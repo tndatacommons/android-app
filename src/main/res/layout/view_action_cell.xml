@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="5dp" >
+
+    <ImageView
+        android:id="@+id/view_action_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="5dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/action_image_description"
+        android:maxHeight="@dimen/action_item_image_size"
+        android:maxWidth="@dimen/action_item_image_size"
+        android:scaleType="centerCrop"
+        android:src="@drawable/default_image" />
+
+    <ImageView
+        android:id="@+id/view_action_add_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="5dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/action_image_description"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_selected_blue" />
+
+    <TextView
+        android:id="@+id/view_action_title_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="15dp"
+        android:layout_toLeftOf="@id/view_action_add_image"
+        android:layout_toRightOf="@id/view_action_image"
+        android:paddingLeft="2dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/dark_text_color" />
+
+    <TextView
+        android:id="@+id/view_action_description_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/view_action_title_textview"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_toLeftOf="@id/view_action_add_image"
+        android:layout_toRightOf="@id/view_action_image"
+        android:paddingLeft="2dp"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</RelativeLayout>

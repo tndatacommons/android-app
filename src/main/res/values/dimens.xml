@@ -1,0 +1,16 @@
+<resources>
+
+    <dimen name="default_activity_padding">15dp</dimen>
+    <dimen name="paper_flat_button_min_width">88dp</dimen>
+    <dimen name="paper_flat_button_min_height">36dp</dimen>
+    <dimen name="paper_flat_login_button_min_width">120dp</dimen>
+    <dimen name="launcher_tagline_text_size">25dp</dimen>
+    <dimen name="launcher_image_top_margin">25dp</dimen>
+    <dimen name="nav_drawer_header_min_height">125dp</dimen>
+    <dimen name="category_grid_spacing">8dp</dimen>
+    <dimen name="category_grid_column_width">140dp</dimen>
+    <dimen name="goal_onboarding_image_size">70dp</dimen>
+    <dimen name="action_item_image_size">55dp</dimen>
+    <dimen name="behavior_fragments_top_padding">100dp</dimen>
+
+</resources>

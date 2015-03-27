@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Grow</string>
+    <string name="version_num">1.0.0</string>
+
+    <!-- MainActivity -->
+    <string name="action_settings">Settings</string>
+    <string name="action_important_to_me">Important to Me</string>
+    <string name="action_my_goals">My Goals</string>
+    <string name="action_my_privacy">My Privacy</string>
+    <string name="nav_drawer_action">Grow</string>
+    <string name="my_goals_title">My Goals</string>
+    <string name="my_goals_error">Either you have no goals or there was an error loading them</string>
+
+    <!-- LoginActivity -->
+    <string name="terms_title">Terms and Conditions</string>
+    <string name="launcher_sign_up">SIGN UP</string>
+    <string name="launcher_login">LOG IN</string>
+    <string name="launcher_tagline">What do YOU want to do?</string>
+    <string name="launcher_grow_image">Grow</string>
+    <string name="login_email_hint">email</string>
+    <string name="login_password_hint">password</string>
+    <string name="login_email_label">email address</string>
+    <string name="login_password_label">password</string>
+    <string name="login_email_error">Please enter a valid email</string>
+    <string name="login_auth_error">An error occurred when logging in</string>
+    <string name="login_header_label">LOG IN</string>
+    <string name="signup_password_mismatch_error">Passwords must match!</string>
+    <string name="signup_password_length_error">Password must be at least 5 characters</string>
+    <string name="signup_first_name_label">first name</string>
+    <string name="signup_last_name_label">last name</string>
+    <string name="signup_first_name_hint">enter first name</string>
+    <string name="signup_last_name_hint">enter last name</string>
+    <string name="signup_confirm_password_label">re-enter password</string>
+    <string name="signup_auth_error">An error occurred when signing up</string>
+    <string name="signup_privacy_link">Privacy Policy</string>
+    <string name="signup_connect_email">Sign up with email</string>
+    <string name="signup_header_label">CREATE YOUR ACCOUNT</string>
+    <string name="signup_header_info_label">YOU\'RE IN CHARGE</string>
+    <string name="signup_info_label">GROW uses your private info to support your choices. We won\'t try to sell you things, and we won\'t share your private info with others. EVER.</string>
+
+    <!-- OnBoardingActivity -->
+    <string name="onboarding_category_error_label">Uh Oh! There seems to have been an issue finding choices!</string>
+    <string name="onboarding_category_header_label">HOW IT WORKS</string>
+    <string name="onboarding_category_info_label">Setting goals is easy! GROW will show you how. Choose three topics that are important to you. You can edit your choices later.</string>
+    <string name="category_image_description">Select</string>
+    <string name="onboarding_category_done">NEXT</string>
+    <string name="onboarding_goals_done">I\'M DONE</string>
+    <string name="onboarding_goals_header_label">SET A %1$s GOAL</string>
+    <string name="onboarding_goals_info_label">Select your goals for easy ways to GROW.</string>
+    <string name="onboarding_goals_error_label">Uh Oh! There seems to have been an issue finding goals!</string>
+    <string name="onboarding_goals_list_item_more_info_label">MORE INFO</string>
+    <string name="onboarding_goals_list_item_select_button">I WANT THIS</string>
+    <string name="goal_image_description">Goal</string>
+
+    <!-- BehaviorActivity -->
+    <string name="learn_more_no_thanks">NO THANKS</string>
+    <string name="learn_more_title_label">Learn more</string>
+    <string name="behavior_no_thanks">NO THANKS</string>
+    <string name="behavior_learn_more">LEARN MORE</string>
+    <string name="behavior_add_to_priorities_label">Add this to my priorities</string>
+    <string name="behavior_keep_in_mind">Keep this in mind each day</string>
+    <string name="behavior_take_action">Take action</string>
+    <string name="action_image_description">Take action</string>
+
+    <!-- GoalTryActivity -->
+    <string name="goal_try_these">TRY THESE</string>
+
+    <!-- SettingsActivity -->
+    <string name="pref_general">General</string>
+    <string name="pref_about">About</string>
+    <string name="settings_logout_summary">Signed in as %1$s</string>
+    <string name="settings_logout_title">Sign Out</string>
+    <string name="settings_version_title">Version</string>
+
+</resources>

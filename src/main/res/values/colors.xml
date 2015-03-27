@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="grow_primary">#87D37C</color>
+    <color name="grow_primary_dark">#388E3C</color>
+    <color name="grow_secondary">#2196F3</color>
+    <color name="grow_primary_accent">#87D37C</color>
+    <color name="actionbar_main_color">#BD98ED</color>
+    <color name="actionbar_text">#FFFFFF</color>
+    <color name="app_background">#FFFFFF</color>
+    <color name="nav_drawer_color">#FFFFFF</color>
+    <color name="login_background">#87D37C</color>
+    
+    <!-- Category Colors -->
+    <color name="category_color_one">#F64747</color>
+    <color name="category_color_two">#2196F3</color>
+    <color name="category_color_three">#2ECC71</color>
+    <color name="category_color_four">#F89406</color>
+    <color name="category_color_five">#D2527F</color>
+    <color name="category_color_six">#8E44AD</color>
+    <color name="category_color_seven">#59ABE3</color>
+
+    <!-- List Rows -->
+    <color name="list_row_selected_color">#87D37C</color>
+    <color name="list_row_default_color">#FFFFFF</color>
+    <color name="nav_drawer_list_divider_color">#1A2196F3</color>
+    <color name="nav_drawer_list_row_selected_color">#2196F3</color>
+
+    <!-- Text -->
+    <color name="dark_text_color">#404040</color>
+    <color name="dark_text_color_inverse">#E0E0E0</color>
+    <color name="white">#FFFFFF</color>
+    <color name="disabled_text_color">#E3E3E3</color>
+
+    <!-- Buttons -->
+    <color name="button_paper_flat_text_color">#2196F3</color>
+    <color name="button_paper_flat_label_text_color">#858585</color>
+    <color name="button_paper_flat_selected_color">#662196F3</color>
+    <color name="button_paper_flat_disabled_color">#1A2196F3</color>
+    <color name="button_positive_text_color">#FFFFFF</color>
+    <color name="button_positive_selected_color">#662196F3</color>
+    <color name="button_positive_unselected_color">#2196F3</color>
+    <color name="button_disabled_color">#1ACCCCCC</color>
+    <color name="button_negative_selected_color">#66FF7061</color>
+    <color name="button_negative_unselected_color">#FF7061</color>
+    <color name="button_secondary_selected_color">#66BF55EC</color>
+    <color name="button_secondary_unselected_color">#BF55EC</color>
+    <color name="button_paper_fab_color">#87D37C</color>
+    <color name="button_paper_fab_selected_color">#388E3C</color>
+
+</resources>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Application theme. -->
+    <style name="CustomActionBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:actionMenuTextColor">@color/actionbar_text</item>
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="android:windowActionBarOverlay">false</item>
+        
+        <item name="colorPrimary">@color/grow_primary</item>
+        <item name="colorPrimaryDark">@color/grow_primary_dark</item>
+        <item name="colorAccent">@color/grow_secondary</item>
+        
+    </style>
+
+</resources>

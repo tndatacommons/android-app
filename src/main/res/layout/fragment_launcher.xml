@@ -1,0 +1,64 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/launcher_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/launcher_image_top_margin"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/launcher_grow_image"
+        android:scaleType="centerCrop"
+        android:src="@drawable/grow_splash_logo" />
+
+    <TextView
+        android:id="@+id/launcher_tagline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/launcher_image"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:text="@string/launcher_tagline"
+        android:textColor="@color/grow_primary"
+        android:textSize="@dimen/launcher_tagline_text_size" />
+
+    <Button
+        android:id="@+id/launcher_sign_up_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/launcher_tagline"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:background="@drawable/button_positive_rounded"
+        android:minHeight="@dimen/paper_flat_button_min_height"
+        android:minWidth="@dimen/paper_flat_login_button_min_width"
+        android:text="@string/launcher_sign_up"
+        android:textColor="@color/button_positive_text_color" />
+
+    <Button
+        android:id="@+id/launcher_login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/launcher_sign_up_button"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="15dp"
+        android:background="@drawable/button_positive_rounded"
+        android:minHeight="@dimen/paper_flat_button_min_height"
+        android:minWidth="@dimen/paper_flat_login_button_min_width"
+        android:text="@string/launcher_login"
+        android:textColor="@color/button_positive_text_color" />
+
+    <ProgressBar
+        android:id="@+id/launcher_load_progress"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/launcher_tagline"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="20dp"
+        android:visibility="gone" />
+
+</RelativeLayout>

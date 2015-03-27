@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.tndata.android.grow.ui.SquareView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/grow_secondary"
+    android:padding="1dp" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/list_item_category_grid_category_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/white" />
+
+        <ImageView
+            android:id="@+id/list_item_category_grid_category_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/list_item_category_grid_category_textview"
+            android:contentDescription="@string/category_image_description"
+            android:src="@drawable/ic_selected_white"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+</org.tndata.android.grow.ui.SquareView>
