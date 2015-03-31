@@ -1,3 +1,14 @@
+// Specify the exact version of gradle. See:
+// http://stackoverflow.com/a/25232725/182778
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.1.0'
+    }
+}
+
 apply plugin: 'com.android.application'
 
 android {
@@ -17,6 +28,11 @@ android {
         }
     }
     types
+}
+
+// Specify where to get dependencies
+repositories {
+    mavenCentral()
 }
 
 dependencies {
