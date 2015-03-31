@@ -56,6 +56,7 @@ public class MainActivity extends ActionBarActivity implements
 
         mToolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.main_left_drawer_list);
