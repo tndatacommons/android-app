@@ -8,6 +8,7 @@ import org.tndata.android.grow.activity.GoalTryActivity;
 import org.tndata.android.grow.adapter.MyGoalsAdapter;
 import org.tndata.android.grow.adapter.MyGoalsAdapter.OnClickEvent;
 import org.tndata.android.grow.model.Goal;
+import org.tndata.android.grow.model.MyGoalsViewItem;
 import org.tndata.android.grow.util.Constants;
 
 import android.content.BroadcastReceiver;
@@ -28,7 +29,7 @@ public class MyGoalsFragment extends Fragment {
     private TextView mErrorTextView;
     private RecyclerView mRecyclerView;
     private MyGoalsAdapter mAdapter;
-    private ArrayList<Goal> mGoalList = new ArrayList<Goal>();
+    private ArrayList<MyGoalsViewItem> mItems = new ArrayList<MyGoalsViewItem>();
     private boolean mBroadcastIsRegistered = false;
     private RecyclerView.LayoutManager mLayoutManager;
 
@@ -46,7 +47,7 @@ public class MyGoalsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_my_goals, container, false);
 
         mErrorTextView = (TextView) v
@@ -64,7 +65,7 @@ public class MyGoalsFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new MyGoalsAdapter(getActivity().getApplicationContext(),
-                mGoalList);
+                mItems);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -74,29 +75,34 @@ public class MyGoalsFragment extends Fragment {
         ArrayList<Goal> goals = ((GrowApplication) getActivity()
                 .getApplication()).getGoals();
         if (goals != null && !goals.isEmpty()) {
-            mGoalList = goals;
-        } else {
-            mGoalList = new ArrayList<Goal>();
+            for (Goal goal : goals) {
+                MyGoalsViewItem item = new MyGoalsViewItem();
+                item.setGoal(goal);
+                mItems.add(item);
+            }
         }
 
         mAdapter = new MyGoalsAdapter(getActivity().getApplicationContext(),
-                mGoalList);
+                mItems);
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.setOnClickEvent(new OnClickEvent() {
 
             @Override
             public void onClick(View v, int position) {
-                Goal goal = mGoalList.get(position);
-                Intent intent = new Intent(getActivity()
-                        .getApplicationContext(), GoalTryActivity.class);
-                Log.d("Goal?",
-                        "id:" + goal.getId() + " title:" + goal.getTitle());
-                intent.putExtra("goal", goal);
-                startActivity(intent);
+                MyGoalsViewItem item = mItems.get(position);
+                if (item.getType() == MyGoalsViewItem.TYPE_GOAL) {
+                    Goal goal = item.getGoal();
+                    Intent intent = new Intent(getActivity()
+                            .getApplicationContext(), GoalTryActivity.class);
+                    Log.d("Goal?",
+                            "id:" + goal.getId() + " title:" + goal.getTitle());
+                    intent.putExtra("goal", goal);
+                    startActivity(intent);
+                }
             }
         });
 
-        if (mGoalList.isEmpty()) {
+        if (mItems.isEmpty()) {
             showError();
         } else {
             showList();
@@ -149,10 +155,10 @@ public class MyGoalsFragment extends Fragment {
                 .getApplication()).getGoals();
         if (goals != null && !goals.isEmpty()) {
             Log.d("Goals?", String.valueOf(goals.size()));
-            mGoalList.clear();
-            mGoalList.addAll(goals);
-            for (Goal goal : mGoalList) {
-                Log.d("GOAL!", "NAME:" + goal.getTitle());
+            for (Goal goal : goals) {
+                MyGoalsViewItem item = new MyGoalsViewItem();
+                item.setGoal(goal);
+                mItems.add(item);
             }
             mAdapter.notifyDataSetChanged();
             showList();

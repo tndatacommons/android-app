@@ -2,7 +2,7 @@ package org.tndata.android.grow.model;
 
 import java.io.Serializable;
 
-public class TDCBase implements Serializable{
+public class TDCBase implements Serializable {
 
     private static final long serialVersionUID = -7297141782846963404L;
     private int id = -1;
