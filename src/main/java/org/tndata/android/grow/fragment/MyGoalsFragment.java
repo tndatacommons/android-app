@@ -9,12 +9,16 @@ import org.tndata.android.grow.adapter.MyGoalsAdapter;
 import org.tndata.android.grow.adapter.MyGoalsAdapter.OnClickEvent;
 import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.model.MyGoalsViewItem;
+import org.tndata.android.grow.model.Survey;
+import org.tndata.android.grow.task.SurveyFinderTask;
+import org.tndata.android.grow.task.SurveyResponseTask;
 import org.tndata.android.grow.util.Constants;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,13 +29,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class MyGoalsFragment extends Fragment {
+public class MyGoalsFragment extends Fragment implements SurveyFinderTask.SurveyFinderInterface,
+        SurveyResponseTask.SurveyResponseListener, MyGoalsAdapter.SurveyCompleteInterface {
     private TextView mErrorTextView;
     private RecyclerView mRecyclerView;
     private MyGoalsAdapter mAdapter;
     private ArrayList<MyGoalsViewItem> mItems = new ArrayList<MyGoalsViewItem>();
     private boolean mBroadcastIsRegistered = false;
     private RecyclerView.LayoutManager mLayoutManager;
+    private boolean mSurveyShown, mSurveyLoading = false;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -65,7 +71,7 @@ public class MyGoalsFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new MyGoalsAdapter(getActivity().getApplicationContext(),
-                mItems);
+                mItems, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -83,7 +89,7 @@ public class MyGoalsFragment extends Fragment {
         }
 
         mAdapter = new MyGoalsAdapter(getActivity().getApplicationContext(),
-                mItems);
+                mItems, this);
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.setOnClickEvent(new OnClickEvent() {
 
@@ -132,6 +138,7 @@ public class MyGoalsFragment extends Fragment {
     public void onResume() {
         registerReceivers();
         super.onResume();
+        loadSurvey();
     }
 
     @Override
@@ -150,6 +157,13 @@ public class MyGoalsFragment extends Fragment {
         mRecyclerView.setVisibility(View.VISIBLE);
     }
 
+    private void loadSurvey() {
+        if (!mSurveyLoading && !mSurveyShown) {
+            new SurveyFinderTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ((GrowApplication) getActivity().getApplication()).getToken());
+            mSurveyLoading = true;
+        }
+    }
+
     public void updateGoals() {
         ArrayList<Goal> goals = ((GrowApplication) getActivity()
                 .getApplication()).getGoals();
@@ -165,5 +179,35 @@ public class MyGoalsFragment extends Fragment {
         } else {
             showError();
         }
+    }
+
+    @Override
+    public void surveyFound(Survey survey) {
+        mSurveyLoading = false;
+        mSurveyShown = true;
+        MyGoalsViewItem item = new MyGoalsViewItem();
+        item.setSurvey(survey);
+        mItems.add(0, item);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void surveyResponseRecorded(Survey survey) {
+        int i = 0;
+        for (; i < mItems.size(); i++) {
+            Survey s = mItems.get(i).getSurvey();
+            if (s != null && s.getId() == survey.getId()) {
+                mItems.remove(i);
+                mSurveyShown = false;
+                mAdapter.notifyDataSetChanged();
+                break;
+            }
+        }
+
+    }
+
+    @Override
+    public void surveyCompleted(Survey survey) {
+        new SurveyResponseTask(getActivity(), this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, survey);
     }
 }

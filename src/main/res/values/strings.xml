@@ -74,4 +74,6 @@
     <string name="settings_logout_title">Sign Out</string>
     <string name="settings_version_title">Version</string>
 
+    <!-- Surveys -->
+    <string name="survey_title">GETTING TO KNOW ME</string>
 </resources>

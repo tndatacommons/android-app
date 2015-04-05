@@ -5,7 +5,13 @@ import java.io.Serializable;
 
 public class MyGoalsViewItem implements Serializable {
     public static final int TYPE_GOAL = 0;
-    public static final int TYPE_SURVEY = 1;
+    public static final int TYPE_SURVEY_LIKERT = 1;
+    public static final int TYPE_SURVEY_MULTICHOICE = 2;
+    public static final int TYPE_SURVEY_BINARY = 3;
+
+    private static final String LIKERT = "likertquestion";
+    private static final String MULTICHOICE = "multiplechoicequestion";
+    private static final String BINARY = "binaryquestion";
 
     private static final long serialVersionUID = 6477860168863580408L;
     private Goal goal = null;
@@ -27,7 +33,12 @@ public class MyGoalsViewItem implements Serializable {
 
     public void setSurvey(Survey survey) {
         this.survey = survey;
-        setType(TYPE_SURVEY);
+        if (survey.getQuestionType().equalsIgnoreCase(LIKERT))
+            setType(TYPE_SURVEY_LIKERT);
+        else if (survey.getQuestionType().equalsIgnoreCase(MULTICHOICE))
+            setType(TYPE_SURVEY_MULTICHOICE);
+        else if (survey.getQuestionType().equalsIgnoreCase(BINARY))
+            setType(TYPE_SURVEY_BINARY);
     }
 
     public int getType() {

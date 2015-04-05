@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 
-public class Survey implements Serializable {
+public class Survey implements Serializable, Comparable<Survey> {
 
     private static final long serialVersionUID = 3345647844660418003L;
     private int id = -1;
@@ -15,6 +15,15 @@ public class Survey implements Serializable {
     private String question_type = "";
     private String response_url = "";
     private List<SurveyOptions> options = null;
+    private SurveyOptions selectedOption = null;
+
+    public SurveyOptions getSelectedOption() {
+        return selectedOption;
+    }
+
+    public void setSelectedOption(SurveyOptions selectedOption) {
+        this.selectedOption = selectedOption;
+    }
 
     public List<SurveyOptions> getOptions() {
         return options;
@@ -80,4 +89,35 @@ public class Survey implements Serializable {
         this.instructions = instructions;
     }
 
+    @Override
+    public boolean equals(Object object) {
+        boolean result = false;
+        if (object == null) {
+            result = false;
+        } else if (object == this) {
+            result = true;
+        } else if (object instanceof Survey) {
+            if (this.getId() == ((Survey) object).getId()) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 7 * hash + this.getText().hashCode();
+        return hash;
+    }
+
+    @Override
+    public int compareTo(Survey another) {
+        if (getId() == another.getId()) {
+            return 0;
+        } else if (getId() < another.getId()) {
+            return -1;
+        } else
+            return 1;
+    }
 }

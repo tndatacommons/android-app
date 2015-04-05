@@ -5,6 +5,8 @@ import java.util.List;
 import org.tndata.android.grow.R;
 import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.model.MyGoalsViewItem;
+import org.tndata.android.grow.model.Survey;
+import org.tndata.android.grow.model.SurveyOptions;
 import org.tndata.android.grow.util.ImageCache;
 
 import android.content.Context;
@@ -12,7 +14,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class MyGoalsAdapter extends
@@ -21,9 +25,14 @@ public class MyGoalsAdapter extends
         void onClick(View v, int position);
     }
 
+    public interface SurveyCompleteInterface {
+        public void surveyCompleted(Survey survey);
+    }
+
     private Context mContext;
     private List<MyGoalsViewItem> mItems;
     private OnClickEvent mOnClickEvent;
+    private SurveyCompleteInterface mSurveyCompleteCallback;
 
     static class MyGoalsViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;
@@ -41,12 +50,32 @@ public class MyGoalsAdapter extends
         }
     }
 
-    public MyGoalsAdapter(Context context, List<MyGoalsViewItem> objects) {
+    static class LikertSurveyViewHolder extends RecyclerView.ViewHolder {
+        TextView titleTextView;
+        TextView minTextView;
+        TextView maxTextView;
+        TextView choiceTextView;
+        SeekBar seekBar;
+        Button doneButton;
+
+        public LikertSurveyViewHolder(View view) {
+            super(view);
+            titleTextView = (TextView) view.findViewById(R.id.list_item_survey_likert_title_textview);
+            minTextView = (TextView) view.findViewById(R.id.list_item_survey_likert_seekbar_min_textview);
+            maxTextView = (TextView) view.findViewById(R.id.list_item_survey_likert_seekbar_max_textview);
+            choiceTextView = (TextView) view.findViewById(R.id.list_item_survey_likert_choice_textview);
+            seekBar = (SeekBar) view.findViewById(R.id.list_item_survey_likert_seekbar);
+            doneButton = (Button) view.findViewById(R.id.list_item_survey_likert_done_button);
+        }
+    }
+
+    public MyGoalsAdapter(Context context, List<MyGoalsViewItem> objects, SurveyCompleteInterface callback) {
         if (objects == null) {
             throw new IllegalArgumentException("Goals List must not be null");
         }
         this.mItems = objects;
         this.mContext = context;
+        this.mSurveyCompleteCallback = callback;
     }
 
     public void updateEntries(List<MyGoalsViewItem> items) {
@@ -65,7 +94,7 @@ public class MyGoalsAdapter extends
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder,
+    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder,
                                  final int position) {
         switch (viewHolder.getItemViewType()) {
             case MyGoalsViewItem.TYPE_GOAL:
@@ -87,8 +116,49 @@ public class MyGoalsAdapter extends
                     });
                 break;
 
-            case MyGoalsViewItem.TYPE_SURVEY:
+            case MyGoalsViewItem.TYPE_SURVEY_LIKERT:
+                final Survey survey = mItems.get(position).getSurvey();
+                ((LikertSurveyViewHolder) viewHolder).titleTextView.setText(survey.getText());
+                ((LikertSurveyViewHolder) viewHolder).minTextView.setText(survey.getOptions().get(0).getText());
+                ((LikertSurveyViewHolder) viewHolder).maxTextView.setText(survey.getOptions().get(survey.getOptions().size() - 1).getText());
+                ((LikertSurveyViewHolder) viewHolder).seekBar.setMax(survey.getOptions().size() - 1);
+                if (survey.getSelectedOption() != null) {
+                    ((LikertSurveyViewHolder) viewHolder).seekBar.setProgress(survey.getSelectedOption().getId());
+                    ((LikertSurveyViewHolder) viewHolder).choiceTextView.setText(survey.getSelectedOption().getText());
+                    ((LikertSurveyViewHolder) viewHolder).doneButton.setEnabled(true);
+                } else {
+                    ((LikertSurveyViewHolder) viewHolder).seekBar.setProgress(0);
+                    ((LikertSurveyViewHolder) viewHolder).doneButton.setEnabled(false);
+                    ((LikertSurveyViewHolder) viewHolder).choiceTextView.setText("");
+                }
+                ((LikertSurveyViewHolder) viewHolder).seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        for (SurveyOptions option : survey.getOptions()) {
+                            if ((option.getId()-1) == progress) {
+                                survey.setSelectedOption(option);
+                                ((LikertSurveyViewHolder) viewHolder).choiceTextView.setText(option.getText());
+                                break;
+                            }
+                        }
+                    }
 
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        ((LikertSurveyViewHolder) viewHolder).doneButton.setEnabled(true);
+                    }
+                });
+                ((LikertSurveyViewHolder) viewHolder).doneButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSurveyCompleteCallback.surveyCompleted(survey);
+                    }
+                });
                 break;
         }
 
@@ -107,6 +177,9 @@ public class MyGoalsAdapter extends
                         R.layout.list_item_goal, viewGroup, false);
 
                 return new MyGoalsViewHolder(itemView);
+            case MyGoalsViewItem.TYPE_SURVEY_LIKERT:
+                itemView = inflater.inflate(R.layout.list_item_survey_likert, viewGroup, false);
+                return new LikertSurveyViewHolder(itemView);
             default:
                 itemView = inflater.inflate(
                         R.layout.list_item_goal, viewGroup, false);
@@ -118,7 +191,6 @@ public class MyGoalsAdapter extends
 
     @Override
     public int getItemViewType(int position) {
-        int viewType;
         final MyGoalsViewItem item = mItems.get(position);
         return item.getType();
     }
