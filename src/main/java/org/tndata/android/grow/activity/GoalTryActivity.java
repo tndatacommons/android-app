@@ -8,6 +8,7 @@ import org.tndata.android.grow.model.Behavior;
 import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.task.BehaviorLoaderTask;
 import org.tndata.android.grow.task.BehaviorLoaderTask.BehaviorLoaderListener;
+import org.tndata.android.grow.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.grow.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
 import org.tndata.android.grow.ui.parallaxrecyclerview.ParallaxRecyclerAdapter.OnClickEvent;
 import org.tndata.android.grow.util.ImageCache;
@@ -67,7 +68,7 @@ public class GoalTryActivity extends ActionBarActivity implements
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.goal_try_recyclerview);
-        LinearLayoutManager manager = new LinearLayoutManager(this);
+        HeaderLayoutManagerFixed manager = new HeaderLayoutManagerFixed(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setHasFixedSize(true);
@@ -77,7 +78,7 @@ public class GoalTryActivity extends ActionBarActivity implements
         mAdapter.implementRecyclerAdapterMethods(new ParallaxRecyclerAdapter.RecyclerAdapterMethods() {
             @Override
             public void onBindViewHolder(RecyclerView.ViewHolder viewHolder,
-                    int i) {
+                                         int i) {
                 Behavior behavior = mBehaviorList.get(i);
 
                 ((TryGoalViewHolder) viewHolder).titleTextView.setText(behavior
@@ -107,19 +108,24 @@ public class GoalTryActivity extends ActionBarActivity implements
                 return mBehaviorList.size();
             }
         });
-        mAdapter.setParallaxHeader(
-                getLayoutInflater().inflate(R.layout.header_try_goal,
-                        mRecyclerView, false), mRecyclerView);
+
+        final View fakeHeader = getLayoutInflater().inflate(R.layout.header_try_goal,
+                mRecyclerView, false);
+        final View realHeader = findViewById(R.id.goal_try_material_imageview);
+        manager.setHeaderIncrementFixer(fakeHeader);
+        mAdapter.setShouldClipView(false);
+        mAdapter.setParallaxHeader(fakeHeader, mRecyclerView);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             mAdapter.setOnParallaxScroll(new ParallaxRecyclerAdapter.OnParallaxScroll() {
                 @SuppressLint("NewApi")
                 @Override
                 public void onParallaxScroll(float percentage, float offset,
-                        View parallax) {
+                                             View parallax) {
 
                     Drawable c = mToolbar.getBackground();
                     c.setAlpha(Math.round(percentage * 255));
                     mToolbar.setBackground(c);
+                    realHeader.setTranslationY(-offset * 0.5f);
 
                 }
             });

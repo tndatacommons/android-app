@@ -13,5 +13,8 @@
     <dimen name="action_item_image_size">55dp</dimen>
     <dimen name="behavior_fragments_top_padding">100dp</dimen>
     <dimen name="cardview_corner_radius">2dp</dimen>
+    <dimen name="material_header_size">175dp</dimen>
+    <dimen name="material_header_padding">120dp</dimen>
+    <dimen name="material_header_content_size">150dp</dimen>
 
 </resources>

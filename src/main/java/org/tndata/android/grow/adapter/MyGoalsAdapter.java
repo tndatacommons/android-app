@@ -14,9 +14,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class MyGoalsAdapter extends
@@ -69,6 +72,19 @@ public class MyGoalsAdapter extends
         }
     }
 
+    static class MultiChoiceSurveyViewHolder extends RecyclerView.ViewHolder {
+        TextView titleTextView;
+        Spinner spinner;
+        Button doneButton;
+
+        public MultiChoiceSurveyViewHolder(View view) {
+            super(view);
+            titleTextView = (TextView) view.findViewById(R.id.list_item_survey_multi_title_textview);
+            spinner = (Spinner) view.findViewById(R.id.list_item_survey_multi_spinner);
+            doneButton = (Button) view.findViewById(R.id.list_item_survey_multi_done_button);
+        }
+    }
+
     public MyGoalsAdapter(Context context, List<MyGoalsViewItem> objects, SurveyCompleteInterface callback) {
         if (objects == null) {
             throw new IllegalArgumentException("Goals List must not be null");
@@ -96,6 +112,7 @@ public class MyGoalsAdapter extends
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder,
                                  final int position) {
+        final Survey survey = mItems.get(position).getSurvey();
         switch (viewHolder.getItemViewType()) {
             case MyGoalsViewItem.TYPE_GOAL:
                 final Goal goal = mItems.get(position).getGoal();
@@ -117,7 +134,6 @@ public class MyGoalsAdapter extends
                 break;
 
             case MyGoalsViewItem.TYPE_SURVEY_LIKERT:
-                final Survey survey = mItems.get(position).getSurvey();
                 ((LikertSurveyViewHolder) viewHolder).titleTextView.setText(survey.getText());
                 ((LikertSurveyViewHolder) viewHolder).minTextView.setText(survey.getOptions().get(0).getText());
                 ((LikertSurveyViewHolder) viewHolder).maxTextView.setText(survey.getOptions().get(survey.getOptions().size() - 1).getText());
@@ -130,12 +146,13 @@ public class MyGoalsAdapter extends
                     ((LikertSurveyViewHolder) viewHolder).seekBar.setProgress(0);
                     ((LikertSurveyViewHolder) viewHolder).doneButton.setEnabled(false);
                     ((LikertSurveyViewHolder) viewHolder).choiceTextView.setText("");
+                    survey.setSelectedOption(survey.getOptions().get(0));
                 }
                 ((LikertSurveyViewHolder) viewHolder).seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                         for (SurveyOptions option : survey.getOptions()) {
-                            if ((option.getId()-1) == progress) {
+                            if ((option.getId() - 1) == progress) {
                                 survey.setSelectedOption(option);
                                 ((LikertSurveyViewHolder) viewHolder).choiceTextView.setText(option.getText());
                                 break;
@@ -154,6 +171,30 @@ public class MyGoalsAdapter extends
                     }
                 });
                 ((LikertSurveyViewHolder) viewHolder).doneButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSurveyCompleteCallback.surveyCompleted(survey);
+                    }
+                });
+                break;
+            case MyGoalsViewItem.TYPE_SURVEY_MULTICHOICE:
+                ((MultiChoiceSurveyViewHolder) viewHolder).titleTextView.setText(survey.getText());
+                ArrayAdapter<SurveyOptions> adapter = new ArrayAdapter<SurveyOptions>(mContext, android.R.layout.simple_spinner_item, survey.getOptions());
+                ((MultiChoiceSurveyViewHolder) viewHolder).spinner.setAdapter(adapter);
+                ((MultiChoiceSurveyViewHolder) viewHolder).spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        SurveyOptions option = (SurveyOptions) ((MultiChoiceSurveyViewHolder) viewHolder).spinner.getSelectedItem();
+                        survey.setSelectedOption(option);
+                        ((MultiChoiceSurveyViewHolder) viewHolder).doneButton.setEnabled(true);
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+                ((MultiChoiceSurveyViewHolder) viewHolder).doneButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mSurveyCompleteCallback.surveyCompleted(survey);
@@ -180,6 +221,9 @@ public class MyGoalsAdapter extends
             case MyGoalsViewItem.TYPE_SURVEY_LIKERT:
                 itemView = inflater.inflate(R.layout.list_item_survey_likert, viewGroup, false);
                 return new LikertSurveyViewHolder(itemView);
+            case MyGoalsViewItem.TYPE_SURVEY_MULTICHOICE:
+                itemView = inflater.inflate(R.layout.list_item_survey_multichoice, viewGroup, false);
+                return new MultiChoiceSurveyViewHolder(itemView);
             default:
                 itemView = inflater.inflate(
                         R.layout.list_item_goal, viewGroup, false);
@@ -191,8 +235,7 @@ public class MyGoalsAdapter extends
 
     @Override
     public int getItemViewType(int position) {
-        final MyGoalsViewItem item = mItems.get(position);
-        return item.getType();
+        return mItems.get(position).getType();
     }
 
 }
