@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true" >
+    android:animateLayoutChanges="true">
 
     <RelativeLayout
         android:id="@+id/onboarding_category_header_container"
@@ -11,8 +11,9 @@
         android:animateLayoutChanges="true"
         android:background="@color/login_background"
         android:paddingLeft="20dp"
+        android:minHeight="@dimen/material_header_size"
         android:paddingRight="20dp"
-        android:paddingTop="20dp" 
+        android:paddingTop="20dp"
         android:paddingBottom="5dp">
 
         <TextView
@@ -63,8 +64,7 @@
         android:numColumns="auto_fit"
         android:padding="@dimen/category_grid_spacing"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="@dimen/category_grid_spacing" >
-    </GridView>
+        android:verticalSpacing="@dimen/category_grid_spacing"></GridView>
 
     <ProgressBar
         android:id="@+id/onboarding_category_load_progress"

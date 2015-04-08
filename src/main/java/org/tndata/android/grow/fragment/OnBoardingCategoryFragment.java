@@ -4,8 +4,7 @@ import java.util.ArrayList;
 
 import org.tndata.android.grow.GrowApplication;
 import org.tndata.android.grow.R;
-import org.tndata.android.grow.adapter.OnBoardingCategoryAdapter;
-import org.tndata.android.grow.adapter.OnBoardingCategoryAdapter.OnBoardingCategoryAdapterListener;
+import org.tndata.android.grow.adapter.ChooseCategoryAdapter;
 import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.task.CategoryLoaderTask;
 import org.tndata.android.grow.task.CategoryLoaderTask.CategoryLoaderListener;
@@ -30,9 +29,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class OnBoardingCategoryFragment extends Fragment implements
-        CategoryLoaderListener, OnBoardingCategoryAdapterListener {
-    private final static int MIN_CATEGORIES_REQUIRED = 3;
-    private OnBoardingCategoryAdapter mAdapter;
+        CategoryLoaderListener, ChooseCategoryAdapter.ChooseCategoryAdapterListener {
+    private final static int MIN_CATEGORIES_REQUIRED = 1;
+    private ChooseCategoryAdapter mAdapter;
     private ArrayList<Category> mItems;
     private GridView mGridView;
     private ProgressBar mProgressBar;
@@ -49,7 +48,7 @@ public class OnBoardingCategoryFragment extends Fragment implements
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view,
-                final int position, long id) {
+                                final int position, long id) {
             Animation animation = AnimationUtils.loadAnimation(getActivity()
                     .getApplicationContext(), R.anim.anim_tile_click);
             final ImageView check = (ImageView) view
@@ -74,7 +73,7 @@ public class OnBoardingCategoryFragment extends Fragment implements
                     } else {
                         mSelectedItems.add(category);
                         check.setVisibility(View.VISIBLE);
-                        if (mSelectedItems.size() == MIN_CATEGORIES_REQUIRED) {
+                        if (mSelectedItems.size() >= MIN_CATEGORIES_REQUIRED) {
                             mNextButton.setEnabled(true);
                             mNextButton.setVisibility(View.VISIBLE);
                         } else {
@@ -94,7 +93,7 @@ public class OnBoardingCategoryFragment extends Fragment implements
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View v = getActivity().getLayoutInflater().inflate(
                 R.layout.fragment_onboarding_categories, container, false);
         mGridView = (GridView) v
@@ -109,7 +108,7 @@ public class OnBoardingCategoryFragment extends Fragment implements
 
             @Override
             public void onClick(View v) {
-                if (mSelectedItems.size() == MIN_CATEGORIES_REQUIRED) {
+                if (mSelectedItems.size() >= MIN_CATEGORIES_REQUIRED) {
                     mCallback.categoriesSelected(mSelectedItems);
                 }
             }
@@ -122,7 +121,7 @@ public class OnBoardingCategoryFragment extends Fragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mItems = new ArrayList<Category>();
-        mAdapter = new OnBoardingCategoryAdapter(getActivity(),
+        mAdapter = new ChooseCategoryAdapter(getActivity(),
                 R.id.list_item_category_grid_category_textview, mItems, this);
         mGridView.setAdapter(mAdapter);
         mGridView.setOnItemClickListener(mClickListener);

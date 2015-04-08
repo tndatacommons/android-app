@@ -14,18 +14,18 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class OnBoardingCategoryAdapter extends ArrayAdapter<Category> {
-    public interface OnBoardingCategoryAdapterListener {
+public class ChooseCategoryAdapter extends ArrayAdapter<Category> {
+    public interface ChooseCategoryAdapterListener {
         public ArrayList<Category> getCurrentlySelectedCategories();
     }
 
     private Context mContext;
     private ArrayList<Category> mItems;
-    private OnBoardingCategoryAdapterListener mCallback;
+    private ChooseCategoryAdapterListener mCallback;
 
-    public OnBoardingCategoryAdapter(Context context, int resource,
-            ArrayList<Category> objects,
-            OnBoardingCategoryAdapterListener callback) {
+    public ChooseCategoryAdapter(Context context, int resource,
+                                 ArrayList<Category> objects,
+                                 ChooseCategoryAdapterListener callback) {
         super(context, resource, objects);
         this.mItems = objects;
         this.mContext = context;
