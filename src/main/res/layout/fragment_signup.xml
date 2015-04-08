@@ -2,15 +2,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true" >
+    android:animateLayoutChanges="true">
+
+    <ImageView
+        android:id="@+id/signup_background_imageview"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/material_header_size"
+        android:layout_height="fill_parent"
+        android:adjustViewBounds="true"
+        android:layout_alignParentBottom="true"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/grow_material_main_image" />
 
     <RelativeLayout
         android:id="@+id/signup_header_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="@dimen/material_header_size"
         android:animateLayoutChanges="true"
         android:background="@color/login_background"
-        android:padding="20dp" >
+        android:padding="20dp">
 
         <TextView
             android:id="@+id/signup_header_label_textview"
@@ -68,7 +80,7 @@
         android:animateLayoutChanges="true"
         android:background="@color/login_background"
         android:padding="20dp"
-        android:visibility="gone" >
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/signup_email_label_textview"

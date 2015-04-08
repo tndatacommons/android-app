@@ -3,8 +3,7 @@ package org.tndata.android.grow.fragment;
 import java.util.ArrayList;
 
 import org.tndata.android.grow.R;
-import org.tndata.android.grow.adapter.OnBoardingGoalAdapter;
-import org.tndata.android.grow.adapter.OnBoardingGoalAdapter.OnBoardingGoalAdapterListener;
+import org.tndata.android.grow.adapter.ChooseGoalAdapter;
 import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.Goal;
 
@@ -22,8 +21,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class OnBoardingGoalsFragment extends Fragment implements
-        OnBoardingGoalAdapterListener {
+public class ChooseGoalsFragment extends Fragment implements
+        ChooseGoalAdapter.ChooseGoalAdapterListener {
     private ListView mListView;
     private TextView mHeaderTextView;
     private TextView mErrorTextView;
@@ -31,15 +30,15 @@ public class OnBoardingGoalsFragment extends Fragment implements
     private Category mCategory;
     private ArrayList<Goal> mItems;
     private ArrayList<Goal> mSelectedGoals = new ArrayList<Goal>();
-    private OnBoardingGoalAdapter mAdapter;
-    private OnBoardingGoalsListener mCallback;
+    private ChooseGoalAdapter mAdapter;
+    private ChooseGoalsFragmentListener mCallback;
 
-    public interface OnBoardingGoalsListener {
+    public interface ChooseGoalsFragmentListener {
         public void goalsSelected(ArrayList<Goal> goals);
     }
 
-    public static OnBoardingGoalsFragment newInstance(Category category) {
-        OnBoardingGoalsFragment fragment = new OnBoardingGoalsFragment();
+    public static ChooseGoalsFragment newInstance(Category category) {
+        ChooseGoalsFragment fragment = new ChooseGoalsFragment();
         Bundle args = new Bundle();
         args.putSerializable("category", category);
         fragment.setArguments(args);
@@ -57,15 +56,15 @@ public class OnBoardingGoalsFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View v = getActivity().getLayoutInflater().inflate(
-                R.layout.fragment_onboarding_goals, container, false);
-        mListView = (ListView) v.findViewById(R.id.onboarding_goals_listview);
+                R.layout.fragment_choose_goals, container, false);
+        mListView = (ListView) v.findViewById(R.id.choose_goals_listview);
         mHeaderTextView = (TextView) v
-                .findViewById(R.id.onboarding_goals_header_label_textview);
+                .findViewById(R.id.choose_goals_header_label_textview);
         mErrorTextView = (TextView) v
                 .findViewById(R.id.onboarding_goals_error_textview);
 
         mDoneButton = (Button) v
-                .findViewById(R.id.onboarding_goals_done_button);
+                .findViewById(R.id.choose_goals_done_button);
         mDoneButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -81,7 +80,7 @@ public class OnBoardingGoalsFragment extends Fragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mItems = new ArrayList<Goal>();
-        mAdapter = new OnBoardingGoalAdapter(getActivity(),
+        mAdapter = new ChooseGoalAdapter(getActivity(),
                 R.id.list_item_category_grid_category_textview,
                 mCategory.getGoals(), this);
         mListView.setAdapter(mAdapter);
@@ -94,10 +93,10 @@ public class OnBoardingGoalsFragment extends Fragment implements
         // has implemented the callback interface. If not, it throws an
         // exception
         try {
-            mCallback = (OnBoardingGoalsListener) activity;
+            mCallback = (ChooseGoalsFragmentListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnBoardingGoalsListener");
+                    + " must implement ChooseGoalsFragmentListener");
         }
     }
 

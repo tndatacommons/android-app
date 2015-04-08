@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 import org.tndata.android.grow.GrowApplication;
 import org.tndata.android.grow.R;
+import org.tndata.android.grow.fragment.ChooseGoalsFragment;
 import org.tndata.android.grow.fragment.OnBoardingCategoryFragment;
-import org.tndata.android.grow.fragment.OnBoardingGoalsFragment;
 import org.tndata.android.grow.fragment.OnBoardingCategoryFragment.OnBoardingCategoryListener;
-import org.tndata.android.grow.fragment.OnBoardingGoalsFragment.OnBoardingGoalsListener;
+import org.tndata.android.grow.fragment.ChooseGoalsFragment.ChooseGoalsFragmentListener;
 import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.task.AddCategoryTask;
@@ -24,7 +24,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 public class OnBoardingActivity extends ActionBarActivity implements
-        OnBoardingCategoryListener, OnBoardingGoalsListener,
+        OnBoardingCategoryListener, ChooseGoalsFragmentListener,
         AddCategoryTaskListener, AddGoalsTaskListener {
     private static final int CHOOSE_CATEGORIES = 0;
     private static final int CHOOSE_GOALS = 1;
@@ -78,11 +78,11 @@ public class OnBoardingActivity extends ActionBarActivity implements
             break;
         case CHOOSE_GOALS:
             if (!mCategories.isEmpty()) {
-                mFragment = OnBoardingGoalsFragment.newInstance(mCategories
+                mFragment = ChooseGoalsFragment.newInstance(mCategories
                         .get(0));
                 if (mCategoriesSaved) {
-                    if (mFragment instanceof OnBoardingGoalsFragment) {
-                        ((OnBoardingGoalsFragment) mFragment).showDone();
+                    if (mFragment instanceof ChooseGoalsFragment) {
+                        ((ChooseGoalsFragment) mFragment).showDone();
                     }
                 }
             }
@@ -101,8 +101,8 @@ public class OnBoardingActivity extends ActionBarActivity implements
             ((GrowApplication) getApplication()).setCategories(mCategories);
         }
         mCategoriesSaved = true;
-        if (mFragment instanceof OnBoardingGoalsFragment) {
-            ((OnBoardingGoalsFragment) mFragment).showDone();
+        if (mFragment instanceof ChooseGoalsFragment) {
+            ((ChooseGoalsFragment) mFragment).showDone();
         }
     }
 

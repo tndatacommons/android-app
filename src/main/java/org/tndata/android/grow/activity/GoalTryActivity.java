@@ -121,10 +121,10 @@ public class GoalTryActivity extends ActionBarActivity implements
                 @Override
                 public void onParallaxScroll(float percentage, float offset,
                                              View parallax) {
-
-                    Drawable c = mToolbar.getBackground();
-                    c.setAlpha(Math.round(percentage * 255));
-                    mToolbar.setBackground(c);
+//TODO fix the toolbar alpha
+//                    Drawable c = mToolbar.getBackground();
+//                    c.setAlpha(Math.round(percentage * 255));
+//                    mToolbar.setBackground(c);
                     realHeader.setTranslationY(-offset * 0.5f);
 
                 }

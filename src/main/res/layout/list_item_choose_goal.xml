@@ -8,7 +8,7 @@
     android:paddingTop="5dp" >
 
     <ImageView
-        android:id="@+id/list_item_onboarding_goal_imageview"
+        android:id="@+id/list_item_choose_goal_imageview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
@@ -19,21 +19,21 @@
         android:scaleType="centerCrop" />
 
     <TextView
-        android:id="@+id/list_item_onboarding_goal_title_textview"
+        android:id="@+id/list_item_choose_goal_title_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:layout_toRightOf="@id/list_item_onboarding_goal_imageview"
+        android:layout_toRightOf="@id/list_item_choose_goal_imageview"
         android:paddingLeft="2dp"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Button
-        android:id="@+id/list_item_onboarding_goal_more_info_button"
+        android:id="@+id/list_item_choose_goal_more_info_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/list_item_onboarding_goal_title_textview"
+        android:layout_below="@id/list_item_choose_goal_title_textview"
         android:layout_margin="5dp"
-        android:layout_toRightOf="@id/list_item_onboarding_goal_imageview"
+        android:layout_toRightOf="@id/list_item_choose_goal_imageview"
         android:background="@drawable/button_paper_flat"
         android:minHeight="@dimen/paper_flat_button_min_height"
         android:paddingLeft="2dp"
@@ -43,15 +43,15 @@
         android:textColor="@drawable/button_paper_flat_text_selector" />
 
     <Button
-        android:id="@+id/list_item_onboarding_goal_select_button"
+        android:id="@+id/list_item_choose_goal_select_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/list_item_onboarding_goal_title_textview"
+        android:layout_below="@id/list_item_choose_goal_title_textview"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
-        android:layout_toRightOf="@id/list_item_onboarding_goal_more_info_button"
+        android:layout_toRightOf="@id/list_item_choose_goal_more_info_button"
         android:background="@drawable/button_positive_rounded"
         android:minHeight="@dimen/paper_flat_button_min_height"
         android:paddingLeft="5dp"
@@ -61,12 +61,12 @@
         android:textColor="@color/white" />
 
     <ImageView
-        android:id="@+id/list_item_onboarding_goal_selected_imageview"
+        android:id="@+id/list_item_choose_goal_selected_imageview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/list_item_onboarding_goal_select_button"
-        android:layout_alignLeft="@id/list_item_onboarding_goal_select_button"
-        android:layout_alignRight="@id/list_item_onboarding_goal_select_button"
+        android:layout_alignBottom="@id/list_item_choose_goal_select_button"
+        android:layout_alignLeft="@id/list_item_choose_goal_select_button"
+        android:layout_alignRight="@id/list_item_choose_goal_select_button"
         android:contentDescription="@string/goal_image_description"
         android:src="@drawable/ic_selected_blue" />
 

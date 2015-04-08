@@ -8,7 +8,7 @@
         android:id="@+id/goal_try_material_imageview"
         android:layout_width="match_parent"
         android:layout_height="@dimen/material_header_size"
-        android:background="@color/grow_secondary" />
+        android:background="@color/grow_primary" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/goal_try_recyclerview"
