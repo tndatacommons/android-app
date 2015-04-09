@@ -159,7 +159,8 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
 
     private void loadSurvey() {
         if (!mSurveyLoading && !mSurveyShown) {
-            new SurveyFinderTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ((GrowApplication) getActivity().getApplication()).getToken());
+            new SurveyFinderTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    ((GrowApplication) getActivity().getApplication()).getToken());
             mSurveyLoading = true;
         }
     }

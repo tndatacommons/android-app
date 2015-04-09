@@ -25,6 +25,7 @@
         android:layout_margin="5dp"
         android:layout_toRightOf="@id/list_item_choose_goal_imageview"
         android:paddingLeft="2dp"
+        android:textColor="@color/dark_text_color"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Button

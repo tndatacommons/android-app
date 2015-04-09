@@ -4,16 +4,11 @@ import java.util.ArrayList;
 
 import org.tndata.android.grow.GrowApplication;
 import org.tndata.android.grow.R;
-import org.tndata.android.grow.fragment.ChooseGoalsFragment;
 import org.tndata.android.grow.fragment.OnBoardingCategoryFragment;
 import org.tndata.android.grow.fragment.OnBoardingCategoryFragment.OnBoardingCategoryListener;
-import org.tndata.android.grow.fragment.ChooseGoalsFragment.ChooseGoalsFragmentListener;
 import org.tndata.android.grow.model.Category;
-import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.task.AddCategoryTask;
 import org.tndata.android.grow.task.AddCategoryTask.AddCategoryTaskListener;
-import org.tndata.android.grow.task.AddGoalTask;
-import org.tndata.android.grow.task.AddGoalTask.AddGoalsTaskListener;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -24,8 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 public class OnBoardingActivity extends ActionBarActivity implements
-        OnBoardingCategoryListener, ChooseGoalsFragmentListener,
-        AddCategoryTaskListener, AddGoalsTaskListener {
+        OnBoardingCategoryListener, AddCategoryTaskListener {
     private static final int CHOOSE_CATEGORIES = 0;
     private static final int CHOOSE_GOALS = 1;
     private boolean mCategoriesSaved = false;
@@ -61,32 +55,22 @@ public class OnBoardingActivity extends ActionBarActivity implements
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    @Override
-    public void goalsSelected(ArrayList<Goal> goals) {
-        ArrayList<String> goalList = new ArrayList<String>();
-        for (Goal goal : goals) {
-            goalList.add(String.valueOf(goal.getId()));
-        }
-        new AddGoalTask(this, this, goalList)
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
     private void swapFragments(int index) {
         switch (index) {
-        case CHOOSE_CATEGORIES:
-            mFragment = new OnBoardingCategoryFragment();
-            break;
-        case CHOOSE_GOALS:
-            if (!mCategories.isEmpty()) {
-                mFragment = ChooseGoalsFragment.newInstance(mCategories
-                        .get(0));
-                if (mCategoriesSaved) {
-                    if (mFragment instanceof ChooseGoalsFragment) {
-                        ((ChooseGoalsFragment) mFragment).showDone();
-                    }
-                }
-            }
-            break;
+            case CHOOSE_CATEGORIES:
+                mFragment = new OnBoardingCategoryFragment();
+                break;
+//        case CHOOSE_GOALS:
+//            if (!mCategories.isEmpty()) {
+//                mFragment = ChooseGoalsFragment.newInstance(mCategories
+//                        .get(0));
+//                if (mCategoriesSaved) {
+//                    if (mFragment instanceof ChooseGoalsFragment) {
+//                        ((ChooseGoalsFragment) mFragment).showDone();
+//                    }
+//                }
+//            }
+//            break;
         }
         if (mFragment != null) {
             getFragmentManager().beginTransaction()
@@ -101,17 +85,12 @@ public class OnBoardingActivity extends ActionBarActivity implements
             ((GrowApplication) getApplication()).setCategories(mCategories);
         }
         mCategoriesSaved = true;
-        if (mFragment instanceof ChooseGoalsFragment) {
-            ((ChooseGoalsFragment) mFragment).showDone();
-        }
-    }
-
-    @Override
-    public void goalsAdded(ArrayList<Goal> goals) {
-        ((GrowApplication) getApplication()).setGoals(goals);
+//        if (mFragment instanceof ChooseGoalsFragment) {
+//            ((ChooseGoalsFragment) mFragment).showDone();
+//        }
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
         finish();
-
     }
+
 }

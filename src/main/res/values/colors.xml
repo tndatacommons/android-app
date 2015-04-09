@@ -45,7 +45,7 @@
     <color name="button_negative_unselected_color">#FF7061</color>
     <color name="button_secondary_selected_color">#66BF55EC</color>
     <color name="button_secondary_unselected_color">#BF55EC</color>
-    <color name="button_paper_fab_color">#87D37C</color>
-    <color name="button_paper_fab_selected_color">#388E3C</color>
+    <color name="button_paper_fab_color">#2196F3</color>
+    <color name="button_paper_fab_selected_color">#662196F3</color>
 
 </resources>

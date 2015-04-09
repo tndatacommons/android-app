@@ -7,9 +7,8 @@
     <RelativeLayout
         android:id="@+id/choose_goals_header_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/material_header_size"
         android:animateLayoutChanges="true"
-        android:minHeight="@dimen/material_header_size"
         android:background="@color/grow_secondary"
         android:paddingBottom="5dp"
         android:paddingLeft="20dp"
@@ -20,21 +19,12 @@
             android:id="@+id/choose_goals_header_label_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
             android:layout_marginBottom="5dp"
+            android:layout_centerHorizontal="true"
             android:layout_marginLeft="5dp"
             android:text="@string/onboarding_goals_header_label"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/white" />
-
-        <TextView
-            android:id="@+id/choose_goals_info_label_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/choose_goals_header_label_textview"
-            android:layout_marginLeft="5dp"
-            android:text="@string/onboarding_goals_info_label"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/white" />
 
         <Button
@@ -42,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_below="@id/choose_goals_info_label_textview"
+            android:layout_above="@id/choose_goals_header_label_textview"
             android:layout_margin="5dp"
             android:background="@drawable/button_positive_rounded"
             android:minHeight="@dimen/paper_flat_button_min_height"
@@ -50,6 +40,15 @@
             android:text="@string/onboarding_goals_done"
             android:textColor="@color/button_positive_text_color" />
     </RelativeLayout>
+
+    <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/choose_goals_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:minHeight="?attr/actionBarSize"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"></android.support.v7.widget.Toolbar>
 
     <ListView
         android:id="@+id/choose_goals_listview"
