@@ -28,9 +28,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class OnBoardingCategoryFragment extends Fragment implements
+public class ChooseCategoriesFragment extends Fragment implements
         CategoryLoaderListener, ChooseCategoryAdapter.ChooseCategoryAdapterListener {
-    private final static int MIN_CATEGORIES_REQUIRED = 1;
+    public final static int MIN_CATEGORIES_REQUIRED = 1;
     private ChooseCategoryAdapter mAdapter;
     private ArrayList<Category> mItems;
     private GridView mGridView;
@@ -38,9 +38,9 @@ public class OnBoardingCategoryFragment extends Fragment implements
     private TextView mErrorTextView;
     private Button mNextButton;
     private ArrayList<Category> mSelectedItems = new ArrayList<Category>();
-    private OnBoardingCategoryListener mCallback;
+    private ChooseCategoriesFragmentListener mCallback;
 
-    public interface OnBoardingCategoryListener {
+    public interface ChooseCategoriesFragmentListener {
         public void categoriesSelected(ArrayList<Category> categories);
     }
 
@@ -95,15 +95,15 @@ public class OnBoardingCategoryFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = getActivity().getLayoutInflater().inflate(
-                R.layout.fragment_onboarding_categories, container, false);
+                R.layout.fragment_choose_categories, container, false);
         mGridView = (GridView) v
-                .findViewById(R.id.onboarding_category_gridview);
+                .findViewById(R.id.choose_categories_gridview);
         mProgressBar = (ProgressBar) v
-                .findViewById(R.id.onboarding_category_load_progress);
+                .findViewById(R.id.choose_categories_load_progress);
         mErrorTextView = (TextView) v
-                .findViewById(R.id.onboarding_category_error_textview);
+                .findViewById(R.id.choose_categories_error_textview);
         mNextButton = (Button) v
-                .findViewById(R.id.onboarding_category_done_button);
+                .findViewById(R.id.choose_categories_done_button);
         mNextButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -113,7 +113,6 @@ public class OnBoardingCategoryFragment extends Fragment implements
                 }
             }
         });
-        mNextButton.setVisibility(View.INVISIBLE);
         return v;
     }
 
@@ -121,6 +120,12 @@ public class OnBoardingCategoryFragment extends Fragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mItems = new ArrayList<Category>();
+        if (((GrowApplication) getActivity().getApplication()).getCategories() != null) {
+            mSelectedItems.addAll(((GrowApplication) getActivity().getApplication()).getCategories());
+        }
+        if (mSelectedItems.size() >= MIN_CATEGORIES_REQUIRED) {
+            mNextButton.setVisibility(View.VISIBLE);
+        }
         mAdapter = new ChooseCategoryAdapter(getActivity(),
                 R.id.list_item_category_grid_category_textview, mItems, this);
         mGridView.setAdapter(mAdapter);
@@ -135,7 +140,7 @@ public class OnBoardingCategoryFragment extends Fragment implements
         // has implemented the callback interface. If not, it throws an
         // exception
         try {
-            mCallback = (OnBoardingCategoryListener) activity;
+            mCallback = (ChooseCategoriesFragmentListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnBoardingCategoryListener");

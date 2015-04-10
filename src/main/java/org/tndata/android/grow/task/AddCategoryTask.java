@@ -88,10 +88,12 @@ public class AddCategoryTask extends AsyncTask<Void, Void, ArrayList<Category>> 
 
             JSONArray jArray = new JSONArray(createResponse);
             ArrayList<Category> categories = new ArrayList<Category>();
-            Log.d("user categories response", jArray.toString(2));
+            Log.d("user category response", jArray.toString(2));
             for (int i = 0; i < jArray.length(); i++) {
-                Category category = gson.fromJson(jArray.getString(i),
-                        Category.class);
+                JSONObject userCategory = jArray.getJSONObject(i);
+                Category category = gson.fromJson(
+                        userCategory.getString("category"), Category.class);
+                category.setMappingId(userCategory.getInt("id"));
                 categories.add(category);
             }
             return categories;

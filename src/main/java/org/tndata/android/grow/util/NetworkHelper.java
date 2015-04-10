@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -78,6 +79,33 @@ public class NetworkHelper {
             return getResponseEntity.getContent();
         } catch (IOException e) {
             httpGet.abort();
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static InputStream httpDeleteStream(String url,
+                                            Map<String, String> headers) {
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpDelete httpDelete = new HttpDelete(url);
+        if (headers != null) {
+            // set all of our headers
+            for (Map.Entry<String, String> header : headers.entrySet()) {
+                httpDelete.setHeader(header.getKey(), header.getValue());
+            }
+        }
+        HttpResponse httpResponse = null;
+        try {
+            HttpContext responseHandler = new BasicHttpContext();
+            httpResponse = client.execute(httpDelete, responseHandler);
+            int code = httpResponse.getStatusLine().getStatusCode();
+            if (code != 201 && code != 200) {
+                return null;
+            }
+            HttpEntity getResponseEntity = httpResponse.getEntity();
+            return getResponseEntity.getContent();
+        } catch (IOException e) {
+            httpDelete.abort();
             e.printStackTrace();
         }
         return null;

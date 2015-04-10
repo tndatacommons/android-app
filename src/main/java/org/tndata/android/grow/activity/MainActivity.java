@@ -6,6 +6,7 @@ import org.tndata.android.grow.GrowApplication;
 import org.tndata.android.grow.R;
 import org.tndata.android.grow.adapter.DrawerAdapter;
 import org.tndata.android.grow.adapter.MainViewPagerAdapter;
+import org.tndata.android.grow.fragment.MyGoalsFragment.MyGoalsFragmentListener;
 import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.DrawerItem;
 import org.tndata.android.grow.model.Goal;
@@ -33,7 +34,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 public class MainActivity extends ActionBarActivity implements
-        GetUserCategoriesListener, GetUserGoalsListener {
+        GetUserCategoriesListener, GetUserGoalsListener,
+        MyGoalsFragmentListener {
     private static final int IMPORTANT_TO_ME = 0;
     private static final int MY_GOALS = 1;
     private static final int MY_PRIVACY = 2;
@@ -54,7 +56,8 @@ public class MainActivity extends ActionBarActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mToolbar = (Toolbar) findViewById(R.id.tool_bar);
+        mToolbar = (Toolbar) findViewById(R.id.transparent_tool_bar);
+        mToolbar.setTitle("");
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -95,7 +98,15 @@ public class MainActivity extends ActionBarActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Constants.LOGGED_OUT_RESULT_CODE) {
             finish();
+        } else if (requestCode == Constants.CHOOSE_CATEGORIES_REQUEST_CODE) {
+            showCategories();
         }
+    }
+
+    @Override
+    public void chooseCategories() {
+        Intent intent = new Intent(getApplicationContext(), ChooseCategoriesActivity.class);
+        startActivityForResult(intent, Constants.CHOOSE_CATEGORIES_REQUEST_CODE);
     }
 
     public void showCategories() {
@@ -134,21 +145,21 @@ public class MainActivity extends ActionBarActivity implements
             ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position,
-                long id) {
+                                long id) {
             Intent intent = null;
             switch (position) {
-            case IMPORTANT_TO_ME:
-                break;
-            case MY_GOALS:
-                break;
-            case MY_PRIVACY:
-                break;
+                case IMPORTANT_TO_ME:
+                    break;
+                case MY_GOALS:
+                    break;
+                case MY_PRIVACY:
+                    break;
 
-            case SETTINGS:
-                intent = new Intent(getApplicationContext(),
-                        SettingsActivity.class);
-                startActivityForResult(intent, Constants.SETTINGS_REQUEST_CODE);
-                break;
+                case SETTINGS:
+                    intent = new Intent(getApplicationContext(),
+                            SettingsActivity.class);
+                    startActivityForResult(intent, Constants.SETTINGS_REQUEST_CODE);
+                    break;
             }
             mDrawerLayout.closeDrawers();
         }
@@ -159,26 +170,26 @@ public class MainActivity extends ActionBarActivity implements
         for (int i = 0; i < DRAWER_COUNT; i++) {
             DrawerItem item = new DrawerItem();
             switch (i) {
-            case IMPORTANT_TO_ME:
-                item.drawable = getResources().getDrawable(
-                        R.drawable.ic_arrow_back_white);
-                item.text = getResources().getString(
-                        R.string.action_important_to_me);
-                break;
-            case MY_GOALS:
-                item.drawable = getResources().getDrawable(
-                        R.drawable.ic_arrow_back_white);
-                item.text = getResources().getString(R.string.action_my_goals);
-                break;
-            case MY_PRIVACY:
-                item.drawable = getResources().getDrawable(
-                        R.drawable.ic_arrow_back_white);
-                item.text = getResources()
-                        .getString(R.string.action_my_privacy);
-                break;
-            case SETTINGS:
-                item.text = getResources().getString(R.string.action_settings);
-                break;
+                case IMPORTANT_TO_ME:
+                    item.drawable = getResources().getDrawable(
+                            R.drawable.ic_arrow_back_white);
+                    item.text = getResources().getString(
+                            R.string.action_important_to_me);
+                    break;
+                case MY_GOALS:
+                    item.drawable = getResources().getDrawable(
+                            R.drawable.ic_arrow_back_white);
+                    item.text = getResources().getString(R.string.action_my_goals);
+                    break;
+                case MY_PRIVACY:
+                    item.drawable = getResources().getDrawable(
+                            R.drawable.ic_arrow_back_white);
+                    item.text = getResources()
+                            .getString(R.string.action_my_privacy);
+                    break;
+                case SETTINGS:
+                    item.text = getResources().getString(R.string.action_settings);
+                    break;
             }
             items.add(item);
         }

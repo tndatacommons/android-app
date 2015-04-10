@@ -76,4 +76,6 @@
 
     <!-- Surveys -->
     <string name="survey_title">GETTING TO KNOW ME</string>
+    <string name="survey_no">No</string>
+    <string name="survey_yes">Yes</string>
 </resources>

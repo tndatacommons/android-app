@@ -13,11 +13,13 @@
             android:id="@+id/main_material_imageview"
             android:layout_width="match_parent"
             android:layout_height="@dimen/material_header_size"
+            android:scaleType="centerCrop"
+            android:src="@drawable/grow_material_header_image"
             android:background="@color/grow_primary" />
 
         <include
-            android:id="@+id/tool_bar"
-            layout="@layout/tool_bar"></include>
+            android:id="@+id/transparent_tool_bar"
+            layout="@layout/transparent_tool_bar"></include>
 
         <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/main_viewpager"
@@ -33,7 +35,7 @@
                 android:layout_marginBottom="4dp"
                 android:layout_marginTop="0dp"
                 android:animateLayoutChanges="true"
-                android:background="@color/grow_primary"
+                android:background="@android:color/transparent"
                 android:minHeight="128dp"
                 android:padding="8dp"
                 android:paddingBottom="8dp"

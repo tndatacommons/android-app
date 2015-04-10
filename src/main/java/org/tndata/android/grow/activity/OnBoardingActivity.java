@@ -4,8 +4,7 @@ import java.util.ArrayList;
 
 import org.tndata.android.grow.GrowApplication;
 import org.tndata.android.grow.R;
-import org.tndata.android.grow.fragment.OnBoardingCategoryFragment;
-import org.tndata.android.grow.fragment.OnBoardingCategoryFragment.OnBoardingCategoryListener;
+import org.tndata.android.grow.fragment.ChooseCategoriesFragment;
 import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.task.AddCategoryTask;
 import org.tndata.android.grow.task.AddCategoryTask.AddCategoryTaskListener;
@@ -19,7 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 public class OnBoardingActivity extends ActionBarActivity implements
-        OnBoardingCategoryListener, AddCategoryTaskListener {
+        ChooseCategoriesFragment.ChooseCategoriesFragmentListener, AddCategoryTaskListener {
     private static final int CHOOSE_CATEGORIES = 0;
     private static final int CHOOSE_GOALS = 1;
     private boolean mCategoriesSaved = false;
@@ -58,7 +57,7 @@ public class OnBoardingActivity extends ActionBarActivity implements
     private void swapFragments(int index) {
         switch (index) {
             case CHOOSE_CATEGORIES:
-                mFragment = new OnBoardingCategoryFragment();
+                mFragment = new ChooseCategoriesFragment();
                 break;
 //        case CHOOSE_GOALS:
 //            if (!mCategories.isEmpty()) {

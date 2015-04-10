@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -82,6 +83,21 @@ public class MyGoalsAdapter extends
             titleTextView = (TextView) view.findViewById(R.id.list_item_survey_multi_title_textview);
             spinner = (Spinner) view.findViewById(R.id.list_item_survey_multi_spinner);
             doneButton = (Button) view.findViewById(R.id.list_item_survey_multi_done_button);
+        }
+    }
+
+    static class BinarySurveyViewHolder extends RecyclerView.ViewHolder {
+        TextView titleTextView;
+        RadioButton negativeRadioButton;
+        RadioButton positiveRadioButton;
+        Button doneButton;
+
+        public BinarySurveyViewHolder(View view) {
+            super(view);
+            titleTextView = (TextView) view.findViewById(R.id.list_item_survey_binary_title_textview);
+            negativeRadioButton = (RadioButton) view.findViewById(R.id.list_item_survey_binary_no_radiobutton);
+            positiveRadioButton = (RadioButton) view.findViewById(R.id.list_item_survey_binary_yes_radiobutton);
+            doneButton = (Button) view.findViewById(R.id.list_item_survey_binary_done_button);
         }
     }
 
@@ -201,6 +217,34 @@ public class MyGoalsAdapter extends
                     }
                 });
                 break;
+            case MyGoalsViewItem.TYPE_SURVEY_BINARY:
+                ((BinarySurveyViewHolder) viewHolder).titleTextView.setText(survey.getText());
+                ((BinarySurveyViewHolder) viewHolder).doneButton.setEnabled(false);
+                ((BinarySurveyViewHolder) viewHolder).negativeRadioButton.setText(survey.getOptions().get(0).getText());
+                ((BinarySurveyViewHolder) viewHolder).positiveRadioButton.setText(survey.getOptions().get(1).getText());
+                ((BinarySurveyViewHolder) viewHolder).negativeRadioButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((BinarySurveyViewHolder) viewHolder).negativeRadioButton.setChecked(true);
+                        survey.setSelectedOption(survey.getOptions().get(0));
+                        ((BinarySurveyViewHolder) viewHolder).doneButton.setEnabled(true);
+                    }
+                });
+                ((BinarySurveyViewHolder) viewHolder).positiveRadioButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((BinarySurveyViewHolder) viewHolder).positiveRadioButton.setChecked(true);
+                        survey.setSelectedOption(survey.getOptions().get(1));
+                        ((BinarySurveyViewHolder) viewHolder).doneButton.setEnabled(true);
+                    }
+                });
+                ((BinarySurveyViewHolder) viewHolder).doneButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSurveyCompleteCallback.surveyCompleted(survey);
+                    }
+                });
+                break;
         }
 
     }
@@ -224,6 +268,9 @@ public class MyGoalsAdapter extends
             case MyGoalsViewItem.TYPE_SURVEY_MULTICHOICE:
                 itemView = inflater.inflate(R.layout.list_item_survey_multichoice, viewGroup, false);
                 return new MultiChoiceSurveyViewHolder(itemView);
+            case MyGoalsViewItem.TYPE_SURVEY_BINARY:
+                itemView = inflater.inflate(R.layout.list_item_survey_binary, viewGroup, false);
+                return new BinarySurveyViewHolder(itemView);
             default:
                 itemView = inflater.inflate(
                         R.layout.list_item_goal, viewGroup, false);

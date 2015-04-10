@@ -69,6 +69,7 @@ public class GetUserCategoriesTask extends
                 JSONObject userCategory = jArray.getJSONObject(i);
                 Category category = gson.fromJson(
                         userCategory.getString("category"), Category.class);
+                category.setMappingId(userCategory.getInt("id"));
                 categories.add(category);
             }
             return categories;

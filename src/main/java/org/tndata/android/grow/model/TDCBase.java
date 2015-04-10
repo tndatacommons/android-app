@@ -9,6 +9,7 @@ public class TDCBase implements Serializable {
     private String title = "";
     private String title_slug = "";
     private String description = "";
+    private int mappingId = -1;
 
     public TDCBase() {
     }
@@ -50,5 +51,13 @@ public class TDCBase implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getMappingId() {
+        return mappingId;
+    }
+
+    public void setMappingId(int mappingId) {
+        this.mappingId = mappingId;
     }
 }

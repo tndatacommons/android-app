@@ -89,7 +89,9 @@ public class AddGoalTask extends AsyncTask<Void, Void, ArrayList<Goal>> {
             ArrayList<Goal> goals = new ArrayList<Goal>();
             Log.d("user goals response", jArray.toString(2));
             for (int i = 0; i < jArray.length(); i++) {
-                Goal goal = gson.fromJson(jArray.getString(i), Goal.class);
+                JSONObject userGoal = jArray.getJSONObject(i);
+                Goal goal = gson.fromJson(userGoal.getString("goal"), Goal.class);
+                goal.setMappingId(userGoal.getInt("id"));
                 goals.add(goal);
             }
             return goals;

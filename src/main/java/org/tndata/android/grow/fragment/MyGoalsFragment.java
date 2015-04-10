@@ -12,8 +12,10 @@ import org.tndata.android.grow.model.MyGoalsViewItem;
 import org.tndata.android.grow.model.Survey;
 import org.tndata.android.grow.task.SurveyFinderTask;
 import org.tndata.android.grow.task.SurveyResponseTask;
+import org.tndata.android.grow.ui.button.FloatingActionButton;
 import org.tndata.android.grow.util.Constants;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -32,12 +34,18 @@ import android.widget.TextView;
 public class MyGoalsFragment extends Fragment implements SurveyFinderTask.SurveyFinderInterface,
         SurveyResponseTask.SurveyResponseListener, MyGoalsAdapter.SurveyCompleteInterface {
     private TextView mErrorTextView;
+    private FloatingActionButton mFloatingActionButton;
     private RecyclerView mRecyclerView;
     private MyGoalsAdapter mAdapter;
     private ArrayList<MyGoalsViewItem> mItems = new ArrayList<MyGoalsViewItem>();
     private boolean mBroadcastIsRegistered = false;
     private RecyclerView.LayoutManager mLayoutManager;
     private boolean mSurveyShown, mSurveyLoading = false;
+    private MyGoalsFragmentListener mCallback;
+
+    public interface MyGoalsFragmentListener {
+        public void chooseCategories();
+    }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -58,6 +66,13 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
 
         mErrorTextView = (TextView) v
                 .findViewById(R.id.my_goals_error_textview);
+        mFloatingActionButton = (FloatingActionButton) v.findViewById(R.id.my_goals_fab_button);
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCallback.chooseCategories();
+            }
+        });
 
         return v;
     }
@@ -113,6 +128,25 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
         } else {
             showList();
         }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity); // This makes sure that the container activity
+        // has implemented the callback interface. If not, it throws an
+        // exception
+        try {
+            mCallback = (MyGoalsFragmentListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement MyGoalsFragmentListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallback = null;
     }
 
     private void registerReceivers() {

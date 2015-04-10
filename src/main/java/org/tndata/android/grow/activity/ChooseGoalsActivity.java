@@ -9,6 +9,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -19,6 +22,7 @@ import org.tndata.android.grow.R;
 import org.tndata.android.grow.adapter.ChooseGoalAdapter;
 import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.Goal;
+import org.tndata.android.grow.task.AddCategoryTask;
 import org.tndata.android.grow.task.AddGoalTask;
 import org.tndata.android.grow.task.GoalLoaderTask;
 
@@ -73,6 +77,25 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
 
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) { // Back key pressed
+            goalsSelected(mSelectedGoals);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                goalsSelected(mSelectedGoals);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void showError() {
         mListView.setVisibility(View.GONE);
         mErrorTextView.setVisibility(View.VISIBLE);
@@ -94,7 +117,9 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
 
     @Override
     public void goalsAdded(ArrayList<Goal> goals) {
-        ((GrowApplication) getApplication()).setGoals(goals);
+        ArrayList<Goal> allGoals = ((GrowApplication) getApplication()).getGoals();
+        allGoals.addAll(goals);
+        ((GrowApplication) getApplication()).setGoals(allGoals);
         finish();
     }
 
@@ -135,12 +160,35 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
     }
 
     private void goalsSelected(ArrayList<Goal> goals) {
-        ArrayList<String> goalList = new ArrayList<String>();
+        Log.e("GOALS", "GOALS SELECTED");
+        //Lets just save the new ones...
+        ArrayList<Goal> goalsToDelete = new ArrayList<Goal>();
+        ArrayList<Goal> goalsToAdd = new ArrayList<Goal>();
+        for (Goal goal : ((GrowApplication) getApplication()).getGoals()) {
+            Log.d("SHOULD DELETE?",goal.getTitle());
+            if (!goals.contains(goal)) {
+                Log.d("Delete Goal", goal.getTitle());
+                goalsToDelete.add(goal);
+            }
+        }
         for (Goal goal : goals) {
+            Log.d("SHOULD ADD?",goal.getTitle());
+            if (!((GrowApplication) getApplication()).getGoals().contains(goal)) {
+                Log.d("Add Goal", goal.getTitle());
+                goalsToAdd.add(goal);
+            }
+        }
+
+        ArrayList<String> goalList = new ArrayList<String>();
+        for (Goal goal : goalsToAdd) {
             goalList.add(String.valueOf(goal.getId()));
         }
-        new AddGoalTask(this, this, goalList)
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        if(goalList.size() > 0) {
+            new AddGoalTask(this, this, goalList)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            finish();
+        }
     }
 
     @Override
