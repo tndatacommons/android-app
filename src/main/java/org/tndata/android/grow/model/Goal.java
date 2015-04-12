@@ -10,13 +10,13 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
     private String subtitle = "";
     private String outcome = "";
     private String icon_url = "";
-    private List<Category> categories = null;
+    private ArrayList<Category> categories = new ArrayList<Category>();
 
     public Goal() {
     }
 
     public Goal(int id, int order, String title, String titleSlug,
-            String description, String subtitle, String outcome, String iconUrl) {
+                String description, String subtitle, String outcome, String iconUrl) {
         super(id, title, titleSlug, description);
         this.subtitle = subtitle;
         this.outcome = outcome;
@@ -25,8 +25,8 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
     }
 
     public Goal(int id, int order, String title, String titleSlug,
-            String description, String subtitle, String outcome,
-            String iconUrl, List<Category> categories) {
+                String description, String subtitle, String outcome,
+                String iconUrl, ArrayList<Category> categories) {
         super(id, title, titleSlug, description);
         this.subtitle = subtitle;
         this.outcome = outcome;
@@ -58,11 +58,11 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
         this.icon_url = icon_url;
     }
 
-    public List<Category> getCategories() {
+    public ArrayList<Category> getCategories() {
         return categories;
     }
 
-    public void setCategories(List<Category> categories) {
+    public void setCategories(ArrayList<Category> categories) {
         this.categories = categories;
     }
 

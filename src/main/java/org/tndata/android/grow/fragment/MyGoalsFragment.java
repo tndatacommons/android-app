@@ -151,7 +151,7 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
 
     private void registerReceivers() {
         if (mBroadcastIsRegistered == false) {
-            getActivity().registerReceiver(broadcastReceiver,
+            getActivity().getApplicationContext().registerReceiver(broadcastReceiver,
                     new IntentFilter(Constants.GOAL_UPDATED_BROADCAST_ACTION));
             mBroadcastIsRegistered = true;
         }
@@ -160,7 +160,7 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
     private void unRegisterReceivers() {
         if (mBroadcastIsRegistered == true) {
             try {
-                getActivity().unregisterReceiver(broadcastReceiver);
+                getActivity().getApplicationContext().unregisterReceiver(broadcastReceiver);
                 mBroadcastIsRegistered = false;
             } catch (Exception e) {
 

@@ -1,74 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="5dp"
-    android:paddingLeft="2dp"
-    android:paddingRight="2dp"
-    android:paddingTop="5dp" >
+    android:layout_gravity="center"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_marginTop="5dp"
+    card_view:cardCornerRadius="@dimen/cardview_corner_radius">
 
-    <ImageView
-        android:id="@+id/list_item_choose_goal_imageview"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/goal_image_description"
-        android:maxHeight="@dimen/goal_onboarding_image_size"
-        android:maxWidth="@dimen/goal_onboarding_image_size"
-        android:scaleType="centerCrop" />
-
-    <TextView
-        android:id="@+id/list_item_choose_goal_title_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:layout_toRightOf="@id/list_item_choose_goal_imageview"
-        android:paddingLeft="2dp"
-        android:textColor="@color/dark_text_color"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <Button
-        android:id="@+id/list_item_choose_goal_more_info_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/list_item_choose_goal_title_textview"
-        android:layout_margin="5dp"
-        android:layout_toRightOf="@id/list_item_choose_goal_imageview"
-        android:background="@drawable/button_paper_flat"
-        android:minHeight="@dimen/paper_flat_button_min_height"
+        android:paddingBottom="5dp"
         android:paddingLeft="2dp"
         android:paddingRight="2dp"
-        android:text="@string/onboarding_goals_list_item_more_info_label"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@drawable/button_paper_flat_text_selector" />
+        android:paddingTop="5dp">
 
-    <Button
-        android:id="@+id/list_item_choose_goal_select_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/list_item_choose_goal_title_textview"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_toRightOf="@id/list_item_choose_goal_more_info_button"
-        android:background="@drawable/button_positive_rounded"
-        android:minHeight="@dimen/paper_flat_button_min_height"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:text="@string/onboarding_goals_list_item_select_button"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/white" />
+        <ImageView
+            android:id="@+id/list_item_choose_goal_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/goal_image_description"
+            android:maxHeight="@dimen/goal_onboarding_image_size"
+            android:maxWidth="@dimen/goal_onboarding_image_size"
+            android:scaleType="centerCrop" />
 
-    <ImageView
-        android:id="@+id/list_item_choose_goal_selected_imageview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/list_item_choose_goal_select_button"
-        android:layout_alignLeft="@id/list_item_choose_goal_select_button"
-        android:layout_alignRight="@id/list_item_choose_goal_select_button"
-        android:contentDescription="@string/goal_image_description"
-        android:src="@drawable/ic_selected_blue" />
+        <TextView
+            android:id="@+id/list_item_choose_goal_title_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_toRightOf="@id/list_item_choose_goal_imageview"
+            android:paddingLeft="2dp"
+            android:textColor="@color/dark_text_color"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/list_item_choose_goal_more_info_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/list_item_choose_goal_title_textview"
+            android:layout_margin="5dp"
+            android:layout_toRightOf="@id/list_item_choose_goal_imageview"
+            android:background="@drawable/button_paper_flat"
+            android:minHeight="@dimen/paper_flat_button_min_height"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:text="@string/choose_goals_list_item_more_info_label"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@drawable/button_paper_flat_text_selector" />
+
+        <Button
+            android:id="@+id/list_item_choose_goal_select_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/list_item_choose_goal_title_textview"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@id/list_item_choose_goal_more_info_button"
+            android:background="@drawable/button_positive_rounded"
+            android:minHeight="@dimen/paper_flat_button_min_height"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:text="@string/choose_goals_list_item_select_button"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white" />
+
+        <ImageView
+            android:id="@+id/list_item_choose_goal_selected_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/list_item_choose_goal_select_button"
+            android:layout_alignLeft="@id/list_item_choose_goal_select_button"
+            android:layout_alignRight="@id/list_item_choose_goal_select_button"
+            android:contentDescription="@string/goal_image_description"
+            android:src="@drawable/ic_selected_blue" />
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

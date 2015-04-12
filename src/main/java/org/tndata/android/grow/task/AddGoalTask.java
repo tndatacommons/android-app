@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.grow.GrowApplication;
+import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.util.Constants;
 import org.tndata.android.grow.util.NetworkHelper;
@@ -38,7 +39,7 @@ public class AddGoalTask extends AsyncTask<Void, Void, ArrayList<Goal>> {
     }
 
     public AddGoalTask(Context context, AddGoalsTaskListener callback,
-            ArrayList<String> goalIds) {
+                       ArrayList<String> goalIds) {
         mContext = context;
         mCallback = callback;
         mGoalIds = goalIds;
@@ -92,6 +93,13 @@ public class AddGoalTask extends AsyncTask<Void, Void, ArrayList<Goal>> {
                 JSONObject userGoal = jArray.getJSONObject(i);
                 Goal goal = gson.fromJson(userGoal.getString("goal"), Goal.class);
                 goal.setMappingId(userGoal.getInt("id"));
+                JSONArray categoryArray = userGoal.getJSONArray("user_categories");
+                ArrayList<Category> categories = goal.getCategories();
+                for (int x = 0; x < categoryArray.length(); x++) {
+                    Category category = gson.fromJson(categoryArray.getString(x), Category.class);
+                    categories.add(category);
+                }
+                goal.setCategories(categories);
                 goals.add(goal);
             }
             return goals;

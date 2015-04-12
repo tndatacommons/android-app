@@ -73,19 +73,21 @@ public class ChooseCategoriesActivity extends ActionBarActivity implements
         ArrayList<Category> categoriesToDelete = new ArrayList<Category>();
         ArrayList<Category> categoriesToAdd = new ArrayList<Category>();
         for (Category cat : ((GrowApplication) getApplication()).getCategories()) {
-            Log.d("SHOULD DELETE?",cat.getTitle());
+            Log.d("SHOULD DELETE?", cat.getTitle());
             if (!categories.contains(cat)) {
                 Log.d("Delete Category", cat.getTitle());
                 categoriesToDelete.add(cat);
             }
         }
         for (Category cat : categories) {
-            Log.d("SHOULD ADD?",cat.getTitle());
+            Log.d("SHOULD ADD?", cat.getTitle());
             if (!((GrowApplication) getApplication()).getCategories().contains(cat)) {
                 Log.d("Add Category", cat.getTitle());
                 categoriesToAdd.add(cat);
             }
         }
+
+        //TODO delete categories, and remove from application
 
         ArrayList<String> cats = new ArrayList<String>();
         for (Category cat : categoriesToAdd) {

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/choose_goals_header_label_textview"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/material_header_content_size"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/transparent"
+        android:gravity="center|bottom"
+        android:paddingBottom="10dp"
+        android:text="@string/choose_goals_header_label"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/white" />
+</RelativeLayout>

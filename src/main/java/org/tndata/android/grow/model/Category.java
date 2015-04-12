@@ -10,22 +10,22 @@ public class Category extends TDCBase implements Serializable,
     private static final long serialVersionUID = -1751642109285216370L;
     private int order = -1;
     private String icon_url = "";
-    private List<Goal> goals = null;
+    private ArrayList<Goal> goals = new ArrayList<Goal>();
     private int color = 0;
 
     public Category() {
     }
 
     public Category(int id, int order, String title, String titleSlug,
-            String description, String iconUrl) {
+                    String description, String iconUrl) {
         super(id, title, titleSlug, description);
         this.order = order;
         this.icon_url = iconUrl;
         this.goals = new ArrayList<Goal>();
     }
-    
+
     public Category(int id, int order, String title, String titleSlug,
-            String description, String iconUrl, List<Goal> goals) {
+                    String description, String iconUrl, ArrayList<Goal> goals) {
         super(id, title, titleSlug, description);
         this.order = order;
         this.icon_url = iconUrl;
@@ -33,7 +33,7 @@ public class Category extends TDCBase implements Serializable,
     }
 
     public Category(int id, int order, String title, String titleSlug,
-            String description, String iconUrl, int color) {
+                    String description, String iconUrl, int color) {
         super(id, title, titleSlug, description);
         this.order = order;
         this.icon_url = iconUrl;
@@ -57,11 +57,11 @@ public class Category extends TDCBase implements Serializable,
         this.icon_url = icon_url;
     }
 
-    public List<Goal> getGoals() {
+    public ArrayList<Goal> getGoals() {
         return goals;
     }
 
-    public void setGoals(List<Goal> goals) {
+    public void setGoals(ArrayList<Goal> goals) {
         this.goals = goals;
     }
 

@@ -83,7 +83,7 @@
             android:background="@drawable/button_positive_rounded"
             android:minHeight="@dimen/paper_flat_button_min_height"
             android:minWidth="@dimen/paper_flat_login_button_min_width"
-            android:text="@string/onboarding_goals_done"
+            android:text="@string/choose_goals_done"
             android:textColor="@color/button_positive_text_color" />
 
         <TextView

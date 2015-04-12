@@ -6,6 +6,7 @@ import org.tndata.android.grow.GrowApplication;
 import org.tndata.android.grow.R;
 import org.tndata.android.grow.adapter.DrawerAdapter;
 import org.tndata.android.grow.adapter.MainViewPagerAdapter;
+import org.tndata.android.grow.fragment.CategoryFragment.CategoryFragmentListener;
 import org.tndata.android.grow.fragment.MyGoalsFragment.MyGoalsFragmentListener;
 import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.DrawerItem;
@@ -35,7 +36,7 @@ import android.widget.ListView;
 
 public class MainActivity extends ActionBarActivity implements
         GetUserCategoriesListener, GetUserGoalsListener,
-        MyGoalsFragmentListener {
+        MyGoalsFragmentListener, CategoryFragmentListener {
     private static final int IMPORTANT_TO_ME = 0;
     private static final int MY_GOALS = 1;
     private static final int MY_PRIVACY = 2;
@@ -101,6 +102,7 @@ public class MainActivity extends ActionBarActivity implements
         } else if (requestCode == Constants.CHOOSE_CATEGORIES_REQUEST_CODE) {
             showCategories();
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -241,6 +243,30 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void goalsLoaded(ArrayList<Goal> goals) {
         ((GrowApplication) getApplication()).setGoals(goals);
+        assignGoalsToCategories(false);
         showGoals();
+    }
+
+    @Override
+    public void assignGoalsToCategories(boolean shouldSendBroadcast) {
+        //this is messy...
+        //add each goal to the correct category
+        for (Category category : ((GrowApplication) getApplication()).getCategories()) {
+            ArrayList<Goal> categoryGoals = new ArrayList<Goal>();
+            for (Goal goal : ((GrowApplication) getApplication()).getGoals()) {
+                for (Category goalCategory : goal.getCategories()) {
+                    if (goalCategory.getId() == category.getId()) {
+                        categoryGoals.add(goal);
+                        break;
+                    }
+                }
+            }
+            category.setGoals(categoryGoals);
+        }
+        if(shouldSendBroadcast) {
+            Intent intent = new Intent(Constants.GOAL_UPDATED_BROADCAST_ACTION);
+            sendBroadcast(intent);
+            Log.d("Main Activity", "send broadcast");
+        }
     }
 }
