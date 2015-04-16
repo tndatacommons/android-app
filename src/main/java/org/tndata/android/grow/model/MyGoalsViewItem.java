@@ -1,6 +1,8 @@
 package org.tndata.android.grow.model;
 
 
+import org.tndata.android.grow.util.Constants;
+
 import java.io.Serializable;
 
 public class MyGoalsViewItem implements Serializable {
@@ -8,10 +10,6 @@ public class MyGoalsViewItem implements Serializable {
     public static final int TYPE_SURVEY_LIKERT = 1;
     public static final int TYPE_SURVEY_MULTICHOICE = 2;
     public static final int TYPE_SURVEY_BINARY = 3;
-
-    private static final String LIKERT = "likertquestion";
-    private static final String MULTICHOICE = "multiplechoicequestion";
-    private static final String BINARY = "binaryquestion";
 
     private static final long serialVersionUID = 6477860168863580408L;
     private Goal goal = null;
@@ -33,11 +31,11 @@ public class MyGoalsViewItem implements Serializable {
 
     public void setSurvey(Survey survey) {
         this.survey = survey;
-        if (survey.getQuestionType().equalsIgnoreCase(LIKERT))
+        if (survey.getQuestionType().equalsIgnoreCase(Constants.LIKERT))
             setType(TYPE_SURVEY_LIKERT);
-        else if (survey.getQuestionType().equalsIgnoreCase(MULTICHOICE))
+        else if (survey.getQuestionType().equalsIgnoreCase(Constants.MULTICHOICE))
             setType(TYPE_SURVEY_MULTICHOICE);
-        else if (survey.getQuestionType().equalsIgnoreCase(BINARY))
+        else if (survey.getQuestionType().equalsIgnoreCase(Constants.BINARY))
             setType(TYPE_SURVEY_BINARY);
     }
 

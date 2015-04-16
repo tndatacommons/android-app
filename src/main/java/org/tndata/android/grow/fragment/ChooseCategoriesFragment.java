@@ -143,7 +143,7 @@ public class ChooseCategoriesFragment extends Fragment implements
             mCallback = (ChooseCategoriesFragmentListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnBoardingCategoryListener");
+                    + " must implement ChooseCategoriesFragmentListener");
         }
     }
 

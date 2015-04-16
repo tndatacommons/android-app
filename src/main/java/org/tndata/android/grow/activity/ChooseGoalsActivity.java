@@ -173,7 +173,6 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                 @Override
                 public void onParallaxScroll(float percentage, float offset,
                                              View parallax) {
-//TODO fix the toolbar alpha
                     Drawable c = mToolbar.getBackground();
                     c.setAlpha(Math.round(percentage * 255));
                     mToolbar.setBackground(c);
@@ -186,7 +185,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
 
         if (mCategory.getIconUrl() != null && !mCategory.getIconUrl().isEmpty()) {
             ImageCache.instance(getApplicationContext()).loadBitmap(
-                    mHeaderImageView, mCategory.getIconUrl(), false);
+                    mHeaderImageView, mCategory.getIconUrl(), false, false);
         }
 
         if (mCategory.getGoals() != null) {

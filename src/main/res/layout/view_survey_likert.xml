@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/view_survey_likert_title_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="15dp"
+        android:paddingLeft="2dp"
+        android:layout_marginTop="15dp"
+        android:text="What are your thoughts on android?"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/view_survey_likert_title_textview"
+        android:id="@+id/view_survey_likert_seekbar" />
+
+    <TextView
+        android:id="@+id/view_survey_likert_seekbar_min_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/view_survey_likert_seekbar"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="5dp"
+        android:paddingLeft="2dp"
+        android:text="Disagree"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/view_survey_likert_seekbar_max_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/view_survey_likert_seekbar"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="5dp"
+        android:paddingRight="2dp"
+        android:text="Agree"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/view_survey_likert_choice_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/view_survey_likert_seekbar_min_textview"
+        android:layout_margin="15dp"
+        android:padding="2dp"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+</RelativeLayout>

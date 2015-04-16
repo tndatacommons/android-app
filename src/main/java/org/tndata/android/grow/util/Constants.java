@@ -6,6 +6,13 @@ public class Constants {
     public final static int CHOOSE_CATEGORIES_REQUEST_CODE = 2202;
     public final static int CHOOSE_GOALS_REQUEST_CODE = 2203;
 
+    public final static int QOL_INSTRUMENT_ID = 1;
+
+    public final static String LIKERT = "likertquestion";
+    public final static String MULTICHOICE = "multiplechoicequestion";
+    public final static String BINARY = "binaryquestion";
+
+
     public final static String GOAL_UPDATED_BROADCAST_ACTION = "org.tndata.android.grow.GOAL_UPDATED_BROADCAST_ACTION";
 
     public final static String TERMS_AND_CONDITIONS_URL = "http://tndata.org";

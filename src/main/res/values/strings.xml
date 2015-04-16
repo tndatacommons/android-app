@@ -53,6 +53,9 @@
     <string name="choose_goals_list_item_more_info_label">MORE INFO</string>
     <string name="choose_goals_list_item_select_button">I WANT THIS</string>
     <string name="goal_image_description">Goal</string>
+    <string name="qol_header_label">CONSIDER YOURSELF</string>
+    <string name="qol_header_info_label">Take a moment to reflect on where you are today. These questions will help GROW focus on your specific needs.</string>
+    <string name="qol_next_button">NEXT</string>
 
     <!-- BehaviorActivity -->
     <string name="learn_more_no_thanks">NO THANKS</string>

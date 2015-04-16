@@ -68,6 +68,10 @@ public class ImageCache {
     }
 
     public void loadBitmap(ImageView imageView, String id, boolean flinging) {
+        loadBitmap(imageView, id, flinging, true);
+    }
+
+    public void loadBitmap(ImageView imageView, String id, boolean flinging, boolean usePlaceholder) {
         final Bitmap bitmap = getBitmapFromMemCache(id);
         if (bitmap != null) {
             imageView.setImageBitmap(bitmap);
@@ -75,8 +79,14 @@ public class ImageCache {
             imageView.setImageBitmap(mPlaceHolderBitmap);
         } else if (cancelPotentialWork(id, imageView)) {
             BitmapWorkerTask task = new BitmapWorkerTask(imageView, mContext);
-            final AsyncDrawable asyncDrawable = new AsyncDrawable(
-                    mContext.getResources(), mPlaceHolderBitmap, task);
+            final AsyncDrawable asyncDrawable;
+            if (usePlaceholder) {
+                asyncDrawable = new AsyncDrawable(
+                        mContext.getResources(), mPlaceHolderBitmap, task);
+            } else {
+                asyncDrawable = new AsyncDrawable(
+                        mContext.getResources(), task);
+            }
             imageView.setImageDrawable(asyncDrawable);
 
             task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, id);
@@ -86,8 +96,15 @@ public class ImageCache {
     static class AsyncDrawable extends BitmapDrawable {
         private final WeakReference<BitmapWorkerTask> bitmapWorkerTaskReference;
 
+        public AsyncDrawable(Resources res, BitmapWorkerTask bitmapWorkerTask) {
+            super(res);
+            bitmapWorkerTaskReference = new WeakReference<BitmapWorkerTask>(
+                    bitmapWorkerTask);
+        }
+
+        @Deprecated
         public AsyncDrawable(Resources res, Bitmap bitmap,
-                BitmapWorkerTask bitmapWorkerTask) {
+                             BitmapWorkerTask bitmapWorkerTask) {
             super(res, bitmap);
             bitmapWorkerTaskReference = new WeakReference<BitmapWorkerTask>(
                     bitmapWorkerTask);

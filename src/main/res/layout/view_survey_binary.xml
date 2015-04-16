@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/view_survey_binary_title_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="15dp"
+        android:paddingLeft="2dp"
+        android:layout_marginTop="15dp"
+        android:text="What are your thoughts on android?"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <RadioGroup
+        android:id="@+id/view_survey_binary_radiogroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="2dp"
+        android:layout_below="@id/view_survey_binary_title_textview">
+
+        <RadioButton
+            android:id="@+id/view_survey_binary_no_radiobutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/survey_no"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+        <RadioButton
+            android:id="@+id/view_survey_binary_yes_radiobutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="@string/survey_yes"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+    </RadioGroup>
+
+</RelativeLayout>
