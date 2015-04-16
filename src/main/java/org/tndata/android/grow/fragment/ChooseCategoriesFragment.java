@@ -121,7 +121,8 @@ public class ChooseCategoriesFragment extends Fragment implements
         super.onActivityCreated(savedInstanceState);
         mItems = new ArrayList<Category>();
         if (((GrowApplication) getActivity().getApplication()).getCategories() != null) {
-            mSelectedItems.addAll(((GrowApplication) getActivity().getApplication()).getCategories());
+            mSelectedItems.addAll(((GrowApplication) getActivity().getApplication())
+                    .getCategories());
         }
         if (mSelectedItems.size() >= MIN_CATEGORIES_REQUIRED) {
             mNextButton.setVisibility(View.VISIBLE);

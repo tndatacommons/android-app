@@ -19,7 +19,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 public class OnBoardingActivity extends ActionBarActivity implements
-        ChooseCategoriesFragment.ChooseCategoriesFragmentListener, AddCategoryTaskListener {
+        ChooseCategoriesFragment.ChooseCategoriesFragmentListener, AddCategoryTaskListener,
+        QualityOfLifeFragment.QualityOfLifeFragmentListener {
     private static final int CHOOSE_CATEGORIES = 0;
     private static final int QOL = 1;
     private static final int BIO = 2;
@@ -62,9 +63,9 @@ public class OnBoardingActivity extends ActionBarActivity implements
                 mFragment = new ChooseCategoriesFragment();
                 break;
             case QOL:
-            if (!mCategories.isEmpty()) {
-                mFragment = new QualityOfLifeFragment();
-            }
+                if (!mCategories.isEmpty()) {
+                    mFragment = new QualityOfLifeFragment();
+                }
                 break;
             case BIO:
                 break;
@@ -85,6 +86,12 @@ public class OnBoardingActivity extends ActionBarActivity implements
 //        if (mFragment instanceof ChooseGoalsFragment) {
 //            ((ChooseGoalsFragment) mFragment).showDone();
 //        }
+
+    }
+
+    @Override
+    public void qualityOfLifeFinished() {
+        swapFragments(BIO);
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
         finish();
