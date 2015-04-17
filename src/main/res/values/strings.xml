@@ -56,6 +56,7 @@
     <string name="qol_header_label">CONSIDER YOURSELF</string>
     <string name="qol_header_info_label">Take a moment to reflect on where you are today. These questions will help GROW focus on your specific needs.</string>
     <string name="qol_next_button">NEXT</string>
+    <string name="survey_open_ended_hint">answer</string>
 
     <!-- BehaviorActivity -->
     <string name="learn_more_no_thanks">NO THANKS</string>

@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import org.tndata.android.grow.GrowApplication;
 import org.tndata.android.grow.R;
 import org.tndata.android.grow.fragment.ChooseCategoriesFragment;
-import org.tndata.android.grow.fragment.QualityOfLifeFragment;
+import org.tndata.android.grow.fragment.InstrumentFragment;
 import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.task.AddCategoryTask;
 import org.tndata.android.grow.task.AddCategoryTask.AddCategoryTaskListener;
+import org.tndata.android.grow.util.Constants;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -20,7 +21,7 @@ import android.util.Log;
 
 public class OnBoardingActivity extends ActionBarActivity implements
         ChooseCategoriesFragment.ChooseCategoriesFragmentListener, AddCategoryTaskListener,
-        QualityOfLifeFragment.QualityOfLifeFragmentListener {
+        InstrumentFragment.InstrumentFragmentListener {
     private static final int CHOOSE_CATEGORIES = 0;
     private static final int QOL = 1;
     private static final int BIO = 2;
@@ -64,10 +65,11 @@ public class OnBoardingActivity extends ActionBarActivity implements
                 break;
             case QOL:
                 if (!mCategories.isEmpty()) {
-                    mFragment = new QualityOfLifeFragment();
+                    mFragment = InstrumentFragment.newInstance(Constants.QOL_INSTRUMENT_ID);
                 }
                 break;
             case BIO:
+                mFragment = InstrumentFragment.newInstance(Constants.BIO_INSTRUMENT_ID);
                 break;
         }
         if (mFragment != null) {
@@ -83,18 +85,17 @@ public class OnBoardingActivity extends ActionBarActivity implements
             ((GrowApplication) getApplication()).setCategories(mCategories);
         }
         mCategoriesSaved = true;
-//        if (mFragment instanceof ChooseGoalsFragment) {
-//            ((ChooseGoalsFragment) mFragment).showDone();
-//        }
-
     }
 
     @Override
-    public void qualityOfLifeFinished() {
-        swapFragments(BIO);
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-        finish();
+    public void instrumentFinished(int instrumentId) {
+        if (instrumentId == Constants.QOL_INSTRUMENT_ID) {
+            swapFragments(BIO);
+        } else {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
 }

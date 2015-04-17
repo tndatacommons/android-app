@@ -31,11 +31,11 @@ public class MyGoalsViewItem implements Serializable {
 
     public void setSurvey(Survey survey) {
         this.survey = survey;
-        if (survey.getQuestionType().equalsIgnoreCase(Constants.LIKERT))
+        if (survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_LIKERT))
             setType(TYPE_SURVEY_LIKERT);
-        else if (survey.getQuestionType().equalsIgnoreCase(Constants.MULTICHOICE))
+        else if (survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_MULTICHOICE))
             setType(TYPE_SURVEY_MULTICHOICE);
-        else if (survey.getQuestionType().equalsIgnoreCase(Constants.BINARY))
+        else if (survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_BINARY))
             setType(TYPE_SURVEY_BINARY);
     }
 

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/view_survey_openended_instructions_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="15dp"
+        android:paddingLeft="2dp"
+        android:layout_marginTop="15dp"
+        android:text="What are your thoughts on android?"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/view_survey_openended_title_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/view_survey_openended_instructions_textview"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="15dp"
+        android:paddingLeft="2dp"
+        android:layout_marginTop="15dp"
+        android:text="What are your thoughts on android?"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/view_survey_openended_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/view_survey_openended_title_textview"
+        android:layout_margin="5dp"
+        android:padding="2dp"
+        android:hint="@string/survey_open_ended_hint"
+        android:visibility="gone" />
+
+    <DatePicker
+        android:id="@+id/view_survey_openended_datepicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/view_survey_openended_title_textview"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:padding="2dp"
+        android:datePickerMode="spinner"
+        android:calendarViewShown="false"
+        android:visibility="visible" />
+
+</RelativeLayout>

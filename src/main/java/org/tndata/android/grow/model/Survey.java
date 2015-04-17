@@ -14,6 +14,8 @@ public class Survey implements Serializable, Comparable<Survey> {
     private String instructions = "";
     private String question_type = "";
     private String response_url = "";
+    private String input_type = "";
+    private String response = "";
     private List<SurveyOptions> options = null;
     private SurveyOptions selectedOption = null;
 
@@ -47,6 +49,22 @@ public class Survey implements Serializable, Comparable<Survey> {
 
     public void setResponseUrl(String responseUrl) {
         this.response_url = responseUrl;
+    }
+
+    public String getInputType() {
+        return input_type;
+    }
+
+    public void setInputType(String inputType) {
+        this.input_type = inputType;
+    }
+
+    public String getResponse() {
+        return response;
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
     }
 
     public int getId() {
@@ -120,4 +138,5 @@ public class Survey implements Serializable, Comparable<Survey> {
         } else
             return 1;
     }
+
 }

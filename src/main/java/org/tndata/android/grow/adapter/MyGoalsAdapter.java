@@ -64,10 +64,14 @@ public class MyGoalsAdapter extends
 
         public LikertSurveyViewHolder(View view) {
             super(view);
-            titleTextView = (TextView) view.findViewById(R.id.list_item_survey_likert_title_textview);
-            minTextView = (TextView) view.findViewById(R.id.list_item_survey_likert_seekbar_min_textview);
-            maxTextView = (TextView) view.findViewById(R.id.list_item_survey_likert_seekbar_max_textview);
-            choiceTextView = (TextView) view.findViewById(R.id.list_item_survey_likert_choice_textview);
+            titleTextView = (TextView) view.findViewById(R.id
+                    .list_item_survey_likert_title_textview);
+            minTextView = (TextView) view.findViewById(R.id
+                    .list_item_survey_likert_seekbar_min_textview);
+            maxTextView = (TextView) view.findViewById(R.id
+                    .list_item_survey_likert_seekbar_max_textview);
+            choiceTextView = (TextView) view.findViewById(R.id
+                    .list_item_survey_likert_choice_textview);
             seekBar = (SeekBar) view.findViewById(R.id.list_item_survey_likert_seekbar);
             doneButton = (Button) view.findViewById(R.id.list_item_survey_likert_done_button);
         }
@@ -80,7 +84,8 @@ public class MyGoalsAdapter extends
 
         public MultiChoiceSurveyViewHolder(View view) {
             super(view);
-            titleTextView = (TextView) view.findViewById(R.id.list_item_survey_multi_title_textview);
+            titleTextView = (TextView) view.findViewById(R.id
+                    .list_item_survey_multi_title_textview);
             spinner = (Spinner) view.findViewById(R.id.list_item_survey_multi_spinner);
             doneButton = (Button) view.findViewById(R.id.list_item_survey_multi_done_button);
         }
@@ -94,14 +99,18 @@ public class MyGoalsAdapter extends
 
         public BinarySurveyViewHolder(View view) {
             super(view);
-            titleTextView = (TextView) view.findViewById(R.id.list_item_survey_binary_title_textview);
-            negativeRadioButton = (RadioButton) view.findViewById(R.id.list_item_survey_binary_no_radiobutton);
-            positiveRadioButton = (RadioButton) view.findViewById(R.id.list_item_survey_binary_yes_radiobutton);
+            titleTextView = (TextView) view.findViewById(R.id
+                    .list_item_survey_binary_title_textview);
+            negativeRadioButton = (RadioButton) view.findViewById(R.id
+                    .list_item_survey_binary_no_radiobutton);
+            positiveRadioButton = (RadioButton) view.findViewById(R.id
+                    .list_item_survey_binary_yes_radiobutton);
             doneButton = (Button) view.findViewById(R.id.list_item_survey_binary_done_button);
         }
     }
 
-    public MyGoalsAdapter(Context context, List<MyGoalsViewItem> objects, SurveyCompleteInterface callback) {
+    public MyGoalsAdapter(Context context, List<MyGoalsViewItem> objects,
+                          SurveyCompleteInterface callback) {
         if (objects == null) {
             throw new IllegalArgumentException("Goals List must not be null");
         }
@@ -133,30 +142,38 @@ public class MyGoalsAdapter extends
             case MyGoalsViewItem.TYPE_GOAL:
                 final Goal goal = mItems.get(position).getGoal();
                 if (goal.getIconUrl() != null && !goal.getIconUrl().isEmpty()) {
-                    ImageCache.instance(mContext).loadBitmap(((MyGoalsViewHolder) viewHolder).iconImageView,
+                    ImageCache.instance(mContext).loadBitmap(((MyGoalsViewHolder) viewHolder)
+                                    .iconImageView,
                             goal.getIconUrl(), false);
                 } else {
-                    ((MyGoalsViewHolder) viewHolder).iconImageView.setImageResource(R.drawable.default_image);
+                    ((MyGoalsViewHolder) viewHolder).iconImageView.setImageResource(R.drawable
+                            .default_image);
                 }
                 ((MyGoalsViewHolder) viewHolder).titleTextView.setText(goal.getTitle());
                 ((MyGoalsViewHolder) viewHolder).descriptionTextView.setText(goal.getSubtitle());
-                if (mOnClickEvent != null)
+                if (mOnClickEvent != null) {
                     viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             mOnClickEvent.onClick(v, position);
                         }
                     });
+                }
                 break;
 
             case MyGoalsViewItem.TYPE_SURVEY_LIKERT:
                 ((LikertSurveyViewHolder) viewHolder).titleTextView.setText(survey.getText());
-                ((LikertSurveyViewHolder) viewHolder).minTextView.setText(survey.getOptions().get(0).getText());
-                ((LikertSurveyViewHolder) viewHolder).maxTextView.setText(survey.getOptions().get(survey.getOptions().size() - 1).getText());
-                ((LikertSurveyViewHolder) viewHolder).seekBar.setMax(survey.getOptions().size() - 1);
+                ((LikertSurveyViewHolder) viewHolder).minTextView.setText(survey.getOptions().get
+                        (0).getText());
+                ((LikertSurveyViewHolder) viewHolder).maxTextView.setText(survey.getOptions().get
+                        (survey.getOptions().size() - 1).getText());
+                ((LikertSurveyViewHolder) viewHolder).seekBar.setMax(survey.getOptions().size() -
+                        1);
                 if (survey.getSelectedOption() != null) {
-                    ((LikertSurveyViewHolder) viewHolder).seekBar.setProgress(survey.getSelectedOption().getId());
-                    ((LikertSurveyViewHolder) viewHolder).choiceTextView.setText(survey.getSelectedOption().getText());
+                    ((LikertSurveyViewHolder) viewHolder).seekBar.setProgress(survey
+                            .getSelectedOption().getId());
+                    ((LikertSurveyViewHolder) viewHolder).choiceTextView.setText(survey
+                            .getSelectedOption().getText());
                     ((LikertSurveyViewHolder) viewHolder).doneButton.setEnabled(true);
                 } else {
                     ((LikertSurveyViewHolder) viewHolder).seekBar.setProgress(0);
@@ -170,7 +187,8 @@ public class MyGoalsAdapter extends
                         for (SurveyOptions option : survey.getOptions()) {
                             if ((option.getId() - 1) == progress) {
                                 survey.setSelectedOption(option);
-                                ((LikertSurveyViewHolder) viewHolder).choiceTextView.setText(option.getText());
+                                ((LikertSurveyViewHolder) viewHolder).choiceTextView.setText
+                                        (option.getText());
                                 break;
                             }
                         }
@@ -186,7 +204,8 @@ public class MyGoalsAdapter extends
                         ((LikertSurveyViewHolder) viewHolder).doneButton.setEnabled(true);
                     }
                 });
-                ((LikertSurveyViewHolder) viewHolder).doneButton.setOnClickListener(new View.OnClickListener() {
+                ((LikertSurveyViewHolder) viewHolder).doneButton.setOnClickListener(new View
+                        .OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mSurveyCompleteCallback.surveyCompleted(survey);
@@ -195,12 +214,15 @@ public class MyGoalsAdapter extends
                 break;
             case MyGoalsViewItem.TYPE_SURVEY_MULTICHOICE:
                 ((MultiChoiceSurveyViewHolder) viewHolder).titleTextView.setText(survey.getText());
-                ArrayAdapter<SurveyOptions> adapter = new ArrayAdapter<SurveyOptions>(mContext, android.R.layout.simple_spinner_item, survey.getOptions());
+                ArrayAdapter<SurveyOptions> adapter = new ArrayAdapter<SurveyOptions>(mContext,
+                        R.layout.list_item_simple_spinner, survey.getOptions());
                 ((MultiChoiceSurveyViewHolder) viewHolder).spinner.setAdapter(adapter);
                 ((MultiChoiceSurveyViewHolder) viewHolder).spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        SurveyOptions option = (SurveyOptions) ((MultiChoiceSurveyViewHolder) viewHolder).spinner.getSelectedItem();
+                    public void onItemSelected(AdapterView<?> parent, View view, int position,
+                                               long id) {
+                        SurveyOptions option = (SurveyOptions) ((MultiChoiceSurveyViewHolder)
+                                viewHolder).spinner.getSelectedItem();
                         survey.setSelectedOption(option);
                         ((MultiChoiceSurveyViewHolder) viewHolder).doneButton.setEnabled(true);
                     }
@@ -210,7 +232,8 @@ public class MyGoalsAdapter extends
 
                     }
                 });
-                ((MultiChoiceSurveyViewHolder) viewHolder).doneButton.setOnClickListener(new View.OnClickListener() {
+                ((MultiChoiceSurveyViewHolder) viewHolder).doneButton.setOnClickListener(new View
+                        .OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mSurveyCompleteCallback.surveyCompleted(survey);
@@ -220,8 +243,10 @@ public class MyGoalsAdapter extends
             case MyGoalsViewItem.TYPE_SURVEY_BINARY:
                 ((BinarySurveyViewHolder) viewHolder).titleTextView.setText(survey.getText());
                 ((BinarySurveyViewHolder) viewHolder).doneButton.setEnabled(false);
-                ((BinarySurveyViewHolder) viewHolder).negativeRadioButton.setText(survey.getOptions().get(0).getText());
-                ((BinarySurveyViewHolder) viewHolder).positiveRadioButton.setText(survey.getOptions().get(1).getText());
+                ((BinarySurveyViewHolder) viewHolder).negativeRadioButton.setText(survey
+                        .getOptions().get(0).getText());
+                ((BinarySurveyViewHolder) viewHolder).positiveRadioButton.setText(survey
+                        .getOptions().get(1).getText());
                 ((BinarySurveyViewHolder) viewHolder).negativeRadioButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -238,7 +263,8 @@ public class MyGoalsAdapter extends
                         ((BinarySurveyViewHolder) viewHolder).doneButton.setEnabled(true);
                     }
                 });
-                ((BinarySurveyViewHolder) viewHolder).doneButton.setOnClickListener(new View.OnClickListener() {
+                ((BinarySurveyViewHolder) viewHolder).doneButton.setOnClickListener(new View
+                        .OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mSurveyCompleteCallback.surveyCompleted(survey);
@@ -266,7 +292,8 @@ public class MyGoalsAdapter extends
                 itemView = inflater.inflate(R.layout.list_item_survey_likert, viewGroup, false);
                 return new LikertSurveyViewHolder(itemView);
             case MyGoalsViewItem.TYPE_SURVEY_MULTICHOICE:
-                itemView = inflater.inflate(R.layout.list_item_survey_multichoice, viewGroup, false);
+                itemView = inflater.inflate(R.layout.list_item_survey_multichoice, viewGroup,
+                        false);
                 return new MultiChoiceSurveyViewHolder(itemView);
             case MyGoalsViewItem.TYPE_SURVEY_BINARY:
                 itemView = inflater.inflate(R.layout.list_item_survey_binary, viewGroup, false);

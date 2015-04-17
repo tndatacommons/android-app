@@ -5,13 +5,16 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.GridView;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
@@ -28,9 +31,11 @@ import org.tndata.android.grow.task.InstrumentLoaderTask;
 import org.tndata.android.grow.task.SurveyResponseTask;
 import org.tndata.android.grow.util.Constants;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
-public class QualityOfLifeFragment extends Fragment implements InstrumentLoaderTask
+public class InstrumentFragment extends Fragment implements InstrumentLoaderTask
         .InstrumentLoaderListener,
         SurveyResponseTask.SurveyResponseListener {
     private Button mNextButton;
@@ -39,10 +44,25 @@ public class QualityOfLifeFragment extends Fragment implements InstrumentLoaderT
     private LinearLayout mSurveyContainer;
     private ArrayList<Survey> mSurveys;
     private int mCurrentSurvey = -1;
-    private QualityOfLifeFragmentListener mCallback;
+    private int mInstrumentId = -1;
+    private InstrumentFragmentListener mCallback;
 
-    public interface QualityOfLifeFragmentListener {
-        public void qualityOfLifeFinished();
+    public interface InstrumentFragmentListener {
+        public void instrumentFinished(int instrumentId);
+    }
+
+    public static InstrumentFragment newInstance(int instrumentId) {
+        InstrumentFragment fragment = new InstrumentFragment();
+        Bundle args = new Bundle();
+        args.putInt("instrumentId", instrumentId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mInstrumentId = getArguments() != null ? getArguments().getInt("instrumentId", -1) : -1;
     }
 
     @Override
@@ -81,10 +101,10 @@ public class QualityOfLifeFragment extends Fragment implements InstrumentLoaderT
         // has implemented the callback interface. If not, it throws an
         // exception
         try {
-            mCallback = (QualityOfLifeFragmentListener) activity;
+            mCallback = (InstrumentFragmentListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement QualityOfLifeFragmentListener");
+                    + " must implement InstrumentFragmentListener");
         }
     }
 
@@ -98,7 +118,7 @@ public class QualityOfLifeFragment extends Fragment implements InstrumentLoaderT
         mLoadProgressBar.setVisibility(View.VISIBLE);
         new InstrumentLoaderTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                 ((GrowApplication) getActivity().getApplication()).getToken(),
-                String.valueOf(Constants.QOL_INSTRUMENT_ID));
+                String.valueOf(mInstrumentId));
     }
 
     private void saveCurrentSurvey() {
@@ -112,14 +132,16 @@ public class QualityOfLifeFragment extends Fragment implements InstrumentLoaderT
     private void showNextSurvey() {
         mCurrentSurvey++;
         if (mCurrentSurvey < mSurveys.size()) {
-            mStatusProgressBar.setProgress(mCurrentSurvey + 1);
+            mStatusProgressBar.setProgress(mCurrentSurvey);
             Survey survey = mSurveys.get(mCurrentSurvey);
-            if (survey.getQuestionType().equalsIgnoreCase(Constants.BINARY)) {
+            if (survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_BINARY)) {
                 showBinarySurvey(survey);
-            } else if (survey.getQuestionType().equalsIgnoreCase(Constants.LIKERT)) {
+            } else if (survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_LIKERT)) {
                 showLikertSurvey(survey);
-            } else if (survey.getQuestionType().equalsIgnoreCase(Constants.MULTICHOICE)) {
+            } else if (survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_MULTICHOICE)) {
                 showMultiChoiceSurvey(survey);
+            } else if (survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_OPENENDED)) {
+                showOpenEndedSurvey(survey);
             }
         }
     }
@@ -137,7 +159,7 @@ public class QualityOfLifeFragment extends Fragment implements InstrumentLoaderT
     @Override
     public void surveyResponseRecorded(Survey survey) {
         if (mCurrentSurvey >= mSurveys.size()) {
-            mCallback.qualityOfLifeFinished();
+            mCallback.instrumentFinished(mInstrumentId);
         }
     }
 
@@ -147,7 +169,11 @@ public class QualityOfLifeFragment extends Fragment implements InstrumentLoaderT
                 mSurveyContainer);
         final TextView instructions = (TextView) v.findViewById(R.id
                 .view_survey_binary_instructions_textview);
-        instructions.setText(survey.getInstructions());
+        if (survey.getInstructions().isEmpty()) {
+            instructions.setVisibility(View.GONE);
+        } else {
+            instructions.setText(survey.getInstructions());
+        }
         TextView title = (TextView) v.findViewById(R.id.view_survey_binary_title_textview);
         title.setText(survey.getText());
         final RadioButton negativeRadioButton = (RadioButton) v.findViewById(R.id
@@ -180,7 +206,11 @@ public class QualityOfLifeFragment extends Fragment implements InstrumentLoaderT
                 mSurveyContainer);
         final TextView instructions = (TextView) v.findViewById(R.id
                 .view_survey_likert_instructions_textview);
-        instructions.setText(survey.getInstructions());
+        if (survey.getInstructions().isEmpty()) {
+            instructions.setVisibility(View.GONE);
+        } else {
+            instructions.setText(survey.getInstructions());
+        }
         final TextView title = (TextView) v.findViewById(R.id.view_survey_likert_title_textview);
         title.setText(survey.getText());
         final TextView minTextView = (TextView) v.findViewById(R.id
@@ -233,12 +263,16 @@ public class QualityOfLifeFragment extends Fragment implements InstrumentLoaderT
                 mSurveyContainer);
         final TextView instructions = (TextView) v.findViewById(R.id
                 .view_survey_multi_instructions_textview);
-        instructions.setText(survey.getInstructions());
+        if (survey.getInstructions().isEmpty()) {
+            instructions.setVisibility(View.GONE);
+        } else {
+            instructions.setText(survey.getInstructions());
+        }
         final TextView title = (TextView) v.findViewById(R.id.view_survey_multi_title_textview);
         title.setText(survey.getText());
         final Spinner spinner = (Spinner) v.findViewById(R.id.view_survey_multi_spinner);
         ArrayAdapter<SurveyOptions> adapter = new ArrayAdapter<SurveyOptions>(getActivity()
-                .getApplicationContext(), android.R.layout.simple_spinner_item,
+                .getApplicationContext(), R.layout.list_item_simple_spinner,
                 survey.getOptions());
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -254,5 +288,63 @@ public class QualityOfLifeFragment extends Fragment implements InstrumentLoaderT
 
             }
         });
+    }
+
+    private void showOpenEndedSurvey(final Survey survey) {
+        mSurveyContainer.removeAllViews();
+        View v = getActivity().getLayoutInflater().inflate(R.layout.view_survey_openended,
+                mSurveyContainer);
+        final TextView instructions = (TextView) v.findViewById(R.id
+                .view_survey_openended_instructions_textview);
+        if (survey.getInstructions().isEmpty()) {
+            instructions.setVisibility(View.GONE);
+        } else {
+            instructions.setText(survey.getInstructions());
+        }
+        final TextView title = (TextView) v.findViewById(R.id.view_survey_openended_title_textview);
+        title.setText(survey.getText());
+
+        if (survey.getInputType().equalsIgnoreCase(Constants.SURVEY_OPENENDED_DATE_TYPE)) {
+            final DatePicker datePicker = (DatePicker) v.findViewById(R.id
+                    .view_survey_openended_datepicker);
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            datePicker.init(year, month, day, new DatePicker.OnDateChangedListener() {
+                @Override
+                public void onDateChanged(DatePicker view, int year, int monthOfYear,
+                                          int dayOfMonth) {
+                    Calendar cal = Calendar.getInstance();
+                    cal.set(year, monthOfYear, dayOfMonth);
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    String date = formatter.format(cal.getTime());
+                    survey.setResponse(date);
+                    mNextButton.setEnabled(true);
+                }
+            });
+            datePicker.setVisibility(View.VISIBLE);
+        } else {
+            final EditText editText = (EditText) v.findViewById(R.id
+                    .view_survey_openended_edittext);
+            editText.addTextChangedListener(new TextWatcher() {
+                public void afterTextChanged(Editable s) {
+                    if (s.length() > 0) {
+                        survey.setResponse(s.toString());
+                        mNextButton.setEnabled(true);
+                    } else {
+                        mNextButton.setEnabled(false);
+                    }
+                }
+
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+            });
+            editText.setVisibility(View.VISIBLE);
+        }
     }
 }

@@ -48,8 +48,12 @@ public class SurveyResponseTask extends AsyncTask<Survey, Void, Survey> {
         JSONObject body = new JSONObject();
         try {
             body.put("question", survey.getId());
-            body.put("selected_option", survey.getSelectedOption().getId());
-            Log.d("Survey submission",body.toString(2));
+            if (survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_OPENENDED)) {
+                body.put("response", survey.getResponse());
+            } else {
+                body.put("selected_option", survey.getSelectedOption().getId());
+            }
+            Log.d("Survey submission", body.toString(2));
         } catch (JSONException e1) {
             e1.printStackTrace();
             return null;
