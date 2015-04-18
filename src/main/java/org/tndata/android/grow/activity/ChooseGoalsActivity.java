@@ -183,9 +183,9 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         }
         mRecyclerView.setAdapter(mAdapter);
 
-        if (mCategory.getIconUrl() != null && !mCategory.getIconUrl().isEmpty()) {
+        if (mCategory.getImageUrl() != null && !mCategory.getImageUrl().isEmpty()) {
             ImageCache.instance(getApplicationContext()).loadBitmap(
-                    mHeaderImageView, mCategory.getIconUrl(), false, false);
+                    mHeaderImageView, mCategory.getImageUrl(), false, false);
         }
 
         if (mCategory.getGoals() != null) {

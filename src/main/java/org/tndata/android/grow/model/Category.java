@@ -2,7 +2,6 @@ package org.tndata.android.grow.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Category extends TDCBase implements Serializable,
         Comparable<Category> {
@@ -10,6 +9,7 @@ public class Category extends TDCBase implements Serializable,
     private static final long serialVersionUID = -1751642109285216370L;
     private int order = -1;
     private String icon_url = "";
+    private String image_url = "";
     private ArrayList<Goal> goals = new ArrayList<Goal>();
     private int color = 0;
 
@@ -17,26 +17,29 @@ public class Category extends TDCBase implements Serializable,
     }
 
     public Category(int id, int order, String title, String titleSlug,
-                    String description, String iconUrl) {
+                    String description, String iconUrl, String imageUrl) {
         super(id, title, titleSlug, description);
         this.order = order;
         this.icon_url = iconUrl;
+        this.image_url = imageUrl;
         this.goals = new ArrayList<Goal>();
     }
 
     public Category(int id, int order, String title, String titleSlug,
-                    String description, String iconUrl, ArrayList<Goal> goals) {
+                    String description, String iconUrl, String imageUrl, ArrayList<Goal> goals) {
         super(id, title, titleSlug, description);
         this.order = order;
         this.icon_url = iconUrl;
+        this.image_url = imageUrl;
         this.goals = goals;
     }
 
     public Category(int id, int order, String title, String titleSlug,
-                    String description, String iconUrl, int color) {
+                    String description, String iconUrl, String imageUrl, int color) {
         super(id, title, titleSlug, description);
         this.order = order;
         this.icon_url = iconUrl;
+        this.image_url = imageUrl;
         this.goals = new ArrayList<Goal>();
         this.color = color;
     }
@@ -55,6 +58,14 @@ public class Category extends TDCBase implements Serializable,
 
     public void setIconUrl(String icon_url) {
         this.icon_url = icon_url;
+    }
+
+    public String getImageUrl() {
+        return image_url;
+    }
+
+    public void setImageUrl(String image_url) {
+        this.image_url = image_url;
     }
 
     public ArrayList<Goal> getGoals() {
