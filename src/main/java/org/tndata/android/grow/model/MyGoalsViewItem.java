@@ -10,6 +10,7 @@ public class MyGoalsViewItem implements Serializable {
     public static final int TYPE_SURVEY_LIKERT = 1;
     public static final int TYPE_SURVEY_MULTICHOICE = 2;
     public static final int TYPE_SURVEY_BINARY = 3;
+    public static final int TYPE_SURVEY_OPENENDED = 4;
 
     private static final long serialVersionUID = 6477860168863580408L;
     private Goal goal = null;
@@ -37,6 +38,8 @@ public class MyGoalsViewItem implements Serializable {
             setType(TYPE_SURVEY_MULTICHOICE);
         else if (survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_BINARY))
             setType(TYPE_SURVEY_BINARY);
+        else if (survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_OPENENDED))
+            setType(TYPE_SURVEY_OPENENDED);
     }
 
     public int getType() {

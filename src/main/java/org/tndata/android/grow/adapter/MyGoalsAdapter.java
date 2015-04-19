@@ -1,5 +1,7 @@
 package org.tndata.android.grow.adapter;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import org.tndata.android.grow.R;
@@ -7,16 +9,21 @@ import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.model.MyGoalsViewItem;
 import org.tndata.android.grow.model.Survey;
 import org.tndata.android.grow.model.SurveyOptions;
+import org.tndata.android.grow.util.Constants;
 import org.tndata.android.grow.util.ImageCache;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
@@ -106,6 +113,22 @@ public class MyGoalsAdapter extends
             positiveRadioButton = (RadioButton) view.findViewById(R.id
                     .list_item_survey_binary_yes_radiobutton);
             doneButton = (Button) view.findViewById(R.id.list_item_survey_binary_done_button);
+        }
+    }
+
+    static class OpenEndedSurveyViewHolder extends RecyclerView.ViewHolder {
+        TextView titleTextView;
+        EditText editText;
+        DatePicker datePicker;
+        Button doneButton;
+
+        public OpenEndedSurveyViewHolder(View view) {
+            super(view);
+            titleTextView = (TextView) view.findViewById(R.id
+                    .list_item_survey_openended_title_textview);
+            editText = (EditText) view.findViewById(R.id.list_item_survey_openended_edittext);
+            datePicker = (DatePicker) view.findViewById(R.id.list_item_survey_openended_datepicker);
+            doneButton = (Button) view.findViewById(R.id.list_item_survey_openended_done_button);
         }
     }
 
@@ -271,6 +294,61 @@ public class MyGoalsAdapter extends
                     }
                 });
                 break;
+            case MyGoalsViewItem.TYPE_SURVEY_OPENENDED:
+                ((OpenEndedSurveyViewHolder) viewHolder).titleTextView.setText(survey.getText());
+                if (survey.getInputType().equalsIgnoreCase(Constants.SURVEY_OPENENDED_DATE_TYPE)) {
+                    final Calendar c = Calendar.getInstance();
+                    int year = c.get(Calendar.YEAR);
+                    int month = c.get(Calendar.MONTH);
+                    int day = c.get(Calendar.DAY_OF_MONTH);
+
+                    ((OpenEndedSurveyViewHolder) viewHolder).datePicker.init(year, month, day,
+                            new DatePicker.OnDateChangedListener() {
+                                @Override
+                                public void onDateChanged(DatePicker view, int year,
+                                                          int monthOfYear,
+                                                          int dayOfMonth) {
+                                    Calendar cal = Calendar.getInstance();
+                                    cal.set(year, monthOfYear, dayOfMonth);
+                                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                                    String date = formatter.format(cal.getTime());
+                                    survey.setResponse(date);
+                                    ((OpenEndedSurveyViewHolder) viewHolder).doneButton
+                                            .setEnabled(true);
+                                }
+                            });
+                    ((OpenEndedSurveyViewHolder) viewHolder).datePicker.setVisibility(View.VISIBLE);
+                } else {
+                    ((OpenEndedSurveyViewHolder) viewHolder).editText.addTextChangedListener(new TextWatcher() {
+                        public void afterTextChanged(Editable s) {
+                            if (s.length() > 0) {
+                                survey.setResponse(s.toString());
+                                ((OpenEndedSurveyViewHolder) viewHolder).doneButton.setEnabled
+                                        (true);
+                            } else {
+                                ((OpenEndedSurveyViewHolder) viewHolder).doneButton.setEnabled
+                                        (false);
+                            }
+                        }
+
+                        public void beforeTextChanged(CharSequence s, int start, int count,
+                                                      int after) {
+                        }
+
+                        public void onTextChanged(CharSequence s, int start, int before,
+                                                  int count) {
+                        }
+                    });
+                    ((OpenEndedSurveyViewHolder) viewHolder).editText.setVisibility(View.VISIBLE);
+                }
+                ((OpenEndedSurveyViewHolder) viewHolder).doneButton.setOnClickListener(new View
+                        .OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSurveyCompleteCallback.surveyCompleted(survey);
+                    }
+                });
+                break;
         }
 
     }
@@ -298,6 +376,9 @@ public class MyGoalsAdapter extends
             case MyGoalsViewItem.TYPE_SURVEY_BINARY:
                 itemView = inflater.inflate(R.layout.list_item_survey_binary, viewGroup, false);
                 return new BinarySurveyViewHolder(itemView);
+            case MyGoalsViewItem.TYPE_SURVEY_OPENENDED:
+                itemView = inflater.inflate(R.layout.list_item_survey_openended, viewGroup, false);
+                return new OpenEndedSurveyViewHolder(itemView);
             default:
                 itemView = inflater.inflate(
                         R.layout.list_item_goal, viewGroup, false);

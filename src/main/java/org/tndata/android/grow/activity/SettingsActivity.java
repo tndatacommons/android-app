@@ -1,8 +1,11 @@
 package org.tndata.android.grow.activity;
 
+import org.tndata.android.grow.GrowApplication;
 import org.tndata.android.grow.R;
 import org.tndata.android.grow.fragment.SettingsFragment;
 import org.tndata.android.grow.fragment.SettingsFragment.OnSettingsClickListener;
+import org.tndata.android.grow.model.Category;
+import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.util.Constants;
 
 import android.app.Fragment;
@@ -12,6 +15,8 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Window;
+
+import java.util.ArrayList;
 
 public class SettingsActivity extends ActionBarActivity implements
         OnSettingsClickListener {
@@ -51,6 +56,8 @@ public class SettingsActivity extends ActionBarActivity implements
         editor.putInt("id", -1);
 
         editor.commit();
+        ((GrowApplication) getApplication()).setCategories(new ArrayList<Category>());
+        ((GrowApplication) getApplication()).setGoals(new ArrayList<Goal>());
         setResult(Constants.LOGGED_OUT_RESULT_CODE);
         finish();
     }
