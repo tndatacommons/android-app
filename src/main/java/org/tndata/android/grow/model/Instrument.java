@@ -9,6 +9,7 @@ public class Instrument implements Serializable {
     private int id = -1;
     private String title = "";
     private String description = "";
+    private String instructions = "";
     private ArrayList<Survey> questions = new ArrayList<Survey>();
 
     public int getId() {
@@ -21,6 +22,10 @@ public class Instrument implements Serializable {
 
     public String getDescription() {
         return this.description;
+    }
+
+    public String getInstructions() {
+        return instructions;
     }
 
     public ArrayList<Survey> getQuestions() {
@@ -37,6 +42,10 @@ public class Instrument implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setInstructions(String instructions) {
+        this.instructions = instructions;
     }
 
     public void setQuestions(ArrayList<Survey> questions) {

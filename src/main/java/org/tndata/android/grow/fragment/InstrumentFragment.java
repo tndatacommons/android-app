@@ -41,6 +41,7 @@ public class InstrumentFragment extends Fragment implements InstrumentLoaderTask
     private Button mNextButton;
     private ProgressBar mStatusProgressBar;
     private ProgressBar mLoadProgressBar;
+    private TextView mInstructionsTextView;
     private LinearLayout mSurveyContainer;
     private ArrayList<Survey> mSurveys;
     private int mCurrentSurvey = -1;
@@ -69,14 +70,16 @@ public class InstrumentFragment extends Fragment implements InstrumentLoaderTask
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = getActivity().getLayoutInflater().inflate(
-                R.layout.fragment_quality_of_life, container, false);
+                R.layout.fragment_instrument, container, false);
         mStatusProgressBar = (ProgressBar) v
-                .findViewById(R.id.qol_status_progress);
+                .findViewById(R.id.instrument_fragment_status_progress);
         mLoadProgressBar = (ProgressBar) v
-                .findViewById(R.id.qol_load_progress);
-        mSurveyContainer = (LinearLayout) v.findViewById(R.id.qol_survey_container);
+                .findViewById(R.id.instrument_fragment_load_progress);
+        mSurveyContainer = (LinearLayout) v.findViewById(R.id.instrument_fragment_survey_container);
+        mInstructionsTextView = (TextView) v.findViewById(R.id
+                .instrument_fragment_info_label_textview);
         mNextButton = (Button) v
-                .findViewById(R.id.qol_next_button);
+                .findViewById(R.id.instrument_next_button);
         mNextButton.setEnabled(false);
         mNextButton.setOnClickListener(new View.OnClickListener() {
 
@@ -150,6 +153,9 @@ public class InstrumentFragment extends Fragment implements InstrumentLoaderTask
     public void instrumentsLoaded(ArrayList<Instrument> instruments) {
         mLoadProgressBar.setVisibility(View.GONE);
         if (instruments != null && !instruments.isEmpty()) {
+            if (!instruments.get(0).getInstructions().isEmpty()) {
+                mInstructionsTextView.setText(instruments.get(0).getInstructions());
+            }
             mSurveys.addAll(instruments.get(0).getQuestions());
             mStatusProgressBar.setMax(mSurveys.size());
             showNextSurvey();
