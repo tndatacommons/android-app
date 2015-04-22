@@ -29,6 +29,7 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -52,10 +53,14 @@ public class GoalTryActivity extends ActionBarActivity implements
                     .findViewById(R.id.list_item_behavior_title_textview);
             descriptionTextView = (TextView) itemView
                     .findViewById(R.id.list_item_behavior_description_textview);
+            noThanks = (Button) itemView.findViewById(R.id.list_item_behavior_no_thanks_button);
+            tryIt = (Button) itemView.findViewById(R.id.list_item_behavior_try_it_button);
         }
 
         TextView titleTextView;
         TextView descriptionTextView;
+        Button noThanks;
+        Button tryIt;
         ImageView iconImageView;
     }
 
@@ -85,8 +90,8 @@ public class GoalTryActivity extends ActionBarActivity implements
         mAdapter.implementRecyclerAdapterMethods(new ParallaxRecyclerAdapter
                 .RecyclerAdapterMethods() {
             @Override
-            public void onBindViewHolder(RecyclerView.ViewHolder viewHolder,
-                                         int i) {
+            public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder,
+                                         final int i) {
                 Behavior behavior = mBehaviorList.get(i);
 
                 ((TryGoalViewHolder) viewHolder).titleTextView.setText(behavior
@@ -102,6 +107,32 @@ public class GoalTryActivity extends ActionBarActivity implements
                     ((TryGoalViewHolder) viewHolder).iconImageView
                             .setImageResource(R.drawable.default_image);
                 }
+
+                ((TryGoalViewHolder) viewHolder).tryIt.setOnClickListener(new View
+                        .OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getApplicationContext(),
+                                BehaviorActivity.class);
+                        intent.putExtra("behavior", mBehaviorList.get(i));
+                        startActivity(intent);
+                    }
+                });
+
+                ((TryGoalViewHolder) viewHolder).noThanks.setOnClickListener(new View
+                        .OnClickListener() {
+
+
+                    @Override
+                    public void onClick(View v) {
+                        ((TryGoalViewHolder) viewHolder).noThanks.setVisibility(View.GONE);
+                        ((TryGoalViewHolder) viewHolder).tryIt.setVisibility(View.GONE);
+                        ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
+                                .GONE);
+                        ((TryGoalViewHolder) viewHolder).iconImageView.setVisibility(View.VISIBLE);
+                    }
+                });
             }
 
             @Override
@@ -141,10 +172,12 @@ public class GoalTryActivity extends ActionBarActivity implements
 
             @Override
             public void onClick(View v, int position) {
-                Intent intent = new Intent(getApplicationContext(),
-                        BehaviorActivity.class);
-                intent.putExtra("behavior", mBehaviorList.get(position));
-                startActivity(intent);
+                v.findViewById(R.id.list_item_behavior_try_it_button).setVisibility(View.VISIBLE);
+                v.findViewById(R.id.list_item_behavior_no_thanks_button).setVisibility(View
+                        .VISIBLE);
+                v.findViewById(R.id.list_item_behavior_description_textview).setVisibility(View
+                        .VISIBLE);
+                v.findViewById(R.id.list_item_behavior_imageview).setVisibility(View.GONE);
             }
         });
         mRecyclerView.setAdapter(mAdapter);
