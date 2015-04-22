@@ -120,19 +120,19 @@ public class GoalTryActivity extends ActionBarActivity implements
                     }
                 });
 
-                ((TryGoalViewHolder) viewHolder).noThanks.setOnClickListener(new View
-                        .OnClickListener() {
-
-
-                    @Override
-                    public void onClick(View v) {
-                        ((TryGoalViewHolder) viewHolder).noThanks.setVisibility(View.GONE);
-                        ((TryGoalViewHolder) viewHolder).tryIt.setVisibility(View.GONE);
-                        ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
-                                .GONE);
-                        ((TryGoalViewHolder) viewHolder).iconImageView.setVisibility(View.VISIBLE);
-                    }
-                });
+//                ((TryGoalViewHolder) viewHolder).noThanks.setOnClickListener(new View
+//                        .OnClickListener() {
+//
+//
+//                    @Override
+//                    public void onClick(View v) {
+//                        ((TryGoalViewHolder) viewHolder).noThanks.setVisibility(View.GONE);
+//                        ((TryGoalViewHolder) viewHolder).tryIt.setVisibility(View.GONE);
+//                        ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
+//                                .GONE);
+//                        ((TryGoalViewHolder) viewHolder).iconImageView.setVisibility(View.VISIBLE);
+//                    }
+//                });
             }
 
             @Override
@@ -173,8 +173,8 @@ public class GoalTryActivity extends ActionBarActivity implements
             @Override
             public void onClick(View v, int position) {
                 v.findViewById(R.id.list_item_behavior_try_it_button).setVisibility(View.VISIBLE);
-                v.findViewById(R.id.list_item_behavior_no_thanks_button).setVisibility(View
-                        .VISIBLE);
+//                v.findViewById(R.id.list_item_behavior_no_thanks_button).setVisibility(View
+//                        .VISIBLE);
                 v.findViewById(R.id.list_item_behavior_description_textview).setVisibility(View
                         .VISIBLE);
                 v.findViewById(R.id.list_item_behavior_imageview).setVisibility(View.GONE);
