@@ -116,13 +116,12 @@ public class ChooseCategoriesActivity extends ActionBarActivity implements
 
     @Override
     public void categoriesAdded(ArrayList<Category> categories) {
-        mAdding = false;
         if (categories != null) {
             mCategories = ((GrowApplication) getApplication()).getCategories();
             mCategories.addAll(categories);
             ((GrowApplication) getApplication()).setCategories(mCategories);
         }
-
+        mAdding = false;
         if (!mDeleting) {
             finish();
         }

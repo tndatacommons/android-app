@@ -26,6 +26,7 @@ import org.tndata.android.grow.R;
 import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.task.AddGoalTask;
+import org.tndata.android.grow.task.DeleteGoalTask;
 import org.tndata.android.grow.task.GoalLoaderTask;
 import org.tndata.android.grow.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.grow.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
@@ -33,8 +34,9 @@ import org.tndata.android.grow.util.ImageCache;
 
 import java.util.ArrayList;
 
-public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTask.AddGoalsTaskListener,
-        GoalLoaderTask.GoalLoaderListener {
+public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTask
+        .AddGoalsTaskListener,
+        GoalLoaderTask.GoalLoaderListener, DeleteGoalTask.DeleteGoalTaskListener {
     private Toolbar mToolbar;
     private RecyclerView mRecyclerView;
     private TextView mHeaderTextView;
@@ -45,6 +47,8 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
     private ArrayList<Goal> mSelectedGoals = new ArrayList<Goal>();
     private ParallaxRecyclerAdapter<Goal> mAdapter;
     private Category mCategory = null;
+    private boolean mAdding = false;
+    private boolean mDeleting = false;
 
     static class ChooseGoalViewHolder extends RecyclerView.ViewHolder {
         public ChooseGoalViewHolder(View itemView) {
@@ -90,7 +94,8 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
 
         mItems = new ArrayList<Goal>();
         mAdapter = new ParallaxRecyclerAdapter<>(mItems);
-        mAdapter.implementRecyclerAdapterMethods(new ParallaxRecyclerAdapter.RecyclerAdapterMethods() {
+        mAdapter.implementRecyclerAdapterMethods(new ParallaxRecyclerAdapter
+                .RecyclerAdapterMethods() {
             @Override
             public void onBindViewHolder(RecyclerView.ViewHolder viewHolder,
                                          int i) {
@@ -111,24 +116,28 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                     ((ChooseGoalViewHolder) viewHolder).checkImageView.setVisibility(View.VISIBLE);
                     ((ChooseGoalViewHolder) viewHolder).selectButton.setVisibility(View.INVISIBLE);
                 } else {
-                    ((ChooseGoalViewHolder) viewHolder).checkImageView.setVisibility(View.INVISIBLE);
+                    ((ChooseGoalViewHolder) viewHolder).checkImageView.setVisibility(View
+                            .INVISIBLE);
                     ((ChooseGoalViewHolder) viewHolder).selectButton.setVisibility(View.VISIBLE);
                 }
-                ((ChooseGoalViewHolder) viewHolder).selectButton.setOnClickListener(new View.OnClickListener() {
+                ((ChooseGoalViewHolder) viewHolder).selectButton.setOnClickListener(new View
+                        .OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
                         goalSelected(goal);
                     }
                 });
-                ((ChooseGoalViewHolder) viewHolder).checkImageView.setOnClickListener(new View.OnClickListener() {
+                ((ChooseGoalViewHolder) viewHolder).checkImageView.setOnClickListener(new View
+                        .OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
                         goalSelected(goal);
                     }
                 });
-                ((ChooseGoalViewHolder) viewHolder).moreInfoButton.setOnClickListener(new View.OnClickListener() {
+                ((ChooseGoalViewHolder) viewHolder).moreInfoButton.setOnClickListener(new View
+                        .OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
@@ -152,7 +161,8 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
 
         mFakeHeader = getLayoutInflater().inflate(R.layout.header_choose_goals,
                 mRecyclerView, false);
-        mHeaderTextView = (TextView) mFakeHeader.findViewById(R.id.choose_goals_header_label_textview);
+        mHeaderTextView = (TextView) mFakeHeader.findViewById(R.id
+                .choose_goals_header_label_textview);
         mHeaderImageView = (ImageView) findViewById(R.id.choose_goals_material_imageview);
         manager.setHeaderIncrementFixer(mFakeHeader);
         mAdapter.setShouldClipView(false);
@@ -219,7 +229,8 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                     R.string.choose_goals_header_label,
                     mCategory.getTitle().toUpperCase()));
         }
-        new GoalLoaderTask(getApplicationContext(), this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+        new GoalLoaderTask(getApplicationContext(), this).executeOnExecutor(AsyncTask
+                        .THREAD_POOL_EXECUTOR,
                 ((GrowApplication) getApplication()).getToken(),
                 String.valueOf(mCategory.getId()));
     }
@@ -231,7 +242,10 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
             allGoals.addAll(goals);
             ((GrowApplication) getApplication()).setGoals(allGoals);
         }
-        finish();
+        mAdding = false;
+        if (!mDeleting) {
+            finish();
+        }
     }
 
     public void goalSelected(Goal goal) {
@@ -266,13 +280,16 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
     private void goalsSelected(ArrayList<Goal> goals) {
         Log.e("GOALS", "GOALS SELECTED");
         //Lets just save the new ones...
-        ArrayList<Goal> goalsToDelete = new ArrayList<Goal>();
+        ArrayList<Goal> goalsWithDelete = new ArrayList<Goal>();
+        goalsWithDelete.addAll(((GrowApplication) getApplication()).getGoals());
+        ArrayList<String> deleteGoals = new ArrayList<String>();
         ArrayList<Goal> goalsToAdd = new ArrayList<Goal>();
         for (Goal goal : mCategory.getGoals()) {
             Log.d("SHOULD DELETE?", goal.getTitle());
             if (!goals.contains(goal)) {
                 Log.d("Delete Goal", goal.getTitle());
-                goalsToDelete.add(goal);
+                deleteGoals.add(String.valueOf(goal.getMappingId()));
+                goalsWithDelete.remove(goal);
             }
         }
         for (Goal goal : goals) {
@@ -283,16 +300,23 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
             }
         }
 
-        // TODO delete goals, then remove from application
+        ((GrowApplication) getApplication()).setGoals(goalsWithDelete);
+
+        if (deleteGoals.size() > 0) {
+            mDeleting = true;
+            new DeleteGoalTask(this, this, deleteGoals).executeOnExecutor(AsyncTask
+                    .THREAD_POOL_EXECUTOR);
+        }
 
         ArrayList<String> goalList = new ArrayList<String>();
         for (Goal goal : goalsToAdd) {
             goalList.add(String.valueOf(goal.getId()));
         }
         if (goalList.size() > 0) {
+            mAdding = true;
             new AddGoalTask(this, this, goalList)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } else {
+        } else if (deleteGoals.size() < 1) {
             finish();
         }
     }
@@ -304,6 +328,15 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
             mAdapter.notifyDataSetChanged();
         } else {
             showError();
+        }
+    }
+
+    @Override
+    public void goalsDeleted() {
+        mDeleting = false;
+
+        if (!mAdding) {
+            finish();
         }
     }
 }
