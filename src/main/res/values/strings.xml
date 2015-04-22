@@ -45,6 +45,7 @@
     <string name="onboarding_category_header_label">USING GROW IS EASY!</string>
     <string name="onboarding_category_info_label">Choose the topics you care about most. You can edit your choices later.</string>
     <string name="category_image_description">Select</string>
+    <string name="choose_categories_need_more">You must select at least 1 category!</string>
     <string name="onboarding_category_done">NEXT</string>
     <string name="choose_goals_done">I\'M DONE</string>
     <string name="choose_goals_header_label">SET %1$s GOALS</string>

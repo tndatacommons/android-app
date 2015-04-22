@@ -17,7 +17,7 @@ import org.apache.http.protocol.HttpContext;
 public class NetworkHelper {
 
     public static InputStream httpPostStream(String url,
-            Map<String, String> headers, String body) {
+                                             Map<String, String> headers, String body) {
 
         DefaultHttpClient client = new DefaultHttpClient();
         HttpResponse httpResponse = null;
@@ -58,7 +58,7 @@ public class NetworkHelper {
     }
 
     public static InputStream httpGetStream(String url,
-            Map<String, String> headers) {
+                                            Map<String, String> headers) {
         DefaultHttpClient client = new DefaultHttpClient();
         HttpGet httpGet = new HttpGet(url);
         if (headers != null) {
@@ -85,9 +85,9 @@ public class NetworkHelper {
     }
 
     public static InputStream httpDeleteStream(String url,
-                                            Map<String, String> headers) {
+                                               Map<String, String> headers, String body) {
         DefaultHttpClient client = new DefaultHttpClient();
-        HttpDelete httpDelete = new HttpDelete(url);
+        HttpDeleteWithBody httpDelete = new HttpDeleteWithBody(url);
         if (headers != null) {
             // set all of our headers
             for (Map.Entry<String, String> header : headers.entrySet()) {
@@ -96,6 +96,13 @@ public class NetworkHelper {
         }
         HttpResponse httpResponse = null;
         try {
+            if (body != null && !body.isEmpty()) {
+                // pass the body to a string builder/entity
+                StringEntity se = new StringEntity(body);
+
+                // sets the post request as the resulting string
+                httpDelete.setEntity(se);
+            }
             HttpContext responseHandler = new BasicHttpContext();
             httpResponse = client.execute(httpDelete, responseHandler);
             int code = httpResponse.getStatusLine().getStatusCode();
