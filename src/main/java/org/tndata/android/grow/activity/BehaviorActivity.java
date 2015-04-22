@@ -36,6 +36,7 @@ public class BehaviorActivity extends ActionBarActivity implements
 
         mToolbar = (Toolbar) findViewById(R.id.tool_bar);
         mToolbar.setTitle(mBehavior.getTitle());
+        mToolbar.getBackground().setAlpha(255);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);

@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/material_header_content_size"
         android:layout_alignParentTop="true"
-        android:background="@color/grow_primary"
+        android:background="@android:color/transparent"
         android:gravity="center|bottom"
         android:paddingBottom="20dp"
         android:text="@string/goal_try_these"

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.tndata.android.grow.GrowApplication;
 import org.tndata.android.grow.R;
 import org.tndata.android.grow.model.Behavior;
+import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.task.BehaviorLoaderTask;
 import org.tndata.android.grow.task.BehaviorLoaderTask.BehaviorLoaderListener;
@@ -24,6 +25,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -36,6 +39,9 @@ public class GoalTryActivity extends ActionBarActivity implements
     private ArrayList<Behavior> mBehaviorList;
     private ParallaxRecyclerAdapter<Behavior> mAdapter;
     private RecyclerView mRecyclerView;
+    private View mFakeHeader;
+    private ImageView mHeaderImageView;
+    private Category mCategory = null;
 
     static class TryGoalViewHolder extends RecyclerView.ViewHolder {
         public TryGoalViewHolder(View itemView) {
@@ -60,6 +66,7 @@ public class GoalTryActivity extends ActionBarActivity implements
 
         mGoal = (Goal) getIntent().getSerializableExtra("goal");
         Log.d("mGoal?", "id:" + mGoal.getId() + " title:" + mGoal.getTitle());
+        mCategory = (Category) getIntent().getSerializableExtra("category");
 
         mToolbar = (Toolbar) findViewById(R.id.goal_try_toolbar);
         mToolbar.setTitle(mGoal.getTitle());
@@ -75,7 +82,8 @@ public class GoalTryActivity extends ActionBarActivity implements
 
         mBehaviorList = new ArrayList<Behavior>();
         mAdapter = new ParallaxRecyclerAdapter<>(mBehaviorList);
-        mAdapter.implementRecyclerAdapterMethods(new ParallaxRecyclerAdapter.RecyclerAdapterMethods() {
+        mAdapter.implementRecyclerAdapterMethods(new ParallaxRecyclerAdapter
+                .RecyclerAdapterMethods() {
             @Override
             public void onBindViewHolder(RecyclerView.ViewHolder viewHolder,
                                          int i) {
@@ -109,23 +117,22 @@ public class GoalTryActivity extends ActionBarActivity implements
             }
         });
 
-        final View fakeHeader = getLayoutInflater().inflate(R.layout.header_try_goal,
+        mFakeHeader = getLayoutInflater().inflate(R.layout.header_try_goal,
                 mRecyclerView, false);
-        final View realHeader = findViewById(R.id.goal_try_material_imageview);
-        manager.setHeaderIncrementFixer(fakeHeader);
+        mHeaderImageView = (ImageView) findViewById(R.id.goal_try_material_imageview);
+        manager.setHeaderIncrementFixer(mFakeHeader);
         mAdapter.setShouldClipView(false);
-        mAdapter.setParallaxHeader(fakeHeader, mRecyclerView);
+        mAdapter.setParallaxHeader(mFakeHeader, mRecyclerView);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             mAdapter.setOnParallaxScroll(new ParallaxRecyclerAdapter.OnParallaxScroll() {
                 @SuppressLint("NewApi")
                 @Override
                 public void onParallaxScroll(float percentage, float offset,
                                              View parallax) {
-//TODO fix the toolbar alpha
-//                    Drawable c = mToolbar.getBackground();
-//                    c.setAlpha(Math.round(percentage * 255));
-//                    mToolbar.setBackground(c);
-                    realHeader.setTranslationY(-offset * 0.5f);
+                    Drawable c = mToolbar.getBackground();
+                    c.setAlpha(Math.round(percentage * 255));
+                    mToolbar.setBackground(c);
+                    mHeaderImageView.setTranslationY(-offset * 0.5f);
 
                 }
             });
@@ -141,6 +148,11 @@ public class GoalTryActivity extends ActionBarActivity implements
             }
         });
         mRecyclerView.setAdapter(mAdapter);
+        if (mCategory != null && mCategory.getImageUrl() != null && !mCategory.getImageUrl()
+                .isEmpty()) {
+            ImageCache.instance(getApplicationContext()).loadBitmap(
+                    mHeaderImageView, mCategory.getImageUrl(), false, false);
+        }
         loadBehaviors();
 
     }
@@ -158,5 +170,24 @@ public class GoalTryActivity extends ActionBarActivity implements
             mBehaviorList.addAll(behaviors);
         }
         mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) { // Back key pressed
+            finish();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

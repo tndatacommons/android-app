@@ -122,6 +122,7 @@ public class CategoryFragment extends Fragment implements MyGoalsAdapter.SurveyC
                     Log.d("Goal?",
                             "id:" + goal.getId() + " title:" + goal.getTitle());
                     intent.putExtra("goal", goal);
+                    intent.putExtra("category", mCategory);
                     startActivity(intent);
                 }
             }
@@ -190,7 +191,8 @@ public class CategoryFragment extends Fragment implements MyGoalsAdapter.SurveyC
     }
 
     private void addGoals() {
-        Intent intent = new Intent(getActivity().getApplicationContext(), ChooseGoalsActivity.class);
+        Intent intent = new Intent(getActivity().getApplicationContext(),
+                ChooseGoalsActivity.class);
         intent.putExtra("category", mCategory);
         startActivityForResult(intent, Constants.CHOOSE_GOALS_REQUEST_CODE);
     }

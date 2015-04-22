@@ -41,7 +41,6 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
     private TextView mErrorTextView;
     private View mFakeHeader;
     private ImageView mHeaderImageView;
-    private Button mDoneButton;
     private ArrayList<Goal> mItems;
     private ArrayList<Goal> mSelectedGoals = new ArrayList<Goal>();
     private ParallaxRecyclerAdapter<Goal> mAdapter;
@@ -89,15 +88,6 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         mRecyclerView.setHasFixedSize(true);
         mErrorTextView = (TextView) findViewById(R.id.choose_goals_error_textview);
 
-//        mDoneButton = (Button) findViewById(R.id.choose_goals_done_button);
-//        mDoneButton.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                goalsSelected(mSelectedGoals);
-//            }
-//        });
-//        mDoneButton.setVisibility(View.GONE);
         mItems = new ArrayList<Goal>();
         mAdapter = new ParallaxRecyclerAdapter<>(mItems);
         mAdapter.implementRecyclerAdapterMethods(new ParallaxRecyclerAdapter.RecyclerAdapterMethods() {

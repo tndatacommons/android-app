@@ -30,6 +30,7 @@ public class ChooseCategoriesActivity extends ActionBarActivity implements
         setContentView(R.layout.activity_base);
 
         mToolbar = (Toolbar) findViewById(R.id.tool_bar);
+        mToolbar.getBackground().setAlpha(255);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);

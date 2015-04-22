@@ -3,50 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true">
-    <!--
-        <RelativeLayout
-            android:id="@+id/choose_goals_header_container"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/material_header_size"
-            android:animateLayoutChanges="true"
-            android:background="@color/grow_secondary"
-            android:paddingBottom="5dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="20dp">
 
-            <TextView
-                android:id="@+id/choose_goals_header_label_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="5dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginLeft="5dp"
-                android:text="@string/choose_goals_header_label"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/white" />
-
-            <Button
-                android:id="@+id/choose_goals_done_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_above="@id/choose_goals_header_label_textview"
-                android:layout_margin="5dp"
-                android:background="@drawable/button_positive_rounded"
-                android:minHeight="@dimen/paper_flat_button_min_height"
-                android:minWidth="@dimen/paper_flat_login_button_min_width"
-                android:text="@string/choose_goals_done"
-                android:textColor="@color/button_positive_text_color" />
-        </RelativeLayout>-->
     <ImageView
         android:id="@+id/choose_goals_material_imageview"
         android:layout_width="match_parent"
         android:layout_height="@dimen/material_header_size"
+        android:background="@color/grow_primary"
         android:scaleType="centerCrop"
-        android:src="@drawable/grow_material_header_image"
-        android:background="@color/grow_primary" />
+        android:src="@drawable/grow_material_header_image" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/choose_goals_recyclerview"
