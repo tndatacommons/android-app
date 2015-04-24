@@ -30,10 +30,24 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
-            android:id="@+id/list_item_survey_openended_title_textview"
+            android:id="@+id/list_item_survey_openended_instructions_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/list_item_survey_openended_header_textview"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="15dp"
+            android:paddingLeft="2dp"
+            android:layout_marginTop="15dp"
+            android:textColor="@color/white"
+            android:text="What are your thoughts on android?"
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+        <TextView
+            android:id="@+id/list_item_survey_openended_title_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/list_item_survey_openended_instructions_textview"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_marginBottom="15dp"

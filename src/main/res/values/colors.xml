@@ -11,6 +11,7 @@
     <color name="nav_drawer_color">#FFFFFF</color>
     <color name="login_background">#87D37C</color>
     <color name="transparent_overlay">#30000000</color>
+    <color name="image_background">#DEDEDE</color>
     
     <!-- Category Colors -->
     <color name="category_color_one">#F64747</color>

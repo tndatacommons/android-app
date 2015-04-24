@@ -16,6 +16,7 @@ import org.tndata.android.grow.task.GetUserCategoriesTask.GetUserCategoriesListe
 import org.tndata.android.grow.task.GetUserGoalsTask;
 import org.tndata.android.grow.task.GetUserGoalsTask.GetUserGoalsListener;
 import org.tndata.android.grow.util.Constants;
+import org.tndata.android.grow.util.ImageCache;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -32,7 +33,10 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+
+import com.astuetz.PagerSlidingTabStrip;
 
 public class MainActivity extends ActionBarActivity implements
         GetUserCategoriesListener, GetUserGoalsListener,
@@ -49,6 +53,7 @@ public class MainActivity extends ActionBarActivity implements
     private DrawerAdapter mDrawerAdapter = null;
     private Toolbar mToolbar;
     private ViewPager mViewPager;
+    private ImageView mHeaderImageView;
     private MainViewPagerAdapter mAdapter;
     private boolean mDrawerIsOpen = false;
 
@@ -88,9 +93,35 @@ public class MainActivity extends ActionBarActivity implements
         };
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mHeaderImageView = (ImageView) findViewById(R.id.main_material_imageview);
         mAdapter = new MainViewPagerAdapter(getSupportFragmentManager(), this);
         mViewPager = (ViewPager) findViewById(R.id.main_viewpager);
         mViewPager.setAdapter(mAdapter);
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.main_pager_tabstrip);
+        tabs.setViewPager(mViewPager);
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset,
+                                       int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                String url = mAdapter.getPositionImageUrl(position);
+                if (url != null) {
+                    ImageCache.instance(getApplicationContext()).loadBitmap(
+                            mHeaderImageView, url, false, false);
+                } else {
+                    mHeaderImageView.setImageResource(R.drawable.grow_material_header_image);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         showCategories();
     }
@@ -263,7 +294,7 @@ public class MainActivity extends ActionBarActivity implements
             }
             category.setGoals(categoryGoals);
         }
-        if(shouldSendBroadcast) {
+        if (shouldSendBroadcast) {
             Intent intent = new Intent(Constants.GOAL_UPDATED_BROADCAST_ACTION);
             sendBroadcast(intent);
             Log.d("Main Activity", "send broadcast");

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp"
-    android:layout_marginTop="5dp"
-    android:background="@color/grow_primary_dark"
-    card_view:cardCornerRadius="@dimen/cardview_corner_radius">
+                                    xmlns:android="http://schemas.android.com/apk/res/android"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginLeft="5dp"
+                                    android:layout_marginRight="5dp"
+                                    android:layout_marginTop="5dp"
+                                    android:background="@color/grow_primary_dark"
+                                    card_view:cardCornerRadius="@dimen/cardview_corner_radius">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -27,10 +27,10 @@
             android:text="@string/survey_title"
             android:textColor="@color/white"
             android:paddingLeft="2dp"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
         <TextView
-            android:id="@+id/list_item_survey_likert_title_textview"
+            android:id="@+id/list_item_survey_likert_instructions_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/list_item_survey_likert_header_textview"
@@ -41,13 +41,27 @@
             android:layout_marginTop="15dp"
             android:textColor="@color/white"
             android:text="What are your thoughts on android?"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+        <TextView
+            android:id="@+id/list_item_survey_likert_title_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/list_item_survey_likert_instructions_textview"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="15dp"
+            android:paddingLeft="2dp"
+            android:layout_marginTop="15dp"
+            android:textColor="@color/white"
+            android:text="What are your thoughts on android?"
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
 
         <SeekBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/list_item_survey_likert_title_textview"
-            android:id="@+id/list_item_survey_likert_seekbar" />
+            android:id="@+id/list_item_survey_likert_seekbar"/>
 
         <TextView
             android:id="@+id/list_item_survey_likert_seekbar_min_textview"
@@ -59,7 +73,7 @@
             android:paddingLeft="2dp"
             android:textColor="@color/white"
             android:text="Disagree"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
 
         <TextView
             android:id="@+id/list_item_survey_likert_seekbar_max_textview"
@@ -71,7 +85,7 @@
             android:paddingRight="2dp"
             android:textColor="@color/white"
             android:text="Agree"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
 
         <Button
             android:id="@+id/list_item_survey_likert_done_button"
@@ -84,7 +98,7 @@
             android:minHeight="@dimen/paper_flat_button_min_height"
             android:minWidth="@dimen/paper_flat_login_button_min_width"
             android:text="@string/choose_goals_done"
-            android:textColor="@color/button_positive_text_color" />
+            android:textColor="@color/button_positive_text_color"/>
 
         <TextView
             android:id="@+id/list_item_survey_likert_choice_textview"
@@ -95,7 +109,7 @@
             android:layout_margin="15dp"
             android:padding="2dp"
             android:textColor="@color/white"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
 
     </RelativeLayout>
 

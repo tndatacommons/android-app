@@ -112,13 +112,6 @@ public class CategoryLoaderTask extends
                     categories.add(category);
                 }
             }
-            Collections.sort(categories, new Comparator<Category>() {
-                @Override
-                public int compare(Category cat1, Category cat2) {
-
-                    return (cat1.getOrder() < cat2.getOrder()) ? 0 : 1;
-                }
-            });
             return categories;
         } catch (IOException e) {
             e.printStackTrace();

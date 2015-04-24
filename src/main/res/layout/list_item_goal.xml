@@ -25,8 +25,8 @@
             android:layout_margin="5dp"
             android:adjustViewBounds="true"
             android:contentDescription="@string/goal_image_description"
-            android:maxHeight="@dimen/goal_onboarding_image_size"
-            android:maxWidth="@dimen/goal_onboarding_image_size"
+            android:maxHeight="@dimen/goal_icon_image_size"
+            android:maxWidth="@dimen/goal_icon_image_size"
             android:scaleType="centerCrop" />
 
         <TextView

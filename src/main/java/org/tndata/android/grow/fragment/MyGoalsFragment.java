@@ -12,6 +12,7 @@ import org.tndata.android.grow.model.MyGoalsViewItem;
 import org.tndata.android.grow.model.Survey;
 import org.tndata.android.grow.task.SurveyFinderTask;
 import org.tndata.android.grow.task.SurveyResponseTask;
+import org.tndata.android.grow.ui.SpacingItemDecoration;
 import org.tndata.android.grow.ui.button.FloatingActionButton;
 import org.tndata.android.grow.util.Constants;
 
@@ -84,6 +85,7 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
         mRecyclerView = (RecyclerView) v
                 .findViewById(R.id.my_goals_recyclerview);
         mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.addItemDecoration(new SpacingItemDecoration(30));
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new MyGoalsAdapter(getActivity().getApplicationContext(),
                 mItems, this);

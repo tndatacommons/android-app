@@ -4,7 +4,10 @@ package org.tndata.android.grow.activity;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,11 +31,14 @@ import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.task.AddGoalTask;
 import org.tndata.android.grow.task.DeleteGoalTask;
 import org.tndata.android.grow.task.GoalLoaderTask;
+import org.tndata.android.grow.ui.SpacingItemDecoration;
 import org.tndata.android.grow.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.grow.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
 import org.tndata.android.grow.util.ImageCache;
 
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTask
         .AddGoalsTaskListener,
@@ -53,12 +59,10 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
     static class ChooseGoalViewHolder extends RecyclerView.ViewHolder {
         public ChooseGoalViewHolder(View itemView) {
             super(itemView);
-            iconImageView = (ImageView) itemView
+            iconImageView = (CircleImageView) itemView
                     .findViewById(R.id.list_item_choose_goal_imageview);
             titleTextView = (TextView) itemView
                     .findViewById(R.id.list_item_choose_goal_title_textview);
-            checkImageView = (ImageView) itemView
-                    .findViewById(R.id.list_item_choose_goal_selected_imageview);
             selectButton = (Button) itemView
                     .findViewById(R.id.list_item_choose_goal_select_button);
             moreInfoButton = (Button) itemView
@@ -66,8 +70,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         }
 
         TextView titleTextView;
-        ImageView iconImageView;
-        ImageView checkImageView;
+        CircleImageView iconImageView;
         Button selectButton;
         Button moreInfoButton;
     }
@@ -88,6 +91,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         mRecyclerView = (RecyclerView) findViewById(R.id.choose_goals_recyclerview);
         HeaderLayoutManagerFixed manager = new HeaderLayoutManagerFixed(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.addItemDecoration(new SpacingItemDecoration(30));
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setHasFixedSize(true);
         mErrorTextView = (TextView) findViewById(R.id.choose_goals_error_textview);
@@ -113,22 +117,17 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                             .setImageResource(R.drawable.default_image);
                 }
                 if (mSelectedGoals.contains(goal)) {
-                    ((ChooseGoalViewHolder) viewHolder).checkImageView.setVisibility(View.VISIBLE);
-                    ((ChooseGoalViewHolder) viewHolder).selectButton.setVisibility(View.INVISIBLE);
+                    ((ChooseGoalViewHolder) viewHolder).selectButton.setBackgroundResource(R
+                            .drawable.button_negative_rounded);
+                    ((ChooseGoalViewHolder) viewHolder).selectButton.setText(R.string
+                            .choose_goals_list_item_selected_button);
                 } else {
-                    ((ChooseGoalViewHolder) viewHolder).checkImageView.setVisibility(View
-                            .INVISIBLE);
-                    ((ChooseGoalViewHolder) viewHolder).selectButton.setVisibility(View.VISIBLE);
+                    ((ChooseGoalViewHolder) viewHolder).selectButton.setBackgroundResource(R
+                            .drawable.button_positive_rounded);
+                    ((ChooseGoalViewHolder) viewHolder).selectButton.setText(R.string
+                            .choose_goals_list_item_select_button);
                 }
                 ((ChooseGoalViewHolder) viewHolder).selectButton.setOnClickListener(new View
-                        .OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        goalSelected(goal);
-                    }
-                });
-                ((ChooseGoalViewHolder) viewHolder).checkImageView.setOnClickListener(new View
                         .OnClickListener() {
 
                     @Override
@@ -144,6 +143,11 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                         moreInfoPressed(goal);
                     }
                 });
+
+                GradientDrawable gradientDrawable = (GradientDrawable) ((ChooseGoalViewHolder) viewHolder)
+                        .iconImageView.getBackground();
+                String colorString = "#3639E3"; //TODO get a color string from the category
+                gradientDrawable.setColor(Color.parseColor(colorString));
             }
 
             @Override

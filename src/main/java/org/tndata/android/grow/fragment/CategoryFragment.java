@@ -10,6 +10,7 @@ import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.model.MyGoalsViewItem;
 import org.tndata.android.grow.model.Survey;
 import org.tndata.android.grow.task.SurveyResponseTask;
+import org.tndata.android.grow.ui.SpacingItemDecoration;
 import org.tndata.android.grow.ui.button.FloatingActionButton;
 import org.tndata.android.grow.util.Constants;
 
@@ -95,6 +96,7 @@ public class CategoryFragment extends Fragment implements MyGoalsAdapter.SurveyC
         mRecyclerView = (RecyclerView) v
                 .findViewById(R.id.category_recyclerview);
         mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.addItemDecoration(new SpacingItemDecoration(30));
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new MyGoalsAdapter(getActivity().getApplicationContext(),
                 mItems, this);

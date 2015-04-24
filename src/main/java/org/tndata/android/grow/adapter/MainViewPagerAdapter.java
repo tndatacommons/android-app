@@ -54,4 +54,12 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
         }
     }
 
+    public String getPositionImageUrl(int position) {
+        if (position == 0) {
+            return null;
+        } else {
+            return mCategories.get(position - 1).getImageUrl();
+        }
+    }
+
 }

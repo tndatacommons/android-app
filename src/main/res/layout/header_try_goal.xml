@@ -10,7 +10,7 @@
         android:layout_alignParentTop="true"
         android:background="@android:color/transparent"
         android:gravity="center|bottom"
-        android:paddingBottom="20dp"
+        android:paddingBottom="10dp"
         android:text="@string/goal_try_these"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/white" />

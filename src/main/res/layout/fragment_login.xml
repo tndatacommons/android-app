@@ -6,7 +6,7 @@
     <ImageView
         android:id="@+id/login_background_imageview"
         android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/material_header_size"
+        android:layout_marginTop="@dimen/login_header_size"
         android:layout_height="fill_parent"
         android:adjustViewBounds="true"
         android:layout_alignParentBottom="true"
@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
-        android:minHeight="@dimen/material_header_size"
+        android:minHeight="@dimen/login_header_size"
         android:layout_alignParentTop="true"
         android:background="@color/login_background"
         android:padding="20dp">

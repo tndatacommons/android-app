@@ -11,7 +11,7 @@
         android:animateLayoutChanges="true"
         android:background="@color/login_background"
         android:paddingLeft="20dp"
-        android:minHeight="@dimen/material_header_size"
+        android:minHeight="@dimen/login_header_size"
         android:paddingRight="20dp"
         android:paddingTop="20dp"
         android:paddingBottom="5dp">

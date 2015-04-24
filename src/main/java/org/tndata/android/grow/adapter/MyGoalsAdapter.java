@@ -66,6 +66,7 @@ public class MyGoalsAdapter extends
         TextView minTextView;
         TextView maxTextView;
         TextView choiceTextView;
+        TextView instructionsTextView;
         SeekBar seekBar;
         Button doneButton;
 
@@ -73,6 +74,8 @@ public class MyGoalsAdapter extends
             super(view);
             titleTextView = (TextView) view.findViewById(R.id
                     .list_item_survey_likert_title_textview);
+            instructionsTextView = (TextView) view.findViewById(R.id
+                    .list_item_survey_likert_instructions_textview);
             minTextView = (TextView) view.findViewById(R.id
                     .list_item_survey_likert_seekbar_min_textview);
             maxTextView = (TextView) view.findViewById(R.id
@@ -86,6 +89,7 @@ public class MyGoalsAdapter extends
 
     static class MultiChoiceSurveyViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;
+        TextView instructionsTextView;
         Spinner spinner;
         Button doneButton;
 
@@ -93,6 +97,8 @@ public class MyGoalsAdapter extends
             super(view);
             titleTextView = (TextView) view.findViewById(R.id
                     .list_item_survey_multi_title_textview);
+            instructionsTextView = (TextView) view.findViewById(R.id
+                    .list_item_survey_multi_instructions_textview);
             spinner = (Spinner) view.findViewById(R.id.list_item_survey_multi_spinner);
             doneButton = (Button) view.findViewById(R.id.list_item_survey_multi_done_button);
         }
@@ -100,6 +106,7 @@ public class MyGoalsAdapter extends
 
     static class BinarySurveyViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;
+        TextView instructionsTextView;
         RadioButton negativeRadioButton;
         RadioButton positiveRadioButton;
         Button doneButton;
@@ -108,6 +115,8 @@ public class MyGoalsAdapter extends
             super(view);
             titleTextView = (TextView) view.findViewById(R.id
                     .list_item_survey_binary_title_textview);
+            instructionsTextView = (TextView) view.findViewById(R.id
+                    .list_item_survey_binary_instructions_textview);
             negativeRadioButton = (RadioButton) view.findViewById(R.id
                     .list_item_survey_binary_no_radiobutton);
             positiveRadioButton = (RadioButton) view.findViewById(R.id
@@ -118,6 +127,7 @@ public class MyGoalsAdapter extends
 
     static class OpenEndedSurveyViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;
+        TextView instructionsTextView;
         EditText editText;
         DatePicker datePicker;
         Button doneButton;
@@ -126,6 +136,8 @@ public class MyGoalsAdapter extends
             super(view);
             titleTextView = (TextView) view.findViewById(R.id
                     .list_item_survey_openended_title_textview);
+            instructionsTextView = (TextView) view.findViewById(R.id
+                    .list_item_survey_openended_instructions_textview);
             editText = (EditText) view.findViewById(R.id.list_item_survey_openended_edittext);
             datePicker = (DatePicker) view.findViewById(R.id.list_item_survey_openended_datepicker);
             doneButton = (Button) view.findViewById(R.id.list_item_survey_openended_done_button);
@@ -186,6 +198,13 @@ public class MyGoalsAdapter extends
 
             case MyGoalsViewItem.TYPE_SURVEY_LIKERT:
                 ((LikertSurveyViewHolder) viewHolder).titleTextView.setText(survey.getText());
+                if (survey.getInstructions().isEmpty()) {
+                    ((LikertSurveyViewHolder) viewHolder).instructionsTextView.setVisibility(View
+                            .GONE);
+                } else {
+                    ((LikertSurveyViewHolder) viewHolder).instructionsTextView.setText(survey
+                            .getInstructions());
+                }
                 ((LikertSurveyViewHolder) viewHolder).minTextView.setText(survey.getOptions().get
                         (0).getText());
                 ((LikertSurveyViewHolder) viewHolder).maxTextView.setText(survey.getOptions().get
@@ -237,6 +256,13 @@ public class MyGoalsAdapter extends
                 break;
             case MyGoalsViewItem.TYPE_SURVEY_MULTICHOICE:
                 ((MultiChoiceSurveyViewHolder) viewHolder).titleTextView.setText(survey.getText());
+                if (survey.getInstructions().isEmpty()) {
+                    ((MultiChoiceSurveyViewHolder) viewHolder).instructionsTextView.setVisibility(View
+                            .GONE);
+                } else {
+                    ((MultiChoiceSurveyViewHolder) viewHolder).instructionsTextView.setText(survey
+                            .getInstructions());
+                }
                 ArrayAdapter<SurveyOptions> adapter = new ArrayAdapter<SurveyOptions>(mContext,
                         R.layout.list_item_simple_spinner, survey.getOptions());
                 ((MultiChoiceSurveyViewHolder) viewHolder).spinner.setAdapter(adapter);
@@ -265,6 +291,13 @@ public class MyGoalsAdapter extends
                 break;
             case MyGoalsViewItem.TYPE_SURVEY_BINARY:
                 ((BinarySurveyViewHolder) viewHolder).titleTextView.setText(survey.getText());
+                if (survey.getInstructions().isEmpty()) {
+                    ((BinarySurveyViewHolder) viewHolder).instructionsTextView.setVisibility(View
+                            .GONE);
+                } else {
+                    ((BinarySurveyViewHolder) viewHolder).instructionsTextView.setText(survey
+                            .getInstructions());
+                }
                 ((BinarySurveyViewHolder) viewHolder).doneButton.setEnabled(false);
                 ((BinarySurveyViewHolder) viewHolder).negativeRadioButton.setText(survey
                         .getOptions().get(0).getText());
@@ -296,6 +329,13 @@ public class MyGoalsAdapter extends
                 break;
             case MyGoalsViewItem.TYPE_SURVEY_OPENENDED:
                 ((OpenEndedSurveyViewHolder) viewHolder).titleTextView.setText(survey.getText());
+                if (survey.getInstructions().isEmpty()) {
+                    ((OpenEndedSurveyViewHolder) viewHolder).instructionsTextView.setVisibility(View
+                            .GONE);
+                } else {
+                    ((OpenEndedSurveyViewHolder) viewHolder).instructionsTextView.setText(survey
+                            .getInstructions());
+                }
                 if (survey.getInputType().equalsIgnoreCase(Constants.SURVEY_OPENENDED_DATE_TYPE)) {
                     final Calendar c = Calendar.getInstance();
                     int year = c.get(Calendar.YEAR);

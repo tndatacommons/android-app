@@ -10,7 +10,7 @@
     <string name="action_my_goals">My Goals</string>
     <string name="action_my_privacy">My Privacy</string>
     <string name="nav_drawer_action">Grow</string>
-    <string name="my_goals_title">My Goals</string>
+    <string name="my_goals_title">My Interests</string>
     <string name="my_goals_error">Either you have no goals or there was an error loading them</string>
 
     <!-- LoginActivity -->
@@ -53,6 +53,7 @@
     <string name="choose_goals_error_label">Uh Oh! There seems to have been an issue finding goals!</string>
     <string name="choose_goals_list_item_more_info_label">MORE INFO</string>
     <string name="choose_goals_list_item_select_button">I WANT THIS</string>
+    <string name="choose_goals_list_item_selected_button">I\'LL DO IT!</string>
     <string name="goal_image_description">Goal</string>
     <string name="qol_header_label">CONSIDER YOURSELF</string>
     <string name="qol_header_info_label">Take a moment to reflect on where you are today. These questions will help GROW focus on your specific needs.</string>
@@ -71,6 +72,7 @@
 
     <!-- GoalTryActivity -->
     <string name="goal_try_these">TRY THESE</string>
+    <string name="goal_behavior_try_it">I\'LL TRY IT!</string>
 
     <!-- SettingsActivity -->
     <string name="pref_general">General</string>

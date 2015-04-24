@@ -9,6 +9,7 @@ import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.task.BehaviorLoaderTask;
 import org.tndata.android.grow.task.BehaviorLoaderTask.BehaviorLoaderListener;
+import org.tndata.android.grow.ui.SpacingItemDecoration;
 import org.tndata.android.grow.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.grow.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
 import org.tndata.android.grow.ui.parallaxrecyclerview.ParallaxRecyclerAdapter.OnClickEvent;
@@ -33,6 +34,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class GoalTryActivity extends ActionBarActivity implements
         BehaviorLoaderListener {
     private Toolbar mToolbar;
@@ -47,7 +50,7 @@ public class GoalTryActivity extends ActionBarActivity implements
     static class TryGoalViewHolder extends RecyclerView.ViewHolder {
         public TryGoalViewHolder(View itemView) {
             super(itemView);
-            iconImageView = (ImageView) itemView
+            iconImageView = (CircleImageView) itemView
                     .findViewById(R.id.list_item_behavior_imageview);
             titleTextView = (TextView) itemView
                     .findViewById(R.id.list_item_behavior_title_textview);
@@ -55,13 +58,15 @@ public class GoalTryActivity extends ActionBarActivity implements
                     .findViewById(R.id.list_item_behavior_description_textview);
             noThanks = (Button) itemView.findViewById(R.id.list_item_behavior_no_thanks_button);
             tryIt = (Button) itemView.findViewById(R.id.list_item_behavior_try_it_button);
+            iconBackView = (View) itemView.findViewById(R.id.list_item_behavior_image_backview);
         }
 
         TextView titleTextView;
         TextView descriptionTextView;
         Button noThanks;
         Button tryIt;
-        ImageView iconImageView;
+        CircleImageView iconImageView;
+        View iconBackView;
     }
 
     @Override
@@ -82,6 +87,7 @@ public class GoalTryActivity extends ActionBarActivity implements
         mRecyclerView = (RecyclerView) findViewById(R.id.goal_try_recyclerview);
         HeaderLayoutManagerFixed manager = new HeaderLayoutManagerFixed(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.addItemDecoration(new SpacingItemDecoration(30));
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setHasFixedSize(true);
 
@@ -130,7 +136,8 @@ public class GoalTryActivity extends ActionBarActivity implements
 //                        ((TryGoalViewHolder) viewHolder).tryIt.setVisibility(View.GONE);
 //                        ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
 //                                .GONE);
-//                        ((TryGoalViewHolder) viewHolder).iconImageView.setVisibility(View.VISIBLE);
+//                        ((TryGoalViewHolder) viewHolder).iconImageView.setVisibility(View
+// .VISIBLE);
 //                    }
 //                });
             }
@@ -178,6 +185,7 @@ public class GoalTryActivity extends ActionBarActivity implements
                 v.findViewById(R.id.list_item_behavior_description_textview).setVisibility(View
                         .VISIBLE);
                 v.findViewById(R.id.list_item_behavior_imageview).setVisibility(View.GONE);
+                v.findViewById(R.id.list_item_behavior_image_backview).setVisibility(View.GONE);
             }
         });
         mRecyclerView.setAdapter(mAdapter);

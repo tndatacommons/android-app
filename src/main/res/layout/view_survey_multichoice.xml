@@ -13,7 +13,7 @@
         android:paddingLeft="2dp"
         android:layout_marginTop="15dp"
         android:text="What are your thoughts on android?"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:id="@+id/view_survey_multi_title_textview"

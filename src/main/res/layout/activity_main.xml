@@ -1,8 +1,8 @@
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main_drawer_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/app_background">
+                                        android:id="@+id/main_drawer_layout"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@color/app_background">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -15,35 +15,35 @@
             android:layout_height="@dimen/material_header_size"
             android:scaleType="centerCrop"
             android:src="@drawable/grow_material_header_image"
-            android:background="@color/grow_primary" />
+            android:background="@color/grow_primary"/>
 
         <include
             android:id="@+id/transparent_tool_bar"
             layout="@layout/transparent_tool_bar"></include>
 
-        <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/main_viewpager"
-            android:layout_marginTop="@dimen/material_header_padding"
+        <com.astuetz.PagerSlidingTabStrip
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/main_pager_tabstrip"
             android:layout_width="match_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_marginTop="@dimen/material_header_padding"
+            android:textColor="@color/white"
+            android:paddingBottom="5dp"
+            android:layout_marginBottom="15dp"
+            app:pstsIndicatorColor="@color/white"
+            app:pstsTextColorSelected="@color/white"
+            app:pstsUnderlineColor="@android:color/transparent"
+            app:pstsPaddingMiddle="true"/>
 
-            <android.support.v4.view.PagerTabStrip
-                android:id="@+id/main_pager_tabstrip"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                android:layout_marginBottom="4dp"
-                android:layout_marginTop="0dp"
-                android:animateLayoutChanges="true"
-                android:background="@android:color/transparent"
-                android:minHeight="128dp"
-                android:padding="8dp"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp"
-                android:textColor="@color/white" />
+        <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+                                           android:id="@+id/main_viewpager"
+                                           android:layout_below="@id/main_pager_tabstrip"
+                                           android:layout_width="match_parent"
+                                           android:layout_height="fill_parent">
         </android.support.v4.view.ViewPager>
+
     </RelativeLayout>
-    Layout>
 
     <LinearLayout
         android:id="@+id/main_left_drawer"
@@ -74,7 +74,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/actionbar_text" />
+                android:textColor="@color/actionbar_text"/>
         </LinearLayout>
 
         <ListView
@@ -87,7 +87,7 @@
             android:listSelector="@drawable/nav_drawer_list_selector"
             android:paddingBottom="10dp"
             android:paddingLeft="5dp"
-            android:paddingRight="5dp" />
+            android:paddingRight="5dp"/>
     </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>
