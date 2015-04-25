@@ -40,17 +40,16 @@ public class BehaviorActivity extends ActionBarActivity implements
         setContentView(R.layout.activity_base);
 
         mBehavior = (Behavior) getIntent().getSerializableExtra("behavior");
-        for (Goal goal : ((GrowApplication) getApplication()).getGoals()) {
-            if (goal.getBehaviors().contains(mBehavior)) {
-                for (Behavior behavior : goal.getBehaviors()) {
-                    if (behavior.getId() == mBehavior.getId()) {
-                        mBehavior.setMappingId(behavior.getMappingId());
-                        break;
-                    }
+        mGoal = (Goal) getIntent().getSerializableExtra("goal");
+        if (mGoal.getBehaviors().contains(mBehavior)) {
+            for (Behavior behavior : mGoal.getBehaviors()) {
+                if (behavior.getId() == mBehavior.getId()) {
+                    mBehavior.setMappingId(behavior.getMappingId());
+                    break;
                 }
             }
         }
-        mGoal = (Goal) getIntent().getSerializableExtra("goal");
+
 
         mToolbar = (Toolbar) findViewById(R.id.tool_bar);
         mToolbar.setTitle(mBehavior.getTitle());
