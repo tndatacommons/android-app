@@ -44,7 +44,6 @@ public class AddActionTask extends AsyncTask<String, Void, Void> {
         headers.put("Authorization", "Token " + token);
         JSONObject body = new JSONObject();
         try {
-            body.put("user", userId);
             body.put("action", actionIds.get(0));
         } catch (JSONException e1) {
             e1.printStackTrace();
@@ -71,7 +70,7 @@ public class AddActionTask extends AsyncTask<String, Void, Void> {
             createResponse = Html.fromHtml(result).toString();
 
             JSONObject jObject = new JSONObject(createResponse);
-            Log.d("user categories response", jObject.toString(2));
+            Log.d("user action", jObject.toString(2));
 
         } catch (IOException e) {
             e.printStackTrace();

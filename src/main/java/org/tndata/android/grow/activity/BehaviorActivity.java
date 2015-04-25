@@ -9,8 +9,10 @@ import org.tndata.android.grow.fragment.LearnMoreFragment;
 import org.tndata.android.grow.fragment.LearnMoreFragment.LearnMoreFragmentListener;
 import org.tndata.android.grow.model.Action;
 import org.tndata.android.grow.model.Behavior;
+import org.tndata.android.grow.task.AddBehaviorTask;
 
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,7 +20,8 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 
 public class BehaviorActivity extends ActionBarActivity implements
-        BehaviorFragmentListener, LearnMoreFragmentListener {
+        BehaviorFragmentListener, LearnMoreFragmentListener,
+        AddBehaviorTask.AddBehaviorsTaskListener {
     private static final int BEHAVIOR = 0;
     private static final int LEARN_MORE = 1;
     private Toolbar mToolbar;
@@ -56,16 +59,19 @@ public class BehaviorActivity extends ActionBarActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case android.R.id.home:
-            handleBackStack();
-            return true;
+            case android.R.id.home:
+                handleBackStack();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void addBehavior(Behavior behavior) {
-        // TODO Auto-generated method stub
+        ArrayList<String> behaviors = new ArrayList<String>();
+        behaviors.add(String.valueOf(behavior.getId()));
+        new AddBehaviorTask(this, this, behaviors).executeOnExecutor(AsyncTask
+                .THREAD_POOL_EXECUTOR);
 
     }
 
@@ -107,18 +113,18 @@ public class BehaviorActivity extends ActionBarActivity implements
     private void swapFragments(int index, boolean addToStack) {
         Fragment fragment = null;
         switch (index) {
-        case BEHAVIOR:
-            if (mBehaviorFragment == null) {
-                mBehaviorFragment = BehaviorFragment.newInstance(mBehavior);
-            }
-            fragment = mBehaviorFragment;
-            break;
-        case LEARN_MORE:
-            if (mLearnMoreFragment == null) {
-                mLearnMoreFragment = LearnMoreFragment.newInstance(mBehavior);
-            }
-            fragment = mLearnMoreFragment;
-            break;
+            case BEHAVIOR:
+                if (mBehaviorFragment == null) {
+                    mBehaviorFragment = BehaviorFragment.newInstance(mBehavior);
+                }
+                fragment = mBehaviorFragment;
+                break;
+            case LEARN_MORE:
+                if (mLearnMoreFragment == null) {
+                    mLearnMoreFragment = LearnMoreFragment.newInstance(mBehavior);
+                }
+                fragment = mLearnMoreFragment;
+                break;
         }
         if (fragment != null) {
             if (addToStack) {
@@ -127,5 +133,10 @@ public class BehaviorActivity extends ActionBarActivity implements
             getFragmentManager().beginTransaction()
                     .replace(R.id.base_content, fragment).commit();
         }
+    }
+
+    @Override
+    public void behaviorsAdded(ArrayList<Behavior> behaviors) {
+
     }
 }

@@ -8,9 +8,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.grow.GrowApplication;
+import org.tndata.android.grow.model.Behavior;
+import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.util.Constants;
 import org.tndata.android.grow.util.NetworkHelper;
 
@@ -20,38 +23,51 @@ import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
 
-public class AddBehaviorTask extends AsyncTask<String, Void, Void> {
-    private Context mContext;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-    public AddBehaviorTask(Context context) {
+public class AddBehaviorTask extends AsyncTask<Void, Void, ArrayList<Behavior>> {
+    private Context mContext;
+    private static Gson gson = new GsonBuilder().setFieldNamingPolicy(
+            FieldNamingPolicy.IDENTITY).create();
+    private ArrayList<String> mBehaviorIds;
+    private AddBehaviorsTaskListener mCallback;
+
+    public interface AddBehaviorsTaskListener {
+        public void behaviorsAdded(ArrayList<Behavior> behaviors);
+    }
+
+    public AddBehaviorTask(Context context, AddBehaviorsTaskListener callback,
+                           ArrayList<String> behaviorIds) {
         mContext = context;
+        mCallback = callback;
+        mBehaviorIds = behaviorIds;
     }
 
     @Override
-    protected Void doInBackground(String... params) {
+    protected ArrayList<Behavior> doInBackground(Void... params) {
         String token = ((GrowApplication) ((Activity) mContext)
                 .getApplication()).getToken();
-        String userId = String.valueOf(((GrowApplication) ((Activity) mContext)
-                .getApplication()).getUser().getId());
-        ArrayList<String> behaviorIds = new ArrayList<String>();
-        for (int i = 0; i < params.length; i++) {
-            behaviorIds.add(params[i]);
-        }
+
         String url = Constants.BASE_URL + "users/behaviors/";
         Map<String, String> headers = new HashMap<String, String>();
         headers.put("Accept", "application/json");
         headers.put("Content-type", "application/json");
         headers.put("Authorization", "Token " + token);
-        JSONObject body = new JSONObject();
-        try {
-            body.put("user", userId);
-            body.put("behavior", behaviorIds.get(0));
-        } catch (JSONException e1) {
-            e1.printStackTrace();
-            return null;
+        JSONArray postArray = new JSONArray();
+        for (int i = 0; i < mBehaviorIds.size(); i++) {
+            JSONObject postId = new JSONObject();
+            try {
+                postId.put("behavior", mBehaviorIds.get(i));
+                postArray.put(postId);
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+                return null;
+            }
         }
         InputStream stream = NetworkHelper.httpPostStream(url, headers,
-                body.toString());
+                postArray.toString());
         if (stream == null) {
             return null;
         }
@@ -70,8 +86,18 @@ public class AddBehaviorTask extends AsyncTask<String, Void, Void> {
 
             createResponse = Html.fromHtml(result).toString();
 
-            JSONObject jObject = new JSONObject(createResponse);
-            Log.d("user categories response", jObject.toString(2));
+            JSONArray jArray = new JSONArray(createResponse);
+            ArrayList<Behavior> behaviors = new ArrayList<Behavior>();
+            Log.d("user behavior", jArray.toString(2));
+            for (int i = 0; i < jArray.length(); i++) {
+                JSONObject userBehavior = jArray.getJSONObject(i);
+                Behavior behavior = gson.fromJson(userBehavior.getString("behavior"),
+                        Behavior.class);
+                behavior.setMappingId(userBehavior.getInt("id"));
+                behaviors.add(behavior);
+            }
+
+            return behaviors;
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -79,6 +105,11 @@ public class AddBehaviorTask extends AsyncTask<String, Void, Void> {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(ArrayList<Behavior> behaviors) {
+        mCallback.behaviorsAdded(behaviors);
     }
 
 }

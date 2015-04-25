@@ -21,6 +21,8 @@ public class LearnMoreFragment extends Fragment {
     public interface LearnMoreFragmentListener {
         public void addBehavior(Behavior behavior);
 
+        public void deleteBehavior(Behavior behavior);
+
         public void cancel();
     }
 
