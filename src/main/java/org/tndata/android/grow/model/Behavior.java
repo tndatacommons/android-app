@@ -1,6 +1,7 @@
 package org.tndata.android.grow.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Behavior extends TDCBase implements Serializable,
@@ -12,14 +13,14 @@ public class Behavior extends TDCBase implements Serializable,
     private String notification_text = "";
     private String icon_url = "";
     private String image_url = "";
-    private List<Goal> goals = null;
+    private ArrayList<Goal> goals = new ArrayList<Goal>();
 
     public Behavior() {
     }
 
     public Behavior(int id, int order, String title, String titleSlug,
-            String description, String narrativeBlock, String externalResource,
-            String notificationText, String iconUrl, String imageUrl) {
+                    String description, String narrativeBlock, String externalResource,
+                    String notificationText, String iconUrl, String imageUrl) {
         super(id, title, titleSlug, description);
         this.narrative_block = narrativeBlock;
         this.external_resource = externalResource;
@@ -29,9 +30,9 @@ public class Behavior extends TDCBase implements Serializable,
     }
 
     public Behavior(int id, int order, String title, String titleSlug,
-            String description, String narrativeBlock, String externalResource,
-            String notificationText, String iconUrl, String imageUrl,
-            List<Goal> goals) {
+                    String description, String narrativeBlock, String externalResource,
+                    String notificationText, String iconUrl, String imageUrl,
+                    ArrayList<Goal> goals) {
         super(id, title, titleSlug, description);
         this.narrative_block = narrativeBlock;
         this.external_resource = externalResource;
@@ -81,11 +82,11 @@ public class Behavior extends TDCBase implements Serializable,
         this.image_url = image_url;
     }
 
-    public List<Goal> getGoals() {
+    public ArrayList<Goal> getGoals() {
         return goals;
     }
 
-    public void setGoals(List<Goal> goals) {
+    public void setGoals(ArrayList<Goal> goals) {
         this.goals = goals;
     }
 

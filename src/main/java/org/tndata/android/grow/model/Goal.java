@@ -11,6 +11,7 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
     private String outcome = "";
     private String icon_url = "";
     private ArrayList<Category> categories = new ArrayList<Category>();
+    private ArrayList<Behavior> behaviors = new ArrayList<Behavior>();
 
     public Goal() {
     }
@@ -65,6 +66,15 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
     public void setCategories(ArrayList<Category> categories) {
         this.categories = categories;
     }
+
+    public ArrayList<Behavior> getBehaviors() {
+        return behaviors;
+    }
+
+    public void setBehaviors(ArrayList<Behavior> behaviors) {
+        this.behaviors = behaviors;
+    }
+
 
     @Override
     public boolean equals(Object object) {

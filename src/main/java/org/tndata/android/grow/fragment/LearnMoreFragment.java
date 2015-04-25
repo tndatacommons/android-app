@@ -1,7 +1,9 @@
 package org.tndata.android.grow.fragment;
 
+import org.tndata.android.grow.GrowApplication;
 import org.tndata.android.grow.R;
 import org.tndata.android.grow.model.Behavior;
+import org.tndata.android.grow.model.Goal;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 
 public class LearnMoreFragment extends Fragment {
     private Behavior mBehavior;
+    private ImageView mAddImageView;
     private LearnMoreFragmentListener mCallback;
 
     public interface LearnMoreFragmentListener {
@@ -24,6 +27,10 @@ public class LearnMoreFragment extends Fragment {
         public void deleteBehavior(Behavior behavior);
 
         public void cancel();
+    }
+
+    public void setBehavior(Behavior behavior) {
+        mBehavior = behavior;
     }
 
     public static LearnMoreFragment newInstance(Behavior behavior) {
@@ -43,19 +50,25 @@ public class LearnMoreFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View v = getActivity().getLayoutInflater().inflate(
                 R.layout.fragment_learn_more, container, false);
         TextView titleTextView = (TextView) v
                 .findViewById(R.id.learn_more_behavior_title_textview);
         TextView descriptionTextView = (TextView) v
                 .findViewById(R.id.learn_more_description_textview);
-        ImageView addImageView = (ImageView) v
+        mAddImageView = (ImageView) v
                 .findViewById(R.id.learn_more_add_imageview);
-        addImageView.setOnClickListener(new OnClickListener() {
+        mAddImageView.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
+                for (Goal goal : ((GrowApplication) getActivity().getApplication()).getGoals()) {
+                    if (goal.getBehaviors().contains(mBehavior)) {
+                        mCallback.deleteBehavior(mBehavior);
+                        return;
+                    }
+                }
                 mCallback.addBehavior(mBehavior);
             }
         });
@@ -91,5 +104,21 @@ public class LearnMoreFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mCallback = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setImageView();
+    }
+
+    public void setImageView() {
+        for (Goal goal : ((GrowApplication) getActivity().getApplication()).getGoals()) {
+            if (goal.getBehaviors().contains(mBehavior)) {
+                mAddImageView.setImageResource(R.drawable.ic_selected_white);
+                return;
+            }
+        }
+        mAddImageView.setImageResource(R.drawable.ic_action_new_large);
     }
 }

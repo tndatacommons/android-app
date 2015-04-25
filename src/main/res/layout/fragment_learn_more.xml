@@ -62,7 +62,8 @@
                 android:layout_alignBottom="@id/learn_more_add_label"
                 android:layout_alignParentRight="true"
                 android:contentDescription="@string/behavior_add_to_priorities_label"
-                android:src="@drawable/ic_selected_blue" />
+                android:src="@drawable/ic_selected_white"
+                android:background="@drawable/circle"/>
 
             <TextView
                 android:id="@+id/learn_more_description_textview"

@@ -2,6 +2,7 @@ package org.tndata.android.grow.activity;
 
 import java.util.ArrayList;
 
+import org.tndata.android.grow.GrowApplication;
 import org.tndata.android.grow.R;
 import org.tndata.android.grow.fragment.BehaviorFragment;
 import org.tndata.android.grow.fragment.BehaviorFragment.BehaviorFragmentListener;
@@ -9,7 +10,9 @@ import org.tndata.android.grow.fragment.LearnMoreFragment;
 import org.tndata.android.grow.fragment.LearnMoreFragment.LearnMoreFragmentListener;
 import org.tndata.android.grow.model.Action;
 import org.tndata.android.grow.model.Behavior;
+import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.task.AddBehaviorTask;
+import org.tndata.android.grow.task.DeleteBehaviorTask;
 
 import android.app.Fragment;
 import android.os.AsyncTask;
@@ -21,11 +24,12 @@ import android.view.MenuItem;
 
 public class BehaviorActivity extends ActionBarActivity implements
         BehaviorFragmentListener, LearnMoreFragmentListener,
-        AddBehaviorTask.AddBehaviorsTaskListener {
+        AddBehaviorTask.AddBehaviorsTaskListener, DeleteBehaviorTask.DeleteBehaviorTaskListener {
     private static final int BEHAVIOR = 0;
     private static final int LEARN_MORE = 1;
     private Toolbar mToolbar;
     private Behavior mBehavior;
+    private Goal mGoal;
     private BehaviorFragment mBehaviorFragment = null;
     private LearnMoreFragment mLearnMoreFragment = null;
     private ArrayList<Fragment> mFragmentStack = new ArrayList<Fragment>();
@@ -36,6 +40,17 @@ public class BehaviorActivity extends ActionBarActivity implements
         setContentView(R.layout.activity_base);
 
         mBehavior = (Behavior) getIntent().getSerializableExtra("behavior");
+        for (Goal goal : ((GrowApplication) getApplication()).getGoals()) {
+            if (goal.getBehaviors().contains(mBehavior)) {
+                for (Behavior behavior : goal.getBehaviors()) {
+                    if (behavior.getId() == mBehavior.getId()) {
+                        mBehavior.setMappingId(behavior.getMappingId());
+                        break;
+                    }
+                }
+            }
+        }
+        mGoal = (Goal) getIntent().getSerializableExtra("goal");
 
         mToolbar = (Toolbar) findViewById(R.id.tool_bar);
         mToolbar.setTitle(mBehavior.getTitle());
@@ -72,6 +87,7 @@ public class BehaviorActivity extends ActionBarActivity implements
         behaviors.add(String.valueOf(behavior.getId()));
         new AddBehaviorTask(this, this, behaviors).executeOnExecutor(AsyncTask
                 .THREAD_POOL_EXECUTOR);
+
 
     }
 
@@ -137,6 +153,72 @@ public class BehaviorActivity extends ActionBarActivity implements
 
     @Override
     public void behaviorsAdded(ArrayList<Behavior> behaviors) {
+        if (behaviors == null) {
+            return;
+        }
+        ArrayList<Behavior> goalBehaviors = mGoal.getBehaviors();
+        goalBehaviors.addAll(behaviors);
+        mGoal.setBehaviors(goalBehaviors);
+        ArrayList<Goal> goals = new ArrayList<Goal>();
+        goals.addAll(((GrowApplication) getApplication()).getGoals());
+        for (Goal goal : goals) {
+            if (goal.getId() == mGoal.getId()) {
+                goal.setBehaviors(goalBehaviors);
+                break;
+            }
+        }
+        for (Behavior behavior : behaviors) {
+            if (behavior.getId() == mBehavior.getId()) {
+                mBehavior = behavior;
+                break;
+            }
+        }
+        ((GrowApplication) getApplication()).setGoals(goals);
+        if (mLearnMoreFragment != null) {
+            mLearnMoreFragment.setBehavior(mBehavior);
+        }
+        if (mBehaviorFragment != null) {
+            mBehaviorFragment.setBehavior(mBehavior);
+        }
+        if (!mFragmentStack.isEmpty()) {
+            Fragment fragment = mFragmentStack.get(mFragmentStack.size() - 1);
+            if (fragment instanceof LearnMoreFragment) {
+                ((LearnMoreFragment) fragment).setImageView();
+            } else if (fragment instanceof BehaviorFragment) {
+                ((BehaviorFragment) fragment).setImageView();
+            }
+        }
+    }
 
+    @Override
+    public void deleteBehavior(Behavior behavior) {
+        ArrayList<String> behaviors = new ArrayList<String>();
+        behaviors.add(String.valueOf(behavior.getMappingId()));
+        new DeleteBehaviorTask(this, this, behaviors).executeOnExecutor(AsyncTask
+                .THREAD_POOL_EXECUTOR);
+        ArrayList<Behavior> goalBehaviors = mGoal.getBehaviors();
+        goalBehaviors.remove(behavior);
+        mGoal.setBehaviors(goalBehaviors);
+        ArrayList<Goal> goals = new ArrayList<Goal>();
+        goals.addAll(((GrowApplication) getApplication()).getGoals());
+        for (Goal goal : goals) {
+            if (goal.getId() == mGoal.getId()) {
+                goal.setBehaviors(goalBehaviors);
+                break;
+            }
+        }
+        ((GrowApplication) getApplication()).setGoals(goals);
+    }
+
+    @Override
+    public void behaviorsDeleted() {
+        if (!mFragmentStack.isEmpty()) {
+            Fragment fragment = mFragmentStack.get(mFragmentStack.size() - 1);
+            if (fragment instanceof LearnMoreFragment) {
+                ((LearnMoreFragment) fragment).setImageView();
+            } else if (fragment instanceof BehaviorFragment) {
+                ((BehaviorFragment) fragment).setImageView();
+            }
+        }
     }
 }

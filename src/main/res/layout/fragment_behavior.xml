@@ -82,8 +82,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@id/behavior_keep_in_mind_label"
                 android:layout_alignParentRight="true"
+                android:padding="3dp"
                 android:contentDescription="@string/behavior_add_to_priorities_label"
-                android:src="@drawable/ic_selected_blue" />
+                android:src="@drawable/ic_selected_white"
+                android:background="@drawable/circle"/>
 
             <View
                 android:id="@+id/behavior_take_action_above_separator"

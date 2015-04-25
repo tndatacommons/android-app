@@ -24,10 +24,12 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_margin="5dp"
+        android:padding="3dp"
         android:adjustViewBounds="true"
         android:contentDescription="@string/action_image_description"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_selected_blue" />
+        android:src="@drawable/ic_selected_white"
+        android:background="@drawable/circle"/>
 
     <TextView
         android:id="@+id/view_action_title_textview"

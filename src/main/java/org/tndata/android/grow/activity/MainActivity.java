@@ -8,9 +8,12 @@ import org.tndata.android.grow.adapter.DrawerAdapter;
 import org.tndata.android.grow.adapter.MainViewPagerAdapter;
 import org.tndata.android.grow.fragment.CategoryFragment.CategoryFragmentListener;
 import org.tndata.android.grow.fragment.MyGoalsFragment.MyGoalsFragmentListener;
+import org.tndata.android.grow.model.Behavior;
 import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.DrawerItem;
 import org.tndata.android.grow.model.Goal;
+import org.tndata.android.grow.task.GetUserBehaviorsTask;
+import org.tndata.android.grow.task.GetUserBehaviorsTask.GetUserBehaviorsListener;
 import org.tndata.android.grow.task.GetUserCategoriesTask;
 import org.tndata.android.grow.task.GetUserCategoriesTask.GetUserCategoriesListener;
 import org.tndata.android.grow.task.GetUserGoalsTask;
@@ -39,7 +42,7 @@ import android.widget.ListView;
 import com.astuetz.PagerSlidingTabStrip;
 
 public class MainActivity extends ActionBarActivity implements
-        GetUserCategoriesListener, GetUserGoalsListener,
+        GetUserCategoriesListener, GetUserGoalsListener, GetUserBehaviorsListener,
         MyGoalsFragmentListener, CategoryFragmentListener {
     private static final int IMPORTANT_TO_ME = 0;
     private static final int MY_GOALS = 1;
@@ -274,6 +277,30 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void goalsLoaded(ArrayList<Goal> goals) {
         ((GrowApplication) getApplication()).setGoals(goals);
+        new GetUserBehaviorsTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                ((GrowApplication) getApplication()).getToken());
+    }
+
+    @Override
+    public void behaviorsLoaded(ArrayList<Behavior> behaviors) {
+        if (behaviors != null) {
+            //this is messy...
+            //add each behavior to the correct goal
+            ArrayList<Goal> goals = new ArrayList<Goal>();
+            goals.addAll(((GrowApplication) getApplication()).getGoals());
+            for (Goal goal : goals) {
+                ArrayList<Behavior> goalBehaviors = new ArrayList<Behavior>();
+                for (Behavior behavior : behaviors) {
+                    for (Goal behaviorGoal : behavior.getGoals()) {
+                        if (behaviorGoal.getId() == goal.getId()) {
+                            goalBehaviors.add(behavior);
+                            break;
+                        }
+                    }
+                }
+                goal.setBehaviors(goalBehaviors);
+            }
+        }
         assignGoalsToCategories(false);
         showGoals();
     }

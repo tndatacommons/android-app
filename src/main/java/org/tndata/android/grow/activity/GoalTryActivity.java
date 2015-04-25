@@ -122,6 +122,7 @@ public class GoalTryActivity extends ActionBarActivity implements
                         Intent intent = new Intent(getApplicationContext(),
                                 BehaviorActivity.class);
                         intent.putExtra("behavior", mBehaviorList.get(i));
+                        intent.putExtra("goal", mGoal);
                         startActivity(intent);
                     }
                 });

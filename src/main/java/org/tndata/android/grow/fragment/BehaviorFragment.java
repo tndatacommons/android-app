@@ -6,6 +6,7 @@ import org.tndata.android.grow.GrowApplication;
 import org.tndata.android.grow.R;
 import org.tndata.android.grow.model.Action;
 import org.tndata.android.grow.model.Behavior;
+import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.task.ActionLoaderTask;
 import org.tndata.android.grow.task.ActionLoaderTask.ActionLoaderListener;
 import org.tndata.android.grow.ui.ActionCellView;
@@ -20,12 +21,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class BehaviorFragment extends Fragment implements ActionLoaderListener {
     private Behavior mBehavior;
     private LinearLayout mActionsContainer;
+    private ImageView mAddImageView;
     private BehaviorFragmentListener mCallback;
     private ArrayList<Action> mActionList;
 
@@ -35,6 +38,14 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener {
         public void cancel();
 
         public void addAction(Action action);
+
+        public void addBehavior(Behavior behavior);
+
+        public void deleteBehavior(Behavior behavior);
+    }
+
+    public void setBehavior(Behavior behavior) {
+        mBehavior = behavior;
     }
 
     public static BehaviorFragment newInstance(Behavior behavior) {
@@ -54,7 +65,7 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View v = getActivity().getLayoutInflater().inflate(
                 R.layout.fragment_behavior, container, false);
         TextView titleTextView = (TextView) v
@@ -76,6 +87,20 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener {
             @Override
             public void onClick(View v) {
                 mCallback.learnMore();
+            }
+        });
+        mAddImageView = (ImageView) v.findViewById(R.id.behavior_add_imageview);
+        mAddImageView.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                for (Goal goal : ((GrowApplication) getActivity().getApplication()).getGoals()) {
+                    if (goal.getBehaviors().contains(mBehavior)) {
+                        mCallback.deleteBehavior(mBehavior);
+                        return;
+                    }
+                }
+                mCallback.addBehavior(mBehavior);
             }
         });
         mActionsContainer = (LinearLayout) v
@@ -128,7 +153,7 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener {
             Log.d("Action", "*draw name:" + action.getTitle());
             ActionCellView acv = new ActionCellView(getActivity()
                     .getApplicationContext());
-            acv.setAction(action);    
+            acv.setAction(action);
             acv.setOnClickListener(new OnClickListener() {
 
                 @Override
@@ -140,7 +165,23 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener {
 
                 }
             });
-            mActionsContainer.addView(acv); 
+            mActionsContainer.addView(acv);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setImageView();
+    }
+
+    public void setImageView() {
+        for (Goal goal : ((GrowApplication) getActivity().getApplication()).getGoals()) {
+            if (goal.getBehaviors().contains(mBehavior)) {
+                mAddImageView.setImageResource(R.drawable.ic_selected_white);
+                return;
+            }
+        }
+        mAddImageView.setImageResource(R.drawable.ic_action_new_large);
     }
 }
