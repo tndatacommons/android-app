@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.tndata.android.grow.GrowApplication;
@@ -60,7 +61,9 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         public ChooseGoalViewHolder(View itemView) {
             super(itemView);
             iconImageView = (CircleImageView) itemView
-                    .findViewById(R.id.list_item_choose_goal_imageview);
+                    .findViewById(R.id.list_item_choose_goal_icon_imageview);
+            iconContainerView = (RelativeLayout) itemView.findViewById(R.id
+                    .list_item_choose_goal_imageview_container);
             titleTextView = (TextView) itemView
                     .findViewById(R.id.list_item_choose_goal_title_textview);
             selectButton = (Button) itemView
@@ -73,6 +76,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         CircleImageView iconImageView;
         Button selectButton;
         Button moreInfoButton;
+        RelativeLayout iconContainerView;
     }
 
     @Override
@@ -111,10 +115,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                         && !goal.getIconUrl().isEmpty()) {
                     ImageCache.instance(getApplicationContext()).loadBitmap(
                             ((ChooseGoalViewHolder) viewHolder).iconImageView,
-                            goal.getIconUrl(), false);
-                } else {
-                    ((ChooseGoalViewHolder) viewHolder).iconImageView
-                            .setImageResource(R.drawable.default_image);
+                            goal.getIconUrl(), false, false);
                 }
                 if (mSelectedGoals.contains(goal)) {
                     ((ChooseGoalViewHolder) viewHolder).selectButton.setBackgroundResource(R
@@ -144,8 +145,9 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                     }
                 });
 
-                GradientDrawable gradientDrawable = (GradientDrawable) ((ChooseGoalViewHolder) viewHolder)
-                        .iconImageView.getBackground();
+                GradientDrawable gradientDrawable = (GradientDrawable) ((ChooseGoalViewHolder)
+                        viewHolder)
+                        .iconContainerView.getBackground();
                 String colorString = "#3639E3"; //TODO get a color string from the category
                 gradientDrawable.setColor(Color.parseColor(colorString));
             }

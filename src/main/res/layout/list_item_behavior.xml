@@ -72,7 +72,7 @@
             android:minHeight="@dimen/paper_flat_button_min_height"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:text="@string/behavior_learn_more"
+            android:text="@string/goal_behavior_try_it"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/white"
             android:visibility="gone"/>
