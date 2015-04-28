@@ -192,12 +192,6 @@ public class CategoryFragment extends Fragment implements CategoryFragmentAdapte
         ArrayList<Goal> goals = mCategory.getGoals();
         mItems.clear();
         if (goals != null && !goals.isEmpty()) {
-            for (Goal goal : goals) {
-                Log.d("Goal", goal.getTitle());
-                for (Behavior behavior : goal.getBehaviors()) {
-                    Log.d("Behavior", behavior.getTitle());
-                }
-            }
             mItems.addAll(goals);
         }
     }

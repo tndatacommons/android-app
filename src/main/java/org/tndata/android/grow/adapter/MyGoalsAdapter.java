@@ -197,6 +197,7 @@ public class MyGoalsAdapter extends
                 ArrayList<Goal> goals = category.getGoals();
                 ((MyGoalsViewHolder) viewHolder).titleTextView.setText(mContext.getString(R
                         .string.category_goals, category.getTitle()));
+                ((MyGoalsViewHolder) viewHolder).goalContainer.removeAllViews();
                 if (goals != null && !goals.isEmpty()) {
                     ((MyGoalsViewHolder) viewHolder).noGoalsContainer.setVisibility(View.GONE);
                     for (final Goal goal : goals) {
