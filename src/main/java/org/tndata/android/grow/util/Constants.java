@@ -7,6 +7,7 @@ public class Constants {
     public final static int CHOOSE_GOALS_REQUEST_CODE = 2203;
     public final static int VIEW_BEHAVIOR_REQUEST_CODE = 2204;
     public final static int BEHAVIOR_CHANGED_RESULT_CODE = 2205;
+    public final static int CHOOSE_BEHAVIORS_REQUEST_CODE = 2206;
 
     public final static int QOL_INSTRUMENT_ID = 1;
     public final static int BIO_INSTRUMENT_ID = 4;

@@ -33,7 +33,7 @@ public class CategoryFragmentAdapter extends
         TextView titleTextView;
         View circleView;
         LinearLayout goalContainer;
-        LinearLayout container;
+        LinearLayout behaviorContainer;
 
         public CategoryGoalViewHolder(View view) {
             super(view);
@@ -42,7 +42,8 @@ public class CategoryFragmentAdapter extends
             circleView = view.findViewById(R.id.list_item_category_goal_circle_view);
             goalContainer = (LinearLayout) view.findViewById(R.id
                     .list_item_category_goal_goal_container);
-            container = (LinearLayout) view.findViewById(R.id.list_item_category_goal_container);
+            behaviorContainer = (LinearLayout) view.findViewById(R.id
+                    .list_item_category_goal_behavior_container);
         }
     }
 
@@ -100,6 +101,7 @@ public class CategoryFragmentAdapter extends
             }
         });
         ArrayList<Behavior> behaviors = goal.getBehaviors();
+        ((CategoryGoalViewHolder) viewHolder).behaviorContainer.removeAllViews();
         if (behaviors != null && !behaviors.isEmpty()) {
             for (final Behavior behavior : behaviors) {
                 BehaviorListView behaviorListView = new BehaviorListView(mContext);
@@ -110,7 +112,7 @@ public class CategoryFragmentAdapter extends
                         mCallback.viewBehavior(goal, behavior);
                     }
                 });
-                ((CategoryGoalViewHolder) viewHolder).container.addView(behaviorListView);
+                ((CategoryGoalViewHolder) viewHolder).behaviorContainer.addView(behaviorListView);
             }
         }
 

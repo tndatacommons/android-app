@@ -45,5 +45,11 @@
                 android:textColor="@color/dark_text_color"
                 android:textAppearance="?android:attr/textAppearanceMedium"/>
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/list_item_category_goal_behavior_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"></LinearLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>
