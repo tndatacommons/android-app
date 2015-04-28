@@ -1,18 +1,23 @@
 package org.tndata.android.grow.adapter;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import org.tndata.android.grow.R;
+import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.model.MyGoalsViewItem;
 import org.tndata.android.grow.model.Survey;
 import org.tndata.android.grow.model.SurveyOptions;
+import org.tndata.android.grow.ui.GoalCellView;
 import org.tndata.android.grow.util.Constants;
-import org.tndata.android.grow.util.ImageCache;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,7 +29,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -36,28 +41,43 @@ public class MyGoalsAdapter extends
         void onClick(View v, int position);
     }
 
-    public interface SurveyCompleteInterface {
+    public interface MyGoalsAdapterInterface {
         public void surveyCompleted(Survey survey);
+
+        public void chooseGoals(Category category);
+
+        public void chooseBehaviors(Goal goal, Category category);
     }
 
     private Context mContext;
     private List<MyGoalsViewItem> mItems;
-    private OnClickEvent mOnClickEvent;
-    private SurveyCompleteInterface mSurveyCompleteCallback;
+    private MyGoalsAdapterInterface mCallback;
 
     static class MyGoalsViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;
-        TextView descriptionTextView;
-        ImageView iconImageView;
+        TextView subTitleTextView;
+        View circleView;
+        LinearLayout noGoalsContainer;
+        LinearLayout goalContainer;
 
         public MyGoalsViewHolder(View view) {
             super(view);
-            iconImageView = (ImageView) view
-                    .findViewById(R.id.list_item_goal_imageview);
+            circleView = view
+                    .findViewById(R.id.list_item_my_goals_category_circle_view);
             titleTextView = (TextView) view
-                    .findViewById(R.id.list_item_goal_title_textview);
-            descriptionTextView = (TextView) view
-                    .findViewById(R.id.list_item_goal_description_textview);
+                    .findViewById(R.id.list_item_my_goals_category_title_textview);
+            subTitleTextView = (TextView) view
+                    .findViewById(R.id.list_item_my_goals_category_add_textview);
+            noGoalsContainer = (LinearLayout) view.findViewById(R.id
+                    .list_item_my_goals_category_no_goals_container);
+            goalContainer = (LinearLayout) view.findViewById(R.id
+                    .list_item_my_goals_category_goals_container);
+        }
+    }
+
+    static class MyGoalsNoContentViewHolder extends RecyclerView.ViewHolder {
+        public MyGoalsNoContentViewHolder(View view) {
+            super(view);
         }
     }
 
@@ -145,23 +165,19 @@ public class MyGoalsAdapter extends
     }
 
     public MyGoalsAdapter(Context context, List<MyGoalsViewItem> objects,
-                          SurveyCompleteInterface callback) {
+                          MyGoalsAdapterInterface callback) {
         if (objects == null) {
             throw new IllegalArgumentException("Goals List must not be null");
         }
         this.mItems = objects;
         this.mContext = context;
-        this.mSurveyCompleteCallback = callback;
+        this.mCallback = callback;
     }
 
     public void updateEntries(List<MyGoalsViewItem> items) {
         mItems.clear();
         mItems.addAll(items);
         notifyDataSetChanged();
-    }
-
-    public void setOnClickEvent(OnClickEvent onClickEvent) {
-        mOnClickEvent = onClickEvent;
     }
 
     @Override
@@ -174,23 +190,51 @@ public class MyGoalsAdapter extends
                                  final int position) {
         final Survey survey = mItems.get(position).getSurvey();
         switch (viewHolder.getItemViewType()) {
-            case MyGoalsViewItem.TYPE_GOAL:
-                final Goal goal = mItems.get(position).getGoal();
-                if (goal.getIconUrl() != null && !goal.getIconUrl().isEmpty()) {
-                    ImageCache.instance(mContext).loadBitmap(((MyGoalsViewHolder) viewHolder)
-                                    .iconImageView,
-                            goal.getIconUrl(), false);
+            case MyGoalsViewItem.TYPE_DEFAULT_NO_CONTENT:
+                break;
+            case MyGoalsViewItem.TYPE_CATEGORY:
+                final Category category = mItems.get(position).getCategory();
+                ArrayList<Goal> goals = category.getGoals();
+                ((MyGoalsViewHolder) viewHolder).titleTextView.setText(mContext.getString(R
+                        .string.category_goals, category.getTitle()));
+                if (goals != null && !goals.isEmpty()) {
+                    ((MyGoalsViewHolder) viewHolder).noGoalsContainer.setVisibility(View.GONE);
+                    for (final Goal goal : goals) {
+                        GoalCellView goalCellView = new GoalCellView(mContext);
+                        goalCellView.setGoal(goal, category);
+                        goalCellView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mCallback.chooseBehaviors(goal, category);
+                            }
+                        });
+                        ((MyGoalsViewHolder) viewHolder).goalContainer.addView(goalCellView);
+                    }
                 } else {
-                    ((MyGoalsViewHolder) viewHolder).iconImageView.setImageResource(R.drawable
-                            .default_image);
-                }
-                ((MyGoalsViewHolder) viewHolder).titleTextView.setText(goal.getTitle());
-                ((MyGoalsViewHolder) viewHolder).descriptionTextView.setText(goal.getSubtitle());
-                if (mOnClickEvent != null) {
-                    viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    GradientDrawable gradientDrawable = (GradientDrawable) ((MyGoalsViewHolder)
+                            viewHolder).circleView.getBackground();
+                    String colorString = category.getColor();
+                    if (colorString != null && !colorString.isEmpty()) {
+                        gradientDrawable.setColor(Color.parseColor(colorString));
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        ((MyGoalsViewHolder) viewHolder).circleView.setBackground
+                                (gradientDrawable);
+                    } else {
+                        ((MyGoalsViewHolder) viewHolder).circleView
+                                .setBackgroundDrawable(gradientDrawable);
+                    }
+                    ((MyGoalsViewHolder) viewHolder).noGoalsContainer.setVisibility(View.VISIBLE);
+                    ((MyGoalsViewHolder) viewHolder).subTitleTextView.setText(mContext.getString
+                            (R.string.category_goals_add,
+                                    category.getTitle()));
+                    ((MyGoalsViewHolder) viewHolder).noGoalsContainer.setOnClickListener(new View
+                            .OnClickListener() {
+
+
                         @Override
                         public void onClick(View v) {
-                            mOnClickEvent.onClick(v, position);
+                            mCallback.chooseGoals(category);
                         }
                     });
                 }
@@ -250,15 +294,16 @@ public class MyGoalsAdapter extends
                         .OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mSurveyCompleteCallback.surveyCompleted(survey);
+                        mCallback.surveyCompleted(survey);
                     }
                 });
                 break;
             case MyGoalsViewItem.TYPE_SURVEY_MULTICHOICE:
                 ((MultiChoiceSurveyViewHolder) viewHolder).titleTextView.setText(survey.getText());
                 if (survey.getInstructions().isEmpty()) {
-                    ((MultiChoiceSurveyViewHolder) viewHolder).instructionsTextView.setVisibility(View
-                            .GONE);
+                    ((MultiChoiceSurveyViewHolder) viewHolder).instructionsTextView.setVisibility
+                            (View
+                                    .GONE);
                 } else {
                     ((MultiChoiceSurveyViewHolder) viewHolder).instructionsTextView.setText(survey
                             .getInstructions());
@@ -285,7 +330,7 @@ public class MyGoalsAdapter extends
                         .OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mSurveyCompleteCallback.surveyCompleted(survey);
+                        mCallback.surveyCompleted(survey);
                     }
                 });
                 break;
@@ -323,7 +368,7 @@ public class MyGoalsAdapter extends
                         .OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mSurveyCompleteCallback.surveyCompleted(survey);
+                        mCallback.surveyCompleted(survey);
                     }
                 });
                 break;
@@ -385,7 +430,7 @@ public class MyGoalsAdapter extends
                         .OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mSurveyCompleteCallback.surveyCompleted(survey);
+                        mCallback.surveyCompleted(survey);
                     }
                 });
                 break;
@@ -401,11 +446,14 @@ public class MyGoalsAdapter extends
         View itemView;
         switch (viewType) {
 
-            case MyGoalsViewItem.TYPE_GOAL:
+            case MyGoalsViewItem.TYPE_CATEGORY:
                 itemView = inflater.inflate(
-                        R.layout.list_item_goal, viewGroup, false);
-
+                        R.layout.list_item_my_goals_category, viewGroup, false);
                 return new MyGoalsViewHolder(itemView);
+            case MyGoalsViewItem.TYPE_DEFAULT_NO_CONTENT:
+                itemView = inflater.inflate(
+                        R.layout.list_item_default_no_content, viewGroup, false);
+                return new MyGoalsNoContentViewHolder(itemView);
             case MyGoalsViewItem.TYPE_SURVEY_LIKERT:
                 itemView = inflater.inflate(R.layout.list_item_survey_likert, viewGroup, false);
                 return new LikertSurveyViewHolder(itemView);

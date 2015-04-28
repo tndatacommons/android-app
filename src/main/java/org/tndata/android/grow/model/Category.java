@@ -11,7 +11,7 @@ public class Category extends TDCBase implements Serializable,
     private String icon_url = "";
     private String image_url = "";
     private ArrayList<Goal> goals = new ArrayList<Goal>();
-    private int color = 0;
+    private String color = "";
 
     public Category() {
     }
@@ -35,7 +35,7 @@ public class Category extends TDCBase implements Serializable,
     }
 
     public Category(int id, int order, String title, String titleSlug,
-                    String description, String iconUrl, String imageUrl, int color) {
+                    String description, String iconUrl, String imageUrl, String color) {
         super(id, title, titleSlug, description);
         this.order = order;
         this.icon_url = iconUrl;
@@ -76,11 +76,11 @@ public class Category extends TDCBase implements Serializable,
         this.goals = goals;
     }
 
-    public int getColor() {
+    public String getColor() {
         return color;
     }
 
-    public void setColor(int color) {
+    public void setColor(String color) {
         this.color = color;
     }
 

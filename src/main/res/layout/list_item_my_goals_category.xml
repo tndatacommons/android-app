@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                                    xmlns:android="http://schemas.android.com/apk/res/android"
+                                    android:id="@+id/card_view"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginLeft="5dp"
+                                    android:layout_marginRight="5dp"
+                                    android:layout_marginTop="5dp"
+                                    card_view:cardCornerRadius="@dimen/cardview_corner_radius">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:paddingTop="5dp">
+
+        <TextView
+            android:id="@+id/list_item_my_goals_category_title_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:paddingLeft="2dp"
+            android:text="@string/category_goals"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+        <LinearLayout
+            android:id="@+id/list_item_my_goals_category_no_goals_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/list_item_my_goals_category_title_textview">
+
+            <View
+                android:id="@+id/list_item_my_goals_category_circle_view"
+                android:layout_width="@dimen/category_small_icon_image_size"
+                android:layout_height="@dimen/category_small_icon_image_size"
+                android:background="@drawable/circle"
+                android:layout_margin="3dp"/>
+
+            <TextView
+                android:id="@+id/list_item_my_goals_category_add_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:paddingLeft="2dp"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
+                android:text="@string/category_goals_add"
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/list_item_my_goals_category_goals_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@id/list_item_my_goals_category_no_goals_container"></LinearLayout>
+
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

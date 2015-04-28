@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                                    xmlns:android="http://schemas.android.com/apk/res/android"
+                                    android:id="@+id/card_view"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginLeft="5dp"
+                                    android:layout_marginRight="5dp"
+                                    android:layout_marginTop="5dp"
+                                    card_view:cardCornerRadius="@dimen/cardview_corner_radius">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <View
+            android:id="@+id/list_item_default_no_content_image_backview"
+            android:layout_width="@dimen/goal_icon_image_size"
+            android:layout_height="@dimen/goal_icon_image_size"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@color/image_background"/>
+
+        <RelativeLayout
+            android:id="@+id/list_item_default_no_content_imageview_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/list_item_default_no_content_image_backview"
+            android:layout_alignRight="@id/list_item_default_no_content_image_backview"
+            android:layout_alignTop="@id/list_item_default_no_content_image_backview"
+            android:layout_alignBottom="@id/list_item_default_no_content_image_backview"
+            android:layout_margin="10dp"
+            android:padding="10dp"
+            android:contentDescription="@string/goal_image_description"
+            android:background="@drawable/circle">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/list_item_default_no_content_icon_imageview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_action_new_large"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/list_item_default_no_content_title_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_toRightOf="@id/list_item_default_no_content_image_backview"
+            android:paddingLeft="2dp"
+            android:paddingTop="5dp"
+            android:text="@string/default_no_content_title"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+        <TextView
+            android:id="@+id/list_item_default_no_content_subtitle_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/list_item_default_no_content_title_textview"
+            android:layout_margin="5dp"
+            android:layout_toRightOf="@id/list_item_default_no_content_image_backview"
+            android:paddingLeft="2dp"
+            android:text="@string/default_no_content_subtitle"
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

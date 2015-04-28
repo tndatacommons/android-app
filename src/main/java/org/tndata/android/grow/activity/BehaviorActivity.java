@@ -10,9 +10,11 @@ import org.tndata.android.grow.fragment.LearnMoreFragment;
 import org.tndata.android.grow.fragment.LearnMoreFragment.LearnMoreFragmentListener;
 import org.tndata.android.grow.model.Action;
 import org.tndata.android.grow.model.Behavior;
+import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.task.AddBehaviorTask;
 import org.tndata.android.grow.task.DeleteBehaviorTask;
+import org.tndata.android.grow.util.Constants;
 
 import android.app.Fragment;
 import android.os.AsyncTask;
@@ -30,6 +32,7 @@ public class BehaviorActivity extends ActionBarActivity implements
     private Toolbar mToolbar;
     private Behavior mBehavior;
     private Goal mGoal;
+    private Category mCategory;
     private BehaviorFragment mBehaviorFragment = null;
     private LearnMoreFragment mLearnMoreFragment = null;
     private ArrayList<Fragment> mFragmentStack = new ArrayList<Fragment>();
@@ -41,6 +44,7 @@ public class BehaviorActivity extends ActionBarActivity implements
 
         mBehavior = (Behavior) getIntent().getSerializableExtra("behavior");
         mGoal = (Goal) getIntent().getSerializableExtra("goal");
+        mCategory = (Category) getIntent().getSerializableExtra("category");
         if (mGoal.getBehaviors().contains(mBehavior)) {
             for (Behavior behavior : mGoal.getBehaviors()) {
                 if (behavior.getId() == mBehavior.getId()) {
@@ -86,7 +90,6 @@ public class BehaviorActivity extends ActionBarActivity implements
         behaviors.add(String.valueOf(behavior.getId()));
         new AddBehaviorTask(this, this, behaviors).executeOnExecutor(AsyncTask
                 .THREAD_POOL_EXECUTOR);
-
 
     }
 
@@ -173,6 +176,7 @@ public class BehaviorActivity extends ActionBarActivity implements
             }
         }
         ((GrowApplication) getApplication()).setGoals(goals);
+        setResult(Constants.BEHAVIOR_CHANGED_RESULT_CODE);
         if (mLearnMoreFragment != null) {
             mLearnMoreFragment.setBehavior(mBehavior);
         }
@@ -207,6 +211,7 @@ public class BehaviorActivity extends ActionBarActivity implements
             }
         }
         ((GrowApplication) getApplication()).setGoals(goals);
+        setResult(Constants.BEHAVIOR_CHANGED_RESULT_CODE);
     }
 
     @Override

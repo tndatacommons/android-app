@@ -60,6 +60,12 @@
     <string name="qol_next_button">NEXT</string>
     <string name="survey_open_ended_hint">answer</string>
 
+    <!-- MyGoalsFragment -->
+    <string name="default_no_content_title">What are your priorities?</string>
+    <string name="default_no_content_subtitle">Click the button below to begin</string>
+    <string name="category_goals">%1$s goals</string>
+    <string name="category_goals_add">Would you like to set a %1$s goal? Click here</string>
+
     <!-- BehaviorActivity -->
     <string name="learn_more_no_thanks">NO THANKS</string>
     <string name="learn_more_title_label">Learn more</string>

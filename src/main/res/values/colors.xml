@@ -12,15 +12,6 @@
     <color name="login_background">#87D37C</color>
     <color name="transparent_overlay">#30000000</color>
     <color name="image_background">#DEDEDE</color>
-    
-    <!-- Category Colors -->
-    <color name="category_color_one">#F64747</color>
-    <color name="category_color_two">#2196F3</color>
-    <color name="category_color_three">#2ECC71</color>
-    <color name="category_color_four">#F89406</color>
-    <color name="category_color_five">#D2527F</color>
-    <color name="category_color_six">#8E44AD</color>
-    <color name="category_color_seven">#59ABE3</color>
 
     <!-- List Rows -->
     <color name="list_row_selected_color">#87D37C</color>

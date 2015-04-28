@@ -13,11 +13,14 @@ import org.tndata.android.grow.ui.SpacingItemDecoration;
 import org.tndata.android.grow.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.grow.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
 import org.tndata.android.grow.ui.parallaxrecyclerview.ParallaxRecyclerAdapter.OnClickEvent;
+import org.tndata.android.grow.util.Constants;
 import org.tndata.android.grow.util.ImageCache;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,6 +35,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -50,7 +54,7 @@ public class GoalTryActivity extends ActionBarActivity implements
     static class TryGoalViewHolder extends RecyclerView.ViewHolder {
         public TryGoalViewHolder(View itemView) {
             super(itemView);
-            iconImageView = (CircleImageView) itemView
+            iconImageView = (ImageView) itemView
                     .findViewById(R.id.list_item_behavior_imageview);
             titleTextView = (TextView) itemView
                     .findViewById(R.id.list_item_behavior_title_textview);
@@ -58,15 +62,18 @@ public class GoalTryActivity extends ActionBarActivity implements
                     .findViewById(R.id.list_item_behavior_description_textview);
             noThanks = (Button) itemView.findViewById(R.id.list_item_behavior_no_thanks_button);
             tryIt = (Button) itemView.findViewById(R.id.list_item_behavior_try_it_button);
-            iconBackView = (View) itemView.findViewById(R.id.list_item_behavior_image_backview);
+            iconBackView = itemView.findViewById(R.id.list_item_behavior_image_backview);
+            iconContainerView = (RelativeLayout) itemView.findViewById(R.id
+                    .list_item_behavior_imageview_container);
         }
 
         TextView titleTextView;
         TextView descriptionTextView;
         Button noThanks;
         Button tryIt;
-        CircleImageView iconImageView;
+        ImageView iconImageView;
         View iconBackView;
+        RelativeLayout iconContainerView;
     }
 
     @Override
@@ -109,9 +116,21 @@ public class GoalTryActivity extends ActionBarActivity implements
                     ImageCache.instance(getApplicationContext()).loadBitmap(
                             ((TryGoalViewHolder) viewHolder).iconImageView,
                             behavior.getIconUrl(), false);
-                } else {
-                    ((TryGoalViewHolder) viewHolder).iconImageView
-                            .setImageResource(R.drawable.default_image);
+                }
+
+                GradientDrawable gradientDrawable = (GradientDrawable) ((TryGoalViewHolder)
+                        viewHolder)
+                        .iconContainerView.getBackground();
+                String colorString = mCategory.getColor();
+                if (colorString != null && !colorString.isEmpty()) {
+                    gradientDrawable.setColor(Color.parseColor(colorString));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        ((TryGoalViewHolder) viewHolder).iconContainerView.setBackground
+                                (gradientDrawable);
+                    } else {
+                        ((TryGoalViewHolder) viewHolder).iconContainerView
+                                .setBackgroundDrawable(gradientDrawable);
+                    }
                 }
 
                 ((TryGoalViewHolder) viewHolder).tryIt.setOnClickListener(new View
@@ -123,7 +142,8 @@ public class GoalTryActivity extends ActionBarActivity implements
                                 BehaviorActivity.class);
                         intent.putExtra("behavior", mBehaviorList.get(i));
                         intent.putExtra("goal", mGoal);
-                        startActivity(intent);
+                        intent.putExtra("category", mCategory);
+                        startActivityForResult(intent, Constants.VIEW_BEHAVIOR_REQUEST_CODE);
                     }
                 });
 
@@ -186,6 +206,8 @@ public class GoalTryActivity extends ActionBarActivity implements
                 v.findViewById(R.id.list_item_behavior_description_textview).setVisibility(View
                         .VISIBLE);
                 v.findViewById(R.id.list_item_behavior_imageview).setVisibility(View.GONE);
+                v.findViewById(R.id.list_item_behavior_imageview_container).setVisibility(View
+                        .GONE);
                 v.findViewById(R.id.list_item_behavior_image_backview).setVisibility(View.GONE);
             }
         });
@@ -197,6 +219,14 @@ public class GoalTryActivity extends ActionBarActivity implements
         }
         loadBehaviors();
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.VIEW_BEHAVIOR_REQUEST_CODE) {
+            setResult(resultCode);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void loadBehaviors() {

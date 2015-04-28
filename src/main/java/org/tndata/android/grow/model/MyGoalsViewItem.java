@@ -6,24 +6,25 @@ import org.tndata.android.grow.util.Constants;
 import java.io.Serializable;
 
 public class MyGoalsViewItem implements Serializable {
-    public static final int TYPE_GOAL = 0;
+    public static final int TYPE_CATEGORY = 0;
     public static final int TYPE_SURVEY_LIKERT = 1;
     public static final int TYPE_SURVEY_MULTICHOICE = 2;
     public static final int TYPE_SURVEY_BINARY = 3;
     public static final int TYPE_SURVEY_OPENENDED = 4;
+    public static final int TYPE_DEFAULT_NO_CONTENT = 5;
 
     private static final long serialVersionUID = 6477860168863580408L;
-    private Goal goal = null;
+    private Category category = null;
     private Survey survey = null;
-    private int type = -1;
+    private int type = TYPE_DEFAULT_NO_CONTENT;
 
-    public Goal getGoal() {
-        return goal;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setGoal(Goal goal) {
-        this.goal = goal;
-        setType(TYPE_GOAL);
+    public void setCategory(Category category) {
+        this.category = category;
+        setType(TYPE_CATEGORY);
     }
 
     public Survey getSurvey() {

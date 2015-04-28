@@ -174,7 +174,7 @@ public class ChooseCategoriesFragment extends Fragment implements
 
     private void loadCategories() {
         showProgress();
-        new CategoryLoaderTask(getActivity().getApplicationContext(), this)
+        new CategoryLoaderTask(this)
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                         ((GrowApplication) getActivity().getApplication())
                                 .getToken());

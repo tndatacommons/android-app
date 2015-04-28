@@ -7,6 +7,7 @@ import org.tndata.android.grow.model.Category;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +44,7 @@ public class ChooseCategoryAdapter extends ArrayAdapter<Category> {
         notifyDataSetChanged();
     }
 
-    @SuppressLint({ "InflateParams", "DefaultLocale" })
+    @SuppressLint({"InflateParams", "DefaultLocale"})
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View v = convertView;
@@ -54,8 +55,8 @@ public class ChooseCategoryAdapter extends ArrayAdapter<Category> {
         }
 
         final Category category = mItems.get(position);
-        if (category.getColor() != 0) {
-            v.setBackgroundColor(mContext.getResources().getColor(
+        if (category.getColor() != null && !category.getColor().isEmpty()) {
+            v.setBackgroundColor(Color.parseColor(
                     category.getColor()));
         }
 

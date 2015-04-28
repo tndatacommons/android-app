@@ -2,14 +2,16 @@ package org.tndata.android.grow.fragment;
 
 import org.tndata.android.grow.GrowApplication;
 import org.tndata.android.grow.R;
+import org.tndata.android.grow.activity.BehaviorActivity;
 import org.tndata.android.grow.activity.ChooseGoalsActivity;
 import org.tndata.android.grow.activity.GoalTryActivity;
+import org.tndata.android.grow.adapter.CategoryFragmentAdapter;
 import org.tndata.android.grow.adapter.MyGoalsAdapter;
+import org.tndata.android.grow.model.Behavior;
 import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.model.MyGoalsViewItem;
 import org.tndata.android.grow.model.Survey;
-import org.tndata.android.grow.task.SurveyResponseTask;
 import org.tndata.android.grow.ui.SpacingItemDecoration;
 import org.tndata.android.grow.ui.button.FloatingActionButton;
 import org.tndata.android.grow.util.Constants;
@@ -19,7 +21,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,19 +29,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class CategoryFragment extends Fragment implements MyGoalsAdapter.SurveyCompleteInterface {
+public class CategoryFragment extends Fragment implements CategoryFragmentAdapter
+        .CategoryFragmentAdapterInterface {
     private Category mCategory;
     private FloatingActionButton mFloatingActionButton;
-    private TextView mErrorTextView;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private MyGoalsAdapter mAdapter;
-    private ArrayList<MyGoalsViewItem> mItems = new ArrayList<MyGoalsViewItem>();
+    private CategoryFragmentAdapter mAdapter;
+    private ArrayList<Goal> mItems = new ArrayList<Goal>();
     private boolean mBroadcastIsRegistered = false;
     private CategoryFragmentListener mCallback;
 
@@ -76,8 +76,6 @@ public class CategoryFragment extends Fragment implements MyGoalsAdapter.SurveyC
                              Bundle savedInstanceState) {
         View v = getActivity().getLayoutInflater().inflate(
                 R.layout.fragment_category, container, false);
-        mErrorTextView = (TextView) v
-                .findViewById(R.id.category_error_textview);
         mFloatingActionButton = (FloatingActionButton) v.findViewById(R.id.category_fab_button);
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,8 +96,8 @@ public class CategoryFragment extends Fragment implements MyGoalsAdapter.SurveyC
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.addItemDecoration(new SpacingItemDecoration(30));
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new MyGoalsAdapter(getActivity().getApplicationContext(),
-                mItems, this);
+        mAdapter = new CategoryFragmentAdapter(getActivity().getApplicationContext(),
+                mItems, mCategory, this);
         mRecyclerView.setAdapter(mAdapter);
         registerReceivers();
     }
@@ -109,32 +107,9 @@ public class CategoryFragment extends Fragment implements MyGoalsAdapter.SurveyC
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setGoals();
-        mAdapter = new MyGoalsAdapter(getActivity().getApplicationContext(),
-                mItems, this);
+        mAdapter = new CategoryFragmentAdapter(getActivity().getApplicationContext(),
+                mItems, mCategory, this);
         mRecyclerView.setAdapter(mAdapter);
-        mAdapter.setOnClickEvent(new MyGoalsAdapter.OnClickEvent() {
-
-            @Override
-            public void onClick(View v, int position) {
-                MyGoalsViewItem item = mItems.get(position);
-                if (item.getType() == MyGoalsViewItem.TYPE_GOAL) {
-                    Goal goal = item.getGoal();
-                    Intent intent = new Intent(getActivity()
-                            .getApplicationContext(), GoalTryActivity.class);
-                    Log.d("Goal?",
-                            "id:" + goal.getId() + " title:" + goal.getTitle());
-                    intent.putExtra("goal", goal);
-                    intent.putExtra("category", mCategory);
-                    startActivity(intent);
-                }
-            }
-        });
-
-        if (mItems.isEmpty()) {
-            showError();
-        } else {
-            showList();
-        }
     }
 
     @Override
@@ -182,16 +157,6 @@ public class CategoryFragment extends Fragment implements MyGoalsAdapter.SurveyC
         }
     }
 
-    private void showError() {
-        mErrorTextView.setVisibility(View.VISIBLE);
-        mRecyclerView.setVisibility(View.GONE);
-    }
-
-    private void showList() {
-        mErrorTextView.setVisibility(View.GONE);
-        mRecyclerView.setVisibility(View.VISIBLE);
-    }
-
     private void addGoals() {
         Intent intent = new Intent(getActivity().getApplicationContext(),
                 ChooseGoalsActivity.class);
@@ -203,6 +168,8 @@ public class CategoryFragment extends Fragment implements MyGoalsAdapter.SurveyC
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d("Category Fragment", "onActivityResult");
         if (requestCode == Constants.CHOOSE_GOALS_REQUEST_CODE) {
+            mCallback.assignGoalsToCategories(true);
+        } else if (resultCode == Constants.BEHAVIOR_CHANGED_RESULT_CODE) {
             mCallback.assignGoalsToCategories(true);
         }
     }
@@ -218,11 +185,6 @@ public class CategoryFragment extends Fragment implements MyGoalsAdapter.SurveyC
         }
         setGoals();
         mAdapter.notifyDataSetChanged();
-        if (mItems.isEmpty()) {
-            showError();
-        } else {
-            showList();
-        }
     }
 
     private void setGoals() {
@@ -230,17 +192,27 @@ public class CategoryFragment extends Fragment implements MyGoalsAdapter.SurveyC
         ArrayList<Goal> goals = mCategory.getGoals();
         mItems.clear();
         if (goals != null && !goals.isEmpty()) {
-            for (Goal goal : goals) {
-                MyGoalsViewItem item = new MyGoalsViewItem();
-                item.setGoal(goal);
-                mItems.add(item);
-            }
+            mItems.addAll(goals);
         }
     }
 
     @Override
-    public void surveyCompleted(Survey survey) {
-        //empty for now - but it allows us to use the MyGoalsAdapter
+    public void chooseBehaviors(Goal goal) {
+        Intent intent = new Intent(getActivity()
+                .getApplicationContext(), GoalTryActivity.class);
+        intent.putExtra("goal", goal);
+        intent.putExtra("category", mCategory);
+        startActivity(intent);
+    }
+
+    @Override
+    public void viewBehavior(Goal goal, Behavior behavior) {
+        Intent intent = new Intent(getActivity().getApplicationContext(),
+                BehaviorActivity.class);
+        intent.putExtra("behavior", behavior);
+        intent.putExtra("goal", goal);
+        intent.putExtra("category", mCategory);
+        startActivityForResult(intent, Constants.VIEW_BEHAVIOR_REQUEST_CODE);
     }
 
 }

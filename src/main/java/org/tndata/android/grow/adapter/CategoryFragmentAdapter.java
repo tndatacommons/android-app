@@ -1,0 +1,128 @@
+package org.tndata.android.grow.adapter;
+
+
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import org.tndata.android.grow.R;
+import org.tndata.android.grow.model.Behavior;
+import org.tndata.android.grow.model.Category;
+import org.tndata.android.grow.model.Goal;
+import org.tndata.android.grow.ui.BehaviorListView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class CategoryFragmentAdapter extends
+        RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    public interface CategoryFragmentAdapterInterface {
+        public void chooseBehaviors(Goal goal);
+
+        public void viewBehavior(Goal goal, Behavior behavior);
+    }
+
+    static class CategoryGoalViewHolder extends RecyclerView.ViewHolder {
+        TextView titleTextView;
+        View circleView;
+        LinearLayout goalContainer;
+        LinearLayout container;
+
+        public CategoryGoalViewHolder(View view) {
+            super(view);
+            titleTextView = (TextView) view.findViewById(R.id
+                    .list_item_category_goal_title_textview);
+            circleView = view.findViewById(R.id.list_item_category_goal_circle_view);
+            goalContainer = (LinearLayout) view.findViewById(R.id
+                    .list_item_category_goal_goal_container);
+            container = (LinearLayout) view.findViewById(R.id.list_item_category_goal_container);
+        }
+    }
+
+    private Context mContext;
+    private Category mCategory;
+    private List<Goal> mItems;
+    private CategoryFragmentAdapterInterface mCallback;
+
+    public CategoryFragmentAdapter(Context context, List<Goal> objects, Category category,
+                                   CategoryFragmentAdapterInterface callback) {
+        if (objects == null) {
+            throw new IllegalArgumentException("Goals List must not be null");
+        }
+        this.mItems = objects;
+        this.mContext = context;
+        this.mCategory = category;
+        this.mCallback = callback;
+    }
+
+    public void updateEntries(List<Goal> items) {
+        mItems.clear();
+        mItems.addAll(items);
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public int getItemCount() {
+        return mItems.size();
+    }
+
+    @Override
+    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder,
+                                 final int position) {
+        final Goal goal = mItems.get(position);
+        ((CategoryGoalViewHolder) viewHolder).titleTextView.setText(goal.getTitle().toUpperCase());
+        GradientDrawable gradientDrawable = (GradientDrawable) ((CategoryGoalViewHolder)
+                viewHolder).circleView.getBackground();
+        String colorString = mCategory.getColor();
+        if (colorString != null && !colorString.isEmpty()) {
+            gradientDrawable.setColor(Color.parseColor(colorString));
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            ((CategoryGoalViewHolder) viewHolder).circleView.setBackground
+                    (gradientDrawable);
+        } else {
+            ((CategoryGoalViewHolder) viewHolder).circleView
+                    .setBackgroundDrawable(gradientDrawable);
+        }
+        ((CategoryGoalViewHolder) viewHolder).goalContainer.setOnClickListener(new View
+                .OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mCallback.chooseBehaviors(goal);
+            }
+        });
+        ArrayList<Behavior> behaviors = goal.getBehaviors();
+        if (behaviors != null && !behaviors.isEmpty()) {
+            for (final Behavior behavior : behaviors) {
+                BehaviorListView behaviorListView = new BehaviorListView(mContext);
+                behaviorListView.setBehavior(behavior, mCategory);
+                behaviorListView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mCallback.viewBehavior(goal, behavior);
+                    }
+                });
+                ((CategoryGoalViewHolder) viewHolder).container.addView(behaviorListView);
+            }
+        }
+
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup,
+                                                      int viewType) {
+
+        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+        View itemView = inflater.inflate(R.layout.list_item_category_goal, viewGroup, false);
+        return new CategoryGoalViewHolder(itemView);
+    }
+
+}

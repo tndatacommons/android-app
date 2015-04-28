@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -60,7 +59,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
     static class ChooseGoalViewHolder extends RecyclerView.ViewHolder {
         public ChooseGoalViewHolder(View itemView) {
             super(itemView);
-            iconImageView = (CircleImageView) itemView
+            iconImageView = (ImageView) itemView
                     .findViewById(R.id.list_item_choose_goal_icon_imageview);
             iconContainerView = (RelativeLayout) itemView.findViewById(R.id
                     .list_item_choose_goal_imageview_container);
@@ -73,7 +72,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         }
 
         TextView titleTextView;
-        CircleImageView iconImageView;
+        ImageView iconImageView;
         Button selectButton;
         Button moreInfoButton;
         RelativeLayout iconContainerView;
@@ -115,7 +114,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                         && !goal.getIconUrl().isEmpty()) {
                     ImageCache.instance(getApplicationContext()).loadBitmap(
                             ((ChooseGoalViewHolder) viewHolder).iconImageView,
-                            goal.getIconUrl(), false, false);
+                            goal.getIconUrl(), false);
                 }
                 if (mSelectedGoals.contains(goal)) {
                     ((ChooseGoalViewHolder) viewHolder).selectButton.setBackgroundResource(R
@@ -148,8 +147,18 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                 GradientDrawable gradientDrawable = (GradientDrawable) ((ChooseGoalViewHolder)
                         viewHolder)
                         .iconContainerView.getBackground();
-                String colorString = "#3639E3"; //TODO get a color string from the category
-                gradientDrawable.setColor(Color.parseColor(colorString));
+                String colorString = mCategory.getColor();
+                Log.d("color",colorString);
+                if (colorString != null && !colorString.isEmpty()) {
+                    gradientDrawable.setColor(Color.parseColor(colorString));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        ((ChooseGoalViewHolder) viewHolder).iconContainerView.setBackground
+                                (gradientDrawable);
+                    } else {
+                        ((ChooseGoalViewHolder) viewHolder).iconContainerView
+                                .setBackgroundDrawable(gradientDrawable);
+                    }
+                }
             }
 
             @Override

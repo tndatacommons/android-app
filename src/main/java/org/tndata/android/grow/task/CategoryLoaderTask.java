@@ -5,14 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.tndata.android.grow.R;
 import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.util.Constants;
 import org.tndata.android.grow.util.NetworkHelper;
@@ -21,8 +18,6 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import android.content.Context;
-import android.content.res.TypedArray;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
@@ -30,7 +25,6 @@ import android.util.Log;
 public class CategoryLoaderTask extends
         AsyncTask<String, Void, ArrayList<Category>> {
     private CategoryLoaderListener mCallback;
-    private Context mContext;
     private static Gson gson = new GsonBuilder().setFieldNamingPolicy(
             FieldNamingPolicy.IDENTITY).create();
 
@@ -38,8 +32,7 @@ public class CategoryLoaderTask extends
         public void categoryLoaderFinished(ArrayList<Category> categories);
     }
 
-    public CategoryLoaderTask(Context context, CategoryLoaderListener callback) {
-        mContext = context;
+    public CategoryLoaderTask(CategoryLoaderListener callback) {
         mCallback = callback;
     }
 
@@ -92,23 +85,11 @@ public class CategoryLoaderTask extends
 
             // Else this was a get for all categories
             JSONArray categoryArray = jObject.optJSONArray("results");
-            TypedArray ta = mContext.getResources().obtainTypedArray(
-                    R.array.category_colors);
-            int[] colorIds = new int[ta.length()];
-            for (int i = 0; i < ta.length(); i++) {
-                colorIds[i] = ta.getResourceId(i, 0);
-            }
-            ta.recycle();
-            int colorCounter = 0;
+
             if (categoryArray != null) {
                 for (int i = 0; i < categoryArray.length(); i++) {
                     Category category = gson.fromJson(
                             categoryArray.getString(i), Category.class);
-                    category.setColor(colorIds[colorCounter]);
-                    colorCounter++;
-                    if (colorCounter >= colorIds.length) {
-                        colorCounter = 0;
-                    }
                     categories.add(category);
                 }
             }
