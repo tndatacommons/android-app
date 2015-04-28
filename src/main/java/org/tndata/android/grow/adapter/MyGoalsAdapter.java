@@ -303,8 +303,7 @@ public class MyGoalsAdapter extends
                 ((MultiChoiceSurveyViewHolder) viewHolder).titleTextView.setText(survey.getText());
                 if (survey.getInstructions().isEmpty()) {
                     ((MultiChoiceSurveyViewHolder) viewHolder).instructionsTextView.setVisibility
-                            (View
-                                    .GONE);
+                            (View.GONE);
                 } else {
                     ((MultiChoiceSurveyViewHolder) viewHolder).instructionsTextView.setText(survey
                             .getInstructions());

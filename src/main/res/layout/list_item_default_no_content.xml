@@ -35,11 +35,11 @@
             android:contentDescription="@string/goal_image_description"
             android:background="@drawable/circle">
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <ImageView
                 android:id="@+id/list_item_default_no_content_icon_imageview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_new_large"
+                android:src="@drawable/ic_action_grow_white"
                 android:layout_centerInParent="true"/>
         </RelativeLayout>
 

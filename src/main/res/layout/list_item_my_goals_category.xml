@@ -39,7 +39,10 @@
                 android:layout_width="@dimen/category_small_icon_image_size"
                 android:layout_height="@dimen/category_small_icon_image_size"
                 android:background="@drawable/circle"
-                android:layout_margin="3dp"/>
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="11dp"/>
 
             <TextView
                 android:id="@+id/list_item_my_goals_category_add_textview"

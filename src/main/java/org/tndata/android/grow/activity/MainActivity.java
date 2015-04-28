@@ -24,6 +24,7 @@ import org.tndata.android.grow.util.ImageCache;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -45,10 +46,11 @@ public class MainActivity extends ActionBarActivity implements
         GetUserCategoriesListener, GetUserGoalsListener, GetUserBehaviorsListener,
         MyGoalsFragmentListener, CategoryFragmentListener {
     private static final int IMPORTANT_TO_ME = 0;
-    private static final int MY_GOALS = 1;
-    private static final int MY_PRIVACY = 2;
-    private static final int SETTINGS = 3;
-    private static final int DRAWER_COUNT = 4;
+    private static final int MY_PRIORITIES = 1;
+    private static final int MYSELF = 2;
+    private static final int MY_PRIVACY = 3;
+    private static final int SETTINGS = 4;
+    private static final int DRAWER_COUNT = 5;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mDrawerList;
@@ -186,14 +188,17 @@ public class MainActivity extends ActionBarActivity implements
             switch (position) {
                 case IMPORTANT_TO_ME:
                     break;
-                case MY_GOALS:
+                case MY_PRIORITIES:
+                    break;
+                case MYSELF:
+                    intent = new Intent(getApplicationContext(), UserProfileActivity.class);
+                    startActivity(intent);
                     break;
                 case MY_PRIVACY:
                     break;
 
                 case SETTINGS:
-                    intent = new Intent(getApplicationContext(),
-                            SettingsActivity.class);
+                    intent = new Intent(getApplicationContext(), SettingsActivity.class);
                     startActivityForResult(intent, Constants.SETTINGS_REQUEST_CODE);
                     break;
             }
@@ -207,19 +212,41 @@ public class MainActivity extends ActionBarActivity implements
             DrawerItem item = new DrawerItem();
             switch (i) {
                 case IMPORTANT_TO_ME:
-                    item.drawable = getResources().getDrawable(
-                            R.drawable.ic_arrow_back_white);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        item.drawable = getResources().getDrawable(
+                                R.drawable.ic_favorite_grey, null);
+                    } else {
+                        item.drawable = getResources().getDrawable(R.drawable.ic_favorite_grey);
+                    }
                     item.text = getResources().getString(
                             R.string.action_important_to_me);
                     break;
-                case MY_GOALS:
-                    item.drawable = getResources().getDrawable(
-                            R.drawable.ic_arrow_back_white);
-                    item.text = getResources().getString(R.string.action_my_goals);
+                case MY_PRIORITIES:
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        item.drawable = getResources().getDrawable(
+                                R.drawable.ic_check_circle_grey, null);
+                    } else {
+                        item.drawable = getResources().getDrawable(R.drawable.ic_check_circle_grey);
+                    }
+                    item.text = getResources().getString(
+                            R.string.action_my_priorities);
+                    break;
+                case MYSELF:
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        item.drawable = getResources().getDrawable(
+                                R.drawable.ic_face_grey, null);
+                    } else {
+                        item.drawable = getResources().getDrawable(R.drawable.ic_face_grey);
+                    }
+                    item.text = getResources().getString(R.string.action_myself);
                     break;
                 case MY_PRIVACY:
-                    item.drawable = getResources().getDrawable(
-                            R.drawable.ic_arrow_back_white);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        item.drawable = getResources().getDrawable(
+                                R.drawable.ic_info_grey, null);
+                    } else {
+                        item.drawable = getResources().getDrawable(R.drawable.ic_info_grey);
+                    }
                     item.text = getResources()
                             .getString(R.string.action_my_privacy);
                     break;

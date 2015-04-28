@@ -7,11 +7,11 @@
     <!-- MainActivity -->
     <string name="action_settings">Settings</string>
     <string name="action_important_to_me">Important to Me</string>
-    <string name="action_my_goals">My Goals</string>
+    <string name="action_myself">Myself</string>
+    <string name="action_my_priorities">My Priorities</string>
     <string name="action_my_privacy">My Privacy</string>
     <string name="nav_drawer_action">Grow</string>
     <string name="my_goals_title">My Interests</string>
-    <string name="my_goals_error">Either you have no goals or there was an error loading them</string>
 
     <!-- LoginActivity -->
     <string name="terms_title">Terms and Conditions</string>
