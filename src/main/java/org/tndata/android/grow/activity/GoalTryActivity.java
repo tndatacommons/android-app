@@ -48,7 +48,7 @@ public class GoalTryActivity extends ActionBarActivity implements
     private ParallaxRecyclerAdapter<Behavior> mAdapter;
     private RecyclerView mRecyclerView;
     private View mFakeHeader;
-    private ImageView mHeaderImageView;
+    private View mHeaderView;
     private Category mCategory = null;
 
     static class TryGoalViewHolder extends RecyclerView.ViewHolder {
@@ -60,20 +60,13 @@ public class GoalTryActivity extends ActionBarActivity implements
                     .findViewById(R.id.list_item_behavior_title_textview);
             descriptionTextView = (TextView) itemView
                     .findViewById(R.id.list_item_behavior_description_textview);
-            noThanks = (Button) itemView.findViewById(R.id.list_item_behavior_no_thanks_button);
             tryIt = (Button) itemView.findViewById(R.id.list_item_behavior_try_it_button);
-            iconBackView = itemView.findViewById(R.id.list_item_behavior_image_backview);
-            iconContainerView = (RelativeLayout) itemView.findViewById(R.id
-                    .list_item_behavior_imageview_container);
         }
 
         TextView titleTextView;
         TextView descriptionTextView;
-        Button noThanks;
         Button tryIt;
         ImageView iconImageView;
-        View iconBackView;
-        RelativeLayout iconContainerView;
     }
 
     @Override
@@ -118,21 +111,6 @@ public class GoalTryActivity extends ActionBarActivity implements
                             behavior.getIconUrl(), false);
                 }
 
-                GradientDrawable gradientDrawable = (GradientDrawable) ((TryGoalViewHolder)
-                        viewHolder)
-                        .iconContainerView.getBackground();
-                String colorString = mCategory.getColor();
-                if (colorString != null && !colorString.isEmpty()) {
-                    gradientDrawable.setColor(Color.parseColor(colorString));
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        ((TryGoalViewHolder) viewHolder).iconContainerView.setBackground
-                                (gradientDrawable);
-                    } else {
-                        ((TryGoalViewHolder) viewHolder).iconContainerView
-                                .setBackgroundDrawable(gradientDrawable);
-                    }
-                }
-
                 ((TryGoalViewHolder) viewHolder).tryIt.setOnClickListener(new View
                         .OnClickListener() {
 
@@ -147,20 +125,6 @@ public class GoalTryActivity extends ActionBarActivity implements
                     }
                 });
 
-//                ((TryGoalViewHolder) viewHolder).noThanks.setOnClickListener(new View
-//                        .OnClickListener() {
-//
-//
-//                    @Override
-//                    public void onClick(View v) {
-//                        ((TryGoalViewHolder) viewHolder).noThanks.setVisibility(View.GONE);
-//                        ((TryGoalViewHolder) viewHolder).tryIt.setVisibility(View.GONE);
-//                        ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
-//                                .GONE);
-//                        ((TryGoalViewHolder) viewHolder).iconImageView.setVisibility(View
-// .VISIBLE);
-//                    }
-//                });
             }
 
             @Override
@@ -178,7 +142,9 @@ public class GoalTryActivity extends ActionBarActivity implements
 
         mFakeHeader = getLayoutInflater().inflate(R.layout.header_try_goal,
                 mRecyclerView, false);
-        mHeaderImageView = (ImageView) findViewById(R.id.goal_try_material_imageview);
+        TextView goalDescription = (TextView) mFakeHeader.findViewById(R.id.goal_try_label);
+        goalDescription.setText(mGoal.getDescription());
+        mHeaderView = findViewById(R.id.goal_try_material_view);
         manager.setHeaderIncrementFixer(mFakeHeader);
         mAdapter.setShouldClipView(false);
         mAdapter.setParallaxHeader(mFakeHeader, mRecyclerView);
@@ -191,7 +157,7 @@ public class GoalTryActivity extends ActionBarActivity implements
                     Drawable c = mToolbar.getBackground();
                     c.setAlpha(Math.round(percentage * 255));
                     mToolbar.setBackground(c);
-                    mHeaderImageView.setTranslationY(-offset * 0.5f);
+                    mHeaderView.setTranslationY(-offset * 0.5f);
 
                 }
             });
@@ -201,21 +167,15 @@ public class GoalTryActivity extends ActionBarActivity implements
             @Override
             public void onClick(View v, int position) {
                 v.findViewById(R.id.list_item_behavior_try_it_button).setVisibility(View.VISIBLE);
-//                v.findViewById(R.id.list_item_behavior_no_thanks_button).setVisibility(View
-//                        .VISIBLE);
                 v.findViewById(R.id.list_item_behavior_description_textview).setVisibility(View
                         .VISIBLE);
                 v.findViewById(R.id.list_item_behavior_imageview).setVisibility(View.GONE);
-                v.findViewById(R.id.list_item_behavior_imageview_container).setVisibility(View
-                        .GONE);
-                v.findViewById(R.id.list_item_behavior_image_backview).setVisibility(View.GONE);
             }
         });
         mRecyclerView.setAdapter(mAdapter);
-        if (mCategory != null && mCategory.getImageUrl() != null && !mCategory.getImageUrl()
-                .isEmpty()) {
-            ImageCache.instance(getApplicationContext()).loadBitmap(
-                    mHeaderImageView, mCategory.getImageUrl(), false, false);
+        if (mCategory != null && !mCategory.getColor().isEmpty()) {
+            mHeaderView.setBackgroundColor(Color.parseColor(mCategory.getColor()));
+            mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }
         loadBehaviors();
 

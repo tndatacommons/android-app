@@ -17,6 +17,7 @@ import org.tndata.android.grow.task.DeleteBehaviorTask;
 import org.tndata.android.grow.util.Constants;
 
 import android.app.Fragment;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -61,6 +62,10 @@ public class BehaviorActivity extends ActionBarActivity implements
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        if (mCategory != null && !mCategory.getColor().isEmpty()) {
+            mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
+        }
 
         swapFragments(BEHAVIOR, true);
     }
