@@ -106,11 +106,13 @@ public class NetworkHelper {
             HttpContext responseHandler = new BasicHttpContext();
             httpResponse = client.execute(httpDelete, responseHandler);
             int code = httpResponse.getStatusLine().getStatusCode();
-            if (code != 201 && code != 200) {
+            if (code != 201 && code != 200 && code != 204) {
                 return null;
             }
             HttpEntity getResponseEntity = httpResponse.getEntity();
-            return getResponseEntity.getContent();
+            if (getResponseEntity != null) {
+                return getResponseEntity.getContent();
+            }
         } catch (IOException e) {
             httpDelete.abort();
             e.printStackTrace();

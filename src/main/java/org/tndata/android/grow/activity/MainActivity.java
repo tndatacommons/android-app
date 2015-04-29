@@ -8,10 +8,13 @@ import org.tndata.android.grow.adapter.DrawerAdapter;
 import org.tndata.android.grow.adapter.MainViewPagerAdapter;
 import org.tndata.android.grow.fragment.CategoryFragment.CategoryFragmentListener;
 import org.tndata.android.grow.fragment.MyGoalsFragment.MyGoalsFragmentListener;
+import org.tndata.android.grow.model.Action;
 import org.tndata.android.grow.model.Behavior;
 import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.DrawerItem;
 import org.tndata.android.grow.model.Goal;
+import org.tndata.android.grow.task.GetUserActionsTask;
+import org.tndata.android.grow.task.GetUserActionsTask.GetUserActionsListener;
 import org.tndata.android.grow.task.GetUserBehaviorsTask;
 import org.tndata.android.grow.task.GetUserBehaviorsTask.GetUserBehaviorsListener;
 import org.tndata.android.grow.task.GetUserCategoriesTask;
@@ -44,7 +47,7 @@ import com.astuetz.PagerSlidingTabStrip;
 
 public class MainActivity extends ActionBarActivity implements
         GetUserCategoriesListener, GetUserGoalsListener, GetUserBehaviorsListener,
-        MyGoalsFragmentListener, CategoryFragmentListener {
+        GetUserActionsListener, MyGoalsFragmentListener, CategoryFragmentListener {
     private static final int IMPORTANT_TO_ME = 0;
     private static final int MY_PRIORITIES = 1;
     private static final int MYSELF = 2;
@@ -306,6 +309,8 @@ public class MainActivity extends ActionBarActivity implements
         ((GrowApplication) getApplication()).setGoals(goals);
         new GetUserBehaviorsTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                 ((GrowApplication) getApplication()).getToken());
+        new GetUserActionsTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                ((GrowApplication) getApplication()).getToken());
     }
 
     @Override
@@ -330,6 +335,11 @@ public class MainActivity extends ActionBarActivity implements
         }
         assignGoalsToCategories(false);
         showGoals();
+    }
+
+    @Override
+    public void actionsLoaded(ArrayList<Action> actions) {
+        ((GrowApplication) getApplication()).setActions(actions);
     }
 
     @Override

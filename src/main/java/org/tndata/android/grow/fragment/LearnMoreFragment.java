@@ -3,6 +3,7 @@ package org.tndata.android.grow.fragment;
 import org.tndata.android.grow.GrowApplication;
 import org.tndata.android.grow.R;
 import org.tndata.android.grow.model.Behavior;
+import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.Goal;
 
 import android.app.Activity;
@@ -14,11 +15,14 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class LearnMoreFragment extends Fragment {
     private Behavior mBehavior;
+    private Category mCategory;
     private ImageView mAddImageView;
+    private ProgressBar mProgressBar;
     private LearnMoreFragmentListener mCallback;
 
     public interface LearnMoreFragmentListener {
@@ -33,10 +37,15 @@ public class LearnMoreFragment extends Fragment {
         mBehavior = behavior;
     }
 
-    public static LearnMoreFragment newInstance(Behavior behavior) {
+    public void setCategory(Category category) {
+        mCategory = category;
+    }
+
+    public static LearnMoreFragment newInstance(Behavior behavior, Category category) {
         LearnMoreFragment fragment = new LearnMoreFragment();
         Bundle args = new Bundle();
         args.putSerializable("behavior", behavior);
+        args.putSerializable("category", category);
         fragment.setArguments(args);
         return fragment;
     }
@@ -46,6 +55,8 @@ public class LearnMoreFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mBehavior = getArguments() != null ? ((Behavior) getArguments().get(
                 "behavior")) : new Behavior();
+        mCategory = getArguments() != null ? ((Category) getArguments().get(
+                "category")) : new Category();
     }
 
     @Override
@@ -57,12 +68,16 @@ public class LearnMoreFragment extends Fragment {
                 .findViewById(R.id.learn_more_behavior_title_textview);
         TextView descriptionTextView = (TextView) v
                 .findViewById(R.id.learn_more_description_textview);
+        mProgressBar = (ProgressBar) v.findViewById(R.id.learn_more_progressbar);
+        mProgressBar.setVisibility(View.GONE);
         mAddImageView = (ImageView) v
                 .findViewById(R.id.learn_more_add_imageview);
         mAddImageView.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
+                mProgressBar.setVisibility(View.VISIBLE);
+                mAddImageView.setEnabled(false);
                 for (Goal goal : ((GrowApplication) getActivity().getApplication()).getGoals()) {
                     if (goal.getBehaviors().contains(mBehavior)) {
                         mCallback.deleteBehavior(mBehavior);
@@ -116,9 +131,13 @@ public class LearnMoreFragment extends Fragment {
         for (Goal goal : ((GrowApplication) getActivity().getApplication()).getGoals()) {
             if (goal.getBehaviors().contains(mBehavior)) {
                 mAddImageView.setImageResource(R.drawable.ic_selected_white);
+                mProgressBar.setVisibility(View.GONE);
+                mAddImageView.setEnabled(true);
                 return;
             }
         }
         mAddImageView.setImageResource(R.drawable.ic_action_new_large);
+        mProgressBar.setVisibility(View.GONE);
+        mAddImageView.setEnabled(true);
     }
 }

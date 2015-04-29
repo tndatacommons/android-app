@@ -6,6 +6,7 @@ import org.tndata.android.grow.GrowApplication;
 import org.tndata.android.grow.R;
 import org.tndata.android.grow.model.Action;
 import org.tndata.android.grow.model.Behavior;
+import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.task.ActionLoaderTask;
 import org.tndata.android.grow.task.ActionLoaderTask.ActionLoaderListener;
@@ -23,12 +24,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class BehaviorFragment extends Fragment implements ActionLoaderListener {
     private Behavior mBehavior;
+    private Category mCategory;
     private LinearLayout mActionsContainer;
     private ImageView mAddImageView;
+    private ProgressBar mProgressBar;
     private BehaviorFragmentListener mCallback;
     private ArrayList<Action> mActionList;
 
@@ -48,10 +52,15 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener {
         mBehavior = behavior;
     }
 
-    public static BehaviorFragment newInstance(Behavior behavior) {
+    public void setCategory(Category category) {
+        mCategory = category;
+    }
+
+    public static BehaviorFragment newInstance(Behavior behavior, Category category) {
         BehaviorFragment fragment = new BehaviorFragment();
         Bundle args = new Bundle();
         args.putSerializable("behavior", behavior);
+        args.putSerializable("category", category);
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,6 +70,8 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener {
         super.onCreate(savedInstanceState);
         mBehavior = getArguments() != null ? ((Behavior) getArguments().get(
                 "behavior")) : new Behavior();
+        mCategory = getArguments() != null ? ((Category) getArguments().get(
+                "category")) : new Category();
     }
 
     @Override
@@ -89,11 +100,14 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener {
                 mCallback.learnMore();
             }
         });
+        mProgressBar = (ProgressBar) v.findViewById(R.id.behavior_progressbar);
         mAddImageView = (ImageView) v.findViewById(R.id.behavior_add_imageview);
         mAddImageView.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
+                mProgressBar.setVisibility(View.VISIBLE);
+                mAddImageView.setEnabled(false);
                 for (Goal goal : ((GrowApplication) getActivity().getApplication()).getGoals()) {
                     if (goal.getBehaviors().contains(mBehavior)) {
                         mCallback.deleteBehavior(mBehavior);
@@ -151,9 +165,8 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener {
     private void drawActions() {
         for (Action action : mActionList) {
             Log.d("Action", "*draw name:" + action.getTitle());
-            ActionCellView acv = new ActionCellView(getActivity()
-                    .getApplicationContext());
-            acv.setAction(action);
+            ActionCellView acv = new ActionCellView(getActivity());
+            acv.setAction(action, mCategory);
             acv.setOnClickListener(new OnClickListener() {
 
                 @Override
@@ -179,9 +192,13 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener {
         for (Goal goal : ((GrowApplication) getActivity().getApplication()).getGoals()) {
             if (goal.getBehaviors().contains(mBehavior)) {
                 mAddImageView.setImageResource(R.drawable.ic_selected_white);
+                mProgressBar.setVisibility(View.GONE);
+                mAddImageView.setEnabled(true);
                 return;
             }
         }
+        mProgressBar.setVisibility(View.GONE);
+        mAddImageView.setEnabled(true);
         mAddImageView.setImageResource(R.drawable.ic_action_new_large);
     }
 }

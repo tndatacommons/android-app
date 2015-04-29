@@ -133,13 +133,13 @@ public class BehaviorActivity extends ActionBarActivity implements
         switch (index) {
             case BEHAVIOR:
                 if (mBehaviorFragment == null) {
-                    mBehaviorFragment = BehaviorFragment.newInstance(mBehavior);
+                    mBehaviorFragment = BehaviorFragment.newInstance(mBehavior, mCategory);
                 }
                 fragment = mBehaviorFragment;
                 break;
             case LEARN_MORE:
                 if (mLearnMoreFragment == null) {
-                    mLearnMoreFragment = LearnMoreFragment.newInstance(mBehavior);
+                    mLearnMoreFragment = LearnMoreFragment.newInstance(mBehavior, mCategory);
                 }
                 fragment = mLearnMoreFragment;
                 break;

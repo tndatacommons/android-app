@@ -2,18 +2,19 @@ package org.tndata.android.grow;
 
 import java.util.ArrayList;
 
+import org.tndata.android.grow.model.Action;
 import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.model.User;
 
 import android.app.Application;
-import android.util.Log;
 
 public class GrowApplication extends Application {
     private String mToken;
     private User mUser;
     private ArrayList<Category> mCategories = null;
     private ArrayList<Goal> mGoals = null;
+    private ArrayList<Action> mActions = new ArrayList<Action>();
 
     public GrowApplication() {
         super();
@@ -49,8 +50,13 @@ public class GrowApplication extends Application {
 
     public void setGoals(ArrayList<Goal> goals) {
         mGoals = goals;
-        for (Goal goal : mGoals) {
-            Log.e("GOAL", "APP:" + goal.getTitle());
-        }
+    }
+
+    public ArrayList<Action> getActions() {
+        return mActions;
+    }
+
+    public void setActions(ArrayList<Action> actions) {
+        mActions = actions;
     }
 }

@@ -1,21 +1,39 @@
 package org.tndata.android.grow.ui;
 
+import org.tndata.android.grow.GrowApplication;
 import org.tndata.android.grow.R;
 import org.tndata.android.grow.model.Action;
+import org.tndata.android.grow.model.Category;
+import org.tndata.android.grow.task.AddActionTask;
+import org.tndata.android.grow.task.DeleteActionTask;
 import org.tndata.android.grow.util.ImageCache;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class ActionCellView extends RelativeLayout {
+import java.util.ArrayList;
+
+public class ActionCellView extends RelativeLayout implements AddActionTask
+        .AddActionTaskListener, DeleteActionTask.DeleteActionTaskListener {
     private ImageView mImageView;
+    private ImageView mAddImageView;
     private TextView mTitleTextView;
     private TextView mDescriptionTextView;
+    private RelativeLayout mCircleView;
+    private ProgressBar mProgressBar;
     private Action mAction;
+    private Category mCategory;
+    private Context mContext;
 
     public ActionCellView(Context context) {
         this(context, null);
@@ -31,24 +49,70 @@ public class ActionCellView extends RelativeLayout {
     }
 
     private void initViews(Context context, AttributeSet attrs) {
+        mContext = context;
 
         View view = inflate(context, R.layout.view_action_cell, this);
 
-        mImageView = (ImageView) view.findViewById(R.id.view_action_image);
+        mImageView = (ImageView) view.findViewById(R.id.view_action_imageview);
+        mAddImageView = (ImageView) view.findViewById(R.id.view_action_add_imageview);
+        mAddImageView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mProgressBar.setVisibility(View.VISIBLE);
+                mAddImageView.setEnabled(false);
+                if (mContext instanceof Activity) {
+                    ArrayList<Action> actions = ((GrowApplication) ((Activity) mContext)
+                            .getApplication()
+                    ).getActions();
+                    if (!actions.contains(mAction)) {
+                        addUserAction();
+                    } else {
+                        deleteUserAction();
+                    }
+                }
+            }
+        });
         mTitleTextView = (TextView) view
                 .findViewById(R.id.view_action_title_textview);
         mDescriptionTextView = (TextView) view
                 .findViewById(R.id.view_action_description_textview);
+        mCircleView = (RelativeLayout) view.findViewById(R.id.view_action_circle_container);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.view_action_progressbar);
         if (mAction != null) {
             updateUi();
         }
     }
 
+    public void setAction(Action action, Category category) {
+        mCategory = category;
+        setAction(action);
+    }
+
     public void setAction(Action action) {
+        if (mContext instanceof Activity) {
+            ArrayList<Action> actions = ((GrowApplication) ((Activity) mContext).getApplication()
+            ).getActions();
+            for (Action userAction : actions) {
+                if (userAction.getId() == action.getId()) {
+                    action.setMappingId(userAction.getMappingId());
+                    break;
+                }
+            }
+        }
         mAction = action;
         if (mTitleTextView != null) {
             updateUi();
         }
+    }
+
+    private void addUserAction() {
+        new AddActionTask(mContext, this, mAction).executeOnExecutor(AsyncTask
+                .THREAD_POOL_EXECUTOR);
+    }
+
+    private void deleteUserAction() {
+        new DeleteActionTask(mContext, this, String.valueOf(mAction.getMappingId()))
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private void updateUi() {
@@ -59,6 +123,19 @@ public class ActionCellView extends RelativeLayout {
                 ImageCache.instance(getContext()).loadBitmap(mImageView,
                         mAction.getIconUrl(), false);
             }
+            if (mCategory != null && !mCategory.getColor().isEmpty()) {
+                GradientDrawable gradientDrawable = (GradientDrawable) mCircleView.getBackground();
+                String colorString = mCategory.getColor();
+                if (colorString != null && !colorString.isEmpty()) {
+                    gradientDrawable.setColor(Color.parseColor(colorString));
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    mCircleView.setBackground(gradientDrawable);
+                } else {
+                    mCircleView.setBackgroundDrawable(gradientDrawable);
+                }
+            }
+            updateImage();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -66,5 +143,49 @@ public class ActionCellView extends RelativeLayout {
 
     public Action getAction() {
         return mAction;
+    }
+
+    public void updateImage() {
+        if (mContext instanceof Activity) {
+            ArrayList<Action> actions = ((GrowApplication) ((Activity) mContext).getApplication()
+            ).getActions();
+            if (actions.contains(mAction)) {
+                mAddImageView.setImageResource(R.drawable.ic_selected_white);
+            } else {
+                mAddImageView.setImageResource(R.drawable.ic_action_new_large);
+            }
+        }
+    }
+
+    @Override
+    public void actionAdded(Action action) {
+        mProgressBar.setVisibility(View.GONE);
+        mAddImageView.setEnabled(true);
+        if (action == null) {
+            return;
+        }
+
+        mAction = action;
+        if (mContext instanceof Activity) {
+            ArrayList<Action> actions = ((GrowApplication) ((Activity) mContext).getApplication()
+            ).getActions();
+
+            actions.add(mAction);
+            ((GrowApplication) ((Activity) mContext).getApplication()).setActions(actions);
+        }
+        updateImage();
+    }
+
+    @Override
+    public void actionDeleted() {
+        mProgressBar.setVisibility(View.GONE);
+        mAddImageView.setEnabled(true);
+        if (mContext instanceof Activity) {
+            ArrayList<Action> actions = ((GrowApplication) ((Activity) mContext).getApplication()
+            ).getActions();
+            actions.remove(mAction);
+            ((GrowApplication) ((Activity) mContext).getApplication()).setActions(actions);
+        }
+        updateImage();
     }
 }

@@ -11,7 +11,7 @@
     <dimen name="category_grid_column_width">140dp</dimen>
     <dimen name="goal_icon_image_size">85dp</dimen>
     <dimen name="category_small_icon_image_size">35dp</dimen>
-    <dimen name="action_item_image_size">55dp</dimen>
+    <dimen name="action_item_image_size">35dp</dimen>
     <dimen name="behavior_fragments_top_padding">100dp</dimen>
     <dimen name="cardview_corner_radius">2dp</dimen>
     <dimen name="login_header_size">175dp</dimen>

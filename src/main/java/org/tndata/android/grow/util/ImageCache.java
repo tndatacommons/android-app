@@ -24,13 +24,14 @@ public class ImageCache {
 
     public static ImageCache instance(Context context) {
         mContext = context;
-        if (mImageCache != null)
+        if (mImageCache != null) {
             return mImageCache;
-        else
+        } else {
             mImageCache = new ImageCache();
+        }
 
         mPlaceHolderBitmap = BitmapFactory.decodeResource(
-                mContext.getResources(), R.drawable.default_image);
+                mContext.getResources(), R.drawable.ic_action_grow_white);
         return mImageCache;
 
     }
@@ -71,7 +72,8 @@ public class ImageCache {
         loadBitmap(imageView, id, flinging, true);
     }
 
-    public void loadBitmap(ImageView imageView, String id, boolean flinging, boolean usePlaceholder) {
+    public void loadBitmap(ImageView imageView, String id, boolean flinging,
+                           boolean usePlaceholder) {
         final Bitmap bitmap = getBitmapFromMemCache(id);
         if (bitmap != null) {
             imageView.setImageBitmap(bitmap);

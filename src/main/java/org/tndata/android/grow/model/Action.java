@@ -6,6 +6,7 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
 
     private static final long serialVersionUID = 2919447130236951923L;
     private Behavior behavior = null;
+    private int behavior_id = -1;
     private int sequence_order = -1;
     private String narrative_block = "";
     private String external_resource = "";
@@ -17,9 +18,9 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
     }
 
     public Action(int id, int order, String title, String titleSlug,
-            String description, int sequenceOrder, String narrativeBlock,
-            String externalResource, String notificationText, String iconUrl,
-            String imageUrl) {
+                  String description, int sequenceOrder, String narrativeBlock,
+                  String externalResource, String notificationText, String iconUrl,
+                  String imageUrl, int behaviorId) {
         super(id, title, titleSlug, description);
         this.sequence_order = sequenceOrder;
         this.narrative_block = narrativeBlock;
@@ -27,12 +28,13 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
         this.notification_text = notificationText;
         this.icon_url = iconUrl;
         this.image_url = imageUrl;
+        this.behavior_id = behaviorId;
     }
 
     public Action(int id, int order, String title, String titleSlug,
-            String description, Behavior behavior, int sequenceOrder,
-            String narrativeBlock, String externalResource,
-            String notificationText, String iconUrl, String imageUrl) {
+                  String description, Behavior behavior, int sequenceOrder,
+                  String narrativeBlock, String externalResource,
+                  String notificationText, String iconUrl, String imageUrl, int behaviorId) {
         super(id, title, titleSlug, description);
         this.behavior = behavior;
         this.sequence_order = sequenceOrder;
@@ -41,6 +43,7 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
         this.notification_text = notificationText;
         this.icon_url = iconUrl;
         this.image_url = imageUrl;
+        this.behavior_id = behaviorId;
     }
 
     public Behavior getBehavior() {
@@ -97,6 +100,14 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
 
     public void setImageUrl(String image_url) {
         this.image_url = image_url;
+    }
+
+    public int getBehavior_id() {
+        return behavior_id;
+    }
+
+    public void setBehavior_id(int behavior_id) {
+        this.behavior_id = behavior_id;
     }
 
     @Override
