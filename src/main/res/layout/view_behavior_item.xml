@@ -8,12 +8,15 @@
               android:layout_marginLeft="15dp"
               android:layout_marginBottom="8dp">
 
-    <View
-        android:id="@+id/view_behavior_circle_view"
-        android:layout_width="@dimen/category_small_icon_image_size"
-        android:layout_height="@dimen/category_small_icon_image_size"
-        android:background="@drawable/circle"
-        android:layout_margin="3dp"/>
+    <ImageView
+        android:id="@+id/view_behavior_icon_imageview"
+        android:layout_width="@dimen/behavior_icon_image_size"
+        android:layout_height="@dimen/behavior_icon_image_size"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        android:src="@drawable/ic_action_grow_white"
+        android:layout_margin="10dp"
+        android:padding="5dp"/>
 
     <TextView
         android:id="@+id/view_behavior_textview"

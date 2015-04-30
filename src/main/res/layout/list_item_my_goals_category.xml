@@ -34,15 +34,27 @@
             android:orientation="horizontal"
             android:layout_below="@id/list_item_my_goals_category_title_textview">
 
-            <View
+            <RelativeLayout
                 android:id="@+id/list_item_my_goals_category_circle_view"
-                android:layout_width="@dimen/category_small_icon_image_size"
-                android:layout_height="@dimen/category_small_icon_image_size"
-                android:background="@drawable/circle"
+                android:layout_width="@dimen/goal_icon_image_size"
+                android:layout_height="@dimen/goal_icon_image_size"
                 android:layout_marginRight="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                android:layout_marginLeft="11dp"/>
+                android:layout_marginLeft="11dp"
+                android:padding="5dp"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@string/goal_image_description"
+                android:background="@drawable/circle">
+
+                <ImageView
+                    android:id="@+id/list_item_my_goals_category_icon_imageview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_action_grow_white"/>
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/list_item_my_goals_category_add_textview"

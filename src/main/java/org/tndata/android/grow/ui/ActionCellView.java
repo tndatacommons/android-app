@@ -7,10 +7,10 @@ import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.task.AddActionTask;
 import org.tndata.android.grow.task.DeleteActionTask;
 import org.tndata.android.grow.util.ImageCache;
+import org.tndata.android.grow.util.ImageHelper;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -28,8 +28,6 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
     private ImageView mImageView;
     private ImageView mAddImageView;
     private TextView mTitleTextView;
-    private TextView mDescriptionTextView;
-    private RelativeLayout mCircleView;
     private ProgressBar mProgressBar;
     private Action mAction;
     private Category mCategory;
@@ -74,9 +72,6 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
         });
         mTitleTextView = (TextView) view
                 .findViewById(R.id.view_action_title_textview);
-        mDescriptionTextView = (TextView) view
-                .findViewById(R.id.view_action_description_textview);
-        mCircleView = (RelativeLayout) view.findViewById(R.id.view_action_circle_container);
         mProgressBar = (ProgressBar) view.findViewById(R.id.view_action_progressbar);
         if (mAction != null) {
             updateUi();
@@ -118,22 +113,9 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
     private void updateUi() {
         try {
             mTitleTextView.setText(mAction.getTitle());
-            mDescriptionTextView.setText(mAction.getNarrativeBlock());
             if (mAction.getIconUrl() != null) {
                 ImageCache.instance(getContext()).loadBitmap(mImageView,
                         mAction.getIconUrl(), false);
-            }
-            if (mCategory != null && !mCategory.getColor().isEmpty()) {
-                GradientDrawable gradientDrawable = (GradientDrawable) mCircleView.getBackground();
-                String colorString = mCategory.getColor();
-                if (colorString != null && !colorString.isEmpty()) {
-                    gradientDrawable.setColor(Color.parseColor(colorString));
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    mCircleView.setBackground(gradientDrawable);
-                } else {
-                    mCircleView.setBackgroundDrawable(gradientDrawable);
-                }
             }
             updateImage();
         } catch (Exception e) {
@@ -150,9 +132,10 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
             ArrayList<Action> actions = ((GrowApplication) ((Activity) mContext).getApplication()
             ).getActions();
             if (actions.contains(mAction)) {
-                mAddImageView.setImageResource(R.drawable.ic_selected_white);
+                ImageHelper.setupImageViewButton(getResources(), mAddImageView,
+                        ImageHelper.SELECTED);
             } else {
-                mAddImageView.setImageResource(R.drawable.ic_action_new_large);
+                ImageHelper.setupImageViewButton(getResources(), mAddImageView, ImageHelper.ADD);
             }
         }
     }

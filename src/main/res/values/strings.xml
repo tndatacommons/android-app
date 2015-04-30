@@ -48,7 +48,7 @@
     <string name="choose_categories_need_more">You must select at least 1 category!</string>
     <string name="onboarding_category_done">NEXT</string>
     <string name="choose_goals_done">I\'M DONE</string>
-    <string name="choose_goals_header_label">SET %1$s GOALS</string>
+    <string name="choose_goals_header_label">%1$s goals</string>
     <string name="choose_goals_info_label">Select your goals for easy ways to GROW.</string>
     <string name="choose_goals_error_label">Uh Oh! There seems to have been an issue finding goals!</string>
     <string name="choose_goals_list_item_more_info_label">MORE INFO</string>
@@ -64,7 +64,7 @@
     <string name="default_no_content_title">What are your priorities?</string>
     <string name="default_no_content_subtitle">Click the button below to begin</string>
     <string name="category_goals">%1$s goals</string>
-    <string name="category_goals_add">Would you like to set a %1$s goal? Click here</string>
+    <string name="category_goals_add">What are your %1$s goals?</string>
 
     <!-- BehaviorActivity -->
     <string name="learn_more_no_thanks">NO THANKS</string>

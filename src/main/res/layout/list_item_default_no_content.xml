@@ -14,22 +14,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <View
-            android:id="@+id/list_item_default_no_content_image_backview"
+        <RelativeLayout
+            android:id="@+id/list_item_default_no_content_imageview_container"
             android:layout_width="@dimen/goal_icon_image_size"
             android:layout_height="@dimen/goal_icon_image_size"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:background="@color/image_background"/>
-
-        <RelativeLayout
-            android:id="@+id/list_item_default_no_content_imageview_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/list_item_default_no_content_image_backview"
-            android:layout_alignRight="@id/list_item_default_no_content_image_backview"
-            android:layout_alignTop="@id/list_item_default_no_content_image_backview"
-            android:layout_alignBottom="@id/list_item_default_no_content_image_backview"
             android:layout_margin="10dp"
             android:padding="10dp"
             android:contentDescription="@string/goal_image_description"
@@ -48,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:layout_toRightOf="@id/list_item_default_no_content_image_backview"
+            android:layout_toRightOf="@id/list_item_default_no_content_imageview_container"
             android:paddingLeft="2dp"
             android:paddingTop="5dp"
             android:text="@string/default_no_content_title"
@@ -60,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/list_item_default_no_content_title_textview"
             android:layout_margin="5dp"
-            android:layout_toRightOf="@id/list_item_default_no_content_image_backview"
+            android:layout_toRightOf="@id/list_item_default_no_content_imageview_container"
             android:paddingLeft="2dp"
             android:text="@string/default_no_content_subtitle"
             android:textAppearance="?android:attr/textAppearanceSmall"/>

@@ -104,12 +104,7 @@ public class BehaviorActivity extends ActionBarActivity implements
     }
 
     @Override
-    public void cancel() {
-        handleBackStack();
-    }
-
-    @Override
-    public void addAction(Action action) {
+    public void learnMoreAction(Action action) {
         // TODO Auto-generated method stub
 
     }

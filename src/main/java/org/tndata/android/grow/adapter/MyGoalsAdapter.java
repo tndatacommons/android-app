@@ -31,6 +31,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -56,13 +57,13 @@ public class MyGoalsAdapter extends
     static class MyGoalsViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;
         TextView subTitleTextView;
-        View circleView;
+        RelativeLayout circleView;
         LinearLayout noGoalsContainer;
         LinearLayout goalContainer;
 
         public MyGoalsViewHolder(View view) {
             super(view);
-            circleView = view
+            circleView = (RelativeLayout) view
                     .findViewById(R.id.list_item_my_goals_category_circle_view);
             titleTextView = (TextView) view
                     .findViewById(R.id.list_item_my_goals_category_title_textview);

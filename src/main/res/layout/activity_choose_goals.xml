@@ -1,16 +1,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:animateLayoutChanges="true">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:animateLayoutChanges="true">
 
-    <ImageView
-        android:id="@+id/choose_goals_material_imageview"
+    <View
+        android:id="@+id/choose_goals_material_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/material_header_size"
-        android:background="@color/grow_primary"
-        android:scaleType="centerCrop"
-        android:src="@drawable/grow_material_header_image" />
+        android:background="@color/grow_primary"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/choose_goals_recyclerview"
@@ -19,25 +17,25 @@
         android:background="@android:color/transparent"></android.support.v7.widget.RecyclerView>
 
     <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/choose_goals_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/grow_primary"
-        android:minHeight="?attr/actionBarSize"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"></android.support.v7.widget.Toolbar>
+                                       android:id="@+id/choose_goals_toolbar"
+                                       android:layout_width="match_parent"
+                                       android:layout_height="wrap_content"
+                                       android:background="@color/grow_primary"
+                                       android:minHeight="?attr/actionBarSize"
+                                       app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                                       app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"></android.support.v7.widget.Toolbar>
 
     <TextView
         android:id="@+id/choose_goals_error_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/choose_goals_material_imageview"
+        android:layout_below="@id/choose_goals_material_view"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="30dp"
         android:gravity="center"
         android:text="@string/choose_goals_error_label"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
 </RelativeLayout>

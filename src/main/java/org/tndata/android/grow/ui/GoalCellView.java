@@ -6,18 +6,23 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.tndata.android.grow.R;
 import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.Goal;
+import org.tndata.android.grow.util.ImageCache;
 
 public class GoalCellView extends LinearLayout {
-    private View mCircleView;
+    private RelativeLayout mCircleView;
     private TextView mTitleTextView;
+    private ImageView mIconImageView;
     private Goal mGoal;
     private Category mCategory;
+    private Context mContext;
 
     public GoalCellView(Context context) {
         this(context, null);
@@ -33,12 +38,13 @@ public class GoalCellView extends LinearLayout {
     }
 
     private void initViews(Context context, AttributeSet attrs) {
-
+        mContext = context;
         View view = inflate(context, R.layout.view_goal_item, this);
 
-        mCircleView = view.findViewById(R.id.view_goal_circle_view);
+        mCircleView = (RelativeLayout) view.findViewById(R.id.view_goal_circle_view);
         mTitleTextView = (TextView) view
                 .findViewById(R.id.view_goal_textview);
+        mIconImageView = (ImageView) view.findViewById(R.id.view_goal_icon_imageview);
         if (mGoal != null) {
             updateUi();
         }
@@ -64,6 +70,10 @@ public class GoalCellView extends LinearLayout {
                 mCircleView.setBackground(gradientDrawable);
             } else {
                 mCircleView.setBackgroundDrawable(gradientDrawable);
+            }
+            if (mGoal.getIconUrl() != null && !mGoal.getIconUrl().isEmpty()) {
+                ImageCache.instance(mContext).loadBitmap(mIconImageView,
+                        mGoal.getIconUrl(), false);
             }
         } catch (Exception e) {
             e.printStackTrace();

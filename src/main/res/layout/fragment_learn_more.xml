@@ -1,87 +1,64 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:animateLayoutChanges="true">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent">
 
-    <Button
-        android:id="@+id/learn_more_no_thanks_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="10dp"
-        android:background="@drawable/button_positive_rounded"
-        android:minHeight="@dimen/paper_flat_button_min_height"
-        android:minWidth="@dimen/paper_flat_login_button_min_width"
-        android:text="@string/learn_more_no_thanks"
-        android:textColor="@color/button_positive_text_color"/>
-
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_above="@id/learn_more_no_thanks_button">
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:paddingLeft="@dimen/default_activity_padding"
+        android:paddingRight="@dimen/default_activity_padding"
+        android:paddingTop="@dimen/behavior_fragments_top_padding">
 
-        <RelativeLayout
+        <TextView
+            android:id="@+id/learn_more_behavior_title_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/learn_more_title_label"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+        <ImageView
+            android:id="@+id/learn_more_add_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/learn_more_behavior_title_textview"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="50dp"
+            android:padding="3dp"
+            android:contentDescription="@string/behavior_add_to_priorities_label"
+            android:src="@drawable/ic_selected_white"
+            android:background="@drawable/circle_secondary"/>
+
+        <TextView
+            android:id="@+id/learn_more_add_label"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_toLeftOf="@id/learn_more_add_imageview"
+            android:layout_alignBottom="@id/learn_more_add_imageview"
+            android:layout_alignTop="@id/learn_more_add_imageview"
+            android:gravity="center_vertical"
+            android:text="@string/behavior_add_to_priorities_label"
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+        <ProgressBar
+            android:id="@+id/learn_more_progressbar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/learn_more_add_label"
+            android:layout_alignParentRight="true"
+            android:layout_margin="5dp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/learn_more_description_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:animateLayoutChanges="true"
-            android:paddingLeft="@dimen/default_activity_padding"
-            android:paddingRight="@dimen/default_activity_padding"
-            android:paddingTop="@dimen/behavior_fragments_top_padding">
-
-            <TextView
-                android:id="@+id/learn_more_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:text="@string/learn_more_title_label"
-                android:textAppearance="?android:attr/textAppearanceLarge"/>
-
-            <TextView
-                android:id="@+id/learn_more_behavior_title_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/learn_more_title"
-                android:layout_marginTop="50dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-            <TextView
-                android:id="@+id/learn_more_add_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/learn_more_behavior_title_textview"
-                android:text="@string/behavior_add_to_priorities_label"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-            <ImageView
-                android:id="@+id/learn_more_add_imageview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/learn_more_add_label"
-                android:layout_alignParentRight="true"
-                android:padding="3dp"
-                android:contentDescription="@string/behavior_add_to_priorities_label"
-                android:src="@drawable/ic_selected_white"
-                android:background="@drawable/circle_secondary"/>
-
-            <TextView
-                android:id="@+id/learn_more_description_textview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/learn_more_add_label"
-                android:layout_marginTop="40dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
-        </RelativeLayout>
-    </ScrollView>
-
-    <ProgressBar
-        android:id="@+id/learn_more_progressbar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_margin="30dp"
-        android:visibility="gone"/>
-
-</RelativeLayout>
+            android:layout_below="@id/learn_more_add_label"
+            android:layout_marginTop="40dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
+    </RelativeLayout>
+</ScrollView>

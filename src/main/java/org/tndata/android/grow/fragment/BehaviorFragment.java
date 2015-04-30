@@ -11,6 +11,8 @@ import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.task.ActionLoaderTask;
 import org.tndata.android.grow.task.ActionLoaderTask.ActionLoaderListener;
 import org.tndata.android.grow.ui.ActionCellView;
+import org.tndata.android.grow.util.ImageCache;
+import org.tndata.android.grow.util.ImageHelper;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -25,6 +27,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class BehaviorFragment extends Fragment implements ActionLoaderListener {
@@ -39,9 +42,7 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener {
     public interface BehaviorFragmentListener {
         public void learnMore();
 
-        public void cancel();
-
-        public void addAction(Action action);
+        public void learnMoreAction(Action action);
 
         public void addBehavior(Behavior behavior);
 
@@ -82,24 +83,21 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener {
         TextView titleTextView = (TextView) v
                 .findViewById(R.id.behavior_title_textview);
         titleTextView.setText(mBehavior.getTitle());
-        Button noThanksButton = (Button) v
-                .findViewById(R.id.behavior_no_thanks_button);
-        noThanksButton.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                mCallback.cancel();
-            }
-        });
-        Button learnMoreButton = (Button) v
-                .findViewById(R.id.behavior_learn_more_button);
-        learnMoreButton.setOnClickListener(new OnClickListener() {
+        RelativeLayout behaviorContentContainer = (RelativeLayout) v
+                .findViewById(R.id.behavior_content_container);
+        behaviorContentContainer.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 mCallback.learnMore();
             }
         });
+        if (mBehavior.getIconUrl() != null && !mBehavior.getIconUrl().isEmpty()) {
+            ImageView iconImageView = (ImageView) v.findViewById(R.id.behavior_icon_imageview);
+            ImageCache.instance(getActivity().getApplicationContext()).loadBitmap(iconImageView,
+                    mBehavior.getIconUrl(), false);
+
+        }
         mProgressBar = (ProgressBar) v.findViewById(R.id.behavior_progressbar);
         mAddImageView = (ImageView) v.findViewById(R.id.behavior_add_imageview);
         mAddImageView.setOnClickListener(new OnClickListener() {
@@ -173,7 +171,7 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener {
                 public void onClick(View v) {
                     if (v instanceof ActionCellView) {
                         Action a = ((ActionCellView) v).getAction();
-                        mCallback.addAction(a);
+                        mCallback.learnMoreAction(a);
                     }
 
                 }
@@ -191,14 +189,15 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener {
     public void setImageView() {
         for (Goal goal : ((GrowApplication) getActivity().getApplication()).getGoals()) {
             if (goal.getBehaviors().contains(mBehavior)) {
-                mAddImageView.setImageResource(R.drawable.ic_selected_white);
+                ImageHelper.setupImageViewButton(getResources(), mAddImageView,
+                        ImageHelper.SELECTED);
                 mProgressBar.setVisibility(View.GONE);
                 mAddImageView.setEnabled(true);
                 return;
             }
         }
+        ImageHelper.setupImageViewButton(getResources(), mAddImageView, ImageHelper.ADD);
         mProgressBar.setVisibility(View.GONE);
         mAddImageView.setEnabled(true);
-        mAddImageView.setImageResource(R.drawable.ic_action_new_large);
     }
 }

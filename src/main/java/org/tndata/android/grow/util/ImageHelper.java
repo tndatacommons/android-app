@@ -1,11 +1,19 @@
 package org.tndata.android.grow.util;
 
+import android.content.res.Resources;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
+import android.widget.ImageView;
+
+import org.tndata.android.grow.R;
 
 public class ImageHelper {
+    public final static int SELECTED = 1;
+    public final static int ADD = 2;
 
     public static int calculateInSampleSize(BitmapFactory.Options options,
-            int reqWidth, int reqHeight) {
+                                            int reqWidth, int reqHeight) {
         // Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;
@@ -26,6 +34,30 @@ public class ImageHelper {
         }
 
         return inSampleSize;
+    }
+
+    public static void setupImageViewButton(final Resources resources, ImageView imageView,
+                                            int style) {
+        GradientDrawable buttonDrawable = (GradientDrawable) imageView.getBackground();
+        int color = -1;
+        switch (style) {
+            case SELECTED:
+                color = resources.getColor(R.color.grow_primary_dark);
+                imageView.setImageResource(R.drawable.ic_selected_white);
+                break;
+            case ADD:
+                color = resources.getColor(R.color.grow_secondary);
+                imageView.setImageResource(R.drawable.ic_action_new_large);
+                break;
+        }
+        if (color != -1) {
+            buttonDrawable.setColor(color);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            imageView.setBackground(buttonDrawable);
+        } else {
+            imageView.setBackgroundDrawable(buttonDrawable);
+        }
     }
 
 }

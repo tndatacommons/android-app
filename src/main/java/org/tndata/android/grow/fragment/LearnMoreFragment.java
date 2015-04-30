@@ -5,6 +5,7 @@ import org.tndata.android.grow.R;
 import org.tndata.android.grow.model.Behavior;
 import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.Goal;
+import org.tndata.android.grow.util.ImageHelper;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -29,8 +30,6 @@ public class LearnMoreFragment extends Fragment {
         public void addBehavior(Behavior behavior);
 
         public void deleteBehavior(Behavior behavior);
-
-        public void cancel();
     }
 
     public void setBehavior(Behavior behavior) {
@@ -87,15 +86,6 @@ public class LearnMoreFragment extends Fragment {
                 mCallback.addBehavior(mBehavior);
             }
         });
-        Button noThanksButton = (Button) v
-                .findViewById(R.id.learn_more_no_thanks_button);
-        noThanksButton.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                mCallback.cancel();
-            }
-        });
 
         titleTextView.setText(mBehavior.getTitle());
         descriptionTextView.setText(mBehavior.getDescription());
@@ -130,13 +120,14 @@ public class LearnMoreFragment extends Fragment {
     public void setImageView() {
         for (Goal goal : ((GrowApplication) getActivity().getApplication()).getGoals()) {
             if (goal.getBehaviors().contains(mBehavior)) {
-                mAddImageView.setImageResource(R.drawable.ic_selected_white);
+                ImageHelper.setupImageViewButton(getResources(), mAddImageView,
+                        ImageHelper.SELECTED);
                 mProgressBar.setVisibility(View.GONE);
                 mAddImageView.setEnabled(true);
                 return;
             }
         }
-        mAddImageView.setImageResource(R.drawable.ic_action_new_large);
+        ImageHelper.setupImageViewButton(getResources(), mAddImageView, ImageHelper.ADD);
         mProgressBar.setVisibility(View.GONE);
         mAddImageView.setEnabled(true);
     }

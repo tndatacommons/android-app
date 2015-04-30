@@ -9,7 +9,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.tndata.android.grow.R;
@@ -17,6 +19,7 @@ import org.tndata.android.grow.model.Behavior;
 import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.ui.BehaviorListView;
+import org.tndata.android.grow.util.ImageCache;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,19 +34,23 @@ public class CategoryFragmentAdapter extends
 
     static class CategoryGoalViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;
-        View circleView;
+        RelativeLayout circleView;
         LinearLayout goalContainer;
         LinearLayout behaviorContainer;
+        ImageView iconImageView;
 
         public CategoryGoalViewHolder(View view) {
             super(view);
             titleTextView = (TextView) view.findViewById(R.id
                     .list_item_category_goal_title_textview);
-            circleView = view.findViewById(R.id.list_item_category_goal_circle_view);
+            circleView = (RelativeLayout) view.findViewById(R.id
+                    .list_item_category_goal_circle_view);
             goalContainer = (LinearLayout) view.findViewById(R.id
                     .list_item_category_goal_goal_container);
             behaviorContainer = (LinearLayout) view.findViewById(R.id
                     .list_item_category_goal_behavior_container);
+            iconImageView = (ImageView) view.findViewById(R.id
+                    .list_item_category_goal_icon_imageview);
         }
     }
 
@@ -78,7 +85,7 @@ public class CategoryFragmentAdapter extends
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder,
                                  final int position) {
         final Goal goal = mItems.get(position);
-        ((CategoryGoalViewHolder) viewHolder).titleTextView.setText(goal.getTitle().toUpperCase());
+        ((CategoryGoalViewHolder) viewHolder).titleTextView.setText(goal.getTitle());
         GradientDrawable gradientDrawable = (GradientDrawable) ((CategoryGoalViewHolder)
                 viewHolder).circleView.getBackground();
         String colorString = mCategory.getColor();
@@ -91,6 +98,12 @@ public class CategoryFragmentAdapter extends
         } else {
             ((CategoryGoalViewHolder) viewHolder).circleView
                     .setBackgroundDrawable(gradientDrawable);
+        }
+        if (goal.getIconUrl() != null
+                && !goal.getIconUrl().isEmpty()) {
+            ImageCache.instance(mContext).loadBitmap(
+                    ((CategoryGoalViewHolder) viewHolder).iconImageView,
+                    goal.getIconUrl(), false);
         }
         ((CategoryGoalViewHolder) viewHolder).goalContainer.setOnClickListener(new View
                 .OnClickListener() {

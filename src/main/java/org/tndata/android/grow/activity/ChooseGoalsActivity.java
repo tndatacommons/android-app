@@ -35,10 +35,10 @@ import org.tndata.android.grow.ui.SpacingItemDecoration;
 import org.tndata.android.grow.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.grow.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
 import org.tndata.android.grow.util.ImageCache;
+import org.tndata.android.grow.util.ImageHelper;
 
 import java.util.ArrayList;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTask
         .AddGoalsTaskListener,
@@ -48,13 +48,14 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
     private TextView mHeaderTextView;
     private TextView mErrorTextView;
     private View mFakeHeader;
-    private ImageView mHeaderImageView;
+    private View mHeaderView;
     private ArrayList<Goal> mItems;
     private ArrayList<Goal> mSelectedGoals = new ArrayList<Goal>();
     private ParallaxRecyclerAdapter<Goal> mAdapter;
     private Category mCategory = null;
     private boolean mAdding = false;
     private boolean mDeleting = false;
+    private ArrayList<Integer> mExpandedPositions = new ArrayList<Integer>();
 
     static class ChooseGoalViewHolder extends RecyclerView.ViewHolder {
         public ChooseGoalViewHolder(View itemView) {
@@ -65,17 +66,20 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                     .list_item_choose_goal_imageview_container);
             titleTextView = (TextView) itemView
                     .findViewById(R.id.list_item_choose_goal_title_textview);
-            selectButton = (Button) itemView
+            selectButton = (ImageView) itemView
                     .findViewById(R.id.list_item_choose_goal_select_button);
-            moreInfoButton = (Button) itemView
-                    .findViewById(R.id.list_item_choose_goal_more_info_button);
+            descriptionTextView = (TextView) itemView
+                    .findViewById(R.id.list_item_choose_goal_description_textview);
+            detailContainerView = (RelativeLayout) itemView.findViewById(R.id
+                    .list_item_choose_goal_detail_container);
         }
 
         TextView titleTextView;
+        TextView descriptionTextView;
         ImageView iconImageView;
-        Button selectButton;
-        Button moreInfoButton;
+        ImageView selectButton;
         RelativeLayout iconContainerView;
+        RelativeLayout detailContainerView;
     }
 
     @Override
@@ -87,7 +91,8 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
 
         mToolbar = (Toolbar) findViewById(R.id.choose_goals_toolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
-        mToolbar.setTitle("");
+        mToolbar.setTitle(getString(R.string.choose_goals_header_label,
+                mCategory.getTitle()));
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -104,12 +109,21 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         mAdapter.implementRecyclerAdapterMethods(new ParallaxRecyclerAdapter
                 .RecyclerAdapterMethods() {
             @Override
-            public void onBindViewHolder(RecyclerView.ViewHolder viewHolder,
-                                         int i) {
+            public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder,
+                                         final int i) {
                 final Goal goal = mItems.get(i);
 
                 ((ChooseGoalViewHolder) viewHolder).titleTextView.setText(goal
                         .getTitle());
+                if (mExpandedPositions.contains(Integer.valueOf(i))) {
+                    ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
+                            .VISIBLE);
+                } else {
+                    ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
+                            .GONE);
+                }
+                ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setText(goal
+                        .getDescription());
                 if (goal.getIconUrl() != null
                         && !goal.getIconUrl().isEmpty()) {
                     ImageCache.instance(getApplicationContext()).loadBitmap(
@@ -117,16 +131,13 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                             goal.getIconUrl(), false);
                 }
                 if (mSelectedGoals.contains(goal)) {
-                    ((ChooseGoalViewHolder) viewHolder).selectButton.setBackgroundResource(R
-                            .drawable.button_negative_rounded);
-                    ((ChooseGoalViewHolder) viewHolder).selectButton.setText(R.string
-                            .choose_goals_list_item_selected_button);
+                    ImageHelper.setupImageViewButton(getResources(),
+                            ((ChooseGoalViewHolder) viewHolder).selectButton, ImageHelper.SELECTED);
                 } else {
-                    ((ChooseGoalViewHolder) viewHolder).selectButton.setBackgroundResource(R
-                            .drawable.button_positive_rounded);
-                    ((ChooseGoalViewHolder) viewHolder).selectButton.setText(R.string
-                            .choose_goals_list_item_select_button);
+                    ImageHelper.setupImageViewButton(getResources(),
+                            ((ChooseGoalViewHolder) viewHolder).selectButton, ImageHelper.ADD);
                 }
+
                 ((ChooseGoalViewHolder) viewHolder).selectButton.setOnClickListener(new View
                         .OnClickListener() {
 
@@ -135,20 +146,23 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                         goalSelected(goal);
                     }
                 });
-                ((ChooseGoalViewHolder) viewHolder).moreInfoButton.setOnClickListener(new View
-                        .OnClickListener() {
+                ((ChooseGoalViewHolder) viewHolder).detailContainerView.setOnClickListener(new View.OnClickListener() {
+
 
                     @Override
                     public void onClick(View v) {
-                        moreInfoPressed(goal);
+                        ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setVisibility
+                                (View.VISIBLE);
+                        mExpandedPositions.add(Integer.valueOf(i));
                     }
                 });
+
 
                 GradientDrawable gradientDrawable = (GradientDrawable) ((ChooseGoalViewHolder)
                         viewHolder)
                         .iconContainerView.getBackground();
                 String colorString = mCategory.getColor();
-                Log.d("color",colorString);
+                Log.d("color", colorString);
                 if (colorString != null && !colorString.isEmpty()) {
                     gradientDrawable.setColor(Color.parseColor(colorString));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -178,7 +192,8 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                 mRecyclerView, false);
         mHeaderTextView = (TextView) mFakeHeader.findViewById(R.id
                 .choose_goals_header_label_textview);
-        mHeaderImageView = (ImageView) findViewById(R.id.choose_goals_material_imageview);
+        mHeaderTextView.setText(mCategory.getDescription());
+        mHeaderView = findViewById(R.id.choose_goals_material_view);
         manager.setHeaderIncrementFixer(mFakeHeader);
         mAdapter.setShouldClipView(false);
         mAdapter.setParallaxHeader(mFakeHeader, mRecyclerView);
@@ -191,16 +206,16 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                     Drawable c = mToolbar.getBackground();
                     c.setAlpha(Math.round(percentage * 255));
                     mToolbar.setBackground(c);
-                    mHeaderImageView.setTranslationY(-offset * 0.5f);
+                    mHeaderView.setTranslationY(-offset * 0.5f);
 
                 }
             });
         }
         mRecyclerView.setAdapter(mAdapter);
 
-        if (mCategory.getImageUrl() != null && !mCategory.getImageUrl().isEmpty()) {
-            ImageCache.instance(getApplicationContext()).loadBitmap(
-                    mHeaderImageView, mCategory.getImageUrl(), false, false);
+        if (mCategory != null && !mCategory.getColor().isEmpty()) {
+            mHeaderView.setBackgroundColor(Color.parseColor(mCategory.getColor()));
+            mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }
 
         if (mCategory.getGoals() != null) {
@@ -239,10 +254,6 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
     private void loadGoals() {
         if (mCategory == null) {
             return;
-        } else if (!mCategory.getTitle().isEmpty()) {
-            mHeaderTextView.setText(getString(
-                    R.string.choose_goals_header_label,
-                    mCategory.getTitle().toUpperCase()));
         }
         new GoalLoaderTask(getApplicationContext(), this).executeOnExecutor(AsyncTask
                         .THREAD_POOL_EXECUTOR,

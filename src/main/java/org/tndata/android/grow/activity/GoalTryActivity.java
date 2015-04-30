@@ -50,6 +50,7 @@ public class GoalTryActivity extends ActionBarActivity implements
     private View mFakeHeader;
     private View mHeaderView;
     private Category mCategory = null;
+    private ArrayList<Integer> mExpandedPositions = new ArrayList<Integer>();
 
     static class TryGoalViewHolder extends RecyclerView.ViewHolder {
         public TryGoalViewHolder(View itemView) {
@@ -104,6 +105,17 @@ public class GoalTryActivity extends ActionBarActivity implements
                         .getTitle());
                 ((TryGoalViewHolder) viewHolder).descriptionTextView
                         .setText(behavior.getNarrativeBlock());
+                if (mExpandedPositions.contains(Integer.valueOf(i))) {
+                    ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
+                            .VISIBLE);
+                    ((TryGoalViewHolder) viewHolder).tryIt.setVisibility(View.VISIBLE);
+                    ((TryGoalViewHolder) viewHolder).iconImageView.setVisibility(View.GONE);
+                } else {
+                    ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
+                            .GONE);
+                    ((TryGoalViewHolder) viewHolder).tryIt.setVisibility(View.GONE);
+                    ((TryGoalViewHolder) viewHolder).iconImageView.setVisibility(View.VISIBLE);
+                }
                 if (behavior.getIconUrl() != null
                         && !behavior.getIconUrl().isEmpty()) {
                     ImageCache.instance(getApplicationContext()).loadBitmap(
@@ -170,6 +182,7 @@ public class GoalTryActivity extends ActionBarActivity implements
                 v.findViewById(R.id.list_item_behavior_description_textview).setVisibility(View
                         .VISIBLE);
                 v.findViewById(R.id.list_item_behavior_imageview).setVisibility(View.GONE);
+                mExpandedPositions.add(Integer.valueOf(position));
             }
         });
         mRecyclerView.setAdapter(mAdapter);

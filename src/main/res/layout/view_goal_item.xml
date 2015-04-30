@@ -8,12 +8,25 @@
               android:layout_marginLeft="8dp"
               android:layout_marginBottom="8dp">
 
-    <View
+    <RelativeLayout
         android:id="@+id/view_goal_circle_view"
-        android:layout_width="@dimen/category_small_icon_image_size"
-        android:layout_height="@dimen/category_small_icon_image_size"
-        android:background="@drawable/circle"
-        android:layout_margin="3dp"/>
+        android:layout_width="@dimen/goal_icon_image_size"
+        android:layout_height="@dimen/goal_icon_image_size"
+        android:padding="10dp"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/goal_image_description"
+        android:background="@drawable/circle">
+
+        <ImageView
+            android:id="@+id/view_goal_icon_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="10dp"
+            android:src="@drawable/ic_action_grow_white"/>
+    </RelativeLayout>
+
 
     <TextView
         android:id="@+id/view_goal_textview"
