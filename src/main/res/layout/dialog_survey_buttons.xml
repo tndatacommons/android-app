@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp">
+
+    <Button
+        android:id="@+id/dialog_survey_positive_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/button_paper_flat"
+        android:text="@string/button_positive"
+        android:textColor="@drawable/button_paper_flat_text_selector"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/dialog_survey_negative_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/dialog_survey_positive_button"
+        android:layout_centerVertical="true"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/button_paper_flat"
+        android:text="@string/button_negative"
+        android:textColor="@drawable/button_paper_flat_text_selector"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:visibility="gone"/>
+
+</RelativeLayout>

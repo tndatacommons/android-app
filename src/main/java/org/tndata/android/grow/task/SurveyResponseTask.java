@@ -54,6 +54,7 @@ public class SurveyResponseTask extends AsyncTask<Survey, Void, Survey> {
                 body.put("selected_option", survey.getSelectedOption().getId());
             }
             Log.d("Survey submission", body.toString(2));
+            Log.d("Survey url", survey.getResponseUrl());
         } catch (JSONException e1) {
             e1.printStackTrace();
             return null;

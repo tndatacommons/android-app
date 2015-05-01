@@ -35,4 +35,12 @@
         android:padding="2dp"
         android:layout_below="@id/view_survey_multi_title_textview"
         android:layout_height="wrap_content" />
+
+    <include
+        android:id="@+id/dialog_buttons"
+        android:layout_below="@id/view_survey_multi_spinner"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        layout="@layout/dialog_survey_buttons">
+    </include>
 </RelativeLayout>

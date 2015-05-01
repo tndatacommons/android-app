@@ -91,4 +91,6 @@
     <string name="survey_title">GETTING TO KNOW ME</string>
     <string name="survey_no">No</string>
     <string name="survey_yes">Yes</string>
+    <string name="button_positive">DONE</string>
+    <string name="button_negative">CANCEL</string>
 </resources>
