@@ -1,21 +1,5 @@
 package org.tndata.android.grow.activity;
 
-import java.util.ArrayList;
-
-import org.tndata.android.grow.GrowApplication;
-import org.tndata.android.grow.R;
-import org.tndata.android.grow.model.Behavior;
-import org.tndata.android.grow.model.Category;
-import org.tndata.android.grow.model.Goal;
-import org.tndata.android.grow.task.BehaviorLoaderTask;
-import org.tndata.android.grow.task.BehaviorLoaderTask.BehaviorLoaderListener;
-import org.tndata.android.grow.ui.SpacingItemDecoration;
-import org.tndata.android.grow.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
-import org.tndata.android.grow.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
-import org.tndata.android.grow.ui.parallaxrecyclerview.ParallaxRecyclerAdapter.OnClickEvent;
-import org.tndata.android.grow.util.Constants;
-import org.tndata.android.grow.util.ImageCache;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
@@ -35,6 +19,22 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.tndata.android.grow.GrowApplication;
+import org.tndata.android.grow.R;
+import org.tndata.android.grow.model.Behavior;
+import org.tndata.android.grow.model.Category;
+import org.tndata.android.grow.model.Goal;
+import org.tndata.android.grow.task.BehaviorLoaderTask;
+import org.tndata.android.grow.task.BehaviorLoaderTask.BehaviorLoaderListener;
+import org.tndata.android.grow.ui.SpacingItemDecoration;
+import org.tndata.android.grow.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
+import org.tndata.android.grow.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
+import org.tndata.android.grow.ui.parallaxrecyclerview.ParallaxRecyclerAdapter.OnClickEvent;
+import org.tndata.android.grow.util.Constants;
+import org.tndata.android.grow.util.ImageCache;
+
+import java.util.ArrayList;
 
 public class GoalTryActivity extends ActionBarActivity implements
         BehaviorLoaderListener {
@@ -100,7 +100,7 @@ public class GoalTryActivity extends ActionBarActivity implements
                 ((TryGoalViewHolder) viewHolder).titleTextView.setText(behavior
                         .getTitle());
                 ((TryGoalViewHolder) viewHolder).descriptionTextView
-                        .setText(behavior.getMoreInfo());
+                        .setText(behavior.getDescription());
                 if (mExpandedPositions.contains(Integer.valueOf(i))) {
                     ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
                             .VISIBLE);
