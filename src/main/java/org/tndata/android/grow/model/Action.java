@@ -8,7 +8,7 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
     private Behavior behavior = null;
     private int behavior_id = -1;
     private int sequence_order = -1;
-    private String narrative_block = "";
+    private String more_info = "";
     private String external_resource = "";
     private String notification_text = "";
     private String icon_url = "";
@@ -18,12 +18,12 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
     }
 
     public Action(int id, int order, String title, String titleSlug,
-                  String description, int sequenceOrder, String narrativeBlock,
+                  String description, int sequenceOrder, String moreInfo,
                   String externalResource, String notificationText, String iconUrl,
                   String imageUrl, int behaviorId) {
         super(id, title, titleSlug, description);
         this.sequence_order = sequenceOrder;
-        this.narrative_block = narrativeBlock;
+        this.more_info = moreInfo;
         this.external_resource = externalResource;
         this.notification_text = notificationText;
         this.icon_url = iconUrl;
@@ -33,12 +33,12 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
 
     public Action(int id, int order, String title, String titleSlug,
                   String description, Behavior behavior, int sequenceOrder,
-                  String narrativeBlock, String externalResource,
+                  String moreInfo, String externalResource,
                   String notificationText, String iconUrl, String imageUrl, int behaviorId) {
         super(id, title, titleSlug, description);
         this.behavior = behavior;
         this.sequence_order = sequenceOrder;
-        this.narrative_block = narrativeBlock;
+        this.more_info = moreInfo;
         this.external_resource = externalResource;
         this.notification_text = notificationText;
         this.icon_url = iconUrl;
@@ -62,12 +62,12 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
         this.sequence_order = sequence_order;
     }
 
-    public String getNarrativeBlock() {
-        return narrative_block;
+    public String getMoreInfo() {
+        return more_info;
     }
 
-    public void setNarrativeBlock(String narrative_block) {
-        this.narrative_block = narrative_block;
+    public void setMoreInfo(String more_info    ) {
+        this.more_info = more_info;
     }
 
     public String getExternalResource() {

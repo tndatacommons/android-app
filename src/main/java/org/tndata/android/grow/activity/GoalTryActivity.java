@@ -1,6 +1,24 @@
 package org.tndata.android.grow.activity;
 
-import java.util.ArrayList;
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.tndata.android.grow.GrowApplication;
 import org.tndata.android.grow.R;
@@ -16,29 +34,7 @@ import org.tndata.android.grow.ui.parallaxrecyclerview.ParallaxRecyclerAdapter.O
 import org.tndata.android.grow.util.Constants;
 import org.tndata.android.grow.util.ImageCache;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
-import de.hdodenhof.circleimageview.CircleImageView;
+import java.util.ArrayList;
 
 public class GoalTryActivity extends ActionBarActivity implements
         BehaviorLoaderListener {
@@ -104,7 +100,7 @@ public class GoalTryActivity extends ActionBarActivity implements
                 ((TryGoalViewHolder) viewHolder).titleTextView.setText(behavior
                         .getTitle());
                 ((TryGoalViewHolder) viewHolder).descriptionTextView
-                        .setText(behavior.getNarrativeBlock());
+                        .setText(behavior.getDescription());
                 if (mExpandedPositions.contains(Integer.valueOf(i))) {
                     ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
                             .VISIBLE);
