@@ -1,134 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="org.tndata.android.grow"
-          android:versionCode="1"
-          android:versionName="1.0">
+    package="org.tndata.android.grow"
+    android:versionCode="1"
+    android:versionName="1.0" >
 
     <uses-sdk
         android:minSdkVersion="14"
-        android:targetSdkVersion="22"/>
+        android:targetSdkVersion="22" />
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <!--<permission-->
+        <!--android:name="com.example.gcm.permission.C2D_MESSAGE"-->
+        <!--android:protectionLevel="signature" />-->
+
+    <uses-permission android:name="org.tndata.android.grow.permission.C2D_MESSAGE" />
+
+    <android:uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <android:uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
 
     <application
-        android:name="org.tndata.android.grow.GrowApplication"
+        android:name=".GrowApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/CustomActionBarTheme">
+        android:theme="@style/CustomActionBarTheme" >
         <activity
-            android:name="org.tndata.android.grow.activity.LoginActivity"
+            android:name=".activity.LoginActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+            android:screenOrientation="portrait" >
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
         </activity>
         <activity
-            android:name="org.tndata.android.grow.activity.MainActivity"
+            android:name=".activity.MainActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
+                <action android:name="android.intent.action.GET_CONTENT" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name="org.tndata.android.grow.activity.OnBoardingActivity"
-            android:screenOrientation="portrait">
+            android:name=".activity.OnBoardingActivity"
+            android:screenOrientation="portrait" >
             <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
+                <action android:name="android.intent.action.GET_CONTENT" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name="org.tndata.android.grow.activity.SettingsActivity"
-            android:parentActivityName="org.tndata.android.grow.activity.MainActivity"
-            android:screenOrientation="portrait">
+            android:name=".activity.SettingsActivity"
+            android:parentActivityName=".activity.MainActivity"
+            android:screenOrientation="portrait" >
             <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
+                <action android:name="android.intent.action.GET_CONTENT" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.tndata.android.grow.activity.MainActivity"/>
+                android:value="org.tndata.android.grow.activity.MainActivity" />
         </activity>
         <activity
-            android:name="org.tndata.android.grow.activity.UserProfileActivity"
-            android:parentActivityName="org.tndata.android.grow.activity.MainActivity"
-            android:screenOrientation="portrait">
+            android:name=".activity.UserProfileActivity"
+            android:parentActivityName=".activity.MainActivity"
+            android:screenOrientation="portrait" >
             <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
+                <action android:name="android.intent.action.GET_CONTENT" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.tndata.android.grow.activity.MainActivity"/>
+                android:value="org.tndata.android.grow.activity.MainActivity" />
         </activity>
         <activity
-            android:name="org.tndata.android.grow.activity.ChooseGoalsActivity"
-            android:parentActivityName="org.tndata.android.grow.activity.MainActivity"
-            android:screenOrientation="portrait">
+            android:name=".activity.ChooseGoalsActivity"
+            android:parentActivityName=".activity.MainActivity"
+            android:screenOrientation="portrait" >
             <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
+                <action android:name="android.intent.action.GET_CONTENT" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.tndata.android.grow.activity.MainActivity"/>
+                android:value="org.tndata.android.grow.activity.MainActivity" />
         </activity>
         <activity
-            android:name="org.tndata.android.grow.activity.ChooseCategoriesActivity"
-            android:parentActivityName="org.tndata.android.grow.activity.MainActivity"
-            android:screenOrientation="portrait">
+            android:name=".activity.ChooseCategoriesActivity"
+            android:parentActivityName=".activity.MainActivity"
+            android:screenOrientation="portrait" >
             <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
+                <action android:name="android.intent.action.GET_CONTENT" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.tndata.android.grow.activity.MainActivity"/>
+                android:value="org.tndata.android.grow.activity.MainActivity" />
         </activity>
         <activity
-            android:name="org.tndata.android.grow.activity.GoalTryActivity"
-            android:parentActivityName="org.tndata.android.grow.activity.MainActivity"
-            android:screenOrientation="portrait">
+            android:name=".activity.GoalTryActivity"
+            android:parentActivityName=".activity.MainActivity"
+            android:screenOrientation="portrait" >
             <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
+                <action android:name="android.intent.action.GET_CONTENT" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.tndata.android.grow.activity.MainActivity"/>
+                android:value="org.tndata.android.grow.activity.MainActivity" />
         </activity>
         <activity
-            android:name="org.tndata.android.grow.activity.BehaviorActivity"
-            android:parentActivityName="org.tndata.android.grow.activity.GoalTryActivity"
-            android:screenOrientation="portrait">
+            android:name=".activity.BehaviorActivity"
+            android:parentActivityName=".activity.GoalTryActivity"
+            android:screenOrientation="portrait" >
             <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
+                <action android:name="android.intent.action.GET_CONTENT" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.tndata.android.grow.activity.GoalTryActivity"/>
+                android:value="org.tndata.android.grow.activity.GoalTryActivity" />
         </activity>
+
+        <receiver
+            android:name=".GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
+                <category android:name="org.tndata.android.grow" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".GcmIntentService"
+            android:exported="false" />
+
+        <activity
+            android:name="org.tndata.android.grow.activity.DemoActivity"
+            android:label="@string/title_activity_demo" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--<receiver-->
+            <!--android:name=".GcmBroadcastReceiver"-->
+            <!--android:enabled="true"-->
+            <!--android:exported="true" >-->
+        <!--</receiver>-->
     </application>
 
 </manifest>

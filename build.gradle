@@ -43,4 +43,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.0.0'
     compile 'de.hdodenhof:circleimageview:1.2.2'
     compile 'com.jpardogo.materialtabstrip:library:1.0.9'
+    compile "com.google.android.gms:play-services:3.1.+"
+
 }
