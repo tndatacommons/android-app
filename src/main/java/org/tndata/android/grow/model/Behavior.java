@@ -2,13 +2,12 @@ package org.tndata.android.grow.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Behavior extends TDCBase implements Serializable,
         Comparable<Behavior> {
 
     private static final long serialVersionUID = 7747989797893422842L;
-    private String narrative_block = "";
+    private String more_info = "";
     private String external_resource = "";
     private String notification_text = "";
     private String icon_url = "";
@@ -19,10 +18,10 @@ public class Behavior extends TDCBase implements Serializable,
     }
 
     public Behavior(int id, int order, String title, String titleSlug,
-                    String description, String narrativeBlock, String externalResource,
+                    String description, String moreInfo, String externalResource,
                     String notificationText, String iconUrl, String imageUrl) {
         super(id, title, titleSlug, description);
-        this.narrative_block = narrativeBlock;
+        this.more_info = moreInfo;
         this.external_resource = externalResource;
         this.notification_text = notificationText;
         this.icon_url = iconUrl;
@@ -30,11 +29,11 @@ public class Behavior extends TDCBase implements Serializable,
     }
 
     public Behavior(int id, int order, String title, String titleSlug,
-                    String description, String narrativeBlock, String externalResource,
+                    String description, String moreInfo, String externalResource,
                     String notificationText, String iconUrl, String imageUrl,
                     ArrayList<Goal> goals) {
         super(id, title, titleSlug, description);
-        this.narrative_block = narrativeBlock;
+        this.more_info = moreInfo;
         this.external_resource = externalResource;
         this.notification_text = notificationText;
         this.icon_url = iconUrl;
@@ -42,12 +41,12 @@ public class Behavior extends TDCBase implements Serializable,
         this.goals = goals;
     }
 
-    public String getNarrativeBlock() {
-        return narrative_block;
+    public String getMoreInfo() {
+        return more_info;
     }
 
-    public void setNarrativeBlock(String narrative_block) {
-        this.narrative_block = narrative_block;
+    public void setMoreInfo(String more_info) {
+        this.more_info = more_info;
     }
 
     public String getExternalResource() {

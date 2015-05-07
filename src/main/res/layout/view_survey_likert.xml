@@ -64,4 +64,11 @@
         android:layout_margin="15dp"
         android:padding="2dp"
         android:textAppearance="?android:attr/textAppearanceSmall" />
+    <include
+        android:id="@+id/dialog_buttons"
+        android:layout_below="@id/view_survey_likert_choice_textview"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        layout="@layout/dialog_survey_buttons">
+    </include>
 </RelativeLayout>

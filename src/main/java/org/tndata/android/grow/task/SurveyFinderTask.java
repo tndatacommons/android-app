@@ -36,6 +36,9 @@ public class SurveyFinderTask extends AsyncTask<String, Void, Survey> {
     protected Survey doInBackground(String... params) {
         String token = params[0];
         String url = Constants.BASE_URL + "survey/";
+        if (params.length > 1) {
+            url += params[1]; // will add a not-so-random survey
+        }
         Map<String, String> headers = new HashMap<String, String>();
         headers.put("Accept", "application/json");
         headers.put("Content-type", "application/json");

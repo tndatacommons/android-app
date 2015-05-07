@@ -1,23 +1,22 @@
 package org.tndata.android.grow.fragment;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
 import org.tndata.android.grow.GrowApplication;
 import org.tndata.android.grow.R;
 import org.tndata.android.grow.model.Behavior;
 import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.Goal;
 import org.tndata.android.grow.util.ImageHelper;
-
-import android.app.Activity;
-import android.app.Fragment;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 public class LearnMoreFragment extends Fragment {
     private Behavior mBehavior;
@@ -88,7 +87,7 @@ public class LearnMoreFragment extends Fragment {
         });
 
         titleTextView.setText(mBehavior.getTitle());
-        descriptionTextView.setText(mBehavior.getDescription());
+        descriptionTextView.setText(mBehavior.getMoreInfo());
         return v;
     }
 
