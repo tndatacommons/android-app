@@ -6,12 +6,9 @@ import org.tndata.android.grow.activity.BehaviorActivity;
 import org.tndata.android.grow.activity.ChooseGoalsActivity;
 import org.tndata.android.grow.activity.GoalTryActivity;
 import org.tndata.android.grow.adapter.CategoryFragmentAdapter;
-import org.tndata.android.grow.adapter.MyGoalsAdapter;
 import org.tndata.android.grow.model.Behavior;
 import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.Goal;
-import org.tndata.android.grow.model.MyGoalsViewItem;
-import org.tndata.android.grow.model.Survey;
 import org.tndata.android.grow.ui.SpacingItemDecoration;
 import org.tndata.android.grow.ui.button.FloatingActionButton;
 import org.tndata.android.grow.util.Constants;
@@ -29,7 +26,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -107,8 +103,7 @@ public class CategoryFragment extends Fragment implements CategoryFragmentAdapte
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setGoals();
-        mAdapter = new CategoryFragmentAdapter(getActivity().getApplicationContext(),
-                mItems, mCategory, this);
+        mAdapter = new CategoryFragmentAdapter(getActivity(), mItems, mCategory, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -183,6 +178,7 @@ public class CategoryFragment extends Fragment implements CategoryFragmentAdapte
                 break;
             }
         }
+
         setGoals();
         mAdapter.notifyDataSetChanged();
     }

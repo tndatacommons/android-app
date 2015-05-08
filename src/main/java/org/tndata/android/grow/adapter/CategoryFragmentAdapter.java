@@ -1,6 +1,7 @@
 package org.tndata.android.grow.adapter;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -14,10 +15,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.tndata.android.grow.GrowApplication;
 import org.tndata.android.grow.R;
+import org.tndata.android.grow.model.Action;
 import org.tndata.android.grow.model.Behavior;
 import org.tndata.android.grow.model.Category;
 import org.tndata.android.grow.model.Goal;
+import org.tndata.android.grow.ui.ActionListView;
 import org.tndata.android.grow.ui.BehaviorListView;
 import org.tndata.android.grow.util.ImageCache;
 
@@ -126,6 +130,20 @@ public class CategoryFragmentAdapter extends
                     }
                 });
                 ((CategoryGoalViewHolder) viewHolder).behaviorContainer.addView(behaviorListView);
+                if (mContext instanceof Activity) {
+                    for (final Action action : ((GrowApplication) ((Activity) mContext)
+                            .getApplication()).getActions()) {
+                        if ((action.getBehavior() != null && action.getBehavior().equals(behavior))
+                                || (action.getBehavior_id() == behavior.getId())) {
+                            ActionListView actionListView = new ActionListView(mContext);
+                            actionListView.setAction(action);
+
+                            ((CategoryGoalViewHolder) viewHolder).behaviorContainer.addView
+                                    (actionListView);
+
+                        }
+                    }
+                }
             }
         }
 

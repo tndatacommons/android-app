@@ -30,7 +30,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class BehaviorFragment extends Fragment implements ActionLoaderListener {
+public class BehaviorFragment extends Fragment implements ActionLoaderListener, ActionCellView
+        .ActionViewListener {
     private Behavior mBehavior;
     private Category mCategory;
     private LinearLayout mActionsContainer;
@@ -47,6 +48,8 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener {
         public void addBehavior(Behavior behavior);
 
         public void deleteBehavior(Behavior behavior);
+
+        public void actionChanged();
     }
 
     public void setBehavior(Behavior behavior) {
@@ -165,6 +168,7 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener {
             Log.d("Action", "*draw name:" + action.getTitle());
             ActionCellView acv = new ActionCellView(getActivity());
             acv.setAction(action, mCategory);
+            acv.setListener(this);
             acv.setOnClickListener(new OnClickListener() {
 
                 @Override
@@ -199,5 +203,10 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener {
         ImageHelper.setupImageViewButton(getResources(), mAddImageView, ImageHelper.ADD);
         mProgressBar.setVisibility(View.GONE);
         mAddImageView.setEnabled(true);
+    }
+
+    @Override
+    public void actionChanged() {
+        mCallback.actionChanged();
     }
 }

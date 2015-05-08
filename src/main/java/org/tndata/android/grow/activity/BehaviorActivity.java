@@ -225,4 +225,9 @@ public class BehaviorActivity extends ActionBarActivity implements
             }
         }
     }
+
+    @Override
+    public void actionChanged() {
+        setResult(Constants.BEHAVIOR_CHANGED_RESULT_CODE);
+    }
 }

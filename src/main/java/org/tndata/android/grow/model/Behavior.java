@@ -13,6 +13,7 @@ public class Behavior extends TDCBase implements Serializable,
     private String icon_url = "";
     private String image_url = "";
     private ArrayList<Goal> goals = new ArrayList<Goal>();
+    private ArrayList<Action> actions = new ArrayList<Action>();
 
     public Behavior() {
     }
@@ -87,6 +88,14 @@ public class Behavior extends TDCBase implements Serializable,
 
     public void setGoals(ArrayList<Goal> goals) {
         this.goals = goals;
+    }
+
+    public ArrayList<Action> getActions() {
+        return actions;
+    }
+
+    public void setActions(ArrayList<Action> actions) {
+        this.actions = actions;
     }
 
     @Override

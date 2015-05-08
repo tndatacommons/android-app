@@ -32,6 +32,11 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
     private Action mAction;
     private Category mCategory;
     private Context mContext;
+    private ActionViewListener mCallback;
+
+    public interface ActionViewListener {
+        public void actionChanged();
+    }
 
     public ActionCellView(Context context) {
         this(context, null);
@@ -81,6 +86,10 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
     public void setAction(Action action, Category category) {
         mCategory = category;
         setAction(action);
+    }
+
+    public void setListener(ActionViewListener listener) {
+        mCallback = listener;
     }
 
     public void setAction(Action action) {
@@ -157,6 +166,9 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
             ((GrowApplication) ((Activity) mContext).getApplication()).setActions(actions);
         }
         updateImage();
+        if (mCallback != null) {
+            mCallback.actionChanged();
+        }
     }
 
     @Override
@@ -170,5 +182,8 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
             ((GrowApplication) ((Activity) mContext).getApplication()).setActions(actions);
         }
         updateImage();
+        if (mCallback != null) {
+            mCallback.actionChanged();
+        }
     }
 }
