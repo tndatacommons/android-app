@@ -1,69 +1,46 @@
-package org.tndata.android.grow.activity;
+package org.tndata.android.grow.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-import org.tndata.android.grow.R;
-
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class DemoActivity extends ActionBarActivity {
-    public static final String EXTRA_MESSAGE = "message";
+/**
+ * This is a utility class that encapsulates registering the app with GCM.
+ */
+public class GcmRegistration {
+
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     static final String TAG = "GCM";
 
-    TextView mDisplay;
-    Context context;
     GoogleCloudMessaging gcm;
-    AtomicInteger msgId = new AtomicInteger();
-    SharedPreferences prefs;
-    String SENDER_ID = "152170900684";
+    String SENDER_ID = "152170900684";  // TODO: this probably shouldn't be public.
+    String registration_id = "";
 
-    String regid;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_demo);
-        mDisplay = (TextView) findViewById(R.id.display);
-
-        context = getApplicationContext();
-
+    public GcmRegistration(Context context) {
         // Check device for Play Services APK.
-        if (checkPlayServices()) {
-            gcm = GoogleCloudMessaging.getInstance(this);
-            regid = getRegistrationId(context);
+        if (checkPlayServices(context)) {
+            gcm = GoogleCloudMessaging.getInstance(context);
+            registration_id = getRegistrationId(context);
 
-            if (regid.isEmpty()) {
-                registerInBackground();
+            if (registration_id.isEmpty()) {
+                registerInBackground(context);
             }
         } else {
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
-    }
-
-    // You need to do the Play Services APK check here too.
-    @Override
-    protected void onResume() {
-        super.onResume();
-        checkPlayServices();
     }
 
     /**
@@ -71,42 +48,18 @@ public class DemoActivity extends ActionBarActivity {
      * it doesn't, display a dialog that allows users to download the APK from
      * the Google Play Store or enable it in the device's system settings.
      */
-    private boolean checkPlayServices() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+    private boolean checkPlayServices(Context context) {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
         if (resultCode != ConnectionResult.SUCCESS) {
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                GooglePlayServicesUtil.getErrorDialog(resultCode, (Activity) context, // TODO: Is this OK?
                         PLAY_SERVICES_RESOLUTION_REQUEST).show();
             } else {
                 Log.i(TAG, "This device is not supported.");
-                finish();
             }
             return false;
         }
         return true;
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_demo, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -140,9 +93,7 @@ public class DemoActivity extends ActionBarActivity {
      * @return Application's {@code SharedPreferences}.
      */
     private SharedPreferences getGCMPreferences(Context context) {
-        // This sample app persists the registration ID in shared preferences, but
-        // how you store the registration ID in your app is up to you.
-        return getSharedPreferences(DemoActivity.class.getSimpleName(),
+        return context.getSharedPreferences(GcmRegistration.class.getSimpleName(),
                 Context.MODE_PRIVATE);
     }
 
@@ -166,7 +117,8 @@ public class DemoActivity extends ActionBarActivity {
      * Stores the registration ID and app versionCode in the application's
      * shared preferences.
      */
-    private void registerInBackground() {
+    private void registerInBackground(final Context context) {
+
         new AsyncTask<Void,Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
@@ -175,9 +127,8 @@ public class DemoActivity extends ActionBarActivity {
                     if (gcm == null) {
                         gcm = GoogleCloudMessaging.getInstance(context);
                     }
-                    regid = gcm.register(SENDER_ID);
-                    msg = "Device registered, registration ID=" + regid;
-                    Log.i("REGISTRATION ID!", regid);
+                    registration_id = gcm.register(SENDER_ID);
+                    msg = "Device registered, registration ID=" + registration_id;
 
                     // You should send the registration ID to your server over HTTP,
                     // so it can use GCM/HTTP or CCS to send messages to your app.
@@ -190,7 +141,7 @@ public class DemoActivity extends ActionBarActivity {
                     // message using the 'from' address in the message.
 
                     // Persist the registration ID - no need to register again.
-                    storeRegistrationId(context, regid);
+                    storeRegistrationId(context, registration_id);
                 } catch (IOException ex) {
                     msg = "Error :" + ex.getMessage();
                     // If there is an error, don't just keep trying to register.
@@ -202,15 +153,14 @@ public class DemoActivity extends ActionBarActivity {
 
             @Override
             protected void onPostExecute(String msg) {
-                mDisplay.append(msg + "\n");
+                Log.i(TAG, msg);
             }
-
-
         }.execute(null, null, null);
     }
 
     private void sendRegistrationIdToBackend() {
-        // Your implementation here.
+        // TODO: Should we implement a way to store Registration IDs on the backend, or should
+        // we just pass that info from the app to the API every time we update a message?
     }
 
     /**
