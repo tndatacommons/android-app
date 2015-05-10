@@ -157,16 +157,6 @@
             android:name=".GcmIntentService"
             android:exported="false" />
 
-        <activity
-            android:name="org.tndata.android.grow.activity.DemoActivity"
-            android:label="@string/title_activity_demo" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
         <!--<receiver-->
             <!--android:name=".GcmBroadcastReceiver"-->
             <!--android:enabled="true"-->
