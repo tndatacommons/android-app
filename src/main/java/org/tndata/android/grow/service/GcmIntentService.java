@@ -1,4 +1,4 @@
-package org.tndata.android.grow;
+package org.tndata.android.grow.service;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -6,13 +6,14 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-import org.tndata.android.grow.activity.DemoActivity;
+import org.tndata.android.grow.R;
+import org.tndata.android.grow.service.GcmBroadcastReceiver;
+import org.tndata.android.grow.util.GcmRegistration;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -73,7 +74,7 @@ public class GcmIntentService extends IntentService {
     }
 
     private void sendNotification(String msg) {
-        sendNotification(msg, DemoActivity.class.getCanonicalName());
+        sendNotification(msg, GcmRegistration.class.getCanonicalName());
     }
 
     private void sendNotification(String msg, String activity) {
@@ -93,7 +94,7 @@ public class GcmIntentService extends IntentService {
         }
         catch (Exception e) {
             Log.d(TAG, "Activity " + activity + " not found! Using default!");
-            cls = DemoActivity.class;
+            cls = GcmRegistration.class;
         }
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,

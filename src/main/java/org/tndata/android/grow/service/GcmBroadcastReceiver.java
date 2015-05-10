@@ -1,10 +1,12 @@
-package org.tndata.android.grow;
+package org.tndata.android.grow.service;
 
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.WakefulBroadcastReceiver;
+
+import org.tndata.android.grow.GcmIntentService;
 
 public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
     public GcmBroadcastReceiver() {

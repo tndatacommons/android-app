@@ -139,7 +139,7 @@
         </activity>
 
         <receiver
-            android:name="org.tndata.android.grow.GcmBroadcastReceiver"
+            android:name="org.tndata.android.grow.service.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -149,7 +149,7 @@
         </receiver>
 
         <service
-            android:name="org.tndata.android.grow.GcmIntentService"
+            android:name="org.tndata.android.grow.service.GcmIntentService"
             android:exported="false" />
 
     </application>
