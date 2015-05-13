@@ -12,7 +12,7 @@ import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import org.tndata.android.grow.R;
-import org.tndata.android.grow.activity.MainActivity;
+import org.tndata.android.grow.activity.LoginActivity;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -24,17 +24,19 @@ import org.tndata.android.grow.activity.MainActivity;
  * NOTE: Messages received from GCM will have a format like the following:
  *
  * {
- *    "id":32,
- *    "message":"Don't forget to review your Notifications for today",
- *    "activity":"org.tndata.android.grow.demoactivity",
  *    "title":"Demo"
+ *    "message":"Don't forget to review your Notifications for today",
+ *    "object_id":32,
+ *    "object_type":"activity",  // either behavior or activity
  * }
  *
  */
 public class GcmIntentService extends IntentService {
     public static final int NOTIFICATION_ID = 1;
-    private static final String DefaultActivity = "org.tndata.android.grow.activity.MainActivity";
+    private static final String DefaultActivity = "org.tndata.android.grow.activity.LoginActivity";
     private static final String DefaultTitle = "Grow Notification";
+    private static final String ActivityType = "activity";
+    private static final String BehaviorType = "behavior";
     private String TAG = "GcmIntentService";
 
     public GcmIntentService() {
@@ -49,7 +51,7 @@ public class GcmIntentService extends IntentService {
         // in your BroadcastReceiver.
         String messageType = gcm.getMessageType(intent);
 
-        if (!extras.isEmpty()) {  // has effect of unparcelling Bundle
+        if (!extras.isEmpty()) {  // has effect of un-parcelling Bundle
             Log.i(TAG, "extra! extra! message " + extras.get("message") + " activity: " + extras.get("activity"));
             /*
              * Filter messages based on message type. Since it is likely that GCM
@@ -59,19 +61,18 @@ public class GcmIntentService extends IntentService {
              */
             if (GoogleCloudMessaging.
                     MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-                sendNotification("Send error: " + extras.toString());
+                Log.d(TAG, "Send error: " + extras.toString());
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_DELETED.equals(messageType)) {
-                sendNotification("Deleted messages on server: " +
-                        extras.toString());
-                // If it's a regular GCM message, do some work.
+                Log.d(TAG, "Deleted messages on server: " + extras.toString());
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
 
                 sendNotification(
                         extras.getString("message"),
                         extras.getString("title"),
-                        extras.getString("activity")
+                        extras.getString("object_type"),
+                        extras.getString("object_id")
                 );
 
                 Log.i(TAG, "Received: " + extras.toString());
@@ -81,18 +82,20 @@ public class GcmIntentService extends IntentService {
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-    private void sendNotification(String msg) {
-        sendNotification(msg, DefaultActivity);
-    }
-
-    private void sendNotification(String msg, String activity) {
-        sendNotification(msg, DefaultTitle, activity);
-    }
-
     // Put the message into a notification and post it.
-    private void sendNotification(String msg, String title, String activity) {
+    private void sendNotification(String msg, String title, String object_type, String object_id) {
         NotificationManager mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        String activity = DefaultActivity;
+        switch (object_type) {
+            case ActivityType:
+                activity = "org.tndata.android.grow.activity.BehaviorActivity";
+                break;
+            case BehaviorType:
+                activity = "org.tndata.android.grow.activity.BehaviorActivity";
+                break;
+        }
 
         Class<?> cls;
         try {
@@ -100,9 +103,10 @@ public class GcmIntentService extends IntentService {
         }
         catch (Exception e) {
             Log.d(TAG, "Activity " + activity + " not found! Using default!");
-            cls = MainActivity.class;
+            cls = LoginActivity.class;
         }
 
+        // TODO: Tell the activity about the object_id
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, cls), 0);
 
