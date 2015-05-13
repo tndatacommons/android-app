@@ -17,6 +17,14 @@ import java.io.IOException;
 
 /**
  * This is a utility class that encapsulates registering the app with GCM.
+ *
+ * TODO: needs work to be usable from within an activity
+ * - constructor should return something
+ * - constructor shouldn't do all the checks & registration (should it?)
+ * - the activity that calls this needs to check for play services in both the
+ *   onCreate and onResume
+ * - once registered, we need to send the registration id to our API (see below)
+ * - the SENDER_ID should be stored in a keys file or something
  */
 public class GcmRegistration {
 
@@ -155,8 +163,7 @@ public class GcmRegistration {
     }
 
     private void sendRegistrationIdToBackend() {
-        // TODO: Should we implement a way to store Registration IDs on the backend, or should
-        // we just pass that info from the app to the API every time we update a message?
+        // TODO: POST to /api/notifications/devices <-- requires the user is already logged in.
     }
 
     /**
