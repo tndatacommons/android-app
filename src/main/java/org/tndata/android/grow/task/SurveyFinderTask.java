@@ -72,6 +72,8 @@ public class SurveyFinderTask extends AsyncTask<String, Void, Survey> {
 
     @Override
     protected void onPostExecute(Survey survey) {
-        mCallback.surveyFound(survey);
+        if(survey != null) {
+            mCallback.surveyFound(survey);
+        }
     }
 }
