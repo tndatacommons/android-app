@@ -33,18 +33,20 @@ public class GcmRegistration {
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     static final String TAG = "GCM";
 
+    Context mContext = null;
     GoogleCloudMessaging gcm;
     String SENDER_ID = "152170900684";  // TODO: this probably shouldn't be public.
     String registration_id = "";
 
     public GcmRegistration(Context context) {
+        this.mContext = context;
         // Check device for Play Services APK.
-        if (checkPlayServices(context)) {
+        if (checkPlayServices()) {
             gcm = GoogleCloudMessaging.getInstance(context);
-            registration_id = getRegistrationId(context);
+            registration_id = getRegistrationId();
 
             if (registration_id.isEmpty()) {
-                registerInBackground(context);
+                registerInBackground();
             }
         } else {
             Log.i(TAG, "No valid Google Play Services APK found.");
@@ -56,11 +58,11 @@ public class GcmRegistration {
      * it doesn't, display a dialog that allows users to download the APK from
      * the Google Play Store or enable it in the device's system settings.
      */
-    private boolean checkPlayServices(Context context) {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(mContext);
         if (resultCode != ConnectionResult.SUCCESS) {
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, (Activity) context, // TODO: Is this OK?
+                GooglePlayServicesUtil.getErrorDialog(resultCode, (Activity) mContext, // TODO: Is this OK?
                         PLAY_SERVICES_RESOLUTION_REQUEST).show();
             } else {
                 Log.i(TAG, "This device is not supported.");
@@ -78,8 +80,8 @@ public class GcmRegistration {
      * @return registration ID, or empty string if there is no existing
      *         registration ID.
      */
-    private String getRegistrationId(Context context) {
-        final SharedPreferences prefs = getGCMPreferences(context);
+    private String getRegistrationId() {
+        final SharedPreferences prefs = getGCMPreferences();
         String registrationId = prefs.getString(PROPERTY_REG_ID, "");
         if (registrationId.isEmpty()) {
             Log.i(TAG, "Registration not found.");
@@ -89,7 +91,7 @@ public class GcmRegistration {
         // since the existing registration ID is not guaranteed to work with
         // the new app version.
         int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
-        int currentVersion = getAppVersion(context);
+        int currentVersion = getAppVersion();
         if (registeredVersion != currentVersion) {
             Log.i(TAG, "App version changed.");
             return "";
@@ -100,18 +102,18 @@ public class GcmRegistration {
     /**
      * @return Application's {@code SharedPreferences}.
      */
-    private SharedPreferences getGCMPreferences(Context context) {
-        return context.getSharedPreferences(GcmRegistration.class.getSimpleName(),
+    private SharedPreferences getGCMPreferences() {
+        return mContext.getSharedPreferences(GcmRegistration.class.getSimpleName(),
                 Context.MODE_PRIVATE);
     }
 
     /**
      * @return Application's version code from the {@code PackageManager}.
      */
-    private static int getAppVersion(Context context) {
+    private int getAppVersion() {
         try {
-            PackageInfo packageInfo = context.getPackageManager()
-                    .getPackageInfo(context.getPackageName(), 0);
+            PackageInfo packageInfo = mContext.getPackageManager()
+                    .getPackageInfo(mContext.getPackageName(), 0);
             return packageInfo.versionCode;
         } catch (PackageManager.NameNotFoundException e) {
             // should never happen
@@ -125,7 +127,7 @@ public class GcmRegistration {
      * Stores the registration ID and app versionCode in the application's
      * shared preferences.
      */
-    private void registerInBackground(final Context context) {
+    private void registerInBackground() {
 
         new AsyncTask<Void,Void, String>() {
             @Override
@@ -133,7 +135,7 @@ public class GcmRegistration {
                 String msg = "";
                 try {
                     if (gcm == null) {
-                        gcm = GoogleCloudMessaging.getInstance(context);
+                        gcm = GoogleCloudMessaging.getInstance(mContext);
                     }
                     registration_id = gcm.register(SENDER_ID);
                     msg = "Device registered, registration ID=" + registration_id;
@@ -142,10 +144,10 @@ public class GcmRegistration {
                     // so it can use GCM/HTTP or CCS to send messages to your app.
                     // The request to your server should be authenticated if your app
                     // is using accounts.
-                    sendRegistrationIdToBackend();
+                    sendRegistrationIdToBackend(registration_id);
 
                     // Persist the registration ID - no need to register again.
-                    storeRegistrationId(context, registration_id);
+                    storeRegistrationId(registration_id);
                 } catch (IOException ex) {
                     msg = "Error :" + ex.getMessage();
                     // If there is an error, don't just keep trying to register.
@@ -162,20 +164,18 @@ public class GcmRegistration {
         }.execute(null, null, null);
     }
 
-    private void sendRegistrationIdToBackend() {
+    private void sendRegistrationIdToBackend(String registration_id) {
         // TODO: POST to /api/notifications/devices <-- requires the user is already logged in.
+        Log.d(TAG, "TODO: ------ POST to /api/notifiations/devices/ --------" + registration_id);
     }
 
     /**
      * Stores the registration ID and app versionCode in the application's
      * {@code SharedPreferences}.
-     *
-     * @param context application's context.
-     * @param regId registration ID
      */
-    private void storeRegistrationId(Context context, String regId) {
-        final SharedPreferences prefs = getGCMPreferences(context);
-        int appVersion = getAppVersion(context);
+    private void storeRegistrationId(String regId) {
+        final SharedPreferences prefs = getGCMPreferences();
+        int appVersion = getAppVersion();
         Log.i(TAG, "Saving regId on app version " + appVersion);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PROPERTY_REG_ID, regId);

@@ -1,6 +1,25 @@
 package org.tndata.android.grow.activity;
 
-import java.util.ArrayList;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.ListView;
+
+import com.astuetz.PagerSlidingTabStrip;
 
 import org.tndata.android.grow.GrowApplication;
 import org.tndata.android.grow.R;
@@ -22,28 +41,10 @@ import org.tndata.android.grow.task.GetUserCategoriesTask.GetUserCategoriesListe
 import org.tndata.android.grow.task.GetUserGoalsTask;
 import org.tndata.android.grow.task.GetUserGoalsTask.GetUserGoalsListener;
 import org.tndata.android.grow.util.Constants;
+import org.tndata.android.grow.util.GcmRegistration;
 import org.tndata.android.grow.util.ImageCache;
 
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.ListView;
-
-import com.astuetz.PagerSlidingTabStrip;
+import java.util.ArrayList;
 
 public class MainActivity extends ActionBarActivity implements
         GetUserCategoriesListener, GetUserGoalsListener, GetUserBehaviorsListener,
@@ -69,6 +70,9 @@ public class MainActivity extends ActionBarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Register the device with Google Cloud Messaging
+        GcmRegistration gcm_registration = new GcmRegistration(getApplicationContext());
 
         mToolbar = (Toolbar) findViewById(R.id.transparent_tool_bar);
         mToolbar.setTitle("");
