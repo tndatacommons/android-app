@@ -16,12 +16,13 @@ public class Constants {
     public final static String SURVEY_MULTICHOICE = "multiplechoicequestion";
     public final static String SURVEY_BINARY = "binaryquestion";
     public final static String SURVEY_OPENENDED = "openendedquestion";
-
     public final static String SURVEY_OPENENDED_DATE_TYPE = "datetime";
-
 
     public final static String GOAL_UPDATED_BROADCAST_ACTION = "org.tndata.android.grow.GOAL_UPDATED_BROADCAST_ACTION";
 
     public final static String TERMS_AND_CONDITIONS_URL = "http://tndata.org";
     public final static String BASE_URL = "http://app.tndata.org/api/";
+
+    // https://stackoverflow.com/questions/18196292/what-are-consequences-of-having-gcm-sender-id-being-exposed
+    public final static String GCM_SENDER_ID = "152170900684";
 }

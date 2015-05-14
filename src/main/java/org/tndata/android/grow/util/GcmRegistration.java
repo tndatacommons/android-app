@@ -30,7 +30,6 @@ public class GcmRegistration implements RegisterDeviceTask.RegisterDeviceTaskLis
 
     Context mContext = null;
     GoogleCloudMessaging gcm;
-    String SENDER_ID = "152170900684";  // TODO: this probably shouldn't be public.
     String registration_id = "";
 
     public GcmRegistration(Context context) {
@@ -57,7 +56,7 @@ public class GcmRegistration implements RegisterDeviceTask.RegisterDeviceTaskLis
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(mContext);
         if (resultCode != ConnectionResult.SUCCESS) {
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, (Activity) mContext, // TODO: Is this OK?
+                GooglePlayServicesUtil.getErrorDialog(resultCode, (Activity) mContext,
                         PLAY_SERVICES_RESOLUTION_REQUEST).show();
             } else {
                 Log.i(TAG, "This device is not supported.");
@@ -132,7 +131,7 @@ public class GcmRegistration implements RegisterDeviceTask.RegisterDeviceTaskLis
                     if (gcm == null) {
                         gcm = GoogleCloudMessaging.getInstance(mContext);
                     }
-                    registration_id = gcm.register(SENDER_ID);
+                    registration_id = gcm.register(Constants.GCM_SENDER_ID);
                     msg = "Device registered, registration ID=" + registration_id;
 
                     // You should send the registration ID to your server over HTTP,
