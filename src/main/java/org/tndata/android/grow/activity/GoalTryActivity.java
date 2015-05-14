@@ -172,12 +172,19 @@ public class GoalTryActivity extends ActionBarActivity implements
         }
         mAdapter.setOnClickEvent(new OnClickEvent() {
 
+            private void setVisibility(View v, int visibility) {
+                if(v != null) {
+                    v.setVisibility(visibility);
+                }
+            }
+
             @Override
             public void onClick(View v, int position) {
-                v.findViewById(R.id.list_item_behavior_try_it_button).setVisibility(View.VISIBLE);
-                v.findViewById(R.id.list_item_behavior_description_textview).setVisibility(View
-                        .VISIBLE);
-                v.findViewById(R.id.list_item_behavior_imageview).setVisibility(View.GONE);
+                setVisibility(v.findViewById(R.id.list_item_behavior_try_it_button), View.VISIBLE);
+                setVisibility(v.findViewById(R.id.list_item_behavior_try_it_button), View.VISIBLE);
+                setVisibility(v.findViewById(R.id.list_item_behavior_description_textview),
+                        View.VISIBLE);
+                setVisibility(v.findViewById(R.id.list_item_behavior_imageview), View.GONE);
                 mExpandedPositions.add(Integer.valueOf(position));
             }
         });
