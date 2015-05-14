@@ -12,21 +12,16 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import org.tndata.android.grow.task.RegisterDeviceTask;
+
 import java.io.IOException;
 
 
 /**
  * This is a utility class that encapsulates registering the app with GCM.
  *
- * TODO: needs work to be usable from within an activity
- * - constructor should return something
- * - constructor shouldn't do all the checks & registration (should it?)
- * - the activity that calls this needs to check for play services in both the
- *   onCreate and onResume
- * - once registered, we need to send the registration id to our API (see below)
- * - the SENDER_ID should be stored in a keys file or something
  */
-public class GcmRegistration {
+public class GcmRegistration implements RegisterDeviceTask.RegisterDeviceTaskListener {
 
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
@@ -83,7 +78,7 @@ public class GcmRegistration {
     private String getRegistrationId() {
         final SharedPreferences prefs = getGCMPreferences();
         String registrationId = prefs.getString(PROPERTY_REG_ID, "");
-        if (registrationId.isEmpty()) {
+        if (registrationId == null || registrationId.isEmpty()) {
             Log.i(TAG, "Registration not found.");
             return "";
         }
@@ -132,7 +127,7 @@ public class GcmRegistration {
         new AsyncTask<Void,Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
-                String msg = "";
+                String msg;
                 try {
                     if (gcm == null) {
                         gcm = GoogleCloudMessaging.getInstance(mContext);
@@ -165,8 +160,8 @@ public class GcmRegistration {
     }
 
     private void sendRegistrationIdToBackend(String registration_id) {
-        // TODO: POST to /api/notifications/devices <-- requires the user is already logged in.
-        Log.d(TAG, "TODO: ------ POST to /api/notifiations/devices/ --------" + registration_id);
+        new RegisterDeviceTask(mContext, this, registration_id).executeOnExecutor(
+                AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     /**
@@ -181,5 +176,9 @@ public class GcmRegistration {
         editor.putString(PROPERTY_REG_ID, regId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
         editor.commit();
+    }
+
+    public void deviceRegistered(String registration_id) {
+        Log.d(TAG, "Device Registered with API backend");
     }
 }
