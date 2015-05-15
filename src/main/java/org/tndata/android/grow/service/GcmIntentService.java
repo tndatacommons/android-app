@@ -14,6 +14,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import org.json.JSONObject;
 import org.tndata.android.grow.R;
 import org.tndata.android.grow.activity.LoginActivity;
+import org.tndata.android.grow.util.Constants;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -34,10 +35,6 @@ import org.tndata.android.grow.activity.LoginActivity;
  */
 public class GcmIntentService extends IntentService {
     public static final int NOTIFICATION_ID = 1;
-    private static final String DefaultActivity = "org.tndata.android.grow.activity.LoginActivity";
-    private static final String DefaultTitle = "Grow Notification";
-    private static final String ActionType = "action";
-    private static final String BehaviorType = "behavior";
     private String TAG = "GcmIntentService";
 
     public GcmIntentService() {
@@ -91,17 +88,17 @@ public class GcmIntentService extends IntentService {
         NotificationManager mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        String activity = DefaultActivity;
+        String activity = Constants.GCM_DEFAULT_ACTIVITY;
         /*
         // TODO: We can't launch these activities directly without the full app being
         // TODO: initialized (e.g. some of the data required for model.Goal.getBehaviors()
         // TODO: will be null)
         switch (object_type) {
-            case ActionType:
-                activity = "org.tndata.android.grow.activity.BehaviorActivity";
+            case Constants.ACTION_TYPE:
+                activity = Constants.GCM_ACTION_ACTIVITY;
                 break;
-            case BehaviorType:
-                activity = "org.tndata.android.grow.activity.BehaviorActivity";
+            case Constants.BEHAVIOR_TYPE:
+                activity = Constants.GCM_BEHAVIOR_ACTIVITY;
                 break;
         }
         */
