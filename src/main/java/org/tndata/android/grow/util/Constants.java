@@ -23,6 +23,13 @@ public class Constants {
     public final static String TERMS_AND_CONDITIONS_URL = "http://tndata.org";
     public final static String BASE_URL = "http://app.tndata.org/api/";
 
+    // For GCM Notifications
+    public final static String ACTION_TYPE = "action";
+    public final static String BEHAVIOR_TYPE = "behavior";
+    public final static String GCM_DEFAULT_ACTIVITY = "org.tndata.android.grow.activity.LoginActivity";
+    public final static String GCM_ACTION_ACTIVITY = "org.tndata.android.grow.activity.LoginActivity"; // TODO: Action's more info
+    public final static String GCM_BEHAVIOR_ACTIVITY = "org.tndata.android.grow.activity.BehaviorActivity"; // TODO: Action's more info
+
     // https://stackoverflow.com/questions/18196292/what-are-consequences-of-having-gcm-sender-id-being-exposed
     public final static String GCM_SENDER_ID = "152170900684";
 }

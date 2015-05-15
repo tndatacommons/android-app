@@ -11,8 +11,10 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import org.json.JSONObject;
 import org.tndata.android.grow.R;
 import org.tndata.android.grow.activity.LoginActivity;
+import org.tndata.android.grow.util.Constants;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -27,16 +29,12 @@ import org.tndata.android.grow.activity.LoginActivity;
  *    "title":"Demo"
  *    "message":"Don't forget to review your Notifications for today",
  *    "object_id":32,
- *    "object_type":"activity",  // either behavior or activity
+ *    "object_type":"action",  // either behavior or action
  * }
  *
  */
 public class GcmIntentService extends IntentService {
     public static final int NOTIFICATION_ID = 1;
-    private static final String DefaultActivity = "org.tndata.android.grow.activity.LoginActivity";
-    private static final String DefaultTitle = "Grow Notification";
-    private static final String ActivityType = "activity";
-    private static final String BehaviorType = "behavior";
     private String TAG = "GcmIntentService";
 
     public GcmIntentService() {
@@ -52,7 +50,7 @@ public class GcmIntentService extends IntentService {
         String messageType = gcm.getMessageType(intent);
 
         if (!extras.isEmpty()) {  // has effect of un-parcelling Bundle
-            Log.i(TAG, "extra! extra! message " + extras.get("message") + " activity: " + extras.get("activity"));
+            Log.d(TAG, "GCM message: " + extras.get("message"));
             /*
              * Filter messages based on message type. Since it is likely that GCM
              * will be extended in the future with new message types, just ignore
@@ -68,14 +66,17 @@ public class GcmIntentService extends IntentService {
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
 
-                sendNotification(
-                        extras.getString("message"),
-                        extras.getString("title"),
-                        extras.getString("object_type"),
-                        extras.getString("object_id")
-                );
-
-                Log.i(TAG, "Received: " + extras.toString());
+                try {
+                    JSONObject jsonObject = new JSONObject(extras.getString("message"));
+                    sendNotification(
+                            jsonObject.optString("message"),
+                            jsonObject.optString("title"),
+                            jsonObject.optString("object_type"),
+                            jsonObject.optString("object_id")
+                    );
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
@@ -87,15 +88,20 @@ public class GcmIntentService extends IntentService {
         NotificationManager mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        String activity = DefaultActivity;
+        String activity = Constants.GCM_DEFAULT_ACTIVITY;
+        /*
+        // TODO: We can't launch these activities directly without the full app being
+        // TODO: initialized (e.g. some of the data required for model.Goal.getBehaviors()
+        // TODO: will be null)
         switch (object_type) {
-            case ActivityType:
-                activity = "org.tndata.android.grow.activity.BehaviorActivity";
+            case Constants.ACTION_TYPE:
+                activity = Constants.GCM_ACTION_ACTIVITY;
                 break;
-            case BehaviorType:
-                activity = "org.tndata.android.grow.activity.BehaviorActivity";
+            case Constants.BEHAVIOR_TYPE:
+                activity = Constants.GCM_BEHAVIOR_ACTIVITY;
                 break;
         }
+        */
 
         Class<?> cls;
         try {
@@ -106,7 +112,7 @@ public class GcmIntentService extends IntentService {
             cls = LoginActivity.class;
         }
 
-        // TODO: Tell the activity about the object_id
+        // TODO: How can we tell the activity about the object_id (and possibly the object_type)
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, cls), 0);
 
