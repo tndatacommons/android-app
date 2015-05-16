@@ -33,6 +33,7 @@ import org.tndata.android.grow.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
 import org.tndata.android.grow.ui.parallaxrecyclerview.ParallaxRecyclerAdapter.OnClickEvent;
 import org.tndata.android.grow.util.Constants;
 import org.tndata.android.grow.util.ImageCache;
+import org.tndata.android.grow.util.ViewHelper;
 
 import java.util.ArrayList;
 
@@ -174,10 +175,18 @@ public class GoalTryActivity extends ActionBarActivity implements
 
             @Override
             public void onClick(View v, int position) {
-                v.findViewById(R.id.list_item_behavior_try_it_button).setVisibility(View.VISIBLE);
-                v.findViewById(R.id.list_item_behavior_description_textview).setVisibility(View
-                        .VISIBLE);
-                v.findViewById(R.id.list_item_behavior_imageview).setVisibility(View.GONE);
+                ViewHelper.setVisibility(
+                        v.findViewById(R.id.list_item_behavior_try_it_button),
+                        View.VISIBLE);
+                ViewHelper.setVisibility(
+                        v.findViewById(R.id.list_item_behavior_try_it_button),
+                        View.VISIBLE);
+                ViewHelper.setVisibility(
+                        v.findViewById(R.id.list_item_behavior_description_textview),
+                        View.VISIBLE);
+                ViewHelper.setVisibility(
+                        v.findViewById(R.id.list_item_behavior_imageview),
+                        View.GONE);
                 mExpandedPositions.add(Integer.valueOf(position));
             }
         });
