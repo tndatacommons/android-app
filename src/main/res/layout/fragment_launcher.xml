@@ -12,7 +12,7 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/launcher_grow_image"
         android:scaleType="centerCrop"
-        android:src="@drawable/grow_splash_logo" />
+        android:src="@drawable/splash_logo" />
 
     <TextView
         android:id="@+id/launcher_tagline"
