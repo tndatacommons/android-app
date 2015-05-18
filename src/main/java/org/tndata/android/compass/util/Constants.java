@@ -18,7 +18,7 @@ public class Constants {
     public final static String SURVEY_OPENENDED = "openendedquestion";
     public final static String SURVEY_OPENENDED_DATE_TYPE = "datetime";
 
-    public final static String GOAL_UPDATED_BROADCAST_ACTION = "org.tndata.android.grow.GOAL_UPDATED_BROADCAST_ACTION";
+    public final static String GOAL_UPDATED_BROADCAST_ACTION = "org.tndata.android.compass.GOAL_UPDATED_BROADCAST_ACTION";
 
     public final static String TERMS_AND_CONDITIONS_URL = "http://tndata.org";
     public final static String BASE_URL = "http://app.tndata.org/api/";
@@ -26,9 +26,9 @@ public class Constants {
     // For GCM Notifications
     public final static String ACTION_TYPE = "action";
     public final static String BEHAVIOR_TYPE = "behavior";
-    public final static String GCM_DEFAULT_ACTIVITY = "org.tndata.android.grow.activity.LoginActivity";
-    public final static String GCM_ACTION_ACTIVITY = "org.tndata.android.grow.activity.LoginActivity"; // TODO: Action's more info
-    public final static String GCM_BEHAVIOR_ACTIVITY = "org.tndata.android.grow.activity.BehaviorActivity"; // TODO: Action's more info
+    public final static String GCM_DEFAULT_ACTIVITY = "org.tndata.android.compass.activity.LoginActivity";
+    public final static String GCM_ACTION_ACTIVITY = "org.tndata.android.compass.activity.LoginActivity"; // TODO: Action's more info
+    public final static String GCM_BEHAVIOR_ACTIVITY = "org.tndata.android.compass.activity.BehaviorActivity"; // TODO: Action's more info
 
     // https://stackoverflow.com/questions/18196292/what-are-consequences-of-having-gcm-sender-id-being-exposed
     public final static String GCM_SENDER_ID = "152170900684";
