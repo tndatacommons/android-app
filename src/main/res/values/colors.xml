@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="grow_primary">#87D37C</color>
-    <color name="grow_primary_dark">#388E3C</color>
-    <color name="grow_secondary">#2196F3</color>
-    <color name="grow_primary_accent">#87D37C</color>
+    <color name="grow_primary">#2196F3</color>
+    <color name="grow_primary_dark">#1976D2</color>
+    <color name="grow_secondary">#009688</color>
+    <color name="grow_primary_accent">#BBDEFB</color>
     <color name="actionbar_main_color">#BD98ED</color>
     <color name="actionbar_text">#FFFFFF</color>
     <color name="app_background">#FFFFFF</color>

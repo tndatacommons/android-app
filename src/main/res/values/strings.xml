@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Grow</string>
+    <string name="app_name">Compass</string>
     <string name="version_num">1.0.0</string>
 
     <!-- MainActivity -->
@@ -10,15 +10,15 @@
     <string name="action_myself">Myself</string>
     <string name="action_my_priorities">My Priorities</string>
     <string name="action_my_privacy">My Privacy</string>
-    <string name="nav_drawer_action">Grow</string>
+    <string name="nav_drawer_action">Compass</string>
     <string name="my_goals_title">My Interests</string>
 
     <!-- LoginActivity -->
     <string name="terms_title">Terms and Conditions</string>
     <string name="launcher_sign_up">SIGN UP</string>
     <string name="launcher_login">LOG IN</string>
-    <string name="launcher_tagline">What do YOU want to do?</string>
-    <string name="launcher_grow_image">Grow</string>
+    <string name="launcher_tagline">Sign up or Log in</string>
+    <string name="launcher_grow_image">Compass</string>
     <string name="login_email_hint">email</string>
     <string name="login_password_hint">password</string>
     <string name="login_email_label">email address</string>
