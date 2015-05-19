@@ -1,6 +1,12 @@
 package org.tndata.android.compass.activity;
 
-import java.util.ArrayList;
+import android.app.Fragment;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -11,13 +17,7 @@ import org.tndata.android.compass.task.AddCategoryTask;
 import org.tndata.android.compass.task.AddCategoryTask.AddCategoryTaskListener;
 import org.tndata.android.compass.util.Constants;
 
-import android.app.Fragment;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import java.util.ArrayList;
 
 public class OnBoardingActivity extends ActionBarActivity implements
         ChooseCategoriesFragment.ChooseCategoriesFragmentListener, AddCategoryTaskListener,
@@ -40,7 +40,7 @@ public class OnBoardingActivity extends ActionBarActivity implements
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().hide();
-        swapFragments(CHOOSE_CATEGORIES);
+        swapFragments(BIO); // Start with Bio questions.
     }
 
     @Override
@@ -89,8 +89,8 @@ public class OnBoardingActivity extends ActionBarActivity implements
 
     @Override
     public void instrumentFinished(int instrumentId) {
-        if (instrumentId == Constants.QOL_INSTRUMENT_ID) {
-            swapFragments(BIO);
+        if (instrumentId == Constants.BIO_INSTRUMENT_ID) {
+            swapFragments(CHOOSE_CATEGORIES);
         } else {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
