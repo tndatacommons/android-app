@@ -12,7 +12,7 @@
         android:layout_alignParentBottom="true"
         android:scaleType="centerCrop"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/grow_material_main_image" />
+        android:src="@drawable/path_main_image" />
 
     <RelativeLayout
         android:layout_width="match_parent"

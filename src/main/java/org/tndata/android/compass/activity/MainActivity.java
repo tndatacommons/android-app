@@ -125,7 +125,7 @@ public class MainActivity extends ActionBarActivity implements
                     ImageCache.instance(getApplicationContext()).loadBitmap(
                             mHeaderImageView, url, false, false);
                 } else {
-                    mHeaderImageView.setImageResource(R.drawable.grow_material_header_image);
+                    mHeaderImageView.setImageResource(R.drawable.path_header_image);
                 }
             }
 

@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/material_header_size"
             android:scaleType="centerCrop"
-            android:src="@drawable/grow_material_header_image"
+            android:src="@drawable/path_header_image"
             android:background="@color/grow_primary"/>
 
         <include
