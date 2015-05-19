@@ -9,7 +9,7 @@
     <color name="actionbar_text">#FFFFFF</color>
     <color name="app_background">#FFFFFF</color>
     <color name="nav_drawer_color">#FFFFFF</color>
-    <color name="login_background">#B3E5FC</color>
+    <color name="login_background">#1976D2</color>
     <color name="transparent_overlay">#30000000</color>
     <color name="image_background">#DEDEDE</color>
 
@@ -26,8 +26,9 @@
     <color name="disabled_text_color">#E3E3E3</color>
 
     <!-- Buttons -->
-    <color name="button_paper_flat_text_color">#BBDEFB</color>
-    <color name="button_paper_flat_label_text_color">#858585</color>
+    <color name="button_paper_flat_text_color">#FFFFFF</color>
+    <color name="button_paper_flat_unselected_color">#E91E63</color>
+    <color name="button_paper_flat_label_text_color">#404040</color>
     <color name="button_paper_flat_selected_color">#662196F3</color>
     <color name="button_paper_flat_disabled_color">#1A2196F3</color>
     <color name="button_positive_text_color">#FFFFFF</color>
