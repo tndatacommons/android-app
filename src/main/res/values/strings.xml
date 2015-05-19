@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Grow</string>
+    <string name="app_name">Compass</string>
     <string name="version_num">1.0.0</string>
 
     <!-- MainActivity -->
@@ -10,15 +10,15 @@
     <string name="action_myself">Myself</string>
     <string name="action_my_priorities">My Priorities</string>
     <string name="action_my_privacy">My Privacy</string>
-    <string name="nav_drawer_action">Grow</string>
+    <string name="nav_drawer_action">Compass</string>
     <string name="my_goals_title">My Interests</string>
 
     <!-- LoginActivity -->
     <string name="terms_title">Terms and Conditions</string>
     <string name="launcher_sign_up">SIGN UP</string>
     <string name="launcher_login">LOG IN</string>
-    <string name="launcher_tagline">What do YOU want to do?</string>
-    <string name="launcher_grow_image">Grow</string>
+    <string name="launcher_tagline">Sign up or Log in</string>
+    <string name="launcher_grow_image">Compass</string>
     <string name="login_email_hint">email</string>
     <string name="login_password_hint">password</string>
     <string name="login_email_label">email address</string>
@@ -37,16 +37,19 @@
     <string name="signup_privacy_link">Privacy Policy</string>
     <string name="signup_connect_email">Sign up with email</string>
     <string name="signup_header_label">CREATE YOUR ACCOUNT</string>
-    <string name="signup_header_info_label">YOU\'RE IN CHARGE</string>
-    <string name="signup_info_label">GROW uses your private info to support your choices. We won\'t try to sell you things, and we won\'t share your private info with others. EVER.</string>
+    <string name="signup_header_info_label">FIND YOUR WAY</string>
+    <string name="signup_info_label">Knowing who you are and where you\'re going affects what you can achieve</string>
 
     <!-- OnBoardingActivity -->
     <string name="onboarding_category_error_label">Uh Oh! There seems to have been an issue finding choices!</string>
-    <string name="onboarding_category_header_label">USING GROW IS EASY!</string>
-    <string name="onboarding_category_info_label">Choose the topics you care about most. You can edit your choices later.</string>
+    <string name="onboarding_category_header_label">KNOW YOUR PATH.</string>
+    <string name="onboarding_category_info_label">Tell Compass four things you think about a lot. You can add to or change your choices later.</string>
     <string name="category_image_description">Select</string>
-    <string name="choose_categories_need_more">You must select at least 1 category!</string>
+    <string name="choose_categories_need_more">You must select at least 4 categories!</string>
     <string name="onboarding_category_done">NEXT</string>
+    <!-- TODO: need to add the 'check progress' section to the end of onboarding -->
+    <string name="onboarding_self_check_title">CHECK YOUR PROGRESS.</string>
+    <string name="onboarding_self_check">Check in with Compass to track your progress.</string>
     <string name="choose_goals_done">I\'M DONE</string>
     <string name="choose_goals_header_label">%1$s goals</string>
     <string name="choose_goals_info_label">Select your goals for easy ways to GROW.</string>
@@ -55,8 +58,8 @@
     <string name="choose_goals_list_item_select_button">I WANT THIS</string>
     <string name="choose_goals_list_item_selected_button">I\'LL DO IT!</string>
     <string name="goal_image_description">Goal</string>
-    <string name="qol_header_label">CONSIDER YOURSELF</string>
-    <string name="qol_header_info_label">Take a moment to reflect on where you are today. These questions will help GROW focus on your specific needs.</string>
+    <string name="qol_header_label">KNOW YOURSELF.</string>
+    <string name="qol_header_info_label">Tell Compass a bit about yourself.</string>
     <string name="qol_next_button">NEXT</string>
     <string name="survey_open_ended_hint">answer</string>
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.tndata.android.grow"
+    package="org.tndata.android.compass"
     android:versionCode="1"
     android:versionName="1.0">
 
@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="org.tndata.android.grow.permission.C2D_MESSAGE" />
+    <uses-permission android:name="org.tndata.android.compass.permission.C2D_MESSAGE" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
@@ -22,13 +22,13 @@
         android:maxSdkVersion="18" />
 
     <application
-        android:name="org.tndata.android.grow.GrowApplication"
+        android:name=".CompassApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/CustomActionBarTheme">
         <activity
-            android:name="org.tndata.android.grow.activity.LoginActivity"
+            android:name="org.tndata.android.compass.activity.LoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -37,7 +37,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.tndata.android.grow.activity.MainActivity"
+            android:name="org.tndata.android.compass.activity.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -46,7 +46,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.tndata.android.grow.activity.OnBoardingActivity"
+            android:name="org.tndata.android.compass.activity.OnBoardingActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
@@ -54,8 +54,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.tndata.android.grow.activity.SettingsActivity"
-            android:parentActivityName="org.tndata.android.grow.activity.MainActivity"
+            android:name="org.tndata.android.compass.activity.SettingsActivity"
+            android:parentActivityName="org.tndata.android.compass.activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
@@ -64,11 +64,11 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.tndata.android.grow.activity.MainActivity" />
+                android:value="org.tndata.android.compass.activity.MainActivity" />
         </activity>
         <activity
-            android:name="org.tndata.android.grow.activity.UserProfileActivity"
-            android:parentActivityName="org.tndata.android.grow.activity.MainActivity"
+            android:name="org.tndata.android.compass.activity.UserProfileActivity"
+            android:parentActivityName="org.tndata.android.compass.activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
@@ -77,11 +77,11 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.tndata.android.grow.activity.MainActivity" />
+                android:value="org.tndata.android.compass.activity.MainActivity" />
         </activity>
         <activity
-            android:name="org.tndata.android.grow.activity.ChooseGoalsActivity"
-            android:parentActivityName="org.tndata.android.grow.activity.MainActivity"
+            android:name="org.tndata.android.compass.activity.ChooseGoalsActivity"
+            android:parentActivityName="org.tndata.android.compass.activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
@@ -90,11 +90,11 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.tndata.android.grow.activity.MainActivity" />
+                android:value="org.tndata.android.compass.activity.MainActivity" />
         </activity>
         <activity
-            android:name="org.tndata.android.grow.activity.ChooseCategoriesActivity"
-            android:parentActivityName="org.tndata.android.grow.activity.MainActivity"
+            android:name="org.tndata.android.compass.activity.ChooseCategoriesActivity"
+            android:parentActivityName="org.tndata.android.compass.activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
@@ -103,11 +103,11 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.tndata.android.grow.activity.MainActivity" />
+                android:value="org.tndata.android.compass.activity.MainActivity" />
         </activity>
         <activity
-            android:name="org.tndata.android.grow.activity.GoalTryActivity"
-            android:parentActivityName="org.tndata.android.grow.activity.MainActivity"
+            android:name="org.tndata.android.compass.activity.GoalTryActivity"
+            android:parentActivityName="org.tndata.android.compass.activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
@@ -116,11 +116,11 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.tndata.android.grow.activity.MainActivity" />
+                android:value="org.tndata.android.compass.activity.MainActivity" />
         </activity>
         <activity
-            android:name="org.tndata.android.grow.activity.BehaviorActivity"
-            android:parentActivityName="org.tndata.android.grow.activity.GoalTryActivity"
+            android:name="org.tndata.android.compass.activity.BehaviorActivity"
+            android:parentActivityName="org.tndata.android.compass.activity.GoalTryActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
@@ -129,20 +129,20 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.tndata.android.grow.activity.GoalTryActivity" />
+                android:value="org.tndata.android.compass.activity.GoalTryActivity" />
         </activity>
 
         <receiver
-            android:name="org.tndata.android.grow.service.GcmBroadcastReceiver"
+            android:name="org.tndata.android.compass.service.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <category android:name="org.tndata.android.grow" />
+                <category android:name="org.tndata.android.compass" />
             </intent-filter>
         </receiver>
 
         <service
-            android:name="org.tndata.android.grow.service.GcmIntentService"
+            android:name="org.tndata.android.compass.service.GcmIntentService"
             android:exported="false" />
 
     </application>

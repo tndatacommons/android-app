@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="org.tndata.android.grow.MainActivity" >
+    tools:context="org.tndata.android.compass.MainActivity" >
 
     <item
         android:id="@+id/action_settings"
