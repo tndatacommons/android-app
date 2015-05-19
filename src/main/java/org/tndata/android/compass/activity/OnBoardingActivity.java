@@ -53,7 +53,7 @@ public class OnBoardingActivity extends ActionBarActivity implements
         for (Category cat : mCategories) {
             cats.add(String.valueOf(cat.getId()));
         }
-        swapFragments(QOL);
+        instrumentFinished(-1); // We're doing with onboarding.
         new AddCategoryTask(this, this, cats)
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }

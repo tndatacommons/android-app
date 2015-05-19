@@ -1,14 +1,5 @@
 package org.tndata.android.compass.fragment;
 
-import java.util.ArrayList;
-
-import org.tndata.android.compass.CompassApplication;
-import org.tndata.android.compass.R;
-import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.task.CategoryLoaderTask;
-import org.tndata.android.compass.task.CategoryLoaderTask.CategoryLoaderListener;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.AsyncTask;
@@ -21,16 +12,25 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.tndata.android.compass.CompassApplication;
+import org.tndata.android.compass.R;
+import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
+import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.task.CategoryLoaderTask;
+import org.tndata.android.compass.task.CategoryLoaderTask.CategoryLoaderListener;
+
+import java.util.ArrayList;
+
 public class ChooseCategoriesFragment extends Fragment implements
         CategoryLoaderListener, ChooseCategoryAdapter.ChooseCategoryAdapterListener {
-    public final static int MIN_CATEGORIES_REQUIRED = 1;
+    public final static int MIN_CATEGORIES_REQUIRED = 4;
     private ChooseCategoryAdapter mAdapter;
     private ArrayList<Category> mItems;
     private GridView mGridView;
@@ -113,6 +113,7 @@ public class ChooseCategoriesFragment extends Fragment implements
                 }
             }
         });
+        mNextButton.setEnabled(false); // Start with a disabled button
         return v;
     }
 
@@ -126,6 +127,7 @@ public class ChooseCategoriesFragment extends Fragment implements
         }
         if (mSelectedItems.size() >= MIN_CATEGORIES_REQUIRED) {
             mNextButton.setVisibility(View.VISIBLE);
+            mNextButton.setEnabled(true);
         }
         mAdapter = new ChooseCategoryAdapter(getActivity(),
                 R.id.list_item_category_grid_category_textview, mItems, this);

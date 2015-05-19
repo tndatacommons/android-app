@@ -45,7 +45,7 @@
     <string name="onboarding_category_header_label">KNOW YOUR PATH.</string>
     <string name="onboarding_category_info_label">Tell Compass four things you think about a lot. You can add to or change your choices later.</string>
     <string name="category_image_description">Select</string>
-    <string name="choose_categories_need_more">You must select at least 1 category!</string>
+    <string name="choose_categories_need_more">You must select at least 4 categories!</string>
     <string name="onboarding_category_done">NEXT</string>
     <!-- TODO: need to add the 'check progress' section to the end of onboarding -->
     <string name="onboarding_self_check_title">CHECK YOUR PROGRESS.</string>
