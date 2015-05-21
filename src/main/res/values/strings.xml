@@ -3,6 +3,7 @@
 
     <string name="app_name">Compass</string>
     <string name="version_num">1.0.0</string>
+    <string name="ok">OK</string>
 
     <!-- MainActivity -->
     <string name="action_settings">Settings</string>
@@ -50,6 +51,9 @@
 
     <string name="onboarding_checkprogress_title">ARE YOU ON COURSE?</string>
     <string name="onboarding_checkprogress_info">Compass will help you track your progress. These icons let you know if you are heading in the right direction. Tap one to get started.</string>
+    <string name="onboarding_checkprogress_privacy_title">Your Privacy</string>
+    <string name="onboarding_checkprogress_privacy_content">Compass respects your privacy and will never share your personal information with others.</string>
+
     <string name="choose_goals_done">I\'M DONE</string>
     <string name="choose_goals_header_label">%1$s goals</string>
     <string name="choose_goals_info_label">Select your goals for easy ways to GROW.</string>

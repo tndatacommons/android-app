@@ -1,9 +1,10 @@
 package org.tndata.android.compass.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,9 +33,16 @@ public class CheckProgressFragment extends Fragment {
         mPrivacyButtonImageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: show an alert with info about privacy
-                // mCallback.progressCompleted();
-                Log.d("CheckProgressFragment", "---> Clicked the privacy info icon");
+                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                builder.setMessage(R.string.onboarding_checkprogress_privacy_content)
+                        .setTitle(R.string.onboarding_checkprogress_privacy_title)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                }
+                        });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
         mCheckProgressInfoImage = (ImageView) v.findViewById(R.id.checkprogress_info_button);
