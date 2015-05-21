@@ -47,9 +47,9 @@
     <string name="category_image_description">Select</string>
     <string name="choose_categories_need_more">You must select at least 4 categories!</string>
     <string name="onboarding_category_done">NEXT</string>
-    <!-- TODO: need to add the 'check progress' section to the end of onboarding -->
-    <string name="onboarding_self_check_title">CHECK YOUR PROGRESS.</string>
-    <string name="onboarding_self_check">Check in with Compass to track your progress.</string>
+
+    <string name="onboarding_checkprogress_title">ARE YOU ON COURSE?</string>
+    <string name="onboarding_checkprogress_info">Compass will help you track your progress. These icons let you know if you are heading in the right direction. Tap one to get started.</string>
     <string name="choose_goals_done">I\'M DONE</string>
     <string name="choose_goals_header_label">%1$s goals</string>
     <string name="choose_goals_info_label">Select your goals for easy ways to GROW.</string>

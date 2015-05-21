@@ -11,6 +11,7 @@ import android.util.Log;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.ChooseCategoriesFragment;
+import org.tndata.android.compass.fragment.CheckProgressFragment;
 import org.tndata.android.compass.fragment.InstrumentFragment;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.task.AddCategoryTask;
@@ -20,11 +21,14 @@ import org.tndata.android.compass.util.Constants;
 import java.util.ArrayList;
 
 public class OnBoardingActivity extends ActionBarActivity implements
-        ChooseCategoriesFragment.ChooseCategoriesFragmentListener, AddCategoryTaskListener,
+        CheckProgressFragment.CheckProgressFragmentListener,
+        ChooseCategoriesFragment.ChooseCategoriesFragmentListener,
+        AddCategoryTaskListener,
         InstrumentFragment.InstrumentFragmentListener {
     private static final int CHOOSE_CATEGORIES = 0;
     private static final int QOL = 1;
     private static final int BIO = 2;
+    private static final int CHECK_PROGRESS = 3;
     private boolean mCategoriesSaved = false;
     private Toolbar mToolbar;
     private ArrayList<Category> mCategories;
@@ -53,9 +57,16 @@ public class OnBoardingActivity extends ActionBarActivity implements
         for (Category cat : mCategories) {
             cats.add(String.valueOf(cat.getId()));
         }
-        instrumentFinished(-1); // We're doing with onboarding.
+        swapFragments(CHECK_PROGRESS);
         new AddCategoryTask(this, this, cats)
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    @Override
+    public void progressCompleted() {
+        // At the very end of the onboarding process, we display the CheckProgressFragment,
+        // and tapping the progress icons should end the onboarding.
+        instrumentFinished(-1);
     }
 
     private void swapFragments(int index) {
@@ -70,6 +81,9 @@ public class OnBoardingActivity extends ActionBarActivity implements
                 break;
             case BIO:
                 mFragment = InstrumentFragment.newInstance(Constants.BIO_INSTRUMENT_ID);
+                break;
+            case CHECK_PROGRESS:
+                mFragment = new CheckProgressFragment();
                 break;
         }
         if (mFragment != null) {
