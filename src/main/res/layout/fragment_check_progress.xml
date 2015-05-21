@@ -1,0 +1,79 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true">
+
+    <ImageView
+        android:id="@+id/signup_background_imageview"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/login_header_size"
+        android:layout_height="fill_parent"
+        android:adjustViewBounds="true"
+        android:layout_alignParentBottom="true"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/path_main_image" />
+
+    <RelativeLayout
+        android:id="@+id/checkprogress_header_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/login_header_size"
+        android:animateLayoutChanges="true"
+        android:background="@color/login_background"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/checkprogress_header_label_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:text="@string/onboarding_checkprogress_title"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/checkprogress_info_label_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/checkprogress_header_label_textview"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="5dp"
+            android:text="@string/onboarding_checkprogress_info"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white" />
+
+        <ImageView
+            android:id="@+id/checkprogress_privacy_button_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/signup_privacy_link"
+            android:src="@drawable/ic_action_info_white" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/checkprogress_directions_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:background="@color/white"
+        android:layout_below="@id/checkprogress_header_container">
+
+        <ImageView
+            android:id="@+id/checkprogress_info_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:layout_alignParentTop="true"
+            android:scaleType="centerCrop"
+            android:gravity="center_vertical"
+            android:minHeight="@dimen/paper_flat_button_min_height"
+            android:minWidth="@dimen/paper_flat_login_button_min_width"
+            android:src="@drawable/direction_icons"/>
+    </RelativeLayout>
+
+</RelativeLayout>

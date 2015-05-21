@@ -31,7 +31,7 @@ public class ImageCache {
         }
 
         mPlaceHolderBitmap = BitmapFactory.decodeResource(
-                mContext.getResources(), R.drawable.ic_action_grow_white);
+                mContext.getResources(), R.drawable.ic_action_compass_white);
         return mImageCache;
 
     }

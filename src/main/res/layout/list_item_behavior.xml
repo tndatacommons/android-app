@@ -23,7 +23,7 @@
             android:layout_margin="10dp"
             android:layout_alignParentLeft="true"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_action_grow_white"/>
+            android:src="@drawable/ic_action_compass_white"/>
 
         <TextView
             android:id="@+id/list_item_behavior_title_textview"
