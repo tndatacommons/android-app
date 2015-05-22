@@ -33,7 +33,9 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
     private ActionViewListener mCallback;
 
     public interface ActionViewListener {
-        public void actionChanged();
+        public void actionChanged(Action action);
+
+        public void fireActionPicker();
     }
 
     public ActionCellView(Context context) {
@@ -165,7 +167,8 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
         }
         updateImage();
         if (mCallback != null) {
-            mCallback.actionChanged();
+            mCallback.actionChanged(mAction);
+            mCallback.fireActionPicker();
         }
     }
 
@@ -181,7 +184,7 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
         }
         updateImage();
         if (mCallback != null) {
-            mCallback.actionChanged();
+            mCallback.actionChanged(mAction);
         }
     }
 }

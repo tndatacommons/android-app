@@ -205,7 +205,22 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
     }
 
     @Override
-    public void actionChanged() {
+    public void actionChanged(Action action) {
         mCallback.actionChanged();
+        ArrayList<Action> actions = ((CompassApplication) getActivity().getApplication()
+        ).getActions();
+        if (actions.contains(action)) {
+            for (Goal goal : ((CompassApplication) getActivity().getApplication()).getGoals()) {
+                if (goal.getBehaviors().contains(mBehavior)) {
+                    return;
+                }
+            }
+            mCallback.addBehavior(mBehavior);
+        }
+    }
+
+    @Override
+    public void fireActionPicker() {
+
     }
 }
