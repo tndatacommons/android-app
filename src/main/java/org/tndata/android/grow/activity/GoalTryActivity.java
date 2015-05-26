@@ -174,11 +174,17 @@ public class GoalTryActivity extends ActionBarActivity implements
 
             @Override
             public void onClick(View v, int position) {
-                v.findViewById(R.id.list_item_behavior_try_it_button).setVisibility(View.VISIBLE);
-                v.findViewById(R.id.list_item_behavior_description_textview).setVisibility(View
-                        .VISIBLE);
-                v.findViewById(R.id.list_item_behavior_imageview).setVisibility(View.GONE);
-                mExpandedPositions.add(Integer.valueOf(position));
+                int visibility = v.findViewById(R.id.list_item_behavior_try_it_button).getVisibility()== View.VISIBLE ? View.GONE : View.VISIBLE;
+
+                v.findViewById(R.id.list_item_behavior_try_it_button).setVisibility(visibility);
+                v.findViewById(R.id.list_item_behavior_description_textview).setVisibility(visibility);
+                v.findViewById(R.id.list_item_behavior_imageview).setVisibility(visibility == View.VISIBLE ? View.GONE : View.VISIBLE);
+
+                if (mExpandedPositions.indexOf(Integer.valueOf(position)) > -1) {
+                    mExpandedPositions.remove(mExpandedPositions.indexOf(Integer.valueOf(position)));
+                }
+                else
+                    mExpandedPositions.add(Integer.valueOf(position));
             }
         });
         mRecyclerView.setAdapter(mAdapter);
