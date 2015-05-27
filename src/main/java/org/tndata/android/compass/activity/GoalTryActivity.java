@@ -33,9 +33,9 @@ import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapte
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter.OnClickEvent;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.ImageCache;
-import org.tndata.android.compass.util.ViewHelper;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class GoalTryActivity extends ActionBarActivity implements
         BehaviorLoaderListener {
@@ -47,7 +47,7 @@ public class GoalTryActivity extends ActionBarActivity implements
     private View mFakeHeader;
     private View mHeaderView;
     private Category mCategory = null;
-    private ArrayList<Integer> mExpandedPositions = new ArrayList<Integer>();
+    private HashSet<Behavior> mExpandedBehaviors = new HashSet<>();
 
     static class TryGoalViewHolder extends RecyclerView.ViewHolder {
         public TryGoalViewHolder(View itemView) {
@@ -102,7 +102,7 @@ public class GoalTryActivity extends ActionBarActivity implements
                         .getTitle());
                 ((TryGoalViewHolder) viewHolder).descriptionTextView
                         .setText(behavior.getDescription());
-                if (mExpandedPositions.contains(Integer.valueOf(i))) {
+                if (mExpandedBehaviors.contains(behavior)) {
                     ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
                             .VISIBLE);
                     ((TryGoalViewHolder) viewHolder).tryIt.setVisibility(View.VISIBLE);
@@ -175,18 +175,18 @@ public class GoalTryActivity extends ActionBarActivity implements
 
             @Override
             public void onClick(View v, int position) {
-                int visibility = v.findViewById(R.id.list_item_behavior_try_it_button).getVisibility()== View.VISIBLE ? View.GONE : View.VISIBLE;
+                //lets get semantic
+                Behavior behavior = mBehaviorList.get(position);
 
-                v.findViewById(R.id.list_item_behavior_try_it_button).setVisibility(visibility);
-                v.findViewById(R.id.list_item_behavior_description_textview).setVisibility(visibility);
-                v.findViewById(R.id.list_item_behavior_imageview).setVisibility(visibility == View.VISIBLE ? View.GONE : View.VISIBLE);
-
-                if (mExpandedPositions.indexOf(Integer.valueOf(position)) > -1) {
-                    mExpandedPositions.remove(mExpandedPositions.indexOf(Integer.valueOf(position)));
+                if (mExpandedBehaviors.contains(behavior)) {
+                    collapseCardView(v);
+                    mExpandedBehaviors.remove(behavior);
+                } else {
+                    expandCardView(v);
+                    mExpandedBehaviors.add(behavior);
                 }
-                else
-                    mExpandedPositions.add(Integer.valueOf(position));
             }
+
         });
         mRecyclerView.setAdapter(mAdapter);
         if (mCategory != null && !mCategory.getColor().isEmpty()) {
@@ -194,7 +194,20 @@ public class GoalTryActivity extends ActionBarActivity implements
             mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }
         loadBehaviors();
+    }
 
+
+
+    private void expandCardView(View card) {
+        card.findViewById(R.id.list_item_behavior_try_it_button).setVisibility(View.VISIBLE);
+        card.findViewById(R.id.list_item_behavior_description_textview).setVisibility(View.VISIBLE);
+        card.findViewById(R.id.list_item_behavior_imageview).setVisibility(View.GONE);
+    }
+
+    private void collapseCardView(View card) {
+        card.findViewById(R.id.list_item_behavior_try_it_button).setVisibility(View.GONE);
+        card.findViewById(R.id.list_item_behavior_description_textview).setVisibility(View.GONE);
+        card.findViewById(R.id.list_item_behavior_imageview).setVisibility(View.VISIBLE);
     }
 
     @Override
