@@ -33,7 +33,7 @@
                 android:layout_alignParentLeft="true"
                 android:contentDescription="@string/action_image_description"
                 android:layout_margin="5dp"
-                android:src="@drawable/ic_action_grow_white"/>
+                android:src="@drawable/ic_action_compass_white"/>
 
             <ImageView
                 android:id="@+id/behavior_add_imageview"
