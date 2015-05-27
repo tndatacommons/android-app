@@ -32,4 +32,6 @@ public class Constants {
 
     // https://stackoverflow.com/questions/18196292/what-are-consequences-of-having-gcm-sender-id-being-exposed
     public final static String GCM_SENDER_ID = "152170900684";
+
+    public final static boolean ENABLE_SURVEYS = false;
 }
