@@ -1,16 +1,5 @@
 package org.tndata.android.compass.adapter;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.tndata.android.compass.R;
-import org.tndata.android.compass.fragment.SurveyDialogFragment;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.model.MyGoalsViewItem;
-import org.tndata.android.compass.model.Survey;
-import org.tndata.android.compass.ui.GoalCellView;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -23,6 +12,18 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import org.tndata.android.compass.R;
+import org.tndata.android.compass.fragment.SurveyDialogFragment;
+import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.MyGoalsViewItem;
+import org.tndata.android.compass.model.Survey;
+import org.tndata.android.compass.ui.GoalCellView;
+import org.tndata.android.compass.util.Constants;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MyGoalsAdapter extends
         RecyclerView.Adapter<RecyclerView.ViewHolder> implements SurveyDialogFragment
@@ -161,14 +162,15 @@ public class MyGoalsAdapter extends
             case MyGoalsViewItem.TYPE_SURVEY_MULTICHOICE:
             case MyGoalsViewItem.TYPE_SURVEY_BINARY:
             case MyGoalsViewItem.TYPE_SURVEY_OPENENDED:
-
-                ((SurveyViewHolder) viewHolder).surveyContainer.removeAllViews();
-                SurveyDialogFragment fragment = SurveyDialogFragment.newInstance(survey, false,
-                        true);
-                fragment.setListener(this);
-                ((Activity) mContext).getFragmentManager().beginTransaction().add((
-                                (SurveyViewHolder) viewHolder).surveyContainer.getId(), fragment,
-                        "survey").commit();
+                if(Constants.ENABLE_SURVEYS) {
+                    ((SurveyViewHolder) viewHolder).surveyContainer.removeAllViews();
+                    SurveyDialogFragment fragment = SurveyDialogFragment.newInstance(survey, false,
+                            true);
+                    fragment.setListener(this);
+                    ((Activity) mContext).getFragmentManager().beginTransaction().add((
+                                    (SurveyViewHolder) viewHolder).surveyContainer.getId(), fragment,
+                            "survey").commit();
+                }
                 break;
         }
 
@@ -194,8 +196,10 @@ public class MyGoalsAdapter extends
             case MyGoalsViewItem.TYPE_SURVEY_MULTICHOICE:
             case MyGoalsViewItem.TYPE_SURVEY_BINARY:
             case MyGoalsViewItem.TYPE_SURVEY_OPENENDED:
-                itemView = inflater.inflate(R.layout.list_item_survey, viewGroup, false);
-                return new SurveyViewHolder(itemView);
+                if(Constants.ENABLE_SURVEYS) {
+                    itemView = inflater.inflate(R.layout.list_item_survey, viewGroup, false);
+                    return new SurveyViewHolder(itemView);
+                }
             default:
                 itemView = inflater.inflate(
                         R.layout.list_item_goal, viewGroup, false);
