@@ -14,7 +14,6 @@ import android.widget.TextView;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.util.ImageCache;
 
 public class GoalCellView extends LinearLayout {
     private RelativeLayout mCircleView;
@@ -71,10 +70,7 @@ public class GoalCellView extends LinearLayout {
             } else {
                 mCircleView.setBackgroundDrawable(gradientDrawable);
             }
-            if (mGoal.getIconUrl() != null && !mGoal.getIconUrl().isEmpty()) {
-                ImageCache.instance(mContext).loadBitmap(mIconImageView,
-                        mGoal.getIconUrl(), false);
-            }
+            mIconImageView.setImageResource(mGoal.getProgressIcon());
         } catch (Exception e) {
             e.printStackTrace();
         }
