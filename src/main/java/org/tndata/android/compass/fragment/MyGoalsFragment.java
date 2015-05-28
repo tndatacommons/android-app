@@ -1,6 +1,19 @@
 package org.tndata.android.compass.fragment;
 
-import java.util.ArrayList;
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -17,20 +30,7 @@ import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.Constants;
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import java.util.ArrayList;
 
 public class MyGoalsFragment extends Fragment implements SurveyFinderTask.SurveyFinderInterface,
         SurveyResponseTask.SurveyResponseListener, MyGoalsAdapter.MyGoalsAdapterInterface {
@@ -167,7 +167,7 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
     }
 
     private void loadSurvey() {
-        if (!mSurveyLoading && !mSurveyShown) {
+        if (!mSurveyLoading && !mSurveyShown && Constants.ENABLE_SURVEYS) {
             new SurveyFinderTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                     ((CompassApplication) getActivity().getApplication()).getToken());
             mSurveyLoading = true;
@@ -197,10 +197,11 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
     private void clearAllButSurvey() {
         if (mItems.size() > 0) {
             MyGoalsViewItem item = mItems.remove(0);
-            if ((item.getType() == MyGoalsViewItem.TYPE_SURVEY_MULTICHOICE) ||
+            if (Constants.ENABLE_SURVEYS && (
+                    (item.getType() == MyGoalsViewItem.TYPE_SURVEY_MULTICHOICE) ||
                     (item.getType() == MyGoalsViewItem.TYPE_SURVEY_BINARY) ||
                     (item.getType() == MyGoalsViewItem.TYPE_SURVEY_LIKERT) ||
-                    (item.getType() == MyGoalsViewItem.TYPE_SURVEY_OPENENDED)) {
+                    (item.getType() == MyGoalsViewItem.TYPE_SURVEY_OPENENDED))) {
                 mItems.clear();
                 mItems.add(item);
             } else {

@@ -1,5 +1,6 @@
 package org.tndata.android.compass.model;
 
+import org.tndata.android.compass.R;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -11,6 +12,7 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
     private String icon_url = "";
     private ArrayList<Category> categories = new ArrayList<Category>();
     private ArrayList<Behavior> behaviors = new ArrayList<Behavior>();
+    private double progress_value = 0.0; // Only used for UserGoals
 
     public Goal() {
     }
@@ -74,6 +76,36 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
         this.behaviors = behaviors;
     }
 
+    public void setProgressValue(double value) {
+        this.progress_value = value;
+    }
+
+    public double getProgressValue() {
+        return this.progress_value;
+    }
+
+    public int getProgressIcon() {
+        double value = getProgressValue();
+        if (value < 0.125) {
+            return R.drawable.compass_9_s;
+        } else if (value < 0.25) {
+            return R.drawable.compass_8_sse;
+        } else if (value < 0.375) {
+            return R.drawable.compass_7_se;
+        } else if (value < 0.5) {
+            return R.drawable.compass_6_ees;
+        } else if (value < 0.625) {
+            return R.drawable.compass_5_e;
+        } else if (value < 0.75) {
+            return R.drawable.compass_4_nee;
+        } else if (value < 0.875) {
+            return R.drawable.compass_3_ne;
+        } else if (value < 0.95) {
+            return R.drawable.compass_2_nne;
+        } else {
+            return R.drawable.compass_1_n;
+        }
+    }
 
     @Override
     public boolean equals(Object object) {

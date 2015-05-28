@@ -1,12 +1,11 @@
 package org.tndata.android.compass.task;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import android.os.AsyncTask;
+import android.text.Html;
+
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,12 +14,13 @@ import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
 
-import android.os.AsyncTask;
-import android.text.Html;
-
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GetUserGoalsTask extends AsyncTask<String, Void, ArrayList<Goal>> {
     private GetUserGoalsListener mCallback;
@@ -68,6 +68,7 @@ public class GetUserGoalsTask extends AsyncTask<String, Void, ArrayList<Goal>> {
             for (int i = 0; i < jArray.length(); i++) {
                 JSONObject userGoal = jArray.getJSONObject(i);
                 Goal goal = gson.fromJson(userGoal.getString("goal"), Goal.class);
+                goal.setProgressValue(userGoal.getDouble("progress_value"));
                 goal.setMappingId(userGoal.getInt("id"));
                 JSONArray categoryArray = userGoal.getJSONArray("user_categories");
                 ArrayList<Category> categories = goal.getCategories();
