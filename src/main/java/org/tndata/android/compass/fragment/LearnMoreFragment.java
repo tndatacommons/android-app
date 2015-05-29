@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
@@ -21,6 +22,7 @@ import org.tndata.android.compass.util.ImageHelper;
 public class LearnMoreFragment extends Fragment {
     private Behavior mBehavior;
     private Category mCategory;
+    private Action mAction;
     private ImageView mAddImageView;
     private ProgressBar mProgressBar;
     private LearnMoreFragmentListener mCallback;
@@ -48,9 +50,22 @@ public class LearnMoreFragment extends Fragment {
         return fragment;
     }
 
+    public static LearnMoreFragment newInstance(Action action, Behavior behavior, Category
+            category) {
+        LearnMoreFragment fragment = new LearnMoreFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("action", action);
+        args.putSerializable("behavior", behavior);
+        args.putSerializable("category", category);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mAction = getArguments() != null ? ((Action) getArguments().get(
+                "action")) : new Action();
         mBehavior = getArguments() != null ? ((Behavior) getArguments().get(
                 "behavior")) : new Behavior();
         mCategory = getArguments() != null ? ((Category) getArguments().get(
@@ -66,6 +81,7 @@ public class LearnMoreFragment extends Fragment {
                 .findViewById(R.id.learn_more_behavior_title_textview);
         TextView descriptionTextView = (TextView) v
                 .findViewById(R.id.learn_more_description_textview);
+        TextView addLabelTextView = (TextView) v.findViewById(R.id.learn_more_add_label);
         mProgressBar = (ProgressBar) v.findViewById(R.id.learn_more_progressbar);
         mProgressBar.setVisibility(View.GONE);
         mAddImageView = (ImageView) v
@@ -85,9 +101,17 @@ public class LearnMoreFragment extends Fragment {
                 mCallback.addBehavior(mBehavior);
             }
         });
-
-        titleTextView.setText(mBehavior.getTitle());
-        descriptionTextView.setText(mBehavior.getMoreInfo());
+        if (mAction != null) {
+            // this is a learn more screen for an Action
+            titleTextView.setText(mAction.getTitle());
+            descriptionTextView.setText(mAction.getDescription());
+            addLabelTextView.setText(getText(R.string.action_i_want_this_label));
+        } else {
+            // this is a learn more screen for a Behavior
+            titleTextView.setText(mBehavior.getTitle());
+            descriptionTextView.setText(mBehavior.getMoreInfo());
+            addLabelTextView.setText(getText(R.string.behavior_add_to_priorities_label));
+        }
         return v;
     }
 

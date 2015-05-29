@@ -40,7 +40,7 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
     private ArrayList<Action> mActionList;
 
     public interface BehaviorFragmentListener {
-        public void learnMore();
+        public void learnMoreBehavior();
 
         public void learnMoreAction(Action action);
 
@@ -91,7 +91,7 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
 
             @Override
             public void onClick(View v) {
-                mCallback.learnMore();
+                mCallback.learnMoreBehavior();
             }
         });
         if (mBehavior.getIconUrl() != null && !mBehavior.getIconUrl().isEmpty()) {
