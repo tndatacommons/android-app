@@ -10,6 +10,7 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.task.ActionLoaderTask;
 import org.tndata.android.compass.task.ActionLoaderTask.ActionLoaderListener;
+import org.tndata.android.compass.task.DeleteActionTask;
 import org.tndata.android.compass.ui.ActionCellView;
 import org.tndata.android.compass.util.ImageCache;
 import org.tndata.android.compass.util.ImageHelper;
@@ -20,11 +21,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -40,7 +43,7 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
     private ArrayList<Action> mActionList;
 
     public interface BehaviorFragmentListener {
-        public void learnMore();
+        public void learnMoreBehavior();
 
         public void learnMoreAction(Action action);
 
@@ -49,6 +52,8 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
         public void deleteBehavior(Behavior behavior);
 
         public void actionChanged();
+
+        public void fireBehaviorPicker(Behavior behavior);
     }
 
     public void setBehavior(Behavior behavior) {
@@ -91,7 +96,7 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
 
             @Override
             public void onClick(View v) {
-                mCallback.learnMore();
+                mCallback.learnMoreBehavior();
             }
         });
         if (mBehavior.getIconUrl() != null && !mBehavior.getIconUrl().isEmpty()) {
@@ -106,14 +111,14 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
 
             @Override
             public void onClick(View v) {
-                mProgressBar.setVisibility(View.VISIBLE);
-                mAddImageView.setEnabled(false);
                 for (Goal goal : ((CompassApplication) getActivity().getApplication()).getGoals()) {
                     if (goal.getBehaviors().contains(mBehavior)) {
-                        mCallback.deleteBehavior(mBehavior);
+                        showPopup();
                         return;
                     }
                 }
+                mProgressBar.setVisibility(View.VISIBLE);
+                mAddImageView.setEnabled(false);
                 mCallback.addBehavior(mBehavior);
             }
         });
@@ -193,7 +198,7 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
         for (Goal goal : ((CompassApplication) getActivity().getApplication()).getGoals()) {
             if (goal.getBehaviors().contains(mBehavior)) {
                 ImageHelper.setupImageViewButton(getResources(), mAddImageView,
-                        ImageHelper.SELECTED);
+                        ImageHelper.CHOOSE);
                 mProgressBar.setVisibility(View.GONE);
                 mAddImageView.setEnabled(true);
                 return;
@@ -204,8 +209,48 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
         mAddImageView.setEnabled(true);
     }
 
+    private void showPopup() {
+        //Creating the instance of PopupMenu
+        PopupMenu popup = new PopupMenu(getActivity(), mAddImageView);
+        //Inflating the Popup using xml file
+        popup.getMenuInflater()
+                .inflate(R.menu.menu_popup_chooser, popup.getMenu());
+
+        //registering popup with OnMenuItemClickListener
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_popup_remove_item:
+                            mCallback.deleteBehavior(mBehavior);
+                        break;
+                    case R.id.menu_popup_edit_item:
+                            mCallback.fireBehaviorPicker(mBehavior);
+                        break;
+                }
+                return true;
+            }
+        });
+
+        popup.show(); //showing popup menu
+    }
+
     @Override
-    public void actionChanged() {
+    public void actionChanged(Action action) {
         mCallback.actionChanged();
+        ArrayList<Action> actions = ((CompassApplication) getActivity().getApplication()
+        ).getActions();
+        if (actions.contains(action)) {
+            for (Goal goal : ((CompassApplication) getActivity().getApplication()).getGoals()) {
+                if (goal.getBehaviors().contains(mBehavior)) {
+                    return;
+                }
+            }
+            mCallback.addBehavior(mBehavior);
+        }
+    }
+
+    @Override
+    public void fireActionPicker() {
+
     }
 }

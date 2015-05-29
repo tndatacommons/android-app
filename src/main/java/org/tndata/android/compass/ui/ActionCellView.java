@@ -13,8 +13,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -33,7 +35,9 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
     private ActionViewListener mCallback;
 
     public interface ActionViewListener {
-        public void actionChanged();
+        public void actionChanged(Action action);
+
+        public void fireActionPicker();
     }
 
     public ActionCellView(Context context) {
@@ -59,16 +63,17 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
         mAddImageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mProgressBar.setVisibility(View.VISIBLE);
-                mAddImageView.setEnabled(false);
+
                 if (mContext instanceof Activity) {
                     ArrayList<Action> actions = ((CompassApplication) ((Activity) mContext)
                             .getApplication()
                     ).getActions();
                     if (!actions.contains(mAction)) {
+                        mProgressBar.setVisibility(View.VISIBLE);
+                        mAddImageView.setEnabled(false);
                         addUserAction();
                     } else {
-                        deleteUserAction();
+                        showPopup();
                     }
                 }
             }
@@ -84,6 +89,31 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
     public void setAction(Action action, Category category) {
         mCategory = category;
         setAction(action);
+    }
+
+    private void showPopup() {
+        //Creating the instance of PopupMenu
+        PopupMenu popup = new PopupMenu(mContext, mAddImageView);
+        //Inflating the Popup using xml file
+        popup.getMenuInflater()
+                .inflate(R.menu.menu_popup_chooser, popup.getMenu());
+
+        //registering popup with OnMenuItemClickListener
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_popup_remove_item:
+                        deleteUserAction();
+                        break;
+                    case R.id.menu_popup_edit_item:
+                        mCallback.fireActionPicker();
+                        break;
+                }
+                return true;
+            }
+        });
+
+        popup.show(); //showing popup menu
     }
 
     public void setListener(ActionViewListener listener) {
@@ -140,7 +170,7 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
             ).getActions();
             if (actions.contains(mAction)) {
                 ImageHelper.setupImageViewButton(getResources(), mAddImageView,
-                        ImageHelper.SELECTED);
+                        ImageHelper.CHOOSE);
             } else {
                 ImageHelper.setupImageViewButton(getResources(), mAddImageView, ImageHelper.ADD);
             }
@@ -165,7 +195,8 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
         }
         updateImage();
         if (mCallback != null) {
-            mCallback.actionChanged();
+            mCallback.actionChanged(mAction);
+            mCallback.fireActionPicker();
         }
     }
 
@@ -181,7 +212,7 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
         }
         updateImage();
         if (mCallback != null) {
-            mCallback.actionChanged();
+            mCallback.actionChanged(mAction);
         }
     }
 }

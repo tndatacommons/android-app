@@ -11,6 +11,7 @@ import org.tndata.android.compass.R;
 public class ImageHelper {
     public final static int SELECTED = 1;
     public final static int ADD = 2;
+    public final static int CHOOSE = 3;
 
     public static int calculateInSampleSize(BitmapFactory.Options options,
                                             int reqWidth, int reqHeight) {
@@ -48,6 +49,10 @@ public class ImageHelper {
             case ADD:
                 color = resources.getColor(R.color.grow_secondary);
                 imageView.setImageResource(R.drawable.ic_action_new_large);
+                break;
+            case CHOOSE:
+                color = resources.getColor(android.R.color.transparent);
+                imageView.setImageResource(R.drawable.ic_more_vert);
                 break;
         }
         if (color != -1) {

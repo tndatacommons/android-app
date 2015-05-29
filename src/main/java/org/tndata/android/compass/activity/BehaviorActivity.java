@@ -29,11 +29,13 @@ public class BehaviorActivity extends ActionBarActivity implements
         BehaviorFragmentListener, LearnMoreFragmentListener,
         AddBehaviorTask.AddBehaviorsTaskListener, DeleteBehaviorTask.DeleteBehaviorTaskListener {
     private static final int BEHAVIOR = 0;
-    private static final int LEARN_MORE = 1;
+    private static final int LEARN_MORE_BEHAVIOR = 1;
+    private static final int LEARN_MORE_ACTION = 2;
     private Toolbar mToolbar;
     private Behavior mBehavior;
     private Goal mGoal;
     private Category mCategory;
+    private Action mAction;
     private BehaviorFragment mBehaviorFragment = null;
     private LearnMoreFragment mLearnMoreFragment = null;
     private ArrayList<Fragment> mFragmentStack = new ArrayList<Fragment>();
@@ -99,13 +101,14 @@ public class BehaviorActivity extends ActionBarActivity implements
     }
 
     @Override
-    public void learnMore() {
-        swapFragments(LEARN_MORE, true);
+    public void learnMoreBehavior() {
+        swapFragments(LEARN_MORE_BEHAVIOR, true);
     }
 
     @Override
     public void learnMoreAction(Action action) {
-        // TODO Auto-generated method stub
+        mAction = action;
+        swapFragments(LEARN_MORE_ACTION, true);
 
     }
 
@@ -117,14 +120,7 @@ public class BehaviorActivity extends ActionBarActivity implements
         if (mFragmentStack.isEmpty()) {
             finish();
         } else {
-            Fragment fragment = mFragmentStack.get(mFragmentStack.size() - 1);
-
-            int index = BEHAVIOR;
-            if (fragment instanceof LearnMoreFragment) {
-                index = LEARN_MORE;
-            }
-
-            swapFragments(index, false);
+            swapFragments(BEHAVIOR, false);
         }
     }
 
@@ -137,11 +133,16 @@ public class BehaviorActivity extends ActionBarActivity implements
                 }
                 fragment = mBehaviorFragment;
                 break;
-            case LEARN_MORE:
-                if (mLearnMoreFragment == null) {
-                    mLearnMoreFragment = LearnMoreFragment.newInstance(mBehavior, mCategory);
-                }
+            case LEARN_MORE_BEHAVIOR:
+                mLearnMoreFragment = LearnMoreFragment.newInstance(mBehavior, mCategory);
                 fragment = mLearnMoreFragment;
+                break;
+            case LEARN_MORE_ACTION:
+                if (mAction != null) {
+                    mLearnMoreFragment = LearnMoreFragment.newInstance(mAction, mBehavior,
+                            mCategory);
+                    fragment = mLearnMoreFragment;
+                }
                 break;
         }
         if (fragment != null) {
@@ -229,5 +230,10 @@ public class BehaviorActivity extends ActionBarActivity implements
     @Override
     public void actionChanged() {
         setResult(Constants.BEHAVIOR_CHANGED_RESULT_CODE);
+    }
+
+    @Override
+    public void fireBehaviorPicker(Behavior behavior) {
+        //TODO
     }
 }

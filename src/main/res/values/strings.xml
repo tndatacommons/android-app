@@ -82,6 +82,9 @@
     <string name="behavior_keep_in_mind">Keep this in mind each day</string>
     <string name="behavior_take_action">Take action</string>
     <string name="action_image_description">Take action</string>
+    <string name="action_i_want_this_label">I want this</string>
+    <string name="menu_popup_remove">Remove</string>
+    <string name="menu_popup_edit">Edit notification</string>
 
     <!-- GoalTryActivity -->
     <string name="goal_try_these">TRY THESE</string>

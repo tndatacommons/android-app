@@ -2,25 +2,35 @@ package org.tndata.android.compass.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.task.AddActionTask;
+import org.tndata.android.compass.task.DeleteActionTask;
 import org.tndata.android.compass.util.ImageHelper;
 
-public class LearnMoreFragment extends Fragment {
+import java.util.ArrayList;
+
+public class LearnMoreFragment extends Fragment implements AddActionTask
+        .AddActionTaskListener, DeleteActionTask.DeleteActionTaskListener {
     private Behavior mBehavior;
     private Category mCategory;
+    private Action mAction;
     private ImageView mAddImageView;
     private ProgressBar mProgressBar;
     private LearnMoreFragmentListener mCallback;
@@ -29,6 +39,10 @@ public class LearnMoreFragment extends Fragment {
         public void addBehavior(Behavior behavior);
 
         public void deleteBehavior(Behavior behavior);
+
+        public void actionChanged();
+
+        public void fireBehaviorPicker(Behavior behavior);
     }
 
     public void setBehavior(Behavior behavior) {
@@ -48,9 +62,22 @@ public class LearnMoreFragment extends Fragment {
         return fragment;
     }
 
+    public static LearnMoreFragment newInstance(Action action, Behavior behavior, Category
+            category) {
+        LearnMoreFragment fragment = new LearnMoreFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("action", action);
+        args.putSerializable("behavior", behavior);
+        args.putSerializable("category", category);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mAction = getArguments() != null ? ((Action) getArguments().get(
+                "action")) : new Action();
         mBehavior = getArguments() != null ? ((Behavior) getArguments().get(
                 "behavior")) : new Behavior();
         mCategory = getArguments() != null ? ((Category) getArguments().get(
@@ -66,6 +93,7 @@ public class LearnMoreFragment extends Fragment {
                 .findViewById(R.id.learn_more_behavior_title_textview);
         TextView descriptionTextView = (TextView) v
                 .findViewById(R.id.learn_more_description_textview);
+        TextView addLabelTextView = (TextView) v.findViewById(R.id.learn_more_add_label);
         mProgressBar = (ProgressBar) v.findViewById(R.id.learn_more_progressbar);
         mProgressBar.setVisibility(View.GONE);
         mAddImageView = (ImageView) v
@@ -74,20 +102,45 @@ public class LearnMoreFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                mProgressBar.setVisibility(View.VISIBLE);
-                mAddImageView.setEnabled(false);
-                for (Goal goal : ((CompassApplication) getActivity().getApplication()).getGoals()) {
-                    if (goal.getBehaviors().contains(mBehavior)) {
-                        mCallback.deleteBehavior(mBehavior);
-                        return;
+
+                if (mAction != null) {
+                    ArrayList<Action> actions = ((CompassApplication) getActivity()
+                            .getApplication()
+                    ).getActions();
+                    if (!actions.contains(mAction)) {
+                        mProgressBar.setVisibility(View.VISIBLE);
+                        mAddImageView.setEnabled(false);
+                        new AddActionTask(getActivity(), LearnMoreFragment.this, mAction)
+                                .executeOnExecutor(AsyncTask
+                                        .THREAD_POOL_EXECUTOR);
+                    } else {
+                        showPopup();
                     }
+                } else {
+                    mProgressBar.setVisibility(View.VISIBLE);
+                    mAddImageView.setEnabled(false);
+                    for (Goal goal : ((CompassApplication) getActivity().getApplication())
+                            .getGoals()) {
+                        if (goal.getBehaviors().contains(mBehavior)) {
+                            showPopup();
+                            return;
+                        }
+                    }
+                    mCallback.addBehavior(mBehavior);
                 }
-                mCallback.addBehavior(mBehavior);
             }
         });
-
-        titleTextView.setText(mBehavior.getTitle());
-        descriptionTextView.setText(mBehavior.getMoreInfo());
+        if (mAction != null) {
+            // this is a learn more screen for an Action
+            titleTextView.setText(mAction.getTitle());
+            descriptionTextView.setText(mAction.getDescription());
+            addLabelTextView.setText(getText(R.string.action_i_want_this_label));
+        } else {
+            // this is a learn more screen for a Behavior
+            titleTextView.setText(mBehavior.getTitle());
+            descriptionTextView.setText(mBehavior.getMoreInfo());
+            addLabelTextView.setText(getText(R.string.behavior_add_to_priorities_label));
+        }
         return v;
     }
 
@@ -117,17 +170,118 @@ public class LearnMoreFragment extends Fragment {
     }
 
     public void setImageView() {
-        for (Goal goal : ((CompassApplication) getActivity().getApplication()).getGoals()) {
-            if (goal.getBehaviors().contains(mBehavior)) {
+        if (mAction != null) {
+            ArrayList<Action> actions = ((CompassApplication) getActivity().getApplication()
+            ).getActions();
+            if (actions.contains(mAction)) {
                 ImageHelper.setupImageViewButton(getResources(), mAddImageView,
-                        ImageHelper.SELECTED);
+                        ImageHelper.CHOOSE);
                 mProgressBar.setVisibility(View.GONE);
                 mAddImageView.setEnabled(true);
                 return;
+            }
+        } else {
+            for (Goal goal : ((CompassApplication) getActivity().getApplication()).getGoals()) {
+                if (goal.getBehaviors().contains(mBehavior)) {
+                    ImageHelper.setupImageViewButton(getResources(), mAddImageView,
+                            ImageHelper.CHOOSE);
+                    mProgressBar.setVisibility(View.GONE);
+                    mAddImageView.setEnabled(true);
+                    return;
+                }
             }
         }
         ImageHelper.setupImageViewButton(getResources(), mAddImageView, ImageHelper.ADD);
         mProgressBar.setVisibility(View.GONE);
         mAddImageView.setEnabled(true);
+    }
+
+    private void showPopup() {
+        //Creating the instance of PopupMenu
+        PopupMenu popup = new PopupMenu(getActivity(), mAddImageView);
+        //Inflating the Popup using xml file
+        popup.getMenuInflater()
+                .inflate(R.menu.menu_popup_chooser, popup.getMenu());
+
+        //registering popup with OnMenuItemClickListener
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_popup_remove_item:
+                        if (mAction != null) {
+                            new DeleteActionTask(getActivity(), LearnMoreFragment.this, String
+                                    .valueOf(mAction.getMappingId()))
+                                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        } else {
+                            mCallback.deleteBehavior(mBehavior);
+                        }
+                        break;
+                    case R.id.menu_popup_edit_item:
+                        if (mAction != null) {
+                            fireActionPicker();
+                        } else {
+                            mCallback.fireBehaviorPicker(mBehavior);
+                        }
+                        break;
+                }
+                return true;
+            }
+        });
+
+        popup.show(); //showing popup menu
+    }
+
+    public void actionChanged(Action action) {
+        mCallback.actionChanged();
+        ArrayList<Action> actions = ((CompassApplication) getActivity().getApplication()
+        ).getActions();
+        if (actions.contains(action)) {
+            for (Goal goal : ((CompassApplication) getActivity().getApplication()).getGoals()) {
+                if (goal.getBehaviors().contains(mBehavior)) {
+                    return;
+                }
+            }
+            mCallback.addBehavior(mBehavior);
+        }
+    }
+
+    public void fireActionPicker() {
+
+    }
+
+    @Override
+    public void actionAdded(Action action) {
+        mProgressBar.setVisibility(View.GONE);
+        mAddImageView.setEnabled(true);
+        if (action == null) {
+            return;
+        }
+
+        mAction = action;
+        ArrayList<Action> actions = ((CompassApplication) getActivity().getApplication()
+        ).getActions();
+
+        actions.add(mAction);
+        ((CompassApplication) getActivity().getApplication()).setActions(actions);
+
+        setImageView();
+        if (mCallback != null) {
+            actionChanged(mAction);
+        }
+    }
+
+    @Override
+    public void actionDeleted() {
+        mProgressBar.setVisibility(View.GONE);
+        mAddImageView.setEnabled(true);
+        ArrayList<Action> actions = ((CompassApplication) getActivity().getApplication()
+        ).getActions();
+        actions.remove(mAction);
+        ((CompassApplication) getActivity().getApplication()).setActions(actions);
+
+        setImageView();
+        if (mCallback != null) {
+            actionChanged(mAction);
+        }
     }
 }
