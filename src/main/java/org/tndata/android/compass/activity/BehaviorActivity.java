@@ -231,4 +231,9 @@ public class BehaviorActivity extends ActionBarActivity implements
     public void actionChanged() {
         setResult(Constants.BEHAVIOR_CHANGED_RESULT_CODE);
     }
+
+    @Override
+    public void fireBehaviorPicker(Behavior behavior) {
+        //TODO
+    }
 }

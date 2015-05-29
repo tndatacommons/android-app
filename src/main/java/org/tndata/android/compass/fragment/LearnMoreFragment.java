@@ -2,12 +2,15 @@ package org.tndata.android.compass.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -17,9 +20,14 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.task.AddActionTask;
+import org.tndata.android.compass.task.DeleteActionTask;
 import org.tndata.android.compass.util.ImageHelper;
 
-public class LearnMoreFragment extends Fragment {
+import java.util.ArrayList;
+
+public class LearnMoreFragment extends Fragment implements AddActionTask
+        .AddActionTaskListener, DeleteActionTask.DeleteActionTaskListener {
     private Behavior mBehavior;
     private Category mCategory;
     private Action mAction;
@@ -31,6 +39,10 @@ public class LearnMoreFragment extends Fragment {
         public void addBehavior(Behavior behavior);
 
         public void deleteBehavior(Behavior behavior);
+
+        public void actionChanged();
+
+        public void fireBehaviorPicker(Behavior behavior);
     }
 
     public void setBehavior(Behavior behavior) {
@@ -90,15 +102,32 @@ public class LearnMoreFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                mProgressBar.setVisibility(View.VISIBLE);
-                mAddImageView.setEnabled(false);
-                for (Goal goal : ((CompassApplication) getActivity().getApplication()).getGoals()) {
-                    if (goal.getBehaviors().contains(mBehavior)) {
-                        mCallback.deleteBehavior(mBehavior);
-                        return;
+
+                if (mAction != null) {
+                    ArrayList<Action> actions = ((CompassApplication) getActivity()
+                            .getApplication()
+                    ).getActions();
+                    if (!actions.contains(mAction)) {
+                        mProgressBar.setVisibility(View.VISIBLE);
+                        mAddImageView.setEnabled(false);
+                        new AddActionTask(getActivity(), LearnMoreFragment.this, mAction)
+                                .executeOnExecutor(AsyncTask
+                                        .THREAD_POOL_EXECUTOR);
+                    } else {
+                        showPopup();
                     }
+                } else {
+                    mProgressBar.setVisibility(View.VISIBLE);
+                    mAddImageView.setEnabled(false);
+                    for (Goal goal : ((CompassApplication) getActivity().getApplication())
+                            .getGoals()) {
+                        if (goal.getBehaviors().contains(mBehavior)) {
+                            showPopup();
+                            return;
+                        }
+                    }
+                    mCallback.addBehavior(mBehavior);
                 }
-                mCallback.addBehavior(mBehavior);
             }
         });
         if (mAction != null) {
@@ -141,17 +170,118 @@ public class LearnMoreFragment extends Fragment {
     }
 
     public void setImageView() {
-        for (Goal goal : ((CompassApplication) getActivity().getApplication()).getGoals()) {
-            if (goal.getBehaviors().contains(mBehavior)) {
+        if (mAction != null) {
+            ArrayList<Action> actions = ((CompassApplication) getActivity().getApplication()
+            ).getActions();
+            if (actions.contains(mAction)) {
                 ImageHelper.setupImageViewButton(getResources(), mAddImageView,
-                        ImageHelper.SELECTED);
+                        ImageHelper.CHOOSE);
                 mProgressBar.setVisibility(View.GONE);
                 mAddImageView.setEnabled(true);
                 return;
+            }
+        } else {
+            for (Goal goal : ((CompassApplication) getActivity().getApplication()).getGoals()) {
+                if (goal.getBehaviors().contains(mBehavior)) {
+                    ImageHelper.setupImageViewButton(getResources(), mAddImageView,
+                            ImageHelper.CHOOSE);
+                    mProgressBar.setVisibility(View.GONE);
+                    mAddImageView.setEnabled(true);
+                    return;
+                }
             }
         }
         ImageHelper.setupImageViewButton(getResources(), mAddImageView, ImageHelper.ADD);
         mProgressBar.setVisibility(View.GONE);
         mAddImageView.setEnabled(true);
+    }
+
+    private void showPopup() {
+        //Creating the instance of PopupMenu
+        PopupMenu popup = new PopupMenu(getActivity(), mAddImageView);
+        //Inflating the Popup using xml file
+        popup.getMenuInflater()
+                .inflate(R.menu.menu_popup_chooser, popup.getMenu());
+
+        //registering popup with OnMenuItemClickListener
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_popup_remove_item:
+                        if (mAction != null) {
+                            new DeleteActionTask(getActivity(), LearnMoreFragment.this, String
+                                    .valueOf(mAction.getMappingId()))
+                                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        } else {
+                            mCallback.deleteBehavior(mBehavior);
+                        }
+                        break;
+                    case R.id.menu_popup_edit_item:
+                        if (mAction != null) {
+                            fireActionPicker();
+                        } else {
+                            mCallback.fireBehaviorPicker(mBehavior);
+                        }
+                        break;
+                }
+                return true;
+            }
+        });
+
+        popup.show(); //showing popup menu
+    }
+
+    public void actionChanged(Action action) {
+        mCallback.actionChanged();
+        ArrayList<Action> actions = ((CompassApplication) getActivity().getApplication()
+        ).getActions();
+        if (actions.contains(action)) {
+            for (Goal goal : ((CompassApplication) getActivity().getApplication()).getGoals()) {
+                if (goal.getBehaviors().contains(mBehavior)) {
+                    return;
+                }
+            }
+            mCallback.addBehavior(mBehavior);
+        }
+    }
+
+    public void fireActionPicker() {
+
+    }
+
+    @Override
+    public void actionAdded(Action action) {
+        mProgressBar.setVisibility(View.GONE);
+        mAddImageView.setEnabled(true);
+        if (action == null) {
+            return;
+        }
+
+        mAction = action;
+        ArrayList<Action> actions = ((CompassApplication) getActivity().getApplication()
+        ).getActions();
+
+        actions.add(mAction);
+        ((CompassApplication) getActivity().getApplication()).setActions(actions);
+
+        setImageView();
+        if (mCallback != null) {
+            actionChanged(mAction);
+        }
+    }
+
+    @Override
+    public void actionDeleted() {
+        mProgressBar.setVisibility(View.GONE);
+        mAddImageView.setEnabled(true);
+        ArrayList<Action> actions = ((CompassApplication) getActivity().getApplication()
+        ).getActions();
+        actions.remove(mAction);
+        ((CompassApplication) getActivity().getApplication()).setActions(actions);
+
+        setImageView();
+        if (mCallback != null) {
+            actionChanged(mAction);
+        }
     }
 }
