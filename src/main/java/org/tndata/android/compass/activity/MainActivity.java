@@ -211,7 +211,7 @@ public class MainActivity extends ActionBarActivity implements
                     startActivityForResult(intent, Constants.SETTINGS_REQUEST_CODE);
                     break;
                 case TEMP:
-                    int[] behavior_ids = {31, 82};
+                    Integer[] behavior_ids = {31, 82};  // never ever use int[]
                     intent = new Intent(getApplicationContext(), BehaviorProgressActivity.class);
                     intent.putExtra("behavior_ids", behavior_ids);
                     startActivity(intent);

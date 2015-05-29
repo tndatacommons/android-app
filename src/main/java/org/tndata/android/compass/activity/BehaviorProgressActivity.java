@@ -1,9 +1,8 @@
 package org.tndata.android.compass.activity;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -14,18 +13,19 @@ import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.task.BehaviorProgressTask;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
-public class BehaviorProgressActivity extends ActionBarActivity implements
+public class BehaviorProgressActivity extends Activity implements
         BehaviorProgressFragment.BehaviorProgressFragmentListener, BehaviorProgressTask.BehaviorProgressTaskListener {
 
     // TODO: temp list of behavior ids
-    private int[] mBehaviorIds = {31, 82};  // 31: Savor, 82: Change my Negative self-image
-
-    private Toolbar mToolbar;
+    private ArrayList<Integer> mBehaviorIds;
     private Behavior mBehavior;
 
     private BehaviorProgressFragment mFragment = null;
     private ArrayList<Fragment> mFragmentStack = new ArrayList<Fragment>();
+
+    private String TAG = "PROGRESS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,24 +35,33 @@ public class BehaviorProgressActivity extends ActionBarActivity implements
         // TODO: we want to instantiate a list of Behaviors
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);
+        setContentView(R.layout.activity_behaviorprogress);
 
-        mBehaviorIds = (int[]) getIntent().getSerializableExtra("behavior_ids");
+        // TODO: this should give us 31: Savor, 82: Change my Negative self-image
+        // TODO: maybe we don't pass any data in. just read all of the user's behaviors from the api
+        // ArrayList<Integer> mBehaviorIds
+        mBehaviorIds = new ArrayList<>(Arrays.asList(
+                (Integer[]) getIntent().getSerializableExtra("behavior_ids")
+        ));
+        Log.d(TAG, mBehaviorIds.toString());
 
-        // TODO: how to load up Behaviors?
-        //mBehavior = (Behavior) getIntent().getSerializableExtra("behavior");
-        mBehavior = new Behavior();
-        mBehavior.setId(mBehaviorIds[0]);
-        mBehavior.setTitle("This is a Placeholder Behavior Title");
+        setNextBehavior();
+    }
 
-        mToolbar = (Toolbar) findViewById(R.id.tool_bar);
-        mToolbar.setTitle(mBehavior.getTitle());
-        mToolbar.getBackground().setAlpha(255);
-        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        swapFragments(true);
+    private void setNextBehavior() {
+        int bid;
+        if(!mBehaviorIds.isEmpty()){
+            // TODO: how to load up Behaviors?
+            bid = mBehaviorIds.remove(0);
+            Log.d(TAG, "removed from mBehaviorIds, not contains: " + mBehaviorIds.toString());
+            mBehavior = new Behavior();
+            mBehavior.setId(bid);
+            mBehavior.setTitle("This is a Placeholder Behavior Title: " + bid);
+            swapFragments(true);
+        } else {
+            mBehavior = null;
+            finish();
+        }
     }
 
     @Override
@@ -77,7 +86,7 @@ public class BehaviorProgressActivity extends ActionBarActivity implements
     @Override
     public void saveBehaviorProgress(int progressValue) {
 
-        Log.d("BehaviorProgressActivity", ".saveBehaviorProgress(" + progressValue + ")");
+        Log.d(TAG, ".saveBehaviorProgress(" + progressValue + ")");
 
         // TODO: Create a BehaviorProgressTask that sends an update to the API.
         /*
@@ -86,31 +95,29 @@ public class BehaviorProgressActivity extends ActionBarActivity implements
         new BehaviorProgressTask(this, this, behaviors).executeOnExecutor(AsyncTask
                 .THREAD_POOL_EXECUTOR);
         */
+        // TODO: show the spinner, then wait for the async task to call behaviorProgressSaved()
+        behaviorProgressSaved();
     }
 
 
     @Override
     public void behaviorProgressSaved() {
         // TODO?  Advance to the next behavior?
-        swapFragments(true);
+        Log.d(TAG, ".behaviorProgressSaved()");
+        setNextBehavior();
     }
 
     private void swapFragments(boolean addToStack) {
-        Fragment fragment = null;
+        Fragment fragment;
 
-        // TODO: Check to see if we have any more behaviors to report on, and if so, load up the next.
-        if(mBehaviorIds.length > 0) {
-            mFragment = BehaviorProgressFragment.newInstance(mBehavior);
-            fragment = mFragment;
-            if (addToStack) {
-                mFragmentStack.add(fragment);
-            }
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.base_content, fragment).commit();
-        } else {
-            // TODO: Otherwise... what? go to the main screen?
-
+        Log.d(TAG, "swapFragments");
+        mFragment = BehaviorProgressFragment.newInstance(mBehavior);
+        fragment = mFragment;
+        if (addToStack) {
+            mFragmentStack.add(fragment);
         }
+        getFragmentManager().beginTransaction()
+                .replace(R.id.behavior_progress_content, fragment).commit();
     }
 
     // TODO: Do we even want to do this?
