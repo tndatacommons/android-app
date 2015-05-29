@@ -131,6 +131,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.tndata.android.compass.activity.GoalTryActivity" />
         </activity>
+        <activity
+            android:name="org.tndata.android.compass.activity.BehaviorProgressActivity"
+            android:parentActivityName="org.tndata.android.compass.activity.MainActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.tndata.android.compass.activity.MainActivity"/>
+        </activity>
 
         <receiver
             android:name="org.tndata.android.compass.service.GcmBroadcastReceiver"
