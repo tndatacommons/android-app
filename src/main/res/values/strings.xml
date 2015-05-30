@@ -103,4 +103,5 @@
     <string name="survey_yes">Yes</string>
     <string name="button_positive">DONE</string>
     <string name="button_negative">CANCEL</string>
+    <string name="survey_default_option">Click to choose</string>
 </resources>
