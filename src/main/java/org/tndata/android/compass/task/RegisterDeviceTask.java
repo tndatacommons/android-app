@@ -35,8 +35,6 @@ public class RegisterDeviceTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-
-        // Here, context is the GrowApplication
         String token = ((CompassApplication) (mContext)).getToken();
         String url = Constants.BASE_URL + "notifications/devices/";
 

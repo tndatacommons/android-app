@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,11 +29,8 @@ public class BehaviorProgressActivity extends Activity implements
     private ArrayList<Fragment> mFragmentStack = new ArrayList<Fragment>();
     private ProgressBar mProgressBar;
 
-    private String TAG = "PROGRESS";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         // TODO: we want to launch this from a notification
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_behaviorprogress);
@@ -44,7 +40,6 @@ public class BehaviorProgressActivity extends Activity implements
     }
 
     private void loadBehaviors() {
-        Log.d(TAG, "loadBehaviors()");
         new GetUserBehaviorsTask(this).executeOnExecutor(
                 AsyncTask.THREAD_POOL_EXECUTOR,
                 ((CompassApplication) getApplication()).getToken());
@@ -52,22 +47,16 @@ public class BehaviorProgressActivity extends Activity implements
 
     @Override
     public void behaviorsLoaded(ArrayList<Behavior> behaviors) {
-        Log.d(TAG, "behaviorsLoaded: behaviors = " + behaviors.toString());
-        if (behaviors != null) {
-            mBehaviorList.addAll(behaviors);
-        }
+        mBehaviorList.addAll(behaviors);
         mProgressBar.setVisibility(View.INVISIBLE);
         setCurrentBehavior();
     }
 
     private void setCurrentBehavior() {
-        Log.d(TAG, "Setting Current Behavior...");
         if(!mBehaviorList.isEmpty()){
             mCurrentBehavior = mBehaviorList.remove(0);
-            Log.d(TAG, "... to " + mCurrentBehavior);
             swapFragments(true);
         } else {
-            Log.d(TAG, "... to null. FINISHED recording progress!");
             mCurrentBehavior = null;
             finish();
         }
@@ -94,32 +83,20 @@ public class BehaviorProgressActivity extends Activity implements
 
     @Override
     public void saveBehaviorProgress(int progressValue) {
-
-        Log.d(TAG, ".saveBehaviorProgress(" + progressValue + ")");
-
-        // TODO: Create a BehaviorProgressTask that sends an update to the API.
-        /*
-        ArrayList<String> behaviors = new ArrayList<String>();
-        behaviors.add(String.valueOf(behavior.getId()));
-        new BehaviorProgressTask(this, this, behaviors).executeOnExecutor(AsyncTask
-                .THREAD_POOL_EXECUTOR);
-        */
-        // TODO: show the spinner, then wait for the async task to call behaviorProgressSaved()
-        mProgressBar.setVisibility(View.VISIBLE);
-        behaviorProgressSaved();
+        new BehaviorProgressTask(this, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                String.valueOf(mCurrentBehavior.getId()),
+                String.valueOf(progressValue));
+        // NOTE: behaviorProgressSaved() is the above task's callback
     }
-
 
     @Override
     public void behaviorProgressSaved() {
-        Log.d(TAG, ".behaviorProgressSaved()");
         setCurrentBehavior();
     }
 
     private void swapFragments(boolean addToStack) {
         Fragment fragment;
-        Log.d(TAG, "swapFragments");
-        mProgressBar.setVisibility(View.INVISIBLE);
+
         mFragment = BehaviorProgressFragment.newInstance(mCurrentBehavior);
         fragment = mFragment;
         if (addToStack) {
