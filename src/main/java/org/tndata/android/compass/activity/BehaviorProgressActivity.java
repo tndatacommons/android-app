@@ -2,28 +2,33 @@ package org.tndata.android.compass.activity;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.BehaviorProgressFragment;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.task.BehaviorProgressTask;
+import org.tndata.android.compass.task.GetUserBehaviorsTask;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class BehaviorProgressActivity extends Activity implements
-        BehaviorProgressFragment.BehaviorProgressFragmentListener, BehaviorProgressTask.BehaviorProgressTaskListener {
+        BehaviorProgressFragment.BehaviorProgressFragmentListener,
+        BehaviorProgressTask.BehaviorProgressTaskListener,
+        GetUserBehaviorsTask.GetUserBehaviorsListener {
 
-    // TODO: temp list of behavior ids
-    private ArrayList<Integer> mBehaviorIds;
-    private Behavior mBehavior;
-
+    private ArrayList<Behavior> mBehaviorList;
+    private Behavior mCurrentBehavior;
     private BehaviorProgressFragment mFragment = null;
     private ArrayList<Fragment> mFragmentStack = new ArrayList<Fragment>();
+    private ProgressBar mProgressBar;
 
     private String TAG = "PROGRESS";
 
@@ -31,35 +36,39 @@ public class BehaviorProgressActivity extends Activity implements
     protected void onCreate(Bundle savedInstanceState) {
 
         // TODO: we want to launch this from a notification
-        // TODO: we want to receive info from the notification (e.g. a list of behavior ids?)
-        // TODO: we want to instantiate a list of Behaviors
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_behaviorprogress);
-
-        // TODO: this should give us 31: Savor, 82: Change my Negative self-image
-        // TODO: maybe we don't pass any data in. just read all of the user's behaviors from the api
-        // ArrayList<Integer> mBehaviorIds
-        mBehaviorIds = new ArrayList<>(Arrays.asList(
-                (Integer[]) getIntent().getSerializableExtra("behavior_ids")
-        ));
-        Log.d(TAG, mBehaviorIds.toString());
-
-        setNextBehavior();
+        mProgressBar = (ProgressBar) findViewById(R.id.activity_behaviorprogress_loading);
+        mBehaviorList = new ArrayList<Behavior>();
+        loadBehaviors();
     }
 
-    private void setNextBehavior() {
-        int bid;
-        if(!mBehaviorIds.isEmpty()){
-            // TODO: how to load up Behaviors?
-            bid = mBehaviorIds.remove(0);
-            Log.d(TAG, "removed from mBehaviorIds, not contains: " + mBehaviorIds.toString());
-            mBehavior = new Behavior();
-            mBehavior.setId(bid);
-            mBehavior.setTitle("This is a Placeholder Behavior Title: " + bid);
+    private void loadBehaviors() {
+        Log.d(TAG, "loadBehaviors()");
+        new GetUserBehaviorsTask(this).executeOnExecutor(
+                AsyncTask.THREAD_POOL_EXECUTOR,
+                ((CompassApplication) getApplication()).getToken());
+    }
+
+    @Override
+    public void behaviorsLoaded(ArrayList<Behavior> behaviors) {
+        Log.d(TAG, "behaviorsLoaded: behaviors = " + behaviors.toString());
+        if (behaviors != null) {
+            mBehaviorList.addAll(behaviors);
+        }
+        mProgressBar.setVisibility(View.INVISIBLE);
+        setCurrentBehavior();
+    }
+
+    private void setCurrentBehavior() {
+        Log.d(TAG, "Setting Current Behavior...");
+        if(!mBehaviorList.isEmpty()){
+            mCurrentBehavior = mBehaviorList.remove(0);
+            Log.d(TAG, "... to " + mCurrentBehavior);
             swapFragments(true);
         } else {
-            mBehavior = null;
+            Log.d(TAG, "... to null. FINISHED recording progress!");
+            mCurrentBehavior = null;
             finish();
         }
     }
@@ -96,22 +105,22 @@ public class BehaviorProgressActivity extends Activity implements
                 .THREAD_POOL_EXECUTOR);
         */
         // TODO: show the spinner, then wait for the async task to call behaviorProgressSaved()
+        mProgressBar.setVisibility(View.VISIBLE);
         behaviorProgressSaved();
     }
 
 
     @Override
     public void behaviorProgressSaved() {
-        // TODO?  Advance to the next behavior?
         Log.d(TAG, ".behaviorProgressSaved()");
-        setNextBehavior();
+        setCurrentBehavior();
     }
 
     private void swapFragments(boolean addToStack) {
         Fragment fragment;
-
         Log.d(TAG, "swapFragments");
-        mFragment = BehaviorProgressFragment.newInstance(mBehavior);
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mFragment = BehaviorProgressFragment.newInstance(mCurrentBehavior);
         fragment = mFragment;
         if (addToStack) {
             mFragmentStack.add(fragment);

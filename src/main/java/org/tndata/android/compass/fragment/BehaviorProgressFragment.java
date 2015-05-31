@@ -48,8 +48,6 @@ public class BehaviorProgressFragment extends Fragment  {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // TODO: Create the layout for this ...
-
         View v = getActivity().getLayoutInflater().inflate(
                 R.layout.fragment_behavior_progress, container, false);
         TextView titleTextView = (TextView) v

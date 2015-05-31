@@ -54,9 +54,10 @@ public class MainActivity extends ActionBarActivity implements
     private static final int MYSELF = 2;
     private static final int MY_PRIVACY = 3;
     private static final int SETTINGS = 4;
-    private static final int TEMP = 5;
+    private static final int TEMP_MENU_FOR_BEHAVIOR_PROGRESS = 5;
     private static final int DRAWER_COUNT = 6;
-    //private static final int DRAWER_COUNT = 5; // TODO: git checkout on this file to reset it.
+    //private static final int DRAWER_COUNT = 5; // TODO: Remove the temporary menu item for Behavior Progress
+
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mDrawerList;
@@ -210,10 +211,8 @@ public class MainActivity extends ActionBarActivity implements
                     intent = new Intent(getApplicationContext(), SettingsActivity.class);
                     startActivityForResult(intent, Constants.SETTINGS_REQUEST_CODE);
                     break;
-                case TEMP:
-                    Integer[] behavior_ids = {31, 82};  // never ever use int[]
+                case TEMP_MENU_FOR_BEHAVIOR_PROGRESS:
                     intent = new Intent(getApplicationContext(), BehaviorProgressActivity.class);
-                    intent.putExtra("behavior_ids", behavior_ids);
                     startActivity(intent);
                     break;
             }
@@ -268,7 +267,7 @@ public class MainActivity extends ActionBarActivity implements
                 case SETTINGS:
                     item.text = getResources().getString(R.string.action_settings);
                     break;
-                case TEMP:
+                case TEMP_MENU_FOR_BEHAVIOR_PROGRESS:
                     item.text = "Behavior Progress";
                     break;
             }
