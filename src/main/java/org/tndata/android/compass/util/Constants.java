@@ -23,6 +23,13 @@ public class Constants {
     public final static String TERMS_AND_CONDITIONS_URL = "http://tndata.org";
     public final static String BASE_URL = "http://app.tndata.org/api/";
 
+    // Behavior, Self-reporting.
+    // NOTE: These values correspond to values exposed/expected by the API
+    public final static int BEHAVIOR_OFF_COURSE = 1;
+    public final static int BEHAVIOR_SEEKING = 2;
+    public final static int BEHAVIOR_ON_COURSE = 3;
+
+
     // For GCM Notifications
     public final static String ACTION_TYPE = "action";
     public final static String BEHAVIOR_TYPE = "behavior";

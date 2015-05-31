@@ -1,0 +1,133 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent">
+
+    <RelativeLayout
+        android:id="@+id/behavior_progress_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true">
+
+        <RelativeLayout
+            android:id="@+id/behavior_progress_hero_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="200dp"
+            android:layout_margin="0dp"
+            android:paddingLeft="@dimen/default_activity_padding"
+            android:paddingRight="@dimen/default_activity_padding"
+            android:paddingTop="@dimen/default_activity_padding"
+            android:paddingBottom="@dimen/default_activity_padding"
+            android:background="@color/grow_primary_dark">
+
+            <TextView
+                android:id="@+id/behavior_progress_hero_title_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="@string/behavior_progress_hero_title"
+                android:textColor="@color/white"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:paddingBottom="20dp"
+                android:padding="@dimen/default_activity_padding" />
+
+            <TextView
+                android:id="@+id/behavior_progress_hero_description_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/behavior_progress_hero_description"
+                android:textColor="@color/white"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_alignParentEnd="false"
+                android:layout_alignParentStart="false"
+                android:layout_alignParentBottom="true"
+                android:layout_alignWithParentIfMissing="false"
+                android:layout_alignParentRight="false"
+                android:padding="@dimen/default_activity_padding" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/behavior_progress_content_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/behavior_progress_hero_container"
+            android:paddingLeft="@dimen/default_activity_padding"
+            android:paddingRight="@dimen/default_activity_padding"
+            android:paddingTop="@dimen/default_activity_padding">
+
+            <TextView
+                android:id="@+id/behavior_progress_behavior_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="20dp"
+                android:text="@string/behavior_progress_default_label"
+                android:textColor="@color/dark_text_color"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:autoText="false"
+                android:padding="10dp"
+                android:minHeight="@dimen/behavior_fragments_top_padding"
+                android:layout_marginTop="10dp" />
+
+            <ProgressBar
+                android:id="@+id/behavior_progress_progressbar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="gone"/>
+
+            <ImageButton
+                android:layout_width="@dimen/fab_size_normal"
+                android:layout_height="@dimen/fab_size_normal"
+                android:src="@drawable/compass_9_s"
+                android:scaleType="fitCenter"
+                android:background="@drawable/circle_primary"
+                android:contentDescription="@string/behavior_progress_off_course"
+                android:layout_margin="10dp"
+                android:layout_marginLeft="@dimen/default_activity_padding"
+                android:id="@+id/behavior_progress_off_course"
+                android:layout_below="@id/behavior_progress_behavior_label"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+            <ImageButton
+                android:layout_width="@dimen/fab_size_normal"
+                android:layout_height="@dimen/fab_size_normal"
+                android:src="@drawable/compass_5_e"
+                android:scaleType="fitCenter"
+                android:background="@drawable/circle_primary"
+                android:contentDescription="@string/behavior_progress_seeking"
+                android:layout_margin="10dp"
+                android:layout_marginLeft="@dimen/default_activity_padding"
+                android:id="@+id/behavior_progress_seeking"
+                android:layout_below="@id/behavior_progress_behavior_label"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@+id/behavior_progress_off_course"
+                android:layout_toStartOf="@+id/behavior_progress_off_course"/>
+
+            <ImageButton
+                android:layout_width="@dimen/fab_size_normal"
+                android:layout_height="@dimen/fab_size_normal"
+                android:src="@drawable/compass_1_n"
+                android:scaleType="fitCenter"
+                android:background="@drawable/circle_primary"
+                android:contentDescription="@string/behavior_progress_on_track"
+                android:layout_margin="10dp"
+                android:layout_marginLeft="@dimen/default_activity_padding"
+                android:id="@+id/behavior_progress_on_track"
+                android:layout_below="@id/behavior_progress_behavior_label"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@+id/behavior_progress_seeking"
+                android:layout_toStartOf="@+id/behavior_progress_seeking"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+</ScrollView>
