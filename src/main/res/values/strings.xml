@@ -109,7 +109,7 @@
     <string name="behavior_progress_hero_description">Now\'s a great time to think about your progress toward your goals.</string>
     <string name="behavior_progress_default_label">My Goals</string>
     <string name="behavior_progress_on_track">On Track</string>
-    <string name="behavior_progress_wandering">Wandering</string>
+    <string name="behavior_progress_seeking">Seeking</string>
     <string name="behavior_progress_off_course">Off Course</string>
 
 </resources>

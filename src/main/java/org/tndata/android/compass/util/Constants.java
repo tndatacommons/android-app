@@ -26,7 +26,7 @@ public class Constants {
     // Behavior, Self-reporting.
     // NOTE: These values correspond to values exposed/expected by the API
     public final static int BEHAVIOR_OFF_COURSE = 1;
-    public final static int BEHAVIOR_WANDERING = 2;
+    public final static int BEHAVIOR_SEEKING = 2;
     public final static int BEHAVIOR_ON_COURSE = 3;
 
 

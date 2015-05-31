@@ -58,8 +58,8 @@ public class BehaviorProgressFragment extends Fragment  {
                 R.id.behavior_progress_on_track);
         ImageButton off_course_button = (ImageButton) v.findViewById(
                 R.id.behavior_progress_off_course);
-        ImageButton wandering_button = (ImageButton) v.findViewById(
-                R.id.behavior_progress_wandering);
+        ImageButton seeking_button = (ImageButton) v.findViewById(
+                R.id.behavior_progress_seeking);
         mProgressBar = (ProgressBar) v.findViewById(R.id.behavior_progress_progressbar);
 
         on_track_button.setOnClickListener(new OnClickListener() {
@@ -80,12 +80,12 @@ public class BehaviorProgressFragment extends Fragment  {
             }
         });
 
-        wandering_button.setOnClickListener(new OnClickListener() {
+        seeking_button.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 mProgressBar.setVisibility(View.VISIBLE);
-                mCallback.saveBehaviorProgress(Constants.BEHAVIOR_WANDERING);
+                mCallback.saveBehaviorProgress(Constants.BEHAVIOR_SEEKING);
             }
         });
 

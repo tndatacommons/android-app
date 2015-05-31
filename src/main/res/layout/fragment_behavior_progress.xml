@@ -103,10 +103,10 @@
                 android:src="@drawable/compass_5_e"
                 android:scaleType="fitCenter"
                 android:background="@drawable/circle_primary"
-                android:contentDescription="@string/behavior_progress_wandering"
+                android:contentDescription="@string/behavior_progress_seeking"
                 android:layout_margin="10dp"
                 android:layout_marginLeft="@dimen/default_activity_padding"
-                android:id="@+id/behavior_progress_wandering"
+                android:id="@+id/behavior_progress_seeking"
                 android:layout_below="@id/behavior_progress_behavior_label"
                 android:layout_alignParentBottom="true"
                 android:layout_toLeftOf="@+id/behavior_progress_off_course"
@@ -124,8 +124,8 @@
                 android:id="@+id/behavior_progress_on_track"
                 android:layout_below="@id/behavior_progress_behavior_label"
                 android:layout_alignParentBottom="true"
-                android:layout_toLeftOf="@+id/behavior_progress_wandering"
-                android:layout_toStartOf="@+id/behavior_progress_wandering"/>
+                android:layout_toLeftOf="@+id/behavior_progress_seeking"
+                android:layout_toStartOf="@+id/behavior_progress_seeking"/>
 
         </RelativeLayout>
 

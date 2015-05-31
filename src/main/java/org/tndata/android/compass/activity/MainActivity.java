@@ -54,6 +54,8 @@ public class MainActivity extends ActionBarActivity implements
     private static final int MYSELF = 2;
     private static final int MY_PRIVACY = 3;
     private static final int SETTINGS = 4;
+    // NOTE: The Drawer menu option to launch the BehaviorProgressActivity is here for demo purposes.
+    // We should remove before submitting to the play store.
     private static final int TEMP_MENU_FOR_BEHAVIOR_PROGRESS = 5;
     private static final int DRAWER_COUNT = 6;
     //private static final int DRAWER_COUNT = 5; // TODO: Remove the temporary menu item for Behavior Progress
