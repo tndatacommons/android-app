@@ -29,6 +29,9 @@ public class BehaviorProgressTask extends AsyncTask<String, Void, Void> {
     }
 
     public BehaviorProgressTask(Context context, BehaviorProgressTaskListener callback) {
+        if (!(context instanceof Activity)) {
+            throw new IllegalStateException("Context Must be an Activity");
+        }
         mContext = context;
         mCallback = callback;
         token = ((CompassApplication) ((Activity) mContext).getApplication()).getToken();
