@@ -34,7 +34,7 @@ public class BehaviorProgressActivity extends Activity implements
         // TODO: we want to launch this from a notification
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_behaviorprogress);
-        mProgressBar = (ProgressBar) findViewById(R.id.activity_behaviorprogress_loading);
+        mProgressBar = (ProgressBar) findViewById(R.id.activity_behavior_progress_progressbar);
         mBehaviorList = new ArrayList<Behavior>();
         loadBehaviors();
     }
@@ -48,7 +48,7 @@ public class BehaviorProgressActivity extends Activity implements
     @Override
     public void behaviorsLoaded(ArrayList<Behavior> behaviors) {
         mBehaviorList.addAll(behaviors);
-        mProgressBar.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.GONE);
         setCurrentBehavior();
     }
 
