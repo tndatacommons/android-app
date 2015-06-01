@@ -35,10 +35,9 @@ public class Constants {
     public final static String BEHAVIOR_TYPE = "behavior";
     public final static String GCM_DEFAULT_ACTIVITY = "org.tndata.android.compass.activity.LoginActivity";
     public final static String GCM_ACTION_ACTIVITY = "org.tndata.android.compass.activity.LoginActivity"; // TODO: Action's more info
-    public final static String GCM_BEHAVIOR_ACTIVITY = "org.tndata.android.compass.activity.BehaviorActivity"; // TODO: Action's more info
+    public final static String GCM_BEHAVIOR_ACTIVITY = "org.tndata.android.compass.activity.BehaviorProgressActivity";
 
     // https://stackoverflow.com/questions/18196292/what-are-consequences-of-having-gcm-sender-id-being-exposed
     public final static String GCM_SENDER_ID = "152170900684";
-
     public final static boolean ENABLE_SURVEYS = false;
 }
