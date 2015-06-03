@@ -1,74 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/view_survey_likert_instructions_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:layout_marginBottom="15dp"
-        android:paddingLeft="2dp"
         android:layout_marginTop="15dp"
+        android:paddingLeft="2dp"
         android:text="What are your thoughts on android?"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
 
     <TextView
         android:id="@+id/view_survey_likert_title_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/view_survey_likert_instructions_textview"
+        android:layout_marginBottom="15dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:layout_marginBottom="15dp"
-        android:paddingLeft="2dp"
         android:layout_marginTop="15dp"
+        android:paddingLeft="2dp"
         android:text="What are your thoughts on android?"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
 
     <SeekBar
+        android:id="@+id/view_survey_likert_seekbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/view_survey_likert_title_textview"
-        android:id="@+id/view_survey_likert_seekbar" />
+        android:layout_below="@id/view_survey_likert_title_textview"/>
 
     <TextView
         android:id="@+id/view_survey_likert_seekbar_min_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/view_survey_likert_seekbar"
         android:layout_alignParentLeft="true"
+        android:layout_below="@id/view_survey_likert_seekbar"
         android:layout_marginLeft="5dp"
         android:paddingLeft="2dp"
         android:text="Disagree"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
 
     <TextView
         android:id="@+id/view_survey_likert_seekbar_max_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/view_survey_likert_seekbar"
         android:layout_alignParentRight="true"
+        android:layout_below="@id/view_survey_likert_seekbar"
         android:layout_marginRight="5dp"
         android:paddingRight="2dp"
         android:text="Agree"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
 
     <TextView
         android:id="@+id/view_survey_likert_choice_textview"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/survey_likert_choice_max_width"
         android:layout_height="wrap_content"
         android:layout_below="@id/view_survey_likert_seekbar_min_textview"
         android:layout_margin="15dp"
+        android:gravity="center"
+        android:text="Strongly"
         android:padding="2dp"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:singleLine="false"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
+
     <include
         android:id="@+id/dialog_buttons"
-        android:layout_below="@id/view_survey_likert_choice_textview"
-        android:layout_height="wrap_content"
+        layout="@layout/dialog_survey_buttons"
         android:layout_width="match_parent"
-        layout="@layout/dialog_survey_buttons">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/view_survey_likert_choice_textview">
     </include>
 </RelativeLayout>

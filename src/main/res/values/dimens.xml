@@ -24,5 +24,6 @@
     <dimen name="fab_shadow_size">12dp</dimen>
     <dimen name="fab_scroll_threshold">4dp</dimen>
     <dimen name="fab_elevation_lollipop">8dp</dimen>
+    <dimen name="survey_likert_choice_max_width">150dp</dimen>
 
 </resources>

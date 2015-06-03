@@ -3,6 +3,7 @@ package org.tndata.android.compass.fragment;
 
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -222,10 +223,24 @@ public class SurveyDialogFragment extends DialogFragment {
             seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    minTextView.setVisibility(View.GONE);
+                    maxTextView.setVisibility(View.GONE);
                     for (SurveyOptions option : mSurvey.getOptions()) {
                         if ((option.getId() - 1) == progress) {
                             mSurvey.setSelectedOption(option);
                             choiceTextView.setText(option.getText());
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                                int x = seekBar.getThumb().getBounds().centerX();
+                                int width = choiceTextView.getMeasuredWidth();
+                                if (progress == (mSurvey.getOptions().size() - 1)) {
+                                    x = x - width;
+                                } else if (progress == 0) {
+                                    //nothing, show have the view start at the thumb
+                                } else {
+                                    x = x - (width / 2);
+                                }
+                                choiceTextView.setX(x);
+                            }
                             break;
                         }
                     }
