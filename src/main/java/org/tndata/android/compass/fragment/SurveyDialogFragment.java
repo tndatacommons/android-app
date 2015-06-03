@@ -234,9 +234,7 @@ public class SurveyDialogFragment extends DialogFragment {
                                 int width = choiceTextView.getMeasuredWidth();
                                 if (progress == (mSurvey.getOptions().size() - 1)) {
                                     x = x - width;
-                                } else if (progress == 0) {
-                                    //nothing, show have the view start at the thumb
-                                } else {
+                                } else if (progress != 0) {
                                     x = x - (width / 2);
                                 }
                                 choiceTextView.setX(x);
