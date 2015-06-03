@@ -65,6 +65,19 @@ public class MyGoalsAdapter extends
             imageView = (ImageView) view.findViewById(
                     R.id.list_item_my_goals_category_icon_imageview);
         }
+
+        public void setBackgroundColor(String colorString) {
+            GradientDrawable gradientDrawable = (GradientDrawable) circleView.getBackground();
+
+            if (colorString != null && !colorString.isEmpty()) {
+                gradientDrawable.setColor(Color.parseColor(colorString));
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                circleView.setBackground(gradientDrawable);
+            } else {
+                circleView.setBackgroundDrawable(gradientDrawable);
+            }
+        }
     }
 
     static class MyGoalsNoContentViewHolder extends RecyclerView.ViewHolder {
@@ -116,19 +129,7 @@ public class MyGoalsAdapter extends
 
                 // Check to see if the user has selected any goals for the category
                 if (goals != null && !goals.isEmpty()) {
-                    GradientDrawable gradientDrawable = (GradientDrawable) ((MyGoalsViewHolder)
-                            viewHolder).circleView.getBackground();
-                    String colorString = category.getColor();
-                    if (colorString != null && !colorString.isEmpty()) {
-                        gradientDrawable.setColor(Color.parseColor(colorString));
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        ((MyGoalsViewHolder) viewHolder).circleView.setBackground
-                                (gradientDrawable);
-                    } else {
-                        ((MyGoalsViewHolder) viewHolder).circleView
-                                .setBackgroundDrawable(gradientDrawable);
-                    }
+                    ((MyGoalsViewHolder) viewHolder).setBackgroundColor(category.getColor());
                     ((MyGoalsViewHolder) viewHolder).imageView.setImageResource(category.getProgressIcon());
                     ((MyGoalsViewHolder) viewHolder).titleTextView.setText(category.getTitle());
                     ((MyGoalsViewHolder) viewHolder).subTitleTextView.setVisibility(View.GONE);
@@ -139,25 +140,12 @@ public class MyGoalsAdapter extends
                         public void onClick(View v) {
                             // TODO: How to select & activate a tab?
                             //mCallback.?
-                            Log.d("MyGoalsAdapter", "Tapped Category Card: " + category.getTitle());
+                            Log.d("MyGoalsAdapter", "Tapped Category Card: " + category.getTitle() + " -- " + position);
                         }
                     });
 
                 } else {
-
-                    GradientDrawable gradientDrawable = (GradientDrawable) ((MyGoalsViewHolder)
-                            viewHolder).circleView.getBackground();
-                    String colorString = category.getColor();
-                    if (colorString != null && !colorString.isEmpty()) {
-                        gradientDrawable.setColor(Color.parseColor(colorString));
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        ((MyGoalsViewHolder) viewHolder).circleView.setBackground
-                                (gradientDrawable);
-                    } else {
-                        ((MyGoalsViewHolder) viewHolder).circleView
-                                .setBackgroundDrawable(gradientDrawable);
-                    }
+                    ((MyGoalsViewHolder) viewHolder).setBackgroundColor(category.getColor());
                     ((MyGoalsViewHolder) viewHolder).titleTextView.setVisibility(View.GONE);
                     ((MyGoalsViewHolder) viewHolder).subTitleTextView.setText(mContext.getString
                             (R.string.category_goals_add,
