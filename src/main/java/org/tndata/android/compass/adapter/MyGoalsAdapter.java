@@ -49,7 +49,7 @@ public class MyGoalsAdapter extends
         TextView titleTextView;
         TextView subTitleTextView;
         RelativeLayout circleView;
-        LinearLayout noGoalsContainer;
+        LinearLayout categoryContainer;
         ImageView imageView;
 
         public MyGoalsViewHolder(View view) {
@@ -60,8 +60,8 @@ public class MyGoalsAdapter extends
                     .findViewById(R.id.list_item_my_goals_category_title_textview);
             subTitleTextView = (TextView) view
                     .findViewById(R.id.list_item_my_goals_category_add_textview);
-            noGoalsContainer = (LinearLayout) view.findViewById(R.id
-                    .list_item_my_goals_category_no_goals_container);
+            categoryContainer = (LinearLayout) view.findViewById(R.id
+                    .list_item_my_goals_category_container);
             imageView = (ImageView) view.findViewById(
                     R.id.list_item_my_goals_category_icon_imageview);
         }
@@ -130,10 +130,9 @@ public class MyGoalsAdapter extends
                                 .setBackgroundDrawable(gradientDrawable);
                     }
                     ((MyGoalsViewHolder) viewHolder).imageView.setImageResource(category.getProgressIcon());
-                    ((MyGoalsViewHolder) viewHolder).noGoalsContainer.setVisibility(View.VISIBLE);
                     ((MyGoalsViewHolder) viewHolder).titleTextView.setText(category.getTitle());
                     ((MyGoalsViewHolder) viewHolder).subTitleTextView.setVisibility(View.GONE);
-                    ((MyGoalsViewHolder) viewHolder).noGoalsContainer.setOnClickListener(new View
+                    ((MyGoalsViewHolder) viewHolder).categoryContainer.setOnClickListener(new View
                             .OnClickListener() {
 
                         @Override
@@ -159,12 +158,11 @@ public class MyGoalsAdapter extends
                         ((MyGoalsViewHolder) viewHolder).circleView
                                 .setBackgroundDrawable(gradientDrawable);
                     }
-                    ((MyGoalsViewHolder) viewHolder).noGoalsContainer.setVisibility(View.VISIBLE);
                     ((MyGoalsViewHolder) viewHolder).titleTextView.setVisibility(View.GONE);
                     ((MyGoalsViewHolder) viewHolder).subTitleTextView.setText(mContext.getString
                             (R.string.category_goals_add,
                                     category.getTitle()));
-                    ((MyGoalsViewHolder) viewHolder).noGoalsContainer.setOnClickListener(new View
+                    ((MyGoalsViewHolder) viewHolder).categoryContainer.setOnClickListener(new View
                             .OnClickListener() {
 
 

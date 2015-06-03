@@ -19,7 +19,7 @@
         android:paddingTop="5dp">
 
         <LinearLayout
-            android:id="@+id/list_item_my_goals_category_no_goals_container"
+            android:id="@+id/list_item_my_goals_category_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
