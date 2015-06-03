@@ -1,12 +1,11 @@
 package org.tndata.android.compass.task;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import android.os.AsyncTask;
+import android.text.Html;
+
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,12 +13,13 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import android.os.AsyncTask;
-import android.text.Html;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GetUserCategoriesTask extends
         AsyncTask<String, Void, ArrayList<Category>> {
@@ -69,6 +69,7 @@ public class GetUserCategoriesTask extends
                 JSONObject userCategory = jArray.getJSONObject(i);
                 Category category = gson.fromJson(
                         userCategory.getString("category"), Category.class);
+                category.setProgressValue(userCategory.getDouble("progress_value"));
                 category.setMappingId(userCategory.getInt("id"));
                 categories.add(category);
             }
