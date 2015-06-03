@@ -47,7 +47,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         if (position == 0) {
-            return mContext.getResources().getString(R.string.my_goals_title)
+            return mContext.getResources().getString(R.string.main_tab_title)
                     .toUpperCase();
         } else {
             return mCategories.get(position - 1).getTitle().toUpperCase();
