@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +38,8 @@ public class MyGoalsAdapter extends
         public void chooseGoals(Category category);
 
         public void chooseBehaviors(Goal goal, Category category);
+
+        public void activateCategoryTab(Category category);
     }
 
     private Context mContext;
@@ -151,9 +152,8 @@ public class MyGoalsAdapter extends
 
                         @Override
                         public void onClick(View v) {
-                            // TODO: How to select & activate a tab?
-                            //mCallback.?
-                            Log.d("MyGoalsAdapter", "Tapped Category Card: " + category.getTitle() + " -- " + position);
+                            // Select & activate a Category Tab
+                            mCallback.activateCategoryTab(category);
                         }
                     });
 
