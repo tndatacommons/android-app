@@ -31,6 +31,7 @@ public class UserProfileActivity extends ActionBarActivity implements UserProfil
     private UserProfileAdapter mAdapter;
     private boolean mSurveyShown, mSurveyLoading = false;
     private SurveyDialogFragment mSurveyDialog;
+    private Survey mSelectedSurvey;
 
     private AdapterView.OnItemClickListener mProfileItemClickListener = new AdapterView
             .OnItemClickListener() {
@@ -40,9 +41,9 @@ public class UserProfileActivity extends ActionBarActivity implements UserProfil
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (!mSurveyLoading && !mSurveyShown) {
                 mProgressBar.setVisibility(View.VISIBLE);
-                Survey survey = mProfileSurveyItems.get(position);
-                String surveyUrlExtra = survey.getQuestionType() + "-" + String.valueOf(survey
-                        .getId());
+                mSelectedSurvey = mProfileSurveyItems.get(position);
+                String surveyUrlExtra = mSelectedSurvey.getQuestionType() + "-" + String.valueOf
+                        (mSelectedSurvey.getId());
                 new SurveyFinderTask(UserProfileActivity.this).executeOnExecutor(AsyncTask
                                 .THREAD_POOL_EXECUTOR, ((CompassApplication) getApplication())
                                 .getToken(),
@@ -94,6 +95,11 @@ public class UserProfileActivity extends ActionBarActivity implements UserProfil
     public void surveyFound(Survey survey) {
         mSurveyLoading = false;
         mProgressBar.setVisibility(View.GONE);
+        if (survey.getId() == mSelectedSurvey.getId() && survey.getQuestionType()
+                .equalsIgnoreCase(mSelectedSurvey.getQuestionType())) {
+            survey.setSelectedOption(mSelectedSurvey.getSelectedOption());
+            survey.setResponse(mSelectedSurvey.getResponse());
+        }
         showSurvey(survey);
     }
 

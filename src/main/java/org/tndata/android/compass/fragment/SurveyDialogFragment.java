@@ -3,6 +3,7 @@ package org.tndata.android.compass.fragment;
 
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -26,6 +27,8 @@ import org.tndata.android.compass.util.Constants;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 public class SurveyDialogFragment extends DialogFragment {
     private Survey mSurvey;
@@ -137,16 +140,33 @@ public class SurveyDialogFragment extends DialogFragment {
                     .view_survey_multi_title_textview);
             title.setText(mSurvey.getText());
             final Spinner spinner = (Spinner) v.findViewById(R.id.view_survey_multi_spinner);
-            ArrayAdapter<SurveyOptions> adapter = new ArrayAdapter<SurveyOptions>(getActivity()
-                    .getApplicationContext(), R.layout.list_item_simple_spinner,
-                    mSurvey.getOptions());
+            SurveyOptions defaultOption = new SurveyOptions();
+            defaultOption.setText(getString(R.string.survey_default_option));
+            List<SurveyOptions> optionsList = mSurvey.getOptions();
+            optionsList.add(0, defaultOption);
+            ArrayAdapter<SurveyOptions> adapter = new ArrayAdapter<SurveyOptions>
+                    (getActivity()
+                            .getApplicationContext(), R.layout.list_item_simple_spinner,
+                            mSurvey.getOptions());
             spinner.setAdapter(adapter);
-            spinner.setSelection(0, false);
+            if (mSurvey.getSelectedOption() != null) {
+                for (int i = 0; i < optionsList.size(); i++) {
+                    if (mSurvey.getSelectedOption().getId() == optionsList.get(i).getId()) {
+                        spinner.setSelection(i, false);
+                        break;
+                    }
+                }
+            } else {
+                spinner.setSelection(0, false);
+            }
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position,
                                            long id) {
                     SurveyOptions option = (SurveyOptions) spinner.getSelectedItem();
+                    if (option.getId() == -1) {
+                        return;
+                    }
                     mSurvey.setSelectedOption(option);
                     if (mCallback != null) {
                         mCallback.setNextButtonEnabled(true);
@@ -203,10 +223,22 @@ public class SurveyDialogFragment extends DialogFragment {
             seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    minTextView.setVisibility(View.GONE);
+                    maxTextView.setVisibility(View.GONE);
                     for (SurveyOptions option : mSurvey.getOptions()) {
                         if ((option.getId() - 1) == progress) {
                             mSurvey.setSelectedOption(option);
                             choiceTextView.setText(option.getText());
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                                int x = seekBar.getThumb().getBounds().centerX();
+                                int width = choiceTextView.getMeasuredWidth();
+                                if (progress == (mSurvey.getOptions().size() - 1)) {
+                                    x = x - width;
+                                } else if (progress != 0) {
+                                    x = x - (width / 2);
+                                }
+                                choiceTextView.setX(x);
+                            }
                             break;
                         }
                     }
@@ -247,6 +279,18 @@ public class SurveyDialogFragment extends DialogFragment {
                 int year = c.get(Calendar.YEAR);
                 int month = c.get(Calendar.MONTH);
                 int day = c.get(Calendar.DAY_OF_MONTH);
+                if (!mSurvey.getResponse().isEmpty()) {
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    try {
+                        Date date = formatter.parse(mSurvey.getResponse());
+                        c.setTime(date);
+                        year = c.get(Calendar.YEAR);
+                        month = c.get(Calendar.MONTH);
+                        day = c.get(Calendar.DAY_OF_MONTH);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
 
                 datePicker.init(year, month, day, new DatePicker.OnDateChangedListener() {
                     @Override
