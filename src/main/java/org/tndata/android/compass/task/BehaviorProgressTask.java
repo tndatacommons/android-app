@@ -1,5 +1,6 @@
 package org.tndata.android.compass.task;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.Html;
@@ -17,49 +18,54 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RegisterDeviceTask extends AsyncTask<Void, Void, Void> {
-    private Context mContext;
-    private RegisterDeviceTaskListener mCallBack;
-    private String mRegistrationId;
-    private static final String TAG = "RegisterDeviceTask";
+public class BehaviorProgressTask extends AsyncTask<String, Void, Void> {
 
-    public interface RegisterDeviceTaskListener {
-        public void deviceRegistered(String registration_id);
+    private Context mContext;
+    private BehaviorProgressTaskListener mCallback;
+    private String token;
+
+    public interface BehaviorProgressTaskListener {
+        public void behaviorProgressSaved();
     }
 
-    public RegisterDeviceTask(Context context, RegisterDeviceTaskListener callback, String registration_id) {
+    public BehaviorProgressTask(Context context, BehaviorProgressTaskListener callback) {
+        if (!(context instanceof Activity)) {
+            throw new IllegalStateException("Context Must be an Activity");
+        }
         mContext = context;
-        mCallBack = callback;
-        mRegistrationId = registration_id;
+        mCallback = callback;
+        token = ((CompassApplication) ((Activity) mContext).getApplication()).getToken();
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
-        String token = ((CompassApplication) (mContext)).getToken();
-        String url = Constants.BASE_URL + "notifications/devices/";
+    protected Void doInBackground(String... params) {
+        String behaviorId = params[0];
+        String progressValue = params[1];
 
+        String url = Constants.BASE_URL + "users/behaviors/progress/";
         Map<String, String> headers = new HashMap<String, String>();
         headers.put("Accept", "application/json");
         headers.put("Content-type", "application/json");
         headers.put("Authorization", "Token " + token);
 
-        JSONObject body = new JSONObject();
+        JSONObject payload = new JSONObject();
         try {
-            body.put("registration_id", mRegistrationId);
+            payload.put("status", progressValue);
+            payload.put("behavior", behaviorId);
         } catch (JSONException e1) {
             e1.printStackTrace();
             return null;
         }
 
-        InputStream stream = NetworkHelper.httpPostStream(url, headers,
-                body.toString());
-        if (stream == null) {
+        InputStream stream = NetworkHelper.httpPostStream(
+                url, headers, payload.toString());
+        if(stream == null) {
             return null;
         }
+
         String result = "";
         String createResponse;
         try {
-
             BufferedReader bReader = new BufferedReader(new InputStreamReader(
                     stream, "UTF-8"));
 
@@ -68,19 +74,21 @@ public class RegisterDeviceTask extends AsyncTask<Void, Void, Void> {
                 result += line;
             }
             bReader.close();
-
             createResponse = Html.fromHtml(result).toString();
-            JSONObject device = new JSONObject(createResponse);
+            JSONObject json_result = new JSONObject(createResponse);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        // NOTE: We aren't doing anything with the results in the app,
+        // so just ignore failures?
         return null;
     }
 
-    protected void onPostExecute() {
-        mCallBack.deviceRegistered(mRegistrationId);
+    @Override
+    protected void onPostExecute(Void param) {
+        mCallback.behaviorProgressSaved();
     }
 
 }

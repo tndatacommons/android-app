@@ -5,6 +5,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -20,8 +22,6 @@ import org.tndata.android.compass.util.Constants;
  * An {@link IntentService} subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
  * <p/>
- * TODO: Customize class - update intent actions, extra parameters and static
- * helper methods.
  *
  * NOTE: Messages received from GCM will have a format like the following:
  *
@@ -29,7 +29,16 @@ import org.tndata.android.compass.util.Constants;
  *    "title":"Demo"
  *    "message":"Don't forget to review your Notifications for today",
  *    "object_id":32,
- *    "object_type":"action",  // either behavior or action
+ *    "object_type":"action",  // an Action
+ * }
+ *
+ * A single, daily Behavior notification will arrive, but it does not contain object info:
+ *
+ * {
+ *    "title":"Stay on Course"
+ *    "message":"some message here...",
+ *    "object_id": null,
+ *    "object_type": null,
  * }
  *
  */
@@ -87,42 +96,52 @@ public class GcmIntentService extends IntentService {
     private void sendNotification(String msg, String title, String object_type, String object_id) {
         NotificationManager mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
+        String activity;
 
-        String activity = Constants.GCM_DEFAULT_ACTIVITY;
-        /*
-        // TODO: We can't launch these activities directly without the full app being
-        // TODO: initialized (e.g. some of the data required for model.Goal.getBehaviors()
-        // TODO: will be null)
         switch (object_type) {
             case Constants.ACTION_TYPE:
+                // TODO: We can't launch these activities directly without the full app being
+                // TODO: initialized (e.g. some of the data required for model.Goal.getBehaviors()
+                // TODO: will be null)
                 activity = Constants.GCM_ACTION_ACTIVITY;
                 break;
             case Constants.BEHAVIOR_TYPE:
                 activity = Constants.GCM_BEHAVIOR_ACTIVITY;
                 break;
+            default:
+                activity = Constants.GCM_BEHAVIOR_ACTIVITY;
+                break;
         }
-        */
 
         Class<?> cls;
         try {
             cls = Class.forName(activity);
         }
         catch (Exception e) {
-            Log.d(TAG, "Activity " + activity + " not found! Using default!");
             cls = LoginActivity.class;
         }
 
-        // TODO: How can we tell the activity about the object_id (and possibly the object_type)
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, cls), 0);
 
+        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setSmallIcon(R.drawable.ic_action_compass_white)
                         .setContentTitle(title)
-                        .setStyle(new NotificationCompat.BigTextStyle()
-                                .bigText(msg))
-                        .setContentText(msg);
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
+                        .setContentText(msg)
+                        .setLargeIcon(icon)
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        if(object_id != null) {
+            // Bundle the object_type/object_id arguments with the intent
+            // http://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html
+            Bundle args = new Bundle();
+            args.putSerializable("objectType", object_type);
+            args.putSerializable("objectId", object_id);
+            mBuilder.addExtras(args);
+        }
 
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
