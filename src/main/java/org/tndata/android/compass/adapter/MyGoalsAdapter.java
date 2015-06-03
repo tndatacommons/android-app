@@ -66,7 +66,21 @@ public class MyGoalsAdapter extends
                     R.id.list_item_my_goals_category_icon_imageview);
         }
 
-        public void setBackgroundColor(String colorString) {
+        public void setTitleText(String content) {
+            // Hide the subtitle, and display the title with the given text.
+            subTitleTextView.setVisibility(View.GONE);
+            titleTextView.setVisibility(View.VISIBLE);
+            titleTextView.setText(content);
+        }
+
+        public void setSubTitleText(String content) {
+            // Hide the title, and display the subtitle with the given text.
+            titleTextView.setVisibility(View.GONE);
+            subTitleTextView.setVisibility(View.VISIBLE);
+            subTitleTextView.setText(content);
+        }
+
+        public void setCircleViewBackgroundColor(String colorString) {
             GradientDrawable gradientDrawable = (GradientDrawable) circleView.getBackground();
 
             if (colorString != null && !colorString.isEmpty()) {
@@ -129,10 +143,9 @@ public class MyGoalsAdapter extends
 
                 // Check to see if the user has selected any goals for the category
                 if (goals != null && !goals.isEmpty()) {
-                    ((MyGoalsViewHolder) viewHolder).setBackgroundColor(category.getColor());
+                    ((MyGoalsViewHolder) viewHolder).setCircleViewBackgroundColor(category.getColor());
                     ((MyGoalsViewHolder) viewHolder).imageView.setImageResource(category.getProgressIcon());
-                    ((MyGoalsViewHolder) viewHolder).titleTextView.setText(category.getTitle());
-                    ((MyGoalsViewHolder) viewHolder).subTitleTextView.setVisibility(View.GONE);
+                    ((MyGoalsViewHolder) viewHolder).setTitleText(category.getTitle());
                     ((MyGoalsViewHolder) viewHolder).categoryContainer.setOnClickListener(new View
                             .OnClickListener() {
 
@@ -145,11 +158,9 @@ public class MyGoalsAdapter extends
                     });
 
                 } else {
-                    ((MyGoalsViewHolder) viewHolder).setBackgroundColor(category.getColor());
-                    ((MyGoalsViewHolder) viewHolder).titleTextView.setVisibility(View.GONE);
-                    ((MyGoalsViewHolder) viewHolder).subTitleTextView.setText(mContext.getString
-                            (R.string.category_goals_add,
-                                    category.getTitle()));
+                    ((MyGoalsViewHolder) viewHolder).setCircleViewBackgroundColor(category.getColor());
+                    ((MyGoalsViewHolder) viewHolder).setSubTitleText(mContext.getString
+                            (R.string.category_goals_add, category.getTitle()));
                     ((MyGoalsViewHolder) viewHolder).categoryContainer.setOnClickListener(new View
                             .OnClickListener() {
 
