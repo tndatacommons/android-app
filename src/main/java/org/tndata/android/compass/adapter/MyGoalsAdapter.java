@@ -50,7 +50,6 @@ public class MyGoalsAdapter extends
         TextView subTitleTextView;
         RelativeLayout circleView;
         LinearLayout noGoalsContainer;
-        LinearLayout goalContainer;
         ImageView imageView;
 
         public MyGoalsViewHolder(View view) {
@@ -63,8 +62,6 @@ public class MyGoalsAdapter extends
                     .findViewById(R.id.list_item_my_goals_category_add_textview);
             noGoalsContainer = (LinearLayout) view.findViewById(R.id
                     .list_item_my_goals_category_no_goals_container);
-            goalContainer = (LinearLayout) view.findViewById(R.id
-                    .list_item_my_goals_category_goals_container);
             imageView = (ImageView) view.findViewById(
                     R.id.list_item_my_goals_category_icon_imageview);
         }
@@ -116,11 +113,9 @@ public class MyGoalsAdapter extends
             case MyGoalsViewItem.TYPE_CATEGORY:
                 final Category category = mItems.get(position).getCategory();
                 ArrayList<Goal> goals = category.getGoals();
-                ((MyGoalsViewHolder) viewHolder).goalContainer.removeAllViews();
 
                 // Check to see if the user has selected any goals for the category
                 if (goals != null && !goals.isEmpty()) {
-                    ((MyGoalsViewHolder) viewHolder).goalContainer.setVisibility(View.GONE);
                     GradientDrawable gradientDrawable = (GradientDrawable) ((MyGoalsViewHolder)
                             viewHolder).circleView.getBackground();
                     String colorString = category.getColor();
