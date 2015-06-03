@@ -18,21 +18,11 @@
         android:paddingRight="2dp"
         android:paddingTop="5dp">
 
-        <TextView
-            android:id="@+id/list_item_my_goals_category_title_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:paddingLeft="2dp"
-            android:text="@string/category_goals"
-            android:textAppearance="?android:attr/textAppearanceMedium"/>
-
         <LinearLayout
             android:id="@+id/list_item_my_goals_category_no_goals_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_below="@id/list_item_my_goals_category_title_textview">
+            android:orientation="horizontal">
 
             <RelativeLayout
                 android:id="@+id/list_item_my_goals_category_circle_view"
@@ -55,6 +45,16 @@
                     android:layout_centerInParent="true"
                     android:src="@drawable/ic_action_compass_white"/>
             </RelativeLayout>
+
+            <TextView
+                android:id="@+id/list_item_my_goals_category_title_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:paddingLeft="2dp"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
 
             <TextView
                 android:id="@+id/list_item_my_goals_category_add_textview"
