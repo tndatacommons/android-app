@@ -1,7 +1,6 @@
 package org.tndata.android.compass.adapter;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -15,16 +14,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.ui.ActionListView;
-import org.tndata.android.compass.ui.BehaviorListView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryFragmentAdapter extends
@@ -39,7 +33,6 @@ public class CategoryFragmentAdapter extends
         TextView titleTextView;
         RelativeLayout circleView;
         LinearLayout goalContainer;
-        LinearLayout behaviorContainer;
         ImageView iconImageView;
 
         public CategoryGoalViewHolder(View view) {
@@ -50,10 +43,20 @@ public class CategoryFragmentAdapter extends
                     .list_item_category_goal_circle_view);
             goalContainer = (LinearLayout) view.findViewById(R.id
                     .list_item_category_goal_goal_container);
-            behaviorContainer = (LinearLayout) view.findViewById(R.id
-                    .list_item_category_goal_behavior_container);
             iconImageView = (ImageView) view.findViewById(R.id
                     .list_item_category_goal_icon_imageview);
+        }
+
+        public void setCircleViewBackgroundColor(String colorString) {
+            GradientDrawable gradientDrawable = (GradientDrawable) circleView.getBackground();
+            if (colorString != null && !colorString.isEmpty()) {
+                gradientDrawable.setColor(Color.parseColor(colorString));
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                circleView.setBackground(gradientDrawable);
+            } else {
+                circleView.setBackgroundDrawable(gradientDrawable);
+            }
         }
     }
 
@@ -89,19 +92,8 @@ public class CategoryFragmentAdapter extends
                                  final int position) {
         final Goal goal = mItems.get(position);
         ((CategoryGoalViewHolder) viewHolder).titleTextView.setText(goal.getTitle());
-        GradientDrawable gradientDrawable = (GradientDrawable) ((CategoryGoalViewHolder)
-                viewHolder).circleView.getBackground();
-        String colorString = mCategory.getColor();
-        if (colorString != null && !colorString.isEmpty()) {
-            gradientDrawable.setColor(Color.parseColor(colorString));
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            ((CategoryGoalViewHolder) viewHolder).circleView.setBackground
-                    (gradientDrawable);
-        } else {
-            ((CategoryGoalViewHolder) viewHolder).circleView
-                    .setBackgroundDrawable(gradientDrawable);
-        }
+        ((CategoryGoalViewHolder) viewHolder).setCircleViewBackgroundColor(
+                mCategory.getColor());
 
         // Set the progress widget for the Goal.
         ((CategoryGoalViewHolder) viewHolder).iconImageView.setImageResource(
@@ -115,36 +107,6 @@ public class CategoryFragmentAdapter extends
                 mCallback.chooseBehaviors(goal);
             }
         });
-        ArrayList<Behavior> behaviors = goal.getBehaviors();
-        ((CategoryGoalViewHolder) viewHolder).behaviorContainer.removeAllViews();
-        if (behaviors != null && !behaviors.isEmpty()) {
-            for (final Behavior behavior : behaviors) {
-                BehaviorListView behaviorListView = new BehaviorListView(mContext);
-                behaviorListView.setBehavior(behavior, mCategory);
-                behaviorListView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mCallback.viewBehavior(goal, behavior);
-                    }
-                });
-                ((CategoryGoalViewHolder) viewHolder).behaviorContainer.addView(behaviorListView);
-                if (mContext instanceof Activity) {
-                    for (final Action action : ((CompassApplication) ((Activity) mContext)
-                            .getApplication()).getActions()) {
-                        if ((action.getBehavior() != null && action.getBehavior().equals(behavior))
-                                || (action.getBehavior_id() == behavior.getId())) {
-                            ActionListView actionListView = new ActionListView(mContext);
-                            actionListView.setAction(action);
-
-                            ((CategoryGoalViewHolder) viewHolder).behaviorContainer.addView
-                                    (actionListView);
-
-                        }
-                    }
-                }
-            }
-        }
-
     }
 
     @Override
