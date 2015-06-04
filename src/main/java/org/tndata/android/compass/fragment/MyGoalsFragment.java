@@ -266,6 +266,7 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
         }
     }
 
+    @Override
     public void activateCategoryTab(Category category) {
         mCallback.transitionToCategoryTab(category);
     }
