@@ -155,7 +155,6 @@ public class GoalTryActivity extends ActionBarActivity implements
         goalDescription.setText(mGoal.getDescription());
         mHeaderView = findViewById(R.id.goal_try_material_view);
         manager.setHeaderIncrementFixer(mFakeHeader);
-        mAdapter.setShouldClipView(false);
         mAdapter.setParallaxHeader(mFakeHeader, mRecyclerView);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             mAdapter.setOnParallaxScroll(new ParallaxRecyclerAdapter.OnParallaxScroll() {
@@ -176,14 +175,24 @@ public class GoalTryActivity extends ActionBarActivity implements
             @Override
             public void onClick(View v, int position) {
                 //lets get semantic
+                if (position == -1) {
+                    // This is the header, ignore. This fixes a bug when clicking a description
+                    return;
+                }
                 Behavior behavior = mBehaviorList.get(position);
 
                 if (mExpandedBehaviors.contains(behavior)) {
-                    collapseCardView(v);
                     mExpandedBehaviors.remove(behavior);
                 } else {
-                    expandCardView(v);
                     mExpandedBehaviors.add(behavior);
+                }
+                try {
+                    // let us redraw the item that has changed, this forces the RecyclerView to respect
+                    //  the layout of each item, and none will overlap. Add 1 to position to account
+                    //  for the header view
+                    mAdapter.notifyItemChanged(position + 1);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 
@@ -194,20 +203,6 @@ public class GoalTryActivity extends ActionBarActivity implements
             mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }
         loadBehaviors();
-    }
-
-
-
-    private void expandCardView(View card) {
-        card.findViewById(R.id.list_item_behavior_try_it_button).setVisibility(View.VISIBLE);
-        card.findViewById(R.id.list_item_behavior_description_textview).setVisibility(View.VISIBLE);
-        card.findViewById(R.id.list_item_behavior_imageview).setVisibility(View.GONE);
-    }
-
-    private void collapseCardView(View card) {
-        card.findViewById(R.id.list_item_behavior_try_it_button).setVisibility(View.GONE);
-        card.findViewById(R.id.list_item_behavior_description_textview).setVisibility(View.GONE);
-        card.findViewById(R.id.list_item_behavior_imageview).setVisibility(View.VISIBLE);
     }
 
     @Override
