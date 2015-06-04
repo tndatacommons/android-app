@@ -23,7 +23,6 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.ui.ActionListView;
 import org.tndata.android.compass.ui.BehaviorListView;
-import org.tndata.android.compass.util.ImageCache;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,12 +102,11 @@ public class CategoryFragmentAdapter extends
             ((CategoryGoalViewHolder) viewHolder).circleView
                     .setBackgroundDrawable(gradientDrawable);
         }
-        if (goal.getIconUrl() != null
-                && !goal.getIconUrl().isEmpty()) {
-            ImageCache.instance(mContext).loadBitmap(
-                    ((CategoryGoalViewHolder) viewHolder).iconImageView,
-                    goal.getIconUrl(), false);
-        }
+
+        // Set the progress widget for the Goal.
+        ((CategoryGoalViewHolder) viewHolder).iconImageView.setImageResource(
+                goal.getProgressIcon());
+
         ((CategoryGoalViewHolder) viewHolder).goalContainer.setOnClickListener(new View
                 .OnClickListener() {
 

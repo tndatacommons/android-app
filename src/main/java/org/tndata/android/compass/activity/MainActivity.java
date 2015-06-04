@@ -70,6 +70,20 @@ public class MainActivity extends ActionBarActivity implements
     private ImageView mHeaderImageView;
     private MainViewPagerAdapter mAdapter;
     private boolean mDrawerIsOpen = false;
+    private boolean backButtonSelectsDefaultTab = false;
+    private static final int DEFAULT_TAB = 0;
+
+    @Override
+    public void onBackPressed() {
+        // This activity may switch tabs when a user taps a card, so after doing that,
+        // we want the back button to return the user to the default tab.
+        if(backButtonSelectsDefaultTab) {
+            activateTab(DEFAULT_TAB);
+            backButtonSelectsDefaultTab = false; // resets default behavior
+        } else {
+            super.onBackPressed();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -379,5 +393,15 @@ public class MainActivity extends ActionBarActivity implements
             sendBroadcast(intent);
             Log.d("Main Activity", "send broadcast");
         }
+    }
+
+    public void activateTab(int tabIndex) {
+        mViewPager.setCurrentItem(tabIndex);
+    }
+
+    @Override
+    public void transitionToCategoryTab(Category category) {
+        backButtonSelectsDefaultTab = true;
+        activateTab(mAdapter.getCategoryPosition(category) + 1);  // add one for the default tab
     }
 }

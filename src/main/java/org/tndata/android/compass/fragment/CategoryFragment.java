@@ -1,18 +1,5 @@
 package org.tndata.android.compass.fragment;
 
-import org.tndata.android.compass.CompassApplication;
-import org.tndata.android.compass.R;
-import org.tndata.android.compass.activity.BehaviorActivity;
-import org.tndata.android.compass.activity.ChooseGoalsActivity;
-import org.tndata.android.compass.activity.GoalTryActivity;
-import org.tndata.android.compass.adapter.CategoryFragmentAdapter;
-import org.tndata.android.compass.model.Behavior;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.ui.SpacingItemDecoration;
-import org.tndata.android.compass.ui.button.FloatingActionButton;
-import org.tndata.android.compass.util.Constants;
-
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -27,6 +14,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.tndata.android.compass.CompassApplication;
+import org.tndata.android.compass.R;
+import org.tndata.android.compass.activity.BehaviorActivity;
+import org.tndata.android.compass.activity.ChooseGoalsActivity;
+import org.tndata.android.compass.activity.GoalTryActivity;
+import org.tndata.android.compass.adapter.CategoryFragmentAdapter;
+import org.tndata.android.compass.model.Behavior;
+import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.ui.SpacingItemDecoration;
+import org.tndata.android.compass.ui.button.FloatingActionButton;
+import org.tndata.android.compass.util.Constants;
+
 import java.util.ArrayList;
 
 public class CategoryFragment extends Fragment implements CategoryFragmentAdapter
@@ -39,11 +39,13 @@ public class CategoryFragment extends Fragment implements CategoryFragmentAdapte
     private ArrayList<Goal> mItems = new ArrayList<Goal>();
     private boolean mBroadcastIsRegistered = false;
     private CategoryFragmentListener mCallback;
+    
+    private static final String TAG = "Category Fragment";
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("Category Fragment", "receive broadcast");
+            Log.d(TAG, "receive broadcast");
             categoryGoalsUpdated();
         }
     };
@@ -137,7 +139,7 @@ public class CategoryFragment extends Fragment implements CategoryFragmentAdapte
             getActivity().getApplicationContext().registerReceiver(broadcastReceiver,
                     new IntentFilter(Constants.GOAL_UPDATED_BROADCAST_ACTION));
             mBroadcastIsRegistered = true;
-            Log.d("Category Fragment", "Broadcast registered");
+            Log.d(TAG, "Broadcast registered");
         }
     }
 
@@ -161,7 +163,7 @@ public class CategoryFragment extends Fragment implements CategoryFragmentAdapte
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("Category Fragment", "onActivityResult");
+        Log.d(TAG, "onActivityResult");
         if (requestCode == Constants.CHOOSE_GOALS_REQUEST_CODE) {
             mCallback.assignGoalsToCategories(true);
         } else if (resultCode == Constants.BEHAVIOR_CHANGED_RESULT_CODE) {
@@ -170,7 +172,7 @@ public class CategoryFragment extends Fragment implements CategoryFragmentAdapte
     }
 
     public void categoryGoalsUpdated() {
-        Log.d("Category Fragment", "categoryGoalsUpdated");
+        Log.d(TAG, "categoryGoalsUpdated");
         for (Category category : ((CompassApplication) getActivity()
                 .getApplication()).getCategories()) {
             if (category.getId() == mCategory.getId()) {
@@ -184,7 +186,7 @@ public class CategoryFragment extends Fragment implements CategoryFragmentAdapte
     }
 
     private void setGoals() {
-        Log.d("Category Fragment", "setGoals");
+        Log.d(TAG, "setGoals");
         ArrayList<Goal> goals = mCategory.getGoals();
         mItems.clear();
         if (goals != null && !goals.isEmpty()) {

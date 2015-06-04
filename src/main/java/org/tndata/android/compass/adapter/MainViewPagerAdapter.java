@@ -1,17 +1,17 @@
 package org.tndata.android.compass.adapter;
 
-import java.util.ArrayList;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.CategoryFragment;
 import org.tndata.android.compass.fragment.MyGoalsFragment;
 import org.tndata.android.compass.model.Category;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import java.util.ArrayList;
 
 public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     private Context mContext;
@@ -47,7 +47,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         if (position == 0) {
-            return mContext.getResources().getString(R.string.my_goals_title)
+            return mContext.getResources().getString(R.string.main_tab_title)
                     .toUpperCase();
         } else {
             return mCategories.get(position - 1).getTitle().toUpperCase();
@@ -60,6 +60,10 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
         } else {
             return mCategories.get(position - 1).getImageUrl();
         }
+    }
+
+    public int getCategoryPosition(Category category) {
+        return mCategories.indexOf(category);
     }
 
 }
