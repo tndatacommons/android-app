@@ -6,9 +6,11 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -31,20 +33,26 @@ public class CategoryFragmentAdapter extends
 
     static class CategoryGoalViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;
+        TextView descriptionTextView;
         RelativeLayout circleView;
         LinearLayout goalContainer;
         ImageView iconImageView;
+        Button moreInfoButton;
 
         public CategoryGoalViewHolder(View view) {
             super(view);
             titleTextView = (TextView) view.findViewById(R.id
                     .list_item_category_goal_title_textview);
+            descriptionTextView = (TextView) view.findViewById(R.id
+                    .list_item_category_goal_description_textview);
             circleView = (RelativeLayout) view.findViewById(R.id
                     .list_item_category_goal_circle_view);
             goalContainer = (LinearLayout) view.findViewById(R.id
                     .list_item_category_goal_goal_container);
             iconImageView = (ImageView) view.findViewById(R.id
                     .list_item_category_goal_icon_imageview);
+            moreInfoButton = (Button) view.findViewById(R.id
+                    .list_item_category_goal_more_info_button);
         }
 
         public void setCircleViewBackgroundColor(String colorString) {
@@ -58,6 +66,23 @@ public class CategoryFragmentAdapter extends
                 circleView.setBackgroundDrawable(gradientDrawable);
             }
         }
+
+        public void toggleCard() {
+
+            Log.d("CategoryFragmentAdapter", "Toggling Card");
+
+            // If the card is collapsed, expand it; if it's expanded, collapse it.
+            if(descriptionTextView.getVisibility() == View.GONE) {
+                circleView.setVisibility(View.GONE);
+                descriptionTextView.setVisibility(View.VISIBLE);
+                moreInfoButton.setVisibility(View.VISIBLE);
+            }else {
+                circleView.setVisibility(View.VISIBLE);
+                descriptionTextView.setVisibility(View.GONE);
+                moreInfoButton.setVisibility(View.GONE);
+            }
+        }
+
     }
 
     private Context mContext;
@@ -92,21 +117,40 @@ public class CategoryFragmentAdapter extends
                                  final int position) {
         final Goal goal = mItems.get(position);
         ((CategoryGoalViewHolder) viewHolder).titleTextView.setText(goal.getTitle());
+        ((CategoryGoalViewHolder) viewHolder).descriptionTextView.setText(
+                goal.getDescription());
         ((CategoryGoalViewHolder) viewHolder).setCircleViewBackgroundColor(
                 mCategory.getColor());
-
-        // Set the progress widget for the Goal.
         ((CategoryGoalViewHolder) viewHolder).iconImageView.setImageResource(
                 goal.getProgressIcon());
-
         ((CategoryGoalViewHolder) viewHolder).goalContainer.setOnClickListener(new View
                 .OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                mCallback.chooseBehaviors(goal);
+                ((CategoryGoalViewHolder) viewHolder).toggleCard();
             }
         });
+
+        // Since the descriptionTextView is outside of the goal_goal_container layout, it
+        // also needs a click handler, otherwise, tapping on the description doesn't do anything
+        ((CategoryGoalViewHolder) viewHolder).descriptionTextView.setOnClickListener(
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((CategoryGoalViewHolder) viewHolder).toggleCard();
+                }
+            }
+        );
+
+        ((CategoryGoalViewHolder) viewHolder).moreInfoButton.setOnClickListener(
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mCallback.chooseBehaviors(goal);
+                }
+            }
+        );
     }
 
     @Override
