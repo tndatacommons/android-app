@@ -15,8 +15,9 @@
         android:scaleType="centerCrop"
         android:adjustViewBounds="true"
         android:src="@drawable/ic_action_compass_white"
-        android:layout_margin="10dp"
-        android:padding="5dp"/>
+        android:layout_margin="0dp"
+        android:paddingEnd="5dp"
+        android:paddingRight="5dp"/>
 
     <TextView
         android:id="@+id/view_behavior_textview"

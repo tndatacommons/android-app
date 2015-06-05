@@ -73,6 +73,10 @@
     <string name="category_goals">%1$s goals</string>
     <string name="category_goals_add">What are your %1$s goals?</string>
 
+    <!-- GoalDetailsActivity -->
+    <string name="goal_title_label">Achieve Your Goal</string>
+    <string name="goal_management">Manage Your Goal</string>
+
     <!-- BehaviorActivity -->
     <string name="learn_more_no_thanks">NO THANKS</string>
     <string name="learn_more_title_label">Learn more</string>
