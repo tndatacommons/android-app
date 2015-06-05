@@ -48,6 +48,7 @@ public class GoalTryActivity extends ActionBarActivity implements
     private View mHeaderView;
     private Category mCategory = null;
     private HashSet<Behavior> mExpandedBehaviors = new HashSet<>();
+    private int mCurrentlyExpandedPosition = -1;
 
     static class TryGoalViewHolder extends RecyclerView.ViewHolder {
         public TryGoalViewHolder(View itemView) {
@@ -168,6 +169,7 @@ public class GoalTryActivity extends ActionBarActivity implements
                     mHeaderView.setTranslationY(-offset * 0.5f);
 
                 }
+
             });
         }
         mAdapter.setOnClickEvent(new OnClickEvent() {
@@ -184,13 +186,20 @@ public class GoalTryActivity extends ActionBarActivity implements
                 if (mExpandedBehaviors.contains(behavior)) {
                     mExpandedBehaviors.remove(behavior);
                 } else {
+                    mExpandedBehaviors.clear();
+                    if (mCurrentlyExpandedPosition >= 0) {
+                        mAdapter.notifyItemChanged(mCurrentlyExpandedPosition);
+                    }
                     mExpandedBehaviors.add(behavior);
                 }
                 try {
-                    // let us redraw the item that has changed, this forces the RecyclerView to respect
+                    // let us redraw the item that has changed, this forces the RecyclerView to
+                    // respect
                     //  the layout of each item, and none will overlap. Add 1 to position to account
                     //  for the header view
-                    mAdapter.notifyItemChanged(position + 1);
+                    mCurrentlyExpandedPosition = position + 1;
+                    mAdapter.notifyItemChanged(mCurrentlyExpandedPosition);
+                    mRecyclerView.scrollToPosition(mCurrentlyExpandedPosition);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -211,6 +220,11 @@ public class GoalTryActivity extends ActionBarActivity implements
             setResult(resultCode);
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void collapseAllViews() {
+        mExpandedBehaviors.clear();
+        mAdapter.notifyDataSetChanged();
     }
 
     private void loadBehaviors() {

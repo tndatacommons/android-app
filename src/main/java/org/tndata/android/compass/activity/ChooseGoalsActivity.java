@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.task.AddGoalTask;
@@ -37,6 +38,7 @@ import org.tndata.android.compass.util.ImageCache;
 import org.tndata.android.compass.util.ImageHelper;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 
 public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTask
@@ -54,7 +56,8 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
     private Category mCategory = null;
     private boolean mAdding = false;
     private boolean mDeleting = false;
-    private ArrayList<Integer> mExpandedPositions = new ArrayList<Integer>();
+    private HashSet<Goal> mExpandedGoals = new HashSet<>();
+    private int mCurrentlyExpandedPosition = -1;
 
     static class ChooseGoalViewHolder extends RecyclerView.ViewHolder {
         public ChooseGoalViewHolder(View itemView) {
@@ -114,12 +117,15 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
 
                 ((ChooseGoalViewHolder) viewHolder).titleTextView.setText(goal
                         .getTitle());
-                if (mExpandedPositions.contains(Integer.valueOf(i))) {
+                if (mExpandedGoals.contains(goal)) {
+                    ((ChooseGoalViewHolder) viewHolder).iconContainerView.setVisibility(View.GONE);
                     ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
                             .VISIBLE);
                 } else {
                     ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
                             .GONE);
+                    ((ChooseGoalViewHolder) viewHolder).iconContainerView.setVisibility(View
+                            .VISIBLE);
                 }
                 ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setText(goal
                         .getDescription());
@@ -145,21 +151,9 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                         goalSelected(goal);
                     }
                 });
-                ((ChooseGoalViewHolder) viewHolder).detailContainerView.setOnClickListener(new View.OnClickListener() {
-
-
-                    @Override
-                    public void onClick(View v) {
-                        ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setVisibility
-                                (View.VISIBLE);
-                        mExpandedPositions.add(Integer.valueOf(i));
-                    }
-                });
-
 
                 GradientDrawable gradientDrawable = (GradientDrawable) ((ChooseGoalViewHolder)
-                        viewHolder)
-                        .iconContainerView.getBackground();
+                        viewHolder).iconContainerView.getBackground();
                 String colorString = mCategory.getColor();
                 Log.d("color", colorString);
                 if (colorString != null && !colorString.isEmpty()) {
@@ -210,6 +204,39 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                 }
             });
         }
+        mAdapter.setOnClickEvent(new ParallaxRecyclerAdapter.OnClickEvent() {
+
+            @Override
+            public void onClick(View v, int position) {
+                if (position == -1) {
+                    // This is the header, ignore. This fixes a bug when clicking a description
+                    return;
+                }
+                Goal goal = mItems.get(position);
+
+                if (mExpandedGoals.contains(goal)) {
+                    mExpandedGoals.remove(goal);
+                } else {
+                    mExpandedGoals.clear();
+                    if (mCurrentlyExpandedPosition >= 0) {
+                        mAdapter.notifyItemChanged(mCurrentlyExpandedPosition);
+                    }
+                    mExpandedGoals.add(goal);
+                }
+                try {
+                    // let us redraw the item that has changed, this forces the RecyclerView to
+                    // respect
+                    //  the layout of each item, and none will overlap. Add 1 to position to account
+                    //  for the header view
+                    mCurrentlyExpandedPosition = position + 1;
+                    mAdapter.notifyItemChanged(mCurrentlyExpandedPosition);
+                    mRecyclerView.scrollToPosition(mCurrentlyExpandedPosition);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        });
         mRecyclerView.setAdapter(mAdapter);
 
         if (mCategory != null && !mCategory.getColor().isEmpty()) {

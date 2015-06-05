@@ -36,11 +36,9 @@ public class ParallaxRecyclerAdapter<T> extends
     public interface OnClickEvent {
         /**
          * Event triggered when you click on a item of the adapter
-         * 
-         * @param v
-         *            view
-         * @param position
-         *            position on the array
+         *
+         * @param v        view
+         * @param position position on the array
          */
         void onClick(View v, int position);
     }
@@ -48,7 +46,7 @@ public class ParallaxRecyclerAdapter<T> extends
     public interface OnParallaxScroll {
         /**
          * Event triggered when the parallax is being scrolled.
-         * 
+         *
          * @param percentage
          * @param offset
          * @param parallax
@@ -67,9 +65,8 @@ public class ParallaxRecyclerAdapter<T> extends
 
     /**
      * Translates the adapter in Y
-     * 
-     * @param of
-     *            offset in px
+     *
+     * @param of offset in px
      */
     public void translateHeader(float of) {
         float ofCalculated = of * SCROLL_MULTIPLIER;
@@ -93,11 +90,9 @@ public class ParallaxRecyclerAdapter<T> extends
 
     /**
      * Set the view as header.
-     * 
-     * @param header
-     *            The inflated header
-     * @param view
-     *            The RecyclerView to set scroll listeners
+     *
+     * @param header The inflated header
+     * @param view   The RecyclerView to set scroll listeners
      */
     public void setParallaxHeader(View header, final RecyclerView view) {
         mRecyclerView = view;
@@ -113,10 +108,7 @@ public class ParallaxRecyclerAdapter<T> extends
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (mHeader != null) {
-                    mTotalYScrolled += dy;
-                    translateHeader(mTotalYScrolled);
-                }
+                updateTranslationBasedOnItems();
             }
         });
     }
@@ -126,6 +118,7 @@ public class ParallaxRecyclerAdapter<T> extends
         if (mRecyclerAdapterMethods == null)
             throw new NullPointerException(
                     "You must call implementRecyclerAdapterMethods");
+        updateTranslationBasedOnItems();
         if (i != 0 && mHeader != null) {
             mRecyclerAdapterMethods.onBindViewHolder(viewHolder, i - 1);
         } else if (i != 0)
@@ -146,14 +139,8 @@ public class ParallaxRecyclerAdapter<T> extends
                     "You must call implementRecyclerAdapterMethods");
         if (i == VIEW_TYPES.HEADER && mHeader != null)
             return new ViewHolder(mHeader);
-        if (i == VIEW_TYPES.FIRST_VIEW && mHeader != null
-                && mRecyclerView != null) {
-            RecyclerView.ViewHolder holder = mRecyclerView
-                    .findViewHolderForPosition(0);
-            if (holder != null) {
-                translateHeader(-holder.itemView.getTop());
-                mTotalYScrolled = -holder.itemView.getTop();
-            }
+        if (i == VIEW_TYPES.FIRST_VIEW) {
+            updateTranslationBasedOnItems();
         }
         return mRecyclerAdapterMethods.onCreateViewHolder(viewGroup, i);
     }
@@ -176,7 +163,7 @@ public class ParallaxRecyclerAdapter<T> extends
     /**
      * Defines if we will clip the layout or not. MUST BE CALLED BEFORE
      * {@link #setParallaxHeader(android.view.View, android.support.v7.widget.RecyclerView)}
-     * 
+     *
      * @param shouldClickView
      */
     public void setShouldClipView(boolean shouldClickView) {
@@ -186,6 +173,18 @@ public class ParallaxRecyclerAdapter<T> extends
     public void setOnParallaxScroll(OnParallaxScroll parallaxScroll) {
         mParallaxScroll = parallaxScroll;
         mParallaxScroll.onParallaxScroll(0, 0, mHeader);
+    }
+
+    private void updateTranslationBasedOnItems() {
+        if (mHeader != null
+                && mRecyclerView != null) {
+            RecyclerView.ViewHolder holder = mRecyclerView
+                    .findViewHolderForPosition(0);
+            if (holder != null) {
+                translateHeader(-holder.itemView.getTop());
+                mTotalYScrolled = -holder.itemView.getTop();
+            }
+        }
     }
 
     public ParallaxRecyclerAdapter(List<T> data) {
@@ -234,7 +233,7 @@ public class ParallaxRecyclerAdapter<T> extends
 
     /**
      * You must call this method to set your normal adapter methods
-     * 
+     *
      * @param callbacks
      */
     public void implementRecyclerAdapterMethods(RecyclerAdapterMethods callbacks) {
