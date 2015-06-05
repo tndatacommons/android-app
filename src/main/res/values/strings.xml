@@ -12,7 +12,7 @@
     <string name="action_my_priorities">My Priorities</string>
     <string name="action_my_privacy">My Privacy</string>
     <string name="nav_drawer_action">Compass</string>
-    <string name="my_goals_title">My Interests</string>
+    <string name="main_tab_title">My Journey</string>
 
     <!-- LoginActivity -->
     <string name="terms_title">Terms and Conditions</string>

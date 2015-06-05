@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -19,7 +20,6 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.MyGoalsViewItem;
 import org.tndata.android.compass.model.Survey;
-import org.tndata.android.compass.ui.GoalCellView;
 import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
@@ -38,6 +38,8 @@ public class MyGoalsAdapter extends
         public void chooseGoals(Category category);
 
         public void chooseBehaviors(Goal goal, Category category);
+
+        public void activateCategoryTab(Category category);
     }
 
     private Context mContext;
@@ -48,8 +50,8 @@ public class MyGoalsAdapter extends
         TextView titleTextView;
         TextView subTitleTextView;
         RelativeLayout circleView;
-        LinearLayout noGoalsContainer;
-        LinearLayout goalContainer;
+        LinearLayout categoryContainer;
+        ImageView imageView;
 
         public MyGoalsViewHolder(View view) {
             super(view);
@@ -59,10 +61,37 @@ public class MyGoalsAdapter extends
                     .findViewById(R.id.list_item_my_goals_category_title_textview);
             subTitleTextView = (TextView) view
                     .findViewById(R.id.list_item_my_goals_category_add_textview);
-            noGoalsContainer = (LinearLayout) view.findViewById(R.id
-                    .list_item_my_goals_category_no_goals_container);
-            goalContainer = (LinearLayout) view.findViewById(R.id
-                    .list_item_my_goals_category_goals_container);
+            categoryContainer = (LinearLayout) view.findViewById(R.id
+                    .list_item_my_goals_category_container);
+            imageView = (ImageView) view.findViewById(
+                    R.id.list_item_my_goals_category_icon_imageview);
+        }
+
+        public void setTitleText(String content) {
+            // Hide the subtitle, and display the title with the given text.
+            subTitleTextView.setVisibility(View.GONE);
+            titleTextView.setVisibility(View.VISIBLE);
+            titleTextView.setText(content);
+        }
+
+        public void setSubTitleText(String content) {
+            // Hide the title, and display the subtitle with the given text.
+            titleTextView.setVisibility(View.GONE);
+            subTitleTextView.setVisibility(View.VISIBLE);
+            subTitleTextView.setText(content);
+        }
+
+        public void setCircleViewBackgroundColor(String colorString) {
+            GradientDrawable gradientDrawable = (GradientDrawable) circleView.getBackground();
+
+            if (colorString != null && !colorString.isEmpty()) {
+                gradientDrawable.setColor(Color.parseColor(colorString));
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                circleView.setBackground(gradientDrawable);
+            } else {
+                circleView.setBackgroundDrawable(gradientDrawable);
+            }
         }
     }
 
@@ -112,41 +141,27 @@ public class MyGoalsAdapter extends
             case MyGoalsViewItem.TYPE_CATEGORY:
                 final Category category = mItems.get(position).getCategory();
                 ArrayList<Goal> goals = category.getGoals();
-                ((MyGoalsViewHolder) viewHolder).titleTextView.setText(mContext.getString(R
-                        .string.category_goals, category.getTitle()));
-                ((MyGoalsViewHolder) viewHolder).goalContainer.removeAllViews();
+
+                // Check to see if the user has selected any goals for the category
                 if (goals != null && !goals.isEmpty()) {
-                    ((MyGoalsViewHolder) viewHolder).noGoalsContainer.setVisibility(View.GONE);
-                    for (final Goal goal : goals) {
-                        GoalCellView goalCellView = new GoalCellView(mContext);
-                        goalCellView.setGoal(goal, category);
-                        goalCellView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                mCallback.chooseBehaviors(goal, category);
-                            }
-                        });
-                        ((MyGoalsViewHolder) viewHolder).goalContainer.addView(goalCellView);
-                    }
+                    ((MyGoalsViewHolder) viewHolder).setCircleViewBackgroundColor(category.getColor());
+                    ((MyGoalsViewHolder) viewHolder).imageView.setImageResource(category.getProgressIcon());
+                    ((MyGoalsViewHolder) viewHolder).setTitleText(category.getTitle());
+                    ((MyGoalsViewHolder) viewHolder).categoryContainer.setOnClickListener(new View
+                            .OnClickListener() {
+
+                        @Override
+                        public void onClick(View v) {
+                            // Select & activate a Category Tab
+                            mCallback.activateCategoryTab(category);
+                        }
+                    });
+
                 } else {
-                    GradientDrawable gradientDrawable = (GradientDrawable) ((MyGoalsViewHolder)
-                            viewHolder).circleView.getBackground();
-                    String colorString = category.getColor();
-                    if (colorString != null && !colorString.isEmpty()) {
-                        gradientDrawable.setColor(Color.parseColor(colorString));
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        ((MyGoalsViewHolder) viewHolder).circleView.setBackground
-                                (gradientDrawable);
-                    } else {
-                        ((MyGoalsViewHolder) viewHolder).circleView
-                                .setBackgroundDrawable(gradientDrawable);
-                    }
-                    ((MyGoalsViewHolder) viewHolder).noGoalsContainer.setVisibility(View.VISIBLE);
-                    ((MyGoalsViewHolder) viewHolder).subTitleTextView.setText(mContext.getString
-                            (R.string.category_goals_add,
-                                    category.getTitle()));
-                    ((MyGoalsViewHolder) viewHolder).noGoalsContainer.setOnClickListener(new View
+                    ((MyGoalsViewHolder) viewHolder).setCircleViewBackgroundColor(category.getColor());
+                    ((MyGoalsViewHolder) viewHolder).setSubTitleText(mContext.getString
+                            (R.string.category_goals_add, category.getTitle()));
+                    ((MyGoalsViewHolder) viewHolder).categoryContainer.setOnClickListener(new View
                             .OnClickListener() {
 
 

@@ -1,5 +1,7 @@
 package org.tndata.android.compass.model;
 
+import org.tndata.android.compass.R;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -12,6 +14,7 @@ public class Category extends TDCBase implements Serializable,
     private String image_url = "";
     private ArrayList<Goal> goals = new ArrayList<Goal>();
     private String color = "";
+    private double progress_value = 0.0; // Only used for UserCategories
 
     public Category() {
     }
@@ -82,6 +85,37 @@ public class Category extends TDCBase implements Serializable,
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public void setProgressValue(double value) {
+        this.progress_value = value;
+    }
+
+    public double getProgressValue() {
+        return this.progress_value;
+    }
+
+    public int getProgressIcon() {
+        double value = getProgressValue();
+        if (value < 0.125) {
+            return R.drawable.compass_9_s;
+        } else if (value < 0.25) {
+            return R.drawable.compass_8_sse;
+        } else if (value < 0.375) {
+            return R.drawable.compass_7_se;
+        } else if (value < 0.5) {
+            return R.drawable.compass_6_ees;
+        } else if (value < 0.625) {
+            return R.drawable.compass_5_e;
+        } else if (value < 0.75) {
+            return R.drawable.compass_4_nee;
+        } else if (value < 0.875) {
+            return R.drawable.compass_3_ne;
+        } else if (value < 0.95) {
+            return R.drawable.compass_2_nne;
+        } else {
+            return R.drawable.compass_1_n;
+        }
     }
 
     @Override
