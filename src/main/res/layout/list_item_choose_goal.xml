@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<android.support.v7.widget.CardView android:id="@+id/card_view"
                                     xmlns:android="http://schemas.android.com/apk/res/android"
-                                    android:id="@+id/card_view"
+                                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center"
@@ -27,42 +27,49 @@
                 android:layout_height="@dimen/goal_icon_image_size"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:layout_margin="10dp"
-                android:padding="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/circle"
                 android:contentDescription="@string/goal_image_description"
-                android:background="@drawable/circle">
+                android:padding="10dp">
 
                 <ImageView
                     android:id="@+id/list_item_choose_goal_icon_imageview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_centerInParent="true"/>
+                    android:layout_centerInParent="true"
+                    android:layout_margin="10dp"/>
             </RelativeLayout>
 
             <ImageView
                 android:id="@+id/list_item_choose_goal_select_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="10dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/circle_secondary"
                 android:padding="3dp"
-                android:layout_alignParentRight="true"
-                android:src="@drawable/ic_action_new_large"
-                android:background="@drawable/circle_secondary"/>
+                android:src="@drawable/ic_action_new_large"/>
 
             <TextView
                 android:id="@+id/list_item_choose_goal_title_textview"
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
                 android:layout_centerVertical="true"
-                android:layout_toRightOf="@id/list_item_choose_goal_imageview_container"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="15dp"
                 android:layout_toLeftOf="@id/list_item_choose_goal_select_button"
+                android:layout_toRightOf="@id/list_item_choose_goal_imageview_container"
                 android:paddingLeft="2dp"
-                android:textColor="@color/dark_text_color"
-                android:textAppearance="?android:attr/textAppearanceMedium"/>
+                android:text="My very cool cool goal"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/dark_text_color"/>
 
         </RelativeLayout>
 
@@ -70,12 +77,12 @@
             android:id="@+id/list_item_choose_goal_description_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:layout_marginTop="5dp"
-            android:layout_marginBottom="15dp"
-            android:textColor="@color/dark_text_color"
             android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/dark_text_color"
             android:visibility="gone"/>
     </LinearLayout>
 </android.support.v7.widget.CardView>
