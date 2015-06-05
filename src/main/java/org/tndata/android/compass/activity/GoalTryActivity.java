@@ -222,11 +222,6 @@ public class GoalTryActivity extends ActionBarActivity implements
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void collapseAllViews() {
-        mExpandedBehaviors.clear();
-        mAdapter.notifyDataSetChanged();
-    }
-
     private void loadBehaviors() {
         new BehaviorLoaderTask(this).executeOnExecutor(
                 AsyncTask.THREAD_POOL_EXECUTOR,
