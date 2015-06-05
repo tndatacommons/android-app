@@ -17,7 +17,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 
@@ -27,8 +26,7 @@ public class CategoryFragmentAdapter extends
         RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public interface CategoryFragmentAdapterInterface {
         public void chooseBehaviors(Goal goal);
-
-        public void viewBehavior(Goal goal, Behavior behavior);
+        public void viewGoal(Goal goal);
     }
 
     static class CategoryGoalViewHolder extends RecyclerView.ViewHolder {
@@ -147,7 +145,7 @@ public class CategoryFragmentAdapter extends
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mCallback.chooseBehaviors(goal);
+                    mCallback.viewGoal(goal);
                 }
             }
         );

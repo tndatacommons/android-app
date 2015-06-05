@@ -16,11 +16,10 @@ import android.view.ViewGroup;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.activity.BehaviorActivity;
 import org.tndata.android.compass.activity.ChooseGoalsActivity;
+import org.tndata.android.compass.activity.GoalDetailsActivity;
 import org.tndata.android.compass.activity.GoalTryActivity;
 import org.tndata.android.compass.adapter.CategoryFragmentAdapter;
-import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
@@ -204,10 +203,9 @@ public class CategoryFragment extends Fragment implements CategoryFragmentAdapte
     }
 
     @Override
-    public void viewBehavior(Goal goal, Behavior behavior) {
+    public void viewGoal(Goal goal) {
         Intent intent = new Intent(getActivity().getApplicationContext(),
-                BehaviorActivity.class);
-        intent.putExtra("behavior", behavior);
+                GoalDetailsActivity.class);
         intent.putExtra("goal", goal);
         intent.putExtra("category", mCategory);
         startActivityForResult(intent, Constants.VIEW_BEHAVIOR_REQUEST_CODE);
