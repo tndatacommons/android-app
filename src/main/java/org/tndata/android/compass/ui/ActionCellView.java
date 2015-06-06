@@ -1,14 +1,5 @@
 package org.tndata.android.compass.ui;
 
-import org.tndata.android.compass.CompassApplication;
-import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.task.AddActionTask;
-import org.tndata.android.compass.task.DeleteActionTask;
-import org.tndata.android.compass.util.ImageCache;
-import org.tndata.android.compass.util.ImageHelper;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -20,6 +11,14 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import org.tndata.android.compass.CompassApplication;
+import org.tndata.android.compass.R;
+import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.task.AddActionTask;
+import org.tndata.android.compass.task.DeleteActionTask;
+import org.tndata.android.compass.util.ImageHelper;
 
 import java.util.ArrayList;
 
@@ -150,10 +149,6 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
     private void updateUi() {
         try {
             mTitleTextView.setText(mAction.getTitle());
-            if (mAction.getIconUrl() != null) {
-                ImageCache.instance(getContext()).loadBitmap(mImageView,
-                        mAction.getIconUrl(), false);
-            }
             updateImage();
         } catch (Exception e) {
             e.printStackTrace();
@@ -166,11 +161,10 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
 
     public void updateImage() {
         if (mContext instanceof Activity) {
-            ArrayList<Action> actions = ((CompassApplication) ((Activity) mContext).getApplication()
-            ).getActions();
+            ArrayList<Action> actions = ((CompassApplication) ((Activity) mContext)
+                    .getApplication()).getActions();
             if (actions.contains(mAction)) {
-                ImageHelper.setupImageViewButton(getResources(), mAddImageView,
-                        ImageHelper.CHOOSE);
+                ImageHelper.setupImageViewButton(getResources(), mAddImageView, ImageHelper.CHOOSE);
             } else {
                 ImageHelper.setupImageViewButton(getResources(), mAddImageView, ImageHelper.ADD);
             }
@@ -187,8 +181,8 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
 
         mAction = action;
         if (mContext instanceof Activity) {
-            ArrayList<Action> actions = ((CompassApplication) ((Activity) mContext).getApplication()
-            ).getActions();
+            ArrayList<Action> actions = ((CompassApplication) ((Activity) mContext)
+                    .getApplication()).getActions();
 
             actions.add(mAction);
             ((CompassApplication) ((Activity) mContext).getApplication()).setActions(actions);
@@ -205,8 +199,8 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
         mProgressBar.setVisibility(View.GONE);
         mAddImageView.setEnabled(true);
         if (mContext instanceof Activity) {
-            ArrayList<Action> actions = ((CompassApplication) ((Activity) mContext).getApplication()
-            ).getActions();
+            ArrayList<Action> actions = ((CompassApplication) ((Activity) mContext)
+                    .getApplication()).getActions();
             actions.remove(mAction);
             ((CompassApplication) ((Activity) mContext).getApplication()).setActions(actions);
         }
