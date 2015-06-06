@@ -6,10 +6,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -40,11 +42,13 @@ public class GoalDetailsFragment extends Fragment implements
     private LinearLayout mBehaviorActionsContainer;
     private ProgressBar mProgressBar;
     private GoalDetailsFragmentListener mCallback;
+    private ImageView mChooseMore;
     private Map<Behavior, ArrayList<Action>> mBehaviorActionMap = new HashMap<Behavior, ArrayList<Action>>();
 
     private static final String TAG = "GoalDetailsFragment";
 
     public interface GoalDetailsFragmentListener {
+        public void chooseBehaviors(Goal goal);
         public void learnMoreBehavior(Behavior behavior);
         public void learnMoreAction(Action action);
         public void deleteBehavior(Behavior behavior);
@@ -75,6 +79,14 @@ public class GoalDetailsFragment extends Fragment implements
                              Bundle savedInstanceState) {
         View v = getActivity().getLayoutInflater().inflate(
                 R.layout.fragment_goal_details, container, false);
+        mChooseMore = (ImageView) v.findViewById(R.id.goal_choose_more_imageview);
+        mChooseMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopup();
+            }
+        });
+
         TextView titleTextView = (TextView) v.findViewById(R.id.goal_title_textview);
         titleTextView.setText(mGoal.getTitle());
 
@@ -202,28 +214,24 @@ public class GoalDetailsFragment extends Fragment implements
     }
 
     private void showPopup() {
-//        //Creating the instance of PopupMenu
-//        PopupMenu popup = new PopupMenu(getActivity(), mAddImageView);
-//        //Inflating the Popup using xml file
-//        popup.getMenuInflater()
-//                .inflate(R.menu.menu_popup_chooser, popup.getMenu());
-//
-//        //registering popup with OnMenuItemClickListener
-//        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-//            public boolean onMenuItemClick(MenuItem item) {
-//                switch (item.getItemId()) {
-//                    case R.id.menu_popup_remove_item:
-//                            mCallback.deleteBehavior(mBehavior);
-//                        break;
-//                    case R.id.menu_popup_edit_item:
-//                            mCallback.fireBehaviorPicker(mBehavior);
-//                        break;
-//                }
-//                return true;
-//            }
-//        });
-//
-//        popup.show(); //showing popup menu
+        //Creating the instance of PopupMenu
+        PopupMenu popup = new PopupMenu(getActivity(), mChooseMore);
+        // TODO: create a new menu file with options for the goal
+        popup.getMenuInflater().inflate(R.menu.menu_goal_details, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_popup_add_behavior:
+                        mCallback.chooseBehaviors(mGoal);
+                        break;
+                    case R.id.menu_popup_remove_goal:
+                        // TODO: Do we really want to do this?
+                        break;
+                }
+                return true;
+            }
+        });
+        popup.show();
     }
 
     @Override

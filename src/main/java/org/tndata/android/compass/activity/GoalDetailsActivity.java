@@ -1,6 +1,7 @@
 package org.tndata.android.compass.activity;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -88,6 +89,14 @@ public class GoalDetailsActivity extends ActionBarActivity implements
     @Override
     public void learnMoreAction(Action action) {
         swapFragments(LEARN_MORE_ACTION, true);
+    }
+
+    @Override
+    public void chooseBehaviors(Goal goal) {
+        Intent intent = new Intent(getApplicationContext(), GoalTryActivity.class);
+        intent.putExtra("goal", goal);
+        intent.putExtra("category", mCategory);
+        startActivityForResult(intent, Constants.CHOOSE_BEHAVIORS_REQUEST_CODE);
     }
 
     private void handleBackStack() {
