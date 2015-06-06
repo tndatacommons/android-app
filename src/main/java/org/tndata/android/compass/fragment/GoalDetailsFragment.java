@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -92,19 +91,11 @@ public class GoalDetailsFragment extends Fragment implements
 
         RelativeLayout goalContentContainer = (RelativeLayout) v
                 .findViewById(R.id.goal_content_container);
-//        goalContentContainer.setOnClickListener(new OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                mCallback.learnMoreBehavior();
-//            }
-//        });
 
         if (mGoal.getIconUrl() != null && !mGoal.getIconUrl().isEmpty()) {
             ImageView iconImageView = (ImageView) v.findViewById(R.id.goal_icon_imageview);
             ImageCache.instance(getActivity().getApplicationContext()).loadBitmap(iconImageView,
                     mGoal.getIconUrl(), false);
-
         }
         mProgressBar = (ProgressBar) v.findViewById(R.id.goal_progressbar);
         mBehaviorActionsContainer = (LinearLayout) v.findViewById(R.id.behavior_actions_container);
@@ -178,39 +169,29 @@ public class GoalDetailsFragment extends Fragment implements
             Behavior behavior = entry.getKey();
             ArrayList<Action> actions = entry.getValue();
 
-            Log.d("Behavior", "*draw name: " + behavior.getTitle());
             BehaviorListView behaviorListView = new BehaviorListView(getActivity());
             behaviorListView.setBehavior(behavior, mCategory);
+            behaviorListView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mCallback.learnMoreBehavior(((BehaviorListView) view).getBehavior());
+                }
+            });
             mBehaviorActionsContainer.addView(behaviorListView);
 
             for (Action action : actions) {
-                Log.d("Action", "*draw name:" + action.getTitle());
                 ActionCellView acv = new ActionCellView(getActivity());
                 acv.setAction(action, mCategory);
                 acv.setListener(this);
+                acv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mCallback.learnMoreAction(((ActionCellView) view).getAction());
+                    }
+                });
                 mBehaviorActionsContainer.addView(acv);
             }
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        setImageView();
-    }
-
-    public void setImageView() {
-//        for (Goal goal : ((CompassApplication) getActivity().getApplication()).getGoals()) {
-//            if (goal.getBehaviors().contains(mBehavior)) {
-//                ImageHelper.setupImageViewButton(getResources(), mAddImageView,
-//                        ImageHelper.CHOOSE);
-//                mProgressBar.setVisibility(View.GONE);
-//                mAddImageView.setEnabled(true);
-//                return;
-//            }
-//        }
-//        ImageHelper.setupImageViewButton(getResources(), mAddImageView, ImageHelper.ADD);
-        mProgressBar.setVisibility(View.GONE);
     }
 
     private void showPopup() {

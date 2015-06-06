@@ -25,7 +25,7 @@ import org.tndata.android.compass.util.Constants;
 import java.util.ArrayList;
 
 public class GoalDetailsActivity extends ActionBarActivity implements
-        //LearnMoreFragmentListener,
+        LearnMoreFragment.LearnMoreFragmentListener,
         GoalDetailsFragment.GoalDetailsFragmentListener,
         DeleteBehaviorTask.DeleteBehaviorTaskListener {
 
@@ -36,6 +36,10 @@ public class GoalDetailsActivity extends ActionBarActivity implements
     private Toolbar mToolbar;
     private Category mCategory;
     private Goal mGoal;
+
+    // A user may tap an action or behavior to see more info
+    private Behavior mSelectedBehavior;
+    private Action mSelectedAction;
 
     private GoalDetailsFragment mGoalDetailsFragment = null;
     private LearnMoreFragment mLearnMoreFragment = null;
@@ -83,11 +87,13 @@ public class GoalDetailsActivity extends ActionBarActivity implements
 
     @Override
     public void learnMoreBehavior(Behavior behavior) {
+        mSelectedBehavior = behavior;
         swapFragments(LEARN_MORE_BEHAVIOR, true);
     }
 
     @Override
     public void learnMoreAction(Action action) {
+        mSelectedAction = action;
         swapFragments(LEARN_MORE_ACTION, true);
     }
 
@@ -121,24 +127,31 @@ public class GoalDetailsActivity extends ActionBarActivity implements
                 fragment = mGoalDetailsFragment;
                 break;
             case LEARN_MORE_BEHAVIOR:
-//                mLearnMoreFragment = LearnMoreFragment.newInstance(mBehavior, mCategory);
-//                fragment = mLearnMoreFragment;
-//                break;
+                if(mSelectedBehavior != null) {
+                    mLearnMoreFragment = LearnMoreFragment.newInstance(mSelectedBehavior, mCategory);
+                    fragment = mLearnMoreFragment;
+                }
+                break;
             case LEARN_MORE_ACTION:
-//                if (mAction != null) {
-//                    mLearnMoreFragment = LearnMoreFragment.newInstance(mAction, mBehavior,
-//                            mCategory);
-//                    fragment = mLearnMoreFragment;
-//                }
-//                break;
+                if (mSelectedAction != null) {
+                    mSelectedBehavior = mSelectedAction.getBehavior();
+                    mLearnMoreFragment = LearnMoreFragment.newInstance(
+                            mSelectedAction, mSelectedBehavior, mCategory);
+                    fragment = mLearnMoreFragment;
+                }
+                break;
         }
         if (fragment != null) {
             if (addToStack) {
                 mFragmentStack.add(fragment);
             }
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.base_content, fragment).commit();
+            getFragmentManager().beginTransaction().replace(R.id.base_content, fragment).commit();
         }
+    }
+
+    @Override
+    public void addBehavior(Behavior behavior) {
+        // TODO:
     }
 
     @Override
