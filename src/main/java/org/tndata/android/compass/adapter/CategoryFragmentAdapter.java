@@ -49,6 +49,7 @@ public class CategoryFragmentAdapter extends
                     .list_item_category_goal_goal_container);
             iconImageView = (ImageView) view.findViewById(R.id
                     .list_item_category_goal_icon_imageview);
+
             moreInfoButton = (Button) view.findViewById(R.id
                     .list_item_category_goal_more_info_button);
         }
@@ -121,31 +122,22 @@ public class CategoryFragmentAdapter extends
                 mCategory.getColor());
         ((CategoryGoalViewHolder) viewHolder).iconImageView.setImageResource(
                 goal.getProgressIcon());
-        ((CategoryGoalViewHolder) viewHolder).goalContainer.setOnClickListener(new View
-                .OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                ((CategoryGoalViewHolder) viewHolder).toggleCard();
-            }
-        });
-
-        // Since the descriptionTextView is outside of the goal_goal_container layout, it
-        // also needs a click handler, otherwise, tapping on the description doesn't do anything
-        ((CategoryGoalViewHolder) viewHolder).descriptionTextView.setOnClickListener(
-            new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ((CategoryGoalViewHolder) viewHolder).toggleCard();
-                }
-            }
-        );
 
         ((CategoryGoalViewHolder) viewHolder).moreInfoButton.setOnClickListener(
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mCallback.viewGoal(goal);
+                }
+            }
+        );
+
+        // Expand/Collapse the card when tapped
+        ((CategoryGoalViewHolder) viewHolder).itemView.setOnClickListener(
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((CategoryGoalViewHolder) viewHolder).toggleCard();
                 }
             }
         );
