@@ -223,7 +223,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
         PopupMenu popup = new PopupMenu(getActivity(), mAddImageView);
         //Inflating the Popup using xml file
         popup.getMenuInflater()
-                .inflate(R.menu.menu_popup_chooser, popup.getMenu());
+                .inflate(R.menu.menu_action_popup_chooser, popup.getMenu());
 
         //registering popup with OnMenuItemClickListener
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {

@@ -34,7 +34,8 @@ import java.util.Map;
 public class GoalDetailsFragment extends Fragment implements
         GetUserActionsTask.GetUserActionsListener,
         GetUserBehaviorsTask.GetUserBehaviorsListener,
-        ActionCellView.ActionViewListener {
+        ActionCellView.ActionViewListener,
+        BehaviorListView.BehaviorListViewListener {
 
     private Category mCategory;
     private Goal mGoal;
@@ -131,6 +132,13 @@ public class GoalDetailsFragment extends Fragment implements
     }
 
     @Override
+    public void onResume() {
+        // Let's reload all the fragment's data because it may have changed.
+        super.onResume();
+        loadBehaviors();
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         mCallback = null;
@@ -174,11 +182,14 @@ public class GoalDetailsFragment extends Fragment implements
 
     private void drawBehaviorsAndActions() {
 
+        mBehaviorActionsContainer.removeAllViews();
+
         for (Map.Entry<Behavior, ArrayList<Action>> entry : mBehaviorActionMap.entrySet()) {
             Behavior behavior = entry.getKey();
             ArrayList<Action> actions = entry.getValue();
 
             BehaviorListView behaviorListView = new BehaviorListView(getActivity());
+            behaviorListView.setListener(this);
             behaviorListView.setBehavior(behavior, mCategory);
             behaviorListView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -206,16 +217,12 @@ public class GoalDetailsFragment extends Fragment implements
     private void showPopup() {
         //Creating the instance of PopupMenu
         PopupMenu popup = new PopupMenu(getActivity(), mChooseMore);
-        // TODO: create a new menu file with options for the goal
         popup.getMenuInflater().inflate(R.menu.menu_goal_details, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_popup_add_behavior:
                         mCallback.chooseBehaviors(mGoal);
-                        break;
-                    case R.id.menu_popup_remove_goal:
-                        // TODO: Do we really want to do this?
                         break;
                 }
                 return true;
@@ -225,18 +232,15 @@ public class GoalDetailsFragment extends Fragment implements
     }
 
     @Override
+    public void deleteUserBehavior(Behavior behavior) {
+        mCallback.deleteBehavior(behavior);
+        mBehaviorActionMap.remove(behavior);
+        drawBehaviorsAndActions();
+    }
+
+    @Override
     public void actionChanged(Action action) {
         mCallback.actionChanged();
-//        ArrayList<Action> actions = ((CompassApplication) getActivity().getApplication()
-//        ).getActions();
-//        if (actions.contains(action)) {
-//            for (Goal goal : ((CompassApplication) getActivity().getApplication()).getGoals()) {
-//                if (goal.getBehaviors().contains(mBehavior)) {
-//                    return;
-//                }
-//            }
-//            mCallback.addBehavior(mBehavior);
-//        }
     }
 
     @Override

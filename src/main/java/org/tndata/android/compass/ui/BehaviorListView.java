@@ -2,7 +2,6 @@ package org.tndata.android.compass.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -22,9 +21,15 @@ public class BehaviorListView extends LinearLayout {
     private Behavior mBehavior;
     private Category mCategory;
     private Context mContext;
+    private BehaviorListViewListener mCallback;
 
-    // TODO: Implement a GoalDetailsViewListener (similar to ActionCellView.ActionViewListener)
-    // TODO: that way I can call methods on the fragment when an item from the popup menu is selected.
+    public interface BehaviorListViewListener {
+        public void deleteUserBehavior(Behavior behavior);
+    }
+
+    public void setListener(BehaviorListViewListener listener) {
+        mCallback = listener;
+    }
 
     public BehaviorListView(Context context) {
         this(context, null);
@@ -81,21 +86,13 @@ public class BehaviorListView extends LinearLayout {
     private void showPopup() {
         //Creating the instance of PopupMenu
         PopupMenu popup = new PopupMenu(mContext, mAddImageView);
-        //Inflating the Popup using xml file
         popup.getMenuInflater()
-                .inflate(R.menu.menu_popup_chooser, popup.getMenu());
-
-        //registering popup with OnMenuItemClickListener
+                .inflate(R.menu.menu_behavior_popup_chooser, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.menu_popup_remove_item:
-                        //deleteUserAction();
-                        Log.d("BehaviorListView", "Remove Behavior... ");
-                        break;
-                    case R.id.menu_popup_edit_item:
-                        //mCallback.fireActionPicker();
-                        Log.d("BehaviorListView", "Edit Behavior Reminder....");
+                    case R.id.menu_behavior_popup_remove_item:
+                        mCallback.deleteUserBehavior(mBehavior);
                         break;
                 }
                 return true;
