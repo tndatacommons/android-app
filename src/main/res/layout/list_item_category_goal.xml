@@ -80,9 +80,15 @@
             android:layout_margin="15dp"
             android:minHeight="@dimen/paper_flat_button_min_height"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@drawable/button_paper_flat_text_selector"
-            android:background="@drawable/button_paper_flat"
+            android:textColor="@color/grow_primary"
             android:text="@string/learn_more_title_label"
+            android:background="@color/white"
+            android:elevation="0dp"
+            android:elegantTextHeight="false"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:singleLine="true"
+            android:textColorHighlight="@color/white"
             android:visibility="gone"/>
     </LinearLayout>
 </android.support.v7.widget.CardView>
