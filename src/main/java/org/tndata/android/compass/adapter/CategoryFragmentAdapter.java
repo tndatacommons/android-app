@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,9 +66,6 @@ public class CategoryFragmentAdapter extends
         }
 
         public void toggleCard() {
-
-            Log.d("CategoryFragmentAdapter", "Toggling Card");
-
             // If the card is collapsed, expand it; if it's expanded, collapse it.
             if(descriptionTextView.getVisibility() == View.GONE) {
                 circleView.setVisibility(View.GONE);
