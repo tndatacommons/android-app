@@ -20,6 +20,7 @@ import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.task.DeleteBehaviorTask;
+import org.tndata.android.compass.task.DeleteGoalTask;
 import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
@@ -27,7 +28,8 @@ import java.util.ArrayList;
 public class GoalDetailsActivity extends ActionBarActivity implements
         LearnMoreFragment.LearnMoreFragmentListener,
         GoalDetailsFragment.GoalDetailsFragmentListener,
-        DeleteBehaviorTask.DeleteBehaviorTaskListener {
+        DeleteBehaviorTask.DeleteBehaviorTaskListener,
+        DeleteGoalTask.DeleteGoalTaskListener {
 
     private static final int GOALDETAIL = 0;
     private static final int LEARN_MORE_BEHAVIOR = 1;
@@ -110,6 +112,26 @@ public class GoalDetailsActivity extends ActionBarActivity implements
         intent.putExtra("goal", goal);
         intent.putExtra("category", mCategory);
         startActivityForResult(intent, Constants.CHOOSE_BEHAVIORS_REQUEST_CODE);
+    }
+
+    @Override
+    public void deleteGoal(Goal goal) {
+        mFragmentStack.clear();
+
+        // Delete the goal.
+        ArrayList<String> goals = new ArrayList<String>();
+        goals.add(String.valueOf(goal.getMappingId()));
+        new DeleteGoalTask(this, this, goals).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        setResult(Constants.GOALS_CHANGED_RESULT_CODE);
+    }
+
+    @Override
+    public void goalsDeleted() {
+        // Tell the parent that the user's selected goals have been updated.
+        Intent intent = new Intent(Constants.GOAL_UPDATED_BROADCAST_ACTION);
+        sendBroadcast(intent);
+        finish();
     }
 
     private void handleBackStack() {

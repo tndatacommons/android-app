@@ -49,6 +49,7 @@ public class GoalDetailsFragment extends Fragment implements
 
     public interface GoalDetailsFragmentListener {
         public void chooseBehaviors(Goal goal);
+        public void deleteGoal(Goal goal);
         public void learnMoreGoal(Goal goal);
         public void learnMoreBehavior(Behavior behavior);
         public void learnMoreAction(Action action);
@@ -224,6 +225,8 @@ public class GoalDetailsFragment extends Fragment implements
                     case R.id.menu_popup_add_behavior:
                         mCallback.chooseBehaviors(mGoal);
                         break;
+                    case R.id.menu_popup_remove_goal:
+                        mCallback.deleteGoal(mGoal);
                 }
                 return true;
             }
