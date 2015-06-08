@@ -48,6 +48,7 @@ public class GoalDetailsFragment extends Fragment implements
 
     public interface GoalDetailsFragmentListener {
         public void chooseBehaviors(Goal goal);
+        public void learnMoreGoal(Goal goal);
         public void learnMoreBehavior(Behavior behavior);
         public void learnMoreAction(Action action);
         public void deleteBehavior(Behavior behavior);
@@ -88,6 +89,14 @@ public class GoalDetailsFragment extends Fragment implements
 
         TextView titleTextView = (TextView) v.findViewById(R.id.goal_title_textview);
         titleTextView.setText(mGoal.getTitle());
+
+        TextView goalManagementLabel = (TextView) v.findViewById(R.id.goal_management_label);
+        goalManagementLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCallback.learnMoreGoal(mGoal);
+            }
+        });
 
         RelativeLayout goalContentContainer = (RelativeLayout) v
                 .findViewById(R.id.goal_content_container);

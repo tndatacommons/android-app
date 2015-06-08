@@ -32,6 +32,7 @@ public class GoalDetailsActivity extends ActionBarActivity implements
     private static final int GOALDETAIL = 0;
     private static final int LEARN_MORE_BEHAVIOR = 1;
     private static final int LEARN_MORE_ACTION = 2;
+    private static final int LEARN_MORE_GOAL = 3;
 
     private Toolbar mToolbar;
     private Category mCategory;
@@ -83,6 +84,12 @@ public class GoalDetailsActivity extends ActionBarActivity implements
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void learnMoreGoal(Goal goal) {
+        mGoal = goal;
+        swapFragments(LEARN_MORE_GOAL, true);
     }
 
     @Override
@@ -140,6 +147,11 @@ public class GoalDetailsActivity extends ActionBarActivity implements
                     fragment = mLearnMoreFragment;
                 }
                 break;
+            case LEARN_MORE_GOAL:
+                if(mGoal != null) {
+                    mLearnMoreFragment = LearnMoreFragment.newInstance(mGoal, mCategory);
+                    fragment = mLearnMoreFragment;
+                }
         }
         if (fragment != null) {
             if (addToStack) {

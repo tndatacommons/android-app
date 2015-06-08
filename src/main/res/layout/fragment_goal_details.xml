@@ -47,7 +47,7 @@
                 android:visibility="gone"/>
 
             <TextView
-                android:id="@+id/behavior_add_to_priorities_label"
+                android:id="@+id/goal_management_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
