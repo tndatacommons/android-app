@@ -60,5 +60,26 @@
             android:layout_below="@id/learn_more_add_label"
             android:layout_marginTop="40dp"
             android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+        <View
+            android:id="@+id/learn_more_separator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/learn_more_description_textview"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/disabled_text_color"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/learn_more_more_info_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/learn_more_separator"
+            android:layout_marginTop="10dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:visibility="gone" />
+
+
     </RelativeLayout>
 </ScrollView>
