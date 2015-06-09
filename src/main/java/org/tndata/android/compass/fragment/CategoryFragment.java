@@ -163,9 +163,9 @@ public class CategoryFragment extends Fragment implements CategoryFragmentAdapte
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "onActivityResult");
-        if (requestCode == Constants.CHOOSE_GOALS_REQUEST_CODE) {
-            mCallback.assignGoalsToCategories(true);
-        } else if (resultCode == Constants.BEHAVIOR_CHANGED_RESULT_CODE) {
+        if (requestCode == Constants.CHOOSE_GOALS_REQUEST_CODE ||
+                requestCode == Constants.BEHAVIOR_CHANGED_RESULT_CODE ||
+                requestCode == Constants.GOALS_CHANGED_RESULT_CODE) {
             mCallback.assignGoalsToCategories(true);
         }
     }
@@ -208,7 +208,7 @@ public class CategoryFragment extends Fragment implements CategoryFragmentAdapte
                 GoalDetailsActivity.class);
         intent.putExtra("goal", goal);
         intent.putExtra("category", mCategory);
-        startActivityForResult(intent, Constants.VIEW_BEHAVIOR_REQUEST_CODE);
+        startActivityForResult(intent, Constants.GOALS_CHANGED_RESULT_CODE);
     }
 
 }

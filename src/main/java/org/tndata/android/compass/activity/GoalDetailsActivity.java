@@ -118,10 +118,15 @@ public class GoalDetailsActivity extends ActionBarActivity implements
     public void deleteGoal(Goal goal) {
         mFragmentStack.clear();
 
-        // Delete the goal.
+        // Delete the goal from the backend api.
         ArrayList<String> goals = new ArrayList<String>();
         goals.add(String.valueOf(goal.getMappingId()));
         new DeleteGoalTask(this, this, goals).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        // Delete the goal from the Compass Application (will affect the UI)
+        ArrayList<Goal> applicationGoals = ((CompassApplication)getApplication()).getGoals();
+        applicationGoals.remove(goal);
+        ((CompassApplication) getApplication()).setGoals(applicationGoals);
 
         setResult(Constants.GOALS_CHANGED_RESULT_CODE);
     }
