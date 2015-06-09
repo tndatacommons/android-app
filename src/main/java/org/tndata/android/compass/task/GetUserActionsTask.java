@@ -1,7 +1,6 @@
 package org.tndata.android.compass.task;
 
 import android.os.AsyncTask;
-import android.text.Html;
 import android.util.Log;
 
 import com.google.gson.FieldNamingPolicy;
@@ -69,9 +68,9 @@ public class GetUserActionsTask extends AsyncTask<String, Void, ArrayList<Action
             }
             bReader.close();
 
-            actionResponse = Html.fromHtml(result).toString();
-
-            JSONObject response = new JSONObject(actionResponse);
+            // TODO: Why do we do this first? It seems to strip the html from within our JSON strings
+            //actionResponse = Html.fromHtml(result).toString();
+            JSONObject response = new JSONObject(result);
             JSONArray jArray = response.getJSONArray("results");
             ArrayList<Action> actions = new ArrayList<Action>();
             for (int i = 0; i < jArray.length(); i++) {
