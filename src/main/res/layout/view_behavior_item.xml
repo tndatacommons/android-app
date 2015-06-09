@@ -8,24 +8,48 @@
               android:layout_marginLeft="15dp"
               android:layout_marginBottom="8dp">
 
-    <ImageView
-        android:id="@+id/view_behavior_icon_imageview"
-        android:layout_width="@dimen/behavior_icon_image_size"
-        android:layout_height="@dimen/behavior_icon_image_size"
-        android:scaleType="centerCrop"
-        android:adjustViewBounds="true"
-        android:src="@drawable/ic_action_compass_white"
-        android:layout_margin="10dp"
-        android:padding="5dp"/>
-
-    <TextView
-        android:id="@+id/view_behavior_textview"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:paddingLeft="5dp"
-        android:gravity="center_vertical"
-        android:layout_gravity="center_vertical"
-        android:textColor="@color/dark_text_color"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
+        android:id="@+id/view_behavior_container">
+
+        <ImageView
+            android:id="@+id/view_behavior_icon_imageview"
+            android:layout_width="@dimen/behavior_icon_image_size"
+            android:layout_height="@dimen/behavior_icon_image_size"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_action_compass_white"
+            android:layout_margin="0dp"
+            android:padding="0dp" />
+
+        <TextView
+            android:id="@+id/view_behavior_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingRight="0dp"
+            android:gravity="center_vertical"
+            android:layout_gravity="center_vertical|left"
+            android:textColor="@color/dark_text_color"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/behavior_title_placeholder"
+            android:layout_toRightOf="@+id/view_behavior_icon_imageview"
+            android:lines="2"
+            android:maxLines="2"
+            android:singleLine="false"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+            android:layout_marginRight="30dp" />
+
+        <ImageView
+            android:id="@+id/view_behavior_add_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_margin="0dp"
+            android:padding="0dp"
+            android:src="@drawable/ic_more_vert"/>
+    </RelativeLayout>
 </LinearLayout>

@@ -2,9 +2,11 @@ package org.tndata.android.compass.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
@@ -14,10 +16,20 @@ import org.tndata.android.compass.util.ImageCache;
 
 public class BehaviorListView extends LinearLayout {
     private ImageView mIconImageView;
+    private ImageView mAddImageView;
     private TextView mTitleTextView;
     private Behavior mBehavior;
     private Category mCategory;
     private Context mContext;
+    private BehaviorListViewListener mCallback;
+
+    public interface BehaviorListViewListener {
+        public void deleteUserBehavior(Behavior behavior);
+    }
+
+    public void setListener(BehaviorListViewListener listener) {
+        mCallback = listener;
+    }
 
     public BehaviorListView(Context context) {
         this(context, null);
@@ -36,9 +48,15 @@ public class BehaviorListView extends LinearLayout {
         mContext = context;
         View view = inflate(context, R.layout.view_behavior_item, this);
 
+        mTitleTextView = (TextView) view.findViewById(R.id.view_behavior_textview);
         mIconImageView = (ImageView) view.findViewById(R.id.view_behavior_icon_imageview);
-        mTitleTextView = (TextView) view
-                .findViewById(R.id.view_behavior_textview);
+        mAddImageView = (ImageView) view.findViewById(R.id.view_behavior_add_imageview);
+        mAddImageView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopup();
+            }
+        });
         if (mBehavior != null) {
             updateUi();
         }
@@ -63,6 +81,24 @@ public class BehaviorListView extends LinearLayout {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void showPopup() {
+        //Creating the instance of PopupMenu
+        PopupMenu popup = new PopupMenu(mContext, mAddImageView);
+        popup.getMenuInflater()
+                .inflate(R.menu.menu_behavior_popup_chooser, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_behavior_popup_remove_item:
+                        mCallback.deleteUserBehavior(mBehavior);
+                        break;
+                }
+                return true;
+            }
+        });
+        popup.show(); //showing popup menu
     }
 
     public Behavior getBehavior() {

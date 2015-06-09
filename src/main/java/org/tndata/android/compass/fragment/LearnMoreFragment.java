@@ -28,6 +28,7 @@ import java.util.ArrayList;
 
 public class LearnMoreFragment extends Fragment implements AddActionTask
         .AddActionTaskListener, DeleteActionTask.DeleteActionTaskListener {
+    private Goal mGoal;
     private Behavior mBehavior;
     private Category mCategory;
     private Action mAction;
@@ -51,6 +52,19 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
 
     public void setCategory(Category category) {
         mCategory = category;
+    }
+
+    public void setGoal(Goal goal) {
+        mGoal = goal;
+    }
+
+    public static LearnMoreFragment newInstance(Goal goal, Category category) {
+        LearnMoreFragment fragment = new LearnMoreFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("goal", goal);
+        args.putSerializable("category", category);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     public static LearnMoreFragment newInstance(Behavior behavior, Category category) {
@@ -82,6 +96,8 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
                 "behavior")) : new Behavior();
         mCategory = getArguments() != null ? ((Category) getArguments().get(
                 "category")) : new Category();
+        mGoal = getArguments() != null ? ((Goal) getArguments().get(
+                "goal")) : new Goal();
     }
 
     @Override
@@ -135,6 +151,12 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
             titleTextView.setText(mAction.getTitle());
             descriptionTextView.setText(mAction.getDescription());
             addLabelTextView.setText(getText(R.string.action_i_want_this_label));
+        } else if (mGoal != null) {
+            // this is a learn more screen for a Goal
+            titleTextView.setText(mGoal.getTitle());
+            descriptionTextView.setText(mGoal.getDescription());
+            addLabelTextView.setVisibility(View.GONE);
+            mAddImageView.setVisibility(View.GONE);
         } else {
             // this is a learn more screen for a Behavior
             titleTextView.setText(mBehavior.getTitle());
@@ -180,7 +202,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
                 mAddImageView.setEnabled(true);
                 return;
             }
-        } else {
+        } else if (mBehavior != null) {
             for (Goal goal : ((CompassApplication) getActivity().getApplication()).getGoals()) {
                 if (goal.getBehaviors().contains(mBehavior)) {
                     ImageHelper.setupImageViewButton(getResources(), mAddImageView,
@@ -201,7 +223,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
         PopupMenu popup = new PopupMenu(getActivity(), mAddImageView);
         //Inflating the Popup using xml file
         popup.getMenuInflater()
-                .inflate(R.menu.menu_popup_chooser, popup.getMenu());
+                .inflate(R.menu.menu_action_popup_chooser, popup.getMenu());
 
         //registering popup with OnMenuItemClickListener
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {

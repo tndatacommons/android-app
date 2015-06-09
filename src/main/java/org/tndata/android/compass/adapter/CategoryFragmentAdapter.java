@@ -1,7 +1,6 @@
 package org.tndata.android.compass.adapter;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -10,51 +9,75 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.ui.ActionListView;
-import org.tndata.android.compass.ui.BehaviorListView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryFragmentAdapter extends
         RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public interface CategoryFragmentAdapterInterface {
         public void chooseBehaviors(Goal goal);
-
-        public void viewBehavior(Goal goal, Behavior behavior);
+        public void viewGoal(Goal goal);
     }
 
     static class CategoryGoalViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;
+        TextView descriptionTextView;
         RelativeLayout circleView;
         LinearLayout goalContainer;
-        LinearLayout behaviorContainer;
         ImageView iconImageView;
+        Button moreInfoButton;
 
         public CategoryGoalViewHolder(View view) {
             super(view);
             titleTextView = (TextView) view.findViewById(R.id
                     .list_item_category_goal_title_textview);
+            descriptionTextView = (TextView) view.findViewById(R.id
+                    .list_item_category_goal_description_textview);
             circleView = (RelativeLayout) view.findViewById(R.id
                     .list_item_category_goal_circle_view);
             goalContainer = (LinearLayout) view.findViewById(R.id
                     .list_item_category_goal_goal_container);
-            behaviorContainer = (LinearLayout) view.findViewById(R.id
-                    .list_item_category_goal_behavior_container);
             iconImageView = (ImageView) view.findViewById(R.id
                     .list_item_category_goal_icon_imageview);
+
+            moreInfoButton = (Button) view.findViewById(R.id
+                    .list_item_category_goal_more_info_button);
         }
+
+        public void setCircleViewBackgroundColor(String colorString) {
+            GradientDrawable gradientDrawable = (GradientDrawable) circleView.getBackground();
+            if (colorString != null && !colorString.isEmpty()) {
+                gradientDrawable.setColor(Color.parseColor(colorString));
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                circleView.setBackground(gradientDrawable);
+            } else {
+                circleView.setBackgroundDrawable(gradientDrawable);
+            }
+        }
+
+        public void toggleCard() {
+            // If the card is collapsed, expand it; if it's expanded, collapse it.
+            if(descriptionTextView.getVisibility() == View.GONE) {
+                circleView.setVisibility(View.GONE);
+                descriptionTextView.setVisibility(View.VISIBLE);
+                moreInfoButton.setVisibility(View.VISIBLE);
+            }else {
+                circleView.setVisibility(View.VISIBLE);
+                descriptionTextView.setVisibility(View.GONE);
+                moreInfoButton.setVisibility(View.GONE);
+            }
+        }
+
     }
 
     private Context mContext;
@@ -89,62 +112,31 @@ public class CategoryFragmentAdapter extends
                                  final int position) {
         final Goal goal = mItems.get(position);
         ((CategoryGoalViewHolder) viewHolder).titleTextView.setText(goal.getTitle());
-        GradientDrawable gradientDrawable = (GradientDrawable) ((CategoryGoalViewHolder)
-                viewHolder).circleView.getBackground();
-        String colorString = mCategory.getColor();
-        if (colorString != null && !colorString.isEmpty()) {
-            gradientDrawable.setColor(Color.parseColor(colorString));
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            ((CategoryGoalViewHolder) viewHolder).circleView.setBackground
-                    (gradientDrawable);
-        } else {
-            ((CategoryGoalViewHolder) viewHolder).circleView
-                    .setBackgroundDrawable(gradientDrawable);
-        }
-
-        // Set the progress widget for the Goal.
+        ((CategoryGoalViewHolder) viewHolder).descriptionTextView.setText(
+                goal.getDescription());
+        ((CategoryGoalViewHolder) viewHolder).setCircleViewBackgroundColor(
+                mCategory.getColor());
         ((CategoryGoalViewHolder) viewHolder).iconImageView.setImageResource(
                 goal.getProgressIcon());
 
-        ((CategoryGoalViewHolder) viewHolder).goalContainer.setOnClickListener(new View
-                .OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                mCallback.chooseBehaviors(goal);
-            }
-        });
-        ArrayList<Behavior> behaviors = goal.getBehaviors();
-        ((CategoryGoalViewHolder) viewHolder).behaviorContainer.removeAllViews();
-        if (behaviors != null && !behaviors.isEmpty()) {
-            for (final Behavior behavior : behaviors) {
-                BehaviorListView behaviorListView = new BehaviorListView(mContext);
-                behaviorListView.setBehavior(behavior, mCategory);
-                behaviorListView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mCallback.viewBehavior(goal, behavior);
-                    }
-                });
-                ((CategoryGoalViewHolder) viewHolder).behaviorContainer.addView(behaviorListView);
-                if (mContext instanceof Activity) {
-                    for (final Action action : ((CompassApplication) ((Activity) mContext)
-                            .getApplication()).getActions()) {
-                        if ((action.getBehavior() != null && action.getBehavior().equals(behavior))
-                                || (action.getBehavior_id() == behavior.getId())) {
-                            ActionListView actionListView = new ActionListView(mContext);
-                            actionListView.setAction(action);
-
-                            ((CategoryGoalViewHolder) viewHolder).behaviorContainer.addView
-                                    (actionListView);
-
-                        }
-                    }
+        ((CategoryGoalViewHolder) viewHolder).moreInfoButton.setOnClickListener(
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mCallback.viewGoal(goal);
                 }
             }
-        }
+        );
 
+        // Expand/Collapse the card when tapped
+        ((CategoryGoalViewHolder) viewHolder).itemView.setOnClickListener(
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((CategoryGoalViewHolder) viewHolder).toggleCard();
+                }
+            }
+        );
     }
 
     @Override

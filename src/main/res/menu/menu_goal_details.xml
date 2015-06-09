@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_popup_add_behavior"
+        android:title="@string/menu_goal_new_behaviors"/>
+
+    <item
+        android:id="@+id/menu_popup_remove_goal"
+        android:title="@string/menu_goal_remove"/>
+
+</menu>

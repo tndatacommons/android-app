@@ -58,10 +58,37 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"/>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/list_item_category_goal_behavior_container"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/list_item_category_goal_description_textview"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"></LinearLayout>
+            android:layout_margin="8dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:textColor="@color/dark_text_color"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:singleLine="false"
+            android:gravity="left"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/list_item_category_goal_more_info_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="right"
+            android:layout_margin="15dp"
+            android:minHeight="@dimen/paper_flat_button_min_height"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/grow_primary"
+            android:text="@string/learn_more_title_label"
+            android:background="@color/white"
+            android:elevation="0dp"
+            android:elegantTextHeight="false"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:singleLine="true"
+            android:textColorHighlight="@color/white"
+            android:visibility="gone"/>
     </LinearLayout>
 </android.support.v7.widget.CardView>

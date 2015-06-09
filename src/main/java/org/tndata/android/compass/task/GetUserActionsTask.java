@@ -38,7 +38,16 @@ public class GetUserActionsTask extends AsyncTask<String, Void, ArrayList<Action
     @Override
     protected ArrayList<Action> doInBackground(String... params) {
         String token = params[0];
+        String goalFilter = null;
+
+        if(params.length == 2) {
+            goalFilter = params[1];
+        }
         String url = Constants.BASE_URL + "users/actions/";
+        if(goalFilter != null) {
+            url = url + "?goal=" + goalFilter;
+        }
+
         Map<String, String> headers = new HashMap<String, String>();
         headers.put("Accept", "application/json");
         headers.put("Content-type", "application/json");

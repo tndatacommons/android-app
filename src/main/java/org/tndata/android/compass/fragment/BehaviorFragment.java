@@ -10,7 +10,6 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.task.ActionLoaderTask;
 import org.tndata.android.compass.task.ActionLoaderTask.ActionLoaderListener;
-import org.tndata.android.compass.task.DeleteActionTask;
 import org.tndata.android.compass.ui.ActionCellView;
 import org.tndata.android.compass.util.ImageCache;
 import org.tndata.android.compass.util.ImageHelper;
@@ -214,7 +213,7 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
         PopupMenu popup = new PopupMenu(getActivity(), mAddImageView);
         //Inflating the Popup using xml file
         popup.getMenuInflater()
-                .inflate(R.menu.menu_popup_chooser, popup.getMenu());
+                .inflate(R.menu.menu_action_popup_chooser, popup.getMenu());
 
         //registering popup with OnMenuItemClickListener
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
