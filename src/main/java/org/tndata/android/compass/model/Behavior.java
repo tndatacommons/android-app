@@ -8,6 +8,7 @@ public class Behavior extends TDCBase implements Serializable,
 
     private static final long serialVersionUID = 7747989797893422842L;
     private String more_info = "";
+    private String html_more_info = "";
     private String external_resource = "";
     private String notification_text = "";
     private String icon_url = "";
@@ -19,10 +20,11 @@ public class Behavior extends TDCBase implements Serializable,
     }
 
     public Behavior(int id, int order, String title, String titleSlug,
-                    String description, String moreInfo, String externalResource,
-                    String notificationText, String iconUrl, String imageUrl) {
-        super(id, title, titleSlug, description);
+                    String description, String html_description, String moreInfo, String htmlMoreInfo,
+                    String externalResource, String notificationText, String iconUrl, String imageUrl) {
+        super(id, title, titleSlug, description, html_description);
         this.more_info = moreInfo;
+        this.html_more_info = htmlMoreInfo;
         this.external_resource = externalResource;
         this.notification_text = notificationText;
         this.icon_url = iconUrl;
@@ -30,11 +32,12 @@ public class Behavior extends TDCBase implements Serializable,
     }
 
     public Behavior(int id, int order, String title, String titleSlug,
-                    String description, String moreInfo, String externalResource,
-                    String notificationText, String iconUrl, String imageUrl,
+                    String description, String html_description, String moreInfo, String htmlMoreInfo,
+                    String externalResource, String notificationText, String iconUrl, String imageUrl,
                     ArrayList<Goal> goals) {
-        super(id, title, titleSlug, description);
+        super(id, title, titleSlug, description, html_description);
         this.more_info = moreInfo;
+        this.html_more_info = htmlMoreInfo;
         this.external_resource = externalResource;
         this.notification_text = notificationText;
         this.icon_url = iconUrl;
@@ -46,9 +49,13 @@ public class Behavior extends TDCBase implements Serializable,
         return more_info;
     }
 
+    public String getHTMLMoreInfo() { return html_more_info; }
+
     public void setMoreInfo(String more_info) {
         this.more_info = more_info;
     }
+
+    public void setHTMLMoreInfo(String html_more_info) { this.html_more_info = html_more_info; }
 
     public String getExternalResource() {
         return external_resource;

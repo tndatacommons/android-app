@@ -9,6 +9,7 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
     private int behavior_id = -1;
     private int sequence_order = -1;
     private String more_info = "";
+    private String html_more_info = "";
     private String external_resource = "";
     private String notification_text = "";
     private String icon_url = "";
@@ -18,10 +19,10 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
     }
 
     public Action(int id, int order, String title, String titleSlug,
-                  String description, int sequenceOrder, String moreInfo,
-                  String externalResource, String notificationText, String iconUrl,
+                  String description, String html_description, int sequenceOrder, String moreInfo,
+                  String htmlMoreInfo, String externalResource, String notificationText, String iconUrl,
                   String imageUrl, int behaviorId) {
-        super(id, title, titleSlug, description);
+        super(id, title, titleSlug, description, html_description);
         this.sequence_order = sequenceOrder;
         this.more_info = moreInfo;
         this.external_resource = externalResource;
@@ -29,16 +30,18 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
         this.icon_url = iconUrl;
         this.image_url = imageUrl;
         this.behavior_id = behaviorId;
+        this.html_more_info = htmlMoreInfo;
     }
 
     public Action(int id, int order, String title, String titleSlug,
-                  String description, Behavior behavior, int sequenceOrder,
-                  String moreInfo, String externalResource,
+                  String description, String html_description, Behavior behavior, int sequenceOrder,
+                  String moreInfo, String htmlMoreInfo, String externalResource,
                   String notificationText, String iconUrl, String imageUrl, int behaviorId) {
-        super(id, title, titleSlug, description);
+        super(id, title, titleSlug, description, html_description);
         this.behavior = behavior;
         this.sequence_order = sequenceOrder;
         this.more_info = moreInfo;
+        this.html_more_info = htmlMoreInfo;
         this.external_resource = externalResource;
         this.notification_text = notificationText;
         this.icon_url = iconUrl;
@@ -69,6 +72,10 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
     public void setMoreInfo(String more_info    ) {
         this.more_info = more_info;
     }
+
+    public String getHTMLMoreInfo() { return html_more_info;}
+
+    public void setHTMLMoreInfo(String htmlMoreInfo) { this.html_more_info = htmlMoreInfo; }
 
     public String getExternalResource() {
         return external_resource;

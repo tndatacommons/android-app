@@ -18,8 +18,8 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
     }
 
     public Goal(int id, int order, String title, String titleSlug,
-                String description, String subtitle, String outcome, String iconUrl) {
-        super(id, title, titleSlug, description);
+                String description, String html_description, String subtitle, String outcome, String iconUrl) {
+        super(id, title, titleSlug, description, html_description);
         this.subtitle = subtitle;
         this.outcome = outcome;
         this.icon_url = iconUrl;
@@ -27,9 +27,9 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
     }
 
     public Goal(int id, int order, String title, String titleSlug,
-                String description, String subtitle, String outcome,
+                String description, String html_description, String subtitle, String outcome,
                 String iconUrl, ArrayList<Category> categories) {
-        super(id, title, titleSlug, description);
+        super(id, title, titleSlug, description, html_description);
         this.subtitle = subtitle;
         this.outcome = outcome;
         this.icon_url = iconUrl;
