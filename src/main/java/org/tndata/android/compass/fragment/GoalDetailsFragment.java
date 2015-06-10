@@ -44,6 +44,7 @@ public class GoalDetailsFragment extends Fragment implements
     private GoalDetailsFragmentListener mCallback;
     private ImageView mChooseMore;
     private Map<Behavior, ArrayList<Action>> mBehaviorActionMap = new HashMap<Behavior, ArrayList<Action>>();
+    private Boolean reloadData = true;
 
     private static final String TAG = "GoalDetailsFragment";
 
@@ -116,7 +117,12 @@ public class GoalDetailsFragment extends Fragment implements
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        loadBehaviors();
+        if(reloadData) {
+            loadBehaviors();
+            reloadData = false;
+        } else {
+            drawBehaviorsAndActions();
+        }
     }
 
     @Override
@@ -130,13 +136,6 @@ public class GoalDetailsFragment extends Fragment implements
             throw new ClassCastException(activity.toString()
                     + " must implement LearnMoreListener");
         }
-    }
-
-    @Override
-    public void onResume() {
-        // Let's reload all the fragment's data because it may have changed.
-        super.onResume();
-        loadBehaviors();
     }
 
     @Override
@@ -173,7 +172,9 @@ public class GoalDetailsFragment extends Fragment implements
 
         for(Behavior behavior : mBehaviorActionMap.keySet()) {
             for (Action action : actions) {
-                if(action.getBehavior_id() == behavior.getId()) {
+                if(action.getBehavior_id() == behavior.getId() &&
+                        !mBehaviorActionMap.get(behavior).contains(action)) {
+
                     mBehaviorActionMap.get(behavior).add(action);
                 }
             }
@@ -182,7 +183,6 @@ public class GoalDetailsFragment extends Fragment implements
     }
 
     private void drawBehaviorsAndActions() {
-
         mBehaviorActionsContainer.removeAllViews();
 
         for (Map.Entry<Behavior, ArrayList<Action>> entry : mBehaviorActionMap.entrySet()) {
