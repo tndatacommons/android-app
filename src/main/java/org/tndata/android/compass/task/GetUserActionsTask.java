@@ -56,7 +56,6 @@ public class GetUserActionsTask extends AsyncTask<String, Void, ArrayList<Action
             return null;
         }
         String result = "";
-        String actionResponse = "";
         try {
 
             BufferedReader bReader = new BufferedReader(new InputStreamReader(
@@ -68,8 +67,6 @@ public class GetUserActionsTask extends AsyncTask<String, Void, ArrayList<Action
             }
             bReader.close();
 
-            // TODO: Why do we do this first? It seems to strip the html from within our JSON strings
-            //actionResponse = Html.fromHtml(result).toString();
             JSONObject response = new JSONObject(result);
             JSONArray jArray = response.getJSONArray("results");
             ArrayList<Action> actions = new ArrayList<Action>();
