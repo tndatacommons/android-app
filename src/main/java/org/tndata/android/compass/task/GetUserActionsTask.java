@@ -1,7 +1,6 @@
 package org.tndata.android.compass.task;
 
 import android.os.AsyncTask;
-import android.text.Html;
 import android.util.Log;
 
 import com.google.gson.FieldNamingPolicy;
@@ -57,7 +56,6 @@ public class GetUserActionsTask extends AsyncTask<String, Void, ArrayList<Action
             return null;
         }
         String result = "";
-        String actionResponse = "";
         try {
 
             BufferedReader bReader = new BufferedReader(new InputStreamReader(
@@ -69,9 +67,7 @@ public class GetUserActionsTask extends AsyncTask<String, Void, ArrayList<Action
             }
             bReader.close();
 
-            actionResponse = Html.fromHtml(result).toString();
-
-            JSONObject response = new JSONObject(actionResponse);
+            JSONObject response = new JSONObject(result);
             JSONArray jArray = response.getJSONArray("results");
             ArrayList<Action> actions = new ArrayList<Action>();
             for (int i = 0; i < jArray.length(); i++) {

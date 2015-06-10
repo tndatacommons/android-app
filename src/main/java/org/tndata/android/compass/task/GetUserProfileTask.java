@@ -1,7 +1,6 @@
 package org.tndata.android.compass.task;
 
 import android.os.AsyncTask;
-import android.text.Html;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -43,7 +42,6 @@ public class GetUserProfileTask extends AsyncTask<String, Void, ArrayList<Survey
             return null;
         }
         String result = "";
-        String profileResponse = "";
         try {
 
             BufferedReader bReader = new BufferedReader(new InputStreamReader(
@@ -55,9 +53,7 @@ public class GetUserProfileTask extends AsyncTask<String, Void, ArrayList<Survey
             }
             bReader.close();
 
-            profileResponse = Html.fromHtml(result).toString();
-
-            JSONObject response = new JSONObject(profileResponse);
+            JSONObject response = new JSONObject(result);
             ArrayList<Survey> surveys = new ArrayList<Survey>();
             JSONArray jArray = response.getJSONArray("results").getJSONObject(0).getJSONArray
                     ("bio");

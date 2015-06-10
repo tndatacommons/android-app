@@ -109,6 +109,10 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
                 .findViewById(R.id.learn_more_behavior_title_textview);
         TextView descriptionTextView = (TextView) v
                 .findViewById(R.id.learn_more_description_textview);
+
+        View separator = v.findViewById(R.id.learn_more_separator);
+        TextView moreInfo = (TextView) v.findViewById(R.id.learn_more_more_info_textview);
+
         TextView addLabelTextView = (TextView) v.findViewById(R.id.learn_more_add_label);
         mProgressBar = (ProgressBar) v.findViewById(R.id.learn_more_progressbar);
         mProgressBar.setVisibility(View.GONE);
@@ -151,6 +155,11 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
             titleTextView.setText(mAction.getTitle());
             descriptionTextView.setText(mAction.getDescription());
             addLabelTextView.setText(getText(R.string.action_i_want_this_label));
+            if(!mAction.getMoreInfo().isEmpty()) {
+                separator.setVisibility(View.VISIBLE);
+                moreInfo.setText(mAction.getMoreInfo());
+                moreInfo.setVisibility(View.VISIBLE);
+            }
         } else if (mGoal != null) {
             // this is a learn more screen for a Goal
             titleTextView.setText(mGoal.getTitle());
@@ -160,8 +169,13 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
         } else {
             // this is a learn more screen for a Behavior
             titleTextView.setText(mBehavior.getTitle());
-            descriptionTextView.setText(mBehavior.getMoreInfo());
+            descriptionTextView.setText((mBehavior.getDescription()));
             addLabelTextView.setText(getText(R.string.behavior_add_to_priorities_label));
+            if(!mBehavior.getMoreInfo().isEmpty()) {
+                separator.setVisibility(View.VISIBLE);
+                moreInfo.setText(mBehavior.getMoreInfo());
+                moreInfo.setVisibility(View.VISIBLE);
+            }
         }
         return v;
     }

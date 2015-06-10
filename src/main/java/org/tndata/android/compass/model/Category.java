@@ -20,8 +20,8 @@ public class Category extends TDCBase implements Serializable,
     }
 
     public Category(int id, int order, String title, String titleSlug,
-                    String description, String iconUrl, String imageUrl) {
-        super(id, title, titleSlug, description);
+                    String description, String html_description, String iconUrl, String imageUrl) {
+        super(id, title, titleSlug, description, html_description);
         this.order = order;
         this.icon_url = iconUrl;
         this.image_url = imageUrl;
@@ -29,8 +29,8 @@ public class Category extends TDCBase implements Serializable,
     }
 
     public Category(int id, int order, String title, String titleSlug,
-                    String description, String iconUrl, String imageUrl, ArrayList<Goal> goals) {
-        super(id, title, titleSlug, description);
+                    String description, String html_description, String iconUrl, String imageUrl, ArrayList<Goal> goals) {
+        super(id, title, titleSlug, description, html_description);
         this.order = order;
         this.icon_url = iconUrl;
         this.image_url = imageUrl;
@@ -38,8 +38,8 @@ public class Category extends TDCBase implements Serializable,
     }
 
     public Category(int id, int order, String title, String titleSlug,
-                    String description, String iconUrl, String imageUrl, String color) {
-        super(id, title, titleSlug, description);
+                    String description, String html_description, String iconUrl, String imageUrl, String color) {
+        super(id, title, titleSlug, description, html_description);
         this.order = order;
         this.icon_url = iconUrl;
         this.image_url = imageUrl;

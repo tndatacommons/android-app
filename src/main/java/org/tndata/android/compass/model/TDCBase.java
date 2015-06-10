@@ -9,16 +9,18 @@ public class TDCBase implements Serializable {
     private String title = "";
     private String title_slug = "";
     private String description = "";
+    private String html_description = "";
     private int mappingId = -1;
 
     public TDCBase() {
     }
 
-    public TDCBase(int id, String name, String nameSlug, String description) {
+    public TDCBase(int id, String name, String nameSlug, String description, String html_description) {
         this.setId(id);
         this.setTitle(name);
         this.setTitleSlug(nameSlug);
         this.setDescription(description);
+        this.setHTMLDescription(html_description);
     }
 
     public int getId() {
@@ -37,6 +39,8 @@ public class TDCBase implements Serializable {
         return this.description;
     }
 
+    public String getHTMLDescription() { return this.html_description; }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -52,6 +56,8 @@ public class TDCBase implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public void setHTMLDescription(String html_description) { this.html_description = html_description; }
 
     public int getMappingId() {
         return mappingId;
