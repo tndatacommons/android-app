@@ -2,8 +2,10 @@ package org.tndata.android.compass.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,6 +46,8 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
         public void actionChanged();
 
         public void fireBehaviorPicker(Behavior behavior);
+
+        public void fireActionPicker(Action action);
     }
 
     public void setBehavior(Behavior behavior) {
@@ -122,7 +126,6 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
 
             @Override
             public void onClick(View v) {
-
                 if (mAction != null) {
                     ArrayList<Action> actions = ((CompassApplication) getActivity()
                             .getApplication()
@@ -137,8 +140,6 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
                         showPopup();
                     }
                 } else {
-                    mProgressBar.setVisibility(View.VISIBLE);
-                    mAddImageView.setEnabled(false);
                     for (Goal goal : ((CompassApplication) getActivity().getApplication())
                             .getGoals()) {
                         if (goal.getBehaviors().contains(mBehavior)) {
@@ -146,6 +147,8 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
                             return;
                         }
                     }
+                    mProgressBar.setVisibility(View.VISIBLE);
+                    mAddImageView.setEnabled(false);
                     mCallback.addBehavior(mBehavior);
                 }
             }
@@ -155,7 +158,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
             titleTextView.setText(mAction.getTitle());
             descriptionTextView.setText(mAction.getDescription());
             addLabelTextView.setText(getText(R.string.action_i_want_this_label));
-            if(!mAction.getMoreInfo().isEmpty()) {
+            if (!mAction.getMoreInfo().isEmpty()) {
                 separator.setVisibility(View.VISIBLE);
                 moreInfo.setText(mAction.getMoreInfo());
                 moreInfo.setVisibility(View.VISIBLE);
@@ -171,7 +174,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
             titleTextView.setText(mBehavior.getTitle());
             descriptionTextView.setText((mBehavior.getDescription()));
             addLabelTextView.setText(getText(R.string.behavior_add_to_priorities_label));
-            if(!mBehavior.getMoreInfo().isEmpty()) {
+            if (!mBehavior.getMoreInfo().isEmpty()) {
                 separator.setVisibility(View.VISIBLE);
                 moreInfo.setText(mBehavior.getMoreInfo());
                 moreInfo.setVisibility(View.VISIBLE);
@@ -282,7 +285,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
     }
 
     public void fireActionPicker() {
-
+        mCallback.fireActionPicker(mAction);
     }
 
     @Override

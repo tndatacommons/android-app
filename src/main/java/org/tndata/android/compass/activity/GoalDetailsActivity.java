@@ -5,10 +5,16 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.text.format.Time;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+
+import com.doomonafireball.betterpickers.recurrencepicker.EventRecurrence;
+import com.doomonafireball.betterpickers.recurrencepicker.RecurrencePickerDialog;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -29,7 +35,8 @@ public class GoalDetailsActivity extends ActionBarActivity implements
         LearnMoreFragment.LearnMoreFragmentListener,
         GoalDetailsFragment.GoalDetailsFragmentListener,
         DeleteBehaviorTask.DeleteBehaviorTaskListener,
-        DeleteGoalTask.DeleteGoalTaskListener {
+        DeleteGoalTask.DeleteGoalTaskListener,
+        RecurrencePickerDialog.OnRecurrenceSetListener {
 
     private static final int GOALDETAIL = 0;
     private static final int LEARN_MORE_BEHAVIOR = 1;
@@ -47,6 +54,11 @@ public class GoalDetailsActivity extends ActionBarActivity implements
     private GoalDetailsFragment mGoalDetailsFragment = null;
     private LearnMoreFragment mLearnMoreFragment = null;
     private ArrayList<Fragment> mFragmentStack = new ArrayList<Fragment>();
+
+    private EventRecurrence mEventRecurrence = new EventRecurrence();
+    private String mRrule;
+
+    private static final String FRAG_TAG_RECUR_PICKER = "recurrencePickerDialogFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +136,7 @@ public class GoalDetailsActivity extends ActionBarActivity implements
         new DeleteGoalTask(this, this, goals).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         // Delete the goal from the Compass Application (will affect the UI)
-        ArrayList<Goal> applicationGoals = ((CompassApplication)getApplication()).getGoals();
+        ArrayList<Goal> applicationGoals = ((CompassApplication) getApplication()).getGoals();
         applicationGoals.remove(goal);
         ((CompassApplication) getApplication()).setGoals(applicationGoals);
 
@@ -161,8 +173,9 @@ public class GoalDetailsActivity extends ActionBarActivity implements
                 fragment = mGoalDetailsFragment;
                 break;
             case LEARN_MORE_BEHAVIOR:
-                if(mSelectedBehavior != null) {
-                    mLearnMoreFragment = LearnMoreFragment.newInstance(mSelectedBehavior, mCategory);
+                if (mSelectedBehavior != null) {
+                    mLearnMoreFragment = LearnMoreFragment.newInstance(mSelectedBehavior,
+                            mCategory);
                     fragment = mLearnMoreFragment;
                 }
                 break;
@@ -175,7 +188,7 @@ public class GoalDetailsActivity extends ActionBarActivity implements
                 }
                 break;
             case LEARN_MORE_GOAL:
-                if(mGoal != null) {
+                if (mGoal != null) {
                     mLearnMoreFragment = LearnMoreFragment.newInstance(mGoal, mCategory);
                     fragment = mLearnMoreFragment;
                 }
@@ -232,7 +245,49 @@ public class GoalDetailsActivity extends ActionBarActivity implements
     }
 
     @Override
+    public void fireActionPicker(Action action) {
+        showPicker();
+    }
+
+    @Override
     public void fireBehaviorPicker(Behavior behavior) {
-        //TODO
+        showPicker();
+    }
+
+    private void showPicker(){
+        Bundle b = new Bundle();
+        Time t = new Time();
+        t.setToNow();
+        b.putLong(RecurrencePickerDialog.BUNDLE_START_TIME_MILLIS, t.toMillis(false));
+        b.putString(RecurrencePickerDialog.BUNDLE_TIME_ZONE, t.timezone);
+
+        // may be more efficient to serialize and pass in EventRecurrence
+        b.putString(RecurrencePickerDialog.BUNDLE_RRULE, mRrule);
+
+        FragmentManager fm = getSupportFragmentManager();
+        RecurrencePickerDialog rpd = (RecurrencePickerDialog) fm.findFragmentByTag(
+                FRAG_TAG_RECUR_PICKER);
+        if (rpd != null) {
+            rpd.dismiss();
+        }
+        rpd = new RecurrencePickerDialog();
+        rpd.setArguments(b);
+        rpd.setOnRecurrenceSetListener(GoalDetailsActivity.this);
+        rpd.show(fm, FRAG_TAG_RECUR_PICKER);
+    }
+
+    @Override
+    public void onRecurrenceSet(String rrule) {
+        mRrule = rrule;
+        if (mRrule != null) {
+            mEventRecurrence.parse(mRrule);
+        }
+        saveTrigger();
+    }
+
+    private void saveTrigger() {
+        if (!TextUtils.isEmpty(mRrule)) {
+            //TODO save the mRrule
+        }
     }
 }
