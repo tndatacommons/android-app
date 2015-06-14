@@ -20,21 +20,15 @@ import android.app.Fragment;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.text.format.Time;
+import android.support.v7.widget.Toolbar;;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 
-import com.doomonafireball.betterpickers.recurrencepicker.EventRecurrence;
-import com.doomonafireball.betterpickers.recurrencepicker.RecurrencePickerDialog;
 
-public class BehaviorActivity extends ActionBarActivity implements
+public class BehaviorActivity extends BaseTriggerActivity implements
         BehaviorFragmentListener, LearnMoreFragmentListener,
-        AddBehaviorTask.AddBehaviorsTaskListener, DeleteBehaviorTask.DeleteBehaviorTaskListener,
-        RecurrencePickerDialog.OnRecurrenceSetListener {
+        AddBehaviorTask.AddBehaviorsTaskListener, DeleteBehaviorTask.DeleteBehaviorTaskListener {
     private static final int BEHAVIOR = 0;
     private static final int LEARN_MORE_BEHAVIOR = 1;
     private static final int LEARN_MORE_ACTION = 2;
@@ -46,11 +40,6 @@ public class BehaviorActivity extends ActionBarActivity implements
     private BehaviorFragment mBehaviorFragment = null;
     private LearnMoreFragment mLearnMoreFragment = null;
     private ArrayList<Fragment> mFragmentStack = new ArrayList<Fragment>();
-
-    private EventRecurrence mEventRecurrence = new EventRecurrence();
-    private String mRrule;
-
-    private static final String FRAG_TAG_RECUR_PICKER = "recurrencePickerDialogFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -246,49 +235,12 @@ public class BehaviorActivity extends ActionBarActivity implements
 
     @Override
     public void fireActionPicker(Action action) {
-        showPicker();
+        getRecurrenceSchedule(action, null);
     }
 
     @Override
     public void fireBehaviorPicker(Behavior behavior) {
-        showPicker();
+        getRecurrenceSchedule(null, behavior);
     }
 
-    private void showPicker() {
-        Bundle b = new Bundle();
-        Time t = new Time();
-        t.setToNow();
-        b.putLong(RecurrencePickerDialog.BUNDLE_START_TIME_MILLIS, t.toMillis(false));
-        b.putString(RecurrencePickerDialog.BUNDLE_TIME_ZONE, t.timezone);
-
-        // may be more efficient to serialize and pass in EventRecurrence
-        b.putString(RecurrencePickerDialog.BUNDLE_RRULE, mRrule);
-
-        FragmentManager fm = getSupportFragmentManager();
-        RecurrencePickerDialog rpd = (RecurrencePickerDialog) fm.findFragmentByTag(
-                FRAG_TAG_RECUR_PICKER);
-        if (rpd != null) {
-            rpd.dismiss();
-        }
-        rpd = new RecurrencePickerDialog();
-        rpd.setArguments(b);
-        rpd.setOnRecurrenceSetListener(BehaviorActivity.this);
-        rpd.show(fm, FRAG_TAG_RECUR_PICKER);
-    }
-
-
-    @Override
-    public void onRecurrenceSet(String rrule) {
-        mRrule = rrule;
-        if (mRrule != null) {
-            mEventRecurrence.parse(mRrule);
-        }
-        saveTrigger();
-    }
-
-    private void saveTrigger() {
-        if (!TextUtils.isEmpty(mRrule)) {
-            //TODO save the mRrule
-        }
-    }
 }

@@ -8,6 +8,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
@@ -51,6 +52,47 @@ public class NetworkHelper {
 
         } catch (IOException e) {
             httpPost.abort();
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static InputStream httpPutStream(String url,
+                                            Map<String, String> headers, String body) {
+
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpResponse httpResponse = null;
+        // url with the post data
+        HttpPut httpPut = new HttpPut(url);
+        try {
+            if (body != null && !body.isEmpty()) {
+                // pass the body to a string builder/entity
+                StringEntity se = new StringEntity(body);
+
+                // sets the post request as the resulting string
+                httpPut.setEntity(se);
+            }
+
+            if (headers != null) {
+                // set all of our headers
+                for (Map.Entry<String, String> header : headers.entrySet()) {
+                    httpPut.setHeader(header.getKey(), header.getValue());
+                }
+            }
+
+            // Handles what is returned from the page
+            // ResponseHandler responseHandler = new BasicResponseHandler();
+            HttpContext responseHandler = new BasicHttpContext();
+            httpResponse = client.execute(httpPut, responseHandler);
+            int code = httpResponse.getStatusLine().getStatusCode();
+            if (code != 201 && code != 200) {
+                return null;
+            }
+            HttpEntity getResponseEntity = httpResponse.getEntity();
+            return getResponseEntity.getContent();
+
+        } catch (IOException e) {
+            httpPut.abort();
             e.printStackTrace();
         }
         return null;

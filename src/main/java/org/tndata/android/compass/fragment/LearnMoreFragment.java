@@ -257,7 +257,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
                         break;
                     case R.id.menu_popup_edit_item:
                         if (mAction != null) {
-                            fireActionPicker();
+                            mCallback.fireActionPicker(mAction);
                         } else {
                             mCallback.fireBehaviorPicker(mBehavior);
                         }
@@ -282,10 +282,6 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
             }
             mCallback.addBehavior(mBehavior);
         }
-    }
-
-    public void fireActionPicker() {
-        mCallback.fireActionPicker(mAction);
     }
 
     @Override
