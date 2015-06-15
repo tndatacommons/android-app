@@ -21,11 +21,12 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.Toolbar;;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 
-public class BehaviorActivity extends ActionBarActivity implements
+
+public class BehaviorActivity extends BaseTriggerActivity implements
         BehaviorFragmentListener, LearnMoreFragmentListener,
         AddBehaviorTask.AddBehaviorsTaskListener, DeleteBehaviorTask.DeleteBehaviorTaskListener {
     private static final int BEHAVIOR = 0;
@@ -233,7 +234,13 @@ public class BehaviorActivity extends ActionBarActivity implements
     }
 
     @Override
-    public void fireBehaviorPicker(Behavior behavior) {
-        //TODO
+    public void fireActionPicker(Action action) {
+        getRecurrenceSchedule(action, null);
     }
+
+    @Override
+    public void fireBehaviorPicker(Behavior behavior) {
+        getRecurrenceSchedule(null, behavior);
+    }
+
 }

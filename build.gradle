@@ -3,6 +3,8 @@
 buildscript {
     repositories {
         jcenter()
+        mavenLocal()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.1.0'
@@ -10,6 +12,7 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'android'
 
 android {
     compileSdkVersion 22
@@ -32,7 +35,12 @@ android {
 
 // Specify where to get dependencies
 repositories {
+    jcenter()
+    mavenLocal()
     mavenCentral()
+    maven {
+        url "http://JRAF.org/static/maven/2"
+    }
 }
 
 dependencies {
@@ -44,5 +52,9 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:1.2.2'
     compile 'com.jpardogo.materialtabstrip:library:1.0.9'
     compile "com.google.android.gms:play-services:3.1.+"
+    compile 'org.jraf:android-switch-backport:1.4.0@aar'
+    compile ("com.doomonafireball.betterpickers:library:1.6.0") {
+        exclude group: 'com.android.support', module: 'support-v4'
+    }
 
 }

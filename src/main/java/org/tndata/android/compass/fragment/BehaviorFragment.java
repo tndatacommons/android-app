@@ -53,6 +53,8 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
         public void actionChanged();
 
         public void fireBehaviorPicker(Behavior behavior);
+
+        public void fireActionPicker(Action action);
     }
 
     public void setBehavior(Behavior behavior) {
@@ -220,10 +222,10 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_popup_remove_item:
-                            mCallback.deleteBehavior(mBehavior);
+                        mCallback.deleteBehavior(mBehavior);
                         break;
                     case R.id.menu_popup_edit_item:
-                            mCallback.fireBehaviorPicker(mBehavior);
+                        mCallback.fireBehaviorPicker(mBehavior);
                         break;
                 }
                 return true;
@@ -249,7 +251,7 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
     }
 
     @Override
-    public void fireActionPicker() {
-
+    public void fireActionPicker(Action action) {
+        mCallback.fireActionPicker(action);
     }
 }

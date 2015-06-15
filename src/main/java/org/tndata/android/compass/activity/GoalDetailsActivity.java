@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -25,7 +24,7 @@ import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
 
-public class GoalDetailsActivity extends ActionBarActivity implements
+public class GoalDetailsActivity extends BaseTriggerActivity implements
         LearnMoreFragment.LearnMoreFragmentListener,
         GoalDetailsFragment.GoalDetailsFragmentListener,
         DeleteBehaviorTask.DeleteBehaviorTaskListener,
@@ -47,6 +46,7 @@ public class GoalDetailsActivity extends ActionBarActivity implements
     private GoalDetailsFragment mGoalDetailsFragment = null;
     private LearnMoreFragment mLearnMoreFragment = null;
     private ArrayList<Fragment> mFragmentStack = new ArrayList<Fragment>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +124,7 @@ public class GoalDetailsActivity extends ActionBarActivity implements
         new DeleteGoalTask(this, this, goals).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         // Delete the goal from the Compass Application (will affect the UI)
-        ArrayList<Goal> applicationGoals = ((CompassApplication)getApplication()).getGoals();
+        ArrayList<Goal> applicationGoals = ((CompassApplication) getApplication()).getGoals();
         applicationGoals.remove(goal);
         ((CompassApplication) getApplication()).setGoals(applicationGoals);
 
@@ -161,8 +161,9 @@ public class GoalDetailsActivity extends ActionBarActivity implements
                 fragment = mGoalDetailsFragment;
                 break;
             case LEARN_MORE_BEHAVIOR:
-                if(mSelectedBehavior != null) {
-                    mLearnMoreFragment = LearnMoreFragment.newInstance(mSelectedBehavior, mCategory);
+                if (mSelectedBehavior != null) {
+                    mLearnMoreFragment = LearnMoreFragment.newInstance(mSelectedBehavior,
+                            mCategory);
                     fragment = mLearnMoreFragment;
                 }
                 break;
@@ -175,7 +176,7 @@ public class GoalDetailsActivity extends ActionBarActivity implements
                 }
                 break;
             case LEARN_MORE_GOAL:
-                if(mGoal != null) {
+                if (mGoal != null) {
                     mLearnMoreFragment = LearnMoreFragment.newInstance(mGoal, mCategory);
                     fragment = mLearnMoreFragment;
                 }
@@ -232,7 +233,13 @@ public class GoalDetailsActivity extends ActionBarActivity implements
     }
 
     @Override
-    public void fireBehaviorPicker(Behavior behavior) {
-        //TODO
+    public void fireActionPicker(Action action) {
+        getRecurrenceSchedule(action, null);
     }
+
+    @Override
+    public void fireBehaviorPicker(Behavior behavior) {
+        getRecurrenceSchedule(null, behavior);
+    }
+
 }

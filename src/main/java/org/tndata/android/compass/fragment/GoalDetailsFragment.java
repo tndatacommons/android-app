@@ -43,20 +43,30 @@ public class GoalDetailsFragment extends Fragment implements
     private ProgressBar mProgressBar;
     private GoalDetailsFragmentListener mCallback;
     private ImageView mChooseMore;
-    private Map<Behavior, ArrayList<Action>> mBehaviorActionMap = new HashMap<Behavior, ArrayList<Action>>();
+    private Map<Behavior, ArrayList<Action>> mBehaviorActionMap = new HashMap<Behavior,
+            ArrayList<Action>>();
     private Boolean reloadData = true;
 
     private static final String TAG = "GoalDetailsFragment";
 
     public interface GoalDetailsFragmentListener {
         public void chooseBehaviors(Goal goal);
+
         public void deleteGoal(Goal goal);
+
         public void learnMoreGoal(Goal goal);
+
         public void learnMoreBehavior(Behavior behavior);
+
         public void learnMoreAction(Action action);
+
         public void deleteBehavior(Behavior behavior);
+
         public void actionChanged();
+
         public void fireBehaviorPicker(Behavior behavior);
+
+        public void fireActionPicker(Action action);
     }
 
     public static GoalDetailsFragment newInstance(Category category, Goal goal) {
@@ -117,7 +127,7 @@ public class GoalDetailsFragment extends Fragment implements
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(reloadData) {
+        if (reloadData) {
             loadBehaviors();
             reloadData = false;
         } else {
@@ -161,7 +171,7 @@ public class GoalDetailsFragment extends Fragment implements
 
     @Override
     public void behaviorsLoaded(ArrayList<Behavior> behaviors) {
-        for(Behavior behavior : behaviors) {
+        for (Behavior behavior : behaviors) {
             mBehaviorActionMap.put(behavior, new ArrayList<Action>());
         }
         loadActions();
@@ -170,9 +180,9 @@ public class GoalDetailsFragment extends Fragment implements
     @Override
     public void actionsLoaded(ArrayList<Action> actions) {
 
-        for(Behavior behavior : mBehaviorActionMap.keySet()) {
+        for (Behavior behavior : mBehaviorActionMap.keySet()) {
             for (Action action : actions) {
-                if(action.getBehavior_id() == behavior.getId() &&
+                if (action.getBehavior_id() == behavior.getId() &&
                         !mBehaviorActionMap.get(behavior).contains(action)) {
 
                     mBehaviorActionMap.get(behavior).add(action);
@@ -247,7 +257,7 @@ public class GoalDetailsFragment extends Fragment implements
     }
 
     @Override
-    public void fireActionPicker() {
-
+    public void fireActionPicker(Action action) {
+        mCallback.fireActionPicker(action);
     }
 }

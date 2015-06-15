@@ -36,7 +36,7 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
     public interface ActionViewListener {
         public void actionChanged(Action action);
 
-        public void fireActionPicker();
+        public void fireActionPicker(Action action);
     }
 
     public ActionCellView(Context context) {
@@ -105,7 +105,7 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
                         deleteUserAction();
                         break;
                     case R.id.menu_popup_edit_item:
-                        mCallback.fireActionPicker();
+                        mCallback.fireActionPicker(mAction);
                         break;
                 }
                 return true;
@@ -190,7 +190,7 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
         updateImage();
         if (mCallback != null) {
             mCallback.actionChanged(mAction);
-            mCallback.fireActionPicker();
+            mCallback.fireActionPicker(mAction);
         }
     }
 
