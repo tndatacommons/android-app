@@ -73,6 +73,9 @@
     <string name="category_goals">%1$s goals</string>
     <string name="category_goals_add">What are your %1$s goals?</string>
 
+    <!-- LearnMoreFragment -->
+    <string name="more_info_header">More Information</string>
+
     <!-- GoalDetailsActivity -->
     <string name="goal_title_label">Achieve Your Goal</string>
     <string name="goal_management">Achieve your Goal</string>

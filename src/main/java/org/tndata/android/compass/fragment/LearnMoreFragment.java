@@ -2,10 +2,8 @@ package org.tndata.android.compass.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -115,6 +113,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
                 .findViewById(R.id.learn_more_description_textview);
 
         View separator = v.findViewById(R.id.learn_more_separator);
+        TextView moreInfoHeader = (TextView) v.findViewById(R.id.learn_more_more_info_header_textview);
         TextView moreInfo = (TextView) v.findViewById(R.id.learn_more_more_info_textview);
 
         TextView addLabelTextView = (TextView) v.findViewById(R.id.learn_more_add_label);
@@ -162,6 +161,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
                 separator.setVisibility(View.VISIBLE);
                 moreInfo.setText(mAction.getMoreInfo());
                 moreInfo.setVisibility(View.VISIBLE);
+                moreInfoHeader.setVisibility(View.VISIBLE);
             }
         } else if (mGoal != null) {
             // this is a learn more screen for a Goal
@@ -178,6 +178,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
                 separator.setVisibility(View.VISIBLE);
                 moreInfo.setText(mBehavior.getMoreInfo());
                 moreInfo.setVisibility(View.VISIBLE);
+                moreInfoHeader.setVisibility(View.VISIBLE);
             }
         }
         return v;
