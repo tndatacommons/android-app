@@ -156,7 +156,15 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
             // this is a learn more screen for an Action
             titleTextView.setText(mAction.getTitle());
             descriptionTextView.setText(mAction.getDescription());
-            addLabelTextView.setText(getText(R.string.action_i_want_this_label));
+            if(mAction.getCustomTrigger() != null) {
+                addLabelTextView.setText(
+                        mAction.getCustomTrigger().getRecurrencesDisplay() + " at " +
+                                mAction.getCustomTrigger().getTime());
+            } else if(mAction.getMappingId() > 0) {
+                addLabelTextView.setText(getText(R.string.action_management_label));
+            } else {
+                addLabelTextView.setText(getText(R.string.action_i_want_this_label));
+            }
             if (!mAction.getMoreInfo().isEmpty()) {
                 separator.setVisibility(View.VISIBLE);
                 moreInfo.setText(mAction.getMoreInfo());
