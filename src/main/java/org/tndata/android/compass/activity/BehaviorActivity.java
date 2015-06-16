@@ -1,6 +1,12 @@
 package org.tndata.android.compass.activity;
 
-import java.util.ArrayList;
+import android.app.Fragment;
+import android.graphics.Color;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -16,14 +22,7 @@ import org.tndata.android.compass.task.AddBehaviorTask;
 import org.tndata.android.compass.task.DeleteBehaviorTask;
 import org.tndata.android.compass.util.Constants;
 
-import android.app.Fragment;
-import android.graphics.Color;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;;
-import android.view.KeyEvent;
-import android.view.MenuItem;
+import java.util.ArrayList;
 
 
 public class BehaviorActivity extends BaseTriggerActivity implements

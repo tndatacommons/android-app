@@ -14,6 +14,10 @@
     <string name="nav_drawer_action">Compass</string>
     <string name="main_tab_title">My Journey</string>
 
+    <!-- Time/Recurrence pickers -->
+    <string name="time_picker_confirmation_toast">You have selected </string>
+    <string name="recurrence_picker_confirmation_toast">Reminder Saved!</string>
+
     <!-- LoginActivity -->
     <string name="terms_title">Terms and Conditions</string>
     <string name="launcher_sign_up">SIGN UP</string>

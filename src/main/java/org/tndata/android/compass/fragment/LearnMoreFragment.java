@@ -237,17 +237,20 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
     }
 
     private void showPopup() {
-        //Creating the instance of PopupMenu
         PopupMenu popup = new PopupMenu(getActivity(), mAddImageView);
-        //Inflating the Popup using xml file
-        popup.getMenuInflater()
-                .inflate(R.menu.menu_action_popup_chooser, popup.getMenu());
+        // Inflating the correct menu depending on which kind of content we're viewing.
+        if(mAction != null) {
+            popup.getMenuInflater()
+                    .inflate(R.menu.menu_action_popup_chooser, popup.getMenu());
+        }else {
+            popup.getMenuInflater().inflate(R.menu.menu_behavior_popup_chooser, popup.getMenu());
+        }
 
-        //registering popup with OnMenuItemClickListener
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_popup_remove_item:
+                    case R.id.menu_behavior_popup_remove_item:
                         if (mAction != null) {
                             new DeleteActionTask(getActivity(), LearnMoreFragment.this, String
                                     .valueOf(mAction.getMappingId()))
@@ -267,8 +270,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
                 return true;
             }
         });
-
-        popup.show(); //showing popup menu
+        popup.show();
     }
 
     public void actionChanged(Action action) {

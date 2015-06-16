@@ -87,22 +87,21 @@ public class BaseTriggerActivity extends ActionBarActivity implements
 
     @Override
     public void onDialogTimeSet(int reference, int hourOfDay, int minute) {
-        mTime = String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute);
+        mTime = R.string.time_picker_confirmation_toast +
+                String.format("%02d", hourOfDay) + ":" +
+                String.format("%02d", minute);
         Toast.makeText(this, mTime, Toast.LENGTH_SHORT).show();
         showRecurrencePicker();
     }
 
     private void saveTrigger() {
         if (!TextUtils.isEmpty(mRrule)) {
-
             if (mActionToUpdate != null) {
                 new AddActionTriggerTask(((CompassApplication) getApplication()).getToken(),
                         mRrule, mTime, String.valueOf(mActionToUpdate.getMappingId()))
                         .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            } else if (mBehaviorToUpdate != null) {
-                // TODO save any behavior mapping here
-                Toast.makeText(this, mTime + " " + mRrule, Toast.LENGTH_LONG).show();
             }
+            Toast.makeText(this, R.string.recurrence_picker_confirmation_toast, Toast.LENGTH_SHORT).show();
         }
     }
 }
