@@ -78,6 +78,7 @@
     <string name="category_goals_add">What are your %1$s goals?</string>
 
     <!-- LearnMoreFragment -->
+    <string name="behavior_management_label">Manage your Priority</string>
     <string name="action_management_label">Set a Reminder for your Action</string>
     <string name="more_info_header">More Information</string>
 

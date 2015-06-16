@@ -156,6 +156,9 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
             // this is a learn more screen for an Action
             titleTextView.setText(mAction.getTitle());
             descriptionTextView.setText(mAction.getDescription());
+
+            // Display different content in the "Add this" label when the user
+            // has already selected the item.
             if(mAction.getCustomTrigger() != null) {
                 addLabelTextView.setText(
                         mAction.getCustomTrigger().getRecurrencesDisplay() + " at " +
@@ -181,7 +184,14 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
             // this is a learn more screen for a Behavior
             titleTextView.setText(mBehavior.getTitle());
             descriptionTextView.setText((mBehavior.getDescription()));
-            addLabelTextView.setText(getText(R.string.behavior_add_to_priorities_label));
+
+            // Display different content in the "Add this" label when the user
+            // has already selected the item.
+            if(mBehavior.getMappingId() > 0) {
+                addLabelTextView.setText(getText(R.string.behavior_management_label));
+            } else {
+                addLabelTextView.setText(getText(R.string.behavior_add_to_priorities_label));
+            }
             if (!mBehavior.getMoreInfo().isEmpty()) {
                 separator.setVisibility(View.VISIBLE);
                 moreInfo.setText(mBehavior.getMoreInfo());
