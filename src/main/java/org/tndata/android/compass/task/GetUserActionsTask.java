@@ -10,6 +10,7 @@ import com.google.gson.GsonBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
 
@@ -70,12 +71,26 @@ public class GetUserActionsTask extends AsyncTask<String, Void, ArrayList<Action
             JSONObject response = new JSONObject(result);
             JSONArray jArray = response.getJSONArray("results");
             ArrayList<Action> actions = new ArrayList<Action>();
+
             for (int i = 0; i < jArray.length(); i++) {
                 JSONObject userAction = jArray.getJSONObject(i);
-                Log.d("USER ACTION", userAction.toString(2));
+                //Log.d("USER ACTION", userAction.toString(2));
                 Action action = gson.fromJson(userAction.getString("action"), Action.class);
                 action.setMappingId(userAction.getInt("id"));
                 actions.add(action);
+
+                Log.d("UserAction", "Created UserAction ("+
+                        action.getMappingId() + ") with Action (" +
+                        action.getId() + ")");
+
+                Log.d("Trigger JSON", userAction.getString("custom_trigger"));
+
+                if(!userAction.isNull("custom_trigger")) {
+                    action.setCustomTrigger(
+                            gson.fromJson(userAction.getString("custom_trigger"), Trigger.class));
+
+                    Log.d("TRIGGER", "loaded trigger: " + action.getCustomTrigger().getName());
+                }
             }
             return actions;
 
