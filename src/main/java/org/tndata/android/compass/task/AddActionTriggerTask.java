@@ -1,15 +1,16 @@
 package org.tndata.android.compass.task;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.AsyncTask;
-import android.text.Html;
 import android.util.Log;
+
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
 
@@ -23,13 +24,23 @@ import java.util.Map;
 /**
  * Created by kevin on 6/14/15.
  */
-public class AddActionTriggerTask extends AsyncTask<Void, Void, Void> {
+public class AddActionTriggerTask extends AsyncTask<Void, Void, Action> {
     private String mToken;
     private String mActionMappingId;
     private String mRrule;
     private String mTime;
 
-    public AddActionTriggerTask(String token, String rrule, String time, String actionMappingId) {
+    private AddActionTriggerTaskListener mCallback;
+    private static Gson gson = new GsonBuilder().setFieldNamingPolicy(
+            FieldNamingPolicy.IDENTITY).create();
+
+    public interface AddActionTriggerTaskListener {
+        public void actionTriggerAdded(Action action);
+    }
+
+    public AddActionTriggerTask(AddActionTriggerTaskListener callback, String token,
+                                String rrule, String time, String actionMappingId) {
+        mCallback = callback;
         mToken = token;
         mRrule = rrule;
         mTime = time;
@@ -37,7 +48,7 @@ public class AddActionTriggerTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
+    protected Action doInBackground(Void... params) {
 
         String url = Constants.BASE_URL + "users/actions/" + mActionMappingId + "/";
         Map<String, String> headers = new HashMap<String, String>();
@@ -59,7 +70,6 @@ public class AddActionTriggerTask extends AsyncTask<Void, Void, Void> {
             return null;
         }
         String result = "";
-        String triggerResponse = "";
         try {
 
             BufferedReader bReader = new BufferedReader(new InputStreamReader(
@@ -71,11 +81,15 @@ public class AddActionTriggerTask extends AsyncTask<Void, Void, Void> {
             }
             bReader.close();
 
-            triggerResponse = Html.fromHtml(result).toString();
-
-            JSONObject response = new JSONObject(triggerResponse);
-            Log.d("trigger action", response.toString(2));
-
+            // create an Action object from the result.
+            JSONObject response = new JSONObject(result);
+            Action action = gson.fromJson(response.getString("action"), Action.class);
+            action.setMappingId(response.getInt("id"));
+            if(!response.isNull("custom_trigger")) {
+                action.setCustomTrigger(
+                        gson.fromJson(response.getString("custom_trigger"), Trigger.class));
+            }
+            return action;
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -83,5 +97,11 @@ public class AddActionTriggerTask extends AsyncTask<Void, Void, Void> {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(Action action) {
+        // Send an Action with the populated Trigger (or null)
+        mCallback.actionTriggerAdded(action);
     }
 }
