@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -25,6 +24,7 @@ import org.tndata.android.compass.task.GetUserActionsTask;
 import org.tndata.android.compass.task.GetUserBehaviorsTask;
 import org.tndata.android.compass.ui.ActionCellView;
 import org.tndata.android.compass.ui.BehaviorListView;
+import org.tndata.android.compass.ui.CompassPopupMenu;
 import org.tndata.android.compass.util.ImageCache;
 
 import java.util.ArrayList;
@@ -227,9 +227,9 @@ public class GoalDetailsFragment extends Fragment implements
 
     private void showPopup() {
         //Creating the instance of PopupMenu
-        PopupMenu popup = new PopupMenu(getActivity(), mChooseMore);
+        CompassPopupMenu popup = CompassPopupMenu.newInstance(getActivity(), mChooseMore);
         popup.getMenuInflater().inflate(R.menu.menu_goal_details, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+        popup.setOnMenuItemClickListener(new CompassPopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_popup_add_behavior:
