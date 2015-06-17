@@ -124,10 +124,7 @@ public class GoalDetailsActivity extends BaseTriggerActivity implements
         new DeleteGoalTask(this, this, goals).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         // Delete the goal from the Compass Application (will affect the UI)
-        ArrayList<Goal> applicationGoals = ((CompassApplication) getApplication()).getGoals();
-        applicationGoals.remove(goal);
-        ((CompassApplication) getApplication()).setGoals(applicationGoals);
-
+        ((CompassApplication) getApplication()).removeGoal(goal);
         setResult(Constants.GOALS_CHANGED_RESULT_CODE);
     }
 
