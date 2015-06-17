@@ -115,7 +115,7 @@ public class BaseTriggerActivity extends ActionBarActivity implements
         mTime = String.format("%02d", hourOfDay) + ":" +
                 String.format("%02d", minute);
         Toast.makeText(this,
-                getText(R.string.time_picker_confirmation_toast) + mTime,
+                getString(R.string.time_picker_confirmation_toast, mTime),
                 Toast.LENGTH_SHORT).show();
         showRecurrencePicker();
     }
