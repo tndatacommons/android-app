@@ -87,8 +87,8 @@
     <string name="more_info_header">More Information</string>
 
     <!-- GoalDetailsActivity -->
-    <string name="goal_title_label">Achieve Your Goal</string>
-    <string name="goal_management">Achieve your Goal</string>
+    <string name="goal_title_label">Your Goal</string>
+    <string name="goal_management">Find more Activities</string>
     <string name="menu_goal_new_behaviors">Choose Priorities</string>
     <string name="menu_goal_view_details">View Details</string>
     <string name="menu_goal_remove">Remove Goal</string>

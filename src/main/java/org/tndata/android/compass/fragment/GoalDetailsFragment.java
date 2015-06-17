@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -24,7 +23,6 @@ import org.tndata.android.compass.task.GetUserActionsTask;
 import org.tndata.android.compass.task.GetUserBehaviorsTask;
 import org.tndata.android.compass.ui.ActionCellView;
 import org.tndata.android.compass.ui.BehaviorListView;
-import org.tndata.android.compass.ui.CompassPopupMenu;
 import org.tndata.android.compass.util.ImageCache;
 
 import java.util.ArrayList;
@@ -42,7 +40,6 @@ public class GoalDetailsFragment extends Fragment implements
     private LinearLayout mBehaviorActionsContainer;
     private ProgressBar mProgressBar;
     private GoalDetailsFragmentListener mCallback;
-    private ImageView mChooseMore;
     private Map<Behavior, ArrayList<Action>> mBehaviorActionMap = new HashMap<Behavior,
             ArrayList<Action>>();
     private Boolean reloadData = true;
@@ -92,13 +89,6 @@ public class GoalDetailsFragment extends Fragment implements
                              Bundle savedInstanceState) {
         View v = getActivity().getLayoutInflater().inflate(
                 R.layout.fragment_goal_details, container, false);
-        mChooseMore = (ImageView) v.findViewById(R.id.goal_choose_more_imageview);
-        mChooseMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPopup();
-            }
-        });
 
         TextView titleTextView = (TextView) v.findViewById(R.id.goal_title_textview);
         titleTextView.setText(mGoal.getTitle());
@@ -107,7 +97,7 @@ public class GoalDetailsFragment extends Fragment implements
         goalManagementLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCallback.learnMoreGoal(mGoal);
+                mCallback.chooseBehaviors(mGoal);
             }
         });
 
@@ -225,24 +215,6 @@ public class GoalDetailsFragment extends Fragment implements
         }
     }
 
-    private void showPopup() {
-        //Creating the instance of PopupMenu
-        CompassPopupMenu popup = CompassPopupMenu.newInstance(getActivity(), mChooseMore);
-        popup.getMenuInflater().inflate(R.menu.menu_goal_details, popup.getMenu());
-        popup.setOnMenuItemClickListener(new CompassPopupMenu.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.menu_popup_add_behavior:
-                        mCallback.chooseBehaviors(mGoal);
-                        break;
-                    case R.id.menu_popup_remove_goal:
-                        mCallback.deleteGoal(mGoal);
-                }
-                return true;
-            }
-        });
-        popup.show();
-    }
 
     @Override
     public void deleteUserBehavior(Behavior behavior) {
