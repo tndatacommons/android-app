@@ -17,6 +17,7 @@
     <!-- Time/Recurrence pickers -->
     <string name="time_picker_confirmation_toast">You have selected %1$s</string>
     <string name="recurrence_picker_confirmation_toast">Reminder Saved!</string>
+    <string name="reminder_failed">Failed to save Reminder</string>
 
     <!-- LoginActivity -->
     <string name="terms_title">Terms and Conditions</string>
