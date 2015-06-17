@@ -2,10 +2,8 @@ package org.tndata.android.compass.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -115,6 +113,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
                 .findViewById(R.id.learn_more_description_textview);
 
         View separator = v.findViewById(R.id.learn_more_separator);
+        TextView moreInfoHeader = (TextView) v.findViewById(R.id.learn_more_more_info_header_textview);
         TextView moreInfo = (TextView) v.findViewById(R.id.learn_more_more_info_textview);
 
         TextView addLabelTextView = (TextView) v.findViewById(R.id.learn_more_add_label);
@@ -157,11 +156,23 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
             // this is a learn more screen for an Action
             titleTextView.setText(mAction.getTitle());
             descriptionTextView.setText(mAction.getDescription());
-            addLabelTextView.setText(getText(R.string.action_i_want_this_label));
+
+            // Display different content in the "Add this" label when the user
+            // has already selected the item.
+            if(mAction.getCustomTrigger() != null) {
+                addLabelTextView.setText(
+                        mAction.getCustomTrigger().getRecurrencesDisplay() + " at " +
+                                mAction.getCustomTrigger().getTime());
+            } else if(mAction.getMappingId() > 0) {
+                addLabelTextView.setText(getText(R.string.action_management_label));
+            } else {
+                addLabelTextView.setText(getText(R.string.action_i_want_this_label));
+            }
             if (!mAction.getMoreInfo().isEmpty()) {
                 separator.setVisibility(View.VISIBLE);
                 moreInfo.setText(mAction.getMoreInfo());
                 moreInfo.setVisibility(View.VISIBLE);
+                moreInfoHeader.setVisibility(View.VISIBLE);
             }
         } else if (mGoal != null) {
             // this is a learn more screen for a Goal
@@ -173,11 +184,19 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
             // this is a learn more screen for a Behavior
             titleTextView.setText(mBehavior.getTitle());
             descriptionTextView.setText((mBehavior.getDescription()));
-            addLabelTextView.setText(getText(R.string.behavior_add_to_priorities_label));
+
+            // Display different content in the "Add this" label when the user
+            // has already selected the item.
+            if(mBehavior.getMappingId() > 0) {
+                addLabelTextView.setText(getText(R.string.behavior_management_label));
+            } else {
+                addLabelTextView.setText(getText(R.string.behavior_add_to_priorities_label));
+            }
             if (!mBehavior.getMoreInfo().isEmpty()) {
                 separator.setVisibility(View.VISIBLE);
                 moreInfo.setText(mBehavior.getMoreInfo());
                 moreInfo.setVisibility(View.VISIBLE);
+                moreInfoHeader.setVisibility(View.VISIBLE);
             }
         }
         return v;
@@ -236,17 +255,20 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
     }
 
     private void showPopup() {
-        //Creating the instance of PopupMenu
         PopupMenu popup = new PopupMenu(getActivity(), mAddImageView);
-        //Inflating the Popup using xml file
-        popup.getMenuInflater()
-                .inflate(R.menu.menu_action_popup_chooser, popup.getMenu());
+        // Inflating the correct menu depending on which kind of content we're viewing.
+        if(mAction != null) {
+            popup.getMenuInflater()
+                    .inflate(R.menu.menu_action_popup_chooser, popup.getMenu());
+        }else {
+            popup.getMenuInflater().inflate(R.menu.menu_behavior_popup_chooser, popup.getMenu());
+        }
 
-        //registering popup with OnMenuItemClickListener
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_popup_remove_item:
+                    case R.id.menu_behavior_popup_remove_item:
                         if (mAction != null) {
                             new DeleteActionTask(getActivity(), LearnMoreFragment.this, String
                                     .valueOf(mAction.getMappingId()))
@@ -266,8 +288,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
                 return true;
             }
         });
-
-        popup.show(); //showing popup menu
+        popup.show();
     }
 
     public void actionChanged(Action action) {

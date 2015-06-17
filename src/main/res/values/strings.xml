@@ -14,6 +14,10 @@
     <string name="nav_drawer_action">Compass</string>
     <string name="main_tab_title">My Journey</string>
 
+    <!-- Time/Recurrence pickers -->
+    <string name="time_picker_confirmation_toast">You have selected </string>
+    <string name="recurrence_picker_confirmation_toast">Reminder Saved!</string>
+
     <!-- LoginActivity -->
     <string name="terms_title">Terms and Conditions</string>
     <string name="launcher_sign_up">SIGN UP</string>
@@ -72,6 +76,11 @@
     <string name="default_no_content_subtitle">Click the button below to begin</string>
     <string name="category_goals">%1$s goals</string>
     <string name="category_goals_add">What are your %1$s goals?</string>
+
+    <!-- LearnMoreFragment -->
+    <string name="behavior_management_label">Manage your Priority</string>
+    <string name="action_management_label">Set a Reminder for your Action</string>
+    <string name="more_info_header">More Information</string>
 
     <!-- GoalDetailsActivity -->
     <string name="goal_title_label">Achieve Your Goal</string>

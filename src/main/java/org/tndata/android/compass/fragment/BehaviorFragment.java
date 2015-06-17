@@ -1,19 +1,5 @@
 package org.tndata.android.compass.fragment;
 
-import java.util.ArrayList;
-
-import org.tndata.android.compass.CompassApplication;
-import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Behavior;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.task.ActionLoaderTask;
-import org.tndata.android.compass.task.ActionLoaderTask.ActionLoaderListener;
-import org.tndata.android.compass.ui.ActionCellView;
-import org.tndata.android.compass.util.ImageCache;
-import org.tndata.android.compass.util.ImageHelper;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.AsyncTask;
@@ -30,6 +16,20 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import org.tndata.android.compass.CompassApplication;
+import org.tndata.android.compass.R;
+import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.Behavior;
+import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.task.ActionLoaderTask;
+import org.tndata.android.compass.task.ActionLoaderTask.ActionLoaderListener;
+import org.tndata.android.compass.ui.ActionCellView;
+import org.tndata.android.compass.util.ImageCache;
+import org.tndata.android.compass.util.ImageHelper;
+
+import java.util.ArrayList;
 
 public class BehaviorFragment extends Fragment implements ActionLoaderListener, ActionCellView
         .ActionViewListener {
@@ -215,17 +215,14 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
         PopupMenu popup = new PopupMenu(getActivity(), mAddImageView);
         //Inflating the Popup using xml file
         popup.getMenuInflater()
-                .inflate(R.menu.menu_action_popup_chooser, popup.getMenu());
+                .inflate(R.menu.menu_behavior_popup_chooser, popup.getMenu());
 
         //registering popup with OnMenuItemClickListener
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.menu_popup_remove_item:
+                    case R.id.menu_behavior_popup_remove_item:
                         mCallback.deleteBehavior(mBehavior);
-                        break;
-                    case R.id.menu_popup_edit_item:
-                        mCallback.fireBehaviorPicker(mBehavior);
                         break;
                 }
                 return true;

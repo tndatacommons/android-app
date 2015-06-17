@@ -14,6 +14,7 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
     private String notification_text = "";
     private String icon_url = "";
     private String image_url = "";
+    private Trigger custom_trigger;
 
     public Action() {
     }
@@ -115,6 +116,14 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
 
     public void setBehavior_id(int behavior_id) {
         this.behavior_id = behavior_id;
+    }
+
+    public Trigger getCustomTrigger() {
+        return custom_trigger;
+    }
+
+    public void setCustomTrigger(Trigger trigger) {
+        this.custom_trigger = trigger;
     }
 
     @Override
