@@ -115,7 +115,7 @@ public class BaseTriggerActivity extends ActionBarActivity implements
         mTime = String.format("%02d", hourOfDay) + ":" +
                 String.format("%02d", minute);
         Toast.makeText(this,
-                getText(R.string.time_picker_confirmation_toast) + mTime,
+                getString(R.string.time_picker_confirmation_toast, mTime),
                 Toast.LENGTH_SHORT).show();
         showRecurrencePicker();
     }
@@ -145,7 +145,7 @@ public class BaseTriggerActivity extends ActionBarActivity implements
                     getText(R.string.recurrence_picker_confirmation_toast),
                     Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Failed to save Reminder", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getText(R.string.reminder_failed), Toast.LENGTH_SHORT).show();
         }
     }
 }
