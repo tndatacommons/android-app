@@ -80,8 +80,8 @@ public class Trigger implements Serializable, Comparable<Trigger> {
             result = false;
         } else if (object == this) {
             result = true;
-        } else if (object instanceof Action) {
-            if (this.getId() == ((Action) object).getId()) {
+        } else if (object instanceof Trigger) {
+            if (this.getId() == ((Trigger) object).getId()) {
                 result = true;
             }
         }
