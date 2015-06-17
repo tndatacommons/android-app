@@ -6,6 +6,10 @@
         android:title="@string/menu_goal_new_behaviors"/>
 
     <item
+        android:id="@+id/menu_popup_view_details"
+        android:title="@string/menu_goal_view_details"/>
+
+    <item
         android:id="@+id/menu_popup_remove_goal"
         android:title="@string/menu_goal_remove"/>
 
