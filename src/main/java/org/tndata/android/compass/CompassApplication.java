@@ -44,6 +44,10 @@ public class CompassApplication extends Application {
         mCategories = categories;
     }
 
+    public void removeCategory(Category category) {
+        mCategories.remove(category);
+    }
+    
     public ArrayList<Goal> getGoals() {
         return mGoals;
     }
@@ -52,8 +56,16 @@ public class CompassApplication extends Application {
         mGoals = goals;
     }
 
+    public void removeGoal(Goal goal) {
+        mGoals.remove(goal);
+    }
+
     public ArrayList<Action> getActions() {
         return mActions;
+    }
+
+    public void removeAction(Action action) {
+        mActions.remove(action);
     }
 
     public void setActions(ArrayList<Action> actions) {
