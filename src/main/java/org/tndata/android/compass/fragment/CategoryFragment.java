@@ -1,10 +1,13 @@
 package org.tndata.android.compass.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -22,14 +26,17 @@ import org.tndata.android.compass.activity.GoalTryActivity;
 import org.tndata.android.compass.adapter.CategoryFragmentAdapter;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.task.DeleteGoalTask;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
 
-public class CategoryFragment extends Fragment implements CategoryFragmentAdapter
-        .CategoryFragmentAdapterInterface {
+public class CategoryFragment extends Fragment implements
+        CategoryFragmentAdapter.CategoryFragmentAdapterInterface,
+        DeleteGoalTask.DeleteGoalTaskListener{
+
     private Category mCategory;
     private FloatingActionButton mFloatingActionButton;
     private RecyclerView mRecyclerView;
@@ -193,6 +200,28 @@ public class CategoryFragment extends Fragment implements CategoryFragmentAdapte
         }
     }
 
+    private void removeGoal(Goal goal) {
+        // NOTE: this is similar to code in GoalDetailsActivity.deleteGoal(); refactor?
+        // Delete the goal from the backend api.
+        ArrayList<String> goals = new ArrayList<String>();
+        goals.add(String.valueOf(goal.getMappingId()));
+        new DeleteGoalTask(getActivity(), this, goals).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        // Remove the goal from the category's collection
+        mCategory.removeGoal(goal);
+
+        // Delete the goal from the Compass Application's collection
+        ((CompassApplication) getActivity().getApplication()).removeGoal(goal);
+
+        setGoals(); // reset the goals collection for this fragment.
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void goalsDeleted() {
+        Toast.makeText(getActivity(), getText(R.string.goal_deleted), Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     public void chooseBehaviors(Goal goal) {
         Intent intent = new Intent(getActivity()
@@ -209,6 +238,28 @@ public class CategoryFragment extends Fragment implements CategoryFragmentAdapte
         intent.putExtra("goal", goal);
         intent.putExtra("category", mCategory);
         startActivityForResult(intent, Constants.GOALS_CHANGED_RESULT_CODE);
+    }
+
+    @Override
+    public void deleteGoal(final Goal goal) {
+        Log.d(TAG, "Deleting Goal: " + goal.getTitle());
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("You are about to permanently remove this")
+                .setTitle("Delete Goal?")
+                .setNegativeButton(R.string.picker_cancel, new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        removeGoal(goal);
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 }
