@@ -13,6 +13,8 @@
     <string name="action_my_privacy">My Privacy</string>
     <string name="nav_drawer_action">Compass</string>
     <string name="main_tab_title">My Journey</string>
+    <string name="popup_menu_content_description">View More Options</string>
+    <string name="goal_deleted">Goal Deleted</string>
 
     <!-- Time/Recurrence pickers -->
     <string name="time_picker_confirmation_toast">You have selected %1$s</string>
@@ -87,6 +89,7 @@
     <string name="goal_title_label">Achieve Your Goal</string>
     <string name="goal_management">Achieve your Goal</string>
     <string name="menu_goal_new_behaviors">Choose New Priorities</string>
+    <string name="menu_goal_view_details">View Details</string>
     <string name="menu_goal_remove">Remove Goal</string>
 
     <!-- BehaviorActivity -->
