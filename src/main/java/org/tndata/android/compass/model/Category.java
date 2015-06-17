@@ -79,6 +79,10 @@ public class Category extends TDCBase implements Serializable,
         this.goals = goals;
     }
 
+    public void removeGoal(Goal goal) {
+        this.goals.remove(goal);
+    }
+
     public String getColor() {
         return color;
     }
