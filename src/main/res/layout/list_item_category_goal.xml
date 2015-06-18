@@ -92,7 +92,7 @@
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/list_item_category_goal_more_info_button"
+            android:id="@+id/list_item_category_goal_more_info_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"

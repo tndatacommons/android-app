@@ -55,7 +55,7 @@ public class CategoryFragmentAdapter extends
             menuImageView = (ImageView) view.findViewById(R.id.goal_popup_imageview);
 
             moreInfoTextView = (TextView) view.findViewById(R.id
-                    .list_item_category_goal_more_info_button);
+                    .list_item_category_goal_more_info_textview);
         }
 
         public void setCircleViewBackgroundColor(String colorString) {
@@ -89,7 +89,6 @@ public class CategoryFragmentAdapter extends
     private Category mCategory;
     private List<Goal> mItems;
     private CategoryFragmentAdapterInterface mCallback;
-    private static final String TAG = "CategoryFragmentAdapter";
 
     public CategoryFragmentAdapter(Context context, List<Goal> objects, Category category,
                                    CategoryFragmentAdapterInterface callback) {
@@ -164,9 +163,7 @@ public class CategoryFragmentAdapter extends
         return new CategoryGoalViewHolder(itemView);
     }
 
-    public void showPopup(View anchor, Goal goal) {
-
-        final Goal localGoal = goal;
+    public void showPopup(final View anchor, final Goal goal) {
 
         CompassPopupMenu popup = CompassPopupMenu.newInstance(mContext, anchor);
         popup.getMenuInflater().inflate(R.menu.menu_goal_details, popup.getMenu());
@@ -174,13 +171,13 @@ public class CategoryFragmentAdapter extends
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_popup_add_behavior:
-                        mCallback.chooseBehaviors(localGoal);
+                        mCallback.chooseBehaviors(goal);
                         break;
                     case R.id.menu_popup_view_details:
-                        mCallback.viewGoal(localGoal);
+                        mCallback.viewGoal(goal);
                         break;
                     case R.id.menu_popup_remove_goal:
-                        mCallback.deleteGoal(localGoal);
+                        mCallback.deleteGoal(goal);
                         break;
                 }
                 return true;
