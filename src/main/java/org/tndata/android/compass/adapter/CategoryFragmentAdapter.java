@@ -38,7 +38,7 @@ public class CategoryFragmentAdapter extends
         LinearLayout goalContainer;
         ImageView iconImageView;
         ImageView menuImageView;
-        TextView moreInfoButton;
+        TextView moreInfoTextView;
 
         public CategoryGoalViewHolder(View view) {
             super(view);
@@ -54,7 +54,7 @@ public class CategoryFragmentAdapter extends
                     .list_item_category_goal_icon_imageview);
             menuImageView = (ImageView) view.findViewById(R.id.goal_popup_imageview);
 
-            moreInfoButton = (TextView) view.findViewById(R.id
+            moreInfoTextView = (TextView) view.findViewById(R.id
                     .list_item_category_goal_more_info_button);
         }
 
@@ -75,11 +75,11 @@ public class CategoryFragmentAdapter extends
             if(descriptionTextView.getVisibility() == View.GONE) {
                 circleView.setVisibility(View.GONE);
                 descriptionTextView.setVisibility(View.VISIBLE);
-                moreInfoButton.setVisibility(View.VISIBLE);
+                moreInfoTextView.setVisibility(View.VISIBLE);
             }else {
                 circleView.setVisibility(View.VISIBLE);
                 descriptionTextView.setVisibility(View.GONE);
-                moreInfoButton.setVisibility(View.GONE);
+                moreInfoTextView.setVisibility(View.GONE);
             }
         }
 
@@ -125,7 +125,7 @@ public class CategoryFragmentAdapter extends
         ((CategoryGoalViewHolder) viewHolder).iconImageView.setImageResource(
                 goal.getProgressIcon());
 
-        ((CategoryGoalViewHolder) viewHolder).moreInfoButton.setOnClickListener(
+        ((CategoryGoalViewHolder) viewHolder).moreInfoTextView.setOnClickListener(
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
