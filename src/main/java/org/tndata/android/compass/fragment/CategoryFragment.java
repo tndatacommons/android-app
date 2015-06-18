@@ -245,8 +245,8 @@ public class CategoryFragment extends Fragment implements
         Log.d(TAG, "Deleting Goal: " + goal.getTitle());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("You are about to permanently remove this")
-                .setTitle("Delete Goal?")
+        builder.setMessage(getText(R.string.goal_dialog_delete_message))
+                .setTitle(getText(R.string.goal_dialog_delete_title))
                 .setNegativeButton(R.string.picker_cancel, new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();

@@ -17,6 +17,10 @@
     <string name="goal_deleted">Goal Deleted</string>
     <string name="goal_card_details_label">MORE INFO</string>
 
+    <!-- CategoryFragment -->
+    <string name="goal_dialog_delete_title">Delete Goal?</string>
+    <string name="goal_dialog_delete_message">You are about to permanently remove this</string>
+
     <!-- Time/Recurrence pickers -->
     <string name="time_picker_confirmation_toast">You have selected %1$s</string>
     <string name="recurrence_picker_confirmation_toast">Reminder Saved!</string>
