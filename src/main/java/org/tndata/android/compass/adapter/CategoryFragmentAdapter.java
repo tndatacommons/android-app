@@ -7,9 +7,9 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -18,14 +18,17 @@ import android.widget.TextView;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.ui.CompassPopupMenu;
 
 import java.util.List;
 
 public class CategoryFragmentAdapter extends
         RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
     public interface CategoryFragmentAdapterInterface {
         public void chooseBehaviors(Goal goal);
         public void viewGoal(Goal goal);
+        public void deleteGoal(Goal goal);
     }
 
     static class CategoryGoalViewHolder extends RecyclerView.ViewHolder {
@@ -34,7 +37,8 @@ public class CategoryFragmentAdapter extends
         RelativeLayout circleView;
         LinearLayout goalContainer;
         ImageView iconImageView;
-        Button moreInfoButton;
+        ImageView menuImageView;
+        TextView moreInfoTextView;
 
         public CategoryGoalViewHolder(View view) {
             super(view);
@@ -48,9 +52,10 @@ public class CategoryFragmentAdapter extends
                     .list_item_category_goal_goal_container);
             iconImageView = (ImageView) view.findViewById(R.id
                     .list_item_category_goal_icon_imageview);
+            menuImageView = (ImageView) view.findViewById(R.id.goal_popup_imageview);
 
-            moreInfoButton = (Button) view.findViewById(R.id
-                    .list_item_category_goal_more_info_button);
+            moreInfoTextView = (TextView) view.findViewById(R.id
+                    .list_item_category_goal_more_info_textview);
         }
 
         public void setCircleViewBackgroundColor(String colorString) {
@@ -70,11 +75,11 @@ public class CategoryFragmentAdapter extends
             if(descriptionTextView.getVisibility() == View.GONE) {
                 circleView.setVisibility(View.GONE);
                 descriptionTextView.setVisibility(View.VISIBLE);
-                moreInfoButton.setVisibility(View.VISIBLE);
+                moreInfoTextView.setVisibility(View.VISIBLE);
             }else {
                 circleView.setVisibility(View.VISIBLE);
                 descriptionTextView.setVisibility(View.GONE);
-                moreInfoButton.setVisibility(View.GONE);
+                moreInfoTextView.setVisibility(View.GONE);
             }
         }
 
@@ -119,13 +124,23 @@ public class CategoryFragmentAdapter extends
         ((CategoryGoalViewHolder) viewHolder).iconImageView.setImageResource(
                 goal.getProgressIcon());
 
-        ((CategoryGoalViewHolder) viewHolder).moreInfoButton.setOnClickListener(
+        ((CategoryGoalViewHolder) viewHolder).moreInfoTextView.setOnClickListener(
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mCallback.viewGoal(goal);
                 }
             }
+        );
+
+        // Hook up the popup menu
+        ((CategoryGoalViewHolder) viewHolder).menuImageView.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showPopup(v, goal);
+                    }
+                }
         );
 
         // Expand/Collapse the card when tapped
@@ -146,6 +161,29 @@ public class CategoryFragmentAdapter extends
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
         View itemView = inflater.inflate(R.layout.list_item_category_goal, viewGroup, false);
         return new CategoryGoalViewHolder(itemView);
+    }
+
+    public void showPopup(final View anchor, final Goal goal) {
+
+        CompassPopupMenu popup = CompassPopupMenu.newInstance(mContext, anchor);
+        popup.getMenuInflater().inflate(R.menu.menu_goal_details, popup.getMenu());
+        popup.setOnMenuItemClickListener(new CompassPopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_popup_add_behavior:
+                        mCallback.chooseBehaviors(goal);
+                        break;
+                    case R.id.menu_popup_view_details:
+                        mCallback.viewGoal(goal);
+                        break;
+                    case R.id.menu_popup_remove_goal:
+                        mCallback.deleteGoal(goal);
+                        break;
+                }
+                return true;
+            }
+        });
+        popup.show();
     }
 
 }

@@ -12,7 +12,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,6 +25,7 @@ import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.task.ActionLoaderTask;
 import org.tndata.android.compass.task.ActionLoaderTask.ActionLoaderListener;
 import org.tndata.android.compass.ui.ActionCellView;
+import org.tndata.android.compass.ui.CompassPopupMenu;
 import org.tndata.android.compass.util.ImageCache;
 import org.tndata.android.compass.util.ImageHelper;
 
@@ -212,13 +212,14 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
 
     private void showPopup() {
         //Creating the instance of PopupMenu
-        PopupMenu popup = new PopupMenu(getActivity(), mAddImageView);
+        CompassPopupMenu popup = CompassPopupMenu.newInstance(getActivity(), mAddImageView);
+
         //Inflating the Popup using xml file
         popup.getMenuInflater()
                 .inflate(R.menu.menu_behavior_popup_chooser, popup.getMenu());
 
         //registering popup with OnMenuItemClickListener
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+        popup.setOnMenuItemClickListener(new CompassPopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_behavior_popup_remove_item:

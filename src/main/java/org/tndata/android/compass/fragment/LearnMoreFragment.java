@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -22,6 +21,7 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.task.AddActionTask;
 import org.tndata.android.compass.task.DeleteActionTask;
+import org.tndata.android.compass.ui.CompassPopupMenu;
 import org.tndata.android.compass.util.ImageHelper;
 
 import java.util.ArrayList;
@@ -255,7 +255,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
     }
 
     private void showPopup() {
-        PopupMenu popup = new PopupMenu(getActivity(), mAddImageView);
+        CompassPopupMenu popup = CompassPopupMenu.newInstance(getActivity(), mAddImageView);
         // Inflating the correct menu depending on which kind of content we're viewing.
         if(mAction != null) {
             popup.getMenuInflater()
@@ -264,7 +264,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
             popup.getMenuInflater().inflate(R.menu.menu_behavior_popup_chooser, popup.getMenu());
         }
 
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+        popup.setOnMenuItemClickListener(new CompassPopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_popup_remove_item:

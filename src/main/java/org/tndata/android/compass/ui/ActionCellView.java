@@ -7,7 +7,6 @@ import android.util.AttributeSet;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -92,13 +91,13 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
 
     private void showPopup() {
         //Creating the instance of PopupMenu
-        PopupMenu popup = new PopupMenu(mContext, mAddImageView);
+        CompassPopupMenu popup = CompassPopupMenu.newInstance(mContext, mAddImageView);
         //Inflating the Popup using xml file
         popup.getMenuInflater()
                 .inflate(R.menu.menu_action_popup_chooser, popup.getMenu());
 
         //registering popup with OnMenuItemClickListener
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+        popup.setOnMenuItemClickListener(new CompassPopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_popup_remove_item:

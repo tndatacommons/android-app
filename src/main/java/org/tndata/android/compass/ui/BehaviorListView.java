@@ -6,7 +6,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
@@ -85,10 +84,10 @@ public class BehaviorListView extends LinearLayout {
 
     private void showPopup() {
         //Creating the instance of PopupMenu
-        PopupMenu popup = new PopupMenu(mContext, mAddImageView);
+        CompassPopupMenu popup = CompassPopupMenu.newInstance(mContext, mAddImageView);
         popup.getMenuInflater()
                 .inflate(R.menu.menu_behavior_popup_chooser, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+        popup.setOnMenuItemClickListener(new CompassPopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_behavior_popup_remove_item:
