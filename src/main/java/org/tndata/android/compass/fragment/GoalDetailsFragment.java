@@ -7,10 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.tndata.android.compass.CompassApplication;
@@ -23,7 +20,7 @@ import org.tndata.android.compass.task.GetUserActionsTask;
 import org.tndata.android.compass.task.GetUserBehaviorsTask;
 import org.tndata.android.compass.ui.ActionCellView;
 import org.tndata.android.compass.ui.BehaviorListView;
-import org.tndata.android.compass.util.ImageCache;
+import org.tndata.android.compass.ui.button.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,10 +35,10 @@ public class GoalDetailsFragment extends Fragment implements
     private Category mCategory;
     private Goal mGoal;
     private LinearLayout mBehaviorActionsContainer;
-    private ProgressBar mProgressBar;
     private GoalDetailsFragmentListener mCallback;
     private Map<Behavior, ArrayList<Action>> mBehaviorActionMap = new HashMap<Behavior,
             ArrayList<Action>>();
+    private FloatingActionButton mFloatingActionButton;
     private Boolean reloadData = true;
 
     private static final String TAG = "GoalDetailsFragment";
@@ -93,24 +90,15 @@ public class GoalDetailsFragment extends Fragment implements
         TextView titleTextView = (TextView) v.findViewById(R.id.goal_title_textview);
         titleTextView.setText(mGoal.getTitle());
 
-        TextView goalManagementLabel = (TextView) v.findViewById(R.id.goal_management_label);
-        goalManagementLabel.setOnClickListener(new View.OnClickListener() {
+        mBehaviorActionsContainer = (LinearLayout) v.findViewById(R.id.behavior_actions_container);
+
+        mFloatingActionButton = (FloatingActionButton) v.findViewById(R.id.goal_fab_button);
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 mCallback.chooseBehaviors(mGoal);
             }
         });
-
-        RelativeLayout goalContentContainer = (RelativeLayout) v
-                .findViewById(R.id.goal_content_container);
-
-        if (mGoal.getIconUrl() != null && !mGoal.getIconUrl().isEmpty()) {
-            ImageView iconImageView = (ImageView) v.findViewById(R.id.goal_icon_imageview);
-            ImageCache.instance(getActivity().getApplicationContext()).loadBitmap(iconImageView,
-                    mGoal.getIconUrl(), false);
-        }
-        mProgressBar = (ProgressBar) v.findViewById(R.id.goal_progressbar);
-        mBehaviorActionsContainer = (LinearLayout) v.findViewById(R.id.behavior_actions_container);
         return v;
     }
 
