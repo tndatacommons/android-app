@@ -44,7 +44,7 @@
                 android:padding="3dp"
                 android:layout_marginRight="5dp"
                 android:contentDescription="@string/behavior_add_to_priorities_label"
-                android:src="@drawable/ic_selected_white"
+                android:src="@drawable/ic_check_white_24dp"
                 android:background="@drawable/circle_secondary"/>
 
             <ProgressBar

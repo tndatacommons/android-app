@@ -28,7 +28,7 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/action_image_description"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_selected_white"
+        android:src="@drawable/ic_check_white_24dp"
         android:background="@drawable/circle_secondary"/>
 
     <ProgressBar
