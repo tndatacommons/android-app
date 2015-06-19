@@ -24,7 +24,7 @@
             android:layout_centerHorizontal="true"
             android:layout_below="@id/list_item_category_grid_category_textview"
             android:contentDescription="@string/category_image_description"
-            android:src="@drawable/ic_selected_white"
+            android:src="@drawable/ic_check_white_24dp"
             android:visibility="gone" />
     </RelativeLayout>
 

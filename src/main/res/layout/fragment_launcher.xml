@@ -14,29 +14,18 @@
         android:scaleType="centerCrop"
         android:src="@drawable/splash_logo" />
 
-    <TextView
-        android:id="@+id/launcher_tagline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/launcher_image"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp"
-        android:text="@string/launcher_tagline"
-        android:textColor="@color/grow_primary"
-        android:textSize="@dimen/launcher_tagline_text_size" />
-
     <Button
         android:id="@+id/launcher_sign_up_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/launcher_tagline"
         android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
         android:background="@drawable/button_positive_rounded"
         android:minHeight="@dimen/paper_flat_button_min_height"
         android:minWidth="@dimen/paper_flat_login_button_min_width"
         android:text="@string/launcher_sign_up"
-        android:textColor="@color/button_positive_text_color" />
+        android:textColor="@color/button_positive_text_color"
+        android:layout_below="@id/launcher_image" />
 
     <Button
         android:id="@+id/launcher_login_button"
@@ -56,9 +45,9 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/launcher_tagline"
         android:layout_centerHorizontal="true"
         android:layout_margin="20dp"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:layout_below="@id/launcher_image" />
 
 </RelativeLayout>

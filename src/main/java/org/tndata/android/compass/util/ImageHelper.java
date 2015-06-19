@@ -44,11 +44,11 @@ public class ImageHelper {
         switch (style) {
             case SELECTED:
                 color = resources.getColor(R.color.grow_primary_dark);
-                imageView.setImageResource(R.drawable.ic_selected_white);
+                imageView.setImageResource(R.drawable.ic_check_white_24dp);
                 break;
             case ADD:
                 color = resources.getColor(R.color.grow_secondary);
-                imageView.setImageResource(R.drawable.ic_action_new_large);
+                imageView.setImageResource(R.drawable.ic_add_white_24dp);
                 break;
             case CHOOSE:
                 color = resources.getColor(android.R.color.transparent);
