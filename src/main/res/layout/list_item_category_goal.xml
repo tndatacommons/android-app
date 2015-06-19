@@ -72,8 +72,8 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
                 android:layout_margin="0dp"
-                android:padding="0dp"
-                android:src="@drawable/ic_more_vert"
+                android:padding="5dp"
+                android:src="@drawable/ic_more_horiz_black_18dp"
                 android:contentDescription="@string/popup_menu_content_description" />
 
         </RelativeLayout>

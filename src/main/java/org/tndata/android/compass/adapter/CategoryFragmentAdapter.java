@@ -124,11 +124,25 @@ public class CategoryFragmentAdapter extends
         ((CategoryGoalViewHolder) viewHolder).iconImageView.setImageResource(
                 goal.getProgressIcon());
 
-        ((CategoryGoalViewHolder) viewHolder).moreInfoTextView.setOnClickListener(
+        final Boolean goalIsEmpty = goal.getBehaviors().isEmpty();
+        TextView ctaTextView = ((CategoryGoalViewHolder) viewHolder).moreInfoTextView;
+        if(goalIsEmpty) {
+            ctaTextView.setText(R.string.goal_card_add_label);
+        } else {
+            ctaTextView.setText(R.string.goal_card_details_label);
+        }
+
+        ctaTextView.setOnClickListener(
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mCallback.viewGoal(goal);
+                    if(goalIsEmpty) {
+                        // when the user has *not* selected Behaviors/Actions, launch the picker
+                        mCallback.chooseBehaviors(goal);
+                    } else {
+                        // When the user has selected Behaviors/Actions, view the goal's details
+                        mCallback.viewGoal(goal);
+                    }
                 }
             }
         );
@@ -170,12 +184,6 @@ public class CategoryFragmentAdapter extends
         popup.setOnMenuItemClickListener(new CompassPopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.menu_popup_add_behavior:
-                        mCallback.chooseBehaviors(goal);
-                        break;
-                    case R.id.menu_popup_view_details:
-                        mCallback.viewGoal(goal);
-                        break;
                     case R.id.menu_popup_remove_goal:
                         mCallback.deleteGoal(goal);
                         break;
