@@ -99,6 +99,14 @@
     <string name="menu_goal_view_details">View Details</string>
     <string name="menu_goal_remove">Remove Goal</string>
 
+    <!-- ActionTriggerActivity -->
+    <string name="trigger_default_action_title">Reminders for this Action</string>
+    <string name="trigger_switch_label">Enable Reminders</string>
+    <string name="trigger_time_picker_label">Select a time</string>
+    <string name="trigger_date_picker_label">Select a Date</string>
+    <string name="trigger_recurrence_picker_label">Select Repeat Options</string>
+    <string name="trigger_finished_label">DONE</string>
+
     <!-- BehaviorActivity -->
     <string name="learn_more_no_thanks">NO THANKS</string>
     <string name="learn_more_title_label">Learn more</string>

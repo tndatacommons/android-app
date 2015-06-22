@@ -1,33 +1,33 @@
 package org.tndata.android.compass.activity;
 
-import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Window;
+
+import com.doomonafireball.betterpickers.calendardatepicker.CalendarDatePickerDialog;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.ActionTriggerFragment;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
 
-public class ActionTriggerActivity extends ActionBarActivity implements
+public class ActionTriggerActivity extends BaseTriggerActivity implements
         ActionTriggerFragment.ActionTriggerFragmentListener {
 
     // TODO: A simple activity that lets users set their triggers
     // TODO: this should extend BaseTriggerActivity
-    // - move time/recurrence pickers here
-    // - launch this from the "Edit Notifications" popup in GoalDetailsActivity
-    // - ensure we display default values for given Actions.
-    // - implement the AddActionTriggerTaskListener interface to save updates.
+    // TODO: - move time/recurrence pickers here
+    // todo: - launch this from the "Edit Notifications" popup in GoalDetailsActivity
+    // todo: - ensure we display default values for given Actions.
+    // todo: - implement the AddActionTriggerTaskListener interface to save updates.
 
     private Toolbar mToolbar;
     private Goal mGoal;
     private Action mAction;
+    private ActionTriggerFragment fragment;
 
-    public void todo() {
-        // TODO: implement anything the fragment needs.
-    }
+    private static final String TAG = "ActionTriggerActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +45,55 @@ public class ActionTriggerActivity extends ActionBarActivity implements
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        Fragment fragment = ActionTriggerFragment.newInstance(mGoal, mAction);
+        fragment = ActionTriggerFragment.newInstance(mGoal, mAction);
         if (fragment != null) {
             getFragmentManager().beginTransaction()
                     .replace(R.id.base_content, fragment).commit();
+        }
+    }
+
+    public void disableTrigger() {
+        Log.d(TAG, "----> REMINDERS OFF");  // TODO: figure out how to disable.
+    }
+
+    public void fireTimePicker() {
+        Log.d(TAG, "----> fireTimePicker");
+        showTimePicker();
+    }
+
+    public void fireDatePicker() {
+        Log.d(TAG, "----> fireDatePicker");
+        showDatePicker();
+    }
+
+    public void fireRecurrencePicker() {
+        Log.d(TAG, "----> fireRecurrencePicker");
+        showRecurrencePicker();
+    }
+
+    public void fireSaveTrigger() {
+        // TODO: ensure all the trigger details are saved and close the activity.
+        Log.d(TAG, "----> fireSaveTrigger");
+    }
+
+    @Override
+    public void onDialogTimeSet(int reference, int hourOfDay, int minute) {
+        String time = String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute);
+        setTime(time);
+        if(fragment != null) {
+            fragment.updateTimeView(hourOfDay, minute);
+        }
+    }
+
+    @Override
+    public void onDateSet(CalendarDatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth) {
+        String date = String.format("%4d", year) + "-" +
+                String.format("%02d", monthOfYear) + "-" +
+                String.format("%02d", dayOfMonth);
+
+        setDate(date);
+        if(fragment != null) {
+            fragment.updateDateView(year, monthOfYear, dayOfMonth);
         }
     }
 

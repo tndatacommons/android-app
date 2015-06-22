@@ -25,6 +25,7 @@ import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
 
+// TODO: change back to subclass of BaseTriggerActivity, and remove trigger interface methods
 public class GoalDetailsActivity extends BaseTriggerActivity implements
         LearnMoreFragment.LearnMoreFragmentListener,
         GoalDetailsFragment.GoalDetailsFragmentListener,
@@ -58,7 +59,10 @@ public class GoalDetailsActivity extends BaseTriggerActivity implements
         mGoal = (Goal) getIntent().getSerializableExtra("goal");
 
         mToolbar = (Toolbar) findViewById(R.id.tool_bar);
-        mToolbar.setTitle(mGoal.getTitle());
+
+        if(mGoal != null && !mGoal.getTitle().isEmpty()) {
+            mToolbar.setTitle(mGoal.getTitle());
+        }
         mToolbar.getBackground().setAlpha(255);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
         setSupportActionBar(mToolbar);
