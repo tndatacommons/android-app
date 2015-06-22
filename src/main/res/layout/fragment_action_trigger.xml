@@ -1,25 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/view_goal_container"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:layout_marginTop="8dp"
-    android:layout_marginLeft="8dp"
     android:layout_marginBottom="8dp">
 
     <TextView
         android:id="@+id/action_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Reminders for this Action"
+        android:layout_margin="30dp" />
+
+    <View style="@style/Divider"/>
+
+    <RelativeLayout
+        android:id="@+id/notification_option_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:gravity="left"
+        android:layout_gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/notification_option_icon_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="10dp"
+            android:src="@drawable/ic_alarm_black_24dp" />
+
+        <!--<TextView-->
+            <!--android:id="@+id/notification_option_title"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_toEndOf="@+id/notification_option_icon_imageview"-->
+            <!--android:layout_toRightOf="@+id/notification_option_icon_imageview"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginLeft="30dp"-->
+            <!--android:text="Enable Reminders" />-->
+
+        <Switch
+            android:id="@+id/notification_option_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/notification_option_icon_imageview"
+            android:layout_toRightOf="@+id/notification_option_icon_imageview"
+            android:layout_marginLeft="30dp"
+            android:text="Enable Reminders"
+            android:textColor="@color/dark_text_color"
+            android:theme="@style/Preference.SwitchPreference"
+            android:layout_centerVertical="true"
+            android:checked="true" />
+    </RelativeLayout>
+
+    <View
+    android:layout_marginLeft="76dp"
+    style="@style/Divider"/>
 
     <RelativeLayout
         android:id="@+id/time_picker_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:gravity="center_vertical"
+        android:gravity="left"
         android:layout_gravity="center_vertical">
 
         <ImageView
@@ -29,15 +77,24 @@
             android:layout_centerInParent="true"
             android:layout_alignParentLeft="true"
             android:layout_margin="10dp"
-            android:src="@drawable/ic_info_grey"/>
+            android:src="@drawable/ic_access_time_black_24dp" />
 
         <TextView
             android:id="@+id/time_picker_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/time_picker_icon_imageview"
+            android:layout_toRightOf="@+id/time_picker_icon_imageview"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="30dp"
             android:text="Pick Time" />
 
     </RelativeLayout>
+
+    <View
+        android:layout_marginLeft="76dp"
+        style="@style/Divider"/>
+
 
     <RelativeLayout
         android:id="@+id/date_picker_container"
@@ -54,15 +111,23 @@
             android:layout_centerInParent="true"
             android:layout_alignParentLeft="true"
             android:layout_margin="10dp"
-            android:src="@drawable/ic_info_grey"/>
+            android:src="@drawable/ic_event_black_24dp"/>
 
         <TextView
             android:id="@+id/date_picker_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/date_picker_icon_imageview"
+            android:layout_toRightOf="@+id/date_picker_icon_imageview"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="30dp"
             android:text="Pick a Date" />
 
     </RelativeLayout>
+
+    <View
+        android:layout_marginLeft="76dp"
+        style="@style/Divider"/>
 
     <RelativeLayout
         android:id="@+id/recurrence_picker_container"
@@ -79,14 +144,22 @@
             android:layout_centerInParent="true"
             android:layout_alignParentLeft="true"
             android:layout_margin="10dp"
-            android:src="@drawable/ic_info_grey"/>
+            android:src="@drawable/ic_autorenew_black_24dp"/>
 
         <TextView
             android:id="@+id/recurrence_picker_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/recurrence_picker_icon_imageview"
+            android:layout_toRightOf="@+id/recurrence_picker_icon_imageview"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="30dp"
             android:text="Set Repeat Options" />
 
     </RelativeLayout>
+
+    <View
+        android:layout_marginLeft="76dp"
+        style="@style/Divider"/>
 
 </LinearLayout>
