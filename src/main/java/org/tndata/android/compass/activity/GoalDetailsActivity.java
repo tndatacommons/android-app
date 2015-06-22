@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 
@@ -231,7 +232,13 @@ public class GoalDetailsActivity extends BaseTriggerActivity implements
 
     @Override
     public void fireActionPicker(Action action) {
-        getRecurrenceSchedule(action, null);
+        Log.d("GoalDetails", "====> fireActionPicker for " + action.getTitle());
+        //getRecurrenceSchedule(action, null);
+        // TODO: Launch the ActionTriggerActivity instead
+        Intent intent = new Intent(getApplicationContext(), ActionTriggerActivity.class);
+        intent.putExtra("goal", mGoal);
+        intent.putExtra("action", action);
+        startActivity(intent);
     }
 
     @Override
