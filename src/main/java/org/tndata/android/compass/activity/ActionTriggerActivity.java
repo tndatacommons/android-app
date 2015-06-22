@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Window;
+import android.widget.Toast;
 
 import com.doomonafireball.betterpickers.calendardatepicker.CalendarDatePickerDialog;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog;
@@ -75,6 +76,8 @@ public class ActionTriggerActivity extends BaseTriggerActivity implements
     public void fireSaveTrigger() {
         // TODO: ensure all the trigger details are saved and close the activity.
         Log.d(TAG, "----> fireSaveTrigger");
+        Toast.makeText(this, "COMING SOON", Toast.LENGTH_LONG).show();
+        finish();
     }
 
     @Override
