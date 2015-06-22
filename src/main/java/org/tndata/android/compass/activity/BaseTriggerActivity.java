@@ -5,15 +5,15 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.text.format.Time;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.doomonafireball.betterpickers.calendardatepicker.CalendarDatePickerDialog;
+import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog;
 import com.doomonafireball.betterpickers.recurrencepicker.EventRecurrence;
 import com.doomonafireball.betterpickers.recurrencepicker.RecurrencePickerDialog;
-import com.doomonafireball.betterpickers.timepicker.TimePickerBuilder;
-import com.doomonafireball.betterpickers.timepicker.TimePickerDialogFragment;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -28,7 +28,7 @@ import java.util.Calendar;
  */
 public class BaseTriggerActivity extends ActionBarActivity implements
         RecurrencePickerDialog.OnRecurrenceSetListener,
-        TimePickerDialogFragment.TimePickerDialogHandler,
+        RadialTimePickerDialog.OnTimeSetListener,
         CalendarDatePickerDialog.OnDateSetListener,
         AddActionTriggerTask.AddActionTriggerTaskListener {
 
@@ -45,6 +45,7 @@ public class BaseTriggerActivity extends ActionBarActivity implements
     private static final String TAG = "BaseTriggerActivity";
     private static final String FRAG_TAG_RECUR_PICKER = "recurrencePickerDialogFragment";
     private static final String FRAG_TAG_DATE_PICKER = "datePickerDialogFragment";
+    private static final String FRAG_TAG_TIME_PICKER = "timePickerDialogFragment";
 
     public String getDate() {
         return mDate;
@@ -91,10 +92,14 @@ public class BaseTriggerActivity extends ActionBarActivity implements
     }
 
     protected void showTimePicker() {
-        TimePickerBuilder tpb = new TimePickerBuilder()
-                .setFragmentManager(getSupportFragmentManager())
-                .setStyleResId(R.style.BetterPickersDialogFragment_Light);
-        tpb.show();
+        Calendar calendar = Calendar.getInstance();
+        RadialTimePickerDialog timePickerDialog = RadialTimePickerDialog.newInstance(
+                BaseTriggerActivity.this,
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                DateFormat.is24HourFormat(BaseTriggerActivity.this));
+
+        timePickerDialog.show(getSupportFragmentManager(), FRAG_TAG_TIME_PICKER);
     }
 
     protected void showDatePicker() {
@@ -145,9 +150,10 @@ public class BaseTriggerActivity extends ActionBarActivity implements
         saveTrigger();
     }
 
+
     @Override
-    public void onDialogTimeSet(int reference, int hourOfDay, int minute) {
-        Log.d(TAG, "reference: " + reference + ", hourOfDay: " + hourOfDay + ", minute: " + minute);
+    public void onTimeSet(RadialTimePickerDialog dialog, int hourOfDay, int minute) {
+        Log.d(TAG, "hourOfDay: " + hourOfDay + ", minute: " + minute);
         mTime = String.format("%02d", hourOfDay) + ":" +
                 String.format("%02d", minute);
         Toast.makeText(this,

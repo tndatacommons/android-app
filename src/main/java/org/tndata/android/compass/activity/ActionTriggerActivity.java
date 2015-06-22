@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.Window;
 
 import com.doomonafireball.betterpickers.calendardatepicker.CalendarDatePickerDialog;
+import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.ActionTriggerFragment;
@@ -77,7 +78,7 @@ public class ActionTriggerActivity extends BaseTriggerActivity implements
     }
 
     @Override
-    public void onDialogTimeSet(int reference, int hourOfDay, int minute) {
+    public void onTimeSet(RadialTimePickerDialog dialog, int hourOfDay, int minute) {
         String time = String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute);
         setTime(time);
         if(fragment != null) {
