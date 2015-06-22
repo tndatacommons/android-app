@@ -1,6 +1,10 @@
 package org.tndata.android.compass.model;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class Trigger implements Serializable, Comparable<Trigger> {
 
@@ -104,5 +108,19 @@ public class Trigger implements Serializable, Comparable<Trigger> {
         } else {
             return 1;
         }
+    }
+
+    public Date getParsedTime() {
+        Date date = new Date();
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("H:m", Locale.getDefault());
+            if(!time.isEmpty()) {
+                date = sdf.parse(time.substring(0, 5));
+            }
+        }
+        catch (ParseException e) {
+            return date;
+        }
+        return date;
     }
 }
