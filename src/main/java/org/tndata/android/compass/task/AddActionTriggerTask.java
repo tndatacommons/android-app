@@ -29,21 +29,27 @@ public class AddActionTriggerTask extends AsyncTask<Void, Void, Action> {
     private String mActionMappingId;
     private String mRrule;
     private String mTime;
+    private String mDate;
 
     private AddActionTriggerTaskListener mCallback;
     private static Gson gson = new GsonBuilder().setFieldNamingPolicy(
             FieldNamingPolicy.IDENTITY).create();
 
     public interface AddActionTriggerTaskListener {
-        public void actionTriggerAdded(Action action);
+        public boolean actionTriggerAdded(Action action);
     }
 
-    public AddActionTriggerTask(AddActionTriggerTaskListener callback, String token,
-                                String rrule, String time, String actionMappingId) {
+    public AddActionTriggerTask(AddActionTriggerTaskListener callback,
+                                String token,
+                                String rrule,
+                                String time,
+                                String date,
+                                String actionMappingId) {
         mCallback = callback;
         mToken = token;
         mRrule = rrule;
         mTime = time;
+        mDate = date;
         mActionMappingId = actionMappingId;
     }
 
@@ -61,6 +67,7 @@ public class AddActionTriggerTask extends AsyncTask<Void, Void, Action> {
         try {
             body.put("custom_trigger_time", mTime);
             body.put("custom_trigger_rrule", mRrule);
+            body.put("custom_trigger_date", mDate);
         } catch (JSONException e1) {
             e1.printStackTrace();
             return null;
