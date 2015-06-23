@@ -24,6 +24,7 @@ import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
 
+// TODO: change back to subclass of BaseTriggerActivity, and remove trigger interface methods
 public class GoalDetailsActivity extends BaseTriggerActivity implements
         LearnMoreFragment.LearnMoreFragmentListener,
         GoalDetailsFragment.GoalDetailsFragmentListener,
@@ -57,7 +58,10 @@ public class GoalDetailsActivity extends BaseTriggerActivity implements
         mGoal = (Goal) getIntent().getSerializableExtra("goal");
 
         mToolbar = (Toolbar) findViewById(R.id.tool_bar);
-        mToolbar.setTitle(mGoal.getTitle());
+
+        if(mGoal != null && !mGoal.getTitle().isEmpty()) {
+            mToolbar.setTitle(mGoal.getTitle());
+        }
         mToolbar.getBackground().setAlpha(255);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
         setSupportActionBar(mToolbar);
@@ -231,12 +235,16 @@ public class GoalDetailsActivity extends BaseTriggerActivity implements
 
     @Override
     public void fireActionPicker(Action action) {
-        getRecurrenceSchedule(action, null);
+        // Launch the ActionTriggerActivity
+        Intent intent = new Intent(getApplicationContext(), ActionTriggerActivity.class);
+        intent.putExtra("goal", mGoal);
+        intent.putExtra("action", action);
+        startActivity(intent);
     }
 
     @Override
     public void fireBehaviorPicker(Behavior behavior) {
-        getRecurrenceSchedule(null, behavior);
+        // NOTE: Not implemented at the moment, because we want a single Reminder for all Behaviors.
     }
 
 }

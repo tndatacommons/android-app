@@ -1,6 +1,10 @@
 package org.tndata.android.compass.model;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class Trigger implements Serializable, Comparable<Trigger> {
 
@@ -9,6 +13,7 @@ public class Trigger implements Serializable, Comparable<Trigger> {
     private String recurrences_display = "";
     private String recurrences = ""; // utf RFC2445 string
     private String time = "";
+    private String date = "";
     private String name = "";
     private String name_slug = "";
     private String location = "";
@@ -39,6 +44,24 @@ public class Trigger implements Serializable, Comparable<Trigger> {
 
     public void setRecurrences(String recurrences) {
         this.recurrences = recurrences;
+    }
+
+    public String getRRULE() {
+        // The RRULE data from the api (stored in `recurrences`) will contain a RRULE:
+        // prefix. However, the betterpickers library doesn't like this, so this method
+        // will return the RRULE data without that prefix.
+        if(recurrences.startsWith("RRULE:")){
+            return recurrences.substring(6);
+        }
+        return recurrences;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getTime() {
@@ -104,5 +127,33 @@ public class Trigger implements Serializable, Comparable<Trigger> {
         } else {
             return 1;
         }
+    }
+
+    public Date getParsedTime() {
+        Date date = new Date();
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("H:m", Locale.getDefault());
+            if(!time.isEmpty()) {
+                date = sdf.parse(time.substring(0, 5));
+            }
+        }
+        catch (ParseException e) {
+            return date;
+        }
+        return date;
+    }
+
+    public Date getParsedDate() {
+        Date d = new Date();
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-d", Locale.getDefault());
+            if(!date.isEmpty()) {
+                d = sdf.parse(date);
+            }
+        }
+        catch (ParseException e) {
+            return d;
+        }
+        return d;
     }
 }
