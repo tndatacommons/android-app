@@ -45,6 +45,16 @@ public class Trigger implements Serializable, Comparable<Trigger> {
         this.recurrences = recurrences;
     }
 
+    public String getRRULE() {
+        // The RRULE data from the api (stored in `recurrences`) will contain a RRULE:
+        // prefix. However, the betterpickers library doesn't like this, so this method
+        // will return the RRULE data without that prefix.
+        if(recurrences.startsWith("RRULE:")){
+            return recurrences.substring(6);
+        }
+        return recurrences;
+    }
+
     public String getTime() {
         return time;
     }
