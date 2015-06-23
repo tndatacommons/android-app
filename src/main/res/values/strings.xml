@@ -24,8 +24,10 @@
     <string name="goal_dialog_delete_message">You are about to permanently remove this</string>
 
     <!-- Time/Recurrence pickers -->
+    <string name="trigger_saved_confirmation_toast">Reminder Saved!</string>
+    <string name="date_picker_confirmation_toast">Date Set</string>
     <string name="time_picker_confirmation_toast">You have selected %1$s</string>
-    <string name="recurrence_picker_confirmation_toast">Reminder Saved!</string>
+    <string name="recurrence_picker_confirmation_toast">Recurring Schedule Saved!</string>
     <string name="reminder_failed">Failed to save Reminder</string>
 
     <!-- LoginActivity -->

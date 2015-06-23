@@ -1,6 +1,7 @@
 package org.tndata.android.compass.activity;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -234,12 +235,16 @@ public class BehaviorActivity extends BaseTriggerActivity implements
 
     @Override
     public void fireActionPicker(Action action) {
-        getRecurrenceSchedule(action, null);
+        // Launch the ActionTriggerActivity
+        Intent intent = new Intent(getApplicationContext(), ActionTriggerActivity.class);
+        intent.putExtra("goal", mGoal);
+        intent.putExtra("action", action);
+        startActivity(intent);
     }
 
     @Override
     public void fireBehaviorPicker(Behavior behavior) {
-        getRecurrenceSchedule(null, behavior);
+        // NOTE: Not implemented at the moment, because we want a single Reminder for all Behaviors.
     }
 
 }

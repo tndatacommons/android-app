@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Window;
-import android.widget.Toast;
 
 import com.doomonafireball.betterpickers.calendardatepicker.CalendarDatePickerDialog;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog;
@@ -16,13 +15,6 @@ import org.tndata.android.compass.model.Goal;
 
 public class ActionTriggerActivity extends BaseTriggerActivity implements
         ActionTriggerFragment.ActionTriggerFragmentListener {
-
-    // TODO: A simple activity that lets users set their triggers
-    // TODO: this should extend BaseTriggerActivity
-    // TODO: - move time/recurrence pickers here
-    // todo: - launch this from the "Edit Notifications" popup in GoalDetailsActivity
-    // todo: - ensure we display default values for given Actions.
-    // todo: - implement the AddActionTriggerTaskListener interface to save updates.
 
     private Toolbar mToolbar;
     private Goal mGoal;
@@ -38,6 +30,9 @@ public class ActionTriggerActivity extends BaseTriggerActivity implements
 
         mGoal = (Goal) getIntent().getSerializableExtra("goal");
         mAction = (Action) getIntent().getSerializableExtra("action");
+
+        // Initialize the reminder data
+        initializeReminders(mAction.getCustomTrigger());
 
         setContentView(R.layout.activity_base);
 
@@ -73,11 +68,11 @@ public class ActionTriggerActivity extends BaseTriggerActivity implements
     }
 
     public void fireSaveTrigger() {
-        // TODO: ensure all the trigger details are saved and close the activity.
-        Log.d(TAG, "----> fireSaveTrigger");
-        Toast.makeText(this, "COMING SOON", Toast.LENGTH_LONG).show();
+        saveActionTrigger(mAction);
         finish();
     }
+
+    // OVER-Riding BaseTriggerActivity's event callbacks.
 
     @Override
     public void onTimeSet(RadialTimePickerDialog dialog, int hourOfDay, int minute) {
@@ -112,6 +107,15 @@ public class ActionTriggerActivity extends BaseTriggerActivity implements
         // Our API needs the 'RRULE' prefix on the rrule string, but
         // BetterPicker's EventRecurrence should *not* have that: https://goo.gl/QhY9aC
         setRRULE(rrule);
+    }
+
+    @Override
+    public boolean actionTriggerAdded(Action action) {
+        Boolean success = super.actionTriggerAdded(action);
+        if(success) {
+            finish();
+        }
+        return success;
     }
 
 }

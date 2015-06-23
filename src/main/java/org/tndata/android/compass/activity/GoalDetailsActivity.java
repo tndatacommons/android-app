@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 
@@ -236,9 +235,7 @@ public class GoalDetailsActivity extends BaseTriggerActivity implements
 
     @Override
     public void fireActionPicker(Action action) {
-        Log.d("GoalDetails", "====> fireActionPicker for " + action.getTitle());
-        //getRecurrenceSchedule(action, null);
-        // TODO: Launch the ActionTriggerActivity instead
+        // Launch the ActionTriggerActivity
         Intent intent = new Intent(getApplicationContext(), ActionTriggerActivity.class);
         intent.putExtra("goal", mGoal);
         intent.putExtra("action", action);
@@ -247,7 +244,7 @@ public class GoalDetailsActivity extends BaseTriggerActivity implements
 
     @Override
     public void fireBehaviorPicker(Behavior behavior) {
-        getRecurrenceSchedule(null, behavior);
+        // NOTE: Not implemented at the moment, because we want a single Reminder for all Behaviors.
     }
 
 }
