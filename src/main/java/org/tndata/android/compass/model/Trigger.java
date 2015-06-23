@@ -13,6 +13,7 @@ public class Trigger implements Serializable, Comparable<Trigger> {
     private String recurrences_display = "";
     private String recurrences = ""; // utf RFC2445 string
     private String time = "";
+    private String date = "";
     private String name = "";
     private String name_slug = "";
     private String location = "";
@@ -53,6 +54,14 @@ public class Trigger implements Serializable, Comparable<Trigger> {
             return recurrences.substring(6);
         }
         return recurrences;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getTime() {
@@ -132,5 +141,19 @@ public class Trigger implements Serializable, Comparable<Trigger> {
             return date;
         }
         return date;
+    }
+
+    public Date getParsedDate() {
+        Date d = new Date();
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-d", Locale.getDefault());
+            if(!date.isEmpty()) {
+                d = sdf.parse(date);
+            }
+        }
+        catch (ParseException e) {
+            return d;
+        }
+        return d;
     }
 }
