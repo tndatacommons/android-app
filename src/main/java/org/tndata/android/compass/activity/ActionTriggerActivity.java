@@ -3,6 +3,8 @@ package org.tndata.android.compass.activity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.Window;
 
 import com.doomonafireball.betterpickers.calendardatepicker.CalendarDatePickerDialog;
@@ -49,17 +51,39 @@ public class ActionTriggerActivity extends BaseTriggerActivity implements
         }
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // Ensure we've saved the trigger when the user hits the back button
+        if (!isTriggerSaved() && (keyCode == KeyEvent.KEYCODE_BACK)) { // Back key pressed
+            if(!isTriggerSaved()) {
+                fireSaveTrigger();
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Ensure we've saved the trigger when the user hits the back Arrow in the toolbar
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if(!isTriggerSaved()) {
+                    fireSaveTrigger();
+                }
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public void disableTrigger() {
         Log.d(TAG, "----> REMINDERS OFF");  // TODO: figure out how to disable.
     }
 
     public void fireTimePicker() {
-        Log.d(TAG, "----> fireTimePicker");
         showTimePicker();
     }
 
     public void fireDatePicker() {
-        Log.d(TAG, "----> fireDatePicker");
         showDatePicker();
     }
 

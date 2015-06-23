@@ -48,11 +48,16 @@ public class BaseTriggerActivity extends ActionBarActivity implements
     private String mRrule; // RFC 2445 RRULE string
     private String mTime;  // HH:mm
     private String mDate;  // YYYY-mm-dd formatted date string
+    private boolean triggerSaved = false; // flag so we know when a trigger is saved.
 
     private static final String TAG = "BaseTriggerActivity";
     private static final String FRAG_TAG_RECUR_PICKER = "recurrencePickerDialogFragment";
     private static final String FRAG_TAG_DATE_PICKER = "datePickerDialogFragment";
     private static final String FRAG_TAG_TIME_PICKER = "timePickerDialogFragment";
+
+    public boolean isTriggerSaved() {
+        return triggerSaved;
+    }
 
     public void initializeReminders(Trigger trigger) {
         // initialize local vars with a given Trigger
@@ -212,7 +217,6 @@ public class BaseTriggerActivity extends ActionBarActivity implements
     Use the selected Time/Date/Recurrence to update the given User's Action.
      */
     protected void saveActionTrigger(Action action) {
-        // TODO: Assemble the Date/Time/RRULE information in the Trigger & Post to the api.
         String rrule = getRRULE();
         String date = getDate();
         String time = getTime();
@@ -229,6 +233,7 @@ public class BaseTriggerActivity extends ActionBarActivity implements
                     rrule, time, date, String.valueOf(action.getMappingId()))
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
+        triggerSaved = true; // We want to know that we've attempted to save, even if saving fails.
     }
 
     public boolean actionTriggerAdded(Action action) {
