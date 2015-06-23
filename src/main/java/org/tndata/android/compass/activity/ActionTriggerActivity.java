@@ -68,9 +68,8 @@ public class ActionTriggerActivity extends BaseTriggerActivity implements
         showDatePicker();
     }
 
-    public void fireRecurrencePicker() {
-        Log.d(TAG, "----> fireRecurrencePicker");
-        showRecurrencePicker();
+    public void fireRecurrencePicker(String rrule) {
+        showRecurrencePicker(rrule);
     }
 
     public void fireSaveTrigger() {
@@ -99,6 +98,20 @@ public class ActionTriggerActivity extends BaseTriggerActivity implements
         if(fragment != null) {
             fragment.updateDateView(year, monthOfYear, dayOfMonth);
         }
+    }
+
+    @Override
+    public void onRecurrenceSet(String rrule) {
+        if(rrule != null) {
+            setEventRecurrence(rrule );
+        }
+
+        if(fragment != null) {
+            fragment.updateRecurrenceView(getFriendlyRecurrenceString());
+        }
+        // Our API needs the 'RRULE' prefix on the rrule string, but
+        // BetterPicker's EventRecurrence should *not* have that: https://goo.gl/QhY9aC
+        setRRULE(rrule);
     }
 
 }

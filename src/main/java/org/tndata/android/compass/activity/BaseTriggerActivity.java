@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.doomonafireball.betterpickers.calendardatepicker.CalendarDatePickerDialog;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog;
 import com.doomonafireball.betterpickers.recurrencepicker.EventRecurrence;
+import com.doomonafireball.betterpickers.recurrencepicker.EventRecurrenceFormatter;
 import com.doomonafireball.betterpickers.recurrencepicker.RecurrencePickerDialog;
 
 import org.tndata.android.compass.CompassApplication;
@@ -61,6 +62,18 @@ public class BaseTriggerActivity extends ActionBarActivity implements
 
     public void setTime(String time) {
         mTime = time;
+    }
+
+    public EventRecurrence getEventRecurrence() {
+        return mEventRecurrence;
+    }
+
+    public String getFriendlyRecurrenceString() {
+        return EventRecurrenceFormatter.getRepeatString(getApplicationContext(), getResources(), mEventRecurrence, true);
+    }
+
+    public void setEventRecurrence(String rrule) {
+        mEventRecurrence.parse(rrule);
     }
 
     /*
@@ -115,15 +128,17 @@ public class BaseTriggerActivity extends ActionBarActivity implements
 
     }
 
-    protected void showRecurrencePicker() {
+    protected void showRecurrencePicker(String rrule) {
         Bundle b = new Bundle();
         Time t = new Time();
         t.setToNow();
+
         b.putLong(RecurrencePickerDialog.BUNDLE_START_TIME_MILLIS, t.toMillis(false));
         b.putString(RecurrencePickerDialog.BUNDLE_TIME_ZONE, t.timezone);
 
         // may be more efficient to serialize and pass in EventRecurrence
-        b.putString(RecurrencePickerDialog.BUNDLE_RRULE, mRrule);
+        if(rrule == null) { rrule = ""; }
+        b.putString(RecurrencePickerDialog.BUNDLE_RRULE, rrule);
 
         FragmentManager fm = getSupportFragmentManager();
         RecurrencePickerDialog rpd = (RecurrencePickerDialog) fm.findFragmentByTag(
@@ -140,14 +155,14 @@ public class BaseTriggerActivity extends ActionBarActivity implements
 
     @Override
     public void onRecurrenceSet(String rrule) {
+        if(rrule != null) {
+            setEventRecurrence(rrule);
+        }
+
         // Our API needs the 'RRULE' prefix on the rrule string, but
         // BetterPicker's EventRecurrence should *not* have that: https://goo.gl/QhY9aC
         setRRULE(rrule);
-        if (rrule != null) {
-            // use local rrule string for the EventRecurrence
-            mEventRecurrence.parse(rrule);
-        }
-        saveTrigger();
+        saveTrigger(); // TODO... call this elsewhere.
     }
 
 

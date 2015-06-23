@@ -37,7 +37,7 @@ public class ActionTriggerFragment extends Fragment {
         // TODO; define methods that this should imlement
         public void fireTimePicker();
         public void fireDatePicker();
-        public void fireRecurrencePicker();
+        public void fireRecurrencePicker(String rrule);
         public void fireSaveTrigger();
         public void disableTrigger();
     }
@@ -81,7 +81,7 @@ public class ActionTriggerFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // TODO: update text views with the default trigger info if there's no custom trigger
-        Trigger trigger = mAction.getCustomTrigger();
+        final Trigger trigger = mAction.getCustomTrigger();
 
         View v = getActivity().getLayoutInflater().inflate(
                 R.layout.fragment_action_trigger, container, false);
@@ -104,7 +104,6 @@ public class ActionTriggerFragment extends Fragment {
         timePickerContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: launch time picker
                 mCallback.fireTimePicker();
             }
         });
@@ -114,7 +113,6 @@ public class ActionTriggerFragment extends Fragment {
         datePickerContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: launch date picker
                 mCallback.fireDatePicker();
             }
         });
@@ -126,8 +124,10 @@ public class ActionTriggerFragment extends Fragment {
         recurrencePickerContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: launch recurrence picker
-                mCallback.fireRecurrencePicker();
+                if(trigger != null && !trigger.getRecurrences().isEmpty()) {
+                    mCallback.fireRecurrencePicker(trigger.getRRULE());
+                }
+
             }
         });
 
