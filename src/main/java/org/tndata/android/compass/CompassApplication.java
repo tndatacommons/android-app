@@ -71,4 +71,12 @@ public class CompassApplication extends Application {
     public void setActions(ArrayList<Action> actions) {
         mActions = actions;
     }
+
+    public void updateAction(Action action) {
+        // Given a single action, find it in the list of Actions and keep the input version
+        int i;
+        for (i = 0; mActions.get(i).getId() == action.getId(); i++) {}
+        mActions.remove(i);
+        mActions.add(action);
+    }
 }

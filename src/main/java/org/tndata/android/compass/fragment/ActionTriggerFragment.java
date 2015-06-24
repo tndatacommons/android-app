@@ -34,7 +34,6 @@ public class ActionTriggerFragment extends Fragment {
     private static final String TAG = "ActionTriggerFragment";
 
     public interface ActionTriggerFragmentListener {
-        // TODO; define methods that this should imlement
         public void fireTimePicker();
         public void fireDatePicker();
         public void fireRecurrencePicker(String rrule);
@@ -90,6 +89,9 @@ public class ActionTriggerFragment extends Fragment {
         titleTextView.setText(mAction.getTitle());
 
         Switch notificationSwitch = (Switch) v.findViewById(R.id.notification_option_switch);
+        if(trigger.isDisabled()) {
+            notificationSwitch.setChecked(false);
+        }
         notificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (!isChecked) {
@@ -124,10 +126,11 @@ public class ActionTriggerFragment extends Fragment {
         recurrencePickerContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(trigger != null && !trigger.getRecurrences().isEmpty()) {
+                if(!trigger.getRecurrences().isEmpty()) {
                     mCallback.fireRecurrencePicker(trigger.getRRULE());
+                } else {
+                    mCallback.fireRecurrencePicker(Trigger.DEFAULT_RRULE);
                 }
-
             }
         });
 
@@ -136,23 +139,28 @@ public class ActionTriggerFragment extends Fragment {
         triggerUpdateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Save all of the trigger details and then close the activity.
                 mCallback.fireSaveTrigger();
             }
         });
 
         // Update labels with Trigger details if applicable.
         if(trigger != null) {
-            updateTimeView(trigger.getParsedTime());
-            //datePickerTextView.setText(); // TODO: need support for 1-time reminders
-            recurrencePickerTextView.setText(trigger.getRecurrencesDisplay());
+            if(!trigger.getTime().isEmpty()) {
+                updateTimeView(trigger.getParsedTime());
+            }
+            if(!trigger.getDate().isEmpty()) {
+                updateDateView(trigger.getParsedDate());
+            }
+            if(!trigger.getRecurrences().isEmpty()) {
+                updateRecurrenceView(trigger.getRecurrencesDisplay());
+            }
         }
 
         return v;
     }
 
     public void updateTimeView(Date time) {
-        SimpleDateFormat sdf = new SimpleDateFormat("h:m a", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a", Locale.getDefault());
         timePickerTextView.setText(sdf.format(time));
     }
 
@@ -162,12 +170,19 @@ public class ActionTriggerFragment extends Fragment {
         time.setHours(hourOfDay);
         time.setMinutes(minute);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("h:m a", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a", Locale.getDefault());
         timePickerTextView.setText(sdf.format(time));
+    }
+
+    public void updateDateView(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM d yyyy", Locale.getDefault());
+        datePickerTextView.setText(sdf.format(date));
     }
 
     public void updateDateView(int year, int monthOfYear, int dayOfMonth) {
         // Format the selected date and update the TextView
+        // NOTE: the picker likes months in the range: 0 - 11
+        monthOfYear = monthOfYear - 1;
         SimpleDateFormat sdf = new SimpleDateFormat("MMM d yyyy", Locale.getDefault());
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, monthOfYear, dayOfMonth);
@@ -175,6 +190,10 @@ public class ActionTriggerFragment extends Fragment {
     }
 
     public void updateRecurrenceView(String recurrence) {
-        recurrencePickerTextView.setText(recurrence);
+        if(recurrence != null && !recurrence.isEmpty()) {
+            recurrencePickerTextView.setText(recurrence);
+        } else {
+            recurrencePickerTextView.setText(getText(R.string.trigger_recurrence_picker_label));
+        }
     }
 }

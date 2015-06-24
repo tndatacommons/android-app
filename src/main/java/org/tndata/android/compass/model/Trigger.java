@@ -1,5 +1,7 @@
 package org.tndata.android.compass.model;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,12 +13,17 @@ public class Trigger implements Serializable, Comparable<Trigger> {
     private static final long serialVersionUID = 7914473023695112323L;
     private int id = -1;
     private String recurrences_display = "";
-    private String recurrences = ""; // utf RFC2445 string
-    private String time = "";
-    private String date = "";
-    private String name = "";
     private String name_slug = "";
     private String location = "";
+    private String name = "";
+
+    // NOTE: Any of these can be null
+    private String recurrences = ""; // utf RFC2445 string
+    private String time = "";
+    private String trigger_date = "";
+
+    // A default RRULE value for the recurrence picker (NOTE: no RRULE prefix)
+    public static final String DEFAULT_RRULE = "FREQ=DAILY";
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -31,6 +38,7 @@ public class Trigger implements Serializable, Comparable<Trigger> {
     }
 
     public String getRecurrencesDisplay() {
+        if(recurrences_display == null) { return "";}
         return recurrences_display;
     }
 
@@ -39,6 +47,7 @@ public class Trigger implements Serializable, Comparable<Trigger> {
     }
 
     public String getRecurrences() {
+        if(recurrences == null) { return "";}
         return recurrences;
     }
 
@@ -47,6 +56,7 @@ public class Trigger implements Serializable, Comparable<Trigger> {
     }
 
     public String getRRULE() {
+        if(recurrences == null) {return "";}
         // The RRULE data from the api (stored in `recurrences`) will contain a RRULE:
         // prefix. However, the betterpickers library doesn't like this, so this method
         // will return the RRULE data without that prefix.
@@ -57,14 +67,19 @@ public class Trigger implements Serializable, Comparable<Trigger> {
     }
 
     public String getDate() {
-        return date;
+        Log.d("Trigger", "getDate() -> " + String.valueOf(trigger_date));
+
+        if(trigger_date == null) { return ""; }
+        return trigger_date;
     }
 
     public void setDate(String date) {
-        this.date = date;
+        Log.d("Trigger", "setDate() <--- " + date);
+        this.trigger_date = date;
     }
 
     public String getTime() {
+        if(time == null) { return "";}
         return time;
     }
 
@@ -143,17 +158,47 @@ public class Trigger implements Serializable, Comparable<Trigger> {
         return date;
     }
 
+    public String getFormattedTime() {
+        String result = "";
+        if(!getTime().isEmpty()) {
+            SimpleDateFormat sdf = new SimpleDateFormat("h:mm a", Locale.getDefault());
+            result = sdf.format(getParsedTime());
+        }
+        return result;
+    }
+
     public Date getParsedDate() {
         Date d = new Date();
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-d", Locale.getDefault());
-            if(!date.isEmpty()) {
-                d = sdf.parse(date);
+            if(!trigger_date.isEmpty()) {
+                d = sdf.parse(trigger_date);
             }
         }
         catch (ParseException e) {
             return d;
         }
         return d;
+    }
+
+    public String getFormattedDate() {
+        String result = "";
+        if(!getDate().isEmpty()) {
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM d yyyy", Locale.getDefault());
+            result = sdf.format(getParsedDate());
+        }
+        return result;
+    }
+
+    public boolean isDisabled() {
+        // If the user disabled the trigger, then the Trigger object will exist
+        // with details like a name, but all of the time/trigger_date/recurrence
+        // information will be null (or empty)
+        if(name != null && !getName().isEmpty()) {
+            return (getDate().isEmpty() &&
+                    getTime().isEmpty() &&
+                    getRecurrences().isEmpty());
+        }
+        return false;
     }
 }

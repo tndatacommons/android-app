@@ -92,6 +92,14 @@ public class BaseTriggerActivity extends ActionBarActivity implements
         mTime = time;
     }
 
+    public void disableTrigger() {
+        // To disable a Trigger, we simply set all of it's parts to empty strings
+        setDate("");
+        setTime("");
+        setRRULE("");
+        Log.d(TAG, "disableTrigger");
+    }
+
     public EventRecurrence getEventRecurrence() {
         return mEventRecurrence;
     }
@@ -115,6 +123,9 @@ public class BaseTriggerActivity extends ActionBarActivity implements
     it, it must start with an 'RRULE:' prefix.
      */
     public void setRRULE(String rrule) {
+        if(rrule == null) {
+            rrule = "";
+        }
         if(!rrule.isEmpty() && !rrule.toUpperCase().startsWith("RRULE:")) {
             rrule = "RRULE:" + rrule;
         }
@@ -204,6 +215,9 @@ public class BaseTriggerActivity extends ActionBarActivity implements
 
     @Override
     public void onDateSet(CalendarDatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth) {
+        // NOTE: the picker uses months in the range 0 - 11
+        monthOfYear = monthOfYear + 1;
+
         String date = String.format("%4d", year) + "-" +
                 String.format("%02d", monthOfYear) + "-" +
                 String.format("%02d", dayOfMonth);
@@ -227,7 +241,8 @@ public class BaseTriggerActivity extends ActionBarActivity implements
         Log.d(TAG, "RRULE: " + rrule);
 
         // Time is required and one of date or rule is required
-        if (action != null && !mTime.isEmpty() && (!mDate.isEmpty() || !mRrule.isEmpty())) {
+        if (action != null) {
+            // TODO: Fails when time/date/rrule is empty or null
             new AddActionTriggerTask(this,
                     ((CompassApplication) getApplication()).getToken(),
                     rrule, time, date, String.valueOf(action.getMappingId()))
@@ -239,14 +254,17 @@ public class BaseTriggerActivity extends ActionBarActivity implements
     public boolean actionTriggerAdded(Action action) {
         // action is the updated Action, presumably with a Trigger attached.
         if(action != null) {
-            Log.d(TAG, "Updated Action & Trigger: " + action.getCustomTrigger().getRecurrences());
+            Log.d(TAG, "Updated Action: " + action.getTitle());
+            Log.d(TAG, "Updated Trigger: " + action.getCustomTrigger());
             Toast.makeText(this,
                     getText(R.string.trigger_saved_confirmation_toast),
                     Toast.LENGTH_SHORT).show();
             return true;
         } else {
+            Log.d(TAG, "actionTriggerAdded: received null Action");
             Toast.makeText(this, getText(R.string.reminder_failed), Toast.LENGTH_SHORT).show();
             return false;
         }
     }
+
 }

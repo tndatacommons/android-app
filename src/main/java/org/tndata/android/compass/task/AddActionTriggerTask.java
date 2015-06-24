@@ -31,6 +31,8 @@ public class AddActionTriggerTask extends AsyncTask<Void, Void, Action> {
     private String mTime;
     private String mDate;
 
+    private static final String TAG = "AddActionTriggerTask";
+
     private AddActionTriggerTaskListener mCallback;
     private static Gson gson = new GsonBuilder().setFieldNamingPolicy(
             FieldNamingPolicy.IDENTITY).create();
@@ -61,7 +63,11 @@ public class AddActionTriggerTask extends AsyncTask<Void, Void, Action> {
         headers.put("Accept", "application/json");
         headers.put("Content-type", "application/json");
         headers.put("Authorization", "Token " + mToken);
-        Log.d("user action trigger", url);
+
+        Log.d(TAG, "PUT: " + url);
+        Log.d(TAG, "custom_trigger_time: '" + mTime + "'");
+        Log.d(TAG, "custom_trigger_date: '" + mDate + "'");
+        Log.d(TAG, "custom_trigger_rrule: '" + mRrule + "'");
 
         JSONObject body = new JSONObject();
         try {
@@ -87,6 +93,8 @@ public class AddActionTriggerTask extends AsyncTask<Void, Void, Action> {
                 result += line;
             }
             bReader.close();
+
+            Log.d(TAG, "JSON result: " + result);
 
             // create an Action object from the result.
             JSONObject response = new JSONObject(result);

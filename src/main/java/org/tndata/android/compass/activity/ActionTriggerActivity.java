@@ -1,8 +1,8 @@
 package org.tndata.android.compass.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.Window;
@@ -10,6 +10,7 @@ import android.view.Window;
 import com.doomonafireball.betterpickers.calendardatepicker.CalendarDatePickerDialog;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog;
 
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.ActionTriggerFragment;
 import org.tndata.android.compass.model.Action;
@@ -75,8 +76,13 @@ public class ActionTriggerActivity extends BaseTriggerActivity implements
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
     public void disableTrigger() {
-        Log.d(TAG, "----> REMINDERS OFF");  // TODO: figure out how to disable.
+        // To disable a Trigger, we simply set all of it's parts to empty strings
+        super.disableTrigger();
+        if(!isTriggerSaved()) {
+            fireSaveTrigger();
+        }
     }
 
     public void fireTimePicker() {
@@ -93,7 +99,6 @@ public class ActionTriggerActivity extends BaseTriggerActivity implements
 
     public void fireSaveTrigger() {
         saveActionTrigger(mAction);
-        finish();
     }
 
     // OVER-Riding BaseTriggerActivity's event callbacks.
@@ -109,6 +114,9 @@ public class ActionTriggerActivity extends BaseTriggerActivity implements
 
     @Override
     public void onDateSet(CalendarDatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth) {
+        // NOTE: the picker uses months in the range 0 - 11
+        monthOfYear = monthOfYear + 1;
+
         String date = String.format("%4d", year) + "-" +
                 String.format("%02d", monthOfYear) + "-" +
                 String.format("%02d", dayOfMonth);
@@ -136,7 +144,20 @@ public class ActionTriggerActivity extends BaseTriggerActivity implements
     @Override
     public boolean actionTriggerAdded(Action action) {
         Boolean success = super.actionTriggerAdded(action);
+
+        // Keep the updated Action object.
+        if(action != null) {
+            mAction = action;
+
+            // We'll return the updated Action to the parent activity (GoalDetailsActivity)
+            // but we also want to tell the Application about the updated version of the Action.
+            ((CompassApplication) getApplication()).updateAction(action);
+        }
+
         if(success) {
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("action", mAction);
+            setResult(RESULT_OK, returnIntent);
             finish();
         }
         return success;

@@ -9,6 +9,7 @@ public class Constants {
     public final static int BEHAVIOR_CHANGED_RESULT_CODE = 2205;
     public final static int CHOOSE_BEHAVIORS_REQUEST_CODE = 2206;
     public final static int GOALS_CHANGED_RESULT_CODE = 2207;
+    public final static int ACTIVITY_CHANGED_RESULT_CODE = 2208;
 
     public final static int QOL_INSTRUMENT_ID = 1;
     public final static int BIO_INSTRUMENT_ID = 4;
