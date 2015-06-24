@@ -19,6 +19,7 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.task.AddActionTask;
 import org.tndata.android.compass.task.DeleteActionTask;
 import org.tndata.android.compass.ui.CompassPopupMenu;
@@ -159,10 +160,21 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
 
             // Display different content in the "Add this" label when the user
             // has already selected the item.
-            if(mAction.getCustomTrigger() != null) {
-                addLabelTextView.setText(
-                        mAction.getCustomTrigger().getRecurrencesDisplay() + " at " +
-                                mAction.getCustomTrigger().getTime());
+            Trigger trigger = mAction.getCustomTrigger();
+            if(trigger != null) {
+                // Construct a string for the Action's Label
+                String recurrence = trigger.getRecurrencesDisplay();
+                String trigger_date = trigger.getFormattedDate();
+                String trigger_time = trigger.getFormattedTime();
+
+                if(!recurrence.isEmpty() && !trigger_time.isEmpty()) {
+                    addLabelTextView.setText(getString(
+                            R.string.trigger_details, recurrence, trigger_time));
+                } else if (!trigger_date.isEmpty() && !trigger_time.isEmpty()) {
+                    addLabelTextView.setText(getString(
+                            R.string.trigger_details, trigger_date, trigger_time));
+                }
+
             } else if(mAction.getMappingId() > 0) {
                 addLabelTextView.setText(getText(R.string.action_management_label));
             } else {

@@ -38,6 +38,7 @@ public class Trigger implements Serializable, Comparable<Trigger> {
     }
 
     public String getRecurrencesDisplay() {
+        if(recurrences_display == null) { return "";}
         return recurrences_display;
     }
 
@@ -157,6 +158,15 @@ public class Trigger implements Serializable, Comparable<Trigger> {
         return date;
     }
 
+    public String getFormattedTime() {
+        String result = "";
+        if(!getTime().isEmpty()) {
+            SimpleDateFormat sdf = new SimpleDateFormat("h:mm a", Locale.getDefault());
+            result = sdf.format(getParsedTime());
+        }
+        return result;
+    }
+
     public Date getParsedDate() {
         Date d = new Date();
         try {
@@ -169,6 +179,15 @@ public class Trigger implements Serializable, Comparable<Trigger> {
             return d;
         }
         return d;
+    }
+
+    public String getFormattedDate() {
+        String result = "";
+        if(!getDate().isEmpty()) {
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM d yyyy", Locale.getDefault());
+            result = sdf.format(getParsedDate());
+        }
+        return result;
     }
 
     public boolean isDisabled() {
