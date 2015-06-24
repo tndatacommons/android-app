@@ -152,7 +152,7 @@ public class ActionTriggerFragment extends Fragment {
                 updateDateView(trigger.getParsedDate());
             }
             if(!trigger.getRecurrences().isEmpty()) {
-                recurrencePickerTextView.setText(trigger.getRecurrencesDisplay());
+                updateRecurrenceView(trigger.getRecurrencesDisplay());
             }
         }
 
@@ -190,6 +190,10 @@ public class ActionTriggerFragment extends Fragment {
     }
 
     public void updateRecurrenceView(String recurrence) {
-        recurrencePickerTextView.setText(recurrence);
+        if(recurrence != null && !recurrence.isEmpty()) {
+            recurrencePickerTextView.setText(recurrence);
+        } else {
+            recurrencePickerTextView.setText(getText(R.string.trigger_recurrence_picker_label));
+        }
     }
 }

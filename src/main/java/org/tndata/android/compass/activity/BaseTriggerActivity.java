@@ -123,6 +123,9 @@ public class BaseTriggerActivity extends ActionBarActivity implements
     it, it must start with an 'RRULE:' prefix.
      */
     public void setRRULE(String rrule) {
+        if(rrule == null) {
+            rrule = "";
+        }
         if(!rrule.isEmpty() && !rrule.toUpperCase().startsWith("RRULE:")) {
             rrule = "RRULE:" + rrule;
         }
