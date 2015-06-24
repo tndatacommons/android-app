@@ -89,6 +89,9 @@ public class ActionTriggerFragment extends Fragment {
         titleTextView.setText(mAction.getTitle());
 
         Switch notificationSwitch = (Switch) v.findViewById(R.id.notification_option_switch);
+        if(trigger.isDisabled()) {
+            notificationSwitch.setChecked(false);
+        }
         notificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (!isChecked) {
@@ -123,10 +126,11 @@ public class ActionTriggerFragment extends Fragment {
         recurrencePickerContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(trigger != null && !trigger.getRecurrences().isEmpty()) {
+                if(!trigger.getRecurrences().isEmpty()) {
                     mCallback.fireRecurrencePicker(trigger.getRRULE());
+                } else {
+                    mCallback.fireRecurrencePicker(Trigger.DEFAULT_RRULE);
                 }
-
             }
         });
 
@@ -141,18 +145,22 @@ public class ActionTriggerFragment extends Fragment {
 
         // Update labels with Trigger details if applicable.
         if(trigger != null) {
-            updateTimeView(trigger.getParsedTime());
+            if(!trigger.getTime().isEmpty()) {
+                updateTimeView(trigger.getParsedTime());
+            }
             if(!trigger.getDate().isEmpty()) {
                 updateDateView(trigger.getParsedDate());
             }
-            recurrencePickerTextView.setText(trigger.getRecurrencesDisplay());
+            if(!trigger.getRecurrences().isEmpty()) {
+                recurrencePickerTextView.setText(trigger.getRecurrencesDisplay());
+            }
         }
 
         return v;
     }
 
     public void updateTimeView(Date time) {
-        SimpleDateFormat sdf = new SimpleDateFormat("h:m a", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a", Locale.getDefault());
         timePickerTextView.setText(sdf.format(time));
     }
 
@@ -162,7 +170,7 @@ public class ActionTriggerFragment extends Fragment {
         time.setHours(hourOfDay);
         time.setMinutes(minute);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("h:m a", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a", Locale.getDefault());
         timePickerTextView.setText(sdf.format(time));
     }
 
@@ -173,6 +181,8 @@ public class ActionTriggerFragment extends Fragment {
 
     public void updateDateView(int year, int monthOfYear, int dayOfMonth) {
         // Format the selected date and update the TextView
+        // NOTE: the picker likes months in the range: 0 - 11
+        monthOfYear = monthOfYear - 1;
         SimpleDateFormat sdf = new SimpleDateFormat("MMM d yyyy", Locale.getDefault());
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, monthOfYear, dayOfMonth);

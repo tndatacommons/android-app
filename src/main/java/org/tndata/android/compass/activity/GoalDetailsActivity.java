@@ -239,12 +239,29 @@ public class GoalDetailsActivity extends BaseTriggerActivity implements
         Intent intent = new Intent(getApplicationContext(), ActionTriggerActivity.class);
         intent.putExtra("goal", mGoal);
         intent.putExtra("action", action);
-        startActivity(intent);
+        startActivityForResult(intent, Constants.ACTIVITY_CHANGED_RESULT_CODE);
     }
 
     @Override
     public void fireBehaviorPicker(Behavior behavior) {
         // NOTE: Not implemented at the moment, because we want a single Reminder for all Behaviors.
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.ACTIVITY_CHANGED_RESULT_CODE) {
+            if(resultCode == RESULT_OK){
+                mSelectedAction = (Action) data.getSerializableExtra("action");
+
+                // Ugh. This is a hacky, but I want the fragment refreshed so, if/when the user
+                // goes right back into the ActionTriggerActivity, it will have the most
+                // up-to-date infor, and the only way to do that is to recreate the fragment.
+                mGoalDetailsFragment = null;
+                swapFragments(GOALDETAIL, true);
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
 }
