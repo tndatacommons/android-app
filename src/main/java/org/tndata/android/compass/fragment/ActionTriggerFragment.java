@@ -34,7 +34,6 @@ public class ActionTriggerFragment extends Fragment {
     private static final String TAG = "ActionTriggerFragment";
 
     public interface ActionTriggerFragmentListener {
-        // TODO; define methods that this should imlement
         public void fireTimePicker();
         public void fireDatePicker();
         public void fireRecurrencePicker(String rrule);
@@ -136,7 +135,6 @@ public class ActionTriggerFragment extends Fragment {
         triggerUpdateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Save all of the trigger details and then close the activity.
                 mCallback.fireSaveTrigger();
             }
         });
@@ -144,7 +142,9 @@ public class ActionTriggerFragment extends Fragment {
         // Update labels with Trigger details if applicable.
         if(trigger != null) {
             updateTimeView(trigger.getParsedTime());
-            //datePickerTextView.setText(); // TODO: need support for 1-time reminders
+            if(!trigger.getDate().isEmpty()) {
+                updateDateView(trigger.getParsedDate());
+            }
             recurrencePickerTextView.setText(trigger.getRecurrencesDisplay());
         }
 
@@ -164,6 +164,11 @@ public class ActionTriggerFragment extends Fragment {
 
         SimpleDateFormat sdf = new SimpleDateFormat("h:m a", Locale.getDefault());
         timePickerTextView.setText(sdf.format(time));
+    }
+
+    public void updateDateView(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM d yyyy", Locale.getDefault());
+        datePickerTextView.setText(sdf.format(date));
     }
 
     public void updateDateView(int year, int monthOfYear, int dayOfMonth) {
