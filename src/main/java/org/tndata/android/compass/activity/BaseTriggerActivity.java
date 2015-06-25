@@ -61,10 +61,14 @@ public class BaseTriggerActivity extends ActionBarActivity implements
 
     public void initializeReminders(Trigger trigger) {
         // initialize local vars with a given Trigger
-        String time = trigger.getTime();
-        String date = trigger.getDate();
-        String rrule = trigger.getRRULE();
-        initializeReminders(time, date, rrule);
+        if(trigger != null) {
+            String time = trigger.getTime();
+            String date = trigger.getDate();
+            String rrule = trigger.getRRULE();
+            initializeReminders(time, date, rrule);
+        } else {
+            initializeReminders("", "", "");
+        }
     }
 
     public void initializeReminders(String time, String date, String rrule) {
