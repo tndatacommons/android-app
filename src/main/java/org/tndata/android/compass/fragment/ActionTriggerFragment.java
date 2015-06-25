@@ -80,7 +80,7 @@ public class ActionTriggerFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // TODO: update text views with the default trigger info if there's no custom trigger
-        final Trigger trigger = mAction.getCustomTrigger();
+        final Trigger trigger = mAction.getTrigger();
 
         View v = getActivity().getLayoutInflater().inflate(
                 R.layout.fragment_action_trigger, container, false);

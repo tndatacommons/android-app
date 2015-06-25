@@ -160,7 +160,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
 
             // Display different content in the "Add this" label when the user
             // has already selected the item.
-            Trigger trigger = mAction.getCustomTrigger();
+            Trigger trigger = mAction.getTrigger();
             if(trigger != null) {
                 // Construct a string for the Action's Label
                 String recurrence = trigger.getRecurrencesDisplay();

@@ -89,7 +89,7 @@ public class GetUserActionsTask extends AsyncTask<String, Void, ArrayList<Action
                     action.setCustomTrigger(
                             gson.fromJson(userAction.getString("custom_trigger"), Trigger.class));
 
-                    Log.d("TRIGGER", "loaded trigger: " + action.getCustomTrigger().getName());
+                    Log.d("TRIGGER", "loaded trigger: " + action.getTrigger().getName());
                 }
             }
             return actions;

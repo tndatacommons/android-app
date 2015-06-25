@@ -259,7 +259,7 @@ public class BaseTriggerActivity extends ActionBarActivity implements
         // action is the updated Action, presumably with a Trigger attached.
         if(action != null) {
             Log.d(TAG, "Updated Action: " + action.getTitle());
-            Log.d(TAG, "Updated Trigger: " + action.getCustomTrigger());
+            Log.d(TAG, "Updated Trigger: " + action.getTrigger());
             Toast.makeText(this,
                     getText(R.string.trigger_saved_confirmation_toast),
                     Toast.LENGTH_SHORT).show();
