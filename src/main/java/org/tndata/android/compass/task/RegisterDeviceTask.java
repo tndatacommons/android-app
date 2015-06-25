@@ -3,6 +3,7 @@ package org.tndata.android.compass.task;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.Html;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,6 +39,7 @@ public class RegisterDeviceTask extends AsyncTask<Void, Void, Void> {
         String token = ((CompassApplication) (mContext)).getToken();
         String url = Constants.BASE_URL + "notifications/devices/";
 
+        Log.d(TAG, "POSTing to: " + url);
         Map<String, String> headers = new HashMap<String, String>();
         headers.put("Accept", "application/json");
         headers.put("Content-type", "application/json");
@@ -54,6 +56,7 @@ public class RegisterDeviceTask extends AsyncTask<Void, Void, Void> {
         InputStream stream = NetworkHelper.httpPostStream(url, headers,
                 body.toString());
         if (stream == null) {
+            Log.d(TAG, "----> null response");
             return null;
         }
         String result = "";
@@ -68,6 +71,8 @@ public class RegisterDeviceTask extends AsyncTask<Void, Void, Void> {
                 result += line;
             }
             bReader.close();
+
+            Log.d(TAG, "result: " + result);
 
             createResponse = Html.fromHtml(result).toString();
             JSONObject device = new JSONObject(createResponse);
