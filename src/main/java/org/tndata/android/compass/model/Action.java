@@ -119,6 +119,15 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
         this.behavior_id = behavior_id;
     }
 
+    public Trigger getTrigger() {
+        // Return the custom trigger if it exists, otherwise return the default trigger.
+        if(custom_trigger != null) {
+            return custom_trigger;
+        }else{
+            return default_trigger;
+        }
+    }
+
     public Trigger getCustomTrigger() {
         return custom_trigger;
     }

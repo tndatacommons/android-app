@@ -61,10 +61,14 @@ public class BaseTriggerActivity extends ActionBarActivity implements
 
     public void initializeReminders(Trigger trigger) {
         // initialize local vars with a given Trigger
-        String time = trigger.getTime();
-        String date = trigger.getDate();
-        String rrule = trigger.getRRULE();
-        initializeReminders(time, date, rrule);
+        if(trigger != null) {
+            String time = trigger.getTime();
+            String date = trigger.getDate();
+            String rrule = trigger.getRRULE();
+            initializeReminders(time, date, rrule);
+        } else {
+            initializeReminders("", "", "");
+        }
     }
 
     public void initializeReminders(String time, String date, String rrule) {
@@ -255,7 +259,7 @@ public class BaseTriggerActivity extends ActionBarActivity implements
         // action is the updated Action, presumably with a Trigger attached.
         if(action != null) {
             Log.d(TAG, "Updated Action: " + action.getTitle());
-            Log.d(TAG, "Updated Trigger: " + action.getCustomTrigger());
+            Log.d(TAG, "Updated Trigger: " + action.getTrigger());
             Toast.makeText(this,
                     getText(R.string.trigger_saved_confirmation_toast),
                     Toast.LENGTH_SHORT).show();

@@ -35,7 +35,7 @@ public class ActionTriggerActivity extends BaseTriggerActivity implements
         mAction = (Action) getIntent().getSerializableExtra("action");
 
         // Initialize the reminder data
-        initializeReminders(mAction.getCustomTrigger());
+        initializeReminders(mAction.getTrigger());
 
         setContentView(R.layout.activity_base);
 
