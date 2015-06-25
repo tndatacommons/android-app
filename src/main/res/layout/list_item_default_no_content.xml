@@ -29,7 +29,7 @@
                 android:id="@+id/list_item_default_no_content_icon_imageview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_compass_white"
+                android:src="@drawable/ic_help_white_48dp"
                 android:layout_centerInParent="true"/>
         </RelativeLayout>
 
