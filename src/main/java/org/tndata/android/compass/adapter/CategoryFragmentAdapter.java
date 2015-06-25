@@ -121,8 +121,12 @@ public class CategoryFragmentAdapter extends
                 goal.getDescription());
         ((CategoryGoalViewHolder) viewHolder).setCircleViewBackgroundColor(
                 mCategory.getColor());
-        ((CategoryGoalViewHolder) viewHolder).iconImageView.setImageResource(
-                goal.getProgressIcon());
+
+        ImageView iconImageView = ((CategoryGoalViewHolder) viewHolder).iconImageView;
+
+        // If the user hasn't selected any Behaviors display the goal's icon instead of the
+        // progress widget
+        goal.loadIconIntoView(mContext, iconImageView);
 
         final Boolean goalIsEmpty = goal.getBehaviors().isEmpty();
         TextView ctaTextView = ((CategoryGoalViewHolder) viewHolder).moreInfoTextView;

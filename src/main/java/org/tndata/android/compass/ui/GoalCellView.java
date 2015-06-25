@@ -70,7 +70,10 @@ public class GoalCellView extends LinearLayout {
             } else {
                 mCircleView.setBackgroundDrawable(gradientDrawable);
             }
-            mIconImageView.setImageResource(mGoal.getProgressIcon());
+            // If the user hasn't selected any Behaviors/Actions, display the Goal icon instead
+            // of the progress widget.
+            mGoal.loadIconIntoView(mContext, mIconImageView);
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
