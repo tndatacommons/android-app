@@ -89,7 +89,7 @@ public class ActionTriggerFragment extends Fragment {
         titleTextView.setText(mAction.getTitle());
 
         Switch notificationSwitch = (Switch) v.findViewById(R.id.notification_option_switch);
-        if(trigger.isDisabled()) {
+        if(trigger != null && trigger.isDisabled()) {
             notificationSwitch.setChecked(false);
         }
         notificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
