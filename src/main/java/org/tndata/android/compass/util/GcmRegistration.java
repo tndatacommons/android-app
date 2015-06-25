@@ -41,6 +41,9 @@ public class GcmRegistration implements RegisterDeviceTask.RegisterDeviceTaskLis
 
             if (registration_id.isEmpty()) {
                 registerInBackground();
+            } else {
+                // Always update this.
+                sendRegistrationIdToBackend(registration_id);
             }
         } else {
             Log.i(TAG, "No valid Google Play Services APK found.");
