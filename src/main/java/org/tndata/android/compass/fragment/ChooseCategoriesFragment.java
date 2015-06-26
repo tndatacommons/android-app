@@ -121,7 +121,7 @@ public class ChooseCategoriesFragment extends Fragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mItems = new ArrayList<Category>();
-        if (((CompassApplication) getActivity().getApplication()).getCategories() != null) {
+        if (!((CompassApplication) getActivity().getApplication()).getCategories().isEmpty()) {
             mSelectedItems.addAll(((CompassApplication) getActivity().getApplication())
                     .getCategories());
         }
