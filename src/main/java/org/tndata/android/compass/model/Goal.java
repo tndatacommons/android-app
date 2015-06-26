@@ -153,6 +153,11 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
      */
     public void loadIconIntoView(Context context, ImageView imageView) {
         String iconUrl = getIconUrl();
+        if(iconUrl != null && !iconUrl.isEmpty()) {
+            ImageCache.instance(context).loadBitmap(imageView, iconUrl, false);
+        }
+        /*
+        // TODO: only show goal icons (above) until we figure out what to do here.
         if(getBehaviors().isEmpty()) {
             if(iconUrl != null && !iconUrl.isEmpty()) {
                 ImageCache.instance(context).loadBitmap(imageView, iconUrl, false);
@@ -160,5 +165,6 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
         } else {
             imageView.setImageResource(getProgressIcon());
         }
+        */
     }
 }
