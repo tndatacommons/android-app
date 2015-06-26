@@ -70,6 +70,7 @@ public class MyGoalsAdapter extends
         public void setTitleText(Context ctx, String content) {
             // NOTE: getString is not available outside of a Context, so need that passed in.
             // (i.e. Activity or Service). See http://stackoverflow.com/a/8765766/182778
+            content = content.toLowerCase();
             titleTextView.setText(ctx.getString(R.string.category_card_title, content));
 
             // Hide the subtitle, and display the title with the given text.

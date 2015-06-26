@@ -13,7 +13,7 @@
     <string name="action_my_privacy">My Privacy</string>
     <string name="nav_drawer_action">Compass</string>
     <string name="main_tab_title">My Journey</string>
-    <string name="category_card_title">My %1$s Goals</string>
+    <string name="category_card_title">My %1$s goals</string>
 
     <!-- CategoryFragment -->
     <string name="popup_menu_content_description">View More Options</string>

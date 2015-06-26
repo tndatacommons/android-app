@@ -25,7 +25,6 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.task.AddGoalTask;
@@ -244,7 +243,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
             mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }
 
-        if (mCategory.getGoals() != null) {
+        if (mCategory.getGoals().isEmpty()) {
             mSelectedGoals.addAll(mCategory.getGoals());
         }
 

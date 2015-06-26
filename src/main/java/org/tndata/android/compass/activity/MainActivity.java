@@ -174,7 +174,7 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     public void showCategories() {
-        if (((CompassApplication) getApplication()).getCategories() == null) {
+        if (((CompassApplication) getApplication()).getCategories().isEmpty()) {
             new GetUserCategoriesTask(this).executeOnExecutor(
                     AsyncTask.THREAD_POOL_EXECUTOR,
                     ((CompassApplication) getApplication()).getToken());
@@ -192,7 +192,7 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     public void showGoals() {
-        if (((CompassApplication) getApplication()).getGoals() == null) {
+        if (((CompassApplication) getApplication()).getGoals().isEmpty()) {
             new GetUserGoalsTask(this).executeOnExecutor(
                     AsyncTask.THREAD_POOL_EXECUTOR,
                     ((CompassApplication) getApplication()).getToken());
