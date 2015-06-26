@@ -174,7 +174,9 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     public void showCategories() {
-        if (((CompassApplication) getApplication()).getCategories().isEmpty()) {
+        ArrayList<Category> categories = ((CompassApplication) getApplication()).getCategories();
+
+        if (categories == null || categories.isEmpty()) {
             new GetUserCategoriesTask(this).executeOnExecutor(
                     AsyncTask.THREAD_POOL_EXECUTOR,
                     ((CompassApplication) getApplication()).getToken());
