@@ -22,6 +22,9 @@ public class Trigger implements Serializable, Comparable<Trigger> {
     private String time = "";
     private String trigger_date = "";
 
+    public Trigger() {
+    }
+
     // A default RRULE value for the recurrence picker (NOTE: no RRULE prefix)
     public static final String DEFAULT_RRULE = "FREQ=DAILY";
 
