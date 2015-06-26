@@ -72,6 +72,10 @@ public class MainActivity extends ActionBarActivity implements
     private boolean mDrawerIsOpen = false;
     private boolean backButtonSelectsDefaultTab = false;
     private static final int DEFAULT_TAB = 0;
+    private boolean fetchedCategories = false; // Have we fetched the user's categories, already?
+    // ^ this is used to prevent the app from hitting the api continuously after the app crashes;
+    // when that happens, the CompassApplication lose's it's local values, then this activity
+    // keeps calling showCategories in a loop, which hits the api without a proper auth token.
 
     @Override
     public void onBackPressed() {
@@ -176,11 +180,11 @@ public class MainActivity extends ActionBarActivity implements
     public void showCategories() {
         ArrayList<Category> categories = ((CompassApplication) getApplication()).getCategories();
 
-        if (categories == null || categories.isEmpty()) {
+        if (!fetchedCategories && (categories == null || categories.isEmpty())) {
             new GetUserCategoriesTask(this).executeOnExecutor(
                     AsyncTask.THREAD_POOL_EXECUTOR,
                     ((CompassApplication) getApplication()).getToken());
-        } else {
+        } else if(categories != null) {
             for (Category cat : ((CompassApplication) getApplication())
                     .getCategories()) {
                 Log.d("Category", cat.getTitle());
@@ -334,6 +338,7 @@ public class MainActivity extends ActionBarActivity implements
     public void categoriesLoaded(ArrayList<Category> categories) {
         ((CompassApplication) getApplication()).setCategories(categories);
         showCategories();
+        fetchedCategories = true;
     }
 
     @Override
