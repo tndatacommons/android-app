@@ -74,9 +74,19 @@ public class CompassApplication extends Application {
 
     public void updateAction(Action action) {
         // Given a single action, find it in the list of Actions and keep the input version
-        int i;
-        for (i = 0; mActions.get(i).getId() == action.getId(); i++) {}
-        mActions.remove(i);
+        int i = 0;
+        boolean found = false;
+        for (Action a : mActions) {
+            if(a.getId() == action.getId()) {
+                found = true;
+                break;
+            }
+            i++;
+        }
+        if(found) {
+            // remove the old action
+            mActions.remove(i);
+        }
         mActions.add(action);
     }
 }
