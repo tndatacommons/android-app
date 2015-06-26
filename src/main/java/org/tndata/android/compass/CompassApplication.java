@@ -12,8 +12,8 @@ import java.util.ArrayList;
 public class CompassApplication extends Application {
     private String mToken;
     private User mUser;
-    private ArrayList<Category> mCategories = null;
-    private ArrayList<Goal> mGoals = null;
+    private ArrayList<Category> mCategories = new ArrayList<>(Category);
+    private ArrayList<Goal> mGoals = new ArrayList<Goal>();
     private ArrayList<Action> mActions = new ArrayList<Action>();
 
     public CompassApplication() {
