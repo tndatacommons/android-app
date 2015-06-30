@@ -16,7 +16,6 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -37,8 +36,13 @@ import org.tndata.android.compass.util.ImageCache;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+/**
+ * The GoalTryActivity is where a user selects Behaviors for a chosen Goal.
+ * 
+ */
 public class GoalTryActivity extends ActionBarActivity implements
         BehaviorLoaderListener {
+
     private Toolbar mToolbar;
     private Goal mGoal;
     private ArrayList<Behavior> mBehaviorList;
@@ -59,12 +63,12 @@ public class GoalTryActivity extends ActionBarActivity implements
                     .findViewById(R.id.list_item_behavior_title_textview);
             descriptionTextView = (TextView) itemView
                     .findViewById(R.id.list_item_behavior_description_textview);
-            tryIt = (Button) itemView.findViewById(R.id.list_item_behavior_try_it_button);
+            tryItTextView = (TextView) itemView.findViewById(R.id.list_item_behavior_try_it_textview);
         }
 
         TextView titleTextView;
         TextView descriptionTextView;
-        Button tryIt;
+        TextView tryItTextView;
         ImageView iconImageView;
     }
 
@@ -106,12 +110,12 @@ public class GoalTryActivity extends ActionBarActivity implements
                 if (mExpandedBehaviors.contains(behavior)) {
                     ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
                             .VISIBLE);
-                    ((TryGoalViewHolder) viewHolder).tryIt.setVisibility(View.VISIBLE);
+                    ((TryGoalViewHolder) viewHolder).tryItTextView.setVisibility(View.VISIBLE);
                     ((TryGoalViewHolder) viewHolder).iconImageView.setVisibility(View.GONE);
                 } else {
                     ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
                             .GONE);
-                    ((TryGoalViewHolder) viewHolder).tryIt.setVisibility(View.GONE);
+                    ((TryGoalViewHolder) viewHolder).tryItTextView.setVisibility(View.GONE);
                     ((TryGoalViewHolder) viewHolder).iconImageView.setVisibility(View.VISIBLE);
                 }
                 if (behavior.getIconUrl() != null
@@ -121,7 +125,7 @@ public class GoalTryActivity extends ActionBarActivity implements
                             behavior.getIconUrl(), false);
                 }
 
-                ((TryGoalViewHolder) viewHolder).tryIt.setOnClickListener(new View
+                ((TryGoalViewHolder) viewHolder).tryItTextView.setOnClickListener(new View
                         .OnClickListener() {
 
                     @Override
