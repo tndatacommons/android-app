@@ -49,23 +49,22 @@
             android:visibility="gone"/>
 
 
-        <Button
-            android:id="@+id/list_item_behavior_try_it_button"
+        <TextView
+            android:id="@+id/list_item_behavior_try_it_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:gravity="center"
+            android:layout_margin="10dp"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_below="@id/list_item_behavior_description_textview"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/button_paper_flat"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:minHeight="@dimen/paper_flat_button_min_height"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/grow_primary"
+            android:layout_below="@id/list_item_behavior_description_textview"
             android:text="@string/goal_behavior_try_it"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@drawable/button_paper_flat_text_selector"
             android:visibility="gone"/>
     </RelativeLayout>
 

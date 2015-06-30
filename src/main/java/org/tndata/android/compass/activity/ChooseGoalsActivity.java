@@ -4,6 +4,7 @@ package org.tndata.android.compass.activity;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -39,7 +40,10 @@ import org.tndata.android.compass.util.ImageHelper;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-
+/**
+ * The ChooseGoalsActivity is where a user selects Goals within a selected Category.
+ *
+ */
 public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTask
         .AddGoalsTaskListener,
         GoalLoaderTask.GoalLoaderListener, DeleteGoalTask.DeleteGoalTaskListener {
@@ -300,6 +304,8 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
     }
 
     public void goalSelected(Goal goal) {
+        // When a goal has been selected, save it in our list of selected goals, and then
+        // immediately launch the user into the Behavior Selection workflow.
 
         if (mSelectedGoals.contains(goal)) {
             mSelectedGoals.remove(goal);
@@ -307,6 +313,12 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
             mSelectedGoals.add(goal);
         }
         mAdapter.notifyDataSetChanged();
+
+        // Launch the GoalTryActivity (where users choose a behavior for the Goal)
+        Intent intent = new Intent(getApplicationContext(), GoalTryActivity.class);
+        intent.putExtra("goal", goal);
+        intent.putExtra("category", mCategory);
+        startActivity(intent);
     }
 
     public void moreInfoPressed(Goal goal) {
