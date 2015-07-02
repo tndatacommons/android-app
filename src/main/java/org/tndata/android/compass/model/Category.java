@@ -1,6 +1,10 @@
 package org.tndata.android.compass.model;
 
+import android.content.Context;
+import android.widget.ImageView;
+
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.util.ImageCache;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -161,6 +165,27 @@ public class Category extends TDCBase implements Serializable,
             return -1;
         } else
             return 1;
+    }
+
+    /**
+     * Given a Context and an ImageView, load this Goal's icon (if the user has selected
+     * no Behaviors) or load the goal's Progress Icons.
+     *
+     * @param context: an application context
+     * @param imageView: an ImageView
+     */
+    public void loadIconIntoView(Context context, ImageView imageView) {
+        String iconUrl = getIconUrl();
+        if(iconUrl != null && !iconUrl.isEmpty()) {
+            ImageCache.instance(context).loadBitmap(imageView, iconUrl, false);
+        }
+    }
+
+    public void loadImageIntoView(Context context, ImageView imageView) {
+        String url = getImageUrl();
+        if(url != null && !url.isEmpty()) {
+            ImageCache.instance(context).loadBitmap(imageView, url, false);
+        }
     }
 
 }
