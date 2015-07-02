@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.tndata.android.compass.CompassApplication;
@@ -156,8 +158,19 @@ public class GoalTryActivity extends ActionBarActivity implements
 
         mFakeHeader = getLayoutInflater().inflate(R.layout.header_try_goal,
                 mRecyclerView, false);
-        TextView goalDescription = (TextView) mFakeHeader.findViewById(R.id.goal_try_label);
-        goalDescription.setText(mGoal.getDescription());
+        ImageView goalIconView = (ImageView) mFakeHeader.findViewById(R.id.goal_try_header_imageview);
+        mGoal.loadIconIntoView(getApplicationContext(), goalIconView);
+        RelativeLayout circleView = (RelativeLayout) mFakeHeader.findViewById(R.id.goal_try_header_circle_view);
+        GradientDrawable gradientDrawable = (GradientDrawable) circleView.getBackground();
+        if (!mCategory.getSecondaryColor().isEmpty()) {
+            gradientDrawable.setColor(Color.parseColor(mCategory.getSecondaryColor()));
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            circleView.setBackground(gradientDrawable);
+        } else {
+            circleView.setBackgroundDrawable(gradientDrawable);
+        }
+
         mHeaderView = findViewById(R.id.goal_try_material_view);
         manager.setHeaderIncrementFixer(mFakeHeader);
         mAdapter.setParallaxHeader(mFakeHeader, mRecyclerView);
