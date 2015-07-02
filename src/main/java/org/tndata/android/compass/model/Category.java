@@ -14,6 +14,7 @@ public class Category extends TDCBase implements Serializable,
     private String image_url = "";
     private ArrayList<Goal> goals = new ArrayList<Goal>();
     private String color = "";
+    private String secondary_color = "";
     private double progress_value = 0.0; // Only used for UserCategories
 
     public Category() {
@@ -89,6 +90,14 @@ public class Category extends TDCBase implements Serializable,
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public String getSecondaryColor() {
+        return this.secondary_color;
+    }
+
+    public void setSecondaryColor(String secondary_color) {
+        this.secondary_color = secondary_color;
     }
 
     public void setProgressValue(double value) {
