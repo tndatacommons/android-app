@@ -77,6 +77,8 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                     .findViewById(R.id.list_item_choose_goal_description_textview);
             detailContainerView = (RelativeLayout) itemView.findViewById(R.id
                     .list_item_choose_goal_detail_container);
+            headerCardTextView = (TextView) itemView
+                    .findViewById(R.id.list_item_choose_goal_header_textview);
         }
 
         TextView titleTextView;
@@ -85,6 +87,19 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         ImageView selectButton;
         RelativeLayout iconContainerView;
         RelativeLayout detailContainerView;
+        TextView headerCardTextView;
+    }
+
+    private Goal createHeaderObject() {
+        // NOTE: We want a single _Header Card_ for each collection; It'll contain the
+        // parent's description (in this case the Category), but so the card can be created
+        // with he rest of the collection, we'll construct a Goal object with only
+        // a description.
+        Goal headerGoal = new Goal();
+        headerGoal.setDescription(mCategory.getDescription());
+        headerGoal.setId(0); // it's not a real object, so it doesn't have a real ID.
+
+        return headerGoal;
     }
 
     @Override
@@ -110,6 +125,8 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         mErrorTextView = (TextView) findViewById(R.id.choose_goals_error_textview);
 
         mItems = new ArrayList<Goal>();
+        mItems.add(0, createHeaderObject());
+
         mAdapter = new ParallaxRecyclerAdapter<>(mItems);
         mAdapter.implementRecyclerAdapterMethods(new ParallaxRecyclerAdapter
                 .RecyclerAdapterMethods() {
@@ -118,55 +135,70 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                                          final int i) {
                 final Goal goal = mItems.get(i);
 
-                ((ChooseGoalViewHolder) viewHolder).titleTextView.setText(goal
-                        .getTitle());
-                if (mExpandedGoals.contains(goal)) {
+                if(i == 0 && goal.getId() == 0) {
+
+                    // Display the Header Card
+
+                    ((ChooseGoalViewHolder) viewHolder).titleTextView.setVisibility(View.GONE);
                     ((ChooseGoalViewHolder) viewHolder).iconContainerView.setVisibility(View.GONE);
-                    ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
-                            .VISIBLE);
+                    ((ChooseGoalViewHolder) viewHolder).detailContainerView.setVisibility(View.GONE);
+                    ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View.GONE);
+                    ((ChooseGoalViewHolder) viewHolder).headerCardTextView.setText(goal.getDescription());
+                    ((ChooseGoalViewHolder) viewHolder).headerCardTextView.setVisibility(View.VISIBLE);
                 } else {
-                    ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
-                            .GONE);
-                    ((ChooseGoalViewHolder) viewHolder).iconContainerView.setVisibility(View
-                            .VISIBLE);
-                }
-                ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setText(goal
-                        .getDescription());
-                if (goal.getIconUrl() != null
-                        && !goal.getIconUrl().isEmpty()) {
-                    ImageCache.instance(getApplicationContext()).loadBitmap(
-                            ((ChooseGoalViewHolder) viewHolder).iconImageView,
-                            goal.getIconUrl(), false);
-                }
-                if (mSelectedGoals.contains(goal)) {
-                    ImageHelper.setupImageViewButton(getResources(),
-                            ((ChooseGoalViewHolder) viewHolder).selectButton, ImageHelper.SELECTED);
-                } else {
-                    ImageHelper.setupImageViewButton(getResources(),
-                            ((ChooseGoalViewHolder) viewHolder).selectButton, ImageHelper.ADD);
-                }
 
-                ((ChooseGoalViewHolder) viewHolder).selectButton.setOnClickListener(new View
-                        .OnClickListener() {
+                    // Handle all other cards
 
-                    @Override
-                    public void onClick(View v) {
-                        goalSelected(goal);
-                    }
-                });
-
-                GradientDrawable gradientDrawable = (GradientDrawable) ((ChooseGoalViewHolder)
-                        viewHolder).iconContainerView.getBackground();
-                String colorString = mCategory.getColor();
-                Log.d("color", colorString);
-                if (colorString != null && !colorString.isEmpty()) {
-                    gradientDrawable.setColor(Color.parseColor(colorString));
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        ((ChooseGoalViewHolder) viewHolder).iconContainerView.setBackground
-                                (gradientDrawable);
+                    ((ChooseGoalViewHolder) viewHolder).titleTextView.setText(goal
+                            .getTitle());
+                    if (mExpandedGoals.contains(goal)) {
+                        ((ChooseGoalViewHolder) viewHolder).iconContainerView.setVisibility(View.GONE);
+                        ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
+                                .VISIBLE);
                     } else {
-                        ((ChooseGoalViewHolder) viewHolder).iconContainerView
-                                .setBackgroundDrawable(gradientDrawable);
+                        ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
+                                .GONE);
+                        ((ChooseGoalViewHolder) viewHolder).iconContainerView.setVisibility(View
+                                .VISIBLE);
+                    }
+                    ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setText(goal
+                            .getDescription());
+                    if (goal.getIconUrl() != null
+                            && !goal.getIconUrl().isEmpty()) {
+                        ImageCache.instance(getApplicationContext()).loadBitmap(
+                                ((ChooseGoalViewHolder) viewHolder).iconImageView,
+                                goal.getIconUrl(), false);
+                    }
+                    if (mSelectedGoals.contains(goal)) {
+                        ImageHelper.setupImageViewButton(getResources(),
+                                ((ChooseGoalViewHolder) viewHolder).selectButton, ImageHelper.SELECTED);
+                    } else {
+                        ImageHelper.setupImageViewButton(getResources(),
+                                ((ChooseGoalViewHolder) viewHolder).selectButton, ImageHelper.ADD);
+                    }
+
+                    ((ChooseGoalViewHolder) viewHolder).selectButton.setOnClickListener(new View
+                            .OnClickListener() {
+
+                        @Override
+                        public void onClick(View v) {
+                            goalSelected(goal);
+                        }
+                    });
+
+                    GradientDrawable gradientDrawable = (GradientDrawable) ((ChooseGoalViewHolder)
+                            viewHolder).iconContainerView.getBackground();
+                    String colorString = mCategory.getColor();
+                    Log.d("color", colorString);
+                    if (colorString != null && !colorString.isEmpty()) {
+                        gradientDrawable.setColor(Color.parseColor(colorString));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                            ((ChooseGoalViewHolder) viewHolder).iconContainerView.setBackground
+                                    (gradientDrawable);
+                        } else {
+                            ((ChooseGoalViewHolder) viewHolder).iconContainerView
+                                    .setBackgroundDrawable(gradientDrawable);
+                        }
                     }
                 }
             }
@@ -211,7 +243,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
 
             @Override
             public void onClick(View v, int position) {
-                if (position == -1) {
+                if (position <= 0) {
                     // This is the header, ignore. This fixes a bug when clicking a description
                     return;
                 }
