@@ -5,17 +5,17 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/material_header_size">
+        android:layout_height="@dimen/material_header_content_size">
 
         <RelativeLayout
             android:id="@+id/goal_try_header_circle_view"
             android:layout_width="@dimen/header_goal_icon_image_size"
             android:layout_height="@dimen/header_goal_icon_image_size"
-            android:layout_margin="20dp"
             android:gravity="center"
-            android:layout_gravity="center|center_vertical"
+            android:layout_gravity="center|bottom"
             android:contentDescription="@string/goal_image_description"
-            android:background="@drawable/circle_gray">
+            android:background="@drawable/circle_gray"
+            android:layout_marginBottom="40dp">
 
             <ImageView
                 android:id="@+id/goal_try_header_imageview"

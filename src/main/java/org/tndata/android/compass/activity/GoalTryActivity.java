@@ -61,6 +61,8 @@ public class GoalTryActivity extends ActionBarActivity implements
             super(itemView);
             iconImageView = (ImageView) itemView
                     .findViewById(R.id.list_item_behavior_imageview);
+            headerCardTextView = (TextView) itemView
+                    .findViewById(R.id.list_item_behavior_header_textview);
             titleTextView = (TextView) itemView
                     .findViewById(R.id.list_item_behavior_title_textview);
             descriptionTextView = (TextView) itemView
@@ -72,6 +74,19 @@ public class GoalTryActivity extends ActionBarActivity implements
         TextView descriptionTextView;
         TextView tryItTextView;
         ImageView iconImageView;
+        TextView headerCardTextView;
+    }
+
+    private Behavior createHeaderObject() {
+        // NOTE: We want a single _Header Card_ for each collection; It'll contain the
+        // parent's description (in this case the goal), but so the card can be created
+        // with he rest of the collection, we'll construct a Behavior object with only
+        // a description.
+        Behavior headerBehavior = new Behavior();
+        headerBehavior.setDescription(mGoal.getDescription());
+        headerBehavior.setId(0); // it's not a real object, so it doesn't have a real ID.
+
+        return headerBehavior;
     }
 
     @Override
@@ -97,6 +112,8 @@ public class GoalTryActivity extends ActionBarActivity implements
         mRecyclerView.setHasFixedSize(true);
 
         mBehaviorList = new ArrayList<Behavior>();
+        mBehaviorList.add(0, createHeaderObject());
+
         mAdapter = new ParallaxRecyclerAdapter<>(mBehaviorList);
         mAdapter.implementRecyclerAdapterMethods(new ParallaxRecyclerAdapter
                 .RecyclerAdapterMethods() {
@@ -105,42 +122,56 @@ public class GoalTryActivity extends ActionBarActivity implements
                                          final int i) {
                 Behavior behavior = mBehaviorList.get(i);
 
-                ((TryGoalViewHolder) viewHolder).titleTextView.setText(behavior
-                        .getTitle());
-                ((TryGoalViewHolder) viewHolder).descriptionTextView
-                        .setText(behavior.getDescription());
-                if (mExpandedBehaviors.contains(behavior)) {
-                    ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
-                            .VISIBLE);
-                    ((TryGoalViewHolder) viewHolder).tryItTextView.setVisibility(View.VISIBLE);
+                if(i == 0 && behavior.getId() == 0) {
+
+                    // Display the Header Card
+
+                    ((TryGoalViewHolder) viewHolder).headerCardTextView.setText(behavior.getDescription());
+                    ((TryGoalViewHolder) viewHolder).headerCardTextView.setVisibility(View.VISIBLE);
+                    ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View.GONE);
+                    ((TryGoalViewHolder) viewHolder).titleTextView.setVisibility(View.GONE);
                     ((TryGoalViewHolder) viewHolder).iconImageView.setVisibility(View.GONE);
                 } else {
-                    ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
-                            .GONE);
-                    ((TryGoalViewHolder) viewHolder).tryItTextView.setVisibility(View.GONE);
-                    ((TryGoalViewHolder) viewHolder).iconImageView.setVisibility(View.VISIBLE);
-                }
-                if (behavior.getIconUrl() != null
-                        && !behavior.getIconUrl().isEmpty()) {
-                    ImageCache.instance(getApplicationContext()).loadBitmap(
-                            ((TryGoalViewHolder) viewHolder).iconImageView,
-                            behavior.getIconUrl(), false);
-                }
 
-                ((TryGoalViewHolder) viewHolder).tryItTextView.setOnClickListener(new View
-                        .OnClickListener() {
+                    // Handle all other cards
 
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(getApplicationContext(),
-                                BehaviorActivity.class);
-                        intent.putExtra("behavior", mBehaviorList.get(i));
-                        intent.putExtra("goal", mGoal);
-                        intent.putExtra("category", mCategory);
-                        startActivityForResult(intent, Constants.VIEW_BEHAVIOR_REQUEST_CODE);
+                    ((TryGoalViewHolder) viewHolder).titleTextView.setText(behavior
+                            .getTitle());
+                    ((TryGoalViewHolder) viewHolder).descriptionTextView
+                            .setText(behavior.getDescription());
+
+                    if (mExpandedBehaviors.contains(behavior)) {
+                        ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
+                                .VISIBLE);
+                        ((TryGoalViewHolder) viewHolder).tryItTextView.setVisibility(View.VISIBLE);
+                        ((TryGoalViewHolder) viewHolder).iconImageView.setVisibility(View.GONE);
+                    } else {
+                        ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
+                                .GONE);
+                        ((TryGoalViewHolder) viewHolder).tryItTextView.setVisibility(View.GONE);
+                        ((TryGoalViewHolder) viewHolder).iconImageView.setVisibility(View.VISIBLE);
                     }
-                });
+                    if (behavior.getIconUrl() != null
+                            && !behavior.getIconUrl().isEmpty()) {
+                        ImageCache.instance(getApplicationContext()).loadBitmap(
+                                ((TryGoalViewHolder) viewHolder).iconImageView,
+                                behavior.getIconUrl(), false);
+                    }
+                    // Set up a Click Listener for all other cards.
+                    ((TryGoalViewHolder) viewHolder).tryItTextView.setOnClickListener(new View
+                            .OnClickListener() {
 
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getApplicationContext(),
+                                    BehaviorActivity.class);
+                            intent.putExtra("behavior", mBehaviorList.get(i));
+                            intent.putExtra("goal", mGoal);
+                            intent.putExtra("category", mCategory);
+                            startActivityForResult(intent, Constants.VIEW_BEHAVIOR_REQUEST_CODE);
+                        }
+                    });
+                }
             }
 
             @Override
@@ -194,8 +225,9 @@ public class GoalTryActivity extends ActionBarActivity implements
             @Override
             public void onClick(View v, int position) {
                 //lets get semantic
-                if (position == -1) {
-                    // This is the header, ignore. This fixes a bug when clicking a description
+                if (position <= 0) {
+                    // This is the header or header card, so ignore.
+                    // This fixes a bug when clicking a description
                     return;
                 }
                 Behavior behavior = mBehaviorList.get(position);
