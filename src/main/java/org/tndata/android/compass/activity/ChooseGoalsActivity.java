@@ -49,10 +49,11 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         GoalLoaderTask.GoalLoaderListener, DeleteGoalTask.DeleteGoalTaskListener {
     private Toolbar mToolbar;
     private RecyclerView mRecyclerView;
-    private TextView mHeaderTextView;
+    private ImageView mHeaderImageView;
     private TextView mErrorTextView;
     private View mFakeHeader;
     private View mHeaderView;
+    private RelativeLayout mHeaderCircleView;
     private ArrayList<Goal> mItems;
     private ArrayList<Goal> mSelectedGoals = new ArrayList<Goal>();
     private ParallaxRecyclerAdapter<Goal> mAdapter;
@@ -218,9 +219,13 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
 
         mFakeHeader = getLayoutInflater().inflate(R.layout.header_choose_goals,
                 mRecyclerView, false);
-        mHeaderTextView = (TextView) mFakeHeader.findViewById(R.id
-                .choose_goals_header_label_textview);
-        mHeaderTextView.setText(mCategory.getDescription());
+        mHeaderCircleView = (RelativeLayout) mFakeHeader.findViewById(R.id.choose_goals_header_circle_view);
+        mHeaderImageView = (ImageView) mFakeHeader.findViewById(R.id.choose_goals_header_imageview);
+        mCategory.loadImageIntoView(getApplicationContext(), mHeaderImageView);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mHeaderCircleView.setClipToOutline(true);
+        }
+
         mHeaderView = findViewById(R.id.choose_goals_material_view);
         manager.setHeaderIncrementFixer(mFakeHeader);
         mAdapter.setShouldClipView(false);

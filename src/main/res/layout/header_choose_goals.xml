@@ -3,15 +3,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/choose_goals_header_label_textview"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/material_header_content_size"
-        android:layout_alignParentTop="true"
-        android:background="@android:color/transparent"
-        android:gravity="start|bottom"
-        android:padding="10dp"
-        android:text="@string/choose_goals_header_label"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@color/white" />
+        android:layout_height="@dimen/material_header_content_size">
+
+        <RelativeLayout
+            android:id="@+id/choose_goals_header_circle_view"
+            android:layout_width="@dimen/header_category_icon_image_size"
+            android:layout_height="@dimen/header_category_icon_image_size"
+            android:gravity="center"
+            android:padding="0dp"
+            android:layout_gravity="center|bottom"
+            android:contentDescription="@string/goal_image_description"
+            android:background="@drawable/circle_gray">
+
+            <ImageView
+                android:id="@+id/choose_goals_header_imageview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                android:src="@drawable/path_main_image"/>
+        </RelativeLayout>
+    </FrameLayout>
+
 </RelativeLayout>

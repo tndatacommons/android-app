@@ -10,6 +10,7 @@
     <dimen name="category_grid_spacing">8dp</dimen>
     <dimen name="category_grid_column_width">140dp</dimen>
     <dimen name="goal_icon_image_size">65dp</dimen>
+    <dimen name="header_category_icon_image_size">150dp</dimen>
     <dimen name="header_goal_icon_image_size">85dp</dimen>
     <dimen name="behavior_icon_image_size">45dp</dimen>
     <dimen name="category_small_icon_image_size">35dp</dimen>
