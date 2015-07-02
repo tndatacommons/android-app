@@ -3,16 +3,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/goal_try_label"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/material_header_content_size"
-        android:layout_alignParentTop="true"
-        android:background="@android:color/transparent"
-        android:gravity="start|bottom"
-        android:padding="10dp"
-        android:text="@string/goal_try_these"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@color/white" />
+        android:layout_height="@dimen/material_header_content_size">
+
+        <RelativeLayout
+            android:id="@+id/goal_try_header_circle_view"
+            android:layout_width="@dimen/header_goal_icon_image_size"
+            android:layout_height="@dimen/header_goal_icon_image_size"
+            android:gravity="center"
+            android:layout_gravity="center|bottom"
+            android:contentDescription="@string/goal_image_description"
+            android:background="@drawable/circle_gray"
+            android:layout_marginBottom="40dp">
+
+            <ImageView
+                android:id="@+id/goal_try_header_imageview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_margin="0dp"
+                android:src="@drawable/ic_action_compass_white" />
+
+        </RelativeLayout>
+    </FrameLayout>
 
 </RelativeLayout>

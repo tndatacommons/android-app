@@ -48,6 +48,16 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:visibility="gone"/>
 
+        <!-- NOTE: When the following TextView is displayed, it will be the only thing on the card -->
+        <TextView
+            android:id="@+id/list_item_behavior_header_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/list_item_behavior_title_textview"
+            android:layout_margin="5dp"
+            android:paddingLeft="2dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/list_item_behavior_try_it_textview"
