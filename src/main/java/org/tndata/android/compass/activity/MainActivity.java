@@ -353,6 +353,9 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void behaviorsLoaded(ArrayList<Behavior> behaviors) {
         if (behaviors != null) {
+            // Save the user's selected behaviors
+            ((CompassApplication) getApplication()).setBehaviors(behaviors);
+            
             //this is messy...
             //add each behavior to the correct goal
             ArrayList<Goal> goals = new ArrayList<Goal>();

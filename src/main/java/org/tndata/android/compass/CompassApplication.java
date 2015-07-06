@@ -3,6 +3,7 @@ package org.tndata.android.compass;
 import android.app.Application;
 
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.User;
@@ -14,6 +15,7 @@ public class CompassApplication extends Application {
     private User mUser;
     private ArrayList<Category> mCategories = new ArrayList<Category>();
     private ArrayList<Goal> mGoals = new ArrayList<Goal>();
+    private ArrayList<Behavior> mBehaviors = new ArrayList<Behavior>(); // The user's selected behaviors
     private ArrayList<Action> mActions = new ArrayList<Action>();
 
     public CompassApplication() {
@@ -58,6 +60,22 @@ public class CompassApplication extends Application {
 
     public void removeGoal(Goal goal) {
         mGoals.remove(goal);
+    }
+
+    public void setBehaviors(ArrayList<Behavior> behaviors) {
+        mBehaviors = behaviors;
+    }
+
+    public ArrayList<Behavior> getBehaviors() {
+        return mBehaviors;
+    }
+
+    public void removeBehavior(Behavior behavior) {
+        mBehaviors.remove(behavior);
+    }
+
+    public void addBehavior(Behavior behavior) {
+        mBehaviors.add(behavior);
     }
 
     public ArrayList<Action> getActions() {
