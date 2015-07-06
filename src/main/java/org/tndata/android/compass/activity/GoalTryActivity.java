@@ -1,6 +1,8 @@
 package org.tndata.android.compass.activity;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -128,7 +130,7 @@ public class GoalTryActivity extends ActionBarActivity implements
             @Override
             public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder,
                                          final int i) {
-                Behavior behavior = mBehaviorList.get(i);
+                final Behavior behavior = mBehaviorList.get(i);
 
                 if(i == 0 && behavior.getId() == 0) {
 
@@ -174,6 +176,7 @@ public class GoalTryActivity extends ActionBarActivity implements
                         @Override
                         public void onClick(View v) {
                             Log.d("GoalTryActivity", "Launch More Info");
+                            moreInfoPressed(behavior);
                         }
                     });
                     ((TryGoalViewHolder) viewHolder).selectActionsImageView.setOnClickListener(new View
@@ -193,7 +196,7 @@ public class GoalTryActivity extends ActionBarActivity implements
                         @Override
                         public void onClick(View v) {
                             // TODO: launch if the user _just_ added the behavior, but NOT if they're
-                            // todo: un-selecting the behavior.
+                            // todo: un-selecting the behavior: Pull some of the features from BehaviorActivity?
                             Intent intent = new Intent(getApplicationContext(),
                                     BehaviorActivity.class);
                             intent.putExtra("behavior", mBehaviorList.get(i));
@@ -292,6 +295,24 @@ public class GoalTryActivity extends ActionBarActivity implements
             mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }
         loadBehaviors();
+    }
+
+    public void moreInfoPressed(Behavior behavior) {
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(GoalTryActivity.this);
+            builder.setMessage(behavior.getMoreInfo()).setTitle(behavior.getTitle());
+            builder.setPositiveButton(android.R.string.ok,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
