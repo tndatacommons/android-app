@@ -67,14 +67,22 @@ public class GoalTryActivity extends ActionBarActivity implements
                     .findViewById(R.id.list_item_behavior_title_textview);
             descriptionTextView = (TextView) itemView
                     .findViewById(R.id.list_item_behavior_description_textview);
-            tryItTextView = (TextView) itemView.findViewById(R.id.list_item_behavior_try_it_textview);
+
+            iconsWrapper = (RelativeLayout) itemView.findViewById(R.id.list_icons_wrapper);
+            tryItImageView = (ImageView) itemView.findViewById(R.id.list_item_behavior_try_it_imageview);
+            selectActionsImageView = (ImageView) itemView.findViewById(R.id.list_item_select_action_imageview);
+            moreInfoImageView = (ImageView) itemView.findViewById(R.id.list_item_behavior_info_imageview);
         }
 
         TextView titleTextView;
         TextView descriptionTextView;
-        TextView tryItTextView;
         ImageView iconImageView;
         TextView headerCardTextView;
+
+        RelativeLayout iconsWrapper;
+        ImageView tryItImageView;
+        ImageView selectActionsImageView;
+        ImageView moreInfoImageView;
     }
 
     private Behavior createHeaderObject() {
@@ -131,6 +139,7 @@ public class GoalTryActivity extends ActionBarActivity implements
                     ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View.GONE);
                     ((TryGoalViewHolder) viewHolder).titleTextView.setVisibility(View.GONE);
                     ((TryGoalViewHolder) viewHolder).iconImageView.setVisibility(View.GONE);
+                    ((TryGoalViewHolder) viewHolder).iconsWrapper.setVisibility(View.GONE);
                 } else {
 
                     // Handle all other cards
@@ -143,12 +152,12 @@ public class GoalTryActivity extends ActionBarActivity implements
                     if (mExpandedBehaviors.contains(behavior)) {
                         ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
                                 .VISIBLE);
-                        ((TryGoalViewHolder) viewHolder).tryItTextView.setVisibility(View.VISIBLE);
+                        ((TryGoalViewHolder) viewHolder).iconsWrapper.setVisibility(View.VISIBLE);
                         ((TryGoalViewHolder) viewHolder).iconImageView.setVisibility(View.GONE);
                     } else {
                         ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
                                 .GONE);
-                        ((TryGoalViewHolder) viewHolder).tryItTextView.setVisibility(View.GONE);
+                        ((TryGoalViewHolder) viewHolder).iconsWrapper.setVisibility(View.GONE);
                         ((TryGoalViewHolder) viewHolder).iconImageView.setVisibility(View.VISIBLE);
                     }
                     if (behavior.getIconUrl() != null
@@ -157,12 +166,34 @@ public class GoalTryActivity extends ActionBarActivity implements
                                 ((TryGoalViewHolder) viewHolder).iconImageView,
                                 behavior.getIconUrl(), false);
                     }
+
                     // Set up a Click Listener for all other cards.
-                    ((TryGoalViewHolder) viewHolder).tryItTextView.setOnClickListener(new View
+                    ((TryGoalViewHolder) viewHolder).moreInfoImageView.setOnClickListener(new View
                             .OnClickListener() {
 
                         @Override
                         public void onClick(View v) {
+                            Log.d("GoalTryActivity", "Launch More Info");
+                        }
+                    });
+                    ((TryGoalViewHolder) viewHolder).selectActionsImageView.setOnClickListener(new View
+                            .OnClickListener() {
+
+                        @Override
+                        public void onClick(View v) {
+                            Log.d("GoalTryActivity", "Launch Action Picker");
+                        }
+                    });
+
+                    // TODO: set the correct icon for this, based on whether or not the user has
+                    // todo: selected the behavior or not.
+                    ((TryGoalViewHolder) viewHolder).tryItImageView.setOnClickListener(new View
+                            .OnClickListener() {
+
+                        @Override
+                        public void onClick(View v) {
+                            // TODO: launch if the user _just_ added the behavior, but NOT if they're
+                            // todo: un-selecting the behavior.
                             Intent intent = new Intent(getApplicationContext(),
                                     BehaviorActivity.class);
                             intent.putExtra("behavior", mBehaviorList.get(i));
