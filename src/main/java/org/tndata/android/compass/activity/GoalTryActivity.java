@@ -22,14 +22,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.task.AddBehaviorTask;
 import org.tndata.android.compass.task.BehaviorLoaderTask;
 import org.tndata.android.compass.task.BehaviorLoaderTask.BehaviorLoaderListener;
+import org.tndata.android.compass.task.DeleteBehaviorTask;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
@@ -45,7 +48,8 @@ import java.util.HashSet;
  * 
  */
 public class GoalTryActivity extends ActionBarActivity implements
-        BehaviorLoaderListener {
+        BehaviorLoaderListener, AddBehaviorTask.AddBehaviorsTaskListener,
+        DeleteBehaviorTask.DeleteBehaviorTaskListener {
 
     private Toolbar mToolbar;
     private Goal mGoal;
@@ -57,6 +61,7 @@ public class GoalTryActivity extends ActionBarActivity implements
     private Category mCategory = null;
     private HashSet<Behavior> mExpandedBehaviors = new HashSet<>();
     private int mCurrentlyExpandedPosition = -1;
+    public CompassApplication application;
 
     static class TryGoalViewHolder extends RecyclerView.ViewHolder {
         public TryGoalViewHolder(View itemView) {
@@ -104,6 +109,8 @@ public class GoalTryActivity extends ActionBarActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_goal_try);
 
+        application = (CompassApplication) getApplication();
+
         mGoal = (Goal) getIntent().getSerializableExtra("goal");
         Log.d("mGoal?", "id:" + mGoal.getId() + " title:" + mGoal.getTitle());
         mCategory = (Category) getIntent().getSerializableExtra("category");
@@ -131,6 +138,7 @@ public class GoalTryActivity extends ActionBarActivity implements
             public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder,
                                          final int i) {
                 final Behavior behavior = mBehaviorList.get(i);
+                final boolean behavior_is_selected = application.getBehaviors().contains(behavior);
 
                 if(i == 0 && behavior.getId() == 0) {
 
@@ -169,6 +177,12 @@ public class GoalTryActivity extends ActionBarActivity implements
                                 behavior.getIconUrl(), false);
                     }
 
+                    if(behavior_is_selected) {
+                        // If the user has already selected the behavior, update the icon
+                        ((TryGoalViewHolder) viewHolder).tryItImageView.setImageResource(
+                                R.drawable.ic_blue_check_circle);
+                    }
+
                     // Set up a Click Listener for all other cards.
                     ((TryGoalViewHolder) viewHolder).moreInfoImageView.setOnClickListener(new View
                             .OnClickListener() {
@@ -185,24 +199,30 @@ public class GoalTryActivity extends ActionBarActivity implements
                         @Override
                         public void onClick(View v) {
                             Log.d("GoalTryActivity", "Launch Action Picker");
+                            launchActionPicker(behavior);
+
                         }
                     });
 
-                    // TODO: set the correct icon for this, based on whether or not the user has
-                    // todo: selected the behavior or not.
                     ((TryGoalViewHolder) viewHolder).tryItImageView.setOnClickListener(new View
                             .OnClickListener() {
 
                         @Override
                         public void onClick(View v) {
-                            // TODO: launch if the user _just_ added the behavior, but NOT if they're
-                            // todo: un-selecting the behavior: Pull some of the features from BehaviorActivity?
-                            Intent intent = new Intent(getApplicationContext(),
-                                    BehaviorActivity.class);
-                            intent.putExtra("behavior", mBehaviorList.get(i));
-                            intent.putExtra("goal", mGoal);
-                            intent.putExtra("category", mCategory);
-                            startActivityForResult(intent, Constants.VIEW_BEHAVIOR_REQUEST_CODE);
+                            // TODO: launch an action picker if the user _just_ added the behavior,
+                            // todo: but NOT if they're un-selecting the behavior: Pull some of the
+                            // todo: features from BehaviorActivity?
+
+                            if(behavior_is_selected) {
+                                // Tapping this again should remove the behavior
+                                Log.d("GoalTryActivity", "Trying to remove behavior: " + behavior.getTitle());
+                                deleteBehavior(behavior);
+                                ((ImageView) v).setImageResource(R.drawable.ic_blue_plus_circle);
+                            } else {
+                                // We need to add the behavior to the user's selections.
+                                addBehavior(behavior);
+                                ((ImageView) v).setImageResource(R.drawable.ic_blue_check_circle);
+                            }
                         }
                     });
                 }
@@ -277,9 +297,8 @@ public class GoalTryActivity extends ActionBarActivity implements
                 }
                 try {
                     // let us redraw the item that has changed, this forces the RecyclerView to
-                    // respect
-                    //  the layout of each item, and none will overlap. Add 1 to position to account
-                    //  for the header view
+                    // respect the layout of each item, and none will overlap. Add 1 to position
+                    // to account for the header view
                     mCurrentlyExpandedPosition = position + 1;
                     mAdapter.notifyItemChanged(mCurrentlyExpandedPosition);
                     mRecyclerView.scrollToPosition(mCurrentlyExpandedPosition);
@@ -295,6 +314,10 @@ public class GoalTryActivity extends ActionBarActivity implements
             mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }
         loadBehaviors();
+    }
+
+    public void launchActionPicker(Behavior behavior) {
+        Toast.makeText(this, "Coming Soon", Toast.LENGTH_SHORT).show();
     }
 
     public void moreInfoPressed(Behavior behavior) {
@@ -335,6 +358,58 @@ public class GoalTryActivity extends ActionBarActivity implements
         if (behaviors != null) {
             mBehaviorList.addAll(behaviors);
         }
+        mAdapter.notifyDataSetChanged();
+    }
+
+    public void addBehavior(Behavior behavior) {
+        ArrayList<String> behaviors = new ArrayList<String>();
+        behaviors.add(String.valueOf(behavior.getId()));
+        new AddBehaviorTask(this, this, behaviors).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    @Override
+    public void behaviorsAdded(ArrayList<Behavior> behaviors) {
+        if(behaviors != null) {
+            for(Behavior b : behaviors) {
+                Log.d("GoalTryActivity", "Added Behavior(s): " + b.getId() + ", " + b.getTitle());
+                Log.d("GoalTryActivity", "-- mapping id: " + b.getMappingId());
+                application.addBehavior(b);
+            }
+        } else {
+            Log.d("GoalTryActivity", "No behaviors added");
+        }
+        mAdapter.notifyDataSetChanged();
+        Toast.makeText(this, getText(R.string.goal_try_behavior_added), Toast.LENGTH_SHORT).show();
+    }
+
+    public void deleteBehavior(Behavior behavior) {
+
+        // Make sure we find the behavior that contains the user's mapping id.
+        // Should this live in CompassApplication? something like .getBehaviorMapping?
+        // TODO: move this to the Compass app... move _all_ the data stuff there?
+        if(behavior.getMappingId() <= 0) {
+            for(Behavior b : application.getBehaviors()) {
+                if(behavior.getId() == b.getId()) {
+                    behavior.setMappingId(b.getMappingId());
+                    break;
+                }
+            }
+        }
+
+        Log.e("GoalTryActivity", "Deleting Behavior, id = " + behavior.getId() + ", userbehavior id = "
+                + behavior.getMappingId() + ", " + behavior.getTitle());
+        ArrayList<String> behaviors = new ArrayList<String>();
+        behaviors.add(String.valueOf(behavior.getMappingId()));
+        new DeleteBehaviorTask(this, this, behaviors).executeOnExecutor(AsyncTask
+                .THREAD_POOL_EXECUTOR);
+
+        application.removeBehavior(behavior);
+        Toast.makeText(this, getText(R.string.goal_try_behavior_removed), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void behaviorsDeleted() {
+        Log.d("GoalTryActivity", "Behavior Deleted... ?");
         mAdapter.notifyDataSetChanged();
     }
 
