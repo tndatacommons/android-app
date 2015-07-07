@@ -2,8 +2,6 @@ package org.tndata.android.compass.activity;
 
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -16,13 +14,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -47,6 +44,8 @@ import java.util.HashSet;
 public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTask
         .AddGoalsTaskListener,
         GoalLoaderTask.GoalLoaderListener, DeleteGoalTask.DeleteGoalTaskListener {
+
+    private CompassApplication application;
     private Toolbar mToolbar;
     private RecyclerView mRecyclerView;
     private ImageView mHeaderImageView;
@@ -54,12 +53,10 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
     private View mFakeHeader;
     private View mHeaderView;
     private RelativeLayout mHeaderCircleView;
-    private ArrayList<Goal> mItems;
-    private ArrayList<Goal> mSelectedGoals = new ArrayList<Goal>();
+    private ArrayList<Goal> mItems; // Array of available Goals to choose
     private ParallaxRecyclerAdapter<Goal> mAdapter;
     private Category mCategory = null;
-    private boolean mAdding = false;
-    private boolean mDeleting = false;
+
     private HashSet<Goal> mExpandedGoals = new HashSet<>();
     private int mCurrentlyExpandedPosition = -1;
 
@@ -107,6 +104,8 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_goals);
+
+        application = (CompassApplication) getApplication();
 
         mCategory = (Category) getIntent().getSerializableExtra("category");
 
@@ -170,7 +169,8 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                                 ((ChooseGoalViewHolder) viewHolder).iconImageView,
                                 goal.getIconUrl(), false);
                     }
-                    if (mSelectedGoals.contains(goal)) {
+
+                    if(application.getGoals().contains(goal)) {
                         ImageHelper.setupImageViewButton(getResources(),
                                 ((ChooseGoalViewHolder) viewHolder).selectButton, ImageHelper.SELECTED);
                     } else {
@@ -284,31 +284,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
             mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }
 
-        if (mCategory.getGoals().isEmpty()) {
-            mSelectedGoals.addAll(mCategory.getGoals());
-        }
-
         loadGoals();
-
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_BACK)) { // Back key pressed
-            goalsSelected(mSelectedGoals);
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                goalsSelected(mSelectedGoals);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     private void showError() {
@@ -321,104 +297,57 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         if (mCategory == null) {
             return;
         }
-        new GoalLoaderTask(getApplicationContext(), this).executeOnExecutor(AsyncTask
-                        .THREAD_POOL_EXECUTOR,
-                ((CompassApplication) getApplication()).getToken(),
+        new GoalLoaderTask(getApplicationContext(), this).executeOnExecutor(
+                AsyncTask.THREAD_POOL_EXECUTOR,
+                application.getToken(),
                 String.valueOf(mCategory.getId()));
     }
 
     @Override
     public void goalsAdded(ArrayList<Goal> goals) {
-        if (goals != null) {
-            ArrayList<Goal> allGoals = ((CompassApplication) getApplication()).getGoals();
-            allGoals.addAll(goals);
-            ((CompassApplication) getApplication()).setGoals(allGoals);
-        }
-        mAdding = false;
-        if (!mDeleting) {
-            finish();
-        }
+        // we've already added the goal to the application's collection.
+        Log.d("ChooseGoalsActivity", "Goal added via API");
+        mAdapter.notifyDataSetChanged();
     }
 
     public void goalSelected(Goal goal) {
         // When a goal has been selected, save it in our list of selected goals, and then
         // immediately launch the user into the Behavior Selection workflow.
 
-        if (mSelectedGoals.contains(goal)) {
-            mSelectedGoals.remove(goal);
+        if(application.getGoals().contains(goal)) {
+            deleteGoal(goal);
         } else {
-            mSelectedGoals.add(goal);
+            //mSelectedGoals.add(goal);
+            addGoal(goal);
+
+            // Launch the GoalTryActivity (where users choose a behavior for the Goal)
+            Intent intent = new Intent(getApplicationContext(), GoalTryActivity.class);
+            intent.putExtra("goal", goal);
+            intent.putExtra("category", mCategory);
+            startActivity(intent);
         }
+    }
+
+    protected void deleteGoal(Goal goal) {
+        // Remove the goal from the application's collection and DELETE from the API
+        ArrayList<String> goalsToDelete = new ArrayList<String>();
+        goalsToDelete.add(String.valueOf(goal.getMappingId()));
+
+        new DeleteGoalTask(this, this, goalsToDelete).executeOnExecutor(
+                AsyncTask.THREAD_POOL_EXECUTOR);
+
+        application.removeGoal(goal);
         mAdapter.notifyDataSetChanged();
-
-        // Launch the GoalTryActivity (where users choose a behavior for the Goal)
-        Intent intent = new Intent(getApplicationContext(), GoalTryActivity.class);
-        intent.putExtra("goal", goal);
-        intent.putExtra("category", mCategory);
-        startActivity(intent);
     }
 
-    public void moreInfoPressed(Goal goal) {
-        try {
-            AlertDialog.Builder builder = new AlertDialog.Builder(ChooseGoalsActivity.this);
+    protected void addGoal(Goal goal) {
+        // Save the user's selected goal via the API, and add it to the application's collection.
+        ArrayList<String> goalsToAdd = new ArrayList<String>();
+        goalsToAdd.add(String.valueOf(goal.getId()));
+        new AddGoalTask(this, this, goalsToAdd).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-            builder.setMessage(goal.getDescription()).setTitle(goal.getTitle());
-            builder.setPositiveButton(android.R.string.ok,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.dismiss();
-                        }
-                    });
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void goalsSelected(ArrayList<Goal> goals) {
-        Log.e("GOALS", "GOALS SELECTED");
-        //Lets just save the new ones...
-        ArrayList<Goal> goalsWithDelete = new ArrayList<Goal>();
-        goalsWithDelete.addAll(((CompassApplication) getApplication()).getGoals());
-        ArrayList<String> deleteGoals = new ArrayList<String>();
-        ArrayList<Goal> goalsToAdd = new ArrayList<Goal>();
-        for (Goal goal : mCategory.getGoals()) {
-            Log.d("SHOULD DELETE?", goal.getTitle());
-            if (!goals.contains(goal)) {
-                Log.d("Delete Goal", goal.getTitle());
-                deleteGoals.add(String.valueOf(goal.getMappingId()));
-                goalsWithDelete.remove(goal);
-            }
-        }
-        for (Goal goal : goals) {
-            Log.d("SHOULD ADD?", goal.getTitle());
-            if (!mCategory.getGoals().contains(goal)) {
-                Log.d("Add Goal", goal.getTitle());
-                goalsToAdd.add(goal);
-            }
-        }
-
-        ((CompassApplication) getApplication()).setGoals(goalsWithDelete);
-
-        if (deleteGoals.size() > 0) {
-            mDeleting = true;
-            new DeleteGoalTask(this, this, deleteGoals).executeOnExecutor(AsyncTask
-                    .THREAD_POOL_EXECUTOR);
-        }
-
-        ArrayList<String> goalList = new ArrayList<String>();
-        for (Goal goal : goalsToAdd) {
-            goalList.add(String.valueOf(goal.getId()));
-        }
-        if (goalList.size() > 0) {
-            mAdding = true;
-            new AddGoalTask(this, this, goalList)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } else if (deleteGoals.size() < 1) {
-            finish();
-        }
+        application.addGoal(goal);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -433,10 +362,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
 
     @Override
     public void goalsDeleted() {
-        mDeleting = false;
+        Toast.makeText(this, getText(R.string.choose_goals_goal_removed), Toast.LENGTH_SHORT).show();
 
-        if (!mAdding) {
-            finish();
-        }
     }
 }

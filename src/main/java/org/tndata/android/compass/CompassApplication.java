@@ -72,6 +72,13 @@ public class CompassApplication extends Application {
         logSelectedData("AFTER setGoals");
     }
 
+    public void addGoal(Goal goal) {
+        if(!mGoals.contains(goal)) {
+            mGoals.add(goal);
+            assignGoalsToCategories();
+        }
+    }
+
     /* Remove a single Goal from the user's collection */
     public void removeGoal(Goal goal) {
         mGoals.remove(goal);
