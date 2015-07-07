@@ -20,11 +20,6 @@ public class CompassApplication extends Application {
     private ArrayList<Behavior> mBehaviors = new ArrayList<Behavior>(); // The user's selected behaviors
     private ArrayList<Action> mActions = new ArrayList<Action>(); // The user's selected actions
 
-    // Need
-    // - Goals organized by Category
-    // - Behaviors organized by Goal
-    // - Actions organized by Behavior
-
     public CompassApplication() {
         super();
     }
@@ -77,11 +72,32 @@ public class CompassApplication extends Application {
         mGoals.remove(goal);
     }
 
+    /**
+     * Goals are associated with one or more categories. This method will include
+     * the user's selected goals within their selected Categories.
+     */
+    public void assignGoalsToCategories() {
+        // add each goal to the correct category
+        for (Category category : getCategories()) {
+            ArrayList<Goal> categoryGoals = new ArrayList<Goal>();
+            for (Goal goal : getGoals()) {
+                for (Category goalCategory : goal.getCategories()) {
+                    if (goalCategory.getId() == category.getId()) {
+                        categoryGoals.add(goal);
+                        break;
+                    }
+                }
+            }
+            category.setGoals(categoryGoals);
+        }
+    }
+
     public void setBehaviors(ArrayList<Behavior> behaviors) {
         mBehaviors = behaviors;
         for(Behavior b: behaviors) {
             Log.d(TAG, "--> setBehavior: " + b.getTitle());
         }
+        assignBehaviorsToGoals();
     }
 
     public ArrayList<Behavior> getBehaviors() {
@@ -95,6 +111,24 @@ public class CompassApplication extends Application {
 
     public void addBehavior(Behavior behavior) {
         mBehaviors.add(behavior);
+    }
+
+    /** Behaviors are contained within a Goal. This method will take the list
+     * of selected behaviors, and associate them with the user's selected goals.
+     */
+    public void assignBehaviorsToGoals() {
+        for (Goal goal : getGoals()) {
+            ArrayList<Behavior> goalBehaviors = new ArrayList<Behavior>();
+            for (Behavior behavior : getBehaviors()) {
+                for (Goal behaviorGoal : behavior.getGoals()) {
+                    if (behaviorGoal.getId() == goal.getId()) {
+                        goalBehaviors.add(behavior);
+                        break;
+                    }
+                }
+            }
+            goal.setBehaviors(goalBehaviors);
+        }
     }
 
     public ArrayList<Action> getActions() {
@@ -111,6 +145,7 @@ public class CompassApplication extends Application {
         for(Action a: actions) {
             Log.d(TAG, "--> setAction: " + a.getTitle());
         }
+        assignActionsToBehaviors();
     }
 
     /* update a single Action in a user's collection */
@@ -130,5 +165,54 @@ public class CompassApplication extends Application {
             mActions.remove(i);
         }
         mActions.add(action);
+    }
+
+    /** Actions are contained within a single Behavior. This method will take the list
+     * of selected actions, and associate them with the user's selected behaviors.
+     */
+    public void assignActionsToBehaviors() {
+
+        for (Behavior behavior : getBehaviors()) {
+            ArrayList<Action> behaviorActions = new ArrayList<Action>();
+            for (Action action : getActions()) {
+                if (behavior.getId() == action.getBehavior_id()) {
+                    behaviorActions.add(action);
+                    break;
+                }
+
+            }
+            behavior.setActions(behaviorActions);
+        }
+    }
+
+    public void logSelectedGoalData(String title) {
+        // Log user-selected goals, behaviors, actions
+        Log.d(TAG, "------------- " + title + " --------------- ");
+        for(Goal g : getGoals()) {
+            Log.d(TAG, "-- GOAL --> " + g.getTitle());
+            for(Behavior b : g.getBehaviors()) {
+                Log.d(TAG, "---- Behavior --> " + b.getTitle());
+                for(Action a : b.getActions()) {
+                    Log.d(TAG, "------ Action --> " + a.getTitle());
+                }
+            }
+        }
+    }
+
+    public void logSelectedData(String title) {
+        // Log user-selected categories, goals, behaviors, actions
+        Log.d(TAG, "------------- " + title + " --------------- ");
+        for(Category c : getCategories()) {
+            Log.d(TAG, "CATEGORY --> " + c.getTitle());
+            for (Goal g : c.getGoals()) {
+                Log.d(TAG, "-- GOAL --> " + g.getTitle());
+                for (Behavior b : g.getBehaviors()) {
+                    Log.d(TAG, "---- BEHAVIOR --> " + b.getTitle());
+                    for (Action a : b.getActions()) {
+                        Log.d(TAG, "------ ACTION --> " + a.getTitle());
+                    }
+                }
+            }
+        }
     }
 }

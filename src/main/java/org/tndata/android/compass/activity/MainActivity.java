@@ -60,6 +60,7 @@ public class MainActivity extends ActionBarActivity implements
     private static final int DRAWER_COUNT = 6;
     //private static final int DRAWER_COUNT = 5; // TODO: Remove the temporary menu item for Behavior Progress
 
+    private CompassApplication application;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mDrawerList;
@@ -72,9 +73,11 @@ public class MainActivity extends ActionBarActivity implements
     private boolean mDrawerIsOpen = false;
     private boolean backButtonSelectsDefaultTab = false;
     private static final int DEFAULT_TAB = 0;
+    private boolean behaviorsLoadedDone = false;
+    private boolean actionsLoadedDone = false;
     private boolean fetchedCategories = false; // Have we fetched the user's categories, already?
     // ^ this is used to prevent the app from hitting the api continuously after the app crashes;
-    // when that happens, the CompassApplication lose's it's local values, then this activity
+    // when that happens, the CompassApplication loses its local values, then this activity
     // keeps calling showCategories in a loop, which hits the api without a proper auth token.
 
     @Override
@@ -93,6 +96,8 @@ public class MainActivity extends ActionBarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        application = (CompassApplication) getApplication();
 
         // Register the device with Google Cloud Messaging
         GcmRegistration gcm_registration = new GcmRegistration(getApplicationContext());
@@ -178,19 +183,13 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     public void showCategories() {
-        ArrayList<Category> categories = ((CompassApplication) getApplication()).getCategories();
+        ArrayList<Category> categories = application.getCategories();
 
         if (!fetchedCategories && (categories == null || categories.isEmpty())) {
             new GetUserCategoriesTask(this).executeOnExecutor(
-                    AsyncTask.THREAD_POOL_EXECUTOR,
-                    ((CompassApplication) getApplication()).getToken());
+                    AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
         } else if(categories != null) {
-            for (Category cat : ((CompassApplication) getApplication())
-                    .getCategories()) {
-                Log.d("Category", cat.getTitle());
-            }
-            mAdapter.setCategories(((CompassApplication) getApplication())
-                    .getCategories());
+            mAdapter.setCategories(application.getCategories());
             showGoals();
 
             mAdapter.notifyDataSetChanged();
@@ -198,14 +197,10 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     public void showGoals() {
-        if (((CompassApplication) getApplication()).getGoals().isEmpty()) {
+        if (application.getGoals().isEmpty()) {
             new GetUserGoalsTask(this).executeOnExecutor(
-                    AsyncTask.THREAD_POOL_EXECUTOR,
-                    ((CompassApplication) getApplication()).getToken());
+                    AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
         } else {
-            for (Goal goal : ((CompassApplication) getApplication()).getGoals()) {
-                Log.d("Goal", goal.getTitle());
-            }
             Intent intent = new Intent(Constants.GOAL_UPDATED_BROADCAST_ACTION);
             sendBroadcast(intent);
         }
@@ -336,68 +331,46 @@ public class MainActivity extends ActionBarActivity implements
 
     @Override
     public void categoriesLoaded(ArrayList<Category> categories) {
-        ((CompassApplication) getApplication()).setCategories(categories);
+        application.setCategories(categories);
         showCategories();
         fetchedCategories = true;
     }
 
     @Override
     public void goalsLoaded(ArrayList<Goal> goals) {
-        ((CompassApplication) getApplication()).setGoals(goals);
-        new GetUserBehaviorsTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                ((CompassApplication) getApplication()).getToken());
-        new GetUserActionsTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                ((CompassApplication) getApplication()).getToken());
+        application.setGoals(goals);
+        new GetUserBehaviorsTask(this).executeOnExecutor(
+                AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
+        new GetUserActionsTask(this).executeOnExecutor(
+                AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
     }
 
     @Override
     public void behaviorsLoaded(ArrayList<Behavior> behaviors) {
         if (behaviors != null) {
             // Save the user's selected behaviors
-            ((CompassApplication) getApplication()).setBehaviors(behaviors);
-            
-            //this is messy...
-            //add each behavior to the correct goal
-            ArrayList<Goal> goals = new ArrayList<Goal>();
-            goals.addAll(((CompassApplication) getApplication()).getGoals());
-            for (Goal goal : goals) {
-                ArrayList<Behavior> goalBehaviors = new ArrayList<Behavior>();
-                for (Behavior behavior : behaviors) {
-                    for (Goal behaviorGoal : behavior.getGoals()) {
-                        if (behaviorGoal.getId() == goal.getId()) {
-                            goalBehaviors.add(behavior);
-                            break;
-                        }
-                    }
-                }
-                goal.setBehaviors(goalBehaviors);
-            }
+            application.setBehaviors(behaviors);
+            behaviorsLoadedDone = true;
         }
         assignGoalsToCategories(false);
         showGoals();
+        if(behaviorsLoadedDone && actionsLoadedDone) {
+            application.assignActionsToBehaviors();
+        }
     }
 
     @Override
     public void actionsLoaded(ArrayList<Action> actions) {
-        ((CompassApplication) getApplication()).setActions(actions);
+        application.setActions(actions);
+        actionsLoadedDone = true;
+        if(behaviorsLoadedDone && actionsLoadedDone) {
+            application.assignActionsToBehaviors();
+        }
     }
 
     @Override
     public void assignGoalsToCategories(boolean shouldSendBroadcast) {
-        //this is messy...
-        //add each goal to the correct category
-        for (Category category : ((CompassApplication) getApplication()).getCategories()) {
-            ArrayList<Goal> categoryGoals = new ArrayList<Goal>();
-            for (Goal goal : ((CompassApplication) getApplication()).getGoals()) {
-                for (Category goalCategory : goal.getCategories()) {
-                    if (goalCategory.getId() == category.getId()) {
-                        categoryGoals.add(goal);
-                        break;
-                    }
-                }
-            }
-            category.setGoals(categoryGoals);
-        }
+        application.assignGoalsToCategories();
         if (shouldSendBroadcast) {
             Intent intent = new Intent(Constants.GOAL_UPDATED_BROADCAST_ACTION);
             sendBroadcast(intent);
