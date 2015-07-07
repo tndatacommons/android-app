@@ -20,6 +20,8 @@ import java.util.ArrayList;
 public class ChooseCategoriesActivity extends ActionBarActivity implements
         ChooseCategoriesFragment.ChooseCategoriesFragmentListener,
         AddCategoryTask.AddCategoryTaskListener, DeleteCategoryTask.DeleteCategoryTaskListener {
+
+    private CompassApplication application;
     private ArrayList<Category> mCategories;
     private ChooseCategoriesFragment mFragment;
     private Toolbar mToolbar;
@@ -30,6 +32,8 @@ public class ChooseCategoriesActivity extends ActionBarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
+
+        application = (CompassApplication) getApplication();
 
         mToolbar = (Toolbar) findViewById(R.id.tool_bar);
         mToolbar.getBackground().setAlpha(255);
@@ -76,8 +80,9 @@ public class ChooseCategoriesActivity extends ActionBarActivity implements
         ArrayList<String> deleteCats = new ArrayList<String>();
         ArrayList<Category> categoriesToAdd = new ArrayList<Category>();
         ArrayList<Category> categoriesWithDelete = new ArrayList<Category>();
-        categoriesWithDelete.addAll(((CompassApplication) getApplication()).getCategories());
-        for (Category cat : ((CompassApplication) getApplication()).getCategories()) {
+        categoriesWithDelete.addAll(application.getCategories());
+
+        for (Category cat : application.getCategories()) {
             if (!categories.contains(cat)) {
                 deleteCats.add(String.valueOf(cat.getMappingId()));
                 categoriesWithDelete.remove(cat);
@@ -85,12 +90,12 @@ public class ChooseCategoriesActivity extends ActionBarActivity implements
         }
 
         for (Category cat : categories) {
-            if (!((CompassApplication) getApplication()).getCategories().contains(cat)) {
+            if (!application.getCategories().contains(cat)) {
                 categoriesToAdd.add(cat);
             }
         }
 
-        ((CompassApplication) getApplication()).setCategories(categoriesWithDelete);
+        application.setCategories(categoriesWithDelete);
 
         if (deleteCats.size() > 0) {
             mDeleting = true;
@@ -114,9 +119,9 @@ public class ChooseCategoriesActivity extends ActionBarActivity implements
     @Override
     public void categoriesAdded(ArrayList<Category> categories) {
         if (categories != null) {
-            mCategories = ((CompassApplication) getApplication()).getCategories();
+            mCategories = application.getCategories();
             mCategories.addAll(categories);
-            ((CompassApplication) getApplication()).setCategories(mCategories);
+            application.setCategories(mCategories);
         }
         mAdding = false;
         if (!mDeleting) {
