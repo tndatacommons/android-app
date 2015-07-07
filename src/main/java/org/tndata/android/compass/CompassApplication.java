@@ -46,9 +46,12 @@ public class CompassApplication extends Application {
 
     public void setCategories(ArrayList<Category> categories) {
         mCategories = categories;
+
         for(Category c: categories) {
             Log.d(TAG, "--> setCategory: " + c.getTitle());
         }
+
+        logSelectedData("AFTER setCategories");
     }
 
     /* Remove a single Category from the user's collection */
@@ -65,6 +68,8 @@ public class CompassApplication extends Application {
         for(Goal g: goals) {
             Log.d(TAG, "--> setGoals: " + g.getTitle());
         }
+        assignGoalsToCategories();
+        logSelectedData("AFTER setGoals");
     }
 
     /* Remove a single Goal from the user's collection */
@@ -98,6 +103,7 @@ public class CompassApplication extends Application {
             Log.d(TAG, "--> setBehavior: " + b.getTitle());
         }
         assignBehaviorsToGoals();
+        logSelectedData("AFTER setBehaviors");
     }
 
     public ArrayList<Behavior> getBehaviors() {
@@ -146,6 +152,7 @@ public class CompassApplication extends Application {
             Log.d(TAG, "--> setAction: " + a.getTitle());
         }
         assignActionsToBehaviors();
+        logSelectedData("AFTER setActions");
     }
 
     /* update a single Action in a user's collection */
@@ -214,5 +221,6 @@ public class CompassApplication extends Application {
                 }
             }
         }
+        Log.d(TAG, "------------------------------------------- ");
     }
 }
