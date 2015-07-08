@@ -1,5 +1,10 @@
 package org.tndata.android.compass.model;
 
+import android.content.Context;
+import android.widget.ImageView;
+
+import org.tndata.android.compass.util.ImageCache;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -135,6 +140,19 @@ public class Behavior extends TDCBase implements Serializable,
             return -1;
         } else
             return 1;
+    }
+
+    /**
+     * Given a Context and an ImageView, load this Behavior's icon into the ImageView.
+     *
+     * @param context: an application context
+     * @param imageView: an ImageView
+     */
+    public void loadIconIntoView(Context context, ImageView imageView) {
+        String iconUrl = getIconUrl();
+        if(iconUrl != null && !iconUrl.isEmpty()) {
+            ImageCache.instance(context).loadBitmap(imageView, iconUrl, false);
+        }
     }
 
 }

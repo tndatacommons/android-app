@@ -53,7 +53,7 @@ public class GoalTryActivity extends ActionBarActivity implements
 
     private Toolbar mToolbar;
     private Goal mGoal;
-    private ArrayList<Behavior> mBehaviorList;
+    private ArrayList<Behavior> mBehaviorList; // Array of Behaviors from which the user can choose
     private ParallaxRecyclerAdapter<Behavior> mAdapter;
     private RecyclerView mRecyclerView;
     private View mFakeHeader;
@@ -209,10 +209,6 @@ public class GoalTryActivity extends ActionBarActivity implements
 
                         @Override
                         public void onClick(View v) {
-                            // TODO: launch an action picker if the user _just_ added the behavior,
-                            // todo: but NOT if they're un-selecting the behavior: Pull some of the
-                            // todo: features from BehaviorActivity?
-
                             if(behavior_is_selected) {
                                 // Tapping this again should remove the behavior
                                 Log.d("GoalTryActivity", "Trying to remove behavior: " + behavior.getTitle());
@@ -317,7 +313,12 @@ public class GoalTryActivity extends ActionBarActivity implements
     }
 
     public void launchActionPicker(Behavior behavior) {
-        Toast.makeText(this, "Coming Soon", Toast.LENGTH_SHORT).show();
+        // Launch the ChooseActionsActivity (where users choose actions for this Behavior)
+        Intent intent = new Intent(getApplicationContext(), ChooseActionsActivity.class);
+        intent.putExtra("category", mCategory);
+        intent.putExtra("goal", mGoal);
+        intent.putExtra("behavior", behavior);
+        startActivity(intent);
     }
 
     public void moreInfoPressed(Behavior behavior) {
@@ -365,6 +366,13 @@ public class GoalTryActivity extends ActionBarActivity implements
         ArrayList<String> behaviors = new ArrayList<String>();
         behaviors.add(String.valueOf(behavior.getId()));
         new AddBehaviorTask(this, this, behaviors).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        // Launch the ChooseActionsActivity (where users choose actions for this Behavior)
+        Intent intent = new Intent(getApplicationContext(), ChooseActionsActivity.class);
+        intent.putExtra("category", mCategory);
+        intent.putExtra("goal", mGoal);
+        intent.putExtra("behavior", behavior);
+        startActivity(intent);
     }
 
     @Override
@@ -385,8 +393,6 @@ public class GoalTryActivity extends ActionBarActivity implements
     public void deleteBehavior(Behavior behavior) {
 
         // Make sure we find the behavior that contains the user's mapping id.
-        // Should this live in CompassApplication? something like .getBehaviorMapping?
-        // TODO: move this to the Compass app... move _all_ the data stuff there?
         if(behavior.getMappingId() <= 0) {
             for(Behavior b : application.getBehaviors()) {
                 if(behavior.getId() == b.getId()) {
@@ -398,10 +404,10 @@ public class GoalTryActivity extends ActionBarActivity implements
 
         Log.e("GoalTryActivity", "Deleting Behavior, id = " + behavior.getId() + ", userbehavior id = "
                 + behavior.getMappingId() + ", " + behavior.getTitle());
-        ArrayList<String> behaviors = new ArrayList<String>();
-        behaviors.add(String.valueOf(behavior.getMappingId()));
-        new DeleteBehaviorTask(this, this, behaviors).executeOnExecutor(AsyncTask
-                .THREAD_POOL_EXECUTOR);
+        ArrayList<String> behaviorsToDelete = new ArrayList<String>();
+        behaviorsToDelete.add(String.valueOf(behavior.getMappingId()));
+        new DeleteBehaviorTask(this, this, behaviorsToDelete).executeOnExecutor(
+                AsyncTask.THREAD_POOL_EXECUTOR);
 
         application.removeBehavior(behavior);
         Toast.makeText(this, getText(R.string.goal_try_behavior_removed), Toast.LENGTH_SHORT).show();
@@ -409,7 +415,8 @@ public class GoalTryActivity extends ActionBarActivity implements
 
     @Override
     public void behaviorsDeleted() {
-        Log.d("GoalTryActivity", "Behavior Deleted... ?");
+        Log.d("GoalTryActivity", "DeleteBehaviorTask completed.");
+        application.logSelectedData("AFTER Deleting a Behavior");
         mAdapter.notifyDataSetChanged();
     }
 

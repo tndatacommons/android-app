@@ -70,6 +70,7 @@
     <string name="onboarding_checkprogress_privacy_title">Your Privacy</string>
     <string name="onboarding_checkprogress_privacy_content">Compass respects your privacy and will never share your personal information with others.</string>
 
+    <string name="choose_goals_goal_removed">Goal removed</string>
     <string name="choose_goals_done">I\'M DONE</string>
     <string name="choose_goals_header_label">%1$s goals</string>
     <string name="choose_goals_info_label">Select your goals for easy ways to GROW.</string>
@@ -129,6 +130,12 @@
     <string name="goal_behavior_try_it">SHOW ME HOW</string>
     <string name="goal_try_behavior_added">Priority selected</string>
     <string name="goal_try_behavior_removed">Priority removed</string>
+
+    <!-- ChooseActionsActivity -->
+    <string name="behavior_image_description">Priority</string>
+    <string name="action_added">Added %1$s</string>
+    <string name="action_deleted">Action Removed</string>
+    <string name="action_saving">Saving Action...</string>
 
     <!-- SettingsActivity -->
     <string name="pref_general">General</string>

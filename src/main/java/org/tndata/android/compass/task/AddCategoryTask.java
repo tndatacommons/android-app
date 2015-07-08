@@ -1,12 +1,13 @@
 package org.tndata.android.compass.task;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import android.app.Activity;
+import android.content.Context;
+import android.os.AsyncTask;
+import android.text.Html;
+
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,15 +17,13 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import android.app.Activity;
-import android.content.Context;
-import android.os.AsyncTask;
-import android.text.Html;
-import android.util.Log;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddCategoryTask extends AsyncTask<Void, Void, ArrayList<Category>> {
     private Context mContext;
@@ -88,7 +87,7 @@ public class AddCategoryTask extends AsyncTask<Void, Void, ArrayList<Category>> 
 
             JSONArray jArray = new JSONArray(createResponse);
             ArrayList<Category> categories = new ArrayList<Category>();
-            Log.d("user category response", jArray.toString(2));
+
             for (int i = 0; i < jArray.length(); i++) {
                 JSONObject userCategory = jArray.getJSONObject(i);
                 Category category = gson.fromJson(

@@ -39,6 +39,7 @@ public class ChooseCategoriesFragment extends Fragment implements
     private Button mNextButton;
     private ArrayList<Category> mSelectedItems = new ArrayList<Category>();
     private ChooseCategoriesFragmentListener mCallback;
+    private CompassApplication application;
 
     public interface ChooseCategoriesFragmentListener {
         public void categoriesSelected(ArrayList<Category> categories);
@@ -120,10 +121,11 @@ public class ChooseCategoriesFragment extends Fragment implements
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        application = (CompassApplication) getActivity().getApplication();
+
         mItems = new ArrayList<Category>();
-        if (!((CompassApplication) getActivity().getApplication()).getCategories().isEmpty()) {
-            mSelectedItems.addAll(((CompassApplication) getActivity().getApplication())
-                    .getCategories());
+        if (!application.getCategories().isEmpty()) {
+            mSelectedItems.addAll(application.getCategories());
         }
         if (mSelectedItems.size() >= MIN_CATEGORIES_REQUIRED) {
             mNextButton.setVisibility(View.VISIBLE);
@@ -176,10 +178,8 @@ public class ChooseCategoriesFragment extends Fragment implements
 
     private void loadCategories() {
         showProgress();
-        new CategoryLoaderTask(this)
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                        ((CompassApplication) getActivity().getApplication())
-                                .getToken());
+        new CategoryLoaderTask(this).executeOnExecutor(
+                AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
     }
 
     @Override
