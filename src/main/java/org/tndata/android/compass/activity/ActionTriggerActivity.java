@@ -25,7 +25,7 @@ public class ActionTriggerActivity extends BaseTriggerActivity implements
     private ActionTriggerFragment fragment;
 
     private static final String TAG = "ActionTriggerActivity";
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().requestFeature(Window.FEATURE_PROGRESS);
@@ -42,6 +42,7 @@ public class ActionTriggerActivity extends BaseTriggerActivity implements
         mToolbar = (Toolbar) findViewById(R.id.tool_bar);
         mToolbar.setTitle(mGoal.getTitle());
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
+        mToolbar.getBackground().setAlpha(255);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
