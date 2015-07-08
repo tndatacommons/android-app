@@ -190,7 +190,6 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                     GradientDrawable gradientDrawable = (GradientDrawable) ((ChooseGoalViewHolder)
                             viewHolder).iconContainerView.getBackground();
                     String colorString = mCategory.getColor();
-                    Log.d("color", colorString);
                     if (colorString != null && !colorString.isEmpty()) {
                         gradientDrawable.setColor(Color.parseColor(colorString));
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -307,6 +306,9 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
     public void goalsAdded(ArrayList<Goal> goals) {
         // we've already added the goal to the application's collection.
         Log.d("ChooseGoalsActivity", "Goal added via API");
+        for(Goal goal : goals) {
+            application.addGoal(goal); // should include the user's goal mapping id.
+        }
         mAdapter.notifyDataSetChanged();
     }
 
@@ -330,8 +332,21 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
 
     protected void deleteGoal(Goal goal) {
         // Remove the goal from the application's collection and DELETE from the API
+
+        // Ensure the goal contains the usermapping id
+        if(goal.getMappingId() <= 0) {
+            for (Goal g : application.getGoals()) {
+                if (goal.getId() == g.getId()) {
+                    goal.setMappingId(g.getMappingId());
+                    break;
+                }
+            }
+        }
+
         ArrayList<String> goalsToDelete = new ArrayList<String>();
         goalsToDelete.add(String.valueOf(goal.getMappingId()));
+        Log.d("ChooseGoalsActivity", "About to delete goal: id = " + goal.getId() +
+                ", usergoal.id = " + goal.getMappingId() + "; " + goal.getTitle());
 
         new DeleteGoalTask(this, this, goalsToDelete).executeOnExecutor(
                 AsyncTask.THREAD_POOL_EXECUTOR);
@@ -345,9 +360,6 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         ArrayList<String> goalsToAdd = new ArrayList<String>();
         goalsToAdd.add(String.valueOf(goal.getId()));
         new AddGoalTask(this, this, goalsToAdd).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-        application.addGoal(goal);
-        mAdapter.notifyDataSetChanged();
     }
 
     @Override
