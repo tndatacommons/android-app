@@ -21,7 +21,6 @@ import android.widget.Toast;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ChooseGoalsActivity;
-import org.tndata.android.compass.activity.GoalDetailsActivity;
 import org.tndata.android.compass.activity.GoalTryActivity;
 import org.tndata.android.compass.adapter.CategoryFragmentAdapter;
 import org.tndata.android.compass.model.Category;
@@ -165,6 +164,7 @@ public class CategoryFragment extends Fragment implements
                 ChooseGoalsActivity.class);
         intent.putExtra("category", mCategory);
         startActivityForResult(intent, Constants.CHOOSE_GOALS_REQUEST_CODE);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -198,6 +198,7 @@ public class CategoryFragment extends Fragment implements
         if (goals != null && !goals.isEmpty()) {
             mItems.addAll(goals);
         }
+        mAdapter.notifyDataSetChanged();
     }
 
     private void removeGoal(Goal goal) {
@@ -220,6 +221,7 @@ public class CategoryFragment extends Fragment implements
     @Override
     public void goalsDeleted() {
         Toast.makeText(getActivity(), getText(R.string.goal_deleted), Toast.LENGTH_SHORT).show();
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -233,11 +235,11 @@ public class CategoryFragment extends Fragment implements
 
     @Override
     public void viewGoal(Goal goal) {
-        Intent intent = new Intent(getActivity().getApplicationContext(),
-                GoalDetailsActivity.class);
+        Intent intent = new Intent(getActivity()
+                .getApplicationContext(), GoalTryActivity.class);
         intent.putExtra("goal", goal);
         intent.putExtra("category", mCategory);
-        startActivityForResult(intent, Constants.GOALS_CHANGED_RESULT_CODE);
+        startActivityForResult(intent, Constants.CHOOSE_BEHAVIORS_REQUEST_CODE);
     }
 
     @Override
