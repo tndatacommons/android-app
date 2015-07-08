@@ -131,6 +131,9 @@
     <string name="goal_try_behavior_added">Priority selected</string>
     <string name="goal_try_behavior_removed">Priority removed</string>
 
+    <!-- ChooseActionsActivity -->
+    <string name="behavior_image_description">Priority</string>
+
     <!-- SettingsActivity -->
     <string name="pref_general">General</string>
     <string name="pref_about">About</string>

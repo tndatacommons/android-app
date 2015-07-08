@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                                    android:id="@+id/card_view"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginLeft="5dp"
+                                    android:layout_marginRight="5dp"
+                                    android:layout_marginTop="5dp"
+                                    card_view:cardCornerRadius="@dimen/cardview_corner_radius">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:animateLayoutChanges="true">
+
+        <ImageView
+            android:id="@+id/list_item_action_imageview"
+            android:layout_width="@dimen/action_item_image_size"
+            android:layout_height="@dimen/action_item_image_size"
+            android:layout_margin="10dp"
+            android:layout_alignParentLeft="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_action_compass_white"/>
+
+        <TextView
+            android:id="@+id/list_item_action_title_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="15dp"
+            android:text='Be positive'
+            android:layout_toRightOf="@id/list_item_action_imageview"
+            android:paddingLeft="2dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+        <TextView
+            android:id="@+id/list_item_action_description_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/list_item_action_title_textview"
+            android:layout_margin="5dp"
+            android:paddingLeft="2dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:visibility="gone"/>
+
+        <!-- NOTE: When the following TextView is displayed, it will be the only thing on the card -->
+        <TextView
+            android:id="@+id/list_item_action_header_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/list_item_action_title_textview"
+            android:layout_margin="5dp"
+            android:paddingLeft="2dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/list_item_action_try_it_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:gravity="center"
+            android:layout_margin="10dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:minHeight="@dimen/paper_flat_button_min_height"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/grow_primary"
+            android:layout_below="@id/list_item_action_description_textview"
+            android:text="@string/goal_behavior_try_it"
+            android:visibility="gone"/>
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
