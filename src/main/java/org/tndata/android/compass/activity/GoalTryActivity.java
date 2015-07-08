@@ -313,7 +313,12 @@ public class GoalTryActivity extends ActionBarActivity implements
     }
 
     public void launchActionPicker(Behavior behavior) {
-        Toast.makeText(this, "Coming Soon", Toast.LENGTH_SHORT).show();
+        // Launch the ChooseActionsActivity (where users choose actions for this Behavior)
+        Intent intent = new Intent(getApplicationContext(), ChooseActionsActivity.class);
+        intent.putExtra("category", mCategory);
+        intent.putExtra("goal", mGoal);
+        intent.putExtra("behavior", behavior);
+        startActivity(intent);
     }
 
     public void moreInfoPressed(Behavior behavior) {
