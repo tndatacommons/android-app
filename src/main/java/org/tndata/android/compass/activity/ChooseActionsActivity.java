@@ -1,6 +1,8 @@
 package org.tndata.android.compass.activity;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -12,6 +14,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +31,8 @@ import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.task.ActionLoaderTask;
+import org.tndata.android.compass.task.AddActionTask;
+import org.tndata.android.compass.task.DeleteActionTask;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
@@ -43,7 +48,8 @@ import java.util.HashSet;
  * 
  */
 public class ChooseActionsActivity extends ActionBarActivity implements
-        ActionLoaderTask.ActionLoaderListener {
+        ActionLoaderTask.ActionLoaderListener, AddActionTask.AddActionTaskListener,
+        DeleteActionTask.DeleteActionTaskListener {
 
     private Toolbar mToolbar;
     private Category mCategory = null;
@@ -57,13 +63,10 @@ public class ChooseActionsActivity extends ActionBarActivity implements
     private HashSet<Action> mExpandedActions = new HashSet<>();
     private int mCurrentlyExpandedPosition = -1;
     private CompassApplication application;
+    private final String TAG = "ChooseActionsActivity";
 
     static class ActionViewHolder extends RecyclerView.ViewHolder {
         public ActionViewHolder(View itemView) {
-            // TODO: update layouts
-            // todo: -  activity_choose_actions
-            // todo: -  list_item_choose_actions
-            // todo: -  header_choose_actions
             super(itemView);
             iconImageView = (ImageView) itemView
                     .findViewById(R.id.list_item_action_imageview);
@@ -73,14 +76,22 @@ public class ChooseActionsActivity extends ActionBarActivity implements
                     .findViewById(R.id.list_item_action_title_textview);
             descriptionTextView = (TextView) itemView
                     .findViewById(R.id.list_item_action_description_textview);
-            tryItTextView = (TextView) itemView.findViewById(R.id.list_item_action_try_it_textview);
+
+            iconsWrapper = (RelativeLayout) itemView.findViewById(R.id.list_action_icons_wrapper);
+            selectActionImageView = (ImageView) itemView.findViewById(
+                    R.id.list_item_select_action_imageview);
+            moreInfoImageView = (ImageView) itemView.findViewById(
+                    R.id.list_item_action_info_imageview);
         }
 
         TextView titleTextView;
         TextView descriptionTextView;
-        TextView tryItTextView;
         ImageView iconImageView;
         TextView headerCardTextView;
+
+        RelativeLayout iconsWrapper;
+        ImageView selectActionImageView;
+        ImageView moreInfoImageView;
     }
 
     private Action createHeaderObject() {
@@ -127,7 +138,8 @@ public class ChooseActionsActivity extends ActionBarActivity implements
             @Override
             public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder,
                                          final int i) {
-                Action action = mActionList.get(i);
+                final Action action = mActionList.get(i);
+                final boolean action_is_selected = application.getActions().contains(action);
 
                 if(i == 0 && action.getId() == 0) {
 
@@ -138,6 +150,7 @@ public class ChooseActionsActivity extends ActionBarActivity implements
                     ((ActionViewHolder) viewHolder).descriptionTextView.setVisibility(View.GONE);
                     ((ActionViewHolder) viewHolder).titleTextView.setVisibility(View.GONE);
                     ((ActionViewHolder) viewHolder).iconImageView.setVisibility(View.GONE);
+                    ((ActionViewHolder) viewHolder).iconsWrapper.setVisibility(View.GONE);
                 } else {
 
                     // Handle all other cards
@@ -149,12 +162,12 @@ public class ChooseActionsActivity extends ActionBarActivity implements
                     if (mExpandedActions.contains(action)) {
                         ((ActionViewHolder) viewHolder).descriptionTextView.setVisibility(View
                                 .VISIBLE);
-                        ((ActionViewHolder) viewHolder).tryItTextView.setVisibility(View.VISIBLE);
                         ((ActionViewHolder) viewHolder).iconImageView.setVisibility(View.GONE);
+                        ((ActionViewHolder) viewHolder).iconsWrapper.setVisibility(View.VISIBLE);
                     } else {
                         ((ActionViewHolder) viewHolder).descriptionTextView.setVisibility(View
                                 .GONE);
-                        ((ActionViewHolder) viewHolder).tryItTextView.setVisibility(View.GONE);
+                        ((ActionViewHolder) viewHolder).iconsWrapper.setVisibility(View.GONE);
                         ((ActionViewHolder) viewHolder).iconImageView.setVisibility(View.VISIBLE);
                     }
                     if (action.getIconUrl() != null
@@ -164,23 +177,33 @@ public class ChooseActionsActivity extends ActionBarActivity implements
                                 action.getIconUrl(), false);
                     }
 
+                    if(action_is_selected) {
+                        ((ActionViewHolder) viewHolder).selectActionImageView.setImageResource(
+                                R.drawable.ic_blue_check_circle);
+                    } else {
+                        ((ActionViewHolder) viewHolder).selectActionImageView.setImageResource(
+                                R.drawable.ic_blue_plus_circle);
+                    }
+
                     // Set up a Click Listener for all other cards.
-                    ((ActionViewHolder) viewHolder).tryItTextView.setOnClickListener(new View
+                    ((ActionViewHolder) viewHolder).moreInfoImageView.setOnClickListener(new View
                             .OnClickListener() {
 
                         @Override
                         public void onClick(View v) {
+                            moreInfoPressed(action);
+                        }
+                    });
+                    ((ActionViewHolder) viewHolder).selectActionImageView.setOnClickListener(new View
+                            .OnClickListener() {
 
-                            // TODO: What's the Action's CTA Info? The ActionTriggerActivity.
-                            Toast.makeText(getApplicationContext(),
-                                    "Coming Soon, Setting Reminder", Toast.LENGTH_SHORT);
-
-//                            Intent intent = new Intent(getApplicationContext(),
-//                                    BehaviorActivity.class);
-//                            intent.putExtra("behavior", mBehaviorList.get(i));
-//                            intent.putExtra("goal", mGoal);
-//                            intent.putExtra("category", mCategory);
-//                            startActivityForResult(intent, Constants.VIEW_BEHAVIOR_REQUEST_CODE);
+                        @Override
+                        public void onClick(View v) {
+                            if(action_is_selected) {
+                                deleteAction(action);
+                            } else {
+                                addAction(action);
+                            }
                         }
                     });
                 }
@@ -199,7 +222,6 @@ public class ChooseActionsActivity extends ActionBarActivity implements
             }
         });
 
-        // -----------------------------------------------------
         mFakeHeader = getLayoutInflater().inflate(
                 R.layout.header_choose_actions, mRecyclerView, false);
         ImageView goalIconView = (ImageView) mFakeHeader.findViewById(R.id.choose_actions_header_imageview);
@@ -312,5 +334,76 @@ public class ChooseActionsActivity extends ActionBarActivity implements
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void moreInfoPressed(Action action) {
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(ChooseActionsActivity.this);
+            builder.setMessage(action.getMoreInfo()).setTitle(action.getTitle());
+            builder.setPositiveButton(android.R.string.ok,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addAction(Action action) {
+        Toast.makeText(getApplicationContext(),
+                getText(R.string.action_saving), Toast.LENGTH_SHORT).show();
+        new AddActionTask(this, this, action).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    @Override
+    public void actionAdded(Action action) {
+        Toast.makeText(getApplicationContext(),
+                getString(R.string.action_added, action.getTitle()),
+                Toast.LENGTH_SHORT).show();
+
+        // Add to the application's collection
+        application.addAction(action);
+        mAdapter.notifyDataSetChanged();
+
+        // launch trigger stuff
+        Intent intent = new Intent(getApplicationContext(), ActionTriggerActivity.class);
+        intent.putExtra("goal", mGoal);
+        intent.putExtra("action", action);
+        startActivity(intent);
+    }
+
+    public void deleteAction(Action action) {
+        // Make sure we find the action that contains the user's mapping id.
+        if(action.getMappingId() <= 0) {
+            for(Action a : application.getActions()) {
+                if(action.getId() == a.getId()) {
+                    action.setMappingId(a.getMappingId());
+                    break;
+                }
+            }
+        }
+
+        Log.e(TAG, "Deleting Action, id = " + action.getId() + ", useraction id = "
+                + action.getMappingId() + ", " + action.getTitle());
+        if(action.getMappingId() > 0) {
+
+            String actionMappingId = String.valueOf(action.getMappingId());
+            new DeleteActionTask(this, this, actionMappingId).executeOnExecutor(
+                    AsyncTask.THREAD_POOL_EXECUTOR);
+
+            // Remove from the application's collection
+            application.removeAction(action);
+        }
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void actionDeleted() {
+        Toast.makeText(getApplicationContext(),
+                getString(R.string.action_deleted), Toast.LENGTH_SHORT).show();
     }
 }

@@ -124,6 +124,7 @@ public class CompassApplication extends Application {
 
     public void addBehavior(Behavior behavior) {
         mBehaviors.add(behavior);
+        assignBehaviorsToGoals();
     }
 
     /** Behaviors are contained within a Goal. This method will take the list
@@ -160,6 +161,15 @@ public class CompassApplication extends Application {
         }
         assignActionsToBehaviors();
         logSelectedData("AFTER setActions");
+    }
+
+    /* Add an individual action the user's collection */
+    public void addAction(Action action) {
+        if(!mActions.contains(action)) {
+            mActions.add(action);
+            assignActionsToBehaviors();
+            logSelectedData("AFTER addAction");
+        }
     }
 
     /* update a single Action in a user's collection */

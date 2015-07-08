@@ -23,7 +23,7 @@
             android:layout_margin="10dp"
             android:layout_alignParentLeft="true"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_action_compass_white"/>
+            android:src="@drawable/ic_directions_run_black_36dp"/>
 
         <TextView
             android:id="@+id/list_item_action_title_textview"
@@ -44,6 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/list_item_action_title_textview"
             android:layout_margin="5dp"
+            android:layout_marginBottom="0dp"
             android:paddingLeft="2dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:visibility="gone"/>
@@ -59,23 +60,32 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:visibility="gone"/>
 
-        <TextView
-            android:id="@+id/list_item_action_try_it_textview"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/list_action_icons_wrapper"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:gravity="center"
-            android:layout_margin="10dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:minHeight="@dimen/paper_flat_button_min_height"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/grow_primary"
+            android:layout_margin="5dp"
             android:layout_below="@id/list_item_action_description_textview"
-            android:text="@string/goal_behavior_try_it"
-            android:visibility="gone"/>
+            android:gravity="center_vertical|right">
+
+            <ImageView
+                android:id="@+id/list_item_select_action_imageview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_blue_plus_circle"
+                android:padding="10dp"
+                android:layout_margin="5dp"/>
+
+            <ImageView
+                android:id="@+id/list_item_action_info_imageview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:src="@drawable/ic_blue_info"
+                android:layout_toLeftOf="@id/list_item_select_action_imageview"/>
+
+        </RelativeLayout>
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>

@@ -133,6 +133,9 @@
 
     <!-- ChooseActionsActivity -->
     <string name="behavior_image_description">Priority</string>
+    <string name="action_added">Added %1$s</string>
+    <string name="action_deleted">Action Removed</string>
+    <string name="action_saving">Saving Action...</string>
 
     <!-- SettingsActivity -->
     <string name="pref_general">General</string>
