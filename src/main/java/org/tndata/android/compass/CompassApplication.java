@@ -51,7 +51,7 @@ public class CompassApplication extends Application {
             Log.d(TAG, "--> setCategory: " + c.getTitle());
         }
 
-        logSelectedData("AFTER setCategories");
+        logSelectedData("AFTER CompassApplication.setCategories");
     }
 
     /* Remove a single Category from the user's collection */
@@ -62,6 +62,7 @@ public class CompassApplication extends Application {
         for(Goal goal : mGoals) {
             goal.removeCategory(category);
         }
+        logSelectedData("AFTER CompassApplication.removeCategory");
     }
 
     /* Returns all of the goals for a given Category */
@@ -79,7 +80,7 @@ public class CompassApplication extends Application {
             Log.d(TAG, "--> setGoals: " + g.getTitle());
         }
         assignGoalsToCategories();
-        logSelectedData("AFTER setGoals");
+        logSelectedData("AFTER CompassApplication.setGoals");
     }
 
     public void addGoal(Goal goal) {
@@ -87,6 +88,7 @@ public class CompassApplication extends Application {
             mGoals.add(goal);
             assignGoalsToCategories();
         }
+        logSelectedData("AFTER CompassApplication.addGoal: " + goal.getTitle());
     }
 
     /* Remove a single Goal from the user's collection */
@@ -97,6 +99,8 @@ public class CompassApplication extends Application {
         for(Category category : mCategories) {
             category.removeGoal(goal);
         }
+
+        logSelectedData("AFTER CompassApplication.removeGoal: " + goal.getTitle());
     }
 
     /**
@@ -125,7 +129,7 @@ public class CompassApplication extends Application {
             Log.d(TAG, "--> setBehavior: " + b.getTitle());
         }
         assignBehaviorsToGoals();
-        logSelectedData("AFTER setBehaviors");
+        logSelectedData("AFTER CompassApplication.setBehaviors");
     }
 
     public ArrayList<Behavior> getBehaviors() {
@@ -140,21 +144,25 @@ public class CompassApplication extends Application {
         for(Goal goal : getGoals()) {
             goal.removeBehavior(behavior);
         }
+        logSelectedData("AFTER CompassApplication.removeBehavior: " + behavior.getTitle());
     }
 
     public void addBehavior(Behavior behavior) {
-        mBehaviors.add(behavior);
-        assignBehaviorsToGoals();
+        if(!mBehaviors.contains(behavior)) {
+            mBehaviors.add(behavior);
+            assignBehaviorsToGoals();
+            logSelectedData("AFTER CompassApplication.addBehavior: " + behavior.getTitle());
+        }
     }
 
     /** Behaviors are contained within a Goal. This method will take the list
      * of selected behaviors, and associate them with the user's selected goals.
      */
     public void assignBehaviorsToGoals() {
-        for (Goal goal : getGoals()) {
+        for (Goal goal : getGoals()) { // Look at all the selected goals
             ArrayList<Behavior> goalBehaviors = new ArrayList<Behavior>();
-            for (Behavior behavior : getBehaviors()) {
-                for (Goal behaviorGoal : behavior.getGoals()) {
+            for (Behavior behavior : getBehaviors()) { // look at all the selected behaviors...
+                for (Goal behaviorGoal : behavior.getGoals()) { // The Behavior's Parent goals
                     if (behaviorGoal.getId() == goal.getId()) {
                         goalBehaviors.add(behavior);
                         break;
@@ -177,6 +185,8 @@ public class CompassApplication extends Application {
         for(Behavior behavior : mBehaviors) {
             behavior.removeAction(action);
         }
+
+        logSelectedData("AFTER CompassApplication.removeAction: " + action.getTitle());
     }
 
     public void setActions(ArrayList<Action> actions) {
@@ -185,7 +195,7 @@ public class CompassApplication extends Application {
             Log.d(TAG, "--> setAction: " + a.getTitle());
         }
         assignActionsToBehaviors();
-        logSelectedData("AFTER setActions");
+        logSelectedData("AFTER CompassApplication.setActions");
     }
 
     /* Add an individual action the user's collection */
@@ -193,7 +203,7 @@ public class CompassApplication extends Application {
         if(!mActions.contains(action)) {
             mActions.add(action);
             assignActionsToBehaviors();
-            logSelectedData("AFTER addAction");
+            logSelectedData("AFTER CompassApplication.addAction: " + action.getTitle());
         }
     }
 
@@ -228,7 +238,6 @@ public class CompassApplication extends Application {
                     behaviorActions.add(action);
                     break;
                 }
-
             }
             behavior.setActions(behaviorActions);
         }
