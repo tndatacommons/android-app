@@ -58,7 +58,12 @@ public class CompassApplication extends Application {
     public void removeCategory(Category category) {
         mCategories.remove(category);
     }
-    
+
+    /* Returns all of the goals for a given Category */
+    public ArrayList<Goal> getCategoryGoals(Category category) {
+        return category.getGoals();
+    }
+
     public ArrayList<Goal> getGoals() {
         return mGoals;
     }
