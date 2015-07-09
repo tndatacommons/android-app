@@ -84,6 +84,12 @@ public class Category extends TDCBase implements Serializable,
         this.goals = goals;
     }
 
+    public void addGoal(Goal goal) {
+        if(!this.goals.contains(goal)) {
+            this.goals.add(goal);
+        }
+    }
+
     public void removeGoal(Goal goal) {
         if(this.goals.contains(goal)) {
             this.goals.remove(goal);
