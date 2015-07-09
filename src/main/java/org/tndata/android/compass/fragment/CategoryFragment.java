@@ -32,10 +32,16 @@ import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
 
+/**
+ * This class, along with the CategoryFragmentAdapter, manages the Goal Cards selected
+ * by the user; The collections of cards are organized by Category, and displayed beneath
+ * a Category Tab.
+ */
 public class CategoryFragment extends Fragment implements
         CategoryFragmentAdapter.CategoryFragmentAdapterInterface,
         DeleteGoalTask.DeleteGoalTaskListener{
 
+    private CompassApplication application;
     private Category mCategory;
     private FloatingActionButton mFloatingActionButton;
     private RecyclerView mRecyclerView;
@@ -45,12 +51,12 @@ public class CategoryFragment extends Fragment implements
     private boolean mBroadcastIsRegistered = false;
     private CategoryFragmentListener mCallback;
     
-    private static final String TAG = "Category Fragment";
+    private static final String TAG = "CategoryFragment";
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "receive broadcast");
+            Log.d(TAG, "received broadcast, calling categoryGoalsUpdated()");
             categoryGoalsUpdated();
         }
     };
@@ -72,6 +78,7 @@ public class CategoryFragment extends Fragment implements
         super.onCreate(savedInstanceState);
         mCategory = getArguments() != null ? ((Category) getArguments().get(
                 "category")) : new Category();
+        application = (CompassApplication) getActivity().getApplication();
     }
 
     @Override
@@ -100,17 +107,23 @@ public class CategoryFragment extends Fragment implements
         mRecyclerView.addItemDecoration(new SpacingItemDecoration(30));
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new CategoryFragmentAdapter(getActivity().getApplicationContext(),
-                mItems, mCategory, this);
+                application, mCategory, this);
         mRecyclerView.setAdapter(mAdapter);
         registerReceivers();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mAdapter.notifyDataSetChanged();
+        application.logSelectedData("CategoryFragment.onResume");
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setGoals();
-        mAdapter = new CategoryFragmentAdapter(getActivity(), mItems, mCategory, this);
+        mAdapter = new CategoryFragmentAdapter(getActivity(), application, mCategory, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -179,18 +192,19 @@ public class CategoryFragment extends Fragment implements
 
     public void categoryGoalsUpdated() {
         Log.d(TAG, "categoryGoalsUpdated");
-        for (Category category : ((CompassApplication) getActivity()
-                .getApplication()).getCategories()) {
+        for (Category category : application.getCategories()) {
             if (category.getId() == mCategory.getId()) {
                 mCategory.setGoals(category.getGoals());
                 break;
             }
         }
-
         setGoals();
-        mAdapter.notifyDataSetChanged();
     }
 
+    /*
+    This method will reset the Fragment's list of goals, based on those assigned to the
+    category. IT also informs the adapter of the change, which should keep everything up to date.
+     */
     private void setGoals() {
         Log.d(TAG, "setGoals");
         ArrayList<Goal> goals = mCategory.getGoals();
@@ -212,7 +226,7 @@ public class CategoryFragment extends Fragment implements
         mCategory.removeGoal(goal);
 
         // Delete the goal from the Compass Application's collection
-        ((CompassApplication) getActivity().getApplication()).removeGoal(goal);
+        application.removeGoal(goal);
 
         setGoals(); // reset the goals collection for this fragment.
         mAdapter.notifyDataSetChanged();
