@@ -69,6 +69,12 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
         return categories;
     }
 
+    public void removeCategory(Category category) {
+        if(this.categories.contains(category)) {
+            this.categories.remove(category);
+        }
+    }
+
     public void setCategories(ArrayList<Category> categories) {
         this.categories = categories;
     }
@@ -79,6 +85,12 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
 
     public void setBehaviors(ArrayList<Behavior> behaviors) {
         this.behaviors = behaviors;
+    }
+
+    public void removeBehavior(Behavior behavior) {
+        if(this.behaviors.contains(behavior)) {
+            this.behaviors.remove(behavior);
+        }
     }
 
     public void setProgressValue(double value) {
