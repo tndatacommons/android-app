@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.tndata.android.compass"
-    android:versionCode="1"
-    android:versionName="1.0">
+    android:versionCode="2"
+    android:versionName="1.1.0">
 
+    <!-- NOTES on Versioning:
+    * Prior to release, increment the versionCode. This should be an integer value.
+    * versionName should adhere to Semantic Versioning. See http://semver.org/
+        * MAJOR version when you make incompatible API changes (or significant UI changes)
+        * MINOR version when you add functionality in a backwards-compatible manner, and
+        * PATCH version when you make backwards-compatible bug fixes.
+    -->
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="22" />
