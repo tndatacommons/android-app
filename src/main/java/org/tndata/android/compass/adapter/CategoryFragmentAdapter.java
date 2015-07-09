@@ -15,12 +15,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.ui.CompassPopupMenu;
-
-import java.util.List;
 
 public class CategoryFragmentAdapter extends
         RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -85,37 +84,34 @@ public class CategoryFragmentAdapter extends
 
     }
 
+    private CompassApplication mApplication;
     private Context mContext;
     private Category mCategory;
-    private List<Goal> mItems;
     private CategoryFragmentAdapterInterface mCallback;
+    private final String TAG = "CatFragAdapter";
 
-    public CategoryFragmentAdapter(Context context, List<Goal> objects, Category category,
-                                   CategoryFragmentAdapterInterface callback) {
-        if (objects == null) {
+    public CategoryFragmentAdapter(Context context, CompassApplication application, Category category,
+            CategoryFragmentAdapterInterface callback) {
+
+        if (application.getCategoryGoals(category) == null) {
             throw new IllegalArgumentException("Goals List must not be null");
         }
-        this.mItems = objects;
+
+        this.mApplication = application;
         this.mContext = context;
         this.mCategory = category;
         this.mCallback = callback;
     }
 
-    public void updateEntries(List<Goal> items) {
-        mItems.clear();
-        mItems.addAll(items);
-        notifyDataSetChanged();
-    }
-
     @Override
     public int getItemCount() {
-        return mItems.size();
+        return mApplication.getCategoryGoals(mCategory).size();
     }
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder,
                                  final int position) {
-        final Goal goal = mItems.get(position);
+        final Goal goal = mApplication.getCategoryGoals(mCategory).get(position);
         ((CategoryGoalViewHolder) viewHolder).titleTextView.setText(goal.getTitle());
         ((CategoryGoalViewHolder) viewHolder).descriptionTextView.setText(
                 goal.getDescription());
