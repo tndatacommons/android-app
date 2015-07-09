@@ -1,21 +1,5 @@
 package org.tndata.android.compass.task;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.tndata.android.compass.CompassApplication;
-import org.tndata.android.compass.model.Behavior;
-import org.tndata.android.compass.util.Constants;
-import org.tndata.android.compass.util.NetworkHelper;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -25,6 +9,23 @@ import android.util.Log;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.tndata.android.compass.CompassApplication;
+import org.tndata.android.compass.model.Behavior;
+import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.util.NetworkHelper;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddBehaviorTask extends AsyncTask<Void, Void, ArrayList<Behavior>> {
     private Context mContext;
@@ -93,6 +94,15 @@ public class AddBehaviorTask extends AsyncTask<Void, Void, ArrayList<Behavior>> 
                 Behavior behavior = gson.fromJson(userBehavior.getString("behavior"),
                         Behavior.class);
                 behavior.setMappingId(userBehavior.getInt("id"));
+
+                // Include the Behavior's Parent goals that have been selected by the user
+                JSONArray goalArray = userBehavior.getJSONArray("user_goals");
+                ArrayList<Goal> goals = behavior.getGoals();
+                for (int x = 0; x < goalArray.length(); x++) {
+                    Goal goal = gson.fromJson(goalArray.getString(x), Goal.class);
+                    goals.add(goal);
+                }
+                behavior.setGoals(goals);
                 behaviors.add(behavior);
             }
 
