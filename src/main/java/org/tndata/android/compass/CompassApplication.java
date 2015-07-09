@@ -57,6 +57,11 @@ public class CompassApplication extends Application {
     /* Remove a single Category from the user's collection */
     public void removeCategory(Category category) {
         mCategories.remove(category);
+
+        // also remove this category from any child goals
+        for(Goal goal : mGoals) {
+            goal.removeCategory(category);
+        }
     }
 
     /* Returns all of the goals for a given Category */
@@ -87,6 +92,11 @@ public class CompassApplication extends Application {
     /* Remove a single Goal from the user's collection */
     public void removeGoal(Goal goal) {
         mGoals.remove(goal);
+
+        // Remove the goal from its parent categories
+        for(Category category : mCategories) {
+            category.removeGoal(goal);
+        }
     }
 
     /**
@@ -125,6 +135,11 @@ public class CompassApplication extends Application {
     /* Remove a single Behavior from a user's collection */
     public void removeBehavior(Behavior behavior) {
         mBehaviors.remove(behavior);
+
+        // Remove the behavior from any Goals
+        for(Goal goal : getGoals()) {
+            goal.removeBehavior(behavior);
+        }
     }
 
     public void addBehavior(Behavior behavior) {
@@ -157,6 +172,11 @@ public class CompassApplication extends Application {
     /* Remove a single Action from a user's collection */
     public void removeAction(Action action) {
         mActions.remove(action);
+
+        // Remove the action from any related behaviors
+        for(Behavior behavior : mBehaviors) {
+            behavior.removeAction(action);
+        }
     }
 
     public void setActions(ArrayList<Action> actions) {
