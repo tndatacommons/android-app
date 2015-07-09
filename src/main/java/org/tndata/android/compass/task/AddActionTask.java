@@ -1,19 +1,5 @@
 package org.tndata.android.compass.task;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.tndata.android.compass.CompassApplication;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.util.Constants;
-import org.tndata.android.compass.util.NetworkHelper;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -23,6 +9,22 @@ import android.util.Log;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.tndata.android.compass.CompassApplication;
+import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.Behavior;
+import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.util.NetworkHelper;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddActionTask extends AsyncTask<Void, Void, Action> {
     private Context mContext;
@@ -43,8 +45,13 @@ public class AddActionTask extends AsyncTask<Void, Void, Action> {
 
     @Override
     protected Action doInBackground(Void... params) {
-        String token = ((CompassApplication) ((Activity) mContext)
-                .getApplication()).getToken();
+
+        CompassApplication application = (CompassApplication) ((Activity) mContext).getApplication();
+        String token = application.getToken();
+
+        // To associate the added Action with the currently selected behavior, we need the
+        // applications list of selected Behaviors.
+        ArrayList<Behavior> selectedBehaviors = application.getBehaviors();
 
         String url = Constants.BASE_URL + "users/actions/";
         Map<String, String> headers = new HashMap<String, String>();
@@ -80,11 +87,18 @@ public class AddActionTask extends AsyncTask<Void, Void, Action> {
 
             JSONObject userAction = new JSONObject(createResponse);
             Log.d("user action", userAction.toString(2));
-            Action action = gson.fromJson(userAction.getString("action"),
-                    Action.class);
-            if (action.getId() == mAction.getId()) {
-                mAction.setMappingId(userAction.getInt("id"));
-                return mAction;
+            Action action = gson.fromJson(userAction.getString("action"), Action.class);
+
+            if(action != null) {
+                action.setMappingId(userAction.getInt("id"));
+
+                // Associate the behavior, as well
+                for(Behavior behavior : selectedBehaviors) {
+                    if(behavior.getId() == action.getBehavior_id()) {
+                        action.setBehavior(behavior);
+                    }
+                }
+                return action;
             }
 
         } catch (IOException e) {
@@ -97,7 +111,11 @@ public class AddActionTask extends AsyncTask<Void, Void, Action> {
 
     @Override
     protected void onPostExecute(Action action) {
-        mCallback.actionAdded(action);
+        if(action != null) {
+            mCallback.actionAdded(action);
+        }else{
+            Log.e("user action", "onPostExecute, action is null!?");
+        }
     }
 
 }

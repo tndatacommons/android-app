@@ -379,12 +379,10 @@ public class GoalTryActivity extends ActionBarActivity implements
     public void behaviorsAdded(ArrayList<Behavior> behaviors) {
         if(behaviors != null) {
             for(Behavior b : behaviors) {
-                Log.d("GoalTryActivity", "Added Behavior(s): " + b.getId() + ", " + b.getTitle());
-                Log.d("GoalTryActivity", "-- mapping id: " + b.getMappingId());
                 application.addBehavior(b);
             }
         } else {
-            Log.d("GoalTryActivity", "No behaviors added");
+            Log.e("GoalTryActivity", "No behaviors added");
         }
         mAdapter.notifyDataSetChanged();
         Toast.makeText(this, getText(R.string.goal_try_behavior_added), Toast.LENGTH_SHORT).show();
