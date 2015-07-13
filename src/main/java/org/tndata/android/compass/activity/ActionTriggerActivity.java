@@ -102,29 +102,21 @@ public class ActionTriggerActivity extends BaseTriggerActivity implements
         saveActionTrigger(mAction);
     }
 
-    // OVER-Riding BaseTriggerActivity's event callbacks.
-
+    //The superclass picker setters are used to update the date-time holder, then the
+    //  dates are extracted as strings and the fields in the fragment updated
     @Override
-    public void onTimeSet(RadialTimePickerDialog dialog, int hourOfDay, int minute) {
-        String time = String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute);
-        setTime(time);
-        if(fragment != null) {
-            fragment.updateTimeView(hourOfDay, minute);
+    public void onTimeSet(RadialTimePickerDialog dialog, int hourOfDay, int minute){
+        super.onTimeSet(dialog, hourOfDay, minute);
+        if(fragment != null){
+            fragment.updateTimeView(getLocalTime());
         }
     }
 
     @Override
-    public void onDateSet(CalendarDatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth) {
-        // NOTE: the picker uses months in the range 0 - 11
-        monthOfYear = monthOfYear + 1;
-
-        String date = String.format("%4d", year) + "-" +
-                String.format("%02d", monthOfYear) + "-" +
-                String.format("%02d", dayOfMonth);
-
-        setDate(date);
-        if(fragment != null) {
-            fragment.updateDateView(year, monthOfYear, dayOfMonth);
+    public void onDateSet(CalendarDatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth){
+        super.onDateSet(dialog, year, monthOfYear, dayOfMonth);
+        if(fragment != null){
+            fragment.updateDateView(getLocalDate());
         }
     }
 
