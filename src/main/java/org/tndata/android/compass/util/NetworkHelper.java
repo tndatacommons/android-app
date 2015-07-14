@@ -1,5 +1,7 @@
 package org.tndata.android.compass.util;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
