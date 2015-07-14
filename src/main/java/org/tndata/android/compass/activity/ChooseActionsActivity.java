@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -226,16 +225,6 @@ public class ChooseActionsActivity extends ActionBarActivity implements
                 R.layout.header_choose_actions, mRecyclerView, false);
         ImageView goalIconView = (ImageView) mFakeHeader.findViewById(R.id.choose_actions_header_imageview);
         mBehavior.loadIconIntoView(getApplicationContext(), goalIconView);
-        RelativeLayout circleView = (RelativeLayout) mFakeHeader.findViewById(R.id.choose_actions_header_circle_view);
-        GradientDrawable gradientDrawable = (GradientDrawable) circleView.getBackground();
-        if (!mCategory.getSecondaryColor().isEmpty()) {
-            gradientDrawable.setColor(Color.parseColor(mCategory.getSecondaryColor()));
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            circleView.setBackground(gradientDrawable);
-        } else {
-            circleView.setBackgroundDrawable(gradientDrawable);
-        }
 
         mHeaderView = findViewById(R.id.choose_actions_material_view);
         manager.setHeaderIncrementFixer(mFakeHeader);
