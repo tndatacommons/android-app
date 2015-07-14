@@ -10,6 +10,7 @@ import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -66,29 +67,16 @@ public class UpdateProfileTask extends AsyncTask<User, Void, Boolean>{
         }
 
         InputStream stream = NetworkHelper.httpPutStream(url, headers, body.toString());
-        if (stream == null){
-            return false;
-        }
-
-        //Don't need the result at the moment, but may in the future
-        /*String result = "";
-        try{
-            BufferedReader bReader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
-
-            String line;
-            while ((line = bReader.readLine()) != null){
-                result += line;
+        if (stream != null){
+            try{
+                stream.close();
             }
-            bReader.close();
-
-            Log.d("PROFILE UPDATE", result);
+            catch (IOException iox){
+                iox.printStackTrace();
+            }
+            return true;
         }
-        catch (Exception x){
-            x.printStackTrace();
-            return false;
-        }*/
-
-        return true;
+        return false;
     }
 
     @Override
