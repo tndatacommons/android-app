@@ -153,7 +153,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/signup_password_confirm_textview"
             android:hint="@string/signup_first_name_hint"
-            android:inputType="textPersonName" />
+            android:inputType="textCapSentences|textPersonName"/>
 
         <TextView
             android:id="@+id/signup_first_name_textview"
@@ -171,7 +171,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/signup_first_name_textview"
             android:hint="@string/signup_last_name_hint"
-            android:inputType="textPersonName" />
+            android:inputType="textCapSentences|textPersonName" />
 
         <TextView
             android:id="@+id/signup_last_name_textview"
