@@ -2,6 +2,7 @@ package org.tndata.android.compass.task;
 
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -92,6 +93,7 @@ public class UpdateProfileTask extends AsyncTask<User, Void, Boolean>{
 
     @Override
     protected void onPostExecute(Boolean success){
+        Log.d("Profile Update", "success: " + success);
         if (mCallback != null){
             mCallback.onProfileUpdated(success);
         }
