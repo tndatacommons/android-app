@@ -18,7 +18,6 @@ import android.widget.ImageView;
 public class ImageCache {
 
     private LruCache<String, Bitmap> mMemoryCache;
-    private DiskLruCache mDiskCache;
     private static ImageCache mImageCache = null;
     private static Context mContext;
     private static Bitmap mPlaceHolderBitmap;
