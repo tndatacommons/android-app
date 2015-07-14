@@ -159,6 +159,10 @@ public class ActionTriggerFragment extends Fragment {
         return v;
     }
 
+    public void updateTimeView(String time){
+        timePickerTextView.setText(time);
+    }
+
     public void updateTimeView(Date time) {
         SimpleDateFormat sdf = new SimpleDateFormat("h:mm a", Locale.getDefault());
         timePickerTextView.setText(sdf.format(time));
@@ -172,6 +176,10 @@ public class ActionTriggerFragment extends Fragment {
 
         SimpleDateFormat sdf = new SimpleDateFormat("h:mm a", Locale.getDefault());
         timePickerTextView.setText(sdf.format(time));
+    }
+
+    public void updateDateView(String date){
+        datePickerTextView.setText(date);
     }
 
     public void updateDateView(Date date) {

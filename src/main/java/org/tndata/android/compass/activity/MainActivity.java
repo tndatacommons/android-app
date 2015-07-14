@@ -40,6 +40,7 @@ import org.tndata.android.compass.task.GetUserCategoriesTask;
 import org.tndata.android.compass.task.GetUserCategoriesTask.GetUserCategoriesListener;
 import org.tndata.android.compass.task.GetUserGoalsTask;
 import org.tndata.android.compass.task.GetUserGoalsTask.GetUserGoalsListener;
+import org.tndata.android.compass.task.UpdateProfileTask;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.ImageCache;
@@ -98,6 +99,9 @@ public class MainActivity extends ActionBarActivity implements
         setContentView(R.layout.activity_main);
 
         application = (CompassApplication) getApplication();
+
+        //Update the timezone
+        new UpdateProfileTask(null).execute(application.getUser());
 
         // Register the device with Google Cloud Messaging
         GcmRegistration gcm_registration = new GcmRegistration(getApplicationContext());
