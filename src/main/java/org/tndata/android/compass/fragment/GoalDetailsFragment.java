@@ -21,6 +21,7 @@ import org.tndata.android.compass.task.GetUserBehaviorsTask;
 import org.tndata.android.compass.ui.ActionCellView;
 import org.tndata.android.compass.ui.BehaviorListView;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
+import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,6 +43,8 @@ public class GoalDetailsFragment extends Fragment implements
     private Boolean reloadData = true;
 
     private static final String TAG = "GoalDetailsFragment";
+
+    private ImageLoader mImageLoader;
 
     public interface GoalDetailsFragmentListener {
         public void chooseBehaviors(Goal goal);
@@ -84,6 +87,9 @@ public class GoalDetailsFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        mImageLoader = new ImageLoader(getActivity().getApplicationContext());
+
         View v = getActivity().getLayoutInflater().inflate(
                 R.layout.fragment_goal_details, container, false);
 
@@ -100,6 +106,12 @@ public class GoalDetailsFragment extends Fragment implements
             }
         });
         return v;
+    }
+
+    @Override
+    public void onPause(){
+        mImageLoader.closeCache();
+        super.onPause();
     }
 
     @Override
@@ -177,7 +189,7 @@ public class GoalDetailsFragment extends Fragment implements
             Behavior behavior = entry.getKey();
             ArrayList<Action> actions = entry.getValue();
 
-            BehaviorListView behaviorListView = new BehaviorListView(getActivity());
+            BehaviorListView behaviorListView = new BehaviorListView(getActivity(), mImageLoader);
             behaviorListView.setListener(this);
             behaviorListView.setBehavior(behavior, mCategory);
             behaviorListView.setOnClickListener(new View.OnClickListener() {

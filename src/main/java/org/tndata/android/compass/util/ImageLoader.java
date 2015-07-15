@@ -86,6 +86,17 @@ public class ImageLoader implements BitmapWorkerTask.OnDownloadCompleteCallback{
      * @param view the view to where the bitmap shall be set.
      * @param url the urk of the bitmap. This acts as a key for the cache.
      * @param flinging avoid downloading on cache miss.
+     */
+    public void loadBitmap(ImageView view, String url, boolean flinging){
+        loadBitmap(view, url, flinging, true);
+    }
+
+    /**
+     * Loads the bitmap at the provided url, but checks the cache first.
+     *
+     * @param view the view to where the bitmap shall be set.
+     * @param url the urk of the bitmap. This acts as a key for the cache.
+     * @param flinging avoid downloading on cache miss.
      * @param usePlaceholder use a placeholder while the bitmap loads.
      */
     public void loadBitmap(ImageView view, String url, boolean flinging, boolean usePlaceholder){

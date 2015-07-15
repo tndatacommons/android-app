@@ -5,6 +5,7 @@ import android.widget.ImageView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.util.ImageCache;
+import org.tndata.android.compass.util.ImageLoader;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -185,14 +186,15 @@ public class Category extends TDCBase implements Serializable,
     public void loadIconIntoView(Context context, ImageView imageView) {
         String iconUrl = getIconUrl();
         if(iconUrl != null && !iconUrl.isEmpty()) {
-            ImageCache.instance(context).loadBitmap(imageView, iconUrl, false);
+            //ImageCache.instance(context).loadBitmap(imageView, iconUrl, false);
         }
     }
 
     public void loadImageIntoView(Context context, ImageView imageView) {
         String url = getImageUrl();
-        if(url != null && !url.isEmpty()) {
-            ImageCache.instance(context).loadBitmap(imageView, url, false);
+        if(url != null && !url.isEmpty()){
+            ImageLoader mImageLoader = new ImageLoader(context);
+            mImageLoader.loadBitmap(imageView, url, false);
         }
     }
 

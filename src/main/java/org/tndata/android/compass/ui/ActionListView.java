@@ -10,6 +10,7 @@ import android.widget.TextView;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.util.ImageCache;
+import org.tndata.android.compass.util.ImageLoader;
 
 public class ActionListView extends LinearLayout {
     private ImageView mIconImageView;
@@ -17,16 +18,19 @@ public class ActionListView extends LinearLayout {
     private Action mAction;
     private Context mContext;
 
-    public ActionListView(Context context) {
-        this(context, null);
+    ImageLoader mImageLoader;
+
+    public ActionListView(Context context, ImageLoader loader) {
+        this(context, null, 0, loader);
     }
 
-    public ActionListView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+    public ActionListView(Context context, AttributeSet attrs, ImageLoader loader) {
+        this(context, attrs, 0, loader);
     }
 
-    public ActionListView(Context context, AttributeSet attrs, int defStyle) {
+    public ActionListView(Context context, AttributeSet attrs, int defStyle, ImageLoader loader) {
         super(context, attrs, defStyle);
+        mImageLoader = loader;
         initViews(context, attrs);
     }
 
@@ -54,7 +58,7 @@ public class ActionListView extends LinearLayout {
             mTitleTextView.setText(mAction.getTitle());
             if (mAction.getIconUrl() != null
                     && !mAction.getIconUrl().isEmpty()) {
-                ImageCache.instance(mContext).loadBitmap(mIconImageView,
+                mImageLoader.loadBitmap(mIconImageView,
                         mAction.getIconUrl(), false);
             }
         } catch (Exception e) {
