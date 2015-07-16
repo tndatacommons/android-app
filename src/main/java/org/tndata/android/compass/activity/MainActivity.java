@@ -120,8 +120,7 @@ public class MainActivity extends ActionBarActivity implements
         mDrawerItems = drawerItems();
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
                 GravityCompat.START);
-        mDrawerAdapter = new DrawerAdapter(this, R.layout.list_item_nav_drawer,
-                mDrawerItems);
+        mDrawerAdapter = new DrawerAdapter(this, mDrawerItems);
         mDrawerList.setAdapter(mDrawerAdapter);
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
