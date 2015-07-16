@@ -185,8 +185,7 @@ public class Category extends TDCBase implements Serializable,
      */
     public void loadIconIntoView(Context context, ImageView imageView) {
         String iconUrl = getIconUrl();
-        if(iconUrl != null && !iconUrl.isEmpty()) {
-            //ImageCache.instance(context).loadBitmap(imageView, iconUrl, false);
+        if(iconUrl != null && !iconUrl.isEmpty()){
             ImageLoader imageLoader = new ImageLoader(context);
             imageLoader.loadBitmap(imageView, iconUrl, false);
         }
