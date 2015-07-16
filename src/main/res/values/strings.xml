@@ -2,39 +2,39 @@
 <resources>
 
     <string name="app_name">Compass</string>
-    <string name="version_num">1.0.0</string>
+    <string name="version_num">1.1.0</string>
     <string name="ok">OK</string>
 
     <!-- MainActivity -->
     <string name="action_settings">Settings</string>
-    <string name="action_important_to_me">Important to Me</string>
+    <string name="action_important_to_me">Important to me</string>
     <string name="action_myself">Myself</string>
-    <string name="action_my_priorities">My Priorities</string>
-    <string name="action_my_privacy">My Privacy</string>
+    <string name="action_my_priorities">My priorities</string>
+    <string name="action_my_privacy">My privacy</string>
     <string name="nav_drawer_action">Compass</string>
     <string name="main_tab_title">My Journey</string>
     <string name="category_card_title">My %1$s goals</string>
 
     <!-- CategoryFragment -->
-    <string name="popup_menu_content_description">View More Options</string>
-    <string name="goal_deleted">Goal Deleted</string>
+    <string name="popup_menu_content_description">View more options</string>
+    <string name="goal_deleted">Goal deleted</string>
     <string name="goal_card_add_label">SHOW ME HOW</string>
     <string name="goal_card_details_label">MY ACTIONS</string>
-    <string name="goal_dialog_delete_title">Delete Goal?</string>
+    <string name="goal_dialog_delete_title">Delete goal?</string>
     <string name="goal_dialog_delete_message">You are about to permanently remove this</string>
 
     <!-- Time/Recurrence pickers -->
-    <string name="trigger_saved_confirmation_toast">Reminder Saved!</string>
-    <string name="date_picker_confirmation_toast">Date Set</string>
+    <string name="trigger_saved_confirmation_toast">Reminder saved</string>
+    <string name="date_picker_confirmation_toast">Date set</string>
     <string name="time_picker_confirmation_toast">You have selected %1$s</string>
-    <string name="recurrence_picker_confirmation_toast">Recurring Schedule Saved!</string>
-    <string name="reminder_failed">Failed to save Reminder</string>
+    <string name="recurrence_picker_confirmation_toast">Recurring schedule saved</string>
+    <string name="reminder_failed">Failed to save reminder</string>
 
     <!-- LoginActivity -->
     <string name="terms_title">Terms and Conditions</string>
     <string name="launcher_sign_up">SIGN UP</string>
     <string name="launcher_login">LOG IN</string>
-    <string name="launcher_tagline">Sign up or Log in</string>
+    <string name="launcher_tagline">Sign up or log in</string>
     <string name="launcher_grow_image">Compass</string>
     <string name="login_email_hint">email</string>
     <string name="login_password_hint">password</string>
@@ -43,7 +43,7 @@
     <string name="login_email_error">Please enter a valid email</string>
     <string name="login_auth_error">An error occurred when logging in</string>
     <string name="login_header_label">LOG IN</string>
-    <string name="signup_password_mismatch_error">Passwords must match!</string>
+    <string name="signup_password_mismatch_error">Passwords must match</string>
     <string name="signup_password_length_error">Password must be at least 5 characters</string>
     <string name="signup_first_name_label">first name</string>
     <string name="signup_last_name_label">last name</string>
@@ -58,57 +58,57 @@
     <string name="signup_info_label">Knowing who you are and where you\'re going affects what you can achieve</string>
 
     <!-- OnBoardingActivity -->
-    <string name="onboarding_category_error_label">Uh Oh! There seems to have been an issue finding choices!</string>
+    <string name="onboarding_category_error_label">Uh Oh! There seems to have been an issue finding choices.</string>
     <string name="onboarding_category_header_label">KNOW YOUR PATH.</string>
     <string name="onboarding_category_info_label">Tell Compass four things you think about a lot. You can add to or change your choices later.</string>
     <string name="category_image_description">Select</string>
-    <string name="choose_categories_need_more">You must select at least 4 categories!</string>
+    <string name="choose_categories_need_more">You must select at least 4 categories</string>
     <string name="onboarding_category_done">NEXT</string>
 
     <string name="onboarding_checkprogress_title">ARE YOU ON COURSE?</string>
     <string name="onboarding_checkprogress_info">Compass will help you track your progress. These icons let you know if you are heading in the right direction. Tap one to get started.</string>
-    <string name="onboarding_checkprogress_privacy_title">Your Privacy</string>
+    <string name="onboarding_checkprogress_privacy_title">My privacy</string>
     <string name="onboarding_checkprogress_privacy_content">Compass respects your privacy and will never share your personal information with others.</string>
 
     <string name="choose_goals_goal_removed">Goal removed</string>
     <string name="choose_goals_done">I\'M DONE</string>
     <string name="choose_goals_header_label">%1$s goals</string>
-    <string name="choose_goals_info_label">Select your goals for easy ways to GROW.</string>
-    <string name="choose_goals_error_label">Uh Oh! There seems to have been an issue finding goals!</string>
+    <string name="choose_goals_info_label">Select my goals</string>
+    <string name="choose_goals_error_label">Uh Oh! There seems to have been an issue finding goals</string>
     <string name="choose_goals_list_item_more_info_label">MORE INFO</string>
     <string name="choose_goals_list_item_select_button">I WANT THIS</string>
-    <string name="choose_goals_list_item_selected_button">I\'LL DO IT!</string>
+    <string name="choose_goals_list_item_selected_button">I\'LL DO IT</string>
     <string name="goal_image_description">Goal</string>
-    <string name="qol_header_label">KNOW YOURSELF.</string>
-    <string name="qol_header_info_label">Tell Compass a bit about yourself.</string>
+    <string name="qol_header_label">KNOW YOURSELF</string>
+    <string name="qol_header_info_label">Tell Compass a bit about yourself</string>
     <string name="qol_next_button">NEXT</string>
     <string name="survey_open_ended_hint">answer</string>
 
     <!-- MyGoalsFragment -->
-    <string name="default_no_content_title">What are your priorities?</string>
+    <string name="default_no_content_title">What are my priorities?</string>
     <string name="default_no_content_subtitle">Click the button below to begin</string>
     <string name="category_goals">%1$s goals</string>
-    <string name="category_goals_add">What are your %1$s goals?</string>
+    <string name="category_goals_add">What are my %1$s goals?</string>
 
     <!-- LearnMoreFragment -->
-    <string name="behavior_management_label">Manage your Priority</string>
-    <string name="action_management_label">Set a Reminder for your Action</string>
-    <string name="more_info_header">More Information</string>
+    <string name="behavior_management_label">Manage my priority</string>
+    <string name="action_management_label">Set a reminder for my action</string>
+    <string name="more_info_header">More information</string>
     <string name="trigger_details">%1$s at %2$s</string>
 
     <!-- GoalDetailsActivity -->
-    <string name="goal_title_label">Your Goal</string>
-    <string name="goal_management">Find more Activities</string>
-    <string name="menu_goal_new_behaviors">Choose Priorities</string>
-    <string name="menu_goal_view_details">View Details</string>
-    <string name="menu_goal_remove">Remove Goal</string>
+    <string name="goal_title_label">My goal</string>
+    <string name="goal_management">Find more activities</string>
+    <string name="menu_goal_new_behaviors">Choose priorities</string>
+    <string name="menu_goal_view_details">View details</string>
+    <string name="menu_goal_remove">Remove goal</string>
 
     <!-- ActionTriggerActivity -->
-    <string name="trigger_default_action_title">Reminders for this Action</string>
-    <string name="trigger_switch_label">Enable Reminders</string>
+    <string name="trigger_default_action_title">Reminders for this action</string>
+    <string name="trigger_switch_label">Enable reminders</string>
     <string name="trigger_time_picker_label">Select a time</string>
-    <string name="trigger_date_picker_label">Select a Date</string>
-    <string name="trigger_recurrence_picker_label">Select Repeat Options</string>
+    <string name="trigger_date_picker_label">Select a date</string>
+    <string name="trigger_recurrence_picker_label">Select repeat options</string>
     <string name="trigger_finished_label">DONE</string>
 
     <!-- BehaviorActivity -->
@@ -123,7 +123,7 @@
     <string name="action_i_want_this_label">I want this</string>
     <string name="menu_popup_remove">Remove</string>
     <string name="menu_popup_edit">Edit notification</string>
-    <string name="behavior_title_placeholder">This is a placeholder description for one of your selected Priorities</string>
+    <string name="behavior_title_placeholder">My selected priority</string>
 
     <!-- GoalTryActivity -->
     <string name="goal_try_these">TRY THESE</string>
@@ -134,14 +134,14 @@
     <!-- ChooseActionsActivity -->
     <string name="behavior_image_description">Priority</string>
     <string name="action_added">Added %1$s</string>
-    <string name="action_deleted">Action Removed</string>
-    <string name="action_saving">Saving Action...</string>
+    <string name="action_deleted">Action removed</string>
+    <string name="action_saving">Saving action</string>
 
     <!-- SettingsActivity -->
     <string name="pref_general">General</string>
     <string name="pref_about">About</string>
     <string name="settings_logout_summary">Signed in as %1$s</string>
-    <string name="settings_logout_title">Sign Out</string>
+    <string name="settings_logout_title">Sign out</string>
     <string name="settings_version_title">Version</string>
 
     <!-- Surveys -->
@@ -153,11 +153,11 @@
     <string name="survey_default_option">Click to choose</string>
 
     <!-- BehaviorProgressActivity -->
-    <string name="behavior_progress_hero_title">Check In!</string>
-    <string name="behavior_progress_hero_description">Now\'s a great time to think about your progress toward your goals.</string>
-    <string name="behavior_progress_default_label">My Goals</string>
-    <string name="behavior_progress_on_track">On Track</string>
+    <string name="behavior_progress_hero_title">Check In</string>
+    <string name="behavior_progress_hero_description">Now\'s a great time to think about my progress toward my goals.</string>
+    <string name="behavior_progress_default_label">My goals</string>
+    <string name="behavior_progress_on_track">On track</string>
     <string name="behavior_progress_seeking">Seeking</string>
-    <string name="behavior_progress_off_course">Off Course</string>
+    <string name="behavior_progress_off_course">Off course</string>
 
 </resources>

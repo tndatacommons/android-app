@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class Trigger implements Serializable, Comparable<Trigger> {
 
@@ -22,7 +23,18 @@ public class Trigger implements Serializable, Comparable<Trigger> {
     private String time = "";
     private String trigger_date = "";
 
-    public Trigger() {
+    private boolean mDefaultTrigger;
+
+    public Trigger(){
+        mDefaultTrigger = false;
+    }
+
+    public void asDefaultTrigger(){
+        mDefaultTrigger = true;
+    }
+
+    public boolean isDefaultTrigger(){
+        return mDefaultTrigger;
     }
 
     // A default RRULE value for the recurrence picker (NOTE: no RRULE prefix)

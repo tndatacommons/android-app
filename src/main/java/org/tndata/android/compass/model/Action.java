@@ -124,6 +124,7 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
         if(custom_trigger != null) {
             return custom_trigger;
         } else if (default_trigger != null){
+            default_trigger.asDefaultTrigger();
             return default_trigger;
         } else {
             return new Trigger();

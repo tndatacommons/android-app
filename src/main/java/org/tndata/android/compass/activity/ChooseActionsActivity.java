@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,6 +38,7 @@ import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapte
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter.OnClickEvent;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.ImageCache;
+import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -64,6 +64,8 @@ public class ChooseActionsActivity extends ActionBarActivity implements
     private int mCurrentlyExpandedPosition = -1;
     private CompassApplication application;
     private final String TAG = "ChooseActionsActivity";
+
+    private ImageLoader mImageLoader;
 
     static class ActionViewHolder extends RecyclerView.ViewHolder {
         public ActionViewHolder(View itemView) {
@@ -110,6 +112,8 @@ public class ChooseActionsActivity extends ActionBarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_actions);
+
+        mImageLoader = new ImageLoader(getApplicationContext());
 
         application = (CompassApplication) getApplication();
         mBehavior = (Behavior) getIntent().getSerializableExtra("behavior");
@@ -172,8 +176,7 @@ public class ChooseActionsActivity extends ActionBarActivity implements
                     }
                     if (action.getIconUrl() != null
                             && !action.getIconUrl().isEmpty()) {
-                        ImageCache.instance(getApplicationContext()).loadBitmap(
-                                ((ActionViewHolder) viewHolder).iconImageView,
+                        mImageLoader.loadBitmap(((ActionViewHolder)viewHolder).iconImageView,
                                 action.getIconUrl(), false);
                     }
 
@@ -226,16 +229,6 @@ public class ChooseActionsActivity extends ActionBarActivity implements
                 R.layout.header_choose_actions, mRecyclerView, false);
         ImageView goalIconView = (ImageView) mFakeHeader.findViewById(R.id.choose_actions_header_imageview);
         mBehavior.loadIconIntoView(getApplicationContext(), goalIconView);
-        RelativeLayout circleView = (RelativeLayout) mFakeHeader.findViewById(R.id.choose_actions_header_circle_view);
-        GradientDrawable gradientDrawable = (GradientDrawable) circleView.getBackground();
-        if (!mCategory.getSecondaryColor().isEmpty()) {
-            gradientDrawable.setColor(Color.parseColor(mCategory.getSecondaryColor()));
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            circleView.setBackground(gradientDrawable);
-        } else {
-            circleView.setBackgroundDrawable(gradientDrawable);
-        }
 
         mHeaderView = findViewById(R.id.choose_actions_material_view);
         manager.setHeaderIncrementFixer(mFakeHeader);
@@ -292,6 +285,18 @@ public class ChooseActionsActivity extends ActionBarActivity implements
             mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }
         loadActions();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        mImageLoader.initCache();
+    }
+
+    @Override
+    protected void onPause(){
+        mImageLoader.closeCache();
+        super.onPause();
     }
 
     @Override

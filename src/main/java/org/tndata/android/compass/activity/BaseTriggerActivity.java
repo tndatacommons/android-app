@@ -21,7 +21,13 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.task.AddActionTriggerTask;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
 
 /**
  * Created by kevin on 6/14/15.
@@ -50,32 +56,144 @@ public class BaseTriggerActivity extends ActionBarActivity implements
     private String mDate;  // YYYY-mm-dd formatted date string
     private boolean triggerSaved = false; // flag so we know when a trigger is saved.
 
+    //Date object that stores both the selected time and date
+    private Date mDateTime;
+
+    //Selection flags
+    private boolean mTimeSelected;
+    private boolean mDateSelected;
+
+    //Date and time formats
+    private SimpleDateFormat mLocalTimeFormatter;
+    private SimpleDateFormat mLocalDateFormatter;
+    private SimpleDateFormat mUtcTimeFormatter;
+    private SimpleDateFormat mUtcDateFormatter;
+
+    //Datetime parsers
+    private SimpleDateFormat mLocalTimeParser;
+    private SimpleDateFormat mLocalDateTimeParser;
+    private SimpleDateFormat mUtcDateTimeParser;
+
     private static final String TAG = "BaseTriggerActivity";
     private static final String FRAG_TAG_RECUR_PICKER = "recurrencePickerDialogFragment";
     private static final String FRAG_TAG_DATE_PICKER = "datePickerDialogFragment";
     private static final String FRAG_TAG_TIME_PICKER = "timePickerDialogFragment";
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+
+        mDateTime = new Date();
+        mTimeSelected = false;
+        mDateSelected = false;
+
+        mLocalTimeFormatter = new SimpleDateFormat("h:mm a", Locale.getDefault());
+        mLocalDateFormatter = new SimpleDateFormat("MMM d y", Locale.getDefault());
+        mUtcTimeFormatter = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        mUtcTimeFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        mUtcDateFormatter = new SimpleDateFormat("y-MM-d", Locale.getDefault());
+        mUtcDateFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        mLocalTimeParser = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        mLocalDateTimeParser = new SimpleDateFormat("y-MM-d HH:mm", Locale.getDefault());
+        mUtcDateTimeParser = new SimpleDateFormat("y-MM-d HH:mm", Locale.getDefault());
+        mUtcDateTimeParser.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
+
     public boolean isTriggerSaved() {
         return triggerSaved;
     }
 
-    public void initializeReminders(Trigger trigger) {
+    public void initializeReminders(Trigger trigger){
         // initialize local vars with a given Trigger
-        if(trigger != null) {
-            String time = trigger.getTime();
-            String date = trigger.getDate();
-            String rrule = trigger.getRRULE();
-            initializeReminders(time, date, rrule);
-        } else {
-            initializeReminders("", "", "");
+        if(trigger != null){
+            try{
+                String datetime = trigger.getDate();
+                if (datetime.equals("")){
+                    datetime = trigger.getTime();
+                    if (!datetime.equals("")){
+                        mTimeSelected = true;
+                        if (trigger.isDefaultTrigger()){
+                            mDateTime = mLocalTimeParser.parse(datetime);
+                        }
+                        else{
+                            mDateTime = mUtcTimeFormatter.parse(datetime);
+                        }
+                    }
+                }
+                else{
+                    mDateSelected = true;
+                    mTimeSelected = true;
+
+                    datetime += " " + trigger.getTime();
+                    if (trigger.isDefaultTrigger()){
+                        mDateTime = mLocalDateTimeParser.parse(datetime);
+                    }
+                    else{
+                        mDateTime = mUtcDateTimeParser.parse(datetime);
+                    }
+                }
+            }
+            catch (ParseException px){
+                px.printStackTrace();
+            }
+
+            Log.d("Local TIME", getLocalTime());
+            Log.d("UTC TIME", getUtcTime());
+
+            setRRULE(trigger.getRRULE());
+        }
+        else{
+            setRRULE("");
         }
     }
 
-    public void initializeReminders(String time, String date, String rrule) {
-        // initialize local vars with String time, date, and rrule data
-        setDate(date);
-        setTime(time);
-        setRRULE(rrule);
+    /**
+     * Local date getter.
+     *
+     * @return a formatted String with the selected date in the local timezone.
+     */
+    public String getLocalDate(){
+        if (!mDateSelected){
+            return "";
+        }
+        return mLocalDateFormatter.format(mDateTime);
+    }
+
+    /**
+     * UTC date getter.
+     *
+     * @return a formatted String with the selected date in UTC.
+     */
+    public String getUtcDate(){
+        if (!mDateSelected){
+            return "";
+        }
+        return mUtcDateFormatter.format(mDateTime);
+    }
+
+    /**
+     * Local time getter.
+     *
+     * @return a formatted String with the selected time in the local timezone.
+     */
+    public String getLocalTime(){
+        if (!mTimeSelected){
+            return "";
+        }
+        return mLocalTimeFormatter.format(mDateTime);
+    }
+
+    /**
+     * UTC time getter.
+     *
+     * @return a formatted string with the selected time in UTC.
+     */
+    public String getUtcTime(){
+        if (!mTimeSelected){
+            return "";
+        }
+        return mUtcTimeFormatter.format(mDateTime);
     }
 
     public String getDate() {
@@ -208,24 +326,39 @@ public class BaseTriggerActivity extends ActionBarActivity implements
 
 
     @Override
-    public void onTimeSet(RadialTimePickerDialog dialog, int hourOfDay, int minute) {
-        Log.d(TAG, "hourOfDay: " + hourOfDay + ", minute: " + minute);
-        mTime = String.format("%02d", hourOfDay) + ":" +
-                String.format("%02d", minute);
+    public void onTimeSet(RadialTimePickerDialog dialog, int hourOfDay, int minute){
+        //A calendar instance is retrieved and the picked time is set
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(mDateTime);
+        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        calendar.set(Calendar.MINUTE, minute);
+
+        //The datetime object is replaced with the new one
+        mDateTime = calendar.getTime();
+        mTimeSelected = true;
+
+        Log.d(TAG, "utc: " + getUtcTime());
+        Log.d(TAG, "local: " + getLocalTime());
+
         Toast.makeText(this,
-                getString(R.string.time_picker_confirmation_toast, mTime),
+                getString(R.string.time_picker_confirmation_toast, getLocalTime()),
                 Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onDateSet(CalendarDatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth) {
-        // NOTE: the picker uses months in the range 0 - 11
-        monthOfYear = monthOfYear + 1;
+    public void onDateSet(CalendarDatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth){
+        //A calendar instance is retrieved and the picked date is set
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(mDateTime);
+        calendar.set(year, monthOfYear, dayOfMonth);
 
-        String date = String.format("%4d", year) + "-" +
-                String.format("%02d", monthOfYear) + "-" +
-                String.format("%02d", dayOfMonth);
-        setDate(date);
+        //The datetime object is replaced with the new one
+        mDateTime = calendar.getTime();
+        mDateSelected = true;
+
+        Log.d(TAG, "utc: " + getUtcDate());
+        Log.d(TAG, "local: " + getLocalDate());
+
         Toast.makeText(this,
                 getText(R.string.date_picker_confirmation_toast),
                 Toast.LENGTH_SHORT).show();
@@ -236,8 +369,8 @@ public class BaseTriggerActivity extends ActionBarActivity implements
      */
     protected void saveActionTrigger(Action action) {
         String rrule = getRRULE();
-        String date = getDate();
-        String time = getTime();
+        String date = getUtcDate();
+        String time = getUtcTime();
 
         Log.d(TAG, "saveActionTrigger, for Action: " + action.getTitle());
         Log.d(TAG, "Time: " + time);
@@ -270,5 +403,4 @@ public class BaseTriggerActivity extends ActionBarActivity implements
             return false;
         }
     }
-
 }

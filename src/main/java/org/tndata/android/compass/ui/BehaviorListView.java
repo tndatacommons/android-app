@@ -12,6 +12,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.util.ImageCache;
+import org.tndata.android.compass.util.ImageLoader;
 
 public class BehaviorListView extends LinearLayout {
     private ImageView mIconImageView;
@@ -22,6 +23,8 @@ public class BehaviorListView extends LinearLayout {
     private Context mContext;
     private BehaviorListViewListener mCallback;
 
+    private ImageLoader mImageLoader;
+
     public interface BehaviorListViewListener {
         public void deleteUserBehavior(Behavior behavior);
     }
@@ -30,16 +33,17 @@ public class BehaviorListView extends LinearLayout {
         mCallback = listener;
     }
 
-    public BehaviorListView(Context context) {
-        this(context, null);
+    public BehaviorListView(Context context, ImageLoader loader) {
+        this(context, null, 0, loader);
     }
 
-    public BehaviorListView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+    public BehaviorListView(Context context, AttributeSet attrs, ImageLoader loader) {
+        this(context, attrs, 0, loader);
     }
 
-    public BehaviorListView(Context context, AttributeSet attrs, int defStyle) {
+    public BehaviorListView(Context context, AttributeSet attrs, int defStyle, ImageLoader loader){
         super(context, attrs, defStyle);
+        this.mImageLoader = loader;
         initViews(context, attrs);
     }
 
@@ -74,8 +78,7 @@ public class BehaviorListView extends LinearLayout {
             mTitleTextView.setText(mBehavior.getTitle());
             if (mBehavior.getIconUrl() != null
                     && !mBehavior.getIconUrl().isEmpty()) {
-                ImageCache.instance(mContext).loadBitmap(mIconImageView,
-                        mBehavior.getIconUrl(), false);
+                mImageLoader.loadBitmap(mIconImageView, mBehavior.getIconUrl(), false);
             }
         } catch (Exception e) {
             e.printStackTrace();
