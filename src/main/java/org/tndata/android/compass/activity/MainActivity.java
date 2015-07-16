@@ -234,6 +234,7 @@ public class MainActivity extends ActionBarActivity implements
                 case IMPORTANT_TO_ME:
                     break;
                 case MY_PRIORITIES:
+                    startActivity(new Intent(getApplicationContext(), MyPrioritiesActivity.class));
                     break;
                 case MYSELF:
                     intent = new Intent(getApplicationContext(), UserProfileActivity.class);
