@@ -109,7 +109,6 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>{
             final BitmapWorkerTask bitmapWorkerTask = ImageLoader.getBitmapWorkerTask(imageView);
             if (this == bitmapWorkerTask){
                 imageView.setImageBitmap(result);
-                ImageCache.instance(mContext).addBitmapToMemoryCache(mUrl, result);
             }
         }
 
