@@ -33,6 +33,7 @@ import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFix
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
 import org.tndata.android.compass.util.ImageCache;
 import org.tndata.android.compass.util.ImageHelper;
+import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -59,6 +60,8 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
 
     private HashSet<Goal> mExpandedGoals = new HashSet<>();
     private int mCurrentlyExpandedPosition = -1;
+
+    private ImageLoader mImageLoader;
 
     static class ChooseGoalViewHolder extends RecyclerView.ViewHolder {
         public ChooseGoalViewHolder(View itemView) {
@@ -104,6 +107,8 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_goals);
+
+        mImageLoader = new ImageLoader(getApplicationContext());
 
         application = (CompassApplication) getApplication();
 
@@ -165,8 +170,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                             .getDescription());
                     if (goal.getIconUrl() != null
                             && !goal.getIconUrl().isEmpty()) {
-                        ImageCache.instance(getApplicationContext()).loadBitmap(
-                                ((ChooseGoalViewHolder) viewHolder).iconImageView,
+                        mImageLoader.loadBitmap(((ChooseGoalViewHolder)viewHolder).iconImageView,
                                 goal.getIconUrl(), false);
                     }
 
@@ -284,6 +288,18 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         }
 
         loadGoals();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        mImageLoader.initCache();
+    }
+
+    @Override
+    protected void onPause(){
+        mImageLoader.closeCache();
+        super.onPause();
     }
 
     private void showError() {

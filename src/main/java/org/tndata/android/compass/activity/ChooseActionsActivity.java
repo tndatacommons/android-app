@@ -38,6 +38,7 @@ import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapte
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter.OnClickEvent;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.ImageCache;
+import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -63,6 +64,8 @@ public class ChooseActionsActivity extends ActionBarActivity implements
     private int mCurrentlyExpandedPosition = -1;
     private CompassApplication application;
     private final String TAG = "ChooseActionsActivity";
+
+    private ImageLoader mImageLoader;
 
     static class ActionViewHolder extends RecyclerView.ViewHolder {
         public ActionViewHolder(View itemView) {
@@ -109,6 +112,8 @@ public class ChooseActionsActivity extends ActionBarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_actions);
+
+        mImageLoader = new ImageLoader(getApplicationContext());
 
         application = (CompassApplication) getApplication();
         mBehavior = (Behavior) getIntent().getSerializableExtra("behavior");
@@ -171,8 +176,7 @@ public class ChooseActionsActivity extends ActionBarActivity implements
                     }
                     if (action.getIconUrl() != null
                             && !action.getIconUrl().isEmpty()) {
-                        ImageCache.instance(getApplicationContext()).loadBitmap(
-                                ((ActionViewHolder) viewHolder).iconImageView,
+                        mImageLoader.loadBitmap(((ActionViewHolder)viewHolder).iconImageView,
                                 action.getIconUrl(), false);
                     }
 
@@ -281,6 +285,18 @@ public class ChooseActionsActivity extends ActionBarActivity implements
             mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }
         loadActions();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        mImageLoader.initCache();
+    }
+
+    @Override
+    protected void onPause(){
+        mImageLoader.closeCache();
+        super.onPause();
     }
 
     @Override

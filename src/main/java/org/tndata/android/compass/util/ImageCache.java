@@ -12,10 +12,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.support.v4.util.LruCache;
 import android.widget.ImageView;
 
-public class ImageCache {
+public class ImageCache implements BitmapWorkerTask.OnDownloadCompleteCallback{
 
     private LruCache<String, Bitmap> mMemoryCache;
     private static ImageCache mImageCache = null;
@@ -80,7 +81,7 @@ public class ImageCache {
         } else if (flinging) {
             imageView.setImageBitmap(mPlaceHolderBitmap);
         } else if (cancelPotentialWork(id, imageView)) {
-            BitmapWorkerTask task = new BitmapWorkerTask(imageView, mContext);
+            BitmapWorkerTask task = new BitmapWorkerTask(mContext, imageView, this);
             final AsyncDrawable asyncDrawable;
             if (usePlaceholder) {
                 asyncDrawable = new AsyncDrawable(
@@ -93,6 +94,11 @@ public class ImageCache {
 
             task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, id);
         }
+    }
+
+    @Override
+    public void onDownloadComplete(String url, @Nullable Bitmap result, boolean wasCancelled){
+
     }
 
     static class AsyncDrawable extends BitmapDrawable {
@@ -121,8 +127,7 @@ public class ImageCache {
         final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
 
         if (bitmapWorkerTask != null) {
-            final String bitmapData = bitmapWorkerTask.mUrl;
-            if ((bitmapData == null) || (!bitmapData.equals(url))) {
+            if (!bitmapWorkerTask.workingOn(url)) {
                 // Cancel previous task
                 bitmapWorkerTask.cancel(true);
             } else {
