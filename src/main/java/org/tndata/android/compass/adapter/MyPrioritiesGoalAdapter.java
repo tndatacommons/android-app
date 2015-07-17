@@ -2,10 +2,11 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,11 +19,20 @@ import java.util.List;
 /**
  * Created by isma on 7/16/15.
  */
-public class MyPrioritiesGoalAdapter extends BaseAdapter{
+public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
+
     private Context mContext;
     private List<Goal> mGoals;
 
+    private int mExpandedViewPosition;
 
+
+    /**
+     * Constructor.
+     *
+     * @param context the application context.
+     * @param goals the list of goals in a given category.
+     */
     public MyPrioritiesGoalAdapter(@NonNull Context context, @NonNull List<Goal> goals){
         mContext = context;
         mGoals = goals;
@@ -31,13 +41,16 @@ public class MyPrioritiesGoalAdapter extends BaseAdapter{
     }
 
     @Override
-    public int getCount(){
-        return mGoals.size();
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        View view = inflater.inflate(R.layout.item_my_priorities_goal, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
-    public Goal getItem(int position){
-        return mGoals.get(position);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position){
+        Log.d("Position", position+"");
+        ((ViewHolder)holder).name.setText(mGoals.get(position).getTitle());
     }
 
     @Override
@@ -46,30 +59,16 @@ public class MyPrioritiesGoalAdapter extends BaseAdapter{
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent){
-        if (convertView == null){
-            LayoutInflater inflater = LayoutInflater.from(mContext);
-            convertView = inflater.inflate(R.layout.item_my_priorities_goal, parent, false);
-            attachViewHolder(convertView);
-        }
-
-        ViewHolder holder = (ViewHolder)convertView.getTag(R.id.view_holder_tag);
-
-        holder.name.setText(getItem(position).getTitle());
-
-        return convertView;
+    public int getItemCount(){
+        return mGoals.size();
     }
 
-    /**
-     * Creates a new view holder, populates it, and attaches it to the provided view.
-     *
-     * @param view the view from which extraction the widgets and to which attach the holder.
-     */
-    private void attachViewHolder(View view){
-        ViewHolder holder = new ViewHolder();
-        holder.name = (TextView)view.findViewById(R.id.my_priorities_goal_name);
-        holder.offspring = (LinearLayout)view.findViewById(R.id.my_priorities_goal_offspring);
-        view.setTag(R.id.view_holder_tag, holder);
+    private void expand(View view, int position){
+
+    }
+
+    private void collapse(View view, int position){
+
     }
 
     /**
@@ -78,7 +77,7 @@ public class MyPrioritiesGoalAdapter extends BaseAdapter{
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    static class ViewHolder{
+    static class ViewHolder extends RecyclerView.ViewHolder{
         //This is a pool of TextViews to be reused. Any unused TextViews should be placed
         //  here. Before creating new ones, the list should be checked to see if there are
         //  any of them available.
@@ -87,5 +86,12 @@ public class MyPrioritiesGoalAdapter extends BaseAdapter{
         //Components
         private TextView name;
         private LinearLayout offspring;
+
+        public ViewHolder(View itemView){
+            super(itemView);
+
+            name = (TextView)itemView.findViewById(R.id.my_priorities_goal_name);
+            offspring = (LinearLayout)itemView.findViewById(R.id.my_priorities_goal_offspring);
+        }
     }
 }

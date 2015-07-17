@@ -41,7 +41,7 @@ public class MyPrioritiesCategoryAdapter extends BaseAdapter{
         return mCategories.size();
     }
 
-    @Override
+    //@Override
     public Category getItem(int position){
         return mCategories.get(position);
     }
@@ -51,13 +51,14 @@ public class MyPrioritiesCategoryAdapter extends BaseAdapter{
         return position;
     }
 
-    @Override
+    //@Override
     public View getView(int position, View convertView, ViewGroup parent){
         if (convertView == null){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             convertView = inflater.inflate(R.layout.item_my_priorities_category, parent, false);
             attachViewHolder(convertView);
         }
+        convertView.setTag(R.id.view_item_position_tag);
 
         ViewHolder holder = (ViewHolder)convertView.getTag(R.id.view_holder_tag);
         holder.name.setText(getItem(position).getTitle());
@@ -77,12 +78,13 @@ public class MyPrioritiesCategoryAdapter extends BaseAdapter{
     }
 
     /**
-     * The item ViewHolder.
+     * The item view holder. Also contains a pool of resources.
      *
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    static class ViewHolder{
+    public static class ViewHolder{
+        //Components
         private TextView name;
     }
 }
