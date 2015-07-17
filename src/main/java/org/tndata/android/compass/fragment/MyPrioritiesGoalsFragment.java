@@ -13,6 +13,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.MyPrioritiesGoalAdapter;
 import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.util.ImageLoader;
 
 
 /**
@@ -20,6 +21,7 @@ import org.tndata.android.compass.model.Category;
  */
 public class MyPrioritiesGoalsFragment extends Fragment{
     private Category mCategory;
+    private ImageLoader mLoader;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,10 +35,18 @@ public class MyPrioritiesGoalsFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View rootView =  inflater.inflate(R.layout.fragment_my_priorities_goals, container, false);
 
+        mLoader = new ImageLoader(getActivity().getApplicationContext());
+
         RecyclerView rv = (RecyclerView)rootView.findViewById(R.id.priorities_goals_recyclerview);
-        rv.setAdapter(new MyPrioritiesGoalAdapter(getActivity().getApplicationContext(), mCategory.getGoals()));
+        rv.setAdapter(new MyPrioritiesGoalAdapter(getActivity().getApplicationContext(), mCategory.getGoals(), mLoader));
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         return rootView;
+    }
+
+    @Override
+    public void onPause(){
+        mLoader.closeCache();
+        super.onPause();
     }
 }
