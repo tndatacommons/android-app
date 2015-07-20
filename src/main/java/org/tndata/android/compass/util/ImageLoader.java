@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.LinkedList;
 
 
 /**
@@ -32,52 +33,89 @@ import java.security.NoSuchAlgorithmException;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class ImageLoader implements BitmapWorkerTask.OnDownloadCompleteCallback{
+public final class ImageLoader{
     //Use a 25 MB internal cache and store the files under the "cache" directory
     private static final int DISK_CACHE_SIZE = 1024*1024*25;
     private static final String DISK_CACHE_SUB_DIR = "cache";
     private static final int DISK_CACHE_INDEX = 0;
 
     //The application context, to get paths
-    private Context mContext;
+    private static Context mContext = null;
 
-    //The cache and the lock (shared across all instantiations)
-    private DiskLruCache mDiskCache;
-    private final Object mDiskCacheLock;
+    //The cache and the lock
+    private static DiskLruCache mDiskCache;
 
-    //Flag to indicate that the disk cache is opening, once it's opened it is set to false
-    private boolean mDiskCacheOpening;
+    private static CacheWorkerTask workerTask;
+
+    //Queues
+    private static LinkedList<LoadRequest> mLoadQueue;
+    private static LinkedList<WriteRequest> mWriteQueue;
 
     //A placeholder used until the intended image is loaded
-    private Bitmap mPlaceHolderBitmap;
+    private static Bitmap mPlaceHolderBitmap;
 
 
     /**
-     * Constructor. Sets the context and initialises the cache handler if necessary.
+     * Initializes the caching system.
      *
-     * @param context the application context
+     * @param context the application context.
      */
-    public ImageLoader(Context context){
-        mContext = context;
-        mDiskCache = null;
-        mDiskCacheLock = new Object();
-        mDiskCacheOpening = false;
+    public static void initialize(Context context){
+        if (mContext == null){
+            mContext = context;
 
-        mPlaceHolderBitmap = BitmapFactory.decodeResource(mContext.getResources(),
-                R.drawable.ic_action_compass_white);
+            mDiskCache = null;
 
-        initCache();
+            mLoadQueue = new LinkedList<>();
+            mWriteQueue = new LinkedList<>();
+
+            workerTask = null;
+
+            mPlaceHolderBitmap = BitmapFactory.decodeResource(mContext.getResources(),
+                    R.drawable.ic_action_compass_white);
+        }
     }
 
     /**
-     * If the cache handler is neither initialised nor initialising, it is initialised.
+     * Queues a load request. Thread safe.
+     *
+     * @param request the request to be queued.
      */
-    public void initCache(){
-        if (mDiskCache == null && !mDiskCacheOpening){
-            mDiskCacheOpening = true;
-            File dir = new File(mContext.getCacheDir().getPath() + File.separator + DISK_CACHE_SUB_DIR);
-            new InitDiskCacheTask().execute(dir);
+    private static synchronized void queueLoadRequest(@NonNull LoadRequest request){
+        mLoadQueue.addLast(request);
+    }
+
+    /**
+     * Dequeues a load request. Thread safe.
+     *
+     * @return the next request in the provided queue.
+     */
+    private static synchronized LoadRequest dequeueLoadRequest(){
+        return mLoadQueue.removeFirst();
+    }
+
+    /**
+     * Tells whether the provided queue is empty.
+     *
+     * @return true if it is empty, false otherwise.
+     */
+    private static synchronized boolean isLoadQueueEmpty(){
+        return mLoadQueue.isEmpty();
+    }
+
+    private static synchronized void queueWriteRequest(@NonNull WriteRequest request){
+        mWriteQueue.addLast(request);
+    }
+
+    private static synchronized WriteRequest dequeueWriteRequest(){
+        if (!mWriteQueue.isEmpty()){
+            return mWriteQueue.removeFirst();
         }
+        return null;
+    }
+
+    private static synchronized boolean isWriteQueueEmpty(){
+        return mWriteQueue.isEmpty();
     }
 
     /**
@@ -87,7 +125,7 @@ public class ImageLoader implements BitmapWorkerTask.OnDownloadCompleteCallback{
      * @param url the urk of the bitmap. This acts as a key for the cache.
      * @param flinging avoid downloading on cache miss.
      */
-    public void loadBitmap(ImageView view, String url, boolean flinging){
+    public static void loadBitmap(ImageView view, String url, boolean flinging){
         loadBitmap(view, url, flinging, true);
     }
 
@@ -99,61 +137,44 @@ public class ImageLoader implements BitmapWorkerTask.OnDownloadCompleteCallback{
      * @param flinging avoid downloading on cache miss.
      * @param usePlaceholder use a placeholder while the bitmap loads.
      */
-    public void loadBitmap(ImageView view, String url, boolean flinging, boolean usePlaceholder){
+    public static void loadBitmap(ImageView view, String url, boolean flinging, boolean usePlaceholder){
         //1.- Check memory cache
         Bitmap bitmap = ImageCache.instance(mContext).getBitmapFromMemCache(url);
         //2.- On hit, load, on miss, check disk cache
-        if (bitmap == null){
-            Log.d("MemoryCache", "Miss: " + url);
-            //3.- On hit, load, on miss, download, then write to cache
-            if (isBitmapInDiskCache(hashKeyForDisk(url))){
-                new ReadFromDiskCacheTask(view).execute(url);
-            }
-            else{
-                if (flinging){
-                    view.setImageBitmap(mPlaceHolderBitmap);
-                }
-                else if (cancelPotentialWork(url, view)){
-                    //If the image needs to be downloaded, the proper task is created
-                    BitmapWorkerTask task = new BitmapWorkerTask(mContext, view, this);
-                    //An AsyncDrawable is created with the selected configuration and set
-                    //  as the drawable of the ImageView
-                    final NewAsyncDrawable asyncDrawable;
-                    if (usePlaceholder){
-                        asyncDrawable = new NewAsyncDrawable(mContext.getResources(),
-                                mPlaceHolderBitmap, task);
-                    }
-                    else{
-                        asyncDrawable = new NewAsyncDrawable(mContext.getResources(), task);
-                    }
-                    view.setImageDrawable(asyncDrawable);
-
-                    task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
-                }
-            }
-        }
-        else{
+        if (bitmap != null){
             Log.d("MemoryCache", "Hit: " + url);
             view.setImageBitmap(bitmap);
+        }
+        else{
+            Log.d("MemoryCache", "Miss: " + url);
+
+            //Add to queue and start the task if necessary
+            queueLoadRequest(new LoadRequest(view, url, flinging, usePlaceholder));
+            if (workerTask == null){
+                File dir = new File(mContext.getCacheDir().getPath() + File.separator + DISK_CACHE_SUB_DIR);
+                workerTask = new CacheWorkerTask();
+                workerTask.execute(dir);
+            }
         }
     }
 
     /**
      * Tells whether the key exists in the disk cache.
      *
-     * @param key the key to check for.
+     * @param url the key to check for.
      * @return true if it exists, false otherwise.
      */
-    private boolean isBitmapInDiskCache(String key){
+    private static boolean isBitmapInDiskCache(String url){
+        String key = hashKeyForDisk(url);
         if (mDiskCache != null){
             try{
                 DiskLruCache.Snapshot snapshot = mDiskCache.get(key);
                 if (snapshot == null){
-                    Log.d("DiskCache", "Miss: " + key);
+                    Log.d("DiskCache", "Miss: " + url);
                     return false;
                 }
                 else{
-                    Log.d("DiskCache", "Hit: " + key);
+                    Log.d("DiskCache", "Hit: " + url);
                     snapshot.close();
                     return true;
                 }
@@ -165,15 +186,58 @@ public class ImageLoader implements BitmapWorkerTask.OnDownloadCompleteCallback{
         return false;
     }
 
+    private static Bitmap readBitmapFromDiskCache(String url){
+        String key = hashKeyForDisk(url);
+
+        if (mDiskCache != null){
+            Bitmap bitmap = null;
+            try{
+                DiskLruCache.Snapshot snapshot = mDiskCache.get(key);
+                if (snapshot != null){
+                    //Load the Bitmap file from the cache and close the snapshot (closing
+                    //  the snapshot also closes the InputStream)
+                    FileInputStream inputStream = (FileInputStream)snapshot
+                            .getInputStream(DISK_CACHE_INDEX);
+                    bitmap = BitmapFactory.decodeFileDescriptor(inputStream.getFD());
+                    snapshot.close();
+                }
+            }
+            catch (IOException iox){
+                iox.printStackTrace();
+            }
+            return bitmap;
+        }
+        return null;
+    }
+
+    private static void writeBitmapToDiskCache(WriteRequest request){
+        try{
+            String key = hashKeyForDisk(request.mUrl);
+            if (mDiskCache != null){
+                DiskLruCache.Editor editor = mDiskCache.edit(key);
+                if (editor != null){
+                    OutputStream outputStream = editor.newOutputStream(DISK_CACHE_INDEX);
+                    request.mBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                    editor.commit();
+                }
+            }
+            else{
+                Log.d("DiskCache", "Cache is closed!");
+            }
+        }
+        catch (IOException iox){
+            iox.printStackTrace();
+        }
+    }
+
     /**
      * Closes the cache.
      */
-    public void closeCache(){
+    private static void closeCache(){
         if (mDiskCache != null){
             try{
                 mDiskCache.close();
                 mDiskCache = null;
-                mDiskCacheOpening = false;
             }
             catch (IOException iox){
                 //Again, this ain't happening either
@@ -182,13 +246,8 @@ public class ImageLoader implements BitmapWorkerTask.OnDownloadCompleteCallback{
         }
     }
 
-    @Override
-    public void onDownloadComplete(String url, @Nullable Bitmap result, boolean wasCancelled){
-        Log.d("ImageLoader", "Download complete");
-        if (result != null){
-            ImageCache.instance(mContext).addBitmapToMemoryCache(url, result);
-            new WriteToDiskCacheTask(result).execute(url);
-        }
+    private static synchronized boolean isReopenNeeded(){
+        return isLoadQueueEmpty();
     }
 
     /**
@@ -310,132 +369,194 @@ public class ImageLoader implements BitmapWorkerTask.OnDownloadCompleteCallback{
 
 
     /**
-     * Creates the disk cache handler.
+     * A request unit. Used to queue the requests.
      *
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    private class InitDiskCacheTask extends AsyncTask<File, Void, Void>{
+    private static class LoadRequest{
+        private final ImageView mImageView;
+        private final String mUrl;
+        private final boolean mFlinging;
+        private final boolean mUsePlaceholder;
+        private Bitmap mResult;
+
+
+        /**
+         * Constructor.
+         *
+         * @param imageView the target ImageView.
+         * @param url the source url.
+         */
+        private LoadRequest(ImageView imageView, String url, boolean flinging, boolean usePlaceholder){
+            mImageView = imageView;
+            mUrl = url;
+            mFlinging = flinging;
+            mUsePlaceholder = usePlaceholder;
+            mResult = null;
+        }
+
+        /**
+         * Sets the result of the load operation.
+         *
+         * @param result the downloaded bitmap.
+         */
+        private void setResult(Bitmap result){
+            mResult = result;
+        }
+    }
+
+
+    /**
+     * A write request unit. Writing to disk cache may take some time, so requests need
+     * to be queued before proceeding.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    private static class WriteRequest{
+        private final Bitmap mBitmap;
+        private final String mUrl;
+
+
+        /**
+         * Constructor.
+         *
+         * @param bitmap the bitmap to be written to cache.
+         * @param url the url the bitmap was fetched from.
+         */
+        private WriteRequest(Bitmap bitmap, String url){
+            mBitmap = bitmap;
+            mUrl = url;
+        }
+    }
+
+
+    private static class CacheWorkerTask
+            extends AsyncTask<File, LoadRequest, Void>
+            implements BitmapWorkerTask.OnDownloadCompleteCallback{
+
+        private int pendingRequests;
+
+
+        private CacheWorkerTask(){
+            pendingRequests = 0;
+        }
+
+        private synchronized void addRequest(){
+            pendingRequests++;
+        }
+
+        private synchronized void closeRequest(){
+            pendingRequests--;
+        }
+
+        private synchronized boolean arePendingRequests(){
+            return pendingRequests != 0;
+        }
+
+        private boolean areOpenRequests(){
+            return !isWriteQueueEmpty() || !isLoadQueueEmpty();
+        }
+
         @Override
         protected Void doInBackground(File... params){
-            synchronized (mDiskCacheLock) {
-                File cacheDir = params[0];
-                try{
-                    mDiskCache = DiskLruCache.open(cacheDir, 1, 1, DISK_CACHE_SIZE);
-                }
-                catch (IOException iox){
-                    //Locally, this ain't ever happening
-                    iox.printStackTrace();
-                }
-                mDiskCacheOpening = false; // Finished initialization
-                mDiskCacheLock.notifyAll(); // Wake any waiting threads
+            File cacheDir = params[0];
+            try{
+                mDiskCache = DiskLruCache.open(cacheDir, 1, 1, DISK_CACHE_SIZE);
             }
-            return null;
-        }
-    }
-
-
-    /**
-     * Loads the bitmap at the key in the view if it exists.
-     *
-     * @author Ismael Alonso
-     * @version 1.0.0
-     */
-    private class ReadFromDiskCacheTask extends AsyncTask<String, Void, Bitmap>{
-        private final ImageView mView;
-        private String mUrl;
-
-
-        /**
-         * Constructor.
-         *
-         * @param view the target view.
-         */
-        public ReadFromDiskCacheTask(@NonNull ImageView view){
-            mView = view;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... params){
-            mUrl = params[0];
-            String key = hashKeyForDisk(mUrl);
-
-            if (mDiskCache != null){
-                Bitmap bitmap = null;
-                try{
-                    DiskLruCache.Snapshot snapshot = mDiskCache.get(key);
-                    if (snapshot != null){
-                        //Load the Bitmap file from the cache and close the snapshot (closing
-                        //  the snapshot also closes the InputStream)
-                        FileInputStream inputStream = (FileInputStream)snapshot
-                                .getInputStream(DISK_CACHE_INDEX);
-                        bitmap = BitmapFactory.decodeFileDescriptor(inputStream.getFD());
-                        snapshot.close();
-                    }
-                }
-                catch (IOException iox){
-                    iox.printStackTrace();
-                }
-                return bitmap;
+            catch (IOException iox){
+                //Locally, this ain't ever happening
+                iox.printStackTrace();
             }
-            return null;
-        }
 
-        @Override
-        protected void onPostExecute(Bitmap result){
-            ImageCache.instance(mContext).addBitmapToMemoryCache(mUrl, result);
-            mView.setImageBitmap(result);
-        }
-    }
-
-
-    /**
-     * Writes a Bitmap to the disk cache.
-     *
-     * @author Ismael Alonso
-     * @version 1.0.0
-     */
-    private class WriteToDiskCacheTask extends AsyncTask<String, Void, Void>{
-        private Bitmap mBitmap;
-
-
-        /**
-         * Constructor.
-         *
-         * @param bitmap the bitmap to write.
-         */
-        public WriteToDiskCacheTask(Bitmap bitmap){
-            this.mBitmap = bitmap;
-        }
-
-        @Override
-        protected Void doInBackground(String... params){
-            String key = hashKeyForDisk(params[0]);
-
-            //Wait until the cache is free
-            synchronized (mDiskCacheLock){
-                //Wait until the cache interface opens up
-                while (mDiskCacheOpening){
+            //As long as there is something to do, this thread must be kept alive
+            while (areOpenRequests() || arePendingRequests()){
+                Log.d("CacheWorker", "Iteration");
+                //However, it there are only downloads in progress, the thread can be put to sleep
+                if (!areOpenRequests()){
+                    Log.d("CacheWorker", "Sleeping");
                     try{
-                        mDiskCacheLock.wait();
+                        Thread.sleep(500);
                     }
                     catch (InterruptedException ix){
-                        //Nothing to do here
+                        ix.printStackTrace();
                     }
                 }
-                try{
-                    DiskLruCache.Editor editor = mDiskCache.edit(key);
-                    if (editor != null){
-                        OutputStream outputStream = editor.newOutputStream(DISK_CACHE_INDEX);
-                        mBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-                        editor.commit();
+                //First the load queue is checked
+                if (!isLoadQueueEmpty()){
+                    LoadRequest request = dequeueLoadRequest();
+                    //If the bitmap was found in the disk cache it is loaded, otherwise downloaded.
+                    if (isBitmapInDiskCache(request.mUrl)){
+                        request.setResult(readBitmapFromDiskCache(request.mUrl));
                     }
+                    else{
+                        request.setResult(null);
+                    }
+                    addRequest();
+                    publishProgress(request);
                 }
-                catch (IOException iox){
-                    iox.printStackTrace();
+                else if (!isWriteQueueEmpty()){
+                    writeBitmapToDiskCache(dequeueWriteRequest());
                 }
             }
+
+            closeCache();
             return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(LoadRequest... values){
+            for (LoadRequest request:values){
+                if (request.mResult == null){
+                    if (request.mFlinging){
+                        request.mImageView.setImageBitmap(mPlaceHolderBitmap);
+                    }
+                    else if (cancelPotentialWork(request.mUrl, request.mImageView)){
+                        //If the image needs to be downloaded, the proper task is created
+                        BitmapWorkerTask task = new BitmapWorkerTask(mContext, request.mImageView, this);
+                        //An AsyncDrawable is created with the selected configuration and set
+                        //  as the drawable of the ImageView
+                        final NewAsyncDrawable asyncDrawable;
+                        if (request.mUsePlaceholder){
+                            asyncDrawable = new NewAsyncDrawable(mContext.getResources(),
+                                    mPlaceHolderBitmap, task);
+                        }
+                        else{
+                            asyncDrawable = new NewAsyncDrawable(mContext.getResources(), task);
+                        }
+                        request.mImageView.setImageDrawable(asyncDrawable);
+
+                        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request.mUrl);
+                    }
+                }
+                else{
+                    ImageCache.instance(mContext).addBitmapToMemoryCache(request.mUrl, request.mResult);
+                    request.mImageView.setImageBitmap(request.mResult);
+                }
+                closeRequest();
+            }
+        }
+
+        @Override
+        public void onDownloadComplete(String url, @Nullable Bitmap result, boolean wasCancelled){
+            Log.d("ImageLoader", "Download complete: " + url);
+            if (result != null){
+                ImageCache.instance(mContext).addBitmapToMemoryCache(url, result);
+                queueWriteRequest(new WriteRequest(result, url));
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid){
+            if (isReopenNeeded()){
+                File dir = new File(mContext.getCacheDir().getPath() + File.separator + DISK_CACHE_SUB_DIR);
+                workerTask = new CacheWorkerTask();
+                workerTask.execute(dir);
+            }
+            else{
+                workerTask = null;
+            }
         }
     }
 }

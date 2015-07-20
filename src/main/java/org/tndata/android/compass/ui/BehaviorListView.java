@@ -23,8 +23,6 @@ public class BehaviorListView extends LinearLayout {
     private Context mContext;
     private BehaviorListViewListener mCallback;
 
-    private ImageLoader mImageLoader;
-
     public interface BehaviorListViewListener {
         public void deleteUserBehavior(Behavior behavior);
     }
@@ -33,17 +31,16 @@ public class BehaviorListView extends LinearLayout {
         mCallback = listener;
     }
 
-    public BehaviorListView(Context context, ImageLoader loader) {
-        this(context, null, 0, loader);
+    public BehaviorListView(Context context) {
+        this(context, null, 0);
     }
 
-    public BehaviorListView(Context context, AttributeSet attrs, ImageLoader loader) {
-        this(context, attrs, 0, loader);
+    public BehaviorListView(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
     }
 
-    public BehaviorListView(Context context, AttributeSet attrs, int defStyle, ImageLoader loader){
+    public BehaviorListView(Context context, AttributeSet attrs, int defStyle){
         super(context, attrs, defStyle);
-        this.mImageLoader = loader;
         initViews(context, attrs);
     }
 
@@ -76,9 +73,8 @@ public class BehaviorListView extends LinearLayout {
     private void updateUi() {
         try {
             mTitleTextView.setText(mBehavior.getTitle());
-            if (mBehavior.getIconUrl() != null
-                    && !mBehavior.getIconUrl().isEmpty()) {
-                mImageLoader.loadBitmap(mIconImageView, mBehavior.getIconUrl(), false);
+            if (mBehavior.getIconUrl() != null && !mBehavior.getIconUrl().isEmpty()){
+                ImageLoader.loadBitmap(mIconImageView, mBehavior.getIconUrl(), false);
             }
         } catch (Exception e) {
             e.printStackTrace();

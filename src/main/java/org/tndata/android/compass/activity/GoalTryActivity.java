@@ -38,7 +38,6 @@ import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFix
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter.OnClickEvent;
 import org.tndata.android.compass.util.Constants;
-import org.tndata.android.compass.util.ImageCache;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
@@ -63,8 +62,6 @@ public class GoalTryActivity extends ActionBarActivity implements
     private HashSet<Behavior> mExpandedBehaviors = new HashSet<>();
     private int mCurrentlyExpandedPosition = -1;
     public CompassApplication application;
-
-    private ImageLoader mImageLoader;
 
     static class TryGoalViewHolder extends RecyclerView.ViewHolder {
         public TryGoalViewHolder(View itemView) {
@@ -111,8 +108,6 @@ public class GoalTryActivity extends ActionBarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_goal_try);
-
-        mImageLoader = new ImageLoader(getApplicationContext());
 
         application = (CompassApplication) getApplication();
 
@@ -177,7 +172,7 @@ public class GoalTryActivity extends ActionBarActivity implements
                     }
                     if (behavior.getIconUrl() != null
                             && !behavior.getIconUrl().isEmpty()) {
-                        mImageLoader.loadBitmap(((TryGoalViewHolder)viewHolder).iconImageView,
+                        ImageLoader.loadBitmap(((TryGoalViewHolder)viewHolder).iconImageView,
                                 behavior.getIconUrl(), false);
                     }
 
@@ -314,18 +309,6 @@ public class GoalTryActivity extends ActionBarActivity implements
             mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }
         loadBehaviors();
-    }
-
-    @Override
-    protected void onResume(){
-        super.onResume();
-        mImageLoader.initCache();
-    }
-
-    @Override
-    protected void onPause(){
-        super.onPause();
-        mImageLoader.closeCache();
     }
 
     public void launchActionPicker(Behavior behavior) {

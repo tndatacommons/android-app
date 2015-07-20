@@ -44,8 +44,6 @@ public class GoalDetailsFragment extends Fragment implements
 
     private static final String TAG = "GoalDetailsFragment";
 
-    private ImageLoader mImageLoader;
-
     public interface GoalDetailsFragmentListener {
         public void chooseBehaviors(Goal goal);
 
@@ -88,8 +86,6 @@ public class GoalDetailsFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mImageLoader = new ImageLoader(getActivity().getApplicationContext());
-
         View v = getActivity().getLayoutInflater().inflate(
                 R.layout.fragment_goal_details, container, false);
 
@@ -106,12 +102,6 @@ public class GoalDetailsFragment extends Fragment implements
             }
         });
         return v;
-    }
-
-    @Override
-    public void onPause(){
-        mImageLoader.closeCache();
-        super.onPause();
     }
 
     @Override
@@ -189,7 +179,7 @@ public class GoalDetailsFragment extends Fragment implements
             Behavior behavior = entry.getKey();
             ArrayList<Action> actions = entry.getValue();
 
-            BehaviorListView behaviorListView = new BehaviorListView(getActivity(), mImageLoader);
+            BehaviorListView behaviorListView = new BehaviorListView(getActivity());
             behaviorListView.setListener(this);
             behaviorListView.setBehavior(behavior, mCategory);
             behaviorListView.setOnClickListener(new View.OnClickListener() {
