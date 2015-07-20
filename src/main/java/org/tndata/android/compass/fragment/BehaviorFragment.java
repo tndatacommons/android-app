@@ -26,7 +26,6 @@ import org.tndata.android.compass.task.ActionLoaderTask;
 import org.tndata.android.compass.task.ActionLoaderTask.ActionLoaderListener;
 import org.tndata.android.compass.ui.ActionCellView;
 import org.tndata.android.compass.ui.CompassPopupMenu;
-import org.tndata.android.compass.util.ImageCache;
 import org.tndata.android.compass.util.ImageHelper;
 import org.tndata.android.compass.util.ImageLoader;
 
@@ -41,8 +40,6 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
     private ProgressBar mProgressBar;
     private BehaviorFragmentListener mCallback;
     private ArrayList<Action> mActionList;
-
-    private ImageLoader mImageLoader;
 
     public interface BehaviorFragmentListener {
         public void learnMoreBehavior();
@@ -90,8 +87,6 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mImageLoader = new ImageLoader(getActivity().getApplicationContext());
-
         View v = getActivity().getLayoutInflater().inflate(
                 R.layout.fragment_behavior, container, false);
         TextView titleTextView = (TextView) v
@@ -108,7 +103,7 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
         });
         if (mBehavior.getIconUrl() != null && !mBehavior.getIconUrl().isEmpty()) {
             ImageView iconImageView = (ImageView) v.findViewById(R.id.behavior_icon_imageview);
-            mImageLoader.loadBitmap(iconImageView, mBehavior.getIconUrl(), false);
+            ImageLoader.loadBitmap(iconImageView, mBehavior.getIconUrl(), false);
 
         }
         mProgressBar = (ProgressBar) v.findViewById(R.id.behavior_progressbar);
@@ -131,12 +126,6 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
         mActionsContainer = (LinearLayout) v
                 .findViewById(R.id.behavior_actions_container);
         return v;
-    }
-
-    @Override
-    public void onPause(){
-        mImageLoader.closeCache();
-        super.onPause();
     }
 
     @Override

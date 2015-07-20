@@ -28,7 +28,6 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
 
     private Context mContext;
     private List<Goal> mGoals;
-    private ImageLoader mLoader;
 
     private boolean[] mExpandedGoals;
 
@@ -39,10 +38,9 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
      * @param context the application context.
      * @param goals the list of goals in a given category.
      */
-    public MyPrioritiesGoalAdapter(@NonNull Context context, @NonNull List<Goal> goals, ImageLoader loader){
+    public MyPrioritiesGoalAdapter(@NonNull Context context, @NonNull List<Goal> goals){
         mContext = context;
         mGoals = goals;
-        mLoader = loader;
 
         mExpandedGoals = new boolean[mGoals.size()];
         for (int i = 0; i < mExpandedGoals.length; i++){
@@ -80,14 +78,14 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
             PriorityItemView tv = getPriorityItemView();
             tv.setLeftPadding(20);
             tv.getTextView().setText(behavior.getTitle());
-            mLoader.loadBitmap(tv.getImageView(), behavior.getIconUrl(), false);
+            ImageLoader.loadBitmap(tv.getImageView(), behavior.getIconUrl(), false);
             holder.offspring.addView(tv);
             Log.d("BehaviourActions", behavior.getActions().size()+"");
             for (Action action:behavior.getActions()){
                 PriorityItemView tv2 = getPriorityItemView();
                 tv2.setLeftPadding(40);
                 tv2.getTextView().setText(action.getTitle());
-                mLoader.loadBitmap(tv2.getImageView(), action.getIconUrl(), false);
+                ImageLoader.loadBitmap(tv2.getImageView(), action.getIconUrl(), false);
                 holder.offspring.addView(tv2);
             }
         }

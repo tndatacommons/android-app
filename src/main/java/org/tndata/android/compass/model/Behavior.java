@@ -3,7 +3,6 @@ package org.tndata.android.compass.model;
 import android.content.Context;
 import android.widget.ImageView;
 
-import org.tndata.android.compass.util.ImageCache;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.io.Serializable;
@@ -176,8 +175,7 @@ public class Behavior extends TDCBase implements Serializable,
     public void loadIconIntoView(Context context, ImageView imageView) {
         String iconUrl = getIconUrl();
         if(iconUrl != null && !iconUrl.isEmpty()) {
-            ImageLoader mImageLoader = new ImageLoader(context);
-            mImageLoader.loadBitmap(imageView, iconUrl, false);
+            ImageLoader.loadBitmap(imageView, iconUrl, false);
         }
     }
 

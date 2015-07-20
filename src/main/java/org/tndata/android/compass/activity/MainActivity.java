@@ -81,8 +81,6 @@ public class MainActivity extends ActionBarActivity implements
     // when that happens, the CompassApplication loses its local values, then this activity
     // keeps calling showCategories in a loop, which hits the api without a proper auth token.
 
-    private ImageLoader imageLoader;
-
     @Override
     public void onBackPressed() {
         // This activity may switch tabs when a user taps a card, so after doing that,
@@ -101,8 +99,6 @@ public class MainActivity extends ActionBarActivity implements
         setContentView(R.layout.activity_main);
 
         application = (CompassApplication) getApplication();
-
-        imageLoader = new ImageLoader(getApplicationContext());
 
         //Update the timezone
         new UpdateProfileTask(null).execute(application.getUser());
@@ -157,7 +153,7 @@ public class MainActivity extends ActionBarActivity implements
             public void onPageSelected(int position) {
                 String url = mAdapter.getPositionImageUrl(position);
                 if (url != null) {
-                    imageLoader.loadBitmap(mHeaderImageView, url, false, false);
+                    ImageLoader.loadBitmap(mHeaderImageView, url, false, false);
                 } else {
                     mHeaderImageView.setImageResource(R.drawable.path_header_image);
                 }
@@ -170,18 +166,6 @@ public class MainActivity extends ActionBarActivity implements
         });
 
         showCategories();
-    }
-
-    @Override
-    protected void onResume(){
-        super.onResume();
-        imageLoader.initCache();
-    }
-
-    @Override
-    protected void onPause(){
-        imageLoader.closeCache();
-        super.onPause();
     }
 
     @Override
