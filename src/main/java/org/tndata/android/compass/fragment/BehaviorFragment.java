@@ -26,7 +26,6 @@ import org.tndata.android.compass.task.ActionLoaderTask;
 import org.tndata.android.compass.task.ActionLoaderTask.ActionLoaderListener;
 import org.tndata.android.compass.ui.ActionCellView;
 import org.tndata.android.compass.ui.CompassPopupMenu;
-import org.tndata.android.compass.util.ImageCache;
 import org.tndata.android.compass.util.ImageHelper;
 import org.tndata.android.compass.util.ImageLoader;
 

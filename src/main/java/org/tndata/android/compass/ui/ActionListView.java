@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.util.ImageCache;
 import org.tndata.android.compass.util.ImageLoader;
 
 public class ActionListView extends LinearLayout {

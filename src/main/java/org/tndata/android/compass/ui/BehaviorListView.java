@@ -11,7 +11,6 @@ import android.widget.TextView;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.util.ImageCache;
 import org.tndata.android.compass.util.ImageLoader;
 
 public class BehaviorListView extends LinearLayout {

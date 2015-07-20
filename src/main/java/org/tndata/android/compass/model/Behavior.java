@@ -3,7 +3,6 @@ package org.tndata.android.compass.model;
 import android.content.Context;
 import android.widget.ImageView;
 
-import org.tndata.android.compass.util.ImageCache;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.io.Serializable;
