@@ -164,6 +164,18 @@
                 android:value="org.tndata.android.compass.activity.MainActivity"/>
         </activity>
         <activity
+            android:name=".activity.MyPrioritiesActivity"
+            android:parentActivityName="org.tndata.android.compass.activity.MainActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.tndata.android.compass.activity.MainActivity"/>
+        </activity>
+        <activity
             android:name="org.tndata.android.compass.activity.GoalDetailsActivity"
             android:parentActivityName="org.tndata.android.compass.activity.MainActivity"
             android:screenOrientation="portrait">
