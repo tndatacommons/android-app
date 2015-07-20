@@ -97,7 +97,8 @@ public class ImageCache implements BitmapWorkerTask.OnDownloadCompleteCallback{
     }
 
     @Override
-    public void onDownloadComplete(String url, @Nullable Bitmap result, boolean wasCancelled){
+    public void onDownloadComplete(BitmapWorkerTask caller, String url, @Nullable Bitmap result,
+                                   boolean wasCancelled){
 
     }
 

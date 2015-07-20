@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 
-import org.tndata.android.compass.util.ImageCache;
 import org.tndata.android.compass.util.ImageHelper;
 import org.tndata.android.compass.util.ImageLoader;
 
@@ -74,8 +73,11 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>{
             //Open the download stream and download the bitmap
             downloadStream = new java.net.URL(mUrl).openStream();
             bitmap =  BitmapFactory.decodeStream(downloadStream, null, options);
+
+            Log.d("BitmapWorkerException", "happened: " + isCancelled());
         }
         catch (Exception e){
+            Log.d("BitmapWorkerException", e.getMessage());
             e.printStackTrace();
         }
         finally{
@@ -112,7 +114,7 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>{
             }
         }
 
-        mCallback.onDownloadComplete(mUrl, result, isCancelled());
+        mCallback.onDownloadComplete(this, mUrl, result, isCancelled());
     }
 
     /**
@@ -136,10 +138,12 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>{
         /**
          * Called when the download is complete.
          *
+         * @param caller the calling BitmapWorkerTask
          * @param url the url of the downloaded bitmap
          * @param result the bitmap obtained through the process; null if the download failed.
          * @param wasCancelled true if the download was cancelled.
          */
-        void onDownloadComplete(String url, @Nullable Bitmap result, boolean wasCancelled);
+        void onDownloadComplete(BitmapWorkerTask caller, String url, @Nullable Bitmap result,
+                                boolean wasCancelled);
     }
 }
