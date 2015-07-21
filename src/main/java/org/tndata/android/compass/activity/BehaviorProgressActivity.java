@@ -47,8 +47,10 @@ public class BehaviorProgressActivity extends Activity implements
 
     @Override
     public void behaviorsLoaded(ArrayList<Behavior> behaviors) {
-        mBehaviorList.addAll(behaviors);
-        mProgressBar.setVisibility(View.GONE);
+        if(behaviors != null && !behaviors.isEmpty()) {
+            mBehaviorList.addAll(behaviors);
+            mProgressBar.setVisibility(View.GONE);
+        }
         setCurrentBehavior();
     }
 
