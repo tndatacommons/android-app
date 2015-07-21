@@ -64,7 +64,7 @@ public class MyPrioritiesCategoriesFragment
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id){
-        mListener.onCategorySelected((Category) mCategoryList.getAdapter().getItem(position));
+        mListener.onCategorySelected((Category)mCategoryList.getAdapter().getItem(position));
     }
 
     public interface OnCategorySelectedListener{

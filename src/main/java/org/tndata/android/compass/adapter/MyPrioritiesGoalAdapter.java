@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,7 +27,6 @@ import java.util.List;
  * Created by isma on 7/16/15.
  */
 public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
-
     private Context mContext;
     private List<Goal> mGoals;
 
@@ -90,6 +91,31 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
             }
         }
         holder.offspring.setVisibility(View.VISIBLE);
+
+        final View view = holder.offspring;
+        view.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        final int targetHeight = view.getMeasuredHeight();
+        view.getLayoutParams().height = 0;
+
+        view.setVisibility(View.VISIBLE);
+        Animation animation = new Animation(){
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t){
+                view.getLayoutParams().height = interpolatedTime == 1
+                        ? LinearLayout.LayoutParams.WRAP_CONTENT
+                        : (int)(targetHeight * interpolatedTime);
+                view.requestLayout();
+            }
+
+            @Override
+            public boolean willChangeBounds(){
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        animation.setDuration((int)(targetHeight/view.getContext().getResources().getDisplayMetrics().density));
+        view.startAnimation(animation);
     }
 
     private PriorityItemView getPriorityItemView(){
@@ -101,13 +127,37 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
         }
     }
 
-    private void collapse(ViewHolder holder){
-        for (int i = 0; i < holder.offspring.getChildCount(); i++){
-            ViewHolder.viewPool.add((PriorityItemView)holder.offspring.getChildAt(i));
-        }
-        Log.d("Recycled views", ViewHolder.viewPool.size()+"");
-        holder.offspring.removeAllViews();
-        holder.offspring.setVisibility(View.GONE);
+    private void collapse(final ViewHolder holder){
+        final ViewGroup view = holder.offspring;
+        final int initialHeight = view.getMeasuredHeight();
+
+        Animation a = new Animation(){
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t){
+                if(interpolatedTime == 1){
+                    view.setVisibility(View.GONE);
+
+                    for (int i = 0; i < view.getChildCount(); i++){
+                        ViewHolder.viewPool.add((PriorityItemView)view.getChildAt(i));
+                    }
+                    Log.d("Recycled views", ViewHolder.viewPool.size()+"");
+                    holder.offspring.removeAllViews();
+                }
+                else{
+                    view.getLayoutParams().height = initialHeight-(int)(initialHeight*interpolatedTime);
+                    view.requestLayout();
+                }
+            }
+
+            @Override
+            public boolean willChangeBounds(){
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration((int)(initialHeight/view.getContext().getResources().getDisplayMetrics().density));
+        view.startAnimation(a);
     }
 
     public void onItemClicked(ViewHolder holder, int position){
