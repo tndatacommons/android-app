@@ -1,15 +1,20 @@
 package org.tndata.android.compass.activity;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.adapter.MyPrioritiesGoalAdapter;
 import org.tndata.android.compass.fragment.MyPrioritiesCategoriesFragment;
 import org.tndata.android.compass.fragment.MyPrioritiesGoalsFragment;
+import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.Goal;
 
 import java.util.ArrayList;
 
@@ -23,13 +28,15 @@ import java.util.ArrayList;
 public class MyPrioritiesActivity
         extends ActionBarActivity
         implements
-                MyPrioritiesCategoriesFragment.OnCategorySelectedListener{
+                MyPrioritiesCategoriesFragment.OnCategorySelectedListener,
+                MyPrioritiesGoalAdapter.OnItemClickListener{
 
     private static final int CATEGORIES = 0;
     private static final int GOALS = 1;
 
     private Toolbar mToolbar;
     private MyPrioritiesCategoriesFragment mCategoriesFragment;
+    private MyPrioritiesGoalsFragment mGoalsFragment;
 
     private ArrayList<Fragment> mFragmentStack = new ArrayList<>();
 
@@ -61,7 +68,8 @@ public class MyPrioritiesActivity
                 fragment = mCategoriesFragment;
                 break;
             case GOALS:
-                fragment = new MyPrioritiesGoalsFragment();
+                mGoalsFragment = new MyPrioritiesGoalsFragment();
+                fragment = mGoalsFragment;
                 Bundle args = new Bundle();
                 args.putSerializable("category", category);
                 fragment.setArguments(args);
@@ -137,5 +145,38 @@ public class MyPrioritiesActivity
                 handleBackStack();
         }
         return true;
+    }
+
+    @Override
+    public void onAddBehaviorsClick(Category category, Goal goal){
+        Intent goalIntent = new Intent(this, GoalTryActivity.class);
+        goalIntent.putExtra("category", category);
+        goalIntent.putExtra("goal", goal);
+        startActivityForResult(goalIntent, 1);
+    }
+
+    @Override
+    public void onBehaviorClick(Category category, Goal goal, Behavior behavior){
+        Intent behaviorIntent = new Intent(this, ChooseActionsActivity.class);
+        behaviorIntent.putExtra("category", category);
+        behaviorIntent.putExtra("goal", goal);
+        behaviorIntent.putExtra("behavior", behavior);
+        startActivityForResult(behaviorIntent, 1);
+    }
+
+    @Override
+    public void onActionClick(Category category, Goal goal, Behavior behavior, Action action){
+        Intent actionIntent = new Intent(this, ActionTriggerActivity.class);
+        actionIntent.putExtra("goal", goal);
+        actionIntent.putExtra("action", action);
+        startActivityForResult(actionIntent, 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (mGoalsFragment != null){
+            mGoalsFragment.updateAdapterData();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

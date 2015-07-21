@@ -9,15 +9,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.tndata.android.compass.adapter.MyPrioritiesGoalAdapter;
+
 
 /**
  * Created by isma on 7/17/15.
  */
 public class PriorityItemView extends LinearLayout{
-    private Context mContext;
-
     private ImageView mImageView;
     private TextView mTextView;
+
+    private MyPrioritiesGoalAdapter.ItemHierarchy mItemHierarchy;
 
 
     public PriorityItemView(Context context){
@@ -35,8 +37,8 @@ public class PriorityItemView extends LinearLayout{
 
     private void initViews(){
         setOrientation(LinearLayout.HORIZONTAL);
-        setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
+        setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                getPixels(35)));
 
         setGravity(Gravity.CENTER_VERTICAL);
 
@@ -50,6 +52,10 @@ public class PriorityItemView extends LinearLayout{
         addView(mTextView);
     }
 
+    public void setItemHierarchy(MyPrioritiesGoalAdapter.ItemHierarchy itemHierarchy){
+        mItemHierarchy = itemHierarchy;
+    }
+
     public void setLeftPadding(int densityPixels){
         setPadding(getPixels(densityPixels), getPixels(5), 0, getPixels(5));
     }
@@ -60,6 +66,10 @@ public class PriorityItemView extends LinearLayout{
 
     public TextView getTextView(){
         return mTextView;
+    }
+
+    public MyPrioritiesGoalAdapter.ItemHierarchy getItemHierarchy(){
+        return mItemHierarchy;
     }
 
     private int getPixels(int densityPixels){
