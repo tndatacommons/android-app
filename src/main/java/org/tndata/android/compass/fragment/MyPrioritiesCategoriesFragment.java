@@ -17,7 +17,10 @@ import org.tndata.android.compass.model.Category;
 
 
 /**
- * Created by isma on 7/17/15.
+ * Fragment that displays the list of categories selected by the user.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class MyPrioritiesCategoriesFragment
         extends Fragment

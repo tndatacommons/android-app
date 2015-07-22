@@ -25,9 +25,16 @@ import java.util.LinkedList;
 
 
 /**
- * Created by isma on 7/16/15.
+ * Adapter for the goal list on my priorities. It handles all of its events and animations.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
+    //The expansion mode, if set to true, when a view expands the opened one (if any) collapses
+    private final boolean mSingleExpandedGoalMode;
+
+    //Context, category, and listener
     private Context mContext;
     private Category mCategory;
     private OnItemClickListener mListener;
@@ -35,6 +42,10 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
     private ViewHolder mClickedHolder;
 
     private boolean[] mExpandedGoals;
+    private ViewHolder mExpandedGoal;
+
+    private int mExpanded;
+    private int mCollapsing;
 
 
     /**
@@ -42,9 +53,12 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
      *
      * @param context the application context.
      * @param category the selected category.
+     * @param listener the receiver of tap events.
      */
     public MyPrioritiesGoalAdapter(@NonNull Context context, @NonNull Category category,
                                    @NonNull OnItemClickListener listener){
+        mSingleExpandedGoalMode = true;
+
         mContext = context;
         mCategory = category;
         mListener = listener;
@@ -55,6 +69,9 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
         for (int i = 0; i < mExpandedGoals.length; i++){
             mExpandedGoals[i] = false;
         }
+        mExpandedGoal = null;
+        mExpanded = -1;
+        mCollapsing = -1;
 
         ViewHolder.viewPool = new LinkedList<>();
     }
@@ -81,6 +98,12 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
         return mCategory.getGoals().size();
     }
 
+    /**
+     * Populates the offspring of a goal with behaviors, actions, and triggers.
+     *
+     * @param holder the view holder hosting the goal.
+     * @param position the position of the goal in the backing list.
+     */
     private void populate(ViewHolder holder, int position){
         Goal goal = mCategory.getGoals().get(position);
         //For each behavior in the goal
@@ -117,7 +140,7 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
                     if (!date.equals("")){
                         triggerText += " " + date;
                     }
-                    triggerText += trigger.getFormattedTime();
+                    triggerText += " " + trigger.getFormattedTime();
                     if (!triggerText.equals("")){
                         triggerView.getTextView().setText(triggerText);
                         triggerView.getImageView().setVisibility(View.GONE);
@@ -141,7 +164,13 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
         holder.offspring.addView(addBehaviors);
     }
 
+    /**
+     * Recycles the offspring of a goal.
+     *
+     * @param holder the view holder hosting the goal.
+     */
     private void recycle(ViewHolder holder){
+        //Add all the views to the recycled queue and clear the offspring.
         for (int i = 0; i < holder.offspring.getChildCount(); i++){
             ViewHolder.recycleView((PriorityItemView)holder.offspring.getChildAt(i));
         }
@@ -149,8 +178,21 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
         Log.d("MyPriorities", ViewHolder.viewPool.size() + " views in the recycled queue");
     }
 
+    /**
+     * Expands a goal.
+     *
+     * @param holder the view holder hosting the goal.
+     * @param position the position of the goal in the backing array.
+     */
     private void expand(ViewHolder holder, int position){
-        populate(holder, position);
+        //The position is marked as expanded
+        mExpanded = position;
+
+        //Populate only if the view is not collapsing. Collapsing does not recycle until
+        //  it is done, making it necessary to do this check.
+        if (mCollapsing != position){
+            populate(holder, position);
+        }
         holder.offspring.setVisibility(View.VISIBLE);
 
         final View view = holder.offspring;
@@ -162,7 +204,7 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
         Animation animation = new Animation(){
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t){
-                view.getLayoutParams().height = interpolatedTime == 1
+                view.getLayoutParams().height = (interpolatedTime == 1)
                         ? LinearLayout.LayoutParams.WRAP_CONTENT
                         : (int)(targetHeight * interpolatedTime);
                 view.requestLayout();
@@ -174,12 +216,19 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
             }
         };
 
-        // 1dp/ms
-        animation.setDuration((int)(targetHeight/view.getContext().getResources().getDisplayMetrics().density));
+        //1dp/ms
+        int length = (int)(targetHeight/view.getContext().getResources().getDisplayMetrics().density);
+        animation.setDuration(length);
         view.startAnimation(animation);
     }
 
+    /**
+     * Returns a free PriorityItemView.
+     *
+     * @return a PriorityItemView ready to be populated.
+     */
     private PriorityItemView getPriorityItemView(){
+        //If the recycle queue is empty it creates a new one, otherwise, returns the first one
         if (ViewHolder.viewPool.isEmpty()){
             return new PriorityItemView(mContext);
         }
@@ -188,16 +237,27 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
         }
     }
 
-    private void collapse(final ViewHolder holder){
+    /**
+     * Collapses a goal.
+     *
+     * @param holder the view holder hosting the goal.
+     * @param position the position of the goal in the backing array.
+     */
+    private void collapse(final ViewHolder holder, int position){
+        mCollapsing = position;
+
         final ViewGroup view = holder.offspring;
         final int initialHeight = view.getMeasuredHeight();
 
-        Animation a = new Animation(){
+        Animation animation = new Animation(){
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t){
                 if(interpolatedTime == 1){
-                    view.setVisibility(View.GONE);
-                    recycle(holder);
+                    if (mCollapsing != -1){
+                        mCollapsing = -1;
+                        view.setVisibility(View.GONE);
+                        recycle(holder);
+                    }
                 }
                 else{
                     view.getLayoutParams().height = initialHeight-(int)(initialHeight*interpolatedTime);
@@ -211,22 +271,53 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
             }
         };
 
-        // 1dp/ms
-        a.setDuration((int)(initialHeight/view.getContext().getResources().getDisplayMetrics().density));
-        view.startAnimation(a);
+        //1dp/ms
+        int length = (int)(initialHeight/view.getContext().getResources().getDisplayMetrics().density);
+        animation.setDuration(length);
+        view.startAnimation(animation);
     }
 
+    /**
+     * Handles click events on goals.
+     *
+     * @param holder the holder hosting the clicked goal.
+     * @param position the position of the clicked goal in the backing array.
+     */
     public void onItemClick(ViewHolder holder, int position){
-        if (mExpandedGoals[position]){
-            collapse(holder);
+        if (mSingleExpandedGoalMode){
+            //If there is an expanded goal, collapse it
+            if (mExpandedGoal != null){
+                collapse(mExpandedGoal, mExpanded);
+            }
+            //If the item clicked is not expanded, then expand it
+            if (mExpandedGoal != holder){
+                mExpandedGoal = holder;
+                expand(holder, position);
+            }
+            else{
+                mExpandedGoal = null;
+            }
         }
         else{
-            expand(holder, position);
+            //Collapse if expanded, expand if collapsed
+            if (mExpandedGoals[position]){
+                collapse(holder, mExpanded);
+            }
+            else{
+                expand(holder, position);
+            }
+            mExpandedGoals[position] = !mExpandedGoals[position];
         }
-        mExpandedGoals[position] = !mExpandedGoals[position];
     }
 
+    /**
+     * Handles click events on items other than goals.
+     *
+     * @param holder the holder hosting the clicked item.
+     * @param view the clicked view.
+     */
     public void onPriorityItemClick(ViewHolder holder, View view){
+        //Determine the type of item and act accordingly
         mClickedHolder = holder;
         ItemHierarchy itemHierarchy = ((PriorityItemView)view).getItemHierarchy();
         if (itemHierarchy.mAction != null){
@@ -242,6 +333,9 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
         }
     }
 
+    /**
+     * Update the data at the holder containing the last clicked item.
+     */
     public void updateData(){
         if (mClickedHolder != null){
             recycle(mClickedHolder);
@@ -267,6 +361,13 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
         private TextView name;
         private LinearLayout offspring;
 
+
+        /**
+         * Constructor.
+         *
+         * @param itemView the root view.
+         * @param listener the listener.
+         */
         public ViewHolder(View itemView, MyPrioritiesGoalAdapter listener){
             super(itemView);
 
@@ -277,6 +378,11 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
             offspring = (LinearLayout)itemView.findViewById(R.id.my_priorities_goal_offspring);
         }
 
+        /**
+         * Recycles a priority item view.
+         *
+         * @param view the view to be recycled.
+         */
         public static void recycleView(PriorityItemView view){
             view.getImageView().setVisibility(View.VISIBLE);
             view.setOnClickListener(null);
@@ -294,12 +400,28 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
         }
     }
 
+
+    /**
+     * Data holder for the hierarchy of an item.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public static class ItemHierarchy{
         private Category mCategory;
         private Goal mGoal;
         private Behavior mBehavior;
         private Action mAction;
 
+
+        /**
+         * Constructor.
+         *
+         * @param category the category.
+         * @param goal the goal.
+         * @param behavior the behavior.
+         * @param action the action.
+         */
         public ItemHierarchy(Category category, Goal goal, Behavior behavior, Action action){
             mCategory = category;
             mGoal = goal;
@@ -308,9 +430,40 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
         }
     }
 
+
+    /**
+     * Item click listener interface.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface OnItemClickListener{
+        /**
+         * Triggered when the add behaviors item is clicked.
+         *
+         * @param category the category containing the goal.
+         * @param goal the goal.
+         */
         void onAddBehaviorsClick(Category category, Goal goal);
+
+        /**
+         * Triggered when a behaviour is clicked.
+         *
+         * @param category the category containing the goal containing the behavior.
+         * @param goal the goal containing the behavior.
+         * @param behavior the behavior.
+         */
         void onBehaviorClick(Category category, Goal goal, Behavior behavior);
+
+        /**
+         * Triggered when an action is clicked.
+         *
+         * @param category the category containing the goal containing the behavior containing
+         *                 the action.
+         * @param goal the goal containing the behavior containing the action.
+         * @param behavior the behavior containing the action.
+         * @param action the action.
+         */
         void onActionClick(Category category, Goal goal, Behavior behavior, Action action);
     }
 }

@@ -18,7 +18,10 @@ import org.tndata.android.compass.util.ImageLoader;
 
 
 /**
- * Created by isma on 7/17/15.
+ * Fragment containing a list of expandable goals within a category.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class MyPrioritiesGoalsFragment extends Fragment{
     private Category mCategory;
@@ -46,6 +49,9 @@ public class MyPrioritiesGoalsFragment extends Fragment{
         return rootView;
     }
 
+    /**
+     * Updates the adapter data after the data set has changed.
+     */
     public void updateAdapterData(){
         mAdapter.updateData();
     }
