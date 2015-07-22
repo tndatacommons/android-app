@@ -182,26 +182,39 @@ public class GoalTryActivity extends ActionBarActivity implements
                                 R.drawable.ic_blue_check_circle);
                     }
 
-                    // Set up a Click Listener for all other cards.
-                    ((TryGoalViewHolder) viewHolder).moreInfoImageView.setOnClickListener(new View
-                            .OnClickListener() {
+                    if (behavior.getMoreInfo().equals("")){
+                        ((TryGoalViewHolder)viewHolder).moreInfoImageView.setVisibility(View.GONE);
+                    }
+                    else{
+                        ((TryGoalViewHolder)viewHolder).moreInfoImageView.setVisibility(View.VISIBLE);
+                        // Set up a Click Listener for all other cards.
+                        ((TryGoalViewHolder) viewHolder).moreInfoImageView.setOnClickListener(new View
+                                .OnClickListener(){
 
-                        @Override
-                        public void onClick(View v) {
-                            Log.d("GoalTryActivity", "Launch More Info");
-                            moreInfoPressed(behavior);
-                        }
-                    });
-                    ((TryGoalViewHolder) viewHolder).selectActionsImageView.setOnClickListener(new View
-                            .OnClickListener() {
+                            @Override
+                            public void onClick(View v){
+                                Log.d("GoalTryActivity", "Launch More Info");
+                                moreInfoPressed(behavior);
+                            }
+                        });
+                    }
 
-                        @Override
-                        public void onClick(View v) {
-                            Log.d("GoalTryActivity", "Launch Action Picker");
-                            launchActionPicker(behavior);
+                    if (behavior.getActionCount() == 0){
+                        ((TryGoalViewHolder) viewHolder).selectActionsImageView.setVisibility(View.GONE);
+                    }
+                    else{
+                        ((TryGoalViewHolder) viewHolder).selectActionsImageView.setVisibility(View.VISIBLE);
+                        ((TryGoalViewHolder) viewHolder).selectActionsImageView.setOnClickListener(new View
+                                .OnClickListener(){
 
-                        }
-                    });
+                            @Override
+                            public void onClick(View v){
+                                Log.d("GoalTryActivity", "Launch Action Picker");
+                                launchActionPicker(behavior);
+
+                            }
+                        });
+                    }
 
                     ((TryGoalViewHolder) viewHolder).tryItImageView.setOnClickListener(new View
                             .OnClickListener() {
@@ -366,12 +379,14 @@ public class GoalTryActivity extends ActionBarActivity implements
         behaviors.add(String.valueOf(behavior.getId()));
         new AddBehaviorTask(this, this, behaviors).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-        // Launch the ChooseActionsActivity (where users choose actions for this Behavior)
-        Intent intent = new Intent(getApplicationContext(), ChooseActionsActivity.class);
-        intent.putExtra("category", mCategory);
-        intent.putExtra("goal", mGoal);
-        intent.putExtra("behavior", behavior);
-        startActivity(intent);
+        if (behavior.getActionCount() > 0){
+            // Launch the ChooseActionsActivity (where users choose actions for this Behavior)
+            Intent intent = new Intent(getApplicationContext(), ChooseActionsActivity.class);
+            intent.putExtra("category", mCategory);
+            intent.putExtra("goal", mGoal);
+            intent.putExtra("behavior", behavior);
+            startActivity(intent);
+        }
     }
 
     @Override

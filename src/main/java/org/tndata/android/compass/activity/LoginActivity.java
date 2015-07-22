@@ -116,6 +116,7 @@ public class LoginActivity extends ActionBarActivity implements
     }
 
     private void transitionToMain() {
+        Thread.dumpStack();
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
         finish();

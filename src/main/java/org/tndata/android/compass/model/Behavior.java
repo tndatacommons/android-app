@@ -18,6 +18,7 @@ public class Behavior extends TDCBase implements Serializable,
     private String notification_text = "";
     private String icon_url = "";
     private String image_url = "";
+    private int actions_count = 0;
     private ArrayList<Goal> goals = new ArrayList<Goal>();
     private ArrayList<Action> actions = new ArrayList<Action>();
 
@@ -116,6 +117,10 @@ public class Behavior extends TDCBase implements Serializable,
 
     public ArrayList<Action> getActions() {
         return actions;
+    }
+
+    public int getActionCount(){
+        return actions_count;
     }
 
     public void setActions(ArrayList<Action> actions) {

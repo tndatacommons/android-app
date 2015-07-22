@@ -26,6 +26,7 @@ public class LoginTask extends AsyncTask<User, Void, User> {
     }
 
     public LoginTask(LoginTaskListener callback) {
+        Thread.dumpStack();
         mCallback = callback;
     }
 

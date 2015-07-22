@@ -321,11 +321,13 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
             //mSelectedGoals.add(goal);
             addGoal(goal);
 
-            // Launch the GoalTryActivity (where users choose a behavior for the Goal)
-            Intent intent = new Intent(getApplicationContext(), GoalTryActivity.class);
-            intent.putExtra("goal", goal);
-            intent.putExtra("category", mCategory);
-            startActivity(intent);
+            if (goal.getBehaviorCount() > 0){
+                // Launch the GoalTryActivity (where users choose a behavior for the Goal)
+                Intent intent = new Intent(getApplicationContext(), GoalTryActivity.class);
+                intent.putExtra("goal", goal);
+                intent.putExtra("category", mCategory);
+                startActivity(intent);
+            }
         }
     }
 

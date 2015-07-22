@@ -15,6 +15,7 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
     private String subtitle = "";
     private String outcome = "";
     private String icon_url = "";
+    private int behaviors_count;
     private ArrayList<Category> categories = new ArrayList<Category>();
     private ArrayList<Behavior> behaviors = new ArrayList<Behavior>();
     private double progress_value = 0.0; // Only used for UserGoals
@@ -83,6 +84,10 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
         if(!this.categories.contains(category)) {
             this.categories.add(category);
         }
+    }
+
+    public int getBehaviorCount(){
+        return behaviors_count;
     }
 
     public ArrayList<Behavior> getBehaviors() {
