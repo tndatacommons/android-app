@@ -108,6 +108,12 @@ public class MyPrioritiesActivity
         }
     }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+        mToolbar.getBackground().setAlpha(255);
+    }
+
     private void handleBackStack(){
         if (!mFragmentStack.isEmpty()){
             mFragmentStack.remove(mFragmentStack.size()-1);
