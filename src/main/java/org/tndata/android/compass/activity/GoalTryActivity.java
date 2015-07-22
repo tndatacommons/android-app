@@ -38,7 +38,7 @@ import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFix
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter.OnClickEvent;
 import org.tndata.android.compass.util.Constants;
-import org.tndata.android.compass.util.ImageCache;
+import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -172,8 +172,7 @@ public class GoalTryActivity extends ActionBarActivity implements
                     }
                     if (behavior.getIconUrl() != null
                             && !behavior.getIconUrl().isEmpty()) {
-                        ImageCache.instance(getApplicationContext()).loadBitmap(
-                                ((TryGoalViewHolder) viewHolder).iconImageView,
+                        ImageLoader.loadBitmap(((TryGoalViewHolder)viewHolder).iconImageView,
                                 behavior.getIconUrl(), false);
                     }
 

@@ -23,7 +23,7 @@ public class Constants {
     public final static String GOAL_UPDATED_BROADCAST_ACTION = "org.tndata.android.compass.GOAL_UPDATED_BROADCAST_ACTION";
 
     public final static String TERMS_AND_CONDITIONS_URL = "http://tndata.org";
-    public final static String BASE_URL = "http://app.tndata.org/api/";
+    public final static String BASE_URL = "https://app.tndata.org/api/";
 
     // Behavior, Self-reporting.
     // NOTE: These values correspond to values exposed/expected by the API

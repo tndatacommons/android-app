@@ -11,7 +11,7 @@ import android.widget.TextView;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.util.ImageCache;
+import org.tndata.android.compass.util.ImageLoader;
 
 public class BehaviorListView extends LinearLayout {
     private ImageView mIconImageView;
@@ -31,14 +31,14 @@ public class BehaviorListView extends LinearLayout {
     }
 
     public BehaviorListView(Context context) {
-        this(context, null);
+        this(context, null, 0);
     }
 
     public BehaviorListView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public BehaviorListView(Context context, AttributeSet attrs, int defStyle) {
+    public BehaviorListView(Context context, AttributeSet attrs, int defStyle){
         super(context, attrs, defStyle);
         initViews(context, attrs);
     }
@@ -72,10 +72,8 @@ public class BehaviorListView extends LinearLayout {
     private void updateUi() {
         try {
             mTitleTextView.setText(mBehavior.getTitle());
-            if (mBehavior.getIconUrl() != null
-                    && !mBehavior.getIconUrl().isEmpty()) {
-                ImageCache.instance(mContext).loadBitmap(mIconImageView,
-                        mBehavior.getIconUrl(), false);
+            if (mBehavior.getIconUrl() != null && !mBehavior.getIconUrl().isEmpty()){
+                ImageLoader.loadBitmap(mIconImageView, mBehavior.getIconUrl(), false);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -43,7 +43,7 @@ import org.tndata.android.compass.task.GetUserGoalsTask.GetUserGoalsListener;
 import org.tndata.android.compass.task.UpdateProfileTask;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.GcmRegistration;
-import org.tndata.android.compass.util.ImageCache;
+import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 
@@ -116,8 +116,7 @@ public class MainActivity extends ActionBarActivity implements
         mDrawerItems = drawerItems();
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
                 GravityCompat.START);
-        mDrawerAdapter = new DrawerAdapter(this, R.layout.list_item_nav_drawer,
-                mDrawerItems);
+        mDrawerAdapter = new DrawerAdapter(this, mDrawerItems);
         mDrawerList.setAdapter(mDrawerAdapter);
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
@@ -154,8 +153,7 @@ public class MainActivity extends ActionBarActivity implements
             public void onPageSelected(int position) {
                 String url = mAdapter.getPositionImageUrl(position);
                 if (url != null) {
-                    ImageCache.instance(getApplicationContext()).loadBitmap(
-                            mHeaderImageView, url, false, false);
+                    ImageLoader.loadBitmap(mHeaderImageView, url, false, false);
                 } else {
                     mHeaderImageView.setImageResource(R.drawable.path_header_image);
                 }
@@ -220,6 +218,7 @@ public class MainActivity extends ActionBarActivity implements
                 case IMPORTANT_TO_ME:
                     break;
                 case MY_PRIORITIES:
+                    startActivity(new Intent(getApplicationContext(), MyPrioritiesActivity.class));
                     break;
                 case MYSELF:
                     intent = new Intent(getApplicationContext(), UserProfileActivity.class);

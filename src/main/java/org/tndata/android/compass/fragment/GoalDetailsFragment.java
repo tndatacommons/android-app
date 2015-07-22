@@ -21,6 +21,7 @@ import org.tndata.android.compass.task.GetUserBehaviorsTask;
 import org.tndata.android.compass.ui.ActionCellView;
 import org.tndata.android.compass.ui.BehaviorListView;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
+import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,6 +85,7 @@ public class GoalDetailsFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View v = getActivity().getLayoutInflater().inflate(
                 R.layout.fragment_goal_details, container, false);
 

@@ -8,6 +8,7 @@ import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.User;
+import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 
@@ -273,5 +274,11 @@ public class CompassApplication extends Application {
             }
         }
         Log.d(TAG, "------------------------------------------- ");
+    }
+
+    @Override
+    public void onCreate(){
+        super.onCreate();
+        ImageLoader.initialize(getApplicationContext());
     }
 }

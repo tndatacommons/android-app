@@ -4,7 +4,7 @@ import android.content.Context;
 import android.widget.ImageView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.util.ImageCache;
+import org.tndata.android.compass.util.ImageLoader;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -178,7 +178,7 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
     public void loadIconIntoView(Context context, ImageView imageView) {
         String iconUrl = getIconUrl();
         if(iconUrl != null && !iconUrl.isEmpty()) {
-            ImageCache.instance(context).loadBitmap(imageView, iconUrl, false);
+            ImageLoader.loadBitmap(imageView, iconUrl, false);
         }
         /*
         // TODO: only show goal icons (above) until we figure out what to do here.

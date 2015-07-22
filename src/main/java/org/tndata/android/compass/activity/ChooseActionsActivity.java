@@ -37,7 +37,7 @@ import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFix
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter.OnClickEvent;
 import org.tndata.android.compass.util.Constants;
-import org.tndata.android.compass.util.ImageCache;
+import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -169,10 +169,8 @@ public class ChooseActionsActivity extends ActionBarActivity implements
                         ((ActionViewHolder) viewHolder).iconsWrapper.setVisibility(View.GONE);
                         ((ActionViewHolder) viewHolder).iconImageView.setVisibility(View.VISIBLE);
                     }
-                    if (action.getIconUrl() != null
-                            && !action.getIconUrl().isEmpty()) {
-                        ImageCache.instance(getApplicationContext()).loadBitmap(
-                                ((ActionViewHolder) viewHolder).iconImageView,
+                    if (action.getIconUrl() != null && !action.getIconUrl().isEmpty()){
+                        ImageLoader.loadBitmap(((ActionViewHolder)viewHolder).iconImageView,
                                 action.getIconUrl(), false);
                     }
 

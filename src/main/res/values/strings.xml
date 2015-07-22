@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Compass</string>
-    <string name="version_num">1.1.0</string>
+    <string name="version_num">1.3.0</string>
     <string name="ok">OK</string>
 
     <!-- MainActivity -->
@@ -159,5 +159,8 @@
     <string name="behavior_progress_on_track">On track</string>
     <string name="behavior_progress_seeking">Seeking</string>
     <string name="behavior_progress_off_course">Off course</string>
+
+    <!-- MyPrioritiesActivity -->
+    <string name="my_priorities_title">My Priorities</string>
 
 </resources>

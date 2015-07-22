@@ -31,8 +31,8 @@ import org.tndata.android.compass.task.GoalLoaderTask;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
-import org.tndata.android.compass.util.ImageCache;
 import org.tndata.android.compass.util.ImageHelper;
+import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -165,8 +165,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                             .getDescription());
                     if (goal.getIconUrl() != null
                             && !goal.getIconUrl().isEmpty()) {
-                        ImageCache.instance(getApplicationContext()).loadBitmap(
-                                ((ChooseGoalViewHolder) viewHolder).iconImageView,
+                        ImageLoader.loadBitmap(((ChooseGoalViewHolder)viewHolder).iconImageView,
                                 goal.getIconUrl(), false);
                     }
 
