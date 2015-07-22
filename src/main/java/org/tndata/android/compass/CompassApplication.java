@@ -242,6 +242,24 @@ public class CompassApplication extends Application {
             }
             behavior.setActions(behaviorActions);
         }
+
+        // now, set each Action's parent Behavior.
+        setActionParents();
+    }
+
+    /**
+    * This method will set the Behavior attribute for all of the user's selected Actions, so the
+    * Action will contain a reference to its parent.
+    */
+    public void setActionParents() {
+        // set a reference to the parent for each action.
+        for(Action action : getActions()) {
+            for(Behavior behavior : getBehaviors()) {
+                if(action.getBehavior_id() == behavior.getId()) {
+                    action.setBehavior(behavior);
+                }
+            }
+        }
     }
 
     public void logSelectedGoalData(String title) {
