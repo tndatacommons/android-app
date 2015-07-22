@@ -83,7 +83,7 @@ public class MyPrioritiesActivity
                 mFragmentStack.add(fragment);
             }
             if (index == CATEGORIES){
-                mToolbar.setTitle("My Priorities");
+                mToolbar.setTitle(R.string.my_priorities_title);
                 if (firstTransition){
                     getFragmentManager().beginTransaction()
                             .setCustomAnimations(0, R.animator.fade_out_downwards)
@@ -151,6 +151,13 @@ public class MyPrioritiesActivity
                 handleBackStack();
         }
         return true;
+    }
+
+    @Override
+    public void onAddGoalsClick(Category category){
+        Intent categoryIntent = new Intent(this, ChooseGoalsActivity.class);
+        categoryIntent.putExtra("category", category);
+        startActivityForResult(categoryIntent, 1);
     }
 
     @Override

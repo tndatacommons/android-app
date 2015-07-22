@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.MyPrioritiesGoalAdapter;
 
 
@@ -63,7 +64,7 @@ public class PriorityItemView extends LinearLayout{
     private void initViews(){
         setOrientation(LinearLayout.HORIZONTAL);
         setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                getPixels(35)));
+                (int)getContext().getResources().getDimension(R.dimen.my_priorities_item_height)));
 
         setGravity(Gravity.CENTER_VERTICAL);
 

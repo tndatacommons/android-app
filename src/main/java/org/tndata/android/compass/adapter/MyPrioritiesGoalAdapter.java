@@ -30,13 +30,14 @@ import java.util.LinkedList;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
+public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter<MyPrioritiesGoalAdapter.ViewHolder>{
     //The expansion mode, if set to true, when a view expands the opened one (if any) collapses
     private final boolean mSingleExpandedGoalMode;
 
     //Context, category, and listener
     private Context mContext;
     private Category mCategory;
+    private boolean mEmptyCategory;
     private OnItemClickListener mListener;
 
     private ViewHolder mClickedHolder;
@@ -63,6 +64,8 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
         mCategory = category;
         mListener = listener;
 
+        mEmptyCategory = mCategory.getGoals().isEmpty();
+
         mClickedHolder = null;
 
         mExpandedGoals = new boolean[mCategory.getGoals().size()];
@@ -77,15 +80,20 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View view = inflater.inflate(R.layout.item_my_priorities_goal, parent, false);
         return new ViewHolder(view, this);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position){
-        ((ViewHolder)holder).name.setText(mCategory.getGoals().get(position).getTitle());
+    public void onBindViewHolder(ViewHolder holder, int position){
+        if (mCategory.getGoals().size() == 0){
+            holder.name.setText("Add a new activity");
+        }
+        else{
+            holder.name.setText(mCategory.getGoals().get(position).getTitle());
+        }
     }
 
     @Override
@@ -95,7 +103,7 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
 
     @Override
     public int getItemCount(){
-        return mCategory.getGoals().size();
+        return (!mEmptyCategory) ? mCategory.getGoals().size() : 1;
     }
 
     /**
@@ -126,7 +134,7 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
             for (Action action:behavior.getActions()){
                 PriorityItemView actionView = getPriorityItemView();
                 actionView.setItemHierarchy(new ItemHierarchy(mCategory, goal, behavior, action));
-                actionView.setLeftPadding(40);
+                actionView.setLeftPadding(30);
                 actionView.getTextView().setText(action.getTitle());
                 if (action.getIconUrl() != null){
                     ImageLoader.loadBitmap(actionView.getImageView(), action.getIconUrl(), false);
@@ -165,7 +173,7 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
         PriorityItemView addBehaviors = getPriorityItemView();
         addBehaviors.setItemHierarchy(new ItemHierarchy(mCategory, goal, null, null));
         addBehaviors.setLeftPadding(0);
-        addBehaviors.getTextView().setText("Add behaviors");
+        addBehaviors.getTextView().setText("Add a new activity");
         addBehaviors.getImageView().setVisibility(View.GONE);
         addBehaviors.setOnClickListener(holder);
         holder.offspring.addView(addBehaviors);
@@ -291,29 +299,34 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
      * @param position the position of the clicked goal in the backing array.
      */
     public void onItemClick(ViewHolder holder, int position){
-        if (mSingleExpandedGoalMode){
-            //If there is an expanded goal, collapse it
-            if (mExpandedGoal != null){
-                collapse(mExpandedGoal, mExpanded);
-            }
-            //If the item clicked is not expanded, then expand it
-            if (mExpandedGoal != holder){
-                mExpandedGoal = holder;
-                expand(holder, position);
-            }
-            else{
-                mExpandedGoal = null;
-            }
+        if (mEmptyCategory){
+            mListener.onAddGoalsClick(mCategory);
         }
         else{
-            //Collapse if expanded, expand if collapsed
-            if (mExpandedGoals[position]){
-                collapse(holder, mExpanded);
+            if (mSingleExpandedGoalMode){
+                //If there is an expanded goal, collapse it
+                if (mExpandedGoal != null){
+                    collapse(mExpandedGoal, mExpanded);
+                }
+                //If the item clicked is not expanded, then expand it
+                if (mExpandedGoal != holder){
+                    mExpandedGoal = holder;
+                    expand(holder, position);
+                }
+                else{
+                    mExpandedGoal = null;
+                }
             }
             else{
-                expand(holder, position);
+                //Collapse if expanded, expand if collapsed
+                if (mExpandedGoals[position]){
+                    collapse(holder, mExpanded);
+                }
+                else{
+                    expand(holder, position);
+                }
+                mExpandedGoals[position] = !mExpandedGoals[position];
             }
-            mExpandedGoals[position] = !mExpandedGoals[position];
         }
     }
 
@@ -344,7 +357,11 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
      * Update the data at the holder containing the last clicked item.
      */
     public void updateData(){
-        if (mClickedHolder != null){
+        if (mEmptyCategory){
+            mEmptyCategory = mCategory.getGoals().isEmpty();
+            notifyDataSetChanged();
+        }
+        else if (mClickedHolder != null){
             recycle(mClickedHolder);
             populate(mClickedHolder, mClickedHolder.getAdapterPosition());
         }
@@ -445,6 +462,13 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
      * @version 1.0.0
      */
     public interface OnItemClickListener{
+        /**
+         * Triggered when the add goals item is clicked.
+         *
+         * @param category the selected category.
+         */
+        void onAddGoalsClick(Category category);
+
         /**
          * Triggered when the add behaviors item is clicked.
          *
