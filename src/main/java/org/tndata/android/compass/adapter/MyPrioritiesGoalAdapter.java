@@ -113,7 +113,9 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
             behaviorView.setItemHierarchy(new ItemHierarchy(mCategory, goal, behavior, null));
             behaviorView.setLeftPadding(20);
             behaviorView.getTextView().setText(behavior.getTitle());
-            ImageLoader.loadBitmap(behaviorView.getImageView(), behavior.getIconUrl(), false);
+            if (behavior.getIconUrl() != null){
+                ImageLoader.loadBitmap(behaviorView.getImageView(), behavior.getIconUrl(), false);
+            }
             behaviorView.setOnClickListener(holder);
 
             //The view is added to the goal's offspring
@@ -126,7 +128,9 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
                 actionView.setItemHierarchy(new ItemHierarchy(mCategory, goal, behavior, action));
                 actionView.setLeftPadding(40);
                 actionView.getTextView().setText(action.getTitle());
-                ImageLoader.loadBitmap(actionView.getImageView(), action.getIconUrl(), false);
+                if (action.getIconUrl() != null){
+                    ImageLoader.loadBitmap(actionView.getImageView(), action.getIconUrl(), false);
+                }
                 actionView.setOnClickListener(holder);
                 holder.offspring.addView(actionView);
 
@@ -140,7 +144,10 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter{
                     if (!date.equals("")){
                         triggerText += " " + date;
                     }
-                    triggerText += " " + trigger.getFormattedTime();
+                    String triggerDate = trigger.getFormattedTime();
+                    if (!triggerDate.equals("")){
+                        triggerText += " " + triggerDate;
+                    }
                     if (!triggerText.equals("")){
                         triggerView.getTextView().setText(triggerText);
                         triggerView.getImageView().setVisibility(View.GONE);
