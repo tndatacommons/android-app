@@ -160,4 +160,7 @@
     <string name="behavior_progress_seeking">Seeking</string>
     <string name="behavior_progress_off_course">Off course</string>
 
+    <!-- MyPrioritiesActivity -->
+    <string name="my_priorities_title">My Priorities</string>
+
 </resources>

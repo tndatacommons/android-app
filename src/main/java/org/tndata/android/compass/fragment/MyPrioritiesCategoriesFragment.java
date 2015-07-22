@@ -17,7 +17,10 @@ import org.tndata.android.compass.model.Category;
 
 
 /**
- * Created by isma on 7/17/15.
+ * Fragment that displays the list of categories selected by the user.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class MyPrioritiesCategoriesFragment
         extends Fragment
@@ -64,7 +67,7 @@ public class MyPrioritiesCategoriesFragment
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id){
-        mListener.onCategorySelected((Category) mCategoryList.getAdapter().getItem(position));
+        mListener.onCategorySelected((Category)mCategoryList.getAdapter().getItem(position));
     }
 
     public interface OnCategorySelectedListener{
