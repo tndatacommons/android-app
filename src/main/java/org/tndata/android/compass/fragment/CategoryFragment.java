@@ -116,7 +116,6 @@ public class CategoryFragment extends Fragment implements
     public void onResume() {
         super.onResume();
         mAdapter.notifyDataSetChanged();
-        application.logSelectedData("CategoryFragment.onResume");
     }
 
     @Override
