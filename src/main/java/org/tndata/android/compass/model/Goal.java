@@ -15,7 +15,7 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
     private String subtitle = "";
     private String outcome = "";
     private String icon_url = "";
-    private int behaviors_count;
+    private int behaviors_count = 0;
     private ArrayList<Category> categories = new ArrayList<Category>();
     private ArrayList<Behavior> behaviors = new ArrayList<Behavior>();
     private double progress_value = 0.0; // Only used for UserGoals

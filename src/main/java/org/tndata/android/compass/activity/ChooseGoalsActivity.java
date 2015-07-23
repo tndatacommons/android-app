@@ -328,6 +328,9 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                 intent.putExtra("category", mCategory);
                 startActivity(intent);
             }
+            else{
+                Toast.makeText(this, R.string.goal_selected, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

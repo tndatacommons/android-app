@@ -125,6 +125,9 @@
     <string name="menu_popup_edit">Edit notification</string>
     <string name="behavior_title_placeholder">My selected priority</string>
 
+    <!-- ChooseGoalsActivity -->
+    <string name="goal_selected">Goal selected</string>
+
     <!-- GoalTryActivity -->
     <string name="goal_try_these">TRY THESE</string>
     <string name="goal_behavior_try_it">SHOW ME HOW</string>
