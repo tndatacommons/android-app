@@ -80,10 +80,10 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData> {
 
             // Parse the user-selected content, store in userData; wait till all data is set
             // before syncing parent/child relationships.
-            userData.setCategories(parseCategories(userJson.getJSONArray("categories")), false);
-            userData.setGoals(parseGoals(userJson.getJSONArray("goals")), false);
-            userData.setBehaviors(parseBehaviors(userJson.getJSONArray("behaviors")), false);
-            userData.setActions(parseActions(userJson.getJSONArray("actions")), false);
+            userData.setCategories(parseUserCategories(userJson.getJSONArray("categories")), false);
+            userData.setGoals(parseUserGoals(userJson.getJSONArray("goals")), false);
+            userData.setBehaviors(parseUserBehaviors(userJson.getJSONArray("behaviors")), false);
+            userData.setActions(parseUserActions(userJson.getJSONArray("actions")), false);
             userData.sync();
 
             Log.e(TAG, "... finishing up GetUserDataTask.");
@@ -99,14 +99,27 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData> {
         return null;
     }
 
-    protected ArrayList<Category> parseCategories(JSONArray categoryArray) {
+    protected ArrayList<Category> parseUserCategories(JSONArray categoryArray) {
         ArrayList<Category> categories = new ArrayList<Category>();
 
         try {
             for (int i = 0; i < categoryArray.length(); i++) {
                 JSONObject categoryJson = categoryArray.getJSONObject(i);
                 Category category = gson.fromJson(categoryJson.getString("category"), Category.class);
+                category.setProgressValue(categoryJson.getDouble("progress_value"));
                 category.setMappingId(categoryJson.getInt("id"));
+
+                // Set the Category's goals
+                // NOTE: Can't reuse parseUserGoals because now we're parsing a Goal, not a UserGoal
+                ArrayList<Goal> categoryGoals = category.getGoals();
+                JSONArray user_goals = categoryJson.getJSONArray("user_goals");
+                Log.d(TAG, "Category.user_goals JSON: " + user_goals.toString(2));
+                for (int x = 0; x < user_goals.length(); x++) {
+                    JSONObject userGoal = user_goals.getJSONObject(x);
+                    Goal g = gson.fromJson(userGoal.toString(), Goal.class);
+                    categoryGoals.add(g);
+                }
+                category.setGoals(categoryGoals);
                 categories.add(category);
 
                 Log.d(TAG, "Created UserCategory (" +
@@ -120,15 +133,26 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData> {
         return categories;
     }
 
-    protected ArrayList<Goal> parseGoals(JSONArray goalArray) {
+    protected ArrayList<Goal> parseUserGoals(JSONArray goalArray) {
         ArrayList<Goal> goals = new ArrayList<Goal>();
 
         try {
             for (int i = 0; i < goalArray.length(); i++) {
                 JSONObject goalJson = goalArray.getJSONObject(i);
                 Goal goal = gson.fromJson(goalJson.getString("goal"), Goal.class);
+                goal.setProgressValue(goalJson.getDouble("progress_value"));
                 goal.setMappingId(goalJson.getInt("id"));
                 goals.add(goal);
+
+                // Set the Goal's parent categories
+                JSONArray user_categories = goalJson.getJSONArray("user_categories");
+                Log.d(TAG, "Goal.user_categories JSON: " + user_categories.toString(2));
+                // TODO: parse these into Category objects and set on the Goal
+
+                // Set the Goal's child behaviors
+                JSONArray user_behaviors = goalJson.getJSONArray("user_behaviors");
+                Log.d(TAG, "Goal.user_behaviors JSON: " + user_behaviors.toString(2));
+                // TODO parse these into Behavior objects and set on the Goal
 
                 Log.d(TAG, "Created UserGoal (" +
                         goal.getMappingId() + ") with Goal (" +
@@ -141,7 +165,7 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData> {
         return goals;
     }
 
-    protected ArrayList<Behavior> parseBehaviors(JSONArray behaviorArray) {
+    protected ArrayList<Behavior> parseUserBehaviors(JSONArray behaviorArray) {
         ArrayList<Behavior> behaviors = new ArrayList<Behavior>();
 
         try {
@@ -150,6 +174,16 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData> {
                 Behavior behavior = gson.fromJson(behaviorJson.getString("behavior"), Behavior.class);
                 behavior.setMappingId(behaviorJson.getInt("id"));
                 behaviors.add(behavior);
+
+                // Set the Behavior's parent goals
+                JSONArray user_goals = behaviorJson.getJSONArray("user_goals");
+                Log.d(TAG, "Behavior.user_goals JSON: " + user_goals.toString(2));
+                // TODO: parse these into Goal objects an set on the Behavior
+
+                // Set the Behavior's child Actions
+                JSONArray user_actions = behaviorJson.getJSONArray("user_actions");
+                Log.d(TAG, "Behavior.user_actions JSON: " + user_actions.toString(2));
+                // TODO: parse these into Action objects an set on the Behavior
 
                 Log.d(TAG, "Created UserBehavior (" +
                         behavior.getMappingId() + ") with Behavior (" +
@@ -162,7 +196,7 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData> {
         return behaviors;
     }
 
-    protected ArrayList<Action> parseActions(JSONArray actionArray) {
+    protected ArrayList<Action> parseUserActions(JSONArray actionArray) {
         ArrayList<Action> actions = new ArrayList<Action>();
 
         try {

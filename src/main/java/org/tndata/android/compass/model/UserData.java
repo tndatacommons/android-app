@@ -406,18 +406,24 @@ public class UserData {
         Log.d(TAG, "Categories.");
         for(Category item : mCategories) {
             Log.d(TAG, "- (" + item.getId() + ") " + item.getTitle());
+            Log.d(TAG, "--> contains " + item.getGoals().size() + " goals");
         }
         Log.d(TAG, "Goals.");
         for(Goal item : mGoals) {
             Log.d(TAG, "- (" + item.getId() + ") " + item.getTitle());
+            Log.d(TAG, "--> contains " + item.getCategories().size() + " categories");
+            Log.d(TAG, "--> contains " + item.getBehaviors().size() + " behaviors");
         }
         Log.d(TAG, "Behaviors.");
         for(Behavior item : mBehaviors) {
             Log.d(TAG, "- (" + item.getId() + ") " + item.getTitle());
+            Log.d(TAG, "--> contains " + item.getGoals().size() + " goals");
+            Log.d(TAG, "--> contains " + item.getActions().size() + " actions");
         }
         Log.d(TAG, "Actions.");
         for(Action item : mActions) {
             Log.d(TAG, "- (" + item.getId() + ") " + item.getTitle());
+            Log.d(TAG, "--> contains, behavior_id = " + item.getBehavior_id());
         }
     }
     /**
