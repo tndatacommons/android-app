@@ -54,8 +54,15 @@ public class UserData {
      * @param categories
      */
     public void setCategories(ArrayList<Category> categories) {
+        setCategories(categories, true);
+    }
+
+    public void setCategories(ArrayList<Category> categories, boolean sync) {
         if(categories != null && !categories.isEmpty()) {
             mCategories = categories;
+        }
+        if(sync) {
+            assignGoalsToCategories();
         }
     }
 
@@ -115,8 +122,14 @@ public class UserData {
      * @param goals an ArrayList of Goal objects
      */
     public void setGoals(ArrayList<Goal> goals) {
+        setGoals(goals, true);
+    }
+
+    public void setGoals(ArrayList<Goal> goals, boolean sync) {
         mGoals = goals;
-        assignGoalsToCategories();
+        if(sync) {
+            assignGoalsToCategories();
+        }
     }
 
     /**
@@ -193,8 +206,13 @@ public class UserData {
      * @param behaviors an ArrayList of Behavior objects
      */
     public void setBehaviors(ArrayList<Behavior> behaviors) {
+        setBehaviors(behaviors, true);
+    }
+    public void setBehaviors(ArrayList<Behavior> behaviors, boolean sync) {
         mBehaviors = behaviors;
-        assignBehaviorsToGoals();
+        if(sync) {
+            assignBehaviorsToGoals();
+        }
     }
 
     /**
@@ -272,8 +290,13 @@ public class UserData {
      * @param actions
      */
     public void setActions(ArrayList<Action> actions) {
+        setActions(actions, true);
+    }
+    public void setActions(ArrayList<Action> actions, boolean sync) {
         mActions = actions;
-        assignActionsToBehaviors();
+        if(sync) {
+            assignActionsToBehaviors();
+        }
     }
 
     /**
@@ -376,6 +399,27 @@ public class UserData {
 
     ----------------------------------------------------------------- */
 
+    /**
+     * Log the value of individual private data members.
+     */
+    public void logData() {
+        Log.d(TAG, "Categories.");
+        for(Category item : mCategories) {
+            Log.d(TAG, "- (" + item.getId() + ") " + item.getTitle());
+        }
+        Log.d(TAG, "Goals.");
+        for(Goal item : mGoals) {
+            Log.d(TAG, "- (" + item.getId() + ") " + item.getTitle());
+        }
+        Log.d(TAG, "Behaviors.");
+        for(Behavior item : mBehaviors) {
+            Log.d(TAG, "- (" + item.getId() + ") " + item.getTitle());
+        }
+        Log.d(TAG, "Actions.");
+        for(Action item : mActions) {
+            Log.d(TAG, "- (" + item.getId() + ") " + item.getTitle());
+        }
+    }
     /**
      * Given a goal, Log information for it's parent Categories.
      *
