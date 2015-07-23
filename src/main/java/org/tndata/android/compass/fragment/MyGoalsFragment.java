@@ -46,7 +46,7 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
     public interface MyGoalsFragmentListener {
         public void chooseCategories();
 
-        public void assignGoalsToCategories(boolean shouldSendBroadcast);
+//        public void assignGoalsToCategories(boolean shouldSendBroadcast);
 
         public void transitionToCategoryTab(Category category);
     }
@@ -261,9 +261,9 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.CHOOSE_GOALS_REQUEST_CODE) {
-            mCallback.assignGoalsToCategories(true);
-        }
+//        if (requestCode == Constants.CHOOSE_GOALS_REQUEST_CODE) {
+//            mCallback.assignGoalsToCategories(true);
+//        }
     }
 
     @Override

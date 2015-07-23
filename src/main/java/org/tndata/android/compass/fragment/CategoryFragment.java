@@ -62,7 +62,7 @@ public class CategoryFragment extends Fragment implements
     };
 
     public interface CategoryFragmentListener {
-        public void assignGoalsToCategories(boolean shouldSendBroadcast);
+//        public void assignGoalsToCategories(boolean shouldSendBroadcast);
     }
 
     public static CategoryFragment newInstance(Category category) {
@@ -185,7 +185,7 @@ public class CategoryFragment extends Fragment implements
         if (requestCode == Constants.CHOOSE_GOALS_REQUEST_CODE ||
                 requestCode == Constants.BEHAVIOR_CHANGED_RESULT_CODE ||
                 requestCode == Constants.GOALS_CHANGED_RESULT_CODE) {
-            mCallback.assignGoalsToCategories(true);
+//            mCallback.assignGoalsToCategories(true);
         }
     }
 
