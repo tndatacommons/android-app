@@ -59,13 +59,29 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:visibility="gone"/>
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/list_icons_wrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:layout_below="@id/list_item_behavior_description_textview"
             android:gravity="center_vertical|right">
+
+            <ImageView
+                android:id="@+id/list_item_behavior_info_imageview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:src="@drawable/ic_blue_info"/>
+
+            <ImageView
+                android:id="@+id/list_item_select_action_imageview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:src="@drawable/ic_blue_directions_run"/>
 
             <ImageView
                 android:id="@+id/list_item_behavior_try_it_imageview"
@@ -75,25 +91,8 @@
                 android:padding="10dp"
                 android:layout_margin="5dp"/>
 
-            <ImageView
-                android:id="@+id/list_item_select_action_imageview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:layout_margin="5dp"
-                android:src="@drawable/ic_blue_directions_run"
-                android:layout_toLeftOf="@id/list_item_behavior_try_it_imageview"/>
 
-            <ImageView
-                android:id="@+id/list_item_behavior_info_imageview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:layout_margin="5dp"
-                android:src="@drawable/ic_blue_info"
-                android:layout_toLeftOf="@id/list_item_select_action_imageview"/>
-
-        </RelativeLayout>
+        </LinearLayout>
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>
