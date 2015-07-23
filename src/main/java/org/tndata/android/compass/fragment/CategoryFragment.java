@@ -39,7 +39,7 @@ import java.util.ArrayList;
  */
 public class CategoryFragment extends Fragment implements
         CategoryFragmentAdapter.CategoryFragmentAdapterInterface,
-        DeleteGoalTask.DeleteGoalTaskListener{
+        DeleteGoalTask.DeleteGoalTaskListener {
 
     private CompassApplication application;
     private Category mCategory;
@@ -50,7 +50,7 @@ public class CategoryFragment extends Fragment implements
     private ArrayList<Goal> mItems = new ArrayList<Goal>();
     private boolean mBroadcastIsRegistered = false;
     private CategoryFragmentListener mCallback;
-    
+
     private static final String TAG = "CategoryFragment";
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -109,6 +109,7 @@ public class CategoryFragment extends Fragment implements
         mAdapter = new CategoryFragmentAdapter(getActivity().getApplicationContext(),
                 application, mCategory, this);
         mRecyclerView.setAdapter(mAdapter);
+        mFloatingActionButton.attachToRecyclerView(mRecyclerView);
         registerReceivers();
     }
 
@@ -263,7 +264,7 @@ public class CategoryFragment extends Fragment implements
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(getText(R.string.goal_dialog_delete_message))
                 .setTitle(getText(R.string.goal_dialog_delete_title))
-                .setNegativeButton(R.string.picker_cancel, new DialogInterface.OnClickListener(){
+                .setNegativeButton(R.string.picker_cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
                     }
@@ -276,6 +277,18 @@ public class CategoryFragment extends Fragment implements
                 });
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    @Override
+    public void cardExpand() {
+        mFloatingActionButton.hide();
+    }
+
+    @Override
+    public void cardCollapse() {
+        if (!mRecyclerView.canScrollVertically(-1)) { //Negative to check scrolling up
+            mFloatingActionButton.show();
+        }
     }
 
 }
