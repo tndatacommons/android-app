@@ -145,14 +145,28 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData> {
                 goals.add(goal);
 
                 // Set the Goal's parent categories
+                // parse these into Category objects and set on the Goal
+                ArrayList<Category> goalCategories = goal.getCategories();
                 JSONArray user_categories = goalJson.getJSONArray("user_categories");
                 Log.d(TAG, "Goal.user_categories JSON: " + user_categories.toString(2));
-                // TODO: parse these into Category objects and set on the Goal
+                for(int x = 0; x < user_categories.length(); x++) {
+                    JSONObject categoryJson = user_categories.getJSONObject(x);
+                    Category c = gson.fromJson(categoryJson.toString(), Category.class);
+                    goalCategories.add(c);
+                }
+                goal.setCategories(goalCategories);
 
                 // Set the Goal's child behaviors
+                // parse these into Behavior objects and set on the Goal
+                ArrayList<Behavior> goalBehaviors = goal.getBehaviors();
                 JSONArray user_behaviors = goalJson.getJSONArray("user_behaviors");
                 Log.d(TAG, "Goal.user_behaviors JSON: " + user_behaviors.toString(2));
-                // TODO parse these into Behavior objects and set on the Goal
+                for(int x = 0; x < user_behaviors.length(); x++) {
+                    JSONObject behaviorJson = user_behaviors.getJSONObject(x);
+                    Behavior b = gson.fromJson(behaviorJson.toString(), Behavior.class);
+                    goalBehaviors.add(b);
+                }
+                goal.setBehaviors(goalBehaviors);
 
                 Log.d(TAG, "Created UserGoal (" +
                         goal.getMappingId() + ") with Goal (" +
@@ -176,14 +190,28 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData> {
                 behaviors.add(behavior);
 
                 // Set the Behavior's parent goals
+                // parse these into Goal objects an set on the Behavior
+                ArrayList<Goal> behaviorGoals = behavior.getGoals();
                 JSONArray user_goals = behaviorJson.getJSONArray("user_goals");
                 Log.d(TAG, "Behavior.user_goals JSON: " + user_goals.toString(2));
-                // TODO: parse these into Goal objects an set on the Behavior
+                for (int x = 0; x < user_goals.length(); x++) {
+                    JSONObject goalJson = user_goals.getJSONObject(x);
+                    Goal g = gson.fromJson(goalJson.toString(), Goal.class);
+                    behaviorGoals.add(g);
+                }
+                behavior.setGoals(behaviorGoals);
 
                 // Set the Behavior's child Actions
+                // parse these into Action objects an set on the Behavior
+                ArrayList<Action> behaviorActions = behavior.getActions();
                 JSONArray user_actions = behaviorJson.getJSONArray("user_actions");
                 Log.d(TAG, "Behavior.user_actions JSON: " + user_actions.toString(2));
-                // TODO: parse these into Action objects an set on the Behavior
+                for (int x = 0; x < user_actions.length(); x++) {
+                    JSONObject actionJson = user_actions.getJSONObject(x);
+                    Action a = gson.fromJson(actionJson.toString(), Action.class);
+                    behaviorActions.add(a);
+                }
+                behavior.setActions(behaviorActions);
 
                 Log.d(TAG, "Created UserBehavior (" +
                         behavior.getMappingId() + ") with Behavior (" +
@@ -228,7 +256,7 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData> {
     @Override
     protected void onPostExecute(UserData userData) {
         Log.e(TAG, "Finished");
-        userData.logSelectedData("FROM UserDataTask.onPostExecute");
+        userData.logSelectedData("FROM UserDataTask.onPostExecute", false);
         mCallback.userDataLoaded(userData);
     }
 
