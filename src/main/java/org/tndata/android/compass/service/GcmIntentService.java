@@ -94,6 +94,7 @@ public class GcmIntentService extends IntentService {
 
     // Put the message into a notification and post it.
     private void sendNotification(String msg, String title, String object_type, String object_id) {
+        Log.d("GCM Message", object_id);
         NotificationManager mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
         String activity;

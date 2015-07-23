@@ -27,7 +27,6 @@ public class ActionActivity extends ActionBarActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        //TODO fetch the action (download?)
         mAction = new Action();
 
         //Fetch UI components
@@ -36,7 +35,7 @@ public class ActionActivity extends ActionBarActivity implements View.OnClickLis
         TextView actionDescription = (TextView)findViewById(R.id.action_description);
 
         //Populate UI
-        //ImageLoader.loadBitmap(actionImage, mAction.getIconUrl(), false);
+        ImageLoader.loadBitmap(actionImage, mAction.getIconUrl(), false);
         actionTitle.setText(mAction.getTitle());
         actionDescription.setText(mAction.getDescription());
 
