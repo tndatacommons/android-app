@@ -166,4 +166,9 @@
     <!-- MyPrioritiesActivity -->
     <string name="my_priorities_title">My Priorities</string>
 
+    <!-- ActionActivity -->
+    <string name="action_later">Later</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_did_it">I did it</string>
+
 </resources>
