@@ -1,6 +1,5 @@
 package org.tndata.android.compass.fragment;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -49,8 +48,6 @@ public class CategoryFragment extends Fragment implements
     private CategoryFragmentAdapter mAdapter;
     private ArrayList<Goal> mItems = new ArrayList<Goal>();
     private boolean mBroadcastIsRegistered = false;
-    private CategoryFragmentListener mCallback;
-    
     private static final String TAG = "CategoryFragment";
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -60,10 +57,6 @@ public class CategoryFragment extends Fragment implements
             categoryGoalsUpdated();
         }
     };
-
-    public interface CategoryFragmentListener {
-//        public void assignGoalsToCategories(boolean shouldSendBroadcast);
-    }
 
     public static CategoryFragment newInstance(Category category) {
         CategoryFragment fragment = new CategoryFragment();
@@ -132,25 +125,6 @@ public class CategoryFragment extends Fragment implements
         super.onDestroy();
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity); // This makes sure that the container activity
-        // has implemented the callback interface. If not, it throws an
-        // exception
-        try {
-            mCallback = (CategoryFragmentListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement CategoryFragmentListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mCallback = null;
-    }
-
     private void registerReceivers() {
         if (mBroadcastIsRegistered == false) {
             getActivity().getApplicationContext().registerReceiver(broadcastReceiver,
@@ -177,16 +151,6 @@ public class CategoryFragment extends Fragment implements
         intent.putExtra("category", mCategory);
         startActivityForResult(intent, Constants.CHOOSE_GOALS_REQUEST_CODE);
         mAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult");
-        if (requestCode == Constants.CHOOSE_GOALS_REQUEST_CODE ||
-                requestCode == Constants.BEHAVIOR_CHANGED_RESULT_CODE ||
-                requestCode == Constants.GOALS_CHANGED_RESULT_CODE) {
-//            mCallback.assignGoalsToCategories(true);
-        }
     }
 
     public void categoryGoalsUpdated() {

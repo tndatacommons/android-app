@@ -24,7 +24,6 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.MainViewPagerAdapter;
-import org.tndata.android.compass.fragment.CategoryFragment.CategoryFragmentListener;
 import org.tndata.android.compass.fragment.MyGoalsFragment.MyGoalsFragmentListener;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.DrawerItem;
@@ -38,12 +37,9 @@ import org.tndata.android.compass.util.ImageLoader;
 import java.util.ArrayList;
 
 
-// TODO: remove the different GetUserWHATEVERListeners, and incorporate the GetUserDataTask;
-// todo: we want a single api request to populate the user's selected information.
-// TODO: clean up commented-out assignGoalsToCategories in MyGoalsFragment and CategoryFragment.
-
 public class MainActivity extends ActionBarActivity implements
-        GetUserDataTask.GetUserDataListener, MyGoalsFragmentListener, CategoryFragmentListener {
+        GetUserDataTask.GetUserDataListener,
+        MyGoalsFragmentListener {
 
     private static final int IMPORTANT_TO_ME = 0;
     private static final int MY_PRIORITIES = 1;
@@ -69,12 +65,6 @@ public class MainActivity extends ActionBarActivity implements
     private boolean mDrawerIsOpen = false;
     private boolean backButtonSelectsDefaultTab = false;
     private static final int DEFAULT_TAB = 0;
-    private boolean behaviorsLoadedDone = false;
-    private boolean actionsLoadedDone = false;
-    private boolean fetchedCategories = false; // Have we fetched the user's categories, already?
-    // ^ this is used to prevent the app from hitting the api continuously after the app crashes;
-    // when that happens, the CompassApplication loses its local values, then this activity
-    // keeps calling showCategories in a loop, which hits the api without a proper auth token.
 
     @Override
     public void onBackPressed() {
@@ -95,15 +85,11 @@ public class MainActivity extends ActionBarActivity implements
 
         application = (CompassApplication) getApplication();
 
-        // Load all user-selected content from the API
-        new GetUserDataTask(this).executeOnExecutor(
-                AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
-
         //Update the timezone
         new UpdateProfileTask(null).execute(application.getUser());
 
         // Register the device with Google Cloud Messaging
-        GcmRegistration gcm_registration = new GcmRegistration(getApplicationContext());
+        new GcmRegistration(getApplicationContext());
 
         mToolbar = (Toolbar) findViewById(R.id.transparent_tool_bar);
         mToolbar.setTitle("");
@@ -164,7 +150,14 @@ public class MainActivity extends ActionBarActivity implements
             }
         });
 
-        showCategories();
+        if(application.getCategories().isEmpty()) {
+            // Load all user-selected content from the API
+            new GetUserDataTask(this).executeOnExecutor(
+                    AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
+        } else {
+            showUserData();
+            application.getUserData().logSelectedData("MainActivity.onCreate", false);
+        }
     }
 
     @Override
@@ -172,7 +165,7 @@ public class MainActivity extends ActionBarActivity implements
         if (resultCode == Constants.LOGGED_OUT_RESULT_CODE) {
             finish();
         } else if (requestCode == Constants.CHOOSE_CATEGORIES_REQUEST_CODE) {
-            showCategories();
+            showUserData();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -181,30 +174,6 @@ public class MainActivity extends ActionBarActivity implements
     public void chooseCategories() {
         Intent intent = new Intent(getApplicationContext(), ChooseCategoriesActivity.class);
         startActivityForResult(intent, Constants.CHOOSE_CATEGORIES_REQUEST_CODE);
-    }
-
-    public void showCategories() {
-        ArrayList<Category> categories = application.getCategories();
-
-//        if (!fetchedCategories && (categories == null || categories.isEmpty())) {
-//            new GetUserCategoriesTask(this).executeOnExecutor(
-//                    AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
-//        } else if(categories != null) {
-            mAdapter.setCategories(application.getCategories());
-            showGoals();
-
-            mAdapter.notifyDataSetChanged();
-//        }
-    }
-
-    public void showGoals() {
-//        if (application.getGoals().isEmpty()) {
-//            new GetUserGoalsTask(this).executeOnExecutor(
-//                    AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
-//        } else {
-            Intent intent = new Intent(Constants.GOAL_UPDATED_BROADCAST_ACTION);
-            sendBroadcast(intent);
-//        }
     }
 
     protected class DrawerItemClickListener implements
@@ -332,59 +301,25 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     @Override
-    public void userDataLoaded(UserData userData) {
-        application.setUserData(userData);
+    public void onResume() {
+        super.onResume();
+        showUserData();
     }
 
-//    @Override
-//    public void categoriesLoaded(ArrayList<Category> categories) {
-//        application.setCategories(categories);
-//        showCategories();
-//        fetchedCategories = true;
-//    }
+    @Override
+    public void userDataLoaded(UserData userData) {
+        application.setUserData(userData);
+        showUserData();
+    }
 
-//    @Override
-//    public void goalsLoaded(ArrayList<Goal> goals) {
-//        application.setGoals(goals);
-//        new GetUserBehaviorsTask(this).executeOnExecutor(
-//                AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
-//        new GetUserActionsTask(this).executeOnExecutor(
-//                AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
-//    }
-//
-//    @Override
-//    public void behaviorsLoaded(ArrayList<Behavior> behaviors) {
-//        if (behaviors != null) {
-//            // Save the user's selected behaviors
-//            application.setBehaviors(behaviors);
-//            behaviorsLoadedDone = true;
-//        }
-//        assignGoalsToCategories(false);
-//        showGoals();
-////        if(behaviorsLoadedDone && actionsLoadedDone) {
-////            application.assignActionsToBehaviors();
-////        }
-//    }
+    public void showUserData() {
+        mAdapter.setCategories(application.getCategories());
+        mAdapter.notifyDataSetChanged();
 
-//    @Override
-//    public void actionsLoaded(ArrayList<Action> actions) {
-//        application.setActions(actions);
-//        actionsLoadedDone = true;
-////        if(behaviorsLoadedDone && actionsLoadedDone) {
-////            application.assignActionsToBehaviors();
-////        }
-//    }
-
-//    @Override
-//    public void assignGoalsToCategories(boolean shouldSendBroadcast) {
-//        // TODO: need to update the MyGoalsFragment & CategoryFragment? no need to call this anymore?
-//        application.assignGoalsToCategories();
-//        if (shouldSendBroadcast) {
-//            Intent intent = new Intent(Constants.GOAL_UPDATED_BROADCAST_ACTION);
-//            sendBroadcast(intent);
-//            Log.d("Main Activity", "send broadcast");
-//        }
-//    }
+        // broadcast that goals are available.
+        Intent intent = new Intent(Constants.GOAL_UPDATED_BROADCAST_ACTION);
+        sendBroadcast(intent);
+    }
 
     public void activateTab(int tabIndex) {
         mViewPager.setCurrentItem(tabIndex);
