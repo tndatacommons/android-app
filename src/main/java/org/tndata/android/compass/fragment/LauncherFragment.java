@@ -1,27 +1,30 @@
 package org.tndata.android.compass.fragment;
 
-import org.tndata.android.compass.R;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+
+import org.tndata.android.compass.R;
 
 public class LauncherFragment extends Fragment {
     private LauncherFragmentListener mCallback;
     private ProgressBar mProgressBar;
     private Button mSignUpButton;
     private Button mLoginButton;
+    private Button mTourButton;
 
     public interface LauncherFragmentListener {
         public void signUp();
 
         public void logIn();
+
+        public void tour();
     }
 
     @Override
@@ -48,6 +51,14 @@ public class LauncherFragment extends Fragment {
                 mCallback.logIn();
             }
         });
+        mTourButton = (Button) v.findViewById(R.id.launcher_tour_button);
+        mTourButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mCallback.tour();
+            }
+        });
         return v;
     }
 
@@ -56,10 +67,12 @@ public class LauncherFragment extends Fragment {
             mProgressBar.setVisibility(View.VISIBLE);
             mSignUpButton.setVisibility(View.GONE);
             mLoginButton.setVisibility(View.GONE);
+            mTourButton.setVisibility(View.GONE);
         } else {
             mProgressBar.setVisibility(View.GONE);
             mSignUpButton.setVisibility(View.VISIBLE);
             mLoginButton.setVisibility(View.VISIBLE);
+            mTourButton.setVisibility(View.VISIBLE);
         }
     }
 

@@ -11,6 +11,7 @@
     <string name="action_myself">Myself</string>
     <string name="action_my_priorities">My priorities</string>
     <string name="action_my_privacy">My privacy</string>
+    <string name="action_tour">Take tour</string>
     <string name="nav_drawer_action">Compass</string>
     <string name="main_tab_title">My Journey</string>
     <string name="category_card_title">My %1$s goals</string>
@@ -36,6 +37,7 @@
     <string name="launcher_login">LOG IN</string>
     <string name="launcher_tagline">Sign up or log in</string>
     <string name="launcher_grow_image">Compass</string>
+    <string name="launcher_tour">TAKE TOUR</string>
     <string name="login_email_hint">email</string>
     <string name="login_password_hint">password</string>
     <string name="login_email_label">email address</string>
@@ -56,6 +58,7 @@
     <string name="signup_header_label">CREATE YOUR ACCOUNT</string>
     <string name="signup_header_info_label">FIND YOUR WAY</string>
     <string name="signup_info_label">Knowing who you are and where you\'re going affects what you can achieve</string>
+
 
     <!-- OnBoardingActivity -->
     <string name="onboarding_category_error_label">Uh Oh! There seems to have been an issue finding choices.</string>

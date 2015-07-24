@@ -1,21 +1,5 @@
 package org.tndata.android.compass.activity;
 
-import java.util.ArrayList;
-
-import org.tndata.android.compass.R;
-import org.tndata.android.compass.CompassApplication;
-import org.tndata.android.compass.fragment.LauncherFragment;
-import org.tndata.android.compass.fragment.LauncherFragment.LauncherFragmentListener;
-import org.tndata.android.compass.fragment.LoginFragment;
-import org.tndata.android.compass.fragment.LoginFragment.LoginFragmentListener;
-import org.tndata.android.compass.fragment.SignUpFragment;
-import org.tndata.android.compass.fragment.SignUpFragment.SignUpFragmentListener;
-import org.tndata.android.compass.fragment.WebFragment;
-import org.tndata.android.compass.model.User;
-import org.tndata.android.compass.task.LoginTask;
-import org.tndata.android.compass.task.LoginTask.LoginTaskListener;
-import org.tndata.android.compass.util.Constants;
-
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,6 +11,23 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 
+import org.tndata.android.compass.CompassApplication;
+import org.tndata.android.compass.R;
+import org.tndata.android.compass.fragment.LauncherFragment;
+import org.tndata.android.compass.fragment.LauncherFragment.LauncherFragmentListener;
+import org.tndata.android.compass.fragment.LoginFragment;
+import org.tndata.android.compass.fragment.LoginFragment.LoginFragmentListener;
+import org.tndata.android.compass.fragment.SignUpFragment;
+import org.tndata.android.compass.fragment.SignUpFragment.SignUpFragmentListener;
+import org.tndata.android.compass.fragment.TourFragment;
+import org.tndata.android.compass.fragment.WebFragment;
+import org.tndata.android.compass.model.User;
+import org.tndata.android.compass.task.LoginTask;
+import org.tndata.android.compass.task.LoginTask.LoginTaskListener;
+import org.tndata.android.compass.util.Constants;
+
+import java.util.ArrayList;
+
 public class LoginActivity extends ActionBarActivity implements
         LauncherFragmentListener, SignUpFragmentListener,
         LoginFragmentListener, LoginTaskListener {
@@ -34,11 +35,13 @@ public class LoginActivity extends ActionBarActivity implements
     private static final int LOGIN = 1;
     private static final int SIGN_UP = 2;
     private static final int TERMS = 3;
+    private static final int TOUR = 4;
     private Toolbar mToolbar;
     private WebFragment mWebFragment = null;
     private LauncherFragment mLauncherFragment = null;
     private LoginFragment mLoginFragment = null;
     private SignUpFragment mSignUpFragment = null;
+    private TourFragment mTourFragment = null;
     private ArrayList<Fragment> mFragmentStack = new ArrayList<Fragment>();
 
     @Override
@@ -109,6 +112,8 @@ public class LoginActivity extends ActionBarActivity implements
                 index = SIGN_UP;
             } else if (fragment instanceof WebFragment) {
                 index = TERMS;
+            } else if (fragment instanceof TourFragment) {
+                index = TOUR;
             }
 
             swapFragments(index, false);
@@ -174,6 +179,13 @@ public class LoginActivity extends ActionBarActivity implements
             mToolbar.setTitle(R.string.terms_title);
             mWebFragment.setUrl(Constants.TERMS_AND_CONDITIONS_URL);
             break;
+        case TOUR:
+                if (mTourFragment == null) {
+                    mTourFragment = new TourFragment();
+                }
+                fragment = mTourFragment;
+                getSupportActionBar().hide();
+            break;
         default:
             break;
         }
@@ -195,6 +207,11 @@ public class LoginActivity extends ActionBarActivity implements
     @Override
     public void logIn() {
         swapFragments(LOGIN, true);
+    }
+
+    @Override
+    public void tour() {
+        //swapFragments(TOUR, true);
     }
 
     @Override
