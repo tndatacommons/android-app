@@ -104,6 +104,10 @@ public class GetUserActionsTask extends AsyncTask<String, Void, ArrayList<Action
 
     @Override
     protected void onPostExecute(ArrayList<Action> actions) {
+        Log.e("GetUserActionsTask", "Finished");
+        for(Action a : actions) {
+            Log.d("GetUserActionsTask", "- (" + a.getId() + ") " + a.getTitle());
+        }
         mCallback.actionsLoaded(actions);
     }
 

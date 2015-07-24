@@ -1,6 +1,7 @@
 package org.tndata.android.compass.task;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -96,6 +97,10 @@ public class GetUserBehaviorsTask extends AsyncTask<String, Void, ArrayList<Beha
 
     @Override
     protected void onPostExecute(ArrayList<Behavior> behaviors) {
+        Log.e("GetUserBehaviorTask", "Loaded behaviors");
+        for(Behavior b : behaviors) {
+            Log.d("GetUserActionsTask", "- (" + b.getId() + ") " + b.getTitle());
+        }
         mCallback.behaviorsLoaded(behaviors);
     }
 

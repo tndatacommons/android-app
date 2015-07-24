@@ -429,7 +429,6 @@ public class GoalTryActivity extends ActionBarActivity implements
     @Override
     public void behaviorsDeleted() {
         Log.d("GoalTryActivity", "DeleteBehaviorTask completed.");
-        application.logSelectedData("AFTER Deleting a Behavior");
         mAdapter.notifyDataSetChanged();
     }
 
