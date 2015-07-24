@@ -77,15 +77,17 @@ public class CompassApplication extends Application {
 
     public void addGoal(Goal goal) {
         mUserData.addGoal(goal);
+        mUserData.logSelectedData("AFTER CompassApplication.addGoal", false);
     }
 
     public void removeGoal(Goal goal) {
         mUserData.removeGoal(goal);
+        mUserData.logSelectedData("AFTER CompassApplication.removeGoal", false);
     }
 
     public void setBehaviors(ArrayList<Behavior> behaviors) {
         mUserData.setBehaviors(behaviors);
-        mUserData.logSelectedData("AFTER CompassApplication.setBehaviors");
+        mUserData.logSelectedData("AFTER CompassApplication.setBehaviors", false);
     }
 
     public ArrayList<Behavior> getBehaviors() {
@@ -94,11 +96,12 @@ public class CompassApplication extends Application {
 
     public void removeBehavior(Behavior behavior) {
         mUserData.removeBehavior(behavior);
-        mUserData.logSelectedData("AFTER CompassApplication.removeBehavior: " + behavior.getTitle());
+        mUserData.logSelectedData("AFTER CompassApplication.removeBehavior: ", false);
     }
 
     public void addBehavior(Behavior behavior) {
         mUserData.addBehavior(behavior);
+        mUserData.logSelectedData("AFTER CompassApplication.addBehavior", false);
     }
 
     public ArrayList<Action> getActions() {
@@ -107,20 +110,22 @@ public class CompassApplication extends Application {
 
     public void removeAction(Action action) {
         mUserData.removeAction(action);
-        mUserData.logSelectedData("AFTER CompassApplication.removeAction: " + action.getTitle());
+        mUserData.logSelectedData("AFTER CompassApplication.removeAction: ", false);
     }
 
     public void setActions(ArrayList<Action> actions) {
         mUserData.setActions(actions);
-        mUserData.logSelectedData("AFTER CompassApplication.setActions");
+        mUserData.logSelectedData("AFTER CompassApplication.setActions", false);
     }
 
     public void addAction(Action action) {
         mUserData.addAction(action);
+        mUserData.logSelectedData("AFTER CompassApplication.addAction", false);
     }
 
     public void updateAction(Action action) {
         mUserData.updateAction(action);
+        mUserData.logSelectedData("AFTER CompassApplication.updateAction", false);
     }
 
     @Override
