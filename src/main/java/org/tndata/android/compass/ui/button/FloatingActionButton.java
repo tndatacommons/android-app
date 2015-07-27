@@ -459,7 +459,7 @@ public class FloatingActionButton extends ImageButton {
 
         @Override
         public void onScrollDown() {
-
+            show();
             if (mScrollDirectionListener != null) {
                 mScrollDirectionListener.onScrollDown();
             }
