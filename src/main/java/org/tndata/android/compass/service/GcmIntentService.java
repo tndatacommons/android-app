@@ -1,6 +1,7 @@
 package org.tndata.android.compass.service;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -15,6 +16,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import org.json.JSONObject;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.activity.ActionActivity;
 import org.tndata.android.compass.activity.LoginActivity;
 import org.tndata.android.compass.util.Constants;
 
@@ -99,53 +101,89 @@ public class GcmIntentService extends IntentService {
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
         String activity;
 
-        switch (object_type) {
-            case Constants.ACTION_TYPE:
-                // TODO: We can't launch these activities directly without the full app being
-                // TODO: initialized (e.g. some of the data required for model.Goal.getBehaviors()
-                // TODO: will be null)
-                activity = Constants.GCM_ACTION_ACTIVITY;
-                break;
-            case Constants.BEHAVIOR_TYPE:
-                activity = Constants.GCM_BEHAVIOR_ACTIVITY;
-                break;
-            default:
-                activity = Constants.GCM_BEHAVIOR_ACTIVITY;
-                break;
-        }
+        if (object_type.equals(Constants.ACTION_TYPE)){
+            try{
+                Intent intent = new Intent(getApplicationContext(), ActionActivity.class);
+                intent.putExtra(ActionActivity.ACTION_ID_KEY, Integer.valueOf(object_id));
+                //intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        Class<?> cls;
-        try {
-            cls = Class.forName(activity);
-        }
-        catch (Exception e) {
-            cls = LoginActivity.class;
-        }
+                Context ctx = getApplicationContext();
+                PendingIntent contentIntent = PendingIntent.getActivity(ctx,
+                        (int) System.currentTimeMillis(), intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
 
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, cls), 0);
+                Bundle args = new Bundle();
+                args.putSerializable("objectType", Constants.ACTION_TYPE);
 
-        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
+                Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
+                Notification notification = new NotificationCompat.Builder(ctx)
                         .setSmallIcon(R.drawable.ic_action_compass_white)
                         .setContentTitle(title)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                         .setContentText(msg)
                         .setLargeIcon(icon)
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .addExtras(args)
+                        .setContentIntent(contentIntent)
+                        .setAutoCancel(true)
+                        .build();
 
-        if(object_id != null) {
-            // Bundle the object_type/object_id arguments with the intent
-            // http://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html
-            Bundle args = new Bundle();
-            args.putSerializable("objectType", object_type);
-            args.putSerializable("objectId", object_id);
-            mBuilder.addExtras(args);
+                mNotificationManager.notify(1, notification);
+            }
+            catch (NumberFormatException nfx){
+                nfx.printStackTrace();
+            }
         }
+        else{
 
-        mBuilder.setContentIntent(contentIntent);
-        mBuilder.setAutoCancel(true);
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+            switch (object_type){
+                case Constants.ACTION_TYPE:
+                    // TODO: We can't launch these activities directly without the full app being
+                    // TODO: initialized (e.g. some of the data required for model.Goal.getBehaviors()
+                    // TODO: will be null)
+                    activity = Constants.GCM_ACTION_ACTIVITY;
+                    break;
+                case Constants.BEHAVIOR_TYPE:
+                    activity = Constants.GCM_BEHAVIOR_ACTIVITY;
+                    break;
+                default:
+                    activity = Constants.GCM_BEHAVIOR_ACTIVITY;
+                    break;
+            }
+
+            Class<?> cls;
+            try{
+                cls = Class.forName(activity);
+            }
+            catch (Exception e){
+                cls = LoginActivity.class;
+            }
+
+            PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+                    new Intent(this, cls), 0);
+
+            Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.ic_action_compass_white)
+                            .setContentTitle(title)
+                            .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
+                            .setContentText(msg)
+                            .setLargeIcon(icon)
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+            if (object_id != null){
+                // Bundle the object_type/object_id arguments with the intent
+                // http://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html
+                Bundle args = new Bundle();
+                args.putSerializable("objectType", object_type);
+                args.putSerializable("objectId", object_id);
+                mBuilder.addExtras(args);
+            }
+
+            mBuilder.setContentIntent(contentIntent);
+            mBuilder.setAutoCancel(true);
+            mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+        }
     }
 }

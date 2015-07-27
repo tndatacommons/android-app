@@ -2,6 +2,7 @@ package org.tndata.android.compass.task;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -48,8 +49,9 @@ public class GetActionTask extends AsyncTask<Integer, Void, Action>{
         Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
         headers.put("Content-type", "application/json");
-        InputStream stream = NetworkHelper.httpGetStream(URL + "/" + params[0] + "/", headers);
+        InputStream stream = NetworkHelper.httpGetStream(URL + params[0] + "/", headers);
         if (stream == null){
+            Log.d("ActionGetTask", "bad stream");
             return null;
         }
 
@@ -76,6 +78,7 @@ public class GetActionTask extends AsyncTask<Integer, Void, Action>{
     protected void onPostExecute(Action action){
         mCallback.onActionRetrieved(action);
     }
+
 
     /**
      * Callback interface for action retrieved events.

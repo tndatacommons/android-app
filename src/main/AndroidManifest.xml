@@ -175,6 +175,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.tndata.android.compass.activity.MainActivity"/>
         </activity>
+
+        <activity
+            android:name=".activity.ActionActivity"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name="org.tndata.android.compass.activity.GoalDetailsActivity"
             android:parentActivityName="org.tndata.android.compass.activity.MainActivity"
