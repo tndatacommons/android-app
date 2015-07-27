@@ -66,6 +66,7 @@ public class ActionActivity
         Log.d("ActionActivity", "onNewIntent");
         int actionId = getIntent().getIntExtra(ACTION_ID_KEY, -1);
         Log.d("ActionActivity", "action: " + actionId);
+        new GetActionTask(this).execute(actionId);
     }
 
     @Override
