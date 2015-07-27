@@ -3,6 +3,7 @@ package org.tndata.android.compass.model;
 import android.util.Log;
 
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,8 +30,12 @@ public class Trigger implements Serializable, Comparable<Trigger> {
         mDefaultTrigger = false;
     }
 
-    public void asDefaultTrigger(){
+    void asDefaultTrigger(){
         mDefaultTrigger = true;
+    }
+
+    void asCustomTrigger(){
+        mDefaultTrigger = false;
     }
 
     public boolean isDefaultTrigger(){
@@ -162,9 +167,16 @@ public class Trigger implements Serializable, Comparable<Trigger> {
     public Date getParsedTime() {
         Date date = new Date();
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("H:m", Locale.getDefault());
             if(!time.isEmpty()) {
-                date = sdf.parse(time.substring(0, 5));
+                DateFormat format;
+                if (mDefaultTrigger){
+                    format = new SimpleDateFormat("H:m", Locale.getDefault());
+                }
+                else{
+                    format = new SimpleDateFormat("H:m", Locale.getDefault());
+                    format.setTimeZone(TimeZone.getTimeZone("UTC"));
+                }
+                date = format.parse(time.substring(0, 5));
             }
         }
         catch (ParseException e) {
@@ -176,8 +188,8 @@ public class Trigger implements Serializable, Comparable<Trigger> {
     public String getFormattedTime() {
         String result = "";
         if(!getTime().isEmpty()) {
-            SimpleDateFormat sdf = new SimpleDateFormat("h:mm a", Locale.getDefault());
-            result = sdf.format(getParsedTime());
+            DateFormat format = new SimpleDateFormat("h:mm a", Locale.getDefault());
+            result = format.format(getParsedTime());
         }
         return result;
     }
@@ -185,9 +197,16 @@ public class Trigger implements Serializable, Comparable<Trigger> {
     public Date getParsedDate() {
         Date d = new Date();
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-d", Locale.getDefault());
             if(!trigger_date.isEmpty()) {
-                d = sdf.parse(trigger_date);
+                DateFormat format;
+                if (mDefaultTrigger){
+                    format = new SimpleDateFormat("yyyy-MM-d", Locale.getDefault());
+                }
+                else{
+                    format = new SimpleDateFormat("yyyy-MM-d", Locale.getDefault());
+                    format.setTimeZone(TimeZone.getTimeZone("UTC"));
+                }
+                d = format.parse(trigger_date);
             }
         }
         catch (ParseException e) {
@@ -199,8 +218,8 @@ public class Trigger implements Serializable, Comparable<Trigger> {
     public String getFormattedDate() {
         String result = "";
         if(!getDate().isEmpty()) {
-            SimpleDateFormat sdf = new SimpleDateFormat("MMM d yyyy", Locale.getDefault());
-            result = sdf.format(getParsedDate());
+            DateFormat format = new SimpleDateFormat("MMM d yyyy", Locale.getDefault());
+            result = format.format(getParsedDate());
         }
         return result;
     }

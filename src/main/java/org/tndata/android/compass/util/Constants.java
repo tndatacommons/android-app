@@ -36,7 +36,7 @@ public class Constants {
     public final static String ACTION_TYPE = "action";
     public final static String BEHAVIOR_TYPE = "behavior";
     public final static String GCM_DEFAULT_ACTIVITY = "org.tndata.android.compass.activity.LoginActivity";
-    public final static String GCM_ACTION_ACTIVITY = "org.tndata.android.compass.activity.LoginActivity"; // TODO: Action's more info
+    public final static String GCM_ACTION_ACTIVITY = "org.tndata.android.compass.activity.ActionActivity";
     public final static String GCM_BEHAVIOR_ACTIVITY = "org.tndata.android.compass.activity.BehaviorProgressActivity";
 
     // https://stackoverflow.com/questions/18196292/what-are-consequences-of-having-gcm-sender-id-being-exposed
