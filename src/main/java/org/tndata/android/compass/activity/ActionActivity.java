@@ -15,7 +15,6 @@ import android.widget.TextView;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.task.GetActionTask;
 import org.tndata.android.compass.task.GetUserActionsTask;
 import org.tndata.android.compass.util.ImageLoader;
 
