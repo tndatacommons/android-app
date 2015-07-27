@@ -12,10 +12,14 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.task.GetActionTask;
+import org.tndata.android.compass.task.GetUserActionsTask;
 import org.tndata.android.compass.util.ImageLoader;
+
+import java.util.ArrayList;
 
 
 /**
@@ -29,7 +33,7 @@ public class ActionActivity
         extends ActionBarActivity
         implements
                 View.OnClickListener,
-                GetActionTask.OnActionRetrievedCallback{
+                GetUserActionsTask.GetUserActionsListener{
 
     public static final String ACTION_ID_KEY = "action_id";
 
@@ -72,7 +76,8 @@ public class ActionActivity
 
         int actionId = getIntent().getIntExtra(ACTION_ID_KEY, -1);
         Log.d("ActionActivity", "action: " + actionId);
-        new GetActionTask(this).execute(actionId);
+        new GetUserActionsTask(this).execute(((CompassApplication)getApplication()).getToken(),
+                "action:" + actionId);
     }
 
     @Override
@@ -81,7 +86,8 @@ public class ActionActivity
         Log.d("ActionActivity", "onNewIntent");
         int actionId = getIntent().getIntExtra(ACTION_ID_KEY, -1);
         Log.d("ActionActivity", "action: " + actionId);
-        new GetActionTask(this).execute(actionId);
+        new GetUserActionsTask(this).execute(((CompassApplication)getApplication()).getToken(),
+                "action:" + actionId);
     }
 
     @Override
@@ -106,9 +112,9 @@ public class ActionActivity
     }
 
     @Override
-    public void onActionRetrieved(Action action){
-        if (action != null){
-            mAction = action;
+    public void actionsLoaded(ArrayList<Action> actions){
+        if (actions.size() > 0){
+            mAction = actions.get(0);
 
             //Populate UI
             ImageLoader.loadBitmap(mActionImage, mAction.getIconUrl(), false);
