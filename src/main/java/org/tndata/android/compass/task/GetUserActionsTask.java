@@ -39,13 +39,22 @@ public class GetUserActionsTask extends AsyncTask<String, Void, ArrayList<Action
     protected ArrayList<Action> doInBackground(String... params) {
         String token = params[0];
         String goalFilter = null;
+        String actionFilter = null;
 
         if(params.length == 2) {
-            goalFilter = params[1];
+            if (params[1].contains("action:")){
+                actionFilter = params[1].substring(params[1].indexOf(":")+1);
+            }
+            else{
+                goalFilter = params[1];
+            }
         }
         String url = Constants.BASE_URL + "users/actions/";
         if(goalFilter != null) {
             url = url + "?goal=" + goalFilter;
+        }
+        else if (actionFilter != null){
+            url = url + "?action=" + actionFilter;
         }
 
         Map<String, String> headers = new HashMap<String, String>();
