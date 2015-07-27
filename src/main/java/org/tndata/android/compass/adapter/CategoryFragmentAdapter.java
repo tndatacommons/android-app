@@ -26,8 +26,14 @@ public class CategoryFragmentAdapter extends
 
     public interface CategoryFragmentAdapterInterface {
         public void chooseBehaviors(Goal goal);
+
         public void viewGoal(Goal goal);
+
         public void deleteGoal(Goal goal);
+
+        public void cardExpand();
+
+        public void cardCollapse();
     }
 
     static class CategoryGoalViewHolder extends RecyclerView.ViewHolder {
@@ -69,16 +75,18 @@ public class CategoryFragmentAdapter extends
             }
         }
 
-        public void toggleCard() {
+        public void toggleCard(CategoryFragmentAdapterInterface mCallback) {
             // If the card is collapsed, expand it; if it's expanded, collapse it.
-            if(descriptionTextView.getVisibility() == View.GONE) {
+            if (descriptionTextView.getVisibility() == View.GONE) {
                 circleView.setVisibility(View.GONE);
                 descriptionTextView.setVisibility(View.VISIBLE);
                 moreInfoTextView.setVisibility(View.VISIBLE);
-            }else {
+                mCallback.cardExpand();
+            } else {
                 circleView.setVisibility(View.VISIBLE);
                 descriptionTextView.setVisibility(View.GONE);
                 moreInfoTextView.setVisibility(View.GONE);
+                mCallback.cardCollapse();
             }
         }
 
@@ -91,7 +99,7 @@ public class CategoryFragmentAdapter extends
     private final String TAG = "CatFragAdapter";
 
     public CategoryFragmentAdapter(Context context, CompassApplication application, Category category,
-            CategoryFragmentAdapterInterface callback) {
+                                   CategoryFragmentAdapterInterface callback) {
 
         if (application.getCategoryGoals(category) == null) {
             throw new IllegalArgumentException("Goals List must not be null");
@@ -126,25 +134,25 @@ public class CategoryFragmentAdapter extends
 
         final Boolean goalIsEmpty = goal.getBehaviors().isEmpty();
         TextView ctaTextView = ((CategoryGoalViewHolder) viewHolder).moreInfoTextView;
-        if(goalIsEmpty) {
+        if (goalIsEmpty) {
             ctaTextView.setText(R.string.goal_card_add_label);
         } else {
             ctaTextView.setText(R.string.goal_card_details_label);
         }
 
         ctaTextView.setOnClickListener(
-            new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(goalIsEmpty) {
-                        // when the user has *not* selected Behaviors/Actions, launch the picker
-                        mCallback.chooseBehaviors(goal);
-                    } else {
-                        // When the user has selected Behaviors/Actions, view the goal's details
-                        mCallback.viewGoal(goal);
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (goalIsEmpty) {
+                            // when the user has *not* selected Behaviors/Actions, launch the picker
+                            mCallback.chooseBehaviors(goal);
+                        } else {
+                            // When the user has selected Behaviors/Actions, view the goal's details
+                            mCallback.viewGoal(goal);
+                        }
                     }
                 }
-            }
         );
 
         // Hook up the popup menu
@@ -159,12 +167,12 @@ public class CategoryFragmentAdapter extends
 
         // Expand/Collapse the card when tapped
         ((CategoryGoalViewHolder) viewHolder).itemView.setOnClickListener(
-            new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ((CategoryGoalViewHolder) viewHolder).toggleCard();
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((CategoryGoalViewHolder) viewHolder).toggleCard(mCallback);
+                    }
                 }
-            }
         );
     }
 

@@ -16,6 +16,7 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +33,7 @@ import org.tndata.android.compass.R;
 public class FloatingActionButton extends ImageButton {
     private static final int TRANSLATE_DURATION_MILLIS = 200;
 
-    @IntDef({ TYPE_NORMAL, TYPE_MINI })
+    @IntDef({TYPE_NORMAL, TYPE_MINI})
     public @interface TYPE {
     }
 
@@ -65,7 +66,7 @@ public class FloatingActionButton extends ImageButton {
     }
 
     public FloatingActionButton(Context context, AttributeSet attrs,
-            int defStyle) {
+                                int defStyle) {
         super(context, attrs, defStyle);
         init(context, attrs);
     }
@@ -124,9 +125,9 @@ public class FloatingActionButton extends ImageButton {
 
     private void updateBackground() {
         StateListDrawable drawable = new StateListDrawable();
-        drawable.addState(new int[] { android.R.attr.state_pressed },
+        drawable.addState(new int[]{android.R.attr.state_pressed},
                 createDrawable(mColorPressed));
-        drawable.addState(new int[] {}, createDrawable(mColorNormal));
+        drawable.addState(new int[]{}, createDrawable(mColorNormal));
         setBackgroundCompat(drawable);
     }
 
@@ -139,8 +140,8 @@ public class FloatingActionButton extends ImageButton {
             Drawable shadowDrawable = getResources().getDrawable(
                     mType == TYPE_NORMAL ? R.drawable.shadow
                             : R.drawable.shadow_mini);
-            LayerDrawable layerDrawable = new LayerDrawable(new Drawable[] {
-                    shadowDrawable, shapeDrawable });
+            LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{
+                    shadowDrawable, shapeDrawable});
             layerDrawable.setLayerInset(1, mShadowSize, mShadowSize,
                     mShadowSize, mShadowSize);
             return layerDrawable;
@@ -150,7 +151,7 @@ public class FloatingActionButton extends ImageButton {
     }
 
     private TypedArray getTypedArray(Context context,
-            AttributeSet attributeSet, int[] attr) {
+                                     AttributeSet attributeSet, int[] attr) {
         return context.obtainStyledAttributes(attributeSet, attr, 0, 0);
     }
 
@@ -186,8 +187,8 @@ public class FloatingActionButton extends ImageButton {
             setElevation(mShadow ? getDimension(R.dimen.fab_elevation_lollipop)
                     : 0.0f);
             RippleDrawable rippleDrawable = new RippleDrawable(
-                    new ColorStateList(new int[][] { {} },
-                            new int[] { mColorRipple }), drawable, null);
+                    new ColorStateList(new int[][]{{}},
+                            new int[]{mColorRipple}), drawable, null);
             setOutlineProvider(new ViewOutlineProvider() {
                 @Override
                 public void getOutline(View view, Outline outline) {
@@ -303,7 +304,7 @@ public class FloatingActionButton extends ImageButton {
     }
 
     private void toggle(final boolean visible, final boolean animate,
-            boolean force) {
+                        boolean force) {
         if (mVisible != visible || force) {
             mVisible = visible;
             int height = getHeight();
@@ -349,8 +350,13 @@ public class FloatingActionButton extends ImageButton {
         attachToScrollView(scrollView, null);
     }
 
+    public void attachToRecyclerView(@NonNull RecyclerView recyclerView) {
+        attachToRecyclerView(recyclerView, null, null);
+    }
+
+
     public void attachToListView(@NonNull AbsListView listView,
-            OnScrollListener listener, Boolean dummy) {
+                                 OnScrollListener listener, Boolean dummy) {
         AbsListViewScrollDetectorImpl scrollDetector = new AbsListViewScrollDetectorImpl();
         scrollDetector.setListener(null);
         scrollDetector.setListView(listView);
@@ -360,11 +366,21 @@ public class FloatingActionButton extends ImageButton {
     }
 
     public void attachToScrollView(@NonNull ObservableScrollView scrollView,
-            ScrollDirectionListener listener) {
+                                   ScrollDirectionListener listener) {
         ScrollViewScrollDetectorImpl scrollDetector = new ScrollViewScrollDetectorImpl();
         scrollDetector.setListener(listener);
         scrollDetector.setScrollThreshold(mScrollThreshold);
         scrollView.setOnScrollChangedListener(scrollDetector);
+    }
+
+    public void attachToRecyclerView(@NonNull RecyclerView recyclerView,
+                                     ScrollDirectionListener scrollDirectionlistener,
+                                     RecyclerView.OnScrollListener onScrollListener) {
+        RecyclerViewScrollDetectorImpl scrollDetector = new RecyclerViewScrollDetectorImpl();
+        scrollDetector.setScrollDirectionListener(scrollDirectionlistener);
+        scrollDetector.setOnScrollListener(onScrollListener);
+        scrollDetector.setScrollThreshold(mScrollThreshold);
+        recyclerView.setOnScrollListener(scrollDetector);
     }
 
     private boolean hasLollipopApi() {
@@ -425,6 +441,57 @@ public class FloatingActionButton extends ImageButton {
             if (mListener != null) {
                 mListener.onScrollUp();
             }
+        }
+    }
+
+
+    private class RecyclerViewScrollDetectorImpl extends RecyclerViewScrollDetector {
+        private ScrollDirectionListener mScrollDirectionListener;
+        private RecyclerView.OnScrollListener mOnScrollListener;
+
+        private void setScrollDirectionListener(ScrollDirectionListener scrollDirectionListener) {
+            mScrollDirectionListener = scrollDirectionListener;
+        }
+
+        public void setOnScrollListener(RecyclerView.OnScrollListener onScrollListener) {
+            mOnScrollListener = onScrollListener;
+        }
+
+        @Override
+        public void onScrollDown() {
+
+            if (mScrollDirectionListener != null) {
+                mScrollDirectionListener.onScrollDown();
+            }
+        }
+
+        @Override
+        public void onScrollUp() {
+            hide();
+            if (mScrollDirectionListener != null) {
+                mScrollDirectionListener.onScrollUp();
+            }
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            if (mOnScrollListener != null) {
+                mOnScrollListener.onScrolled(recyclerView, dx, dy);
+            }
+
+            if (!recyclerView.canScrollVertically(-1)) { //Negative to check scrolling up
+                show();
+            }
+            super.onScrolled(recyclerView, dx, dy);
+        }
+
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            if (mOnScrollListener != null) {
+                mOnScrollListener.onScrollStateChanged(recyclerView, newState);
+            }
+
+            super.onScrollStateChanged(recyclerView, newState);
         }
     }
 }

@@ -88,6 +88,7 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new MyGoalsAdapter(getActivity(), mItems, this);
         mRecyclerView.setAdapter(mAdapter);
+        mFloatingActionButton.attachToRecyclerView(mRecyclerView);
         registerReceivers();
     }
 
