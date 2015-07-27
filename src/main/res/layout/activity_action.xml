@@ -14,33 +14,45 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
-    
-        <ImageView
-            android:id="@+id/action_image"
-            android:layout_width="match_parent"
-            android:layout_height="240dp"
-            android:layout_gravity="center"
-            android:padding="60dp"
-            android:background="@color/grow_primary"
-            android:contentDescription="@string/action_icon_cd" />
 
-        <TextView
-            android:id="@+id/action_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:textSize="18sp" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="240dp"
+                android:background="@color/grow_primary" >
 
-        <TextView
-            android:id="@+id/action_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:textSize="15sp" />
+                <RelativeLayout
+                    android:id="@+id/action_circle_view"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/circle" >
+
+                    <ImageView
+                        android:id="@+id/action_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@string/action_icon_cd" />
+
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/action_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/action_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:textSize="15sp" />
 
         </LinearLayout>
     </ScrollView>

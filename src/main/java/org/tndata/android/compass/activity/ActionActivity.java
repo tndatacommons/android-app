@@ -1,11 +1,15 @@
 package org.tndata.android.compass.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
@@ -47,6 +51,7 @@ public class ActionActivity
         mAction = null;
 
         //Fetch UI components
+        RelativeLayout circleView = (RelativeLayout)findViewById(R.id.action_circle_view);
         mActionImage = (ImageView)findViewById(R.id.action_image);
         mActionTitle = (TextView)findViewById(R.id.action_title);
         mActionDescription = (TextView)findViewById(R.id.action_description);
@@ -54,6 +59,16 @@ public class ActionActivity
         //Listeners
         findViewById(R.id.action_later).setOnClickListener(this);
         findViewById(R.id.action_did_it).setOnClickListener(this);
+
+        //Circle view
+        GradientDrawable gradientDrawable = (GradientDrawable)circleView.getBackground();
+        gradientDrawable.setColor(Color.WHITE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+            circleView.setBackground(gradientDrawable);
+        }
+        else{
+            circleView.setBackgroundDrawable(gradientDrawable);
+        }
 
         int actionId = getIntent().getIntExtra(ACTION_ID_KEY, -1);
         Log.d("ActionActivity", "action: " + actionId);
