@@ -1,17 +1,10 @@
 package org.tndata.android.compass.activity;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -223,35 +216,6 @@ public class MainActivity extends ActionBarActivity implements
             Intent intent = null;
             switch (position) {
                 case IMPORTANT_TO_ME:
-                    NotificationManager mNotificationManager = (NotificationManager)
-                            getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-
-                    Intent intent2 = new Intent(getApplicationContext(), ActionActivity.class);
-                    intent2.putExtra(ActionActivity.ACTION_ID_KEY, 20);
-                    //intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-                    Context ctx = getApplicationContext();
-                    PendingIntent contentIntent = PendingIntent.getActivity(ctx,
-                            (int) System.currentTimeMillis(), intent2,
-                            PendingIntent.FLAG_UPDATE_CURRENT);
-
-                    Bundle args = new Bundle();
-                    args.putSerializable("objectType", Constants.ACTION_TYPE);
-
-                    Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-                    Notification notification = new NotificationCompat.Builder(ctx)
-                            .setSmallIcon(R.drawable.ic_action_compass_white)
-                            .setContentTitle("Title")
-                            .setStyle(new NotificationCompat.BigTextStyle().bigText("Message"))
-                            .setContentText("Message")
-                            .setLargeIcon(icon)
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                            .addExtras(args)
-                            .setContentIntent(contentIntent)
-                            .setAutoCancel(true)
-                            .build();
-
-                    mNotificationManager.notify(1, notification);
                     break;
                 case MY_PRIORITIES:
                     startActivity(new Intent(getApplicationContext(), MyPrioritiesActivity.class));
