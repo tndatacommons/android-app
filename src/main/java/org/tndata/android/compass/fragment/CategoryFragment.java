@@ -79,7 +79,7 @@ public class CategoryFragment extends Fragment implements
                              Bundle savedInstanceState) {
         View v = getActivity().getLayoutInflater().inflate(
                 R.layout.fragment_category, container, false);
-        mFloatingActionButton = (FloatingActionButton) v.findViewById(R.id.category_fab_button);
+        //mFloatingActionButton = (FloatingActionButton) v.findViewById(R.id.category_fab_button);
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -252,6 +252,10 @@ public class CategoryFragment extends Fragment implements
         if (!mRecyclerView.canScrollVertically(-1)) { //Negative to check scrolling up
             mFloatingActionButton.show();
         }
+    }
+
+    public void setFloatingActionButton(FloatingActionButton fab) {
+        mFloatingActionButton = fab;
     }
 
 }

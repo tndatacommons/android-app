@@ -66,7 +66,7 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_my_goals, container, false);
 
-        mFloatingActionButton = (FloatingActionButton) v.findViewById(R.id.my_goals_fab_button);
+        //mFloatingActionButton = (FloatingActionButton) v.findViewById(R.id.my_goals_fab_button);
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -262,4 +262,9 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
     public void activateCategoryTab(Category category) {
         mCallback.transitionToCategoryTab(category);
     }
+
+    public void setFloatingActionButton(FloatingActionButton fab) {
+        mFloatingActionButton = fab;
+    }
+
 }
