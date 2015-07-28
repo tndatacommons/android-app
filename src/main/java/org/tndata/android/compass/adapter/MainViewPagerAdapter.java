@@ -10,12 +10,15 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.CategoryFragment;
 import org.tndata.android.compass.fragment.MyGoalsFragment;
 import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.ui.button.FloatingActionButton;
 
 import java.util.ArrayList;
 
 public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     private Context mContext;
     private ArrayList<Category> mCategories = new ArrayList<Category>();
+    private FloatingActionButton mFloatingActionButton;
+
 
     public MainViewPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
@@ -26,14 +29,20 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
         mCategories = categories;
     }
 
+    public void setFloatingActionButton(FloatingActionButton fab) {
+        mFloatingActionButton = fab;
+    }
+
     @Override
     public Fragment getItem(int position) {
         Fragment fragment = null;
         if (position == 0) {
             fragment = new MyGoalsFragment();
+            ((MyGoalsFragment) fragment).setFloatingActionButton(mFloatingActionButton);
         } else {
             fragment = CategoryFragment.newInstance(mCategories
                     .get(position - 1));
+            ((CategoryFragment) fragment).setFloatingActionButton(mFloatingActionButton);
         }
         return fragment;
     }
