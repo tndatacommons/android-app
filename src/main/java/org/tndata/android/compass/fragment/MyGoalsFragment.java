@@ -65,16 +65,20 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_my_goals, container, false);
-
-        mFloatingActionButton = (FloatingActionButton) v.findViewById(R.id.my_goals_fab_button);
-        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCallback.chooseCategories();
-            }
-        });
-
         return v;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mCallback.chooseCategories();
+                }
+            });
+        }
     }
 
     @Override
@@ -200,9 +204,9 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
             MyGoalsViewItem item = mItems.remove(0);
             if (Constants.ENABLE_SURVEYS && (
                     (item.getType() == MyGoalsViewItem.TYPE_SURVEY_MULTICHOICE) ||
-                    (item.getType() == MyGoalsViewItem.TYPE_SURVEY_BINARY) ||
-                    (item.getType() == MyGoalsViewItem.TYPE_SURVEY_LIKERT) ||
-                    (item.getType() == MyGoalsViewItem.TYPE_SURVEY_OPENENDED))) {
+                            (item.getType() == MyGoalsViewItem.TYPE_SURVEY_BINARY) ||
+                            (item.getType() == MyGoalsViewItem.TYPE_SURVEY_LIKERT) ||
+                            (item.getType() == MyGoalsViewItem.TYPE_SURVEY_OPENENDED))) {
                 mItems.clear();
                 mItems.add(item);
             } else {
@@ -262,4 +266,9 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
     public void activateCategoryTab(Category category) {
         mCallback.transitionToCategoryTab(category);
     }
+
+    public void setFloatingActionButton(FloatingActionButton fab) {
+        mFloatingActionButton = fab;
+    }
+
 }

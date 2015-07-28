@@ -14,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -30,6 +32,7 @@ import org.tndata.android.compass.model.DrawerItem;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.task.GetUserDataTask;
 import org.tndata.android.compass.task.UpdateProfileTask;
+import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.ImageLoader;
@@ -62,15 +65,18 @@ public class MainActivity extends ActionBarActivity implements
     private ViewPager mViewPager;
     private ImageView mHeaderImageView;
     private MainViewPagerAdapter mAdapter;
+    private FloatingActionButton mFloatingActionButton;
+    private Animation mMenuButtonShowAnimation;
     private boolean mDrawerIsOpen = false;
     private boolean backButtonSelectsDefaultTab = false;
     private static final int DEFAULT_TAB = 0;
+    private int lastViewPagerItem = 0;
 
     @Override
     public void onBackPressed() {
         // This activity may switch tabs when a user taps a card, so after doing that,
         // we want the back button to return the user to the default tab.
-        if(backButtonSelectsDefaultTab) {
+        if (backButtonSelectsDefaultTab) {
             activateTab(DEFAULT_TAB);
             backButtonSelectsDefaultTab = false; // resets default behavior
         } else {
@@ -120,9 +126,11 @@ public class MainActivity extends ActionBarActivity implements
             }
         };
 
+        mFloatingActionButton = (FloatingActionButton) findViewById(R.id.category_fab_button);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mHeaderImageView = (ImageView) findViewById(R.id.main_material_imageview);
         mAdapter = new MainViewPagerAdapter(getSupportFragmentManager(), this);
+        mAdapter.setFloatingActionButton(mFloatingActionButton);
         mViewPager = (ViewPager) findViewById(R.id.main_viewpager);
         mViewPager.setAdapter(mAdapter);
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.main_pager_tabstrip);
@@ -146,11 +154,16 @@ public class MainActivity extends ActionBarActivity implements
 
             @Override
             public void onPageScrollStateChanged(int state) {
+                int currentViewPagerItem = mViewPager.getCurrentItem();
+                if (state == ViewPager.SCROLL_STATE_IDLE && currentViewPagerItem != lastViewPagerItem) {
+                    mFloatingActionButton.startAnimation(mMenuButtonShowAnimation);
+                    lastViewPagerItem = currentViewPagerItem;
+                }
 
             }
         });
 
-        if(application.getCategories().isEmpty()) {
+        if (application.getCategories().isEmpty()) {
             // Load all user-selected content from the API
             new GetUserDataTask(this).executeOnExecutor(
                     AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
@@ -158,6 +171,10 @@ public class MainActivity extends ActionBarActivity implements
             showUserData();
             application.getUserData().logSelectedData("MainActivity.onCreate", false);
         }
+
+        mMenuButtonShowAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_scale_up);
+
+
     }
 
     @Override
