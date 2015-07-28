@@ -171,5 +171,6 @@
     <string name="action_later">Later</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_did_it">I did it</string>
+    <string name="action_tick_cd">Action complete tick</string>
 
 </resources>
