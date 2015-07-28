@@ -70,6 +70,7 @@ public class MainActivity extends ActionBarActivity implements
     private boolean mDrawerIsOpen = false;
     private boolean backButtonSelectsDefaultTab = false;
     private static final int DEFAULT_TAB = 0;
+    private int lastViewPagerItem = 0;
 
     @Override
     public void onBackPressed() {
@@ -153,8 +154,10 @@ public class MainActivity extends ActionBarActivity implements
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                if (state == ViewPager.SCROLL_STATE_IDLE) {
+                int currentViewPagerItem = mViewPager.getCurrentItem();
+                if (state == ViewPager.SCROLL_STATE_IDLE && currentViewPagerItem != lastViewPagerItem) {
                     mFloatingActionButton.startAnimation(mMenuButtonShowAnimation);
+                    lastViewPagerItem = currentViewPagerItem;
                 }
 
             }
@@ -170,6 +173,7 @@ public class MainActivity extends ActionBarActivity implements
         }
 
         mMenuButtonShowAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_scale_up);
+
 
     }
 
