@@ -1,10 +1,12 @@
 package org.tndata.android.compass.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
@@ -25,10 +27,10 @@ import java.util.ArrayList;
 
 /**
  * Displays an action after clicking a notification and allows the user to report
- * whether they did it or to cancel or snooze the action.
+ * whether they did it or snooze the action.
  *
  * @author Ismael Alonso
- * @version 1.0.0
+ * @version 1.1.0
  */
 public class ActionActivity
         extends ActionBarActivity
@@ -86,20 +88,40 @@ public class ActionActivity
 
         mActionComplete = false;
 
-        int actionId = getIntent().getIntExtra(ACTION_ID_KEY, -1);
-        Log.d("ActionActivity", "action: " + actionId);
-        new GetUserActionsTask(this).execute(((CompassApplication)getApplication()).getToken(),
-                "action:" + actionId);
+        fetchAction(getIntent().getIntExtra(ACTION_ID_KEY, -1));
     }
 
     @Override
     protected void onNewIntent(Intent intent){
         super.onNewIntent(intent);
         Log.d("ActionActivity", "onNewIntent");
-        int actionId = getIntent().getIntExtra(ACTION_ID_KEY, -1);
+        fetchAction(getIntent().getIntExtra(ACTION_ID_KEY, -1));
+    }
+
+    /**
+     * Retrieves an action from an id.
+     *
+     * @param actionId the id of the action to be fetched.
+     */
+    private void fetchAction(int actionId){
         Log.d("ActionActivity", "action: " + actionId);
-        new GetUserActionsTask(this).execute(((CompassApplication)getApplication()).getToken(),
-                "action:" + actionId);
+        CompassApplication application = (CompassApplication)getApplication();
+        String token = application.getToken();
+        if (token == null || token.isEmpty()){
+            // Read from shared preferences instead.
+            SharedPreferences settings = PreferenceManager
+                    .getDefaultSharedPreferences(getApplicationContext());
+            token = settings.getString("auth_token", "");
+        }
+
+        if(token != null && !token.isEmpty()){
+            new GetUserActionsTask(this).execute(token, "action:" + actionId);
+        }
+        else{
+            //Something is wrong and we don't have an auth token for the user, so fail.
+            Log.e("ActionActivity", "AUTH Token is null, giving up!");
+            finish();
+        }
     }
 
     @Override
