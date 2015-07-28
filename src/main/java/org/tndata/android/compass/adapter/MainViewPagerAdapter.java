@@ -38,11 +38,11 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
         Fragment fragment = null;
         if (position == 0) {
             fragment = new MyGoalsFragment();
-            ((MyGoalsFragment)fragment).setFloatingActionButton(mFloatingActionButton);
+            ((MyGoalsFragment) fragment).setFloatingActionButton(mFloatingActionButton);
         } else {
             fragment = CategoryFragment.newInstance(mCategories
                     .get(position - 1));
-            ((CategoryFragment)fragment).setFloatingActionButton(mFloatingActionButton);
+            ((CategoryFragment) fragment).setFloatingActionButton(mFloatingActionButton);
         }
         return fragment;
     }

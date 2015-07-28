@@ -1,9 +1,9 @@
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
-                                        android:id="@+id/main_drawer_layout"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:background="@color/app_background">
+    android:id="@+id/main_drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_background">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -14,35 +14,33 @@
             android:id="@+id/main_material_imageview"
             android:layout_width="match_parent"
             android:layout_height="@dimen/material_header_size"
+            android:background="@color/grow_primary"
             android:scaleType="centerCrop"
-            android:src="@drawable/path_header_image"
-            android:background="@color/grow_primary"/>
+            android:src="@drawable/path_header_image" />
 
         <include
             android:id="@+id/transparent_tool_bar"
             layout="@layout/transparent_tool_bar"></include>
 
-        <com.astuetz.PagerSlidingTabStrip
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <com.astuetz.PagerSlidingTabStrip xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/main_pager_tabstrip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:layout_marginTop="@dimen/material_header_padding"
-            android:textColor="@color/white"
-            android:paddingBottom="5dp"
             android:layout_marginBottom="15dp"
+            android:layout_marginTop="@dimen/material_header_padding"
+            android:background="@android:color/transparent"
+            android:paddingBottom="5dp"
+            android:textColor="@color/white"
             app:pstsIndicatorColor="@color/white"
+            app:pstsPaddingMiddle="true"
             app:pstsTextColorSelected="@color/white"
-            app:pstsUnderlineColor="@android:color/transparent"
-            app:pstsPaddingMiddle="true"/>
+            app:pstsUnderlineColor="@android:color/transparent" />
 
         <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
-                                           android:id="@+id/main_viewpager"
-                                           android:layout_below="@id/main_pager_tabstrip"
-                                           android:layout_width="match_parent"
-                                           android:layout_height="fill_parent">
-        </android.support.v4.view.ViewPager>
+            android:id="@+id/main_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@id/main_pager_tabstrip"></android.support.v4.view.ViewPager>
 
         <org.tndata.android.compass.ui.button.FloatingActionButton
             android:id="@+id/category_fab_button"
@@ -54,7 +52,7 @@
             android:src="@drawable/ic_action_new_large"
             fab:fab_colorNormal="@color/button_paper_fab_color"
             fab:fab_colorPressed="@color/button_paper_fab_selected_color"
-            fab:fab_colorRipple="@color/white"/>
+            fab:fab_colorRipple="@color/white" />
 
     </RelativeLayout>
 
@@ -87,7 +85,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/actionbar_text"/>
+                android:textColor="@color/actionbar_text" />
         </LinearLayout>
 
         <ListView
@@ -100,9 +98,7 @@
             android:listSelector="@drawable/nav_drawer_list_selector"
             android:paddingBottom="10dp"
             android:paddingLeft="5dp"
-            android:paddingRight="5dp"/>
+            android:paddingRight="5dp" />
     </LinearLayout>
-
-
 
 </android.support.v4.widget.DrawerLayout>
