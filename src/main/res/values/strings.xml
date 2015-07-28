@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Compass</string>
-    <string name="version_num">1.3.0</string>
+    <string name="version_num">1.4.0</string>
     <string name="ok">OK</string>
 
     <!-- MainActivity -->
@@ -168,5 +168,11 @@
 
     <!-- MyPrioritiesActivity -->
     <string name="my_priorities_title">My Priorities</string>
+
+    <!-- ActionActivity -->
+    <string name="action_icon_cd">Action icon</string>
+    <string name="action_later">Later</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_did_it">I did it</string>
 
 </resources>

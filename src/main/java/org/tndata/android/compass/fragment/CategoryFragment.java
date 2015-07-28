@@ -1,6 +1,5 @@
 package org.tndata.android.compass.fragment;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -39,7 +38,7 @@ import java.util.ArrayList;
  */
 public class CategoryFragment extends Fragment implements
         CategoryFragmentAdapter.CategoryFragmentAdapterInterface,
-        DeleteGoalTask.DeleteGoalTaskListener{
+        DeleteGoalTask.DeleteGoalTaskListener {
 
     private CompassApplication application;
     private Category mCategory;
@@ -49,8 +48,6 @@ public class CategoryFragment extends Fragment implements
     private CategoryFragmentAdapter mAdapter;
     private ArrayList<Goal> mItems = new ArrayList<Goal>();
     private boolean mBroadcastIsRegistered = false;
-    private CategoryFragmentListener mCallback;
-    
     private static final String TAG = "CategoryFragment";
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -60,10 +57,6 @@ public class CategoryFragment extends Fragment implements
             categoryGoalsUpdated();
         }
     };
-
-    public interface CategoryFragmentListener {
-        public void assignGoalsToCategories(boolean shouldSendBroadcast);
-    }
 
     public static CategoryFragment newInstance(Category category) {
         CategoryFragment fragment = new CategoryFragment();
@@ -109,6 +102,7 @@ public class CategoryFragment extends Fragment implements
         mAdapter = new CategoryFragmentAdapter(getActivity().getApplicationContext(),
                 application, mCategory, this);
         mRecyclerView.setAdapter(mAdapter);
+        mFloatingActionButton.attachToRecyclerView(mRecyclerView);
         registerReceivers();
     }
 
@@ -116,7 +110,6 @@ public class CategoryFragment extends Fragment implements
     public void onResume() {
         super.onResume();
         mAdapter.notifyDataSetChanged();
-        application.logSelectedData("CategoryFragment.onResume");
     }
 
     @Override
@@ -131,25 +124,6 @@ public class CategoryFragment extends Fragment implements
     public void onDestroy() {
         unRegisterReceivers();
         super.onDestroy();
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity); // This makes sure that the container activity
-        // has implemented the callback interface. If not, it throws an
-        // exception
-        try {
-            mCallback = (CategoryFragmentListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement CategoryFragmentListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mCallback = null;
     }
 
     private void registerReceivers() {
@@ -178,16 +152,6 @@ public class CategoryFragment extends Fragment implements
         intent.putExtra("category", mCategory);
         startActivityForResult(intent, Constants.CHOOSE_GOALS_REQUEST_CODE);
         mAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult");
-        if (requestCode == Constants.CHOOSE_GOALS_REQUEST_CODE ||
-                requestCode == Constants.BEHAVIOR_CHANGED_RESULT_CODE ||
-                requestCode == Constants.GOALS_CHANGED_RESULT_CODE) {
-            mCallback.assignGoalsToCategories(true);
-        }
     }
 
     public void categoryGoalsUpdated() {
@@ -263,7 +227,7 @@ public class CategoryFragment extends Fragment implements
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(getText(R.string.goal_dialog_delete_message))
                 .setTitle(getText(R.string.goal_dialog_delete_title))
-                .setNegativeButton(R.string.picker_cancel, new DialogInterface.OnClickListener(){
+                .setNegativeButton(R.string.picker_cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
                     }
@@ -278,4 +242,15 @@ public class CategoryFragment extends Fragment implements
         dialog.show();
     }
 
+    @Override
+    public void cardExpand() {
+        mFloatingActionButton.hide();
+    }
+
+    @Override
+    public void cardCollapse(){
+        if (mRecyclerView.canScrollVertically(1)){
+            mFloatingActionButton.show();
+        }
+    }
 }

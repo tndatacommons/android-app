@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,7 +77,7 @@ public class ChooseActionsActivity extends ActionBarActivity implements
             descriptionTextView = (TextView) itemView
                     .findViewById(R.id.list_item_action_description_textview);
 
-            iconsWrapper = (RelativeLayout) itemView.findViewById(R.id.list_action_icons_wrapper);
+            iconsWrapper = (LinearLayout) itemView.findViewById(R.id.list_action_icons_wrapper);
             selectActionImageView = (ImageView) itemView.findViewById(
                     R.id.list_item_select_action_imageview);
             moreInfoImageView = (ImageView) itemView.findViewById(
@@ -88,7 +89,7 @@ public class ChooseActionsActivity extends ActionBarActivity implements
         ImageView iconImageView;
         TextView headerCardTextView;
 
-        RelativeLayout iconsWrapper;
+        LinearLayout iconsWrapper;
         ImageView selectActionImageView;
         ImageView moreInfoImageView;
     }

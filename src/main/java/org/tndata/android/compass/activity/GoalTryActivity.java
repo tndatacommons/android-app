@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -75,7 +76,7 @@ public class GoalTryActivity extends ActionBarActivity implements
             descriptionTextView = (TextView) itemView
                     .findViewById(R.id.list_item_behavior_description_textview);
 
-            iconsWrapper = (RelativeLayout) itemView.findViewById(R.id.list_icons_wrapper);
+            iconsWrapper = (LinearLayout) itemView.findViewById(R.id.list_icons_wrapper);
             tryItImageView = (ImageView) itemView.findViewById(R.id.list_item_behavior_try_it_imageview);
             selectActionsImageView = (ImageView) itemView.findViewById(R.id.list_item_select_action_imageview);
             moreInfoImageView = (ImageView) itemView.findViewById(R.id.list_item_behavior_info_imageview);
@@ -86,7 +87,7 @@ public class GoalTryActivity extends ActionBarActivity implements
         ImageView iconImageView;
         TextView headerCardTextView;
 
-        RelativeLayout iconsWrapper;
+        LinearLayout iconsWrapper;
         ImageView tryItImageView;
         ImageView selectActionsImageView;
         ImageView moreInfoImageView;
@@ -428,7 +429,6 @@ public class GoalTryActivity extends ActionBarActivity implements
     @Override
     public void behaviorsDeleted() {
         Log.d("GoalTryActivity", "DeleteBehaviorTask completed.");
-        application.logSelectedData("AFTER Deleting a Behavior");
         mAdapter.notifyDataSetChanged();
     }
 
