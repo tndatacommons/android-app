@@ -97,9 +97,12 @@ public class GetUserBehaviorsTask extends AsyncTask<String, Void, ArrayList<Beha
 
     @Override
     protected void onPostExecute(ArrayList<Behavior> behaviors) {
-        Log.e("GetUserBehaviorTask", "Loaded behaviors");
-        for(Behavior b : behaviors) {
-            Log.d("GetUserActionsTask", "- (" + b.getId() + ") " + b.getTitle());
+        if(behaviors != null) {
+            for (Behavior b : behaviors) {
+                Log.d("GetUserBehaviorsTask", "- (" + b.getId() + ") " + b.getTitle());
+            }
+        } else {
+            Log.d("GetUserBehaviorTask", "^^^^^^^ behaviors is null");
         }
         mCallback.behaviorsLoaded(behaviors);
     }
