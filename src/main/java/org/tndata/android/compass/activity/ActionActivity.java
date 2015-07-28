@@ -11,10 +11,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.service.CompleteActionService;
 import org.tndata.android.compass.task.GetUserActionsTask;
 import org.tndata.android.compass.util.ImageLoader;
 
@@ -43,6 +45,10 @@ public class ActionActivity
     private ImageView mActionImage;
     private TextView mActionTitle;
     private TextView mActionDescription;
+    private ViewSwitcher mTickSwitcher;
+
+    //Firewall
+    private boolean mActionComplete;
 
 
     @Override
@@ -58,6 +64,11 @@ public class ActionActivity
         mActionImage = (ImageView)findViewById(R.id.action_image);
         mActionTitle = (TextView)findViewById(R.id.action_title);
         mActionDescription = (TextView)findViewById(R.id.action_description);
+        mTickSwitcher = (ViewSwitcher)findViewById(R.id.action_tick_switcher);
+
+        //Animate the switcher.
+        mTickSwitcher.setInAnimation(this, R.anim.action_switcher_fade_in);
+        mTickSwitcher.setOutAnimation(this, R.anim.action_switcher_fade_out);
 
         //Listeners
         findViewById(R.id.action_later).setOnClickListener(this);
@@ -72,6 +83,8 @@ public class ActionActivity
         else{
             circleView.setBackgroundDrawable(gradientDrawable);
         }
+
+        mActionComplete = false;
 
         int actionId = getIntent().getIntExtra(ACTION_ID_KEY, -1);
         Log.d("ActionActivity", "action: " + actionId);
@@ -102,12 +115,24 @@ public class ActionActivity
         }
     }
 
+    /**
+     * Later clicked.
+     */
     private void later(){
         finish();
     }
 
+    /**
+     * I did it clicked.
+     */
     private void didIt(){
-        //TODO when api supports it
+        if (!mActionComplete){
+            mActionComplete = true;
+            mTickSwitcher.showNext();
+            Intent completeAction = new Intent(this, CompleteActionService.class);
+            completeAction.putExtra(CompleteActionService.ACTION_KEY, mAction.getId());
+            startService(completeAction);
+        }
     }
 
     @Override

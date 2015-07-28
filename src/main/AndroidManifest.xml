@@ -217,6 +217,9 @@
             android:name="org.tndata.android.compass.service.GcmIntentService"
             android:exported="false" />
 
+        <service
+            android:name="org.tndata.android.compass.service.CompleteActionService" />
+
     </application>
 
 </manifest>
