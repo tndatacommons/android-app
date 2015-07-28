@@ -60,7 +60,7 @@ public class BehaviorProgressFragment extends Fragment  {
                 R.id.behavior_progress_off_course);
         ImageButton seeking_button = (ImageButton) v.findViewById(
                 R.id.behavior_progress_seeking);
-        mProgressBar = (ProgressBar) v.findViewById(R.id.behavior_progress_progressbar);
+        mProgressBar = (ProgressBar) v.findViewById(R.id.behavior_progress_progress_bar);
 
         on_track_button.setOnClickListener(new OnClickListener() {
 
