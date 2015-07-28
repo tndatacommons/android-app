@@ -36,8 +36,8 @@ public class BehaviorProgressActivity extends Activity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_behaviorprogress);
-        mProgressBar = (ProgressBar) findViewById(R.id.activity_behavior_progress_progressbar);
+        setContentView(R.layout.activity_behavior_progress);
+        mProgressBar = (ProgressBar) findViewById(R.id.behavior_progress_progress_bar);
         mBehaviorList = new ArrayList<Behavior>();
         loadBehaviors();
     }
