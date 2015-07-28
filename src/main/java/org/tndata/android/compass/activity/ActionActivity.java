@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -154,6 +155,14 @@ public class ActionActivity
             Intent completeAction = new Intent(this, CompleteActionService.class);
             completeAction.putExtra(CompleteActionService.ACTION_KEY, mAction.getId());
             startService(completeAction);
+
+            //Finish the activity after one second
+            new Handler().postDelayed(new Runnable(){
+                @Override
+                public void run(){
+                    finish();;
+                }
+            }, 1000);
         }
     }
 
