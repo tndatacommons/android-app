@@ -1,6 +1,6 @@
 package org.tndata.android.compass.task;
 
-import android.app.Activity;
+import android.app.Service;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -43,7 +43,7 @@ public class CompleteActionTask extends AsyncTask<Void, Void, Void>{
             String url = Constants.BASE_URL + "users/actions/" + actionId + "/complete/";
 
             CompassApplication application;
-            application= (CompassApplication)((Activity)mContext).getApplication();
+            application= (CompassApplication)((Service)mContext).getApplication();
             String token = application.getToken();
 
             Map<String, String> headers = new HashMap<>();

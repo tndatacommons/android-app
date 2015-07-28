@@ -153,14 +153,14 @@ public class ActionActivity
             mActionComplete = true;
             mTickSwitcher.showNext();
             Intent completeAction = new Intent(this, CompleteActionService.class);
-            completeAction.putExtra(CompleteActionService.ACTION_KEY, mAction.getId());
+            completeAction.putExtra(CompleteActionService.ACTION_KEY, mAction.getMappingId());
             startService(completeAction);
 
             //Finish the activity after one second
             new Handler().postDelayed(new Runnable(){
                 @Override
                 public void run(){
-                    finish();;
+                    finish();
                 }
             }, 1000);
         }
