@@ -2,8 +2,11 @@ package org.tndata.android.compass.activity;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +26,7 @@ public class BehaviorProgressActivity extends Activity implements
         BehaviorProgressTask.BehaviorProgressTaskListener,
         GetUserBehaviorsTask.GetUserBehaviorsListener {
 
+    private static final String TAG = "BehaviorProgress";
     private ArrayList<Behavior> mBehaviorList;
     private Behavior mCurrentBehavior;
     private BehaviorProgressFragment mFragment = null;
@@ -31,7 +35,6 @@ public class BehaviorProgressActivity extends Activity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO: we want to launch this from a notification
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_behaviorprogress);
         mProgressBar = (ProgressBar) findViewById(R.id.activity_behavior_progress_progressbar);
@@ -40,9 +43,22 @@ public class BehaviorProgressActivity extends Activity implements
     }
 
     private void loadBehaviors() {
-        new GetUserBehaviorsTask(this).executeOnExecutor(
-                AsyncTask.THREAD_POOL_EXECUTOR,
-                ((CompassApplication) getApplication()).getToken());
+        CompassApplication application = (CompassApplication) getApplication();
+        String token = application.getToken();
+        if(token == null || token.isEmpty()) {
+            // Read from shared preferences instead.
+            SharedPreferences settings = PreferenceManager
+                    .getDefaultSharedPreferences(getApplicationContext());
+            token = settings.getString("auth_token", "");
+        }
+
+        if(!token.isEmpty()) {
+            new GetUserBehaviorsTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, token);
+        } else {
+            // Something is wrong and we don't have an auth token for the user, so fail.
+            Log.e(TAG, "AUTH Token is null, giving up!");
+            finish();
+        }
     }
 
     @Override
@@ -50,6 +66,10 @@ public class BehaviorProgressActivity extends Activity implements
         if(behaviors != null && !behaviors.isEmpty()) {
             mBehaviorList.addAll(behaviors);
             mProgressBar.setVisibility(View.GONE);
+            Log.d(TAG, "Behaviors: " + behaviors.toString());
+        }
+        else {
+            Log.d(TAG, "---- No Behaviors retrieved. ---");
         }
         setCurrentBehavior();
     }
