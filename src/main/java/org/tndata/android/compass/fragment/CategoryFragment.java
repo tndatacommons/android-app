@@ -248,10 +248,9 @@ public class CategoryFragment extends Fragment implements
     }
 
     @Override
-    public void cardCollapse() {
-        if (!mRecyclerView.canScrollVertically(-1)) { //Negative to check scrolling up
+    public void cardCollapse(){
+        if (mRecyclerView.canScrollVertically(1)){
             mFloatingActionButton.show();
         }
     }
-
 }
