@@ -169,14 +169,16 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter<MyPrioritiesGo
             }
         }
 
-        //Add behaviours view
-        PriorityItemView addBehaviors = getPriorityItemView();
-        addBehaviors.setItemHierarchy(new ItemHierarchy(mCategory, goal, null, null));
-        addBehaviors.setLeftPadding(0);
-        addBehaviors.getTextView().setText("Add a new activity");
-        addBehaviors.getImageView().setVisibility(View.GONE);
-        addBehaviors.setOnClickListener(holder);
-        holder.offspring.addView(addBehaviors);
+        if (goal.getBehaviorCount() > 0){
+            //Add behaviours view
+            PriorityItemView addBehaviors = getPriorityItemView();
+            addBehaviors.setItemHierarchy(new ItemHierarchy(mCategory, goal, null, null));
+            addBehaviors.setLeftPadding(0);
+            addBehaviors.getTextView().setText("Add a new activity");
+            addBehaviors.getImageView().setVisibility(View.GONE);
+            addBehaviors.setOnClickListener(holder);
+            holder.offspring.addView(addBehaviors);
+        }
     }
 
     /**
