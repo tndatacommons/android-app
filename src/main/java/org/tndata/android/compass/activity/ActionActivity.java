@@ -1,20 +1,25 @@
 package org.tndata.android.compass.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.service.CompleteActionService;
 import org.tndata.android.compass.task.GetUserActionsTask;
 import org.tndata.android.compass.util.ImageLoader;
 
@@ -23,10 +28,10 @@ import java.util.ArrayList;
 
 /**
  * Displays an action after clicking a notification and allows the user to report
- * whether they did it or to cancel or snooze the action.
+ * whether they did it or snooze the action.
  *
  * @author Ismael Alonso
- * @version 1.0.0
+ * @version 1.1.0
  */
 public class ActionActivity
         extends ActionBarActivity
@@ -43,6 +48,10 @@ public class ActionActivity
     private ImageView mActionImage;
     private TextView mActionTitle;
     private TextView mActionDescription;
+    private ViewSwitcher mTickSwitcher;
+
+    //Firewall
+    private boolean mActionComplete;
 
 
     @Override
@@ -58,6 +67,11 @@ public class ActionActivity
         mActionImage = (ImageView)findViewById(R.id.action_image);
         mActionTitle = (TextView)findViewById(R.id.action_title);
         mActionDescription = (TextView)findViewById(R.id.action_description);
+        mTickSwitcher = (ViewSwitcher)findViewById(R.id.action_tick_switcher);
+
+        //Animate the switcher.
+        mTickSwitcher.setInAnimation(this, R.anim.action_switcher_fade_in);
+        mTickSwitcher.setOutAnimation(this, R.anim.action_switcher_fade_out);
 
         //Listeners
         findViewById(R.id.action_later).setOnClickListener(this);
@@ -73,20 +87,42 @@ public class ActionActivity
             circleView.setBackgroundDrawable(gradientDrawable);
         }
 
-        int actionId = getIntent().getIntExtra(ACTION_ID_KEY, -1);
-        Log.d("ActionActivity", "action: " + actionId);
-        new GetUserActionsTask(this).execute(((CompassApplication)getApplication()).getToken(),
-                "action:" + actionId);
+        mActionComplete = false;
+
+        fetchAction(getIntent().getIntExtra(ACTION_ID_KEY, -1));
     }
 
     @Override
     protected void onNewIntent(Intent intent){
         super.onNewIntent(intent);
         Log.d("ActionActivity", "onNewIntent");
-        int actionId = getIntent().getIntExtra(ACTION_ID_KEY, -1);
+        fetchAction(getIntent().getIntExtra(ACTION_ID_KEY, -1));
+    }
+
+    /**
+     * Retrieves an action from an id.
+     *
+     * @param actionId the id of the action to be fetched.
+     */
+    private void fetchAction(int actionId){
         Log.d("ActionActivity", "action: " + actionId);
-        new GetUserActionsTask(this).execute(((CompassApplication)getApplication()).getToken(),
-                "action:" + actionId);
+        CompassApplication application = (CompassApplication)getApplication();
+        String token = application.getToken();
+        if (token == null || token.isEmpty()){
+            // Read from shared preferences instead.
+            SharedPreferences settings = PreferenceManager
+                    .getDefaultSharedPreferences(getApplicationContext());
+            token = settings.getString("auth_token", "");
+        }
+
+        if(token != null && !token.isEmpty()){
+            new GetUserActionsTask(this).execute(token, "action:" + actionId);
+        }
+        else{
+            //Something is wrong and we don't have an auth token for the user, so fail.
+            Log.e("ActionActivity", "AUTH Token is null, giving up!");
+            finish();
+        }
     }
 
     @Override
@@ -102,12 +138,32 @@ public class ActionActivity
         }
     }
 
+    /**
+     * Later clicked.
+     */
     private void later(){
         finish();
     }
 
+    /**
+     * I did it clicked.
+     */
     private void didIt(){
-        //TODO when api supports it
+        if (!mActionComplete){
+            mActionComplete = true;
+            mTickSwitcher.showNext();
+            Intent completeAction = new Intent(this, CompleteActionService.class);
+            completeAction.putExtra(CompleteActionService.ACTION_KEY, mAction.getMappingId());
+            startService(completeAction);
+
+            //Finish the activity after one second
+            new Handler().postDelayed(new Runnable(){
+                @Override
+                public void run(){
+                    finish();
+                }
+            }, 1000);
+        }
     }
 
     @Override

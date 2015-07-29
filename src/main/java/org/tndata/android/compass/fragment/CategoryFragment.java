@@ -74,20 +74,26 @@ public class CategoryFragment extends Fragment implements
         application = (CompassApplication) getActivity().getApplication();
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = getActivity().getLayoutInflater().inflate(
                 R.layout.fragment_category, container, false);
-        mFloatingActionButton = (FloatingActionButton) v.findViewById(R.id.category_fab_button);
-        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addGoals();
-            }
-        });
-
         return v;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    addGoals();
+                }
+            });
+        }
     }
 
     @Override
@@ -253,4 +259,9 @@ public class CategoryFragment extends Fragment implements
             mFloatingActionButton.show();
         }
     }
+
+    public void setFloatingActionButton(FloatingActionButton fab) {
+        mFloatingActionButton = fab;
+    }
+
 }
