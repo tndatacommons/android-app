@@ -177,7 +177,6 @@
 
     <!-- TourFragment -->
     <string name="tour_action_skip">SKIP</string>
-    <string name="tour_action_finish">FINISH</string>
 
 
 </resources>

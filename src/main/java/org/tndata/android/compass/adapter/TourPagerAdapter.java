@@ -38,7 +38,6 @@ public class TourPagerAdapter extends PagerAdapter {
 
         ImageView imageView = (ImageView) itemView.findViewById(R.id.tourImageView);
         imageView.setImageResource(images[position]);
-
         container.addView(itemView);
 
         return itemView;

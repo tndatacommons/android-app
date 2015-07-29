@@ -58,12 +58,12 @@ public class LoginActivity extends ActionBarActivity implements
 
         SharedPreferences settings = getSharedPreferences(Constants.PREFERENCES_NAME, 0);
 
-        if(settings.getBoolean(Constants.PREFERENCES_NEW_USER, true)) {
+        if (settings.getBoolean(Constants.PREFERENCES_NEW_USER, true)) {
             swapFragments(TOUR, true);
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean(Constants.PREFERENCES_NEW_USER, false);
             editor.commit();
-        }else{
+        } else {
             swapFragments(DEFAULT, true);
         }
     }
@@ -92,9 +92,9 @@ public class LoginActivity extends ActionBarActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case android.R.id.home:
-            handleBackStack();
-            return true;
+            case android.R.id.home:
+                handleBackStack();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -160,52 +160,52 @@ public class LoginActivity extends ActionBarActivity implements
     private void swapFragments(int index, boolean addToStack) {
         Fragment fragment = null;
         switch (index) {
-        case DEFAULT:
-            if (mLauncherFragment == null) {
-                mLauncherFragment = new LauncherFragment();
-            }
-            fragment = mLauncherFragment;
-            getSupportActionBar().hide();
-            break;
-        case LOGIN:
-            if (mLoginFragment == null) {
-                mLoginFragment = new LoginFragment();
-            }
-            fragment = mLoginFragment;
-            getSupportActionBar().hide();
-            break;
-        case SIGN_UP:
-            if (mSignUpFragment == null) {
-                mSignUpFragment = new SignUpFragment();
-            }
-            fragment = mSignUpFragment;
-            getSupportActionBar().hide();
-            break;
-        case TERMS:
-            if (mWebFragment == null) {
-                mWebFragment = new WebFragment();
-            }
-            fragment = mWebFragment;
-            getSupportActionBar().show();
-            mToolbar.setTitle(R.string.terms_title);
-            mWebFragment.setUrl(Constants.TERMS_AND_CONDITIONS_URL);
-            break;
-        case TOUR:
+            case DEFAULT:
+                if (mLauncherFragment == null) {
+                    mLauncherFragment = new LauncherFragment();
+                }
+                fragment = mLauncherFragment;
+                getSupportActionBar().hide();
+                break;
+            case LOGIN:
+                if (mLoginFragment == null) {
+                    mLoginFragment = new LoginFragment();
+                }
+                fragment = mLoginFragment;
+                getSupportActionBar().hide();
+                break;
+            case SIGN_UP:
+                if (mSignUpFragment == null) {
+                    mSignUpFragment = new SignUpFragment();
+                }
+                fragment = mSignUpFragment;
+                getSupportActionBar().hide();
+                break;
+            case TERMS:
+                if (mWebFragment == null) {
+                    mWebFragment = new WebFragment();
+                }
+                fragment = mWebFragment;
+                getSupportActionBar().show();
+                mToolbar.setTitle(R.string.terms_title);
+                mWebFragment.setUrl(Constants.TERMS_AND_CONDITIONS_URL);
+                break;
+            case TOUR:
                 if (mTourFragment == null) {
                     mTourFragment = new TourFragment();
                 }
                 fragment = mTourFragment;
                 getSupportActionBar().hide();
-            break;
-        default:
-            break;
+                break;
+            default:
+                break;
         }
         if (fragment != null) {
             if (addToStack) {
                 mFragmentStack.add(fragment);
             }
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.base_content, fragment).commit();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.base_content, fragment).commit();
         }
 
     }
@@ -276,7 +276,7 @@ public class LoginActivity extends ActionBarActivity implements
     }
 
     @Override
-    public void tourFinish(){
+    public void tourFinish() {
         swapFragments(DEFAULT, true);
     }
 }

@@ -31,6 +31,7 @@ public class TourActivity
     @Override
     public void tourFinish() {
         finish();
+        this.overridePendingTransition(R.anim.push_in, R.anim.push_out);
     }
 
 }
