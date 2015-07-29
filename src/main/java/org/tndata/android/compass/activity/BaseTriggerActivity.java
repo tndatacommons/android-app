@@ -88,7 +88,9 @@ public class BaseTriggerActivity extends ActionBarActivity implements
         mDateSelected = false;
 
         mLocalTimeFormatter = new SimpleDateFormat("h:mm a", Locale.getDefault());
+        mLocalTimeFormatter.setTimeZone(TimeZone.getDefault());
         mLocalDateFormatter = new SimpleDateFormat("MMM d y", Locale.getDefault());
+        mLocalDateFormatter.setTimeZone(TimeZone.getDefault());
         mUtcTimeFormatter = new SimpleDateFormat("HH:mm", Locale.getDefault());
         mUtcTimeFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
         mUtcDateFormatter = new SimpleDateFormat("y-MM-d", Locale.getDefault());
@@ -108,30 +110,20 @@ public class BaseTriggerActivity extends ActionBarActivity implements
         // initialize local vars with a given Trigger
         if(trigger != null){
             try{
-                String datetime = trigger.getDate();
+                String datetime = trigger.getRawDate();
                 if (datetime.equals("")){
-                    datetime = trigger.getTime();
+                    datetime = trigger.getRawTime();
                     if (!datetime.equals("")){
                         mTimeSelected = true;
-                        if (trigger.isDefaultTrigger()){
-                            mDateTime = mLocalTimeParser.parse(datetime);
-                        }
-                        else{
-                            mDateTime = mUtcTimeFormatter.parse(datetime);
-                        }
+                        mDateTime = mLocalTimeParser.parse(datetime);
                     }
                 }
                 else{
                     mDateSelected = true;
                     mTimeSelected = true;
 
-                    datetime += " " + trigger.getTime();
-                    if (trigger.isDefaultTrigger()){
-                        mDateTime = mLocalDateTimeParser.parse(datetime);
-                    }
-                    else{
-                        mDateTime = mUtcDateTimeParser.parse(datetime);
-                    }
+                    datetime += " " + trigger.getRawTime();
+                    mDateTime = mLocalDateTimeParser.parse(datetime);
                 }
             }
             catch (ParseException px){

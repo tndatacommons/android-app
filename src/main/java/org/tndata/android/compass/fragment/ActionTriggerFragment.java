@@ -145,11 +145,11 @@ public class ActionTriggerFragment extends Fragment {
 
         // Update labels with Trigger details if applicable.
         if(trigger != null) {
-            if(!trigger.getTime().isEmpty()) {
-                updateTimeView(trigger.getParsedTime());
+            if(!trigger.getRawTime().isEmpty()) {
+                updateTimeView(trigger.getTime());
             }
-            if(!trigger.getDate().isEmpty()) {
-                updateDateView(trigger.getParsedDate());
+            if(!trigger.getRawDate().isEmpty()) {
+                updateDateView(trigger.getDate());
             }
             if(!trigger.getRecurrences().isEmpty()) {
                 updateRecurrenceView(trigger.getRecurrencesDisplay());
