@@ -7,8 +7,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -18,43 +16,73 @@ import org.tndata.android.compass.fragment.BehaviorProgressFragment;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.task.BehaviorProgressTask;
 import org.tndata.android.compass.task.GetUserBehaviorsTask;
+import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
-public class BehaviorProgressActivity extends Activity implements
-        BehaviorProgressFragment.BehaviorProgressFragmentListener,
-        BehaviorProgressTask.BehaviorProgressTaskListener,
-        GetUserBehaviorsTask.GetUserBehaviorsListener {
+
+/**
+ * Displays behaviors and allows the user to report his progress on them.
+ *
+ * @author Edited by Ismael Alonso
+ * @version 2.0.0
+ */
+public class BehaviorProgressActivity
+        extends Activity
+        implements
+                View.OnClickListener,
+                BehaviorProgressTask.BehaviorProgressTaskListener,
+                GetUserBehaviorsTask.GetUserBehaviorsListener{
 
     private static final String TAG = "BehaviorProgress";
-    private ArrayList<Behavior> mBehaviorList;
-    private Behavior mCurrentBehavior;
-    private BehaviorProgressFragment mFragment = null;
-    private ArrayList<Fragment> mFragmentStack = new ArrayList<Fragment>();
+
+    //UI components
     private ProgressBar mProgressBar;
 
+    //The actual data
+    private LinkedList<Behavior> mBehaviorList;
+    private Behavior mCurrentBehavior;
+
+    //A firewall.
+    private boolean mSavingBehavior;
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_behaviorprogress);
-        mProgressBar = (ProgressBar) findViewById(R.id.activity_behavior_progress_progressbar);
-        mBehaviorList = new ArrayList<Behavior>();
+        setContentView(R.layout.activity_behavior_progress);
+
+        mProgressBar = (ProgressBar) findViewById(R.id.behavior_progress_progress_bar);
+        mBehaviorList = new LinkedList<>();
+
+        findViewById(R.id.behavior_progress_on_track).setOnClickListener(this);
+        findViewById(R.id.behavior_progress_seeking).setOnClickListener(this);
+        findViewById(R.id.behavior_progress_off_course).setOnClickListener(this);
+
+        mSavingBehavior = true;
+
         loadBehaviors();
     }
 
-    private void loadBehaviors() {
-        CompassApplication application = (CompassApplication) getApplication();
+    /**
+     * Fires up the task that retrieves the user behaviors.
+     */
+    private void loadBehaviors(){
+        Log.d(TAG, "Loading user behaviors");
+        CompassApplication application = (CompassApplication)getApplication();
         String token = application.getToken();
-        if(token == null || token.isEmpty()) {
+        if (token == null || token.isEmpty()){
             // Read from shared preferences instead.
             SharedPreferences settings = PreferenceManager
                     .getDefaultSharedPreferences(getApplicationContext());
             token = settings.getString("auth_token", "");
         }
 
-        if(!token.isEmpty()) {
+        if (token != null && !token.isEmpty()){
             new GetUserBehaviorsTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, token);
-        } else {
+        }
+        else{
             // Something is wrong and we don't have an auth token for the user, so fail.
             Log.e(TAG, "AUTH Token is null, giving up!");
             finish();
@@ -62,81 +90,75 @@ public class BehaviorProgressActivity extends Activity implements
     }
 
     @Override
-    public void behaviorsLoaded(ArrayList<Behavior> behaviors) {
-        if(behaviors != null && !behaviors.isEmpty()) {
+    public void behaviorsLoaded(ArrayList<Behavior> behaviors){
+        if (behaviors != null && !behaviors.isEmpty()){
             mBehaviorList.addAll(behaviors);
-            mProgressBar.setVisibility(View.GONE);
             Log.d(TAG, "Behaviors: " + behaviors.toString());
         }
         else {
             Log.d(TAG, "---- No Behaviors retrieved. ---");
         }
-        setCurrentBehavior();
+        nextBehavior();
     }
 
-    private void setCurrentBehavior() {
-        if(!mBehaviorList.isEmpty()){
-            mCurrentBehavior = mBehaviorList.remove(0);
-            swapFragments(true);
-        } else {
+    /**
+     * Displays the next behavior in the queue, if there are none, it closes the activity.
+     */
+    private void nextBehavior(){
+        if (!mBehaviorList.isEmpty()){
+            mProgressBar.setVisibility(View.INVISIBLE);
+            mCurrentBehavior = mBehaviorList.removeFirst();
+            mSavingBehavior = false;
+
+            int enter = R.animator.behavior_progress_next_in;
+            int exit = R.animator.behavior_progress_current_out;
+
+            Fragment fragment = BehaviorProgressFragment.newInstance(mCurrentBehavior);
+            getFragmentManager().beginTransaction()
+                    .setCustomAnimations(enter, exit)
+                    .replace(R.id.behavior_progress_content, fragment)
+                    .commit();
+        }
+        else{
             mCurrentBehavior = null;
             finish();
         }
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_BACK)) { // Back key pressed
-            handleBackStack();
-            return true;
+    public void onClick(View view){
+        switch (view.getId()){
+            case R.id.behavior_progress_on_track:
+                onProgressSelected(Constants.BEHAVIOR_ON_COURSE);
+                break;
+
+            case R.id.behavior_progress_seeking:
+                onProgressSelected(Constants.BEHAVIOR_SEEKING);
+                break;
+
+            case R.id.behavior_progress_off_course:
+                onProgressSelected(Constants.BEHAVIOR_OFF_COURSE);
+                break;
         }
-        return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * Called when a progress button is clicked.
+     *
+     * @param progressValue indicates which progress button was clicked.
+     */
+    private void onProgressSelected(int progressValue){
+        if (!mSavingBehavior){
+            mSavingBehavior = true;
+            mProgressBar.setVisibility(View.VISIBLE);
+            new BehaviorProgressTask(this, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    String.valueOf(mCurrentBehavior.getId()), String.valueOf(progressValue));
+        }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                handleBackStack();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void saveBehaviorProgress(int progressValue) {
-        new BehaviorProgressTask(this, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                String.valueOf(mCurrentBehavior.getId()),
-                String.valueOf(progressValue));
-        // NOTE: behaviorProgressSaved() is the above task's callback
-    }
-
-    @Override
-    public void behaviorProgressSaved() {
-        setCurrentBehavior();
-    }
-
-    private void swapFragments(boolean addToStack) {
-        Fragment fragment;
-
-        mFragment = BehaviorProgressFragment.newInstance(mCurrentBehavior);
-        fragment = mFragment;
-        if (addToStack) {
-            mFragmentStack.add(fragment);
-        }
-        getFragmentManager().beginTransaction()
-                .replace(R.id.behavior_progress_content, fragment).commit();
-    }
-
-    // TODO: Do we even want to do this?
-    private void handleBackStack() {
-        if (!mFragmentStack.isEmpty()) {
-            mFragmentStack.remove(mFragmentStack.size() - 1);
-        }
-        if (mFragmentStack.isEmpty()) {
-            finish();
-        } else {
-            swapFragments(false);
-        }
+    public void behaviorProgressSaved(){
+        Log.d(TAG, "Behavior progress saved");
+        nextBehavior();
     }
 }

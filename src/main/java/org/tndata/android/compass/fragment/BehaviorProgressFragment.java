@@ -1,114 +1,80 @@
 package org.tndata.android.compass.fragment;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Behavior;
-import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.model.Category;
 
-public class BehaviorProgressFragment extends Fragment  {
+import java.util.ArrayList;
 
+
+/**
+ * Displays a behavior and allows the user to report progress.
+ *
+ * @author Edited by Ismael Alonso
+ * @version 1.1.0
+ */
+public class BehaviorProgressFragment extends Fragment{
     private Behavior mBehavior;
-    private ProgressBar mProgressBar;
-    private BehaviorProgressFragmentListener mCallback;
 
 
-    public interface BehaviorProgressFragmentListener {
-        public void saveBehaviorProgress(int progressValue);
-    }
-
-    public void setBehavior(Behavior behavior) {
-        mBehavior = behavior;
-    }
-
-    public static BehaviorProgressFragment newInstance(Behavior behavior) {
-        BehaviorProgressFragment fragment = new BehaviorProgressFragment();
+    /**
+     * Creates a new fragment and delivers the behavior in a bundle.
+     *
+     * @param behavior the behavior this fragment represents.
+     * @return the newly created fragment.
+     */
+    public static BehaviorProgressFragment newInstance(@NonNull Behavior behavior){
         Bundle args = new Bundle();
         args.putSerializable("behavior", behavior);
+
+        BehaviorProgressFragment fragment = new BehaviorProgressFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        mBehavior = getArguments() == null ? new Behavior() :
-                ((Behavior) getArguments().get("behavior"));
+        mBehavior = (getArguments() == null) ?
+                new Behavior() : ((Behavior) getArguments().get("behavior"));
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v = getActivity().getLayoutInflater().inflate(
-                R.layout.fragment_behavior_progress, container, false);
-        TextView titleTextView = (TextView) v
-                .findViewById(R.id.behavior_progress_behavior_label);
-        titleTextView.setText(mBehavior.getTitle());
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        View v = inflater.inflate(R.layout.fragment_behavior_progress, container, false);
 
-        ImageButton on_track_button = (ImageButton) v.findViewById(
-                R.id.behavior_progress_on_track);
-        ImageButton off_course_button = (ImageButton) v.findViewById(
-                R.id.behavior_progress_off_course);
-        ImageButton seeking_button = (ImageButton) v.findViewById(
-                R.id.behavior_progress_seeking);
-        mProgressBar = (ProgressBar) v.findViewById(R.id.behavior_progress_progressbar);
-
-        on_track_button.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                mProgressBar.setVisibility(View.VISIBLE);
-                mCallback.saveBehaviorProgress(Constants.BEHAVIOR_ON_COURSE);
+        String label = "My ";
+        ArrayList<Category> categories = mBehavior.getUserCategories();
+        if (categories.size() == 1){
+            label += categories.get(0).getTitle().toUpperCase();
+        }
+        else if (categories.size() == 2){
+            label += categories.get(0).getTitle().toUpperCase();
+            label += " and ";
+            label += categories.get(1).getTitle().toUpperCase();
+        }
+        else if (categories.size() >= 3){
+            for (int i = 0; i < categories.size()-1; i++){
+                label += categories.get(i).getTitle().toUpperCase();
+                label += ", ";
             }
-        });
+            label += "and " + categories.get(categories.size()-1).getTitle().toUpperCase();
+        }
+        label += ". That's why I want to:";
+        TextView behaviorLabel = (TextView)v.findViewById(R.id.behavior_progress_behavior_label);
+        behaviorLabel.setText(label);
 
-        off_course_button.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                mProgressBar.setVisibility(View.VISIBLE);
-                mCallback.saveBehaviorProgress(Constants.BEHAVIOR_OFF_COURSE);
-            }
-        });
-
-        seeking_button.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                mProgressBar.setVisibility(View.VISIBLE);
-                mCallback.saveBehaviorProgress(Constants.BEHAVIOR_SEEKING);
-            }
-        });
+        TextView behaviorTitle = (TextView)v.findViewById(R.id.behavior_progress_behavior_title);
+        behaviorTitle.setText(mBehavior.getTitle());
 
         return v;
     }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity); // This makes sure that the container activity
-        // has implemented the callback interface. If not, it throws an
-        // exception
-        try {
-            mCallback = (BehaviorProgressFragmentListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement BehaviorProgressFragmentListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mCallback = null;
-    }
-
 }

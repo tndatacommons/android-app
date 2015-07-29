@@ -10,6 +10,7 @@ import com.google.gson.GsonBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.tndata.android.compass.model.Behavior;
+import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
@@ -83,6 +84,12 @@ public class GetUserBehaviorsTask extends AsyncTask<String, Void, ArrayList<Beha
                     goals.add(goal);
                 }
                 behavior.setGoals(goals);
+                JSONArray categoryArray = userBehavior.getJSONArray("user_categories");
+                ArrayList<Category> categories = behavior.getUserCategories();
+                for (int j = 0; j < categoryArray.length(); j++){
+                    Category userCategory = gson.fromJson(categoryArray.getString(j), Category.class);
+                    categories.add(userCategory);
+                }
                 behaviors.add(behavior);
             }
             return behaviors;
