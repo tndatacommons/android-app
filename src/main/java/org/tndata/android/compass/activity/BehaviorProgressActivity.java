@@ -30,7 +30,7 @@ import java.util.LinkedList;
 public class BehaviorProgressActivity
         extends Activity
         implements
-                BehaviorProgressFragment.BehaviorProgressFragmentListener,
+        BehaviorProgressFragment.OnProgressSelectedListener,
                 BehaviorProgressTask.BehaviorProgressTaskListener,
                 GetUserBehaviorsTask.GetUserBehaviorsListener{
 
@@ -114,7 +114,7 @@ public class BehaviorProgressActivity
     }
 
     @Override
-    public void saveBehaviorProgress(int progressValue){
+    public void onProgressSelected(int progressValue){
         if (!mSavingBehavior){
             mSavingBehavior = true;
             new BehaviorProgressTask(this, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
