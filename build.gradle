@@ -46,13 +46,14 @@ repositories {
 dependencies {
     compile 'com.android.support:recyclerview-v7:22.0.0'
     compile 'com.android.support:cardview-v7:22.0.0'
-    compile 'com.android.support:support-v4:22.0.0'
+    compile 'com.android.support:support-v4:22.2.1'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.android.support:appcompat-v7:22.0.0'
     compile 'de.hdodenhof:circleimageview:1.2.2'
     compile 'com.jpardogo.materialtabstrip:library:1.0.9'
     compile "com.google.android.gms:play-services:3.1.+"
     compile 'org.jraf:android-switch-backport:1.4.0@aar'
+    compile 'me.relex:circleindicator:1.1.5@aar'
     compile ("com.doomonafireball.betterpickers:library:1.6.0") {
         exclude group: 'com.android.support', module: 'support-v4'
     }
