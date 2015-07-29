@@ -30,7 +30,7 @@ import java.util.LinkedList;
 public class BehaviorProgressActivity
         extends Activity
         implements
-        BehaviorProgressFragment.OnProgressSelectedListener,
+                BehaviorProgressFragment.OnProgressSelectedListener,
                 BehaviorProgressTask.BehaviorProgressTaskListener,
                 GetUserBehaviorsTask.GetUserBehaviorsListener{
 
@@ -103,8 +103,12 @@ public class BehaviorProgressActivity
         if (!mBehaviorList.isEmpty()){
             mCurrentBehavior = mBehaviorList.removeFirst();
 
+            int enter = R.animator.behavior_progress_next_in;
+            int exit = R.animator.behavior_progress_current_out;
+
             Fragment fragment = BehaviorProgressFragment.newInstance(mCurrentBehavior);
             getFragmentManager().beginTransaction()
+                    .setCustomAnimations(enter, exit)
                     .replace(R.id.behavior_progress_content, fragment).commit();
         }
         else{
