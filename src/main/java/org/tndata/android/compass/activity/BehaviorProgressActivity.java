@@ -116,7 +116,8 @@ public class BehaviorProgressActivity
             Fragment fragment = BehaviorProgressFragment.newInstance(mCurrentBehavior);
             getFragmentManager().beginTransaction()
                     .setCustomAnimations(enter, exit)
-                    .replace(R.id.behavior_progress_content, fragment).commit();
+                    .replace(R.id.behavior_progress_content, fragment)
+                    .commit();
         }
         else{
             mCurrentBehavior = null;

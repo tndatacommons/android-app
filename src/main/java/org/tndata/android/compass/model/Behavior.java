@@ -19,6 +19,7 @@ public class Behavior extends TDCBase implements Serializable,
     private String icon_url = "";
     private String image_url = "";
     private int actions_count = 0;
+    private ArrayList<Category> userCategories = new ArrayList<>();
     private ArrayList<Goal> goals = new ArrayList<Goal>();
     private ArrayList<Action> actions = new ArrayList<Action>();
 
@@ -93,6 +94,10 @@ public class Behavior extends TDCBase implements Serializable,
 
     public void setImageUrl(String image_url) {
         this.image_url = image_url;
+    }
+
+    public ArrayList<Category> getUserCategories(){
+        return userCategories;
     }
 
     public ArrayList<Goal> getGoals() {
