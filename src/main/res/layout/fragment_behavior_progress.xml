@@ -10,6 +10,7 @@
         android:layout_height="0dp"
         android:layout_weight="0.5"
         android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:gravity="center_vertical"
         android:textColor="@color/dark_text_color"
         android:textAppearance="?android:attr/textAppearanceMedium"
@@ -21,6 +22,7 @@
         android:layout_height="0dp"
         android:layout_weight="0.5"
         android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:textColor="@color/grow_primary"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:padding="10dp" />
