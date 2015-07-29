@@ -71,7 +71,7 @@ public class MainActivity extends ActionBarActivity implements
     public void onBackPressed() {
         // This activity may switch tabs when a user taps a card, so after doing that,
         // we want the back button to return the user to the default tab.
-        if(backButtonSelectsDefaultTab) {
+        if (backButtonSelectsDefaultTab) {
             activateTab(DEFAULT_TAB);
             backButtonSelectsDefaultTab = false; // resets default behavior
         } else {
@@ -151,7 +151,7 @@ public class MainActivity extends ActionBarActivity implements
             }
         });
 
-        if(application.getCategories().isEmpty()) {
+        if (application.getCategories().isEmpty()) {
             // Load all user-selected content from the API
             new GetUserDataTask(this).executeOnExecutor(
                     AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
@@ -205,8 +205,7 @@ public class MainActivity extends ActionBarActivity implements
                     startActivity(intent);
                     break;
                 case TOUR:
-//                    intent = new Intent(getApplicationContext(), .class);
-//                    startActivity(intent);
+                    startActivity(new Intent(getApplicationContext(), TourActivity.class));
                     break;
             }
             mDrawerLayout.closeDrawers();

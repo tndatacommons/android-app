@@ -175,4 +175,9 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_did_it">I did it</string>
 
+    <!-- TourFragment -->
+    <string name="tour_action_skip">SKIP</string>
+    <string name="tour_action_finish">FINISH</string>
+
+
 </resources>

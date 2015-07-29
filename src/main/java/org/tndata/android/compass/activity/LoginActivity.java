@@ -20,6 +20,7 @@ import org.tndata.android.compass.fragment.LoginFragment.LoginFragmentListener;
 import org.tndata.android.compass.fragment.SignUpFragment;
 import org.tndata.android.compass.fragment.SignUpFragment.SignUpFragmentListener;
 import org.tndata.android.compass.fragment.TourFragment;
+import org.tndata.android.compass.fragment.TourFragment.TourFragmentListener;
 import org.tndata.android.compass.fragment.WebFragment;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.task.LoginTask;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 
 public class LoginActivity extends ActionBarActivity implements
         LauncherFragmentListener, SignUpFragmentListener,
-        LoginFragmentListener, LoginTaskListener {
+        LoginFragmentListener, LoginTaskListener, TourFragmentListener {
     private static final int DEFAULT = 0;
     private static final int LOGIN = 1;
     private static final int SIGN_UP = 2;
@@ -54,7 +55,17 @@ public class LoginActivity extends ActionBarActivity implements
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().hide();
-        swapFragments(DEFAULT, true);
+
+        SharedPreferences settings = getSharedPreferences(Constants.PREFERENCES_NAME, 0);
+
+        if(settings.getBoolean(Constants.PREFERENCES_NEW_USER, true)) {
+            swapFragments(TOUR, true);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(Constants.PREFERENCES_NEW_USER, false);
+            editor.commit();
+        }else{
+            swapFragments(DEFAULT, true);
+        }
     }
 
     @Override
@@ -211,7 +222,7 @@ public class LoginActivity extends ActionBarActivity implements
 
     @Override
     public void tour() {
-        //swapFragments(TOUR, true);
+        swapFragments(TOUR, true);
     }
 
     @Override
@@ -262,5 +273,10 @@ public class LoginActivity extends ActionBarActivity implements
     @Override
     public void showTermsAndConditions() {
         swapFragments(TERMS, true);
+    }
+
+    @Override
+    public void tourFinish(){
+        swapFragments(DEFAULT, true);
     }
 }
