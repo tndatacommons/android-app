@@ -193,7 +193,7 @@
                 android:value="org.tndata.android.compass.activity.MainActivity"/>
         </activity>
         <activity
-            android:name="org.tndata.android.compass.activity.ActionTriggerActivity"
+            android:name="org.tndata.android.compass.activity.TriggerActivity"
             android:parentActivityName="org.tndata.android.compass.activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>

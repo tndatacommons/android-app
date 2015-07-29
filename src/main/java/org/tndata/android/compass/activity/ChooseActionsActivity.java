@@ -358,7 +358,7 @@ public class ChooseActionsActivity extends ActionBarActivity implements
         mAdapter.notifyDataSetChanged();
 
         // launch trigger stuff
-        Intent intent = new Intent(getApplicationContext(), ActionTriggerActivity.class);
+        Intent intent = new Intent(getApplicationContext(), TriggerActivity.class);
         intent.putExtra("goal", mGoal);
         intent.putExtra("action", action);
         startActivity(intent);

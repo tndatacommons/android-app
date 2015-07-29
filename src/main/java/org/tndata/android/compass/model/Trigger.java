@@ -307,7 +307,7 @@ public class Trigger implements Serializable, Comparable<Trigger>{
      * @return the date as a string.
      */
     public String getFormattedDate(){
-        return getFormattedTime(new SimpleDateFormat("MMM d yyyy", Locale.getDefault()));
+        return getFormattedDate(new SimpleDateFormat("MMM d yyyy", Locale.getDefault()));
     }
 
     /**
