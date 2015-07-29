@@ -16,6 +16,7 @@ import org.tndata.android.compass.fragment.BehaviorProgressFragment;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.task.BehaviorProgressTask;
 import org.tndata.android.compass.task.GetUserBehaviorsTask;
+import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -30,7 +31,7 @@ import java.util.LinkedList;
 public class BehaviorProgressActivity
         extends Activity
         implements
-                BehaviorProgressFragment.OnProgressSelectedListener,
+                View.OnClickListener,
                 BehaviorProgressTask.BehaviorProgressTaskListener,
                 GetUserBehaviorsTask.GetUserBehaviorsListener{
 
@@ -55,7 +56,11 @@ public class BehaviorProgressActivity
         mProgressBar = (ProgressBar) findViewById(R.id.behavior_progress_progress_bar);
         mBehaviorList = new LinkedList<>();
 
-        mSavingBehavior = false;
+        findViewById(R.id.behavior_progress_on_track).setOnClickListener(this);
+        findViewById(R.id.behavior_progress_seeking).setOnClickListener(this);
+        findViewById(R.id.behavior_progress_off_course).setOnClickListener(this);
+
+        mSavingBehavior = true;
 
         loadBehaviors();
     }
@@ -64,6 +69,7 @@ public class BehaviorProgressActivity
      * Fires up the task that retrieves the user behaviors.
      */
     private void loadBehaviors(){
+        Log.d(TAG, "Loading user behaviors");
         CompassApplication application = (CompassApplication)getApplication();
         String token = application.getToken();
         if (token == null || token.isEmpty()){
@@ -87,7 +93,6 @@ public class BehaviorProgressActivity
     public void behaviorsLoaded(ArrayList<Behavior> behaviors){
         if (behaviors != null && !behaviors.isEmpty()){
             mBehaviorList.addAll(behaviors);
-            mProgressBar.setVisibility(View.GONE);
             Log.d(TAG, "Behaviors: " + behaviors.toString());
         }
         else {
@@ -101,7 +106,9 @@ public class BehaviorProgressActivity
      */
     private void nextBehavior(){
         if (!mBehaviorList.isEmpty()){
+            mProgressBar.setVisibility(View.INVISIBLE);
             mCurrentBehavior = mBehaviorList.removeFirst();
+            mSavingBehavior = false;
 
             int enter = R.animator.behavior_progress_next_in;
             int exit = R.animator.behavior_progress_current_out;
@@ -118,18 +125,39 @@ public class BehaviorProgressActivity
     }
 
     @Override
-    public void onProgressSelected(int progressValue){
+    public void onClick(View view){
+        switch (view.getId()){
+            case R.id.behavior_progress_on_track:
+                onProgressSelected(Constants.BEHAVIOR_ON_COURSE);
+                break;
+
+            case R.id.behavior_progress_seeking:
+                onProgressSelected(Constants.BEHAVIOR_SEEKING);
+                break;
+
+            case R.id.behavior_progress_off_course:
+                onProgressSelected(Constants.BEHAVIOR_OFF_COURSE);
+                break;
+        }
+    }
+
+    /**
+     * Called when a progress button is clicked.
+     *
+     * @param progressValue indicates which progress button was clicked.
+     */
+    private void onProgressSelected(int progressValue){
         if (!mSavingBehavior){
             mSavingBehavior = true;
+            mProgressBar.setVisibility(View.VISIBLE);
             new BehaviorProgressTask(this, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    String.valueOf(mCurrentBehavior.getId()),
-                    String.valueOf(progressValue));
+                    String.valueOf(mCurrentBehavior.getId()), String.valueOf(progressValue));
         }
     }
 
     @Override
     public void behaviorProgressSaved(){
+        Log.d(TAG, "Behavior progress saved");
         nextBehavior();
-        mSavingBehavior = false;
     }
 }
