@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Behavior;
+import org.tndata.android.compass.model.Category;
+
+import java.util.ArrayList;
 
 
 /**
@@ -48,9 +51,26 @@ public class BehaviorProgressFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View v = inflater.inflate(R.layout.fragment_behavior_progress, container, false);
 
-        //String label = getResources().getString(R.string.behavior_progress_behavior_label, mBehavior.get);
+        String label = "My ";
+        ArrayList<Category> categories = mBehavior.getUserCategories();
+        if (categories.size() == 1){
+            label += categories.get(0).getTitle().toUpperCase();
+        }
+        else if (categories.size() == 2){
+            label += categories.get(0).getTitle().toUpperCase();
+            label += " and ";
+            label += categories.get(1).getTitle().toUpperCase();
+        }
+        else if (categories.size() >= 3){
+            for (int i = 0; i < categories.size()-1; i++){
+                label += categories.get(i).getTitle().toUpperCase();
+                label += ", ";
+            }
+            label += "and " + categories.get(categories.size()-1).getTitle().toUpperCase();
+        }
+        label += ". That's why I want to:";
         TextView behaviorLabel = (TextView)v.findViewById(R.id.behavior_progress_behavior_label);
-        behaviorLabel.setText("Test text");
+        behaviorLabel.setText(label);
 
         TextView behaviorTitle = (TextView)v.findViewById(R.id.behavior_progress_behavior_title);
         behaviorTitle.setText(mBehavior.getTitle());
