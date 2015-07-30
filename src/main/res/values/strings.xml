@@ -136,6 +136,7 @@
     <string name="goal_behavior_try_it">SHOW ME HOW</string>
     <string name="goal_try_behavior_added">Priority selected</string>
     <string name="goal_try_behavior_removed">Priority removed</string>
+    <string name="goal_try_do_it_now">Do it now</string>
 
     <!-- ChooseActionsActivity -->
     <string name="behavior_image_description">Priority</string>

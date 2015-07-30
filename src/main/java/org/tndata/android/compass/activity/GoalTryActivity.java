@@ -2,11 +2,13 @@ package org.tndata.android.compass.activity;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -80,6 +82,7 @@ public class GoalTryActivity extends ActionBarActivity implements
             tryItImageView = (ImageView) itemView.findViewById(R.id.list_item_behavior_try_it_imageview);
             selectActionsImageView = (ImageView) itemView.findViewById(R.id.list_item_select_action_imageview);
             moreInfoImageView = (ImageView) itemView.findViewById(R.id.list_item_behavior_info_imageview);
+            doItNow = (TextView)itemView.findViewById(R.id.list_item_behavior_do_it_now);
         }
 
         TextView titleTextView;
@@ -91,6 +94,7 @@ public class GoalTryActivity extends ActionBarActivity implements
         ImageView tryItImageView;
         ImageView selectActionsImageView;
         ImageView moreInfoImageView;
+        TextView doItNow;
     }
 
     private Behavior createHeaderObject() {
@@ -212,7 +216,21 @@ public class GoalTryActivity extends ActionBarActivity implements
                             public void onClick(View v){
                                 Log.d("GoalTryActivity", "Launch Action Picker");
                                 launchActionPicker(behavior);
+                            }
+                        });
+                    }
 
+                    if (behavior.getExternalResource().isEmpty()){
+                        Log.d("GoalTry", "empty resource");
+                        ((TryGoalViewHolder)viewHolder).doItNow.setVisibility(View.GONE);
+                    }
+                    else{
+                        ((TryGoalViewHolder)viewHolder).doItNow.setVisibility(View.VISIBLE);
+                        ((TryGoalViewHolder)viewHolder).doItNow.setOnClickListener(new View.OnClickListener(){
+                            @Override
+                            public void onClick(View v){
+                                Log.d("GoalTryActivity", "Do it now");
+                                doItNow(behavior);
                             }
                         });
                     }
@@ -323,6 +341,61 @@ public class GoalTryActivity extends ActionBarActivity implements
             mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }
         loadBehaviors();
+    }
+
+    /**
+     * Checks whether the provided string has one of the following formats, X being a number:
+     *
+     * (XXX) XXX-XXX
+     * XXX-XXX-XXXX
+     *
+     * @param resource the resource to be checked.
+     * @return true if the resource is a phone number, false otherwise.
+     */
+    private boolean isPhoneNumber(String resource){
+        return resource.matches("[(][0-9]{3}[)] [0-9]{3}[-][0-9]{4}") ||
+                resource.matches("[0-9]{3}[-][0-9]{3}[-][0-9]{4}");
+    }
+
+    /**
+     * Calls the appropriate action when "do it now" is tapped.
+     *
+     * @param behavior the behavior of the card whose "do it now" was pressed.
+     */
+    private void doItNow(Behavior behavior){
+        String resource = behavior.getExternalResource();
+        //If a link
+        if (resource.startsWith("http")){
+            //If an app
+            if (resource.startsWith("http://play.google.com/store/apps/") ||
+                    resource.startsWith("https://play.google.com/store/apps/")){
+                String id = resource.substring(resource.indexOf('/', 32));
+                //Try, if the user does not have the store installed, launch as web link
+                try{
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://"+id)));
+                }
+                catch (ActivityNotFoundException anfx){
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(resource)));
+                }
+            }
+            //Otherwise opened with the browser
+            else{
+                Uri uri = Uri.parse(resource);
+                startActivity(new Intent(Intent.ACTION_VIEW, uri));
+            }
+        }
+        //If a phone number
+        else if (isPhoneNumber(resource)){
+            //First of all, the number needs to be extracted from the resource
+            String number = "";
+            for (int i = 0; i < resource.length(); i++){
+                char digit = resource.charAt(i);
+                if (digit >= '0' && digit <= '9'){
+                    number += digit;
+                }
+            }
+            startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + number)));
+        }
     }
 
     public void launchActionPicker(Behavior behavior) {

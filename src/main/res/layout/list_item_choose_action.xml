@@ -84,6 +84,17 @@
                 android:padding="10dp"
                 android:layout_margin="5dp"/>
 
+            <TextView
+                android:id="@+id/list_item_select_action_do_it_now"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:padding="10dp"
+                android:textAllCaps="true"
+                android:textColor="@color/grow_primary"
+                android:textSize="15sp"
+                android:text="@string/goal_try_do_it_now"/>
+
         </LinearLayout>
     </RelativeLayout>
 
