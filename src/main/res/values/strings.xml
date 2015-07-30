@@ -136,6 +136,7 @@
     <string name="goal_behavior_try_it">SHOW ME HOW</string>
     <string name="goal_try_behavior_added">Priority selected</string>
     <string name="goal_try_behavior_removed">Priority removed</string>
+    <string name="goal_try_do_it_now">Do it now</string>
 
     <!-- ChooseActionsActivity -->
     <string name="behavior_image_description">Priority</string>
@@ -170,6 +171,8 @@
 
     <!-- ActionActivity -->
     <string name="action_icon_cd">Action icon</string>
+    <string name="action_external_resource_header">Try this resource</string>
+    <string name="action_more_info_header">More info</string>
     <string name="action_later">Later</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_did_it">I did it</string>

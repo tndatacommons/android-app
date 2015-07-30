@@ -2,10 +2,12 @@ package org.tndata.android.compass.activity;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -76,22 +78,27 @@ public class ChooseActionsActivity extends ActionBarActivity implements
                     .findViewById(R.id.list_item_action_title_textview);
             descriptionTextView = (TextView) itemView
                     .findViewById(R.id.list_item_action_description_textview);
+            externalResource = (TextView)itemView.findViewById(R.id.list_item_action_external_resource);
 
             iconsWrapper = (LinearLayout) itemView.findViewById(R.id.list_action_icons_wrapper);
             selectActionImageView = (ImageView) itemView.findViewById(
                     R.id.list_item_select_action_imageview);
             moreInfoImageView = (ImageView) itemView.findViewById(
                     R.id.list_item_action_info_imageview);
+
+            doItNow = (TextView)itemView.findViewById(R.id.list_item_select_action_do_it_now);
         }
 
         TextView titleTextView;
         TextView descriptionTextView;
+        TextView externalResource;
         ImageView iconImageView;
         TextView headerCardTextView;
 
         LinearLayout iconsWrapper;
         ImageView selectActionImageView;
         ImageView moreInfoImageView;
+        TextView doItNow;
     }
 
     private Action createHeaderObject() {
@@ -148,6 +155,7 @@ public class ChooseActionsActivity extends ActionBarActivity implements
                     ((ActionViewHolder) viewHolder).headerCardTextView.setText(action.getDescription());
                     ((ActionViewHolder) viewHolder).headerCardTextView.setVisibility(View.VISIBLE);
                     ((ActionViewHolder) viewHolder).descriptionTextView.setVisibility(View.GONE);
+                    ((ActionViewHolder) viewHolder).externalResource.setVisibility(View.GONE);
                     ((ActionViewHolder) viewHolder).titleTextView.setVisibility(View.GONE);
                     ((ActionViewHolder) viewHolder).iconImageView.setVisibility(View.GONE);
                     ((ActionViewHolder) viewHolder).iconsWrapper.setVisibility(View.GONE);
@@ -170,6 +178,28 @@ public class ChooseActionsActivity extends ActionBarActivity implements
                         ((ActionViewHolder) viewHolder).iconsWrapper.setVisibility(View.GONE);
                         ((ActionViewHolder) viewHolder).iconImageView.setVisibility(View.VISIBLE);
                     }
+
+                    if (action.getExternalResource().isEmpty()){
+                        ((ActionViewHolder)viewHolder).doItNow.setVisibility(View.GONE);
+                        ((ActionViewHolder)viewHolder).externalResource.setVisibility(View.GONE);
+                    }
+                    else{
+                        if (mExpandedActions.contains(action)){
+                            ((ActionViewHolder)viewHolder).externalResource.setVisibility(View.VISIBLE);
+                        }
+                        else{
+                            ((ActionViewHolder)viewHolder).externalResource.setVisibility(View.GONE);
+                        }
+                        ((ActionViewHolder)viewHolder).doItNow.setVisibility(View.VISIBLE);
+                        ((ActionViewHolder)viewHolder).externalResource.setText(action.getExternalResource());
+                        ((ActionViewHolder)viewHolder).doItNow.setOnClickListener(new View.OnClickListener(){
+                            @Override
+                            public void onClick(View v){
+                                doItNow(action);
+                            }
+                        });
+                    }
+
                     if (action.getIconUrl() != null && !action.getIconUrl().isEmpty()){
                         ImageLoader.loadBitmap(((ActionViewHolder)viewHolder).iconImageView,
                                 action.getIconUrl(), false);
@@ -280,6 +310,61 @@ public class ChooseActionsActivity extends ActionBarActivity implements
             mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }
         loadActions();
+    }
+
+    /**
+     * Checks whether the provided string has one of the following formats, X being a number:
+     *
+     * (XXX) XXX-XXX
+     * XXX-XXX-XXXX
+     *
+     * @param resource the resource to be checked.
+     * @return true if the resource is a phone number, false otherwise.
+     */
+    private boolean isPhoneNumber(String resource){
+        return resource.matches("[(][0-9]{3}[)] [0-9]{3}[-][0-9]{4}") ||
+                resource.matches("[0-9]{3}[-][0-9]{3}[-][0-9]{4}");
+    }
+
+    /**
+     * Calls the appropriate action when "do it now" is tapped.
+     *
+     * @param action the action of the card whose "do it now" was pressed.
+     */
+    private void doItNow(Action action){
+        String resource = action.getExternalResource();
+        //If a link
+        if (resource.startsWith("http")){
+            //If an app
+            if (resource.startsWith("http://play.google.com/store/apps/") ||
+                    resource.startsWith("https://play.google.com/store/apps/")){
+                String id = resource.substring(resource.indexOf('/', 32));
+                //Try, if the user does not have the store installed, launch as web link
+                try{
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://"+id)));
+                }
+                catch (ActivityNotFoundException anfx){
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(resource)));
+                }
+            }
+            //Otherwise opened with the browser
+            else{
+                Uri uri = Uri.parse(resource);
+                startActivity(new Intent(Intent.ACTION_VIEW, uri));
+            }
+        }
+        //If a phone number
+        else if (isPhoneNumber(resource)){
+            //First of all, the number needs to be extracted from the resource
+            String number = "";
+            for (int i = 0; i < resource.length(); i++){
+                char digit = resource.charAt(i);
+                if (digit >= '0' && digit <= '9'){
+                    number += digit;
+                }
+            }
+            startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + number)));
+        }
     }
 
     @Override

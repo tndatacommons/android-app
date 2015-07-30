@@ -60,12 +60,25 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:visibility="gone"/>
 
+        <TextView
+            android:id="@+id/list_item_action_external_resource"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/list_item_action_description_textview"
+            android:layout_margin="5dp"
+            android:layout_marginBottom="0dp"
+            android:paddingTop="5dp"
+            android:paddingLeft="2dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
         <LinearLayout
             android:id="@+id/list_action_icons_wrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:layout_below="@id/list_item_action_description_textview"
+            android:layout_below="@id/list_item_action_external_resource"
             android:gravity="center_vertical|right">
 
             <ImageView
@@ -83,6 +96,17 @@
                 android:src="@drawable/ic_blue_plus_circle"
                 android:padding="10dp"
                 android:layout_margin="5dp"/>
+
+            <TextView
+                android:id="@+id/list_item_select_action_do_it_now"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:padding="10dp"
+                android:textAllCaps="true"
+                android:textColor="@color/grow_primary"
+                android:textSize="15sp"
+                android:text="@string/goal_try_do_it_now"/>
 
         </LinearLayout>
     </RelativeLayout>
