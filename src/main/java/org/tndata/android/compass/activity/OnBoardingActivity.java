@@ -14,8 +14,10 @@ import org.tndata.android.compass.fragment.ChooseCategoriesFragment;
 import org.tndata.android.compass.fragment.CheckProgressFragment;
 import org.tndata.android.compass.fragment.InstrumentFragment;
 import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.task.AddCategoryTask;
 import org.tndata.android.compass.task.AddCategoryTask.AddCategoryTaskListener;
+import org.tndata.android.compass.task.UpdateProfileTask;
 import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
@@ -102,10 +104,14 @@ public class OnBoardingActivity extends ActionBarActivity implements
     }
 
     @Override
-    public void instrumentFinished(int instrumentId) {
-        if (instrumentId == Constants.BIO_INSTRUMENT_ID) {
+    public void instrumentFinished(int instrumentId){
+        if (instrumentId == Constants.BIO_INSTRUMENT_ID){
             swapFragments(CHOOSE_CATEGORIES);
-        } else {
+        }
+        else{
+            User user = ((CompassApplication)getApplication()).getUser();
+            user.onBoardingComplete();
+            new UpdateProfileTask(null).execute(user);
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();

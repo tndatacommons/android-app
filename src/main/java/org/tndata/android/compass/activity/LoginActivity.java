@@ -244,9 +244,10 @@ public class LoginActivity extends ActionBarActivity implements
         editor.commit();
         ((CompassApplication) getApplication()).setToken(user.getToken());
         ((CompassApplication) getApplication()).setUser(user);
-        if (newUser) {
+        if (newUser){// || user.needsOnBoarding()){
             transitionToOnBoarding();
-        } else {
+        }
+        else{
             transitionToMain();
         }
     }
