@@ -138,6 +138,7 @@ public class SignUpFragment extends Fragment implements SignUpTaskListener {
             user.setPassword(password);
             user.setFirstName(firstName);
             user.setLastName(lastName);
+            user.needsOnBoarding();
             new SignUpTask(this).executeOnExecutor(
                     AsyncTask.THREAD_POOL_EXECUTOR, user);
         } else {

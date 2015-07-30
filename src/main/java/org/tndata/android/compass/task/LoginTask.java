@@ -80,6 +80,9 @@ public class LoginTask extends AsyncTask<User, Void, User> {
             user.setId(jObject.optInt("id", -1));
             user.setUserprofileId(jObject.optInt("userprofile_id", -1));
             user.setDateJoined(jObject.optString("date_joined"));
+            if (jObject.optBoolean("needs_onboarding", false)){
+                user.needsOnBoarding();
+            }
             return user;
         } catch (IOException e) {
             e.printStackTrace();
