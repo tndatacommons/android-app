@@ -78,6 +78,7 @@ public class ChooseActionsActivity extends ActionBarActivity implements
                     .findViewById(R.id.list_item_action_title_textview);
             descriptionTextView = (TextView) itemView
                     .findViewById(R.id.list_item_action_description_textview);
+            externalResource = (TextView)itemView.findViewById(R.id.list_item_action_external_resource);
 
             iconsWrapper = (LinearLayout) itemView.findViewById(R.id.list_action_icons_wrapper);
             selectActionImageView = (ImageView) itemView.findViewById(
@@ -90,6 +91,7 @@ public class ChooseActionsActivity extends ActionBarActivity implements
 
         TextView titleTextView;
         TextView descriptionTextView;
+        TextView externalResource;
         ImageView iconImageView;
         TextView headerCardTextView;
 
@@ -153,6 +155,7 @@ public class ChooseActionsActivity extends ActionBarActivity implements
                     ((ActionViewHolder) viewHolder).headerCardTextView.setText(action.getDescription());
                     ((ActionViewHolder) viewHolder).headerCardTextView.setVisibility(View.VISIBLE);
                     ((ActionViewHolder) viewHolder).descriptionTextView.setVisibility(View.GONE);
+                    ((ActionViewHolder) viewHolder).externalResource.setVisibility(View.GONE);
                     ((ActionViewHolder) viewHolder).titleTextView.setVisibility(View.GONE);
                     ((ActionViewHolder) viewHolder).iconImageView.setVisibility(View.GONE);
                     ((ActionViewHolder) viewHolder).iconsWrapper.setVisibility(View.GONE);
@@ -177,15 +180,21 @@ public class ChooseActionsActivity extends ActionBarActivity implements
                     }
 
                     if (action.getExternalResource().isEmpty()){
-                        Log.d("GoalTry", "empty resource");
                         ((ActionViewHolder)viewHolder).doItNow.setVisibility(View.GONE);
+                        ((ActionViewHolder)viewHolder).externalResource.setVisibility(View.GONE);
                     }
                     else{
+                        if (mExpandedActions.contains(action)){
+                            ((ActionViewHolder)viewHolder).externalResource.setVisibility(View.VISIBLE);
+                        }
+                        else{
+                            ((ActionViewHolder)viewHolder).externalResource.setVisibility(View.GONE);
+                        }
                         ((ActionViewHolder)viewHolder).doItNow.setVisibility(View.VISIBLE);
+                        ((ActionViewHolder)viewHolder).externalResource.setText(action.getExternalResource());
                         ((ActionViewHolder)viewHolder).doItNow.setOnClickListener(new View.OnClickListener(){
                             @Override
                             public void onClick(View v){
-                                Log.d("ChooseActionsActivity", "Do it now");
                                 doItNow(action);
                             }
                         });

@@ -59,12 +59,25 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:visibility="gone"/>
 
+        <TextView
+            android:id="@+id/list_item_behavior_external_resource"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/list_item_behavior_description_textview"
+            android:layout_margin="5dp"
+            android:layout_marginBottom="0dp"
+            android:paddingTop="5dp"
+            android:paddingLeft="2dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
         <LinearLayout
             android:id="@+id/list_icons_wrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:layout_below="@id/list_item_behavior_description_textview"
+            android:layout_below="@id/list_item_behavior_external_resource"
             android:gravity="center_vertical|right">
 
             <ImageView

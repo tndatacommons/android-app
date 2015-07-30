@@ -77,6 +77,7 @@ public class GoalTryActivity extends ActionBarActivity implements
                     .findViewById(R.id.list_item_behavior_title_textview);
             descriptionTextView = (TextView) itemView
                     .findViewById(R.id.list_item_behavior_description_textview);
+            externalResource = (TextView)itemView.findViewById(R.id.list_item_behavior_external_resource);
 
             iconsWrapper = (LinearLayout) itemView.findViewById(R.id.list_icons_wrapper);
             tryItImageView = (ImageView) itemView.findViewById(R.id.list_item_behavior_try_it_imageview);
@@ -87,6 +88,7 @@ public class GoalTryActivity extends ActionBarActivity implements
 
         TextView titleTextView;
         TextView descriptionTextView;
+        TextView externalResource;
         ImageView iconImageView;
         TextView headerCardTextView;
 
@@ -152,6 +154,7 @@ public class GoalTryActivity extends ActionBarActivity implements
                     ((TryGoalViewHolder) viewHolder).headerCardTextView.setText(behavior.getDescription());
                     ((TryGoalViewHolder) viewHolder).headerCardTextView.setVisibility(View.VISIBLE);
                     ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View.GONE);
+                    ((TryGoalViewHolder) viewHolder).externalResource.setVisibility(View.GONE);
                     ((TryGoalViewHolder) viewHolder).titleTextView.setVisibility(View.GONE);
                     ((TryGoalViewHolder) viewHolder).iconImageView.setVisibility(View.GONE);
                     ((TryGoalViewHolder) viewHolder).iconsWrapper.setVisibility(View.GONE);
@@ -221,15 +224,21 @@ public class GoalTryActivity extends ActionBarActivity implements
                     }
 
                     if (behavior.getExternalResource().isEmpty()){
-                        Log.d("GoalTry", "empty resource");
                         ((TryGoalViewHolder)viewHolder).doItNow.setVisibility(View.GONE);
+                        ((TryGoalViewHolder)viewHolder).externalResource.setVisibility(View.GONE);
                     }
                     else{
+                        if (mExpandedBehaviors.contains(behavior)){
+                            ((TryGoalViewHolder)viewHolder).externalResource.setVisibility(View.VISIBLE);
+                        }
+                        else{
+                            ((TryGoalViewHolder)viewHolder).externalResource.setVisibility(View.GONE);
+                        }
                         ((TryGoalViewHolder)viewHolder).doItNow.setVisibility(View.VISIBLE);
+                        ((TryGoalViewHolder)viewHolder).externalResource.setText(behavior.getExternalResource());
                         ((TryGoalViewHolder)viewHolder).doItNow.setOnClickListener(new View.OnClickListener(){
                             @Override
                             public void onClick(View v){
-                                Log.d("GoalTryActivity", "Do it now");
                                 doItNow(behavior);
                             }
                         });
