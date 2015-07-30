@@ -60,6 +60,7 @@ public class UpdateProfileTask extends AsyncTask<User, Void, Boolean>{
         JSONObject body = new JSONObject();
         try{
             body.put("timezone", TimeZone.getDefault().getID());
+            body.put("needs_onboarding", user.needsOnBoarding());
         }
         catch (JSONException jx){
             jx.printStackTrace();
