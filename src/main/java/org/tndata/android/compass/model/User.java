@@ -15,7 +15,7 @@ public class User implements Serializable {
     private String token = "";
     private String password = "";
     private String error = "";
-    private boolean needs_onboarding = true;
+    private boolean needs_onboarding = false;
 
     public User() {
 
@@ -101,8 +101,8 @@ public class User implements Serializable {
         this.error = error;
     }
 
-    public void onBoardingComplete(){
-        needs_onboarding = false;
+    public void onBoardingComplete(boolean complete){
+        needs_onboarding = !complete;
     }
 
     public boolean needsOnBoarding(){

@@ -110,7 +110,7 @@ public class OnBoardingActivity extends ActionBarActivity implements
         }
         else{
             User user = ((CompassApplication)getApplication()).getUser();
-            user.onBoardingComplete();
+            user.onBoardingComplete(true);
             new UpdateProfileTask(null).execute(user);
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
