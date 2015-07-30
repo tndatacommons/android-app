@@ -54,6 +54,50 @@
                 android:layout_marginRight="30dp"
                 android:textSize="15sp" />
 
+            <TextView
+                android:id="@+id/action_external_resource_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:textAllCaps="true"
+                android:textSize="16sp"
+                android:text="@string/action_external_resource_header"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/action_external_resource"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:textSize="15sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/action_more_info_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:textAllCaps="true"
+                android:textSize="16sp"
+                android:text="@string/action_more_info_header"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/action_more_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:textSize="15sp"
+                android:visibility="gone" />
+
         </LinearLayout>
     </ScrollView>
 
@@ -73,9 +117,9 @@
                 android:id="@+id/action_later"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:textAllCaps="true"
-                android:gravity="center"
+                android:gravity="right"
                 android:textColor="@color/grow_primary"
                 android:text="@string/action_later" />
 
