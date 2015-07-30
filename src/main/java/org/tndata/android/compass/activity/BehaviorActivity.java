@@ -26,7 +26,7 @@ import org.tndata.android.compass.util.Constants;
 import java.util.ArrayList;
 
 
-public class BehaviorActivity extends BaseTriggerActivity implements
+public class BehaviorActivity extends TriggerActivity implements
         BehaviorFragmentListener, LearnMoreFragmentListener,
         AddBehaviorTask.AddBehaviorsTaskListener, DeleteBehaviorTask.DeleteBehaviorTaskListener {
     private static final int BEHAVIOR = 0;
@@ -236,7 +236,7 @@ public class BehaviorActivity extends BaseTriggerActivity implements
     @Override
     public void fireActionPicker(Action action) {
         // Launch the ActionTriggerActivity
-        Intent intent = new Intent(getApplicationContext(), ActionTriggerActivity.class);
+        Intent intent = new Intent(getApplicationContext(), TriggerActivity.class);
         intent.putExtra("goal", mGoal);
         intent.putExtra("action", action);
         startActivity(intent);
