@@ -204,6 +204,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.tndata.android.compass.activity.MainActivity"/>
         </activity>
+        <activity
+            android:name="org.tndata.android.compass.activity.TourActivity"
+            android:screenOrientation="portrait" />
         <receiver
             android:name="org.tndata.android.compass.service.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
