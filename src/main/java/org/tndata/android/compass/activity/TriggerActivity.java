@@ -84,7 +84,7 @@ public class TriggerActivity
     private DateFormat mDisplayDateFormat;
     private DateFormat mApiTimeFormat;
     private DateFormat mApiDateFormat;
-    private DateFormat mDateTimeFormat;
+    private DateFormat mApiDateTimeFormat;
 
 
     @Override
@@ -102,7 +102,7 @@ public class TriggerActivity
         mDisplayDateFormat = new SimpleDateFormat("MMM d yyyy", Locale.getDefault());
         mApiTimeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
         mApiDateFormat = new SimpleDateFormat("yyyy-MM-d", Locale.getDefault());
-        mDateTimeFormat = new SimpleDateFormat("y-MM-d HH:mm", Locale.getDefault());
+        mApiDateTimeFormat = new SimpleDateFormat("y-MM-d HH:mm", Locale.getDefault());
 
         initializeReminders(mAction.getTrigger());
 
@@ -141,7 +141,7 @@ public class TriggerActivity
                     if (!trigger.getRawTime().equals("")){
                         mTimeSelected = true;
                         String dateTime = trigger.getRawDate() + " " + trigger.getRawTime();
-                        mDateTime = mDateTimeFormat.parse(dateTime);
+                        mDateTime = mApiDateTimeFormat.parse(dateTime);
                     }
                     else{
                         mDateTime = trigger.getDate();
@@ -315,7 +315,15 @@ public class TriggerActivity
 
     @Override
     public void onDisableTrigger(){
-        finish();
+        if (mAction.getCustomTrigger() == null){
+            finish();
+        }
+        else{
+            mTimeSelected = false;
+            mDateSelected = false;
+            setRRULE(null);
+            saveActionTrigger(mAction);
+        }
     }
 
     @Override
@@ -382,6 +390,11 @@ public class TriggerActivity
                 Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * RRule getter.
+     *
+     * @return a RRule in an API compatible format.
+     */
     public String getRRULE(){
         if (mRrule == null){
             mRrule = "";
@@ -392,10 +405,12 @@ public class TriggerActivity
         return mRrule;
     }
 
-    /*
-    Use the selected Time/Date/Recurrence to update the given User's Action.
+    /**
+     * Use the selected Time/Date/Recurrence to update the given User's Action.
+     *
+     * @param action the action to which the trigger belongs to.
      */
-    protected void saveActionTrigger(Action action) {
+    private void saveActionTrigger(Action action) {
         String rrule = getRRULE();
         String date = getApiDate();
         String time = getApiTime();
@@ -416,9 +431,10 @@ public class TriggerActivity
         savingTrigger = true; // We want to know that we've attempted to save, even if saving fails.
     }
 
-    public boolean actionTriggerAdded(Action action) {
+    @Override
+    public boolean actionTriggerAdded(Action action){
         // action is the updated Action, presumably with a Trigger attached.
-        if(action != null) {
+        if(action != null){
             Log.d(TAG, "Updated Action: " + action.getTitle());
             Log.d(TAG, "Updated Trigger: " + action.getTrigger());
 
@@ -428,9 +444,7 @@ public class TriggerActivity
             // but we also want to tell the Application about the updated version of the Action.
             ((CompassApplication) getApplication()).updateAction(action);
 
-            Toast.makeText(this,
-                    getText(R.string.trigger_saved_confirmation_toast),
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getText(R.string.trigger_saved_confirmation_toast), Toast.LENGTH_SHORT).show();
             Intent returnIntent = new Intent();
             returnIntent.putExtra("action", mAction);
             setResult(RESULT_OK, returnIntent);

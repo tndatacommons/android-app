@@ -15,7 +15,6 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Trigger;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -32,7 +31,7 @@ public class TriggerFragment
                 View.OnClickListener,
                 CompoundButton.OnCheckedChangeListener{
 
-    private static final String TAG = "ActionTriggerFragment";
+    //private static final String TAG = "ActionTriggerFragment";
 
     private TriggerFragmentListener mCallback;
 
@@ -92,7 +91,7 @@ public class TriggerFragment
         title.setText(mAction.getTitle());
 
         Switch notificationSwitch = (Switch)view.findViewById(R.id.notification_option_switch);
-        notificationSwitch.setChecked(mTrigger.isDisabled());
+        notificationSwitch.setChecked(!mTrigger.isDisabled());
         notificationSwitch.setOnCheckedChangeListener(this);
 
         timePickerTextView = (TextView)view.findViewById(R.id.time_picker_textview);
@@ -166,16 +165,6 @@ public class TriggerFragment
         timePickerTextView.setText(sdf.format(time));
     }
 
-    public void updateTimeView(int hourOfDay, int minute) {
-        // Format the selected time and update the TextView.
-        Date time = Calendar.getInstance().getTime();
-        time.setHours(hourOfDay);
-        time.setMinutes(minute);
-
-        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a", Locale.getDefault());
-        timePickerTextView.setText(sdf.format(time));
-    }
-
     public void updateDateView(String date){
         datePickerTextView.setText(date);
     }
@@ -183,16 +172,6 @@ public class TriggerFragment
     public void updateDateView(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat("MMM d yyyy", Locale.getDefault());
         datePickerTextView.setText(sdf.format(date));
-    }
-
-    public void updateDateView(int year, int monthOfYear, int dayOfMonth) {
-        // Format the selected date and update the TextView
-        // NOTE: the picker likes months in the range: 0 - 11
-        monthOfYear = monthOfYear - 1;
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM d yyyy", Locale.getDefault());
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year, monthOfYear, dayOfMonth);
-        datePickerTextView.setText(sdf.format(calendar.getTime()));
     }
 
     public void updateRecurrenceView(String recurrence) {
