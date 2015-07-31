@@ -5,14 +5,17 @@ buildscript {
         jcenter()
         mavenLocal()
         mavenCentral()
+        maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.2.3'
+        classpath 'io.fabric.tools:gradle:1.+'
     }
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'android'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 22
@@ -41,6 +44,7 @@ repositories {
     maven {
         url "http://JRAF.org/static/maven/2"
     }
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 dependencies {
@@ -56,6 +60,9 @@ dependencies {
     compile 'me.relex:circleindicator:1.1.5@aar'
     compile ("com.doomonafireball.betterpickers:library:1.6.0") {
         exclude group: 'com.android.support', module: 'support-v4'
+    }
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.0@aar') {
+        transitive = true;
     }
 
 }

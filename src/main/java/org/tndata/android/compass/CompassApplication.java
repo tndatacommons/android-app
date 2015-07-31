@@ -2,6 +2,8 @@ package org.tndata.android.compass;
 
 import android.app.Application;
 
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
@@ -131,6 +133,7 @@ public class CompassApplication extends Application {
     @Override
     public void onCreate(){
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         ImageLoader.initialize(getApplicationContext());
     }
 }
