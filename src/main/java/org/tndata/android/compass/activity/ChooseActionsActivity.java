@@ -22,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -81,12 +80,13 @@ public class ChooseActionsActivity extends ActionBarActivity implements
             externalResource = (TextView)itemView.findViewById(R.id.list_item_action_external_resource);
 
             iconsWrapper = (LinearLayout) itemView.findViewById(R.id.list_action_icons_wrapper);
-            selectActionImageView = (ImageView) itemView.findViewById(
-                    R.id.list_item_select_action_imageview);
             moreInfoImageView = (ImageView) itemView.findViewById(
                     R.id.list_item_action_info_imageview);
+            selectActionImageView = (ImageView) itemView.findViewById(
+                    R.id.list_item_select_action_imageview);
 
-            doItNow = (TextView)itemView.findViewById(R.id.list_item_select_action_do_it_now);
+            editReminder = (ImageView)itemView.findViewById(R.id.list_item_action_edit_reminder);
+            doItNow = (TextView)itemView.findViewById(R.id.list_item_action_do_it_now);
         }
 
         TextView titleTextView;
@@ -96,8 +96,9 @@ public class ChooseActionsActivity extends ActionBarActivity implements
         TextView headerCardTextView;
 
         LinearLayout iconsWrapper;
-        ImageView selectActionImageView;
         ImageView moreInfoImageView;
+        ImageView editReminder;
+        ImageView selectActionImageView;
         TextView doItNow;
     }
 
@@ -179,6 +180,23 @@ public class ChooseActionsActivity extends ActionBarActivity implements
                         ((ActionViewHolder) viewHolder).iconImageView.setVisibility(View.VISIBLE);
                     }
 
+                    if (action.getMoreInfo().equals("")){
+                        ((ActionViewHolder)viewHolder).moreInfoImageView.setVisibility(View.GONE);
+                    }
+                    else{
+                        ((ActionViewHolder)viewHolder).moreInfoImageView.setVisibility(View.VISIBLE);
+                        // Set up a Click Listener for all other cards.
+                        ((ActionViewHolder) viewHolder).moreInfoImageView.setOnClickListener(new View
+                                .OnClickListener(){
+
+                            @Override
+                            public void onClick(View v){
+                                Log.d("GoalTryActivity", "Launch More Info");
+                                moreInfoPressed(action);
+                            }
+                        });
+                    }
+
                     if (action.getExternalResource().isEmpty()){
                         ((ActionViewHolder)viewHolder).doItNow.setVisibility(View.GONE);
                         ((ActionViewHolder)viewHolder).externalResource.setVisibility(View.GONE);
@@ -205,23 +223,23 @@ public class ChooseActionsActivity extends ActionBarActivity implements
                                 action.getIconUrl(), false);
                     }
 
-                    if(action_is_selected) {
-                        ((ActionViewHolder) viewHolder).selectActionImageView.setImageResource(
+                    if (action_is_selected){
+                        ((ActionViewHolder)viewHolder).selectActionImageView.setImageResource(
                                 R.drawable.ic_blue_check_circle);
-                    } else {
-                        ((ActionViewHolder) viewHolder).selectActionImageView.setImageResource(
+                        ((ActionViewHolder)viewHolder).editReminder.setVisibility(View.VISIBLE);
+                        ((ActionViewHolder)viewHolder).editReminder.setOnClickListener(new View.OnClickListener(){
+                            @Override
+                            public void onClick(View v){
+                                editReminder(action);
+                            }
+                        });
+                    }
+                    else{
+                        ((ActionViewHolder)viewHolder).selectActionImageView.setImageResource(
                                 R.drawable.ic_blue_plus_circle);
+                        ((ActionViewHolder)viewHolder).editReminder.setVisibility(View.GONE);
                     }
 
-                    // Set up a Click Listener for all other cards.
-                    ((ActionViewHolder) viewHolder).moreInfoImageView.setOnClickListener(new View
-                            .OnClickListener() {
-
-                        @Override
-                        public void onClick(View v) {
-                            moreInfoPressed(action);
-                        }
-                    });
                     ((ActionViewHolder) viewHolder).selectActionImageView.setOnClickListener(new View
                             .OnClickListener() {
 
@@ -365,6 +383,22 @@ public class ChooseActionsActivity extends ActionBarActivity implements
             }
             startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + number)));
         }
+    }
+
+    /**
+     * Starts the TriggerActivity to edit the reminder set by the user in an action
+     *
+     * @param action the action whose trigger is to be edited.
+     */
+    private void editReminder(Action action){
+        ArrayList<Action> actions = application.getActions();
+
+        Intent intent = new Intent(getApplicationContext(), TriggerActivity.class);
+        intent.putExtra("goal", mGoal);
+        //Need to pass the action that contains the trigger set by the user (if any), not the
+        //  action in the master list, which likely won't contain that information.
+        intent.putExtra("action", actions.get(actions.indexOf(action)));
+        startActivity(intent);
     }
 
     @Override

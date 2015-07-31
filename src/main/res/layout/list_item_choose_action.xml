@@ -90,15 +90,23 @@
                 android:src="@drawable/ic_blue_info"/>
 
             <ImageView
+                android:id="@+id/list_item_action_edit_reminder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:src="@drawable/ic_blue_notifications" />
+
+            <ImageView
                 android:id="@+id/list_item_select_action_imageview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_blue_plus_circle"
                 android:padding="10dp"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:src="@drawable/ic_blue_plus_circle" />
 
             <TextView
-                android:id="@+id/list_item_select_action_do_it_now"
+                android:id="@+id/list_item_action_do_it_now"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -106,7 +114,7 @@
                 android:textAllCaps="true"
                 android:textColor="@color/grow_primary"
                 android:textSize="15sp"
-                android:text="@string/goal_try_do_it_now"/>
+                android:text="@string/goal_try_do_it_now" />
 
         </LinearLayout>
     </RelativeLayout>
