@@ -191,7 +191,6 @@ public class ChooseActionsActivity extends ActionBarActivity implements
 
                             @Override
                             public void onClick(View v){
-                                Log.d("GoalTryActivity", "Launch More Info");
                                 moreInfoPressed(action);
                             }
                         });
