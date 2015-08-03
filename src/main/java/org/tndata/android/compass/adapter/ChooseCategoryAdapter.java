@@ -198,7 +198,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
         public void onClick(final View view){
             if (view == itemView){
                 AlphaAnimation animation;
-                Category category = getItem(getLayoutPosition()-1);
+                Category category = getItem(getAdapterPosition()-1);
                 if (mSelectedCategories.contains(category)){
                     Log.d("CategoryAdapter", "deselecting: " + category.getTitle());
                     mSelectedCategories.remove(category);
@@ -214,6 +214,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
                     animation.setAnimationListener(this);
                     mOverlay.startAnimation(animation);
                 }
+                notifyItemChanged(getAdapterPosition());
             }
             else{
 
@@ -227,7 +228,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
 
         @Override
         public void onAnimationEnd(Animation animation){
-            if (mSelectedCategories.contains(getItem(getLayoutPosition()-1))){
+            if (mSelectedCategories.contains(getItem(getAdapterPosition()-1))){
                 mOverlay.setVisibility(View.GONE);
             }
         }
