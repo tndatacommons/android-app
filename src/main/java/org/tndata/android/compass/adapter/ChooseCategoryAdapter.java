@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -32,12 +33,17 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
     private List<Category> mCategories;
     private List<Category> mSelectedCategories;
 
+    private int mLastAnimatedPosition;
+    private long mLastAnimationScheduleTime;
+
 
     public ChooseCategoryAdapter(Context context, ChooseCategoryAdapterListener callback){
         mContext = context;
         mCallback = callback;
 
         mCategories = null;
+
+        mLastAnimatedPosition = -1;
     }
 
     /**
@@ -106,6 +112,36 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
                 holder.mOverlay.setVisibility(View.GONE);
             }
             holder.mCaption.setText(getItem(position-1).getTitle());
+            setAnimation(holder.itemView, position);
+        }
+    }
+
+    /**
+     * Sets an in-animation to an item if it hasn't been animated already. If there are
+     * scheduled animations, it sets it after the last one.
+     *
+     * @param view the view to animate in.
+     * @param position the position of the view.
+     */
+    private void setAnimation(View view, int position){
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > mLastAnimatedPosition){
+            if (position == 1){
+                mLastAnimationScheduleTime = System.currentTimeMillis()-200;
+            }
+
+            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.category_in);
+            if (mLastAnimationScheduleTime <= System.currentTimeMillis()){
+                animation.setStartOffset(200);
+                mLastAnimationScheduleTime = System.currentTimeMillis()+200;
+            }
+            else{
+                int offset = (int)(mLastAnimationScheduleTime-System.currentTimeMillis())+200;
+                animation.setStartOffset(offset);
+                mLastAnimationScheduleTime = System.currentTimeMillis()+offset;
+            }
+            view.startAnimation(animation);
+            mLastAnimatedPosition = position;
         }
     }
 
