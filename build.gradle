@@ -24,6 +24,10 @@ android {
         targetSdkVersion 22
     }
 
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
     final def types = buildTypes {
         release {
             minifyEnabled false
@@ -53,8 +57,10 @@ dependencies {
     compile 'com.jpardogo.materialtabstrip:library:1.0.9'
     compile "com.google.android.gms:play-services:3.1.+"
     compile 'org.jraf:android-switch-backport:1.4.0@aar'
-    compile ("com.doomonafireball.betterpickers:library:1.6.0") {
+    compile("com.doomonafireball.betterpickers:library:1.6.0") {
         exclude group: 'com.android.support', module: 'support-v4'
     }
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
 
 }
