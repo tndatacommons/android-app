@@ -28,8 +28,12 @@ import org.tndata.android.compass.task.CategoryLoaderTask.CategoryLoaderListener
 
 import java.util.ArrayList;
 
-public class ChooseCategoriesFragment extends Fragment implements
-        CategoryLoaderListener, ChooseCategoryAdapter.ChooseCategoryAdapterListener {
+public class ChooseCategoriesFragment
+        extends Fragment
+        implements
+                CategoryLoaderListener,
+                ChooseCategoryAdapter.ChooseCategoryAdapterListener{
+
     public final static int MIN_CATEGORIES_REQUIRED = 4;
     private ChooseCategoryAdapter mAdapter;
     private ArrayList<Category> mItems;
