@@ -2,11 +2,14 @@ package org.tndata.android.compass.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -17,6 +20,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.tndata.android.compass.CompassApplication;
@@ -28,6 +32,7 @@ import org.tndata.android.compass.task.CategoryLoaderTask.CategoryLoaderListener
 
 import java.util.ArrayList;
 
+
 public class ChooseCategoriesFragment
         extends Fragment
         implements
@@ -37,6 +42,11 @@ public class ChooseCategoriesFragment
     public final static int MIN_CATEGORIES_REQUIRED = 4;
     private ChooseCategoryAdapter mAdapter;
     private ArrayList<Category> mItems;
+
+    private View mMaterialHeader;
+    private RecyclerView mGrid;
+
+
     private GridView mGridView;
     private ProgressBar mProgressBar;
     private TextView mErrorTextView;
@@ -56,8 +66,8 @@ public class ChooseCategoriesFragment
                                 final int position, long id) {
             Animation animation = AnimationUtils.loadAnimation(getActivity()
                     .getApplicationContext(), R.anim.anim_tile_click);
-            final ImageView check = (ImageView) view
-                    .findViewById(R.id.list_item_category_grid_category_imageview);
+            final ImageView check = null;/*(ImageView) view
+                    .findViewById(R.id.list_item_category_grid_category_imageview);*/
 
             animation.setAnimationListener(new AnimationListener() {
 
@@ -97,20 +107,28 @@ public class ChooseCategoriesFragment
     };
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v = getActivity().getLayoutInflater().inflate(
-                R.layout.fragment_choose_categories, container, false);
-        mGridView = (GridView) v
-                .findViewById(R.id.choose_categories_gridview);
-        mProgressBar = (ProgressBar) v
-                .findViewById(R.id.choose_categories_load_progress);
-        mErrorTextView = (TextView) v
-                .findViewById(R.id.choose_categories_error_textview);
-        mNextButton = (Button) v
-                .findViewById(R.id.choose_categories_done_button);
-        mNextButton.setOnClickListener(new OnClickListener() {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        View root = inflater.inflate(R.layout.fragment_choose_categories, container, false);
 
+        mMaterialHeader = root.findViewById(R.id.choose_categories_material_header);
+
+        mGrid = (RecyclerView)root.findViewById(R.id.choose_categories_grid);
+        mGrid.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+
+        mAdapter = new ChooseCategoryAdapter(getActivity(), this);
+        mGrid.setAdapter(mAdapter);
+        mGrid.addItemDecoration(new ItemPadding());
+        mGrid.setOnScrollListener(new ParallaxEffect());
+
+        /*mGridView = (GridView) root
+                .findViewById(R.id.choose_categories_gridview);*/
+        mProgressBar = (ProgressBar) root
+                .findViewById(R.id.choose_categories_load_progress);
+        mErrorTextView = (TextView) root
+                .findViewById(R.id.choose_categories_error_textview);
+        mNextButton = (Button) root
+                .findViewById(R.id.choose_categories_done_button);
+        /*mNextButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mSelectedItems.size() >= MIN_CATEGORIES_REQUIRED) {
@@ -118,8 +136,8 @@ public class ChooseCategoriesFragment
                 }
             }
         });
-        mNextButton.setEnabled(false); // Start with a disabled button
-        return v;
+        mNextButton.setEnabled(false);*/ // Start with a disabled button
+        return root;
     }
 
     @Override
@@ -132,13 +150,15 @@ public class ChooseCategoriesFragment
             mSelectedItems.addAll(application.getCategories());
         }
         if (mSelectedItems.size() >= MIN_CATEGORIES_REQUIRED) {
-            mNextButton.setVisibility(View.VISIBLE);
-            mNextButton.setEnabled(true);
+            /*mNextButton.setVisibility(View.VISIBLE);
+            mNextButton.setEnabled(true);*/
         }
-        mAdapter = new ChooseCategoryAdapter(getActivity(),
+
+
+        /*mAdapter = new ChooseCategoryAdapter(getActivity(),
                 R.id.list_item_category_grid_category_textview, mItems, this);
         mGridView.setAdapter(mAdapter);
-        mGridView.setOnItemClickListener(mClickListener);
+        mGridView.setOnItemClickListener(mClickListener);*/
 
         loadCategories();
     }
@@ -164,19 +184,19 @@ public class ChooseCategoriesFragment
 
     private void showProgress() {
         mProgressBar.setVisibility(View.VISIBLE);
-        mGridView.setVisibility(View.GONE);
+        //mGridView.setVisibility(View.GONE);
         mErrorTextView.setVisibility(View.GONE);
     }
 
     private void showCategories() {
         mProgressBar.setVisibility(View.GONE);
-        mGridView.setVisibility(View.VISIBLE);
+        //mGridView.setVisibility(View.VISIBLE);
         mErrorTextView.setVisibility(View.GONE);
     }
 
     private void showError() {
         mProgressBar.setVisibility(View.GONE);
-        mGridView.setVisibility(View.GONE);
+        //mGridView.setVisibility(View.GONE);
         mErrorTextView.setVisibility(View.VISIBLE);
     }
 
@@ -189,8 +209,7 @@ public class ChooseCategoriesFragment
     @Override
     public void categoryLoaderFinished(ArrayList<Category> categories) {
         if (categories != null) {
-            mItems.addAll(categories);
-            mAdapter.notifyDataSetChanged();
+            mAdapter.setCategories(categories, application.getCategories());
         }
 
         if (!mItems.isEmpty()) {
@@ -203,5 +222,116 @@ public class ChooseCategoriesFragment
     @Override
     public ArrayList<Category> getCurrentlySelectedCategories() {
         return mSelectedItems;
+    }
+
+
+    final class ItemPadding extends RecyclerView.ItemDecoration{
+        private int padding;
+
+
+        public ItemPadding(){
+            padding = (int)Math.ceil(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                    8, getActivity().getResources().getDisplayMetrics()));
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
+                                   RecyclerView.State state){
+
+            int position = parent.getChildLayoutPosition(view);
+
+            //If the header, only bottom padding
+            if (position == 0){
+                outRect.bottom = padding / 2;
+            }
+            //If to the left, full left padding
+            else if (position%2 == 1){
+                outRect.top = padding / 2;
+                outRect.left = padding;
+                outRect.bottom = padding / 2;
+                outRect.right = padding / 2;
+            }
+            //If to the right, full right padding
+            else if (position%2 == 0){
+                outRect.top = padding / 2;
+                outRect.left = padding / 2;
+                outRect.bottom = padding / 2;
+                outRect.right = padding;
+            }
+        }
+    }
+
+
+    /**
+     * Creates a parallax effect on the material header view.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    final class ParallaxEffect extends RecyclerView.OnScrollListener{
+        //The combined height of the rows that are off-screen. NOTE: This number will either
+        //  be 0 or negative because the origin of coordinates if the top left corner.
+        private int mPreviousMargin;
+
+        //Header and category item heights
+        private int mHeaderHeight;
+        private int mCategoryHeight;
+
+        //Current item.
+        private int mCurrent;
+
+
+        /**
+         * Constructor.
+         */
+        private ParallaxEffect(){
+            mPreviousMargin = 0;
+
+            mCurrent = -1;
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+            //If this is the first call
+            if (mCurrent == -1){
+                //Retrieve the two item heights for later calculations
+                mHeaderHeight = recyclerView.findViewHolderForLayoutPosition(0).itemView.getHeight();
+                mCategoryHeight = recyclerView.findViewHolderForLayoutPosition(1).itemView.getHeight();
+                mCurrent = 0;
+            }
+
+            //While there are views above the current
+            while (mCurrent > 0 && recyclerView.findViewHolderForLayoutPosition(mCurrent-1) != null){
+                mCurrent -= 2;
+                //Update the margin
+                if (mCurrent > 0){
+                    mPreviousMargin += mCategoryHeight;
+                }
+                else{
+                    mPreviousMargin += mHeaderHeight;
+                }
+            }
+
+            //While there are not views below the current
+            while (recyclerView.findViewHolderForLayoutPosition(mCurrent) == null){
+                //Update the margin
+                if (mCurrent == 0){
+                    mPreviousMargin -= mHeaderHeight;
+                }
+                else{
+                    mPreviousMargin -= mCategoryHeight;
+                }
+                mCurrent += 2;
+            }
+
+            //Retrieve the margin state of the current view
+            int topState = recyclerView.findViewHolderForLayoutPosition(mCurrent).itemView.getTop();
+
+            //Update the parameters of the material header
+            RelativeLayout.LayoutParams params;
+            params = (RelativeLayout.LayoutParams)mMaterialHeader.getLayoutParams();
+            params.topMargin = (int)((mPreviousMargin+topState)*0.75);
+            mMaterialHeader.setLayoutParams(params);
+        }
     }
 }
