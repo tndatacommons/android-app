@@ -20,8 +20,15 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
+/**
+ * Adapter for the grid in the category chooser.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
+ */
 public class ChooseCategoryAdapter extends RecyclerView.Adapter{
     private static final int VIEW_TYPE_HEADER = 1;
     private static final int VIEW_TYPE_CATEGORY = 2;
@@ -29,7 +36,8 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
 
 
     private final Context mContext;
-    private final ChooseCategoryAdapterListener mCallback;
+    private final OnCategoriesSelectedListener mCallback;
+    private final boolean mApplyRestrictions;
 
     private List<Category> mCategories;
     private List<Category> mSelectedCategories;
@@ -38,9 +46,11 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
     private long mLastAnimationScheduleTime;
 
 
-    public ChooseCategoryAdapter(Context context, ChooseCategoryAdapterListener callback){
+    public ChooseCategoryAdapter(Context context, OnCategoriesSelectedListener callback,
+                                 boolean applyRestrictions){
         mContext = context;
         mCallback = callback;
+        mApplyRestrictions = applyRestrictions;
 
         mCategories = null;
 
@@ -149,6 +159,9 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
             view.startAnimation(animation);
             mLastAnimatedPosition = position;
         }
+        else{
+            view.clearAnimation();
+        }
     }
 
     @Override
@@ -234,7 +247,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
                 }
             }
             else{
-
+                //TODO info
             }
         }
 
@@ -259,16 +272,28 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
     class NextViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public NextViewHolder(View itemView){
             super(itemView);
+            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v){
-
+            if (mApplyRestrictions){
+                if (mSelectedCategories.size() < 3){
+                    Toast.makeText(mContext, R.string.choose_categories_at_least_three,
+                            Toast.LENGTH_SHORT).show();
+                }
+                else if (mSelectedCategories.size() > 5){
+                    Toast.makeText(mContext, R.string.choose_categories_at_most_five,
+                            Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    mCallback.onCategoriesSelected(mSelectedCategories);
+                }
+            }
+            else{
+                mCallback.onCategoriesSelected(mSelectedCategories);
+            }
         }
-    }
-
-    public interface ChooseCategoryAdapterListener{
-        ArrayList<Category> getCurrentlySelectedCategories();
     }
 
     public interface OnCategoriesSelectedListener{

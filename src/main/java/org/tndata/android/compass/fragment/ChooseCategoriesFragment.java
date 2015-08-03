@@ -3,7 +3,6 @@ package org.tndata.android.compass.fragment;
 import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Rect;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -11,15 +10,8 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -31,75 +23,38 @@ import org.tndata.android.compass.task.CategoryLoaderTask.CategoryLoaderListener
 import java.util.ArrayList;
 
 
-public class ChooseCategoriesFragment
-        extends Fragment
-        implements
-                CategoryLoaderListener,
-                ChooseCategoryAdapter.ChooseCategoryAdapterListener{
-
-    public final static int MIN_CATEGORIES_REQUIRED = 4;
-    private ChooseCategoryAdapter mAdapter;
-    private ArrayList<Category> mItems;
+public class ChooseCategoriesFragment extends Fragment implements CategoryLoaderListener{
+    public static final String RESTRICTIONS_KEY = "restrictions";
 
     private View mMaterialHeader;
-    private RecyclerView mGrid;
+    private ChooseCategoryAdapter mAdapter;
+    private boolean mApplyRestrictions;
 
-    private TextView mErrorTextView;
-    private Button mNextButton;
-    private ArrayList<Category> mSelectedItems = new ArrayList<Category>();
-    private ChooseCategoriesFragmentListener mCallback;
+    private ChooseCategoryAdapter.OnCategoriesSelectedListener mCallback;
     private CompassApplication application;
 
-    public interface ChooseCategoriesFragmentListener {
-        public void categoriesSelected(ArrayList<Category> categories);
+
+    @Override
+    public void onAttach(Activity activity){
+        super.onAttach(activity);
+        //This makes sure that the container activity has implemented the callback
+        //  interface. If not, it throws an exception
+
+        try{
+            mCallback = (ChooseCategoryAdapter.OnCategoriesSelectedListener)activity;
+        }
+        catch (ClassCastException e){
+            throw new ClassCastException(activity.toString()
+                    + " must implement ChooseCategoriesFragmentListener");
+        }
     }
 
-    private OnItemClickListener mClickListener = new OnItemClickListener() {
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
 
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view,
-                                final int position, long id) {
-            Animation animation = AnimationUtils.loadAnimation(getActivity()
-                    .getApplicationContext(), R.anim.anim_tile_click);
-            final ImageView check = null;/*(ImageView) view
-                    .findViewById(R.id.list_item_category_grid_category_imageview);*/
-
-            animation.setAnimationListener(new AnimationListener() {
-
-                @Override
-                public void onAnimationStart(Animation animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    Category category = mItems.get(position);
-                    if (mSelectedItems.contains(category)) {
-                        mSelectedItems.remove(category);
-                        check.setVisibility(View.GONE);
-                        if (mSelectedItems.size() < MIN_CATEGORIES_REQUIRED) {
-                            mNextButton.setEnabled(false);
-                        }
-                    } else {
-                        mSelectedItems.add(category);
-                        check.setVisibility(View.VISIBLE);
-                        if (mSelectedItems.size() >= MIN_CATEGORIES_REQUIRED) {
-                            mNextButton.setEnabled(true);
-                            mNextButton.setVisibility(View.VISIBLE);
-                        } else {
-                            mNextButton.setEnabled(false);
-                        }
-                    }
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-            view.startAnimation(animation);
-        }
-    };
+        mApplyRestrictions = getArguments() == null || getArguments().getBoolean(RESTRICTIONS_KEY, true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -107,118 +62,62 @@ public class ChooseCategoriesFragment
 
         mMaterialHeader = root.findViewById(R.id.choose_categories_material_header);
 
-        mGrid = (RecyclerView)root.findViewById(R.id.choose_categories_grid);
+        RecyclerView mGrid = (RecyclerView)root.findViewById(R.id.choose_categories_grid);
         mGrid.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
-        mAdapter = new ChooseCategoryAdapter(getActivity(), this);
+        mAdapter = new ChooseCategoryAdapter(getActivity(), mCallback, mApplyRestrictions);
         mGrid.setAdapter(mAdapter);
         mGrid.addItemDecoration(new ItemPadding());
         mGrid.setOnScrollListener(new ParallaxEffect());
 
-        /*mGridView = (GridView) root
-                .findViewById(R.id.choose_categories_gridview);*/
-        mErrorTextView = (TextView) root
-                .findViewById(R.id.choose_categories_error_textview);
-        mNextButton = (Button) root
-                .findViewById(R.id.choose_categories_done_button);
-        /*mNextButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mSelectedItems.size() >= MIN_CATEGORIES_REQUIRED) {
-                    mCallback.categoriesSelected(mSelectedItems);
-                }
-            }
-        });
-        mNextButton.setEnabled(false);*/ // Start with a disabled button
         return root;
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
         application = (CompassApplication) getActivity().getApplication();
-
-        mItems = new ArrayList<Category>();
-        if (!application.getCategories().isEmpty()) {
-            mSelectedItems.addAll(application.getCategories());
-        }
-        if (mSelectedItems.size() >= MIN_CATEGORIES_REQUIRED) {
-            /*mNextButton.setVisibility(View.VISIBLE);
-            mNextButton.setEnabled(true);*/
-        }
-
-
-        /*mAdapter = new ChooseCategoryAdapter(getActivity(),
-                R.id.list_item_category_grid_category_textview, mItems, this);
-        mGridView.setAdapter(mAdapter);
-        mGridView.setOnItemClickListener(mClickListener);*/
 
         loadCategories();
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity); // This makes sure that the container activity
-        // has implemented the callback interface. If not, it throws an
-        // exception
-        try {
-            mCallback = (ChooseCategoriesFragmentListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement ChooseCategoriesFragmentListener");
-        }
+    /**
+     * Starts the category load process.
+     */
+    private void loadCategories(){
+        new CategoryLoaderTask(this).execute(application.getToken());
     }
 
     @Override
-    public void onDetach() {
+    public void onDetach(){
         super.onDetach();
         mCallback = null;
     }
 
-    private void showProgress() {
-        mErrorTextView.setVisibility(View.GONE);
-    }
-
-    private void showCategories() {
-        mErrorTextView.setVisibility(View.GONE);
-    }
-
-    private void showError() {
-        mErrorTextView.setVisibility(View.VISIBLE);
-    }
-
-    private void loadCategories() {
-        showProgress();
-        new CategoryLoaderTask(this).executeOnExecutor(
-                AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
-    }
-
     @Override
-    public void categoryLoaderFinished(ArrayList<Category> categories) {
-        if (categories != null) {
+    public void categoryLoaderFinished(ArrayList<Category> categories){
+        if (categories == null){
+            Toast.makeText(getActivity(), R.string.choose_categories_error, Toast.LENGTH_SHORT).show();
+        }
+        else{
             mAdapter.setCategories(categories, application.getCategories());
         }
-
-        if (!mItems.isEmpty()) {
-            showCategories();
-        } else {
-            showError();
-        }
-    }
-
-    @Override
-    public ArrayList<Category> getCurrentlySelectedCategories() {
-        return mSelectedItems;
     }
 
 
     /**
-     * Decoration class to establish the grid's items margin
+     * Decoration class to establish the grid's items margin.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
      */
     final class ItemPadding extends RecyclerView.ItemDecoration{
         private int margin;
 
 
+        /**
+         * Constructor.
+         */
         public ItemPadding(){
             margin = (int)Math.ceil(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                     8, getActivity().getResources().getDisplayMetrics()));

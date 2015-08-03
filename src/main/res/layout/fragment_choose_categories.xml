@@ -22,7 +22,7 @@
         android:layout_marginRight="20dp"
         android:layout_marginTop="30dp"
         android:gravity="center"
-        android:text="@string/onboarding_category_error_label"
+        android:text="@string/choose_categories_error"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:visibility="gone" />
 

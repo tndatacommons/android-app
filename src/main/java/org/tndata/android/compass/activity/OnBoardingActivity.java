@@ -10,6 +10,7 @@ import android.util.Log;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
 import org.tndata.android.compass.fragment.ChooseCategoriesFragment;
 import org.tndata.android.compass.fragment.CheckProgressFragment;
 import org.tndata.android.compass.fragment.InstrumentFragment;
@@ -21,12 +22,13 @@ import org.tndata.android.compass.task.UpdateProfileTask;
 import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class OnBoardingActivity extends ActionBarActivity implements
         CheckProgressFragment.CheckProgressFragmentListener,
-        ChooseCategoriesFragment.ChooseCategoriesFragmentListener,
         AddCategoryTaskListener,
-        InstrumentFragment.InstrumentFragmentListener {
+        InstrumentFragment.InstrumentFragmentListener,
+        ChooseCategoryAdapter.OnCategoriesSelectedListener{
     private static final int CHOOSE_CATEGORIES = 0;
     private static final int QOL = 1;
     private static final int BIO = 2;
@@ -47,21 +49,6 @@ public class OnBoardingActivity extends ActionBarActivity implements
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().hide();
         swapFragments(BIO); // Start with Bio questions.
-    }
-
-    @Override
-    public void categoriesSelected(ArrayList<Category> categories) {
-        for (Category cat : categories) {
-            Log.d("Category", cat.getTitle());
-        }
-        mCategories = categories;
-        ArrayList<String> cats = new ArrayList<String>();
-        for (Category cat : mCategories) {
-            cats.add(String.valueOf(cat.getId()));
-        }
-        swapFragments(CHECK_PROGRESS);
-        new AddCategoryTask(this, this, cats)
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
@@ -118,4 +105,19 @@ public class OnBoardingActivity extends ActionBarActivity implements
         }
     }
 
+    @Override
+    public void onCategoriesSelected(List<Category> selection){
+        for (Category cat : selection) {
+            Log.d("Category", cat.getTitle());
+        }
+        mCategories = new ArrayList<>();
+        mCategories.addAll(selection);
+        ArrayList<String> cats = new ArrayList<String>();
+        for (Category cat : mCategories) {
+            cats.add(String.valueOf(cat.getId()));
+        }
+        swapFragments(CHECK_PROGRESS);
+        new AddCategoryTask(this, this, cats)
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
 }
