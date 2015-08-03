@@ -18,6 +18,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
@@ -55,10 +56,11 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
         //Let the GC take care of the previous list and fill a new one
         mCategories = new ArrayList<>();
         mCategories.addAll(all);
-        notifyDataSetChanged();
 
         mSelectedCategories = new ArrayList<>();
         mSelectedCategories.addAll(selected);
+
+        notifyDataSetChanged();
     }
 
     /**
@@ -96,6 +98,10 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
             StaggeredGridLayoutManager.LayoutParams params;
             params = (StaggeredGridLayoutManager.LayoutParams)holder.itemView.getLayoutParams();
             params.setFullSpan(true);
+
+            if (mCategories != null){
+                holder.progressBar.setVisibility(View.GONE);
+            }
         }
         else if (getItemViewType(position) == VIEW_TYPE_NEXT){
             NextViewHolder holder = (NextViewHolder)rawHolder;
@@ -165,49 +171,25 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
         }
     }
 
-    /*@SuppressLint({"InflateParams", "DefaultLocale"})
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View v = convertView;
-        if (v == null) {
-            LayoutInflater vi = (LayoutInflater) mContext
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.item_choose_categories_category, null);
-        }
-
-        final Category category = mItems.get(position);
-        if (category.getColor() != null && !category.getColor().isEmpty()) {
-            v.setBackgroundColor(Color.parseColor(
-                    category.getColor()));
-        }
-
-        final TextView title = (TextView) v
-                .findViewById(R.id.list_item_category_grid_category_textview);
-
-        title.setText(category.getTitle().toUpperCase());
-        final ImageView check = (ImageView) v
-                .findViewById(R.id.list_item_category_grid_category_imageview);
-        final ArrayList<Category> selectedItems = mCallback
-                .getCurrentlySelectedCategories();
-        if (selectedItems.contains(category)) {
-            check.setVisibility(View.VISIBLE);
-        } else {
-            check.setVisibility(View.GONE);
-        }
-
-        return v;
-    }*/
 
     /**
-     * The grid's header ViewHolder. Since the header fields are pre-populated, the existence
-     * of this view holder is a mere formality.
+     * The grid's header ViewHolder.
      *
      * @author Ismael Alonso
      * @version 1.0.0
      */
     class HeaderViewHolder extends RecyclerView.ViewHolder{
+        private ProgressBar progressBar;
+
+        /**
+         * Constructor.
+         *
+         * @param itemView the root view of the cell.
+         */
         public HeaderViewHolder(View itemView){
             super(itemView);
+
+            progressBar = (ProgressBar)itemView.findViewById(R.id.choose_categories_header_progress_bar);
         }
     }
 
@@ -250,7 +232,6 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
                     animation.setAnimationListener(this);
                     mOverlay.startAnimation(animation);
                 }
-                notifyItemChanged(getAdapterPosition());
             }
             else{
 

@@ -17,9 +17,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -46,9 +44,6 @@ public class ChooseCategoriesFragment
     private View mMaterialHeader;
     private RecyclerView mGrid;
 
-
-    private GridView mGridView;
-    private ProgressBar mProgressBar;
     private TextView mErrorTextView;
     private Button mNextButton;
     private ArrayList<Category> mSelectedItems = new ArrayList<Category>();
@@ -122,8 +117,6 @@ public class ChooseCategoriesFragment
 
         /*mGridView = (GridView) root
                 .findViewById(R.id.choose_categories_gridview);*/
-        mProgressBar = (ProgressBar) root
-                .findViewById(R.id.choose_categories_load_progress);
         mErrorTextView = (TextView) root
                 .findViewById(R.id.choose_categories_error_textview);
         mNextButton = (Button) root
@@ -183,20 +176,14 @@ public class ChooseCategoriesFragment
     }
 
     private void showProgress() {
-        mProgressBar.setVisibility(View.VISIBLE);
-        //mGridView.setVisibility(View.GONE);
         mErrorTextView.setVisibility(View.GONE);
     }
 
     private void showCategories() {
-        mProgressBar.setVisibility(View.GONE);
-        //mGridView.setVisibility(View.VISIBLE);
         mErrorTextView.setVisibility(View.GONE);
     }
 
     private void showError() {
-        mProgressBar.setVisibility(View.GONE);
-        //mGridView.setVisibility(View.GONE);
         mErrorTextView.setVisibility(View.VISIBLE);
     }
 
@@ -225,12 +212,15 @@ public class ChooseCategoriesFragment
     }
 
 
+    /**
+     * Decoration class to establish the grid's items margin
+     */
     final class ItemPadding extends RecyclerView.ItemDecoration{
-        private int padding;
+        private int margin;
 
 
         public ItemPadding(){
-            padding = (int)Math.ceil(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+            margin = (int)Math.ceil(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                     8, getActivity().getResources().getDisplayMetrics()));
         }
 
@@ -240,23 +230,23 @@ public class ChooseCategoriesFragment
 
             int position = parent.getChildLayoutPosition(view);
 
-            //If the header, only bottom padding
+            //If the header, only bottom margin
             if (position == 0){
-                outRect.bottom = padding / 2;
+                outRect.bottom = margin / 2;
             }
-            //If to the left, full left padding
+            //If to the left, full left margin
             else if (position%2 == 1){
-                outRect.top = padding / 2;
-                outRect.left = padding;
-                outRect.bottom = padding / 2;
-                outRect.right = padding / 2;
+                outRect.top = margin / 2;
+                outRect.left = margin;
+                outRect.bottom = margin / 2;
+                outRect.right = margin / 2;
             }
-            //If to the right, full right padding
+            //If to the right, full right margin
             else if (position%2 == 0){
-                outRect.top = padding / 2;
-                outRect.left = padding / 2;
-                outRect.bottom = padding / 2;
-                outRect.right = padding;
+                outRect.top = margin / 2;
+                outRect.left = margin / 2;
+                outRect.bottom = margin / 2;
+                outRect.right = margin;
             }
         }
     }

@@ -6,22 +6,13 @@
     <View
         android:id="@+id/choose_categories_material_header"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="210dp"
         android:background="@color/grow_primary_dark" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/choose_categories_grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-    <ProgressBar
-        android:id="@+id/choose_categories_load_progress"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="30dp"
-        android:visibility="gone" />
 
     <TextView
         android:id="@+id/choose_categories_error_textview"
