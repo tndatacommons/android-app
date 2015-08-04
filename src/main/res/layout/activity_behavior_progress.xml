@@ -8,13 +8,12 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.50"
-        android:layout_gravity="center_vertical"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:padding="25dp"
         android:textSize="25sp"
         android:textColor="#FFF"
         android:background="@color/grow_primary_dark"
-        android:text="@string/behavior_progress_title"/>
+        android:text="@string/behavior_progress_title" />
 
     <ProgressBar
         style="?android:attr/progressBarStyle"
