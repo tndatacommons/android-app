@@ -12,7 +12,6 @@ import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -363,10 +362,11 @@ public class ChooseCategoryAdapter
         public void onAnimationEnd(Animation animation){
             //When the category has been selected, make the overlay gone, otherwise, when the
             //  animation ends, the overlay will restore to its original alpha state.
-            if (mSelectedCategories.contains(getItem(getAdapterPosition()-1))){
-                mOverlay.setVisibility(View.GONE);
+            if (getLayoutPosition() != -1){
+                if (mSelectedCategories.contains(getItem(getLayoutPosition()-1))){
+                    mOverlay.setVisibility(View.GONE);
+                }
             }
-            Log.d("CategoryAdapter", "holder alpha: " + mOverlay.getAlpha());
         }
 
         @Override
