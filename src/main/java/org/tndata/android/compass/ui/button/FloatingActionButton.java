@@ -342,6 +342,39 @@ public class FloatingActionButton extends ImageButton {
         }
     }
 
+    public void showPager() {
+        showPager(false);
+    }
+
+    public void showPager(boolean force) {
+        togglePager(true, force);
+    }
+
+    public void hidePager() {
+        togglePager(false, false);
+    }
+
+    private void togglePager(final boolean visible, boolean force) {
+        if (mVisible != visible || force) {
+            mVisible = force ? true : visible;
+            if (!visible) {
+                this.animate()
+                        .scaleY(0.0f)
+                        .scaleX(0.0f)
+                        .setInterpolator(new AccelerateDecelerateInterpolator())
+                        .setStartDelay(0)
+                        .start();
+            } else {
+                this.animate()
+                        .scaleY(1)
+                        .scaleX(1)
+                        .setInterpolator(new AccelerateDecelerateInterpolator())
+                        .setStartDelay(0)
+                        .start();
+            }
+        }
+    }
+
     public void attachToListView(@NonNull AbsListView listView, OnScrollListener listener) {
         attachToListView(listView, listener, false);
     }
