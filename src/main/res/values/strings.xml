@@ -61,9 +61,6 @@
 
 
     <!-- OnBoardingActivity -->
-    <string name="onboarding_category_error_label">Uh Oh! There seems to have been an issue finding choices.</string>
-    <string name="onboarding_category_header_label">KNOW YOUR PATH.</string>
-    <string name="onboarding_category_info_label">Tell Compass four things you think about a lot. You can add to or change your choices later.</string>
     <string name="category_image_description">Select</string>
     <string name="choose_categories_need_more">You must select at least 4 categories</string>
     <string name="onboarding_category_done">NEXT</string>
@@ -180,6 +177,13 @@
 
     <!-- TourFragment -->
     <string name="tour_action_skip">SKIP</string>
+
+    <!-- Category chooser -->
+    <string name="choose_categories_error">Uh Oh! There seems to have been an issue finding choices.</string>
+    <string name="choose_categories_header">KNOW YOUR PATH.</string>
+    <string name="choose_categories_info">Tell Compass some things you care about. You can add or change choices later.</string>
+    <string name="choose_categories_at_least_three">Pick a minimum of three things you care about most.</string>
+    <string name="choose_categories_at_most_five">Just pick the five things you care about most. You can choose more later.</string>
 
 
 </resources>

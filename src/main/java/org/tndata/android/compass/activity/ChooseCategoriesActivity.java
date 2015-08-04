@@ -10,16 +10,18 @@ import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
 import org.tndata.android.compass.fragment.ChooseCategoriesFragment;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.task.AddCategoryTask;
 import org.tndata.android.compass.task.DeleteCategoryTask;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ChooseCategoriesActivity extends ActionBarActivity implements
-        ChooseCategoriesFragment.ChooseCategoriesFragmentListener,
-        AddCategoryTask.AddCategoryTaskListener, DeleteCategoryTask.DeleteCategoryTaskListener {
+        AddCategoryTask.AddCategoryTaskListener, DeleteCategoryTask.DeleteCategoryTaskListener,
+        ChooseCategoryAdapter.OnCategoriesSelectedListener{
 
     private CompassApplication application;
     private ArrayList<Category> mCategories;
@@ -40,42 +42,18 @@ public class ChooseCategoriesActivity extends ActionBarActivity implements
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        Bundle args = new Bundle();
+        args.putBoolean(ChooseCategoriesFragment.RESTRICTIONS_KEY, false);
+
         mFragment = new ChooseCategoriesFragment();
+        mFragment.setArguments(args);
         getFragmentManager().beginTransaction()
                 .replace(R.id.base_content, mFragment).commit();
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_BACK)) { // Back key pressed
-            saveCategories();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                saveCategories();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void saveCategories() {
-        mCategories = mFragment.getCurrentlySelectedCategories();
-        if (mCategories.size() < ChooseCategoriesFragment.MIN_CATEGORIES_REQUIRED) {
-            Toast.makeText(getApplicationContext(), R.string.choose_categories_need_more,
-                    Toast.LENGTH_LONG).show();
-        } else {
-            categoriesSelected(mCategories);
-        }
-    }
-
-    @Override
-    public void categoriesSelected(ArrayList<Category> categories) {
+    public void onCategoriesSelected(List<Category> selection){
         //Lets just save the new ones...
         ArrayList<String> deleteCats = new ArrayList<String>();
         ArrayList<Category> categoriesToAdd = new ArrayList<Category>();
@@ -83,13 +61,13 @@ public class ChooseCategoriesActivity extends ActionBarActivity implements
         categoriesWithDelete.addAll(application.getCategories());
 
         for (Category cat : application.getCategories()) {
-            if (!categories.contains(cat)) {
+            if (!selection.contains(cat)) {
                 deleteCats.add(String.valueOf(cat.getMappingId()));
                 categoriesWithDelete.remove(cat);
             }
         }
 
-        for (Category cat : categories) {
+        for (Category cat : selection) {
             if (!application.getCategories().contains(cat)) {
                 categoriesToAdd.add(cat);
             }
