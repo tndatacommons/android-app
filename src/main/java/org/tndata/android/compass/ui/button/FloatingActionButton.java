@@ -41,6 +41,7 @@ public class FloatingActionButton extends ImageButton {
     public static final int TYPE_MINI = 1;
 
     private boolean mVisible;
+    private boolean mVisiblePager;
 
     private int mColorNormal;
     private int mColorPressed;
@@ -85,6 +86,7 @@ public class FloatingActionButton extends ImageButton {
 
     private void init(Context context, AttributeSet attributeSet) {
         mVisible = true;
+        mVisiblePager = false;
         mColorNormal = getColor(R.color.button_paper_fab_color);
         mColorPressed = getColor(R.color.button_paper_fab_selected_color);
         mColorRipple = getColor(android.R.color.white);
@@ -355,8 +357,11 @@ public class FloatingActionButton extends ImageButton {
     }
 
     private void togglePager(final boolean visible, boolean force) {
-        if (mVisible != visible || force) {
-            mVisible = force ? true : visible;
+        if (!mVisible) {
+            show();
+        }
+        if (mVisiblePager != visible || force) {
+            mVisiblePager = force ? true : visible;
             if (!visible) {
                 this.animate()
                         .scaleY(0.0f)
