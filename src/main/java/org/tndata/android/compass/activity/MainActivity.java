@@ -14,8 +14,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -67,7 +65,6 @@ public class MainActivity extends ActionBarActivity implements
     private ImageView mHeaderImageView;
     private MainViewPagerAdapter mAdapter;
     private FloatingActionButton mFloatingActionButton;
-    private Animation mMenuButtonShowAnimation;
     private boolean mDrawerIsOpen = false;
     private boolean backButtonSelectsDefaultTab = false;
     private static final int DEFAULT_TAB = 0;
@@ -141,6 +138,7 @@ public class MainActivity extends ActionBarActivity implements
             public void onPageScrolled(int position, float positionOffset,
                                        int positionOffsetPixels) {
 
+                mFloatingActionButton.hidePager();
             }
 
             @Override
@@ -155,12 +153,7 @@ public class MainActivity extends ActionBarActivity implements
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                int currentViewPagerItem = mViewPager.getCurrentItem();
-                if (state == ViewPager.SCROLL_STATE_IDLE && currentViewPagerItem != lastViewPagerItem) {
-                    mFloatingActionButton.startAnimation(mMenuButtonShowAnimation);
-                    lastViewPagerItem = currentViewPagerItem;
-                }
-
+                mFloatingActionButton.showPager(true);
             }
         });
 
@@ -172,10 +165,6 @@ public class MainActivity extends ActionBarActivity implements
             showUserData();
             application.getUserData().logSelectedData("MainActivity.onCreate", false);
         }
-
-        mMenuButtonShowAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_scale_up);
-
-
     }
 
     @Override
@@ -340,7 +329,6 @@ public class MainActivity extends ActionBarActivity implements
     public void showUserData() {
         mAdapter.setCategories(application.getCategories());
         mAdapter.notifyDataSetChanged();
-
         // broadcast that goals are available.
         Intent intent = new Intent(Constants.GOAL_UPDATED_BROADCAST_ACTION);
         sendBroadcast(intent);
