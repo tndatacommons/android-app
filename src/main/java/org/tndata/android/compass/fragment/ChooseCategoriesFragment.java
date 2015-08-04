@@ -23,6 +23,12 @@ import org.tndata.android.compass.task.CategoryLoaderTask.CategoryLoaderListener
 import java.util.ArrayList;
 
 
+/**
+ * A fragment containing a grid set to choose categories.
+ *
+ * @author Edited by Ismael Alonso
+ * @version 2.0.0
+ */
 public class ChooseCategoriesFragment extends Fragment implements CategoryLoaderListener{
     public static final String RESTRICTIONS_KEY = "restrictions";
 
@@ -62,13 +68,13 @@ public class ChooseCategoriesFragment extends Fragment implements CategoryLoader
 
         mMaterialHeader = root.findViewById(R.id.choose_categories_material_header);
 
-        RecyclerView mGrid = (RecyclerView)root.findViewById(R.id.choose_categories_grid);
-        mGrid.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        RecyclerView grid = (RecyclerView)root.findViewById(R.id.choose_categories_grid);
+        grid.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
         mAdapter = new ChooseCategoryAdapter(getActivity(), mCallback, mApplyRestrictions);
-        mGrid.setAdapter(mAdapter);
-        mGrid.addItemDecoration(new ItemPadding());
-        mGrid.setOnScrollListener(new ParallaxEffect());
+        grid.setAdapter(mAdapter);
+        grid.addItemDecoration(new ItemPadding());
+        grid.setOnScrollListener(new ParallaxEffect());
 
         return root;
     }
@@ -219,7 +225,7 @@ public class ChooseCategoriesFragment extends Fragment implements CategoryLoader
             //Update the parameters of the material header
             RelativeLayout.LayoutParams params;
             params = (RelativeLayout.LayoutParams)mMaterialHeader.getLayoutParams();
-            params.topMargin = (int)((mPreviousMargin+topState)*0.75);
+            params.topMargin = (int)((mPreviousMargin+topState)*0.5);
             mMaterialHeader.setLayoutParams(params);
         }
     }

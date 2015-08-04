@@ -61,7 +61,10 @@ public class OnBoardingActivity extends ActionBarActivity implements
     private void swapFragments(int index) {
         switch (index) {
             case CHOOSE_CATEGORIES:
+                Bundle args = new Bundle();
+                args.putBoolean(ChooseCategoriesFragment.RESTRICTIONS_KEY, true);
                 mFragment = new ChooseCategoriesFragment();
+                mFragment.setArguments(args);
                 break;
             case QOL:
                 if (!mCategories.isEmpty()) {

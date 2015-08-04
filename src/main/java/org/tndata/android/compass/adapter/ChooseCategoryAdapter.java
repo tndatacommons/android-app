@@ -6,7 +6,9 @@ import java.util.List;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Category;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -29,7 +31,10 @@ import android.widget.Toast;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class ChooseCategoryAdapter extends RecyclerView.Adapter{
+public class ChooseCategoryAdapter
+        extends RecyclerView.Adapter
+        implements Animation.AnimationListener{
+
     private static final int VIEW_TYPE_HEADER = 1;
     private static final int VIEW_TYPE_CATEGORY = 2;
     private static final int VIEW_TYPE_NEXT = 3;
@@ -42,10 +47,17 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
     private List<Category> mCategories;
     private List<Category> mSelectedCategories;
 
-    private int mLastAnimatedPosition;
-    private long mLastAnimationScheduleTime;
+    private int mLastAnimation;
+    private int mCurrentAnimations;
 
 
+    /**
+     * Constructor.
+     *
+     * @param context a reference to the context.
+     * @param callback the callback interface.
+     * @param applyRestrictions whether the 3 to 5 vtegory restriction should be applied.
+     */
     public ChooseCategoryAdapter(Context context, OnCategoriesSelectedListener callback,
                                  boolean applyRestrictions){
         mContext = context;
@@ -54,7 +66,8 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
 
         mCategories = null;
 
-        mLastAnimatedPosition = -1;
+        mLastAnimation = 0;
+        mCurrentAnimations = 0;
     }
 
     /**
@@ -115,52 +128,96 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
         }
         else if (getItemViewType(position) == VIEW_TYPE_NEXT){
             NextViewHolder holder = (NextViewHolder)rawHolder;
+            holder.itemView.setVisibility(View.GONE);
             StaggeredGridLayoutManager.LayoutParams params;
             params = (StaggeredGridLayoutManager.LayoutParams)holder.itemView.getLayoutParams();
             params.setFullSpan(true);
+            setAnimation(holder, position);
         }
         else if (getItemViewType(position) == VIEW_TYPE_CATEGORY){
             CategoryViewHolder holder = (CategoryViewHolder)rawHolder;
-            if (!mSelectedCategories.contains(getItem(position-1))){
+            Category category = getItem(position-1);
+            holder.itemView.setVisibility(View.GONE);
+            if (!mSelectedCategories.contains(category)){
                 holder.mOverlay.setVisibility(View.VISIBLE);
             }
             else{
                 holder.mOverlay.setVisibility(View.GONE);
             }
-            holder.mCaption.setText(getItem(position-1).getTitle());
-            setAnimation(holder.itemView, position);
+
+            if (category.getTitle().equalsIgnoreCase("Happiness")){
+                holder.mBackground.setImageResource(R.drawable.tile_happiness);
+            }
+            else if (category.getTitle().equalsIgnoreCase("Community")){
+                holder.mBackground.setImageResource(R.drawable.tile_community);
+            }
+            else if (category.getTitle().equalsIgnoreCase("Family")){
+                holder.mBackground.setImageResource(R.drawable.tile_family);
+            }
+            else if (category.getTitle().equalsIgnoreCase("Home")){
+                holder.mBackground.setImageResource(R.drawable.tile_home);
+            }
+            else if (category.getTitle().equalsIgnoreCase("Romance")){
+                holder.mBackground.setImageResource(R.drawable.tile_romance);
+            }
+            else if (category.getTitle().equalsIgnoreCase("Health")){
+                holder.mBackground.setImageResource(R.drawable.tile_health);
+            }
+            else if (category.getTitle().equalsIgnoreCase("Wellness")){
+                holder.mBackground.setImageResource(R.drawable.tile_wellness);
+            }
+            else if (category.getTitle().equalsIgnoreCase("Safety")){
+                holder.mBackground.setImageResource(R.drawable.tile_safety);
+            }
+            else if (category.getTitle().equalsIgnoreCase("Parenting")){
+                holder.mBackground.setImageResource(R.drawable.tile_parenting);
+            }
+            else if (category.getTitle().equalsIgnoreCase("Education")){
+                holder.mBackground.setImageResource(R.drawable.tile_education);
+            }
+            else if (category.getTitle().equalsIgnoreCase("Skills")){
+                holder.mBackground.setImageResource(R.drawable.tile_skills);
+            }
+            else if (category.getTitle().equalsIgnoreCase("Work")){
+                holder.mBackground.setImageResource(R.drawable.tile_work);
+            }
+            else if (category.getTitle().equalsIgnoreCase("Prosperity")){
+                holder.mBackground.setImageResource(R.drawable.tile_prosperity);
+            }
+            else if (category.getTitle().equalsIgnoreCase("Fun")){
+                holder.mBackground.setImageResource(R.drawable.tile_fun);
+            }
+            else{
+                holder.mBackground.setImageResource(0);
+            }
+
+            holder.mCaption.setText(category.getTitle());
+            setAnimation(holder, position);
         }
     }
 
     /**
-     * Sets an in-animation to an item if it hasn't been animated already. If there are
+     * Sets an in-animation to a tile if it hasn't been animated already. If there are
      * scheduled animations, it sets it after the last one.
      *
-     * @param view the view to animate in.
-     * @param position the position of the view.
+     * @param rawHolder the holder containing the tile to animate in.
+     * @param position the position of the tile.
      */
-    private void setAnimation(View view, int position){
-        // If the bound view wasn't previously displayed on screen, it's animated
-        if (position > mLastAnimatedPosition){
-            if (position == 1){
-                mLastAnimationScheduleTime = System.currentTimeMillis()-200;
-            }
-
+    private void setAnimation(RecyclerView.ViewHolder rawHolder, int position){
+        // If the bound tile wasn't previously displayed on screen, it's animated
+        if (position > mLastAnimation){
             Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.category_in);
-            if (mLastAnimationScheduleTime <= System.currentTimeMillis()){
-                animation.setStartOffset(200);
-                mLastAnimationScheduleTime = System.currentTimeMillis()+200;
-            }
-            else{
-                int offset = (int)(mLastAnimationScheduleTime-System.currentTimeMillis())+200;
-                animation.setStartOffset(offset);
-                mLastAnimationScheduleTime = System.currentTimeMillis()+offset;
-            }
-            view.startAnimation(animation);
-            mLastAnimatedPosition = position;
+            animation.setAnimationListener(this);
+            animation.setStartOffset(100 * mCurrentAnimations);
+            mCurrentAnimations++;
+            rawHolder.itemView.startAnimation(animation);
+            rawHolder.itemView.setVisibility(View.VISIBLE);
+            mLastAnimation = position;
         }
         else{
-            view.clearAnimation();
+            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.category_set);
+            rawHolder.itemView.startAnimation(animation);
+            rawHolder.itemView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -182,6 +239,21 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
         else{
             return VIEW_TYPE_CATEGORY;
         }
+    }
+
+    @Override
+    public void onAnimationStart(Animation animation){
+        //Unused
+    }
+
+    @Override
+    public void onAnimationEnd(Animation animation){
+        mCurrentAnimations--;
+    }
+
+    @Override
+    public void onAnimationRepeat(Animation animation){
+        //Unused
     }
 
 
@@ -206,17 +278,29 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
         }
     }
 
+
+    /**
+     * Holder for a category tile. Handles clicks and animations.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     class CategoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, Animation.AnimationListener{
         private ImageView mBackground;
         private View mOverlay;
         private TextView mCaption;
 
 
+        /**
+         * Constructor.
+         *
+         * @param itemView the root view of the cell.
+         */
         public CategoryViewHolder(View itemView){
             super(itemView);
 
             //UI components
-            mBackground = (ImageView)itemView.findViewById(R.id.choose_categories_category_background);
+            mBackground = (ImageView)itemView.findViewById(R.id.choose_categories_category_tile);
             mOverlay = itemView.findViewById(R.id.choose_categories_category_overlay);
             mCaption = (TextView)itemView.findViewById(R.id.choose_categories_category_caption);
 
@@ -227,40 +311,62 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
 
         @Override
         public void onClick(final View view){
+            //In any event the Category is needed, so it is fetched
+            Category category = getItem(getAdapterPosition()-1);
+
+            //If the tile was clicked
             if (view == itemView){
                 AlphaAnimation animation;
-                Category category = getItem(getAdapterPosition()-1);
+                //If the category was selected, remove it and fade in the overlay
                 if (mSelectedCategories.contains(category)){
-                    Log.d("CategoryAdapter", "deselecting: " + category.getTitle());
                     mSelectedCategories.remove(category);
                     animation = new AlphaAnimation(0, 1);
-                    animation.setDuration(200);
-                    animation.setAnimationListener(this);
-                    mOverlay.startAnimation(animation);
                 }
+                //Otherwise add it and fade out the overlay
                 else{
                     mSelectedCategories.add(category);
                     animation = new AlphaAnimation(1, 0);
-                    animation.setDuration(200);
-                    animation.setAnimationListener(this);
-                    mOverlay.startAnimation(animation);
                 }
+                //Start the animation
+                animation.setDuration(200);
+                animation.setAnimationListener(this);
+                mOverlay.startAnimation(animation);
+
+                //Notify the adapter the item was changed. Sometimes the animation won't fire
+                //  if this is not done.
+                notifyItemChanged(getLayoutPosition());
             }
+            //If the description was clicked
             else{
-                //TODO info
+                //Create a dialog with the description
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setMessage(category.getDescription()).setTitle(category.getTitle());
+                builder.setPositiveButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener(){
+                            public void onClick(DialogInterface dialog, int id){
+                                dialog.dismiss();
+                            }
+                        });
+                builder.create().show();
             }
         }
 
         @Override
         public void onAnimationStart(Animation animation){
+            //In any event, the overlay is made visible at the beginning of the animation, It
+            //  will be already visible if the category is not selected, which won't have any
+            //  effect, but will make it visible if the category is visible.
             mOverlay.setVisibility(View.VISIBLE);
         }
 
         @Override
         public void onAnimationEnd(Animation animation){
+            //When the category has been selected, make the overlay gone, otherwise, when the
+            //  animation ends, the overlay will restore to its original alpha state.
             if (mSelectedCategories.contains(getItem(getAdapterPosition()-1))){
                 mOverlay.setVisibility(View.GONE);
             }
+            Log.d("CategoryAdapter", "holder alpha: " + mOverlay.getAlpha());
         }
 
         @Override
@@ -269,6 +375,13 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
         }
     }
 
+
+    /**
+     * Holder for the next button tile. Handles clicks.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     class NextViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public NextViewHolder(View itemView){
             super(itemView);
@@ -296,7 +409,19 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
         }
     }
 
+
+    /**
+     * Listener for save events.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface OnCategoriesSelectedListener{
+        /**
+         * Called when the next button is clicked if the conditions are right.
+         *
+         * @param selection the list of selected categories.
+         */
         void onCategoriesSelected(List<Category> selection);
     }
 }
