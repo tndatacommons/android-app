@@ -12,6 +12,8 @@
     <color name="login_background">#1976D2</color>
     <color name="transparent_overlay">#30000000</color>
     <color name="image_background">#DEDEDE</color>
+    <color name="action_background_opaque">#FFEEEEEE</color>
+    <color name="action_background_transparent">#00EEEEEE</color>
 
     <color name="tour_color">#3fb3e6</color>
 

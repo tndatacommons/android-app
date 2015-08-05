@@ -431,7 +431,7 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter<MyPrioritiesGo
      * Data holder for the hierarchy of an item.
      *
      * @author Ismael Alonso
-     * @version 1.0.0
+     * @version 1.0.1
      */
     public static class ItemHierarchy{
         private Category mCategory;
@@ -453,6 +453,15 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter<MyPrioritiesGo
             mGoal = goal;
             mBehavior = behavior;
             mAction = action;
+        }
+
+        /**
+         * Tells whether this hierarchy contains an action.
+         *
+         * @return true if the hierarchy contains an action, false otherwise.
+         */
+        public boolean hasAction(){
+            return mAction != null;
         }
     }
 
