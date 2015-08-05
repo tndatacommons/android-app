@@ -16,11 +16,11 @@
             android:layout_height="@dimen/material_header_size"
             android:background="@color/grow_primary"
             android:scaleType="centerCrop"
-            android:src="@drawable/path_header_image" />
+            android:src="@drawable/compass_master_illustration" />
 
         <include
             android:id="@+id/transparent_tool_bar"
-            layout="@layout/transparent_tool_bar"></include>
+            layout="@layout/transparent_tool_bar" />
 
         <com.astuetz.PagerSlidingTabStrip xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/main_pager_tabstrip"
@@ -56,49 +56,12 @@
 
     </RelativeLayout>
 
-    <LinearLayout
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/main_left_drawer"
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/nav_drawer_color"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:id="@+id/main_drawer_user_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/grow_secondary"
-            android:clickable="true"
-            android:minHeight="@dimen/nav_drawer_header_min_height"
-            android:orientation="horizontal"
-            android:paddingBottom="5dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingTop="30dp">
-
-            <TextView
-                android:id="@+id/main_drawer_user_name_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/actionbar_text" />
-        </LinearLayout>
-
-        <ListView
-            android:id="@+id/main_left_drawer_list"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:choiceMode="singleChoice"
-            android:divider="@color/nav_drawer_list_divider_color"
-            android:dividerHeight="1dp"
-            android:listSelector="@drawable/nav_drawer_list_selector"
-            android:paddingBottom="10dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp" />
-    </LinearLayout>
+        android:choiceMode="singleChoice"
+        android:background="@color/nav_drawer_color" />
 
 </android.support.v4.widget.DrawerLayout>

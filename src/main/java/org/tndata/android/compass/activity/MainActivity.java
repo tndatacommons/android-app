@@ -10,6 +10,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -30,6 +32,7 @@ import org.tndata.android.compass.model.DrawerItem;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.task.GetUserDataTask;
 import org.tndata.android.compass.task.UpdateProfileTask;
+import org.tndata.android.compass.ui.DividerItemDecoration;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.GcmRegistration;
@@ -40,7 +43,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends ActionBarActivity implements
         GetUserDataTask.GetUserDataListener,
-        MyGoalsFragmentListener {
+        MyGoalsFragmentListener,
+        DrawerAdapter.OnItemClickListener{
 
     private static final int IMPORTANT_TO_ME = 0;
     private static final int MY_PRIORITIES = 1;
@@ -57,9 +61,8 @@ public class MainActivity extends ActionBarActivity implements
     private CompassApplication application;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-    private ListView mDrawerList;
+    private RecyclerView mDrawerList;
     private ArrayList<DrawerItem> mDrawerItems;
-    private DrawerAdapter mDrawerAdapter = null;
     private Toolbar mToolbar;
     private ViewPager mViewPager;
     private ImageView mHeaderImageView;
@@ -100,14 +103,15 @@ public class MainActivity extends ActionBarActivity implements
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.main_left_drawer_list);
+        mDrawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
+        mDrawerList = (RecyclerView)findViewById(R.id.main_left_drawer);
+        mDrawerList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mDrawerList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
         mDrawerItems = drawerItems();
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
                 GravityCompat.START);
-        mDrawerAdapter = new DrawerAdapter(this, mDrawerItems);
-        mDrawerList.setAdapter(mDrawerAdapter);
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+        DrawerAdapter drawerAdapter = new DrawerAdapter(this, this, mDrawerItems);
+        mDrawerList.setAdapter(drawerAdapter);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.string.nav_drawer_action, R.string.nav_drawer_action) {
 
@@ -147,7 +151,13 @@ public class MainActivity extends ActionBarActivity implements
                 if (url != null) {
                     ImageLoader.loadBitmap(mHeaderImageView, url, false, false);
                 } else {
-                    mHeaderImageView.setImageResource(R.drawable.path_header_image);
+                    //TODO there is a bug here, when the user scrolls fast, the resource gets
+                    //TODO  loaded before the cached image. When that happens, some other
+                    //TODO  category image is displayed. The next line will only fix that
+                    //TODO  if the resource is being pulled from the web. Need to make a
+                    //TODO  couple of minor adjustments to the tasks spawned by the cache.
+                    ImageLoader.cancelPotentialWork("", mHeaderImageView);
+                    mHeaderImageView.setImageResource(R.drawable.compass_master_illustration);
                 }
             }
 
@@ -183,39 +193,35 @@ public class MainActivity extends ActionBarActivity implements
         startActivityForResult(intent, Constants.CHOOSE_CATEGORIES_REQUEST_CODE);
     }
 
-    protected class DrawerItemClickListener implements
-            ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-                                long id) {
-            Intent intent = null;
-            switch (position) {
-                case IMPORTANT_TO_ME:
-                    break;
-                case MY_PRIORITIES:
-                    startActivity(new Intent(getApplicationContext(), MyPrioritiesActivity.class));
-                    break;
-                case MYSELF:
-                    intent = new Intent(getApplicationContext(), UserProfileActivity.class);
-                    startActivity(intent);
-                    break;
-                case MY_PRIVACY:
-                    break;
+    @Override
+    public void onItemClick(int position){
+        Intent intent = null;
+        switch (position) {
+            case IMPORTANT_TO_ME:
+                break;
+            case MY_PRIORITIES:
+                startActivity(new Intent(getApplicationContext(), MyPrioritiesActivity.class));
+                break;
+            case MYSELF:
+                intent = new Intent(getApplicationContext(), UserProfileActivity.class);
+                startActivity(intent);
+                break;
+            case MY_PRIVACY:
+                break;
 
-                case SETTINGS:
-                    intent = new Intent(getApplicationContext(), SettingsActivity.class);
-                    startActivityForResult(intent, Constants.SETTINGS_REQUEST_CODE);
-                    break;
-                case TEMP_MENU_FOR_BEHAVIOR_PROGRESS:
-                    intent = new Intent(getApplicationContext(), BehaviorProgressActivity.class);
-                    startActivity(intent);
-                    break;
-                case TOUR:
-                    startActivity(new Intent(getApplicationContext(), TourActivity.class));
-                    break;
-            }
-            mDrawerLayout.closeDrawers();
+            case SETTINGS:
+                intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                startActivityForResult(intent, Constants.SETTINGS_REQUEST_CODE);
+                break;
+            case TEMP_MENU_FOR_BEHAVIOR_PROGRESS:
+                intent = new Intent(getApplicationContext(), BehaviorProgressActivity.class);
+                startActivity(intent);
+                break;
+            case TOUR:
+                startActivity(new Intent(getApplicationContext(), TourActivity.class));
+                break;
         }
+        mDrawerLayout.closeDrawers();
     }
 
     private ArrayList<DrawerItem> drawerItems() {
