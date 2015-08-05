@@ -14,8 +14,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -49,11 +47,12 @@ public class MainActivity extends ActionBarActivity implements
     private static final int MYSELF = 2;
     private static final int MY_PRIVACY = 3;
     private static final int SETTINGS = 4;
+    private static final int TOUR = 5;
     // NOTE: The Drawer menu option to launch the BehaviorProgressActivity is here for demo purposes.
     // We should remove before submitting to the play store.
-    private static final int TEMP_MENU_FOR_BEHAVIOR_PROGRESS = 5;
-    private static final int DRAWER_COUNT = 6;
-    //private static final int DRAWER_COUNT = 5; // TODO: Remove the temporary menu item for Behavior Progress
+    private static final int TEMP_MENU_FOR_BEHAVIOR_PROGRESS = 6;
+    private static final int DRAWER_COUNT = 7;
+    //private static final int DRAWER_COUNT = 6; // TODO: Remove the temporary menu item for Behavior Progress
 
     private CompassApplication application;
     private DrawerLayout mDrawerLayout;
@@ -66,7 +65,6 @@ public class MainActivity extends ActionBarActivity implements
     private ImageView mHeaderImageView;
     private MainViewPagerAdapter mAdapter;
     private FloatingActionButton mFloatingActionButton;
-    private Animation mMenuButtonShowAnimation;
     private boolean mDrawerIsOpen = false;
     private boolean backButtonSelectsDefaultTab = false;
     private static final int DEFAULT_TAB = 0;
@@ -140,6 +138,7 @@ public class MainActivity extends ActionBarActivity implements
             public void onPageScrolled(int position, float positionOffset,
                                        int positionOffsetPixels) {
 
+                mFloatingActionButton.hidePager();
             }
 
             @Override
@@ -154,12 +153,7 @@ public class MainActivity extends ActionBarActivity implements
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                int currentViewPagerItem = mViewPager.getCurrentItem();
-                if (state == ViewPager.SCROLL_STATE_IDLE && currentViewPagerItem != lastViewPagerItem) {
-                    mFloatingActionButton.startAnimation(mMenuButtonShowAnimation);
-                    lastViewPagerItem = currentViewPagerItem;
-                }
-
+                mFloatingActionButton.showPager(true);
             }
         });
 
@@ -171,10 +165,6 @@ public class MainActivity extends ActionBarActivity implements
             showUserData();
             application.getUserData().logSelectedData("MainActivity.onCreate", false);
         }
-
-        mMenuButtonShowAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_scale_up);
-
-
     }
 
     @Override
@@ -219,6 +209,9 @@ public class MainActivity extends ActionBarActivity implements
                 case TEMP_MENU_FOR_BEHAVIOR_PROGRESS:
                     intent = new Intent(getApplicationContext(), BehaviorProgressActivity.class);
                     startActivity(intent);
+                    break;
+                case TOUR:
+                    startActivity(new Intent(getApplicationContext(), TourActivity.class));
                     break;
             }
             mDrawerLayout.closeDrawers();
@@ -274,6 +267,10 @@ public class MainActivity extends ActionBarActivity implements
                     break;
                 case TEMP_MENU_FOR_BEHAVIOR_PROGRESS:
                     item.text = "Behavior Progress";
+                    break;
+                case TOUR:
+                    item.text = getResources()
+                            .getString(R.string.action_tour);
                     break;
             }
             items.add(item);
@@ -332,7 +329,6 @@ public class MainActivity extends ActionBarActivity implements
     public void showUserData() {
         mAdapter.setCategories(application.getCategories());
         mAdapter.notifyDataSetChanged();
-
         // broadcast that goals are available.
         Intent intent = new Intent(Constants.GOAL_UPDATED_BROADCAST_ACTION);
         sendBroadcast(intent);
