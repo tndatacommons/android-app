@@ -19,13 +19,13 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="240dp"
+                android:layout_height="200dp"
                 android:background="@color/grow_primary" >
 
                 <RelativeLayout
                     android:id="@+id/action_circle_view"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="85dp"
+                    android:layout_height="85dp"
                     android:layout_centerInParent="true"
                     android:background="@drawable/circle" >
 
