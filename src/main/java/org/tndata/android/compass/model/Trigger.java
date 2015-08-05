@@ -126,7 +126,7 @@ public class Trigger implements Serializable, Comparable<Trigger>{
     /**
      * Raw date setter.
      *
-     * @param date raw trigger time
+     * @param date raw trigger date
      */
     public void setRawDate(String date){
         this.trigger_date = date;
