@@ -49,6 +49,8 @@ public class ChooseCategoryAdapter
     private int mLastAnimation;
     private int mCurrentAnimations;
 
+    private boolean mHideProgressBar;
+
 
     /**
      * Constructor.
@@ -67,6 +69,16 @@ public class ChooseCategoryAdapter
 
         mLastAnimation = 0;
         mCurrentAnimations = 0;
+
+        mHideProgressBar = false;
+    }
+
+    /**
+     * Makes the progress bar go away in the header view.
+     */
+    public void hideProgressBar(){
+        mHideProgressBar = true;
+        notifyItemChanged(0);
     }
 
     /**
@@ -121,7 +133,7 @@ public class ChooseCategoryAdapter
             params = (StaggeredGridLayoutManager.LayoutParams)holder.itemView.getLayoutParams();
             params.setFullSpan(true);
 
-            if (mCategories != null){
+            if (mCategories != null || mHideProgressBar){
                 holder.progressBar.setVisibility(View.GONE);
             }
         }

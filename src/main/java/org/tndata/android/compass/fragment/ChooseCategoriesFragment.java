@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.TypedValue;
@@ -32,12 +34,17 @@ import java.util.ArrayList;
 public class ChooseCategoriesFragment extends Fragment implements CategoryLoaderListener{
     public static final String RESTRICTIONS_KEY = "restrictions";
 
+    //10 seconds worth in milliseconds
+    private static final int FETCH_TIMEOUT = 10*1000;
+
     private View mMaterialHeader;
     private ChooseCategoryAdapter mAdapter;
     private boolean mApplyRestrictions;
 
     private ChooseCategoryAdapter.OnCategoriesSelectedListener mCallback;
     private CompassApplication application;
+
+    private boolean mFetchingCategories;
 
 
     @Override
@@ -76,6 +83,8 @@ public class ChooseCategoriesFragment extends Fragment implements CategoryLoader
         grid.addItemDecoration(new ItemPadding());
         grid.setOnScrollListener(new ParallaxEffect());
 
+        mFetchingCategories = false;
+
         return root;
     }
 
@@ -91,6 +100,17 @@ public class ChooseCategoriesFragment extends Fragment implements CategoryLoader
      * Starts the category load process.
      */
     private void loadCategories(){
+        mFetchingCategories = true;
+        new Handler().postDelayed(new Runnable(){
+            @Override
+            public void run(){
+                if (mFetchingCategories){
+                    notifyError(R.string.choose_categories_error);
+                    mFetchingCategories = false;
+                }
+            }
+        }, FETCH_TIMEOUT);
+
         new CategoryLoaderTask(this).execute(application.getToken());
     }
 
@@ -102,12 +122,25 @@ public class ChooseCategoriesFragment extends Fragment implements CategoryLoader
 
     @Override
     public void categoryLoaderFinished(ArrayList<Category> categories){
-        if (categories == null){
-            Toast.makeText(getActivity(), R.string.choose_categories_error, Toast.LENGTH_SHORT).show();
+        if (mFetchingCategories){
+            if (categories == null){
+                notifyError(R.string.choose_categories_error);
+            }
+            else{
+                mAdapter.setCategories(categories, application.getCategories());
+            }
+            mFetchingCategories = false;
         }
-        else{
-            mAdapter.setCategories(categories, application.getCategories());
-        }
+    }
+
+    /**
+     * Toasts the string with the provided id and hides the progress bar in the header.
+     *
+     * @param resId the resource id of the error string.
+     */
+    private void notifyError(@StringRes int resId){
+        mAdapter.hideProgressBar();
+        Toast.makeText(getActivity(), resId, Toast.LENGTH_SHORT).show();
     }
 
 
