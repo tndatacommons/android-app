@@ -3,13 +3,10 @@ package com.tndata.android.compass.tests.model;
 import org.junit.Test;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
-import org.tndata.android.compass.model.Trigger;
 
 import java.lang.reflect.Field;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
 
 
 public class ActionTest {
@@ -192,48 +189,6 @@ public class ActionTest {
         field.set(action, value);
         final Behavior result = action.getBehavior();
         assertEquals(value, result);
-    }
-
-    @Test
-    public void action_getter_default_trigger_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
-        Action action = new Action();
-        Trigger value = new Trigger();
-        final Field field = action.getClass().getDeclaredField("default_trigger");
-        field.setAccessible(true);
-        field.set(action, value);
-        final Trigger result = action.getDefaultTrigger();
-        assertFalse(result.isDefaultTrigger());
-    }
-
-    @Test
-    public void action_getter_custom_trigger_ReturnsFalse() throws NoSuchFieldException, IllegalAccessException {
-        Action action = new Action();
-        Trigger value = new Trigger();
-        final Field field = action.getClass().getDeclaredField("custom_trigger");
-        field.setAccessible(true);
-        field.set(action, value);
-        final Trigger result = action.getCustomTrigger();
-        assertFalse(result.isDefaultTrigger());
-    }
-
-    @Test
-    public void action_getter_getTrigger()  {
-        Action action = new Action();
-
-        assertFalse(action.getTrigger().isDefaultTrigger());
-
-        Trigger value = new Trigger();
-        value.setId(100);
-        action.setDefaultTrigger(value);
-        assertTrue(action.getTrigger().isDefaultTrigger());
-        assertEquals(100, action.getTrigger().getId());
-
-        Trigger value2 = new Trigger();
-        value2.setId(200);
-        action.setCustomTrigger(value2);
-        assertFalse(action.getTrigger().isDefaultTrigger());
-        assertEquals(200, action.getTrigger().getId());
-
     }
 
 }
