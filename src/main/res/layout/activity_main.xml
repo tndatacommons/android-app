@@ -56,31 +56,12 @@
 
     </RelativeLayout>
 
-    <LinearLayout
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/main_left_drawer"
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/nav_drawer_color"
-        android:orientation="vertical" >
+        android:choiceMode="singleChoice"
+        android:background="@color/nav_drawer_color" />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:scaleType="fitXY"
-            android:background="@drawable/compass_master_illustration" />
-
-        <ListView
-            android:id="@+id/main_left_drawer_list"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:choiceMode="singleChoice"
-            android:divider="@color/nav_drawer_list_divider_color"
-            android:dividerHeight="1dp"
-            android:listSelector="@drawable/nav_drawer_list_selector"
-            android:paddingBottom="10dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp" />
-
-    </LinearLayout>
 </android.support.v4.widget.DrawerLayout>
