@@ -147,7 +147,13 @@ public class MainActivity extends ActionBarActivity implements
                 if (url != null) {
                     ImageLoader.loadBitmap(mHeaderImageView, url, false, false);
                 } else {
-                    mHeaderImageView.setImageResource(R.drawable.path_header_image);
+                    //TODO there is a bug here, when the user scrolls fast, the resource gets
+                    //TODO  loaded before the cached image. When that happens, some other
+                    //TODO  category image is displayed. The next line will only fix that
+                    //TODO  if the resource is being pulled from the web. Need to make a
+                    //TODO  couple of minor adjustments to the tasks spawned by the cache.
+                    ImageLoader.cancelPotentialWork("", mHeaderImageView);
+                    mHeaderImageView.setImageResource(R.drawable.compass_master_illustration);
                 }
             }
 
