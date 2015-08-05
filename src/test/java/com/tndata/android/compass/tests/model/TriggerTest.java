@@ -76,7 +76,7 @@ public class TriggerTest {
     public void trigger_setter_time_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
         Trigger trigger = new Trigger();
         String value = new String("time");
-        trigger.setTime(value);
+        trigger.setRawTime(value);
         final Field field = trigger.getClass().getDeclaredField("time");
         field.setAccessible(true);
         assertEquals(value, field.get(trigger));
@@ -86,7 +86,7 @@ public class TriggerTest {
     public void trigger_setter_date_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
         Trigger trigger = new Trigger();
         String value = new String("trigger_date");
-        trigger.setDate(value);
+        trigger.setRawDate(value);
         final Field field = trigger.getClass().getDeclaredField("trigger_date");
         field.setAccessible(true);
         assertEquals(value, field.get(trigger));
@@ -165,7 +165,7 @@ public class TriggerTest {
         final Field field = trigger.getClass().getDeclaredField("time");
         field.setAccessible(true);
         field.set(trigger, value);
-        final String result = trigger.getTime();
+        final String result = trigger.getRawTime();
         assertEquals(value, result);
     }
 
@@ -176,14 +176,8 @@ public class TriggerTest {
         final Field field = trigger.getClass().getDeclaredField("trigger_date");
         field.setAccessible(true);
         field.set(trigger, value);
-        final String result = trigger.getDate();
+        final String result = trigger.getRawDate();
         assertEquals(value, result);
-    }
-
-    @Test
-    public void trigger_default_trigger_ReturnsFalse() {
-        Trigger trigger = new Trigger();
-        assertFalse(trigger.isDefaultTrigger());
     }
 
     @Test
@@ -217,7 +211,7 @@ public class TriggerTest {
     public void trigger_isDisabled_nameNotEmpty_dateNotEmpty_ReturnsFalse() {
         Trigger trigger = new Trigger();
         trigger.setName("name");
-        trigger.setDate("date");
+        trigger.setRawDate("date");
         assertFalse(trigger.isDisabled());
     }
 
@@ -225,7 +219,7 @@ public class TriggerTest {
     public void trigger_isDisabled_nameNotEmpty_timeNotEmpty_ReturnsFalse() {
         Trigger trigger = new Trigger();
         trigger.setName("name");
-        trigger.setTime("time");
+        trigger.setRawTime("time");
         assertFalse(trigger.isDisabled());
     }
 
@@ -252,22 +246,16 @@ public class TriggerTest {
     @Test
     public void trigger_getFormattedTime_format_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
         Trigger trigger = new Trigger();
-        final Field field = trigger.getClass().getDeclaredField("mDefaultTrigger");
-        field.setAccessible(true);
-        field.set(trigger, true);
 
-        trigger.setTime("07:00:00");
+        trigger.setRawTime("07:00:00");
         assertEquals(trigger.getFormattedTime(), "7:00 AM");
     }
 
     @Test
     public void trigger_getFormattedDate_format_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
         Trigger trigger = new Trigger();
-        final Field field = trigger.getClass().getDeclaredField("mDefaultTrigger");
-        field.setAccessible(true);
-        field.set(trigger, true);
 
-        trigger.setDate("2015-06-03T15:36:14.400558Z");
+        trigger.setRawDate("2015-06-03T15:36:14.400558Z");
         assertEquals(trigger.getFormattedDate(), "Jun 3 2015");
     }
 

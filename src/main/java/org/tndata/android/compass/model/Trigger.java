@@ -124,6 +124,15 @@ public class Trigger implements Serializable, Comparable<Trigger>{
     }
 
     /**
+     * Raw date setter.
+     *
+     * @param date raw trigger date
+     */
+    public void setRawDate(String date){
+        this.trigger_date = date;
+    }
+
+    /**
      * Raw date getter.
      *
      * @return the date as a string in format "yyyy-MM-d" or an empty string if there is no date.
@@ -133,6 +142,15 @@ public class Trigger implements Serializable, Comparable<Trigger>{
             return "";
         }
         return trigger_date;
+    }
+
+    /**
+     * Raw time setter.
+     *
+     * @param time raw trigger time
+     */
+    public void setRawTime(String time){
+        this.time = time;
     }
 
     /**
