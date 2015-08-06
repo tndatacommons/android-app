@@ -370,11 +370,6 @@ public class UserData {
                     behaviorActions.add(action);
                 }
             }
-            if (behavior.getId() == 9){
-                for (Action action:behaviorActions){
-                    Log.d(TAG, "assigning " + action.getTitle() + " to " + behavior.getTitle());
-                }
-            }
             behavior.setActions(behaviorActions);
         }
 
