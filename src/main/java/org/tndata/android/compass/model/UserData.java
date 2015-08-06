@@ -368,7 +368,11 @@ public class UserData {
             for (Action action : getActions()) {
                 if (behavior.getId() == action.getBehavior_id()) {
                     behaviorActions.add(action);
-                    break;
+                }
+            }
+            if (behavior.getId() == 9){
+                for (Action action:behaviorActions){
+                    Log.d(TAG, "assigning " + action.getTitle() + " to " + behavior.getTitle());
                 }
             }
             behavior.setActions(behaviorActions);
