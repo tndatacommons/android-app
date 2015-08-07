@@ -3,6 +3,7 @@ package org.tndata.android.compass.model;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by brad on 07/22/2015.
@@ -87,12 +88,21 @@ public class UserData {
      *
      * @param category the category to remove
      */
-    public void removeCategory(Category category) {
+    public void removeCategory(Category category){
         mCategories.remove(category);
 
-        // also remove this category from any child goals
-        for(Goal goal : mGoals) {
+        List<Goal> toRemove = new ArrayList<>();
+        //Remove this category from any child goals
+        for (Goal goal:mGoals){
             goal.removeCategory(category);
+            //Record all the Goals w/o parent Categories
+            if (goal.getCategories().isEmpty()){
+                toRemove.add(goal);
+            }
+        }
+        //Remove all the Goals w/o parent Categories
+        for (Goal goal:toRemove){
+            removeGoal(goal);
         }
     }
 
@@ -184,9 +194,18 @@ public class UserData {
             category.removeGoal(goal);
         }
 
-        // Remove the goal from it's child Behaviors.
-        for(Behavior behavior : mBehaviors) {
+        List<Behavior> toRemove = new ArrayList<>();
+        //Remove the goal from its child Behaviors
+        for(Behavior behavior:mBehaviors){
             behavior.removeGoal(goal);
+            //Record all the Behaviors w/o parent Goals
+            if (behavior.getGoals().isEmpty()){
+                toRemove.add(behavior);
+            }
+        }
+        //Remove Behaviors w/o parent Goals
+        for (Behavior behavior:toRemove){
+            removeBehavior(behavior);
         }
     }
 
@@ -231,9 +250,9 @@ public class UserData {
         }
 
         // Remove the child Actions
-        ArrayList<Action> toRemove = new ArrayList<Action>();
-        for(Action action: getActions()) {
-            if(action.getBehavior_id() == behavior.getId()) {
+        List<Action> toRemove = new ArrayList<>();
+        for (Action action:getActions()){
+            if (action.getBehavior_id() == behavior.getId()){
                 toRemove.add(action);
             }
         }
