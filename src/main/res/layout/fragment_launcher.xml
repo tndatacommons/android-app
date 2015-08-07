@@ -40,6 +40,20 @@
         android:text="@string/launcher_login"
         android:textColor="@color/button_positive_text_color" />
 
+    <Button
+        android:id="@+id/launcher_tour_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/launcher_login_button"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="15dp"
+        android:background="@android:color/transparent"
+        style="?android:attr/borderlessButtonStyle"
+        android:minHeight="@dimen/paper_flat_button_min_height"
+        android:minWidth="@dimen/paper_flat_login_button_min_width"
+        android:text="@string/launcher_tour"
+        android:textColor="@color/button_paper_fab_color" />
+
     <ProgressBar
         android:id="@+id/launcher_load_progress"
         style="?android:attr/progressBarStyle"

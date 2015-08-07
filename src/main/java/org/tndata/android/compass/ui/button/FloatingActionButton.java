@@ -41,6 +41,7 @@ public class FloatingActionButton extends ImageButton {
     public static final int TYPE_MINI = 1;
 
     private boolean mVisible;
+    private boolean mVisiblePager;
 
     private int mColorNormal;
     private int mColorPressed;
@@ -85,6 +86,7 @@ public class FloatingActionButton extends ImageButton {
 
     private void init(Context context, AttributeSet attributeSet) {
         mVisible = true;
+        mVisiblePager = false;
         mColorNormal = getColor(R.color.button_paper_fab_color);
         mColorPressed = getColor(R.color.button_paper_fab_selected_color);
         mColorRipple = getColor(android.R.color.white);
@@ -338,6 +340,42 @@ public class FloatingActionButton extends ImageButton {
             // to disable clicks manually
             if (!hasHoneycombApi()) {
                 setClickable(visible);
+            }
+        }
+    }
+
+    public void showPager() {
+        showPager(false);
+    }
+
+    public void showPager(boolean force) {
+        togglePager(true, force);
+    }
+
+    public void hidePager() {
+        togglePager(false, false);
+    }
+
+    private void togglePager(final boolean visible, boolean force) {
+        if (!mVisible) {
+            show();
+        }
+        if (mVisiblePager != visible || force) {
+            mVisiblePager = force ? true : visible;
+            if (!visible) {
+                this.animate()
+                        .scaleY(0.0f)
+                        .scaleX(0.0f)
+                        .setInterpolator(new AccelerateDecelerateInterpolator())
+                        .setStartDelay(0)
+                        .start();
+            } else {
+                this.animate()
+                        .scaleY(1)
+                        .scaleX(1)
+                        .setInterpolator(new AccelerateDecelerateInterpolator())
+                        .setStartDelay(0)
+                        .start();
             }
         }
     }

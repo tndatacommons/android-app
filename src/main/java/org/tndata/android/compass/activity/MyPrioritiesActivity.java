@@ -179,7 +179,7 @@ public class MyPrioritiesActivity
 
     @Override
     public void onActionClick(Category category, Goal goal, Behavior behavior, Action action){
-        Intent actionIntent = new Intent(this, ActionTriggerActivity.class);
+        Intent actionIntent = new Intent(this, TriggerActivity.class);
         actionIntent.putExtra("goal", goal);
         actionIntent.putExtra("action", action);
         startActivityForResult(actionIntent, 1);

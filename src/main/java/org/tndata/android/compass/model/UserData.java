@@ -368,7 +368,6 @@ public class UserData {
             for (Action action : getActions()) {
                 if (behavior.getId() == action.getBehavior_id()) {
                     behaviorActions.add(action);
-                    break;
                 }
             }
             behavior.setActions(behaviorActions);

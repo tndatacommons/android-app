@@ -255,7 +255,7 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData> {
 
     @Override
     protected void onPostExecute(UserData userData) {
-        Log.e(TAG, "Finished");
+        Log.d(TAG, "Finished");
         userData.logSelectedData("FROM UserDataTask.onPostExecute", false);
         mCallback.userDataLoaded(userData);
     }

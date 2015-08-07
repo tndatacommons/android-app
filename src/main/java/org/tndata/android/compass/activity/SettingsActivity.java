@@ -6,6 +6,7 @@ import org.tndata.android.compass.fragment.SettingsFragment;
 import org.tndata.android.compass.fragment.SettingsFragment.OnSettingsClickListener;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.util.Constants;
 
 import android.app.Fragment;
@@ -54,10 +55,9 @@ public class SettingsActivity extends ActionBarActivity implements
         editor.putString("username", "");
         editor.putString("password", "");
         editor.putInt("id", -1);
-
         editor.commit();
-        ((CompassApplication) getApplication()).setCategories(new ArrayList<Category>());
-        ((CompassApplication) getApplication()).setGoals(new ArrayList<Goal>());
+
+        ((CompassApplication)getApplication()).setUserData(new UserData());
         setResult(Constants.LOGGED_OUT_RESULT_CODE);
         finish();
     }

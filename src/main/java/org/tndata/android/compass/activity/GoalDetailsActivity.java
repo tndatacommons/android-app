@@ -25,7 +25,7 @@ import org.tndata.android.compass.util.Constants;
 import java.util.ArrayList;
 
 // TODO: change back to subclass of BaseTriggerActivity, and remove trigger interface methods
-public class GoalDetailsActivity extends BaseTriggerActivity implements
+public class GoalDetailsActivity extends TriggerActivity implements
         LearnMoreFragment.LearnMoreFragmentListener,
         GoalDetailsFragment.GoalDetailsFragmentListener,
         DeleteBehaviorTask.DeleteBehaviorTaskListener,
@@ -236,7 +236,7 @@ public class GoalDetailsActivity extends BaseTriggerActivity implements
     @Override
     public void fireActionPicker(Action action) {
         // Launch the ActionTriggerActivity
-        Intent intent = new Intent(getApplicationContext(), ActionTriggerActivity.class);
+        Intent intent = new Intent(getApplicationContext(), TriggerActivity.class);
         intent.putExtra("goal", mGoal);
         intent.putExtra("action", action);
         startActivityForResult(intent, Constants.ACTIVITY_CHANGED_RESULT_CODE);

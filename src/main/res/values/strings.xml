@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Compass</string>
-    <string name="version_num">1.5.0</string>
+    <string name="version_num">1.7.0</string>
     <string name="ok">OK</string>
 
     <!-- MainActivity -->
@@ -11,6 +11,7 @@
     <string name="action_myself">Myself</string>
     <string name="action_my_priorities">My priorities</string>
     <string name="action_my_privacy">My privacy</string>
+    <string name="action_tour">Take tour</string>
     <string name="nav_drawer_action">Compass</string>
     <string name="main_tab_title">My Journey</string>
     <string name="category_card_title">My %1$s goals</string>
@@ -36,6 +37,7 @@
     <string name="launcher_login">LOG IN</string>
     <string name="launcher_tagline">Sign up or log in</string>
     <string name="launcher_grow_image">Compass</string>
+    <string name="launcher_tour">TAKE TOUR</string>
     <string name="login_email_hint">email</string>
     <string name="login_password_hint">password</string>
     <string name="login_email_label">email address</string>
@@ -57,10 +59,8 @@
     <string name="signup_header_info_label">FIND YOUR WAY</string>
     <string name="signup_info_label">Knowing who you are and where you\'re going affects what you can achieve</string>
 
+
     <!-- OnBoardingActivity -->
-    <string name="onboarding_category_error_label">Uh Oh! There seems to have been an issue finding choices.</string>
-    <string name="onboarding_category_header_label">KNOW YOUR PATH.</string>
-    <string name="onboarding_category_info_label">Tell Compass four things you think about a lot. You can add to or change your choices later.</string>
     <string name="category_image_description">Select</string>
     <string name="choose_categories_need_more">You must select at least 4 categories</string>
     <string name="onboarding_category_done">NEXT</string>
@@ -133,6 +133,7 @@
     <string name="goal_behavior_try_it">SHOW ME HOW</string>
     <string name="goal_try_behavior_added">Priority selected</string>
     <string name="goal_try_behavior_removed">Priority removed</string>
+    <string name="goal_try_do_it_now">Do it now</string>
 
     <!-- ChooseActionsActivity -->
     <string name="behavior_image_description">Priority</string>
@@ -167,9 +168,22 @@
 
     <!-- ActionActivity -->
     <string name="action_icon_cd">Action icon</string>
+    <string name="action_external_resource_header">Try this resource</string>
+    <string name="action_more_info_header">More info</string>
     <string name="action_later">Later</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_did_it">I did it</string>
     <string name="action_tick_cd">Action complete tick</string>
+
+    <!-- TourFragment -->
+    <string name="tour_action_skip">SKIP</string>
+
+    <!-- Category chooser -->
+    <string name="choose_categories_error">Uh Oh! There seems to have been an issue finding choices.</string>
+    <string name="choose_categories_header">KNOW YOUR PATH.</string>
+    <string name="choose_categories_info">Tell Compass some things you care about. You can add or change choices later.</string>
+    <string name="choose_categories_at_least_three">Pick a minimum of three things you care about most.</string>
+    <string name="choose_categories_at_most_five">Just pick the five things you care about most. You can choose more later.</string>
+
 
 </resources>

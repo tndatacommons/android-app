@@ -55,7 +55,7 @@
             android:layout_gravity="center_horizontal"
             android:datePickerMode="spinner"
             android:calendarViewShown="false"
-            android:visibility="visible"/>
+            android:visibility="gone"/>
     </LinearLayout>
 
     <include

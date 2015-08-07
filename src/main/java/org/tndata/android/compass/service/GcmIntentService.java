@@ -25,28 +25,28 @@ import org.tndata.android.compass.util.Constants;
  * An {@link IntentService} subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
  * <p/>
- *
+ * <p/>
  * NOTE: Messages received from GCM will have a format like the following:
- *
+ * <p/>
  * {
- *    "title":"Demo"
- *    "message":"Don't forget to review your Notifications for today",
- *    "object_id":32,
- *    "object_type":"action",  // an Action
+ * "title":"Demo"
+ * "message":"Don't forget to review your Notifications for today",
+ * "object_id":32,
+ * "object_type":"action",  // an Action
  * }
- *
+ * <p/>
  * A single, daily Behavior notification will arrive, but it does not contain object info:
- *
+ * <p/>
  * {
- *    "title":"Stay on Course"
- *    "message":"some message here...",
- *    "object_id": null,
- *    "object_type": null,
+ * "title":"Stay on Course"
+ * "message":"some message here...",
+ * "object_id": null,
+ * "object_type": null,
  * }
- *
  */
 public class GcmIntentService extends IntentService {
     public static final int NOTIFICATION_ID = 1;
+    public final static String NOTIFICATION_TAG = "COMPASS_ACTION";
     private String TAG = "GcmIntentService";
 
     public GcmIntentService() {
@@ -61,7 +61,7 @@ public class GcmIntentService extends IntentService {
         // in your BroadcastReceiver.
         String messageType = gcm.getMessageType(intent);
 
-        if (!extras.isEmpty()) {  // has effect of un-parcelling Bundle
+        if (extras != null && !extras.isEmpty()) {  // has effect of un-parcelling Bundle
             Log.d(TAG, "GCM message: " + extras.get("message"));
             /*
              * Filter messages based on message type. Since it is likely that GCM
@@ -98,12 +98,11 @@ public class GcmIntentService extends IntentService {
     // Put the message into a notification and post it.
     private void sendNotification(String msg, String title, String object_type, String object_id) {
         Log.d(TAG, "object_id = " + object_id);
-        NotificationManager mNotificationManager = (NotificationManager)
-                this.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         String activity;
 
-        if (object_type.equals(Constants.ACTION_TYPE)){
-            try{
+        if (object_type.equals(Constants.ACTION_TYPE)) {
+            try {
                 Intent intent = new Intent(getApplicationContext(), ActionActivity.class);
                 intent.putExtra(ActionActivity.ACTION_ID_KEY, Integer.valueOf(object_id));
                 //intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -130,12 +129,10 @@ public class GcmIntentService extends IntentService {
                         .build();
 
                 mNotificationManager.notify(NOTIFICATION_ID, notification);
-            }
-            catch (NumberFormatException nfx){
+            } catch (NumberFormatException nfx) {
                 nfx.printStackTrace();
             }
-        }
-        else{
+        } else {
             // We're launching the BehaviorProgressActivity
             CompassApplication application = (CompassApplication) getApplication();
             Context ctx = getApplicationContext();
@@ -160,7 +157,7 @@ public class GcmIntentService extends IntentService {
                     .setAutoCancel(true)
                     .build();
 
-            mNotificationManager.notify(NOTIFICATION_ID, notification);
+            mNotificationManager.notify(NOTIFICATION_TAG, NOTIFICATION_ID, notification);
         }
     }
 }

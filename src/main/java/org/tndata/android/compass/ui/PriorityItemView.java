@@ -85,6 +85,10 @@ public class PriorityItemView extends LinearLayout{
      */
     public void setItemHierarchy(MyPrioritiesGoalAdapter.ItemHierarchy itemHierarchy){
         mItemHierarchy = itemHierarchy;
+        if (mItemHierarchy.hasAction()){
+            setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+        }
     }
 
     /**
@@ -93,7 +97,7 @@ public class PriorityItemView extends LinearLayout{
      * @param densityPixels the amount of padding in density pixels.
      */
     public void setLeftPadding(int densityPixels){
-        setPadding(getPixels(densityPixels), getPixels(5), 0, getPixels(5));
+        setPadding(getPixels(densityPixels), getPixels(5), getPixels(12), getPixels(5));
     }
 
     /**

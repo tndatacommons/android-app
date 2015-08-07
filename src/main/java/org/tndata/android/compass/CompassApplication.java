@@ -2,6 +2,8 @@ package org.tndata.android.compass;
 
 import android.app.Application;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
@@ -11,6 +13,8 @@ import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
+
+import io.fabric.sdk.android.Fabric;
 
 public class CompassApplication extends Application {
     private String TAG = "CompassApplication";
@@ -131,6 +135,9 @@ public class CompassApplication extends Application {
     @Override
     public void onCreate(){
         super.onCreate();
+        if(!BuildConfig.DEBUG) {
+            Fabric.with(this, new Crashlytics());
+        }
         ImageLoader.initialize(getApplicationContext());
     }
 }
