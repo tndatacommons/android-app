@@ -165,6 +165,7 @@
 
     <!-- MyPrioritiesActivity -->
     <string name="my_priorities_title">My Priorities</string>
+    <string name="my_priorities_edit_activities">Edit my activities</string>
 
     <!-- ActionActivity -->
     <string name="action_icon_cd">Action icon</string>

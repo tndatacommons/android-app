@@ -174,7 +174,7 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter<MyPrioritiesGo
             PriorityItemView addBehaviors = getPriorityItemView();
             addBehaviors.setItemHierarchy(new ItemHierarchy(mCategory, goal, null, null));
             addBehaviors.setLeftPadding(0);
-            addBehaviors.getTextView().setText("Add a new activity");
+            addBehaviors.getTextView().setText(R.string.my_priorities_edit_activities);
             addBehaviors.getImageView().setVisibility(View.GONE);
             addBehaviors.setOnClickListener(holder);
             holder.offspring.addView(addBehaviors);
