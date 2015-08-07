@@ -63,7 +63,9 @@ public class DrawerAdapter extends RecyclerView.Adapter{
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
         if (viewType == VIEW_TYPE_HEADER){
             ImageView header = new ImageView(mContext);
-            header.setLayoutParams(new LinearLayout.LayoutParams(getPixels(240), getPixels(160)));
+            header.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+            header.setAdjustViewBounds(true);
             header.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
             return new HeaderViewHolder(header);
