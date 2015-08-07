@@ -4,10 +4,40 @@
     android:background="@color/tour_color"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/tour_information_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:text="@string/tour_page_1_information"
+        android:textSize="28dp"
+        android:textColor="@color/white" />
+
+
     <ImageView
         android:id="@+id/tourImageView"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/tour_information_bottom"
+        android:layout_below="@+id/tour_information_top"
         android:scaleType="centerInside"
-        android:layout_height="match_parent" />
+        android:src="@drawable/tour1" />
+
+
+    <TextView
+        android:id="@+id/tour_information_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:textSize="28dp"
+        android:text="@string/tour_page_2_information"
+        android:textColor="@color/white" />
 
 </RelativeLayout>

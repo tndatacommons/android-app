@@ -177,6 +177,10 @@
 
     <!-- TourFragment -->
     <string name="tour_action_skip">SKIP</string>
+    <string name="tour_page_1_information">Tell Compass where you want to go.</string>
+    <string name="tour_page_2_information">Compass helps you stay on course.</string>
+    <string name="tour_page_3_information">Browse activities that can help ease your way.</string>
+    <string name="tour_page_4_information">Check in daily to keep yourself on course.</string>
 
 
 </resources>
