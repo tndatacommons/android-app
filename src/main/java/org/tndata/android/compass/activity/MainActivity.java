@@ -106,7 +106,6 @@ public class MainActivity extends ActionBarActivity implements
         mDrawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
         mDrawerList = (RecyclerView)findViewById(R.id.main_left_drawer);
         mDrawerList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mDrawerList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
         mDrawerItems = drawerItems();
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
                 GravityCompat.START);
