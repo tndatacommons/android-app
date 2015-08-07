@@ -272,7 +272,7 @@ public class MainActivity extends ActionBarActivity implements
                     item.text = getResources().getString(R.string.action_settings);
                     break;
                 case TEMP_MENU_FOR_BEHAVIOR_PROGRESS:
-                    item.text = "Behavior Progress";
+                    item.text = getResources().getString(R.string.action_check_in);
                     break;
                 case TOUR:
                     item.text = getResources()

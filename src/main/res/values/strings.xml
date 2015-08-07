@@ -6,11 +6,12 @@
     <string name="ok">OK</string>
 
     <!-- MainActivity -->
-    <string name="action_settings">Settings</string>
     <string name="action_important_to_me">Important to me</string>
     <string name="action_myself">Myself</string>
     <string name="action_my_priorities">My activities</string>
     <string name="action_my_privacy">My privacy</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_check_in">Check in</string>
     <string name="action_tour">Take tour</string>
     <string name="nav_drawer_action">Compass</string>
     <string name="main_tab_title">My Journey</string>
