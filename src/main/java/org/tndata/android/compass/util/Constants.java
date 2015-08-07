@@ -23,7 +23,9 @@ public class Constants {
     public final static String GOAL_UPDATED_BROADCAST_ACTION = "org.tndata.android.compass.GOAL_UPDATED_BROADCAST_ACTION";
 
     public final static String TERMS_AND_CONDITIONS_URL = "http://tndata.org";
-    public final static String BASE_URL = "https://app.tndata.org/api/";
+    public static final String TNDATA_BASE_URL = "https://app.tndata.org/api/";
+    public static final String NGROK_TUNNEL_BASE_URL = "https://tndata.ngrok.io/api/";
+    public final static String BASE_URL = TNDATA_BASE_URL;
 
     //Preferences
     public final static String PREFERENCES_NAME = "compass_pref";
