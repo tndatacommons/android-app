@@ -13,9 +13,10 @@
         <ImageView
             android:id="@+id/main_material_imageview"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/material_header_size"
+            android:layout_height="wrap_content"
             android:background="@color/grow_primary"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
             android:src="@drawable/compass_master_illustration" />
 
         <include
