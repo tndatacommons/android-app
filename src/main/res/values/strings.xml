@@ -7,7 +7,7 @@
 
     <!-- MainActivity -->
     <string name="action_my_progress">My progress</string>
-    <string name="action_myself">Myself</string>
+    <string name="action_my_information">My information</string>
     <string name="action_my_priorities">My activities</string>
     <string name="action_my_privacy">My privacy</string>
     <string name="action_settings">Settings</string>

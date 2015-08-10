@@ -240,7 +240,7 @@ public class MainActivity extends ActionBarActivity implements
                             R.drawable.ic_list_bullet));
                     break;
                 case MYSELF:
-                    items.add(new DrawerItem(getResources().getString(R.string.action_myself),
+                    items.add(new DrawerItem(getResources().getString(R.string.action_my_information),
                             R.drawable.ic_profile));
                     break;
                 case MY_PRIVACY:
