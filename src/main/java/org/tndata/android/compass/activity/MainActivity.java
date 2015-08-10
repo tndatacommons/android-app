@@ -52,11 +52,8 @@ public class MainActivity extends ActionBarActivity implements
     private static final int MY_PRIVACY = 3;
     private static final int SETTINGS = 4;
     private static final int TOUR = 5;
-    // NOTE: The Drawer menu option to launch the BehaviorProgressActivity is here for demo purposes.
-    // We should remove before submitting to the play store.
-    private static final int TEMP_MENU_FOR_BEHAVIOR_PROGRESS = 6;
-    private static final int DRAWER_COUNT = 7;
-    //private static final int DRAWER_COUNT = 6; // TODO: Remove the temporary menu item for Behavior Progress
+    private static final int DRAWER_COUNT = 6;
+
 
     private CompassApplication application;
     private DrawerLayout mDrawerLayout;
@@ -111,6 +108,7 @@ public class MainActivity extends ActionBarActivity implements
                 GravityCompat.START);
         DrawerAdapter drawerAdapter = new DrawerAdapter(this, this, mDrawerItems);
         mDrawerList.setAdapter(drawerAdapter);
+        mDrawerList.addItemDecoration(DrawerAdapter.getItemPadding(this));
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.string.nav_drawer_action, R.string.nav_drawer_action) {
 
@@ -212,10 +210,6 @@ public class MainActivity extends ActionBarActivity implements
                 intent = new Intent(getApplicationContext(), SettingsActivity.class);
                 startActivityForResult(intent, Constants.SETTINGS_REQUEST_CODE);
                 break;
-            case TEMP_MENU_FOR_BEHAVIOR_PROGRESS:
-                intent = new Intent(getApplicationContext(), BehaviorProgressActivity.class);
-                startActivity(intent);
-                break;
             case TOUR:
                 startActivity(new Intent(getApplicationContext(), TourActivity.class));
                 break;
@@ -223,62 +217,39 @@ public class MainActivity extends ActionBarActivity implements
         mDrawerLayout.closeDrawers();
     }
 
-    private ArrayList<DrawerItem> drawerItems() {
-        ArrayList<DrawerItem> items = new ArrayList<DrawerItem>();
-        for (int i = 0; i < DRAWER_COUNT; i++) {
-            DrawerItem item = new DrawerItem();
-            switch (i) {
+    /**
+     * Creates the list of drawer items.
+     *
+     * @return the list of drawer items.
+     */
+    private ArrayList<DrawerItem> drawerItems(){
+        ArrayList<DrawerItem> items = new ArrayList<>();
+        for (int i = 0; i < DRAWER_COUNT; i++){
+            switch (i){
                 case IMPORTANT_TO_ME:
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        item.drawable = getResources().getDrawable(
-                                R.drawable.ic_favorite_grey, null);
-                    } else {
-                        item.drawable = getResources().getDrawable(R.drawable.ic_favorite_grey);
-                    }
-                    item.text = getResources().getString(
-                            R.string.action_important_to_me);
+                    items.add(new DrawerItem(getResources().getString(R.string.action_important_to_me),
+                            R.drawable.ic_favorite_grey));
                     break;
                 case MY_PRIORITIES:
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        item.drawable = getResources().getDrawable(
-                                R.drawable.ic_check_circle_grey, null);
-                    } else {
-                        item.drawable = getResources().getDrawable(R.drawable.ic_check_circle_grey);
-                    }
-                    item.text = getResources().getString(
-                            R.string.action_my_priorities);
+                    items.add(new DrawerItem(getResources().getString(R.string.action_my_priorities),
+                            R.drawable.ic_check_circle_grey));
                     break;
                 case MYSELF:
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        item.drawable = getResources().getDrawable(
-                                R.drawable.ic_face_grey, null);
-                    } else {
-                        item.drawable = getResources().getDrawable(R.drawable.ic_face_grey);
-                    }
-                    item.text = getResources().getString(R.string.action_myself);
+                    items.add(new DrawerItem(getResources().getString(R.string.action_myself),
+                            R.drawable.ic_face_grey));
                     break;
                 case MY_PRIVACY:
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        item.drawable = getResources().getDrawable(
-                                R.drawable.ic_info_grey, null);
-                    } else {
-                        item.drawable = getResources().getDrawable(R.drawable.ic_info_grey);
-                    }
-                    item.text = getResources()
-                            .getString(R.string.action_my_privacy);
+                    items.add(new DrawerItem(getResources().getString(R.string.action_my_privacy),
+                            R.drawable.ic_info_grey));
                     break;
                 case SETTINGS:
-                    item.text = getResources().getString(R.string.action_settings);
-                    break;
-                case TEMP_MENU_FOR_BEHAVIOR_PROGRESS:
-                    item.text = getResources().getString(R.string.action_check_in);
+                    items.add(new DrawerItem(getResources().getString(R.string.action_settings),
+                            R.drawable.ic_settings));
                     break;
                 case TOUR:
-                    item.text = getResources()
-                            .getString(R.string.action_tour);
+                    items.add(new DrawerItem(getResources().getString(R.string.action_tour)));
                     break;
             }
-            items.add(item);
         }
 
         return items;

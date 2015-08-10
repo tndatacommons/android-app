@@ -7,6 +7,8 @@ import org.tndata.android.compass.model.DrawerItem;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
@@ -73,13 +75,13 @@ public class DrawerAdapter extends RecyclerView.Adapter{
 
         LinearLayout.LayoutParams params;
         params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
+                getPixels(mContext, 48));
 
         TextView item = new TextView(mContext);
         item.setLayoutParams(params);
         item.setGravity(Gravity.CENTER_VERTICAL);
-        item.setPadding(getPixels(16), getPixels(10), getPixels(16), getPixels(10));
-        item.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+        item.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Medium.ttf"));
+        item.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
 
         int[] attrs = new int[]{android.R.attr.selectableItemBackground};
         TypedArray array = mContext.obtainStyledAttributes(attrs);
@@ -104,14 +106,13 @@ public class DrawerAdapter extends RecyclerView.Adapter{
             DrawerItem item = getItem(position);
 
             TextView itemView = ((ItemViewHolder)holder).mItem;
-            itemView.setText(item.text);
-            if (item.drawable != null){
-                itemView.setCompoundDrawablesWithIntrinsicBounds(item.drawable, null, null, null);
-                itemView.setCompoundDrawablePadding(getPixels(10));
+            itemView.setText(item.getCaption());
+            itemView.setCompoundDrawablesWithIntrinsicBounds(item.getIconResId(), 0, 0, 0);
+            if (item.getIconResId() == 0){
+                itemView.setCompoundDrawablePadding(0);
             }
             else{
-                itemView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-                itemView.setCompoundDrawablePadding(0);
+                itemView.setCompoundDrawablePadding(getPixels(mContext, 32));
             }
         }
     }
@@ -132,12 +133,23 @@ public class DrawerAdapter extends RecyclerView.Adapter{
     /**
      * Converts density pixels to pixels.
      *
+     * @param context the application context.
      * @param densityPixels the amount of dp to be converted.
      * @return the converter number of pixels.
      */
-    private int getPixels(int densityPixels){
+    private static int getPixels(Context context, int densityPixels){
         return (int)Math.ceil(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, densityPixels,
-                mContext.getResources().getDisplayMetrics()));
+                context.getResources().getDisplayMetrics()));
+    }
+
+    /**
+     * ItemPadding specification getter.
+     *
+     * @param context the application context.
+     * @return the item decoration object that specifie the drawer item horizontalPadding.
+     */
+    public static ItemPadding getItemPadding(Context context){
+        return new ItemPadding(context);
     }
 
 
@@ -187,6 +199,48 @@ public class DrawerAdapter extends RecyclerView.Adapter{
         @Override
         public void onClick(View v){
             mListener.onItemClick(getLayoutPosition()-1);
+        }
+    }
+
+
+    /**
+     * Item decoration class that specifies the padding of drawer items.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    public static class ItemPadding extends RecyclerView.ItemDecoration{
+        private int horizontalPadding;
+        private int firstItemPadding;
+
+
+        /**
+         * Constructor.
+         *
+         * @param context the application context.
+         */
+        private ItemPadding(Context context){
+            horizontalPadding = getPixels(context, 16);
+            firstItemPadding = getPixels(context, 8);
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
+                                   RecyclerView.State state){
+            if (parent.getChildLayoutPosition(view) == 0){
+                outRect.left = 0;
+                outRect.right = 0;
+            }
+            else{
+                if (parent.getChildLayoutPosition(view) == 1){
+                    outRect.top = firstItemPadding;
+                }
+                else{
+                    outRect.top = 0;
+                }
+                outRect.left = horizontalPadding;
+                outRect.right = horizontalPadding;
+            }
         }
     }
 
