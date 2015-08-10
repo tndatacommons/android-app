@@ -212,6 +212,11 @@ public class MainActivity extends ActionBarActivity implements
             case TOUR:
                 startActivity(new Intent(getApplicationContext(), TourActivity.class));
                 break;
+
+            case DRAWER_COUNT:
+                //Debug button
+
+                break;
         }
         mDrawerLayout.closeDrawers();
     }
