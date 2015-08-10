@@ -6,7 +6,7 @@
     <string name="ok">OK</string>
 
     <!-- MainActivity -->
-    <string name="action_important_to_me">Important to me</string>
+    <string name="action_my_progress">My progress</string>
     <string name="action_myself">Myself</string>
     <string name="action_my_priorities">My activities</string>
     <string name="action_my_privacy">My privacy</string>

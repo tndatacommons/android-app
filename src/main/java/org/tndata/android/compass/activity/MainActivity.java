@@ -3,7 +3,6 @@ package org.tndata.android.compass.activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -16,9 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 
 import com.astuetz.PagerSlidingTabStrip;
 
@@ -32,7 +29,6 @@ import org.tndata.android.compass.model.DrawerItem;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.task.GetUserDataTask;
 import org.tndata.android.compass.task.UpdateProfileTask;
-import org.tndata.android.compass.ui.DividerItemDecoration;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.GcmRegistration;
@@ -192,24 +188,27 @@ public class MainActivity extends ActionBarActivity implements
 
     @Override
     public void onItemClick(int position){
-        Intent intent = null;
         switch (position) {
             case IMPORTANT_TO_ME:
+                startActivity(new Intent(getApplicationContext(), BehaviorProgressActivity.class));
                 break;
+
             case MY_PRIORITIES:
                 startActivity(new Intent(getApplicationContext(), MyPrioritiesActivity.class));
                 break;
+
             case MYSELF:
-                intent = new Intent(getApplicationContext(), UserProfileActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(getApplicationContext(), UserProfileActivity.class));
                 break;
+
             case MY_PRIVACY:
                 break;
 
             case SETTINGS:
-                intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
                 startActivityForResult(intent, Constants.SETTINGS_REQUEST_CODE);
                 break;
+            
             case TOUR:
                 startActivity(new Intent(getApplicationContext(), TourActivity.class));
                 break;
@@ -227,20 +226,20 @@ public class MainActivity extends ActionBarActivity implements
         for (int i = 0; i < DRAWER_COUNT; i++){
             switch (i){
                 case IMPORTANT_TO_ME:
-                    items.add(new DrawerItem(getResources().getString(R.string.action_important_to_me),
-                            R.drawable.ic_favorite_grey));
+                    items.add(new DrawerItem(getResources().getString(R.string.action_my_progress),
+                            R.drawable.ic_clipboard));
                     break;
                 case MY_PRIORITIES:
                     items.add(new DrawerItem(getResources().getString(R.string.action_my_priorities),
-                            R.drawable.ic_check_circle_grey));
+                            R.drawable.ic_list_bullet));
                     break;
                 case MYSELF:
                     items.add(new DrawerItem(getResources().getString(R.string.action_myself),
-                            R.drawable.ic_face_grey));
+                            R.drawable.ic_profile));
                     break;
                 case MY_PRIVACY:
                     items.add(new DrawerItem(getResources().getString(R.string.action_my_privacy),
-                            R.drawable.ic_info_grey));
+                            R.drawable.ic_info));
                     break;
                 case SETTINGS:
                     items.add(new DrawerItem(getResources().getString(R.string.action_settings),
