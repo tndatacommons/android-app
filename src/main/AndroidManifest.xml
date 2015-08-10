@@ -37,6 +37,7 @@
         <activity
             android:name="org.tndata.android.compass.activity.LoginActivity"
             android:label="@string/app_name"
+            android:theme="@style/LogInTheme"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

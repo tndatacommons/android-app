@@ -208,7 +208,7 @@ public class MainActivity extends ActionBarActivity implements
                 Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
                 startActivityForResult(intent, Constants.SETTINGS_REQUEST_CODE);
                 break;
-            
+
             case TOUR:
                 startActivity(new Intent(getApplicationContext(), TourActivity.class));
                 break;
@@ -218,6 +218,7 @@ public class MainActivity extends ActionBarActivity implements
 
     /**
      * Creates the list of drawer items.
+     * TODO move to DrawerAdapter?
      *
      * @return the list of drawer items.
      */

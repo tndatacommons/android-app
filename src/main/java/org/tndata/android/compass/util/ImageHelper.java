@@ -47,7 +47,7 @@ public class ImageHelper {
                 imageView.setImageResource(R.drawable.ic_check_white_24dp);
                 break;
             case ADD:
-                color = resources.getColor(R.color.grow_secondary);
+                color = resources.getColor(R.color.grow_accent);
                 imageView.setImageResource(R.drawable.ic_add_white_24dp);
                 break;
             case CHOOSE:

@@ -204,6 +204,6 @@
             android:minWidth="@dimen/paper_flat_login_button_min_width"
             android:text="@string/launcher_sign_up"
             android:textColor="@color/button_positive_text_color" />
-    </RelativeLayout>
 
+    </RelativeLayout>
 </RelativeLayout>
