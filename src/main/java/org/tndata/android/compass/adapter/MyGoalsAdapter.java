@@ -166,7 +166,7 @@ public class MyGoalsAdapter extends
                 } else {
                     ((MyGoalsViewHolder) viewHolder).setCircleViewBackgroundColor(category.getColor());
                     ((MyGoalsViewHolder) viewHolder).setSubTitleText(mContext.getString
-                            (R.string.category_goals_add, category.getTitle()));
+                            (R.string.category_goals_add, category.getTitle().toLowerCase()));
                     ((MyGoalsViewHolder) viewHolder).categoryContainer.setOnClickListener(new View
                             .OnClickListener() {
 
