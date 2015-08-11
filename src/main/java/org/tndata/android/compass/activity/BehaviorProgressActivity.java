@@ -26,7 +26,7 @@ import java.util.LinkedList;
  * Displays behaviors and allows the user to report his progress on them.
  *
  * @author Edited by Ismael Alonso
- * @version 2.0.0
+ * @version 2.1.0
  */
 public class BehaviorProgressActivity
         extends Activity
@@ -37,8 +37,7 @@ public class BehaviorProgressActivity
 
     private static final String TAG = "BehaviorProgress";
 
-    //UI components
-    private ProgressBar mProgressBar;
+    private BehaviorProgressFragment mCurrentFragment;
 
     //The actual data
     private LinkedList<Behavior> mBehaviorList;
@@ -53,7 +52,6 @@ public class BehaviorProgressActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_behavior_progress);
 
-        mProgressBar = (ProgressBar) findViewById(R.id.behavior_progress_progress_bar);
         mBehaviorList = new LinkedList<>();
 
         findViewById(R.id.behavior_progress_on_track).setOnClickListener(this);
@@ -61,6 +59,11 @@ public class BehaviorProgressActivity
         findViewById(R.id.behavior_progress_off_course).setOnClickListener(this);
 
         mSavingBehavior = true;
+
+        mCurrentFragment = BehaviorProgressFragment.newInstance();
+        getFragmentManager().beginTransaction()
+                .replace(R.id.behavior_progress_content, mCurrentFragment)
+                .commit();
 
         loadBehaviors();
     }
@@ -106,17 +109,16 @@ public class BehaviorProgressActivity
      */
     private void nextBehavior(){
         if (!mBehaviorList.isEmpty()){
-            mProgressBar.setVisibility(View.INVISIBLE);
             mCurrentBehavior = mBehaviorList.removeFirst();
             mSavingBehavior = false;
 
             int enter = R.animator.behavior_progress_next_in;
             int exit = R.animator.behavior_progress_current_out;
 
-            Fragment fragment = BehaviorProgressFragment.newInstance(mCurrentBehavior);
+            mCurrentFragment = BehaviorProgressFragment.newInstance(mCurrentBehavior);
             getFragmentManager().beginTransaction()
                     .setCustomAnimations(enter, exit)
-                    .replace(R.id.behavior_progress_content, fragment)
+                    .replace(R.id.behavior_progress_content, mCurrentFragment)
                     .commit();
         }
         else{
@@ -150,7 +152,7 @@ public class BehaviorProgressActivity
     private void onProgressSelected(int progressValue){
         if (!mSavingBehavior){
             mSavingBehavior = true;
-            mProgressBar.setVisibility(View.VISIBLE);
+            mCurrentFragment.showProgress();
             new BehaviorProgressTask(this, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                     String.valueOf(mCurrentBehavior.getId()), String.valueOf(progressValue));
         }

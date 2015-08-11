@@ -38,8 +38,8 @@ import java.util.ArrayList;
 public class ActionActivity
         extends ActionBarActivity
         implements
-        View.OnClickListener,
-        GetUserActionsTask.GetUserActionsListener {
+                View.OnClickListener,
+                GetUserActionsTask.GetUserActionsListener{
 
     public static final String ACTION_ID_KEY = "action_id";
 
@@ -61,7 +61,7 @@ public class ActionActivity
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_action);
 
@@ -69,15 +69,15 @@ public class ActionActivity
         mAction = null;
 
         //Fetch UI components
-        RelativeLayout circleView = (RelativeLayout) findViewById(R.id.action_circle_view);
-        mActionImage = (ImageView) findViewById(R.id.action_image);
-        mActionTitle = (TextView) findViewById(R.id.action_title);
-        mActionDescription = (TextView) findViewById(R.id.action_description);
-        mExternalResourceHeader = (TextView) findViewById(R.id.action_external_resource_header);
-        mExternalResource = (TextView) findViewById(R.id.action_external_resource);
-        mMoreInfoHeader = (TextView) findViewById(R.id.action_more_info_header);
-        mMoreInfo = (TextView) findViewById(R.id.action_more_info);
-        mTickSwitcher = (ViewSwitcher) findViewById(R.id.action_tick_switcher);
+        RelativeLayout circleView = (RelativeLayout)findViewById(R.id.action_circle_view);
+        mActionImage = (ImageView)findViewById(R.id.action_image);
+        mActionTitle = (TextView)findViewById(R.id.action_title);
+        mActionDescription = (TextView)findViewById(R.id.action_description);
+        mExternalResourceHeader = (TextView)findViewById(R.id.action_external_resource_header);
+        mExternalResource = (TextView)findViewById(R.id.action_external_resource);
+        mMoreInfoHeader = (TextView)findViewById(R.id.action_more_info_header);
+        mMoreInfo = (TextView)findViewById(R.id.action_more_info);
+        mTickSwitcher = (ViewSwitcher)findViewById(R.id.action_tick_switcher);
 
         //Animate the switcher.
         mTickSwitcher.setInAnimation(this, R.anim.action_switcher_fade_in);
@@ -88,11 +88,12 @@ public class ActionActivity
         findViewById(R.id.action_did_it).setOnClickListener(this);
 
         //Circle view
-        GradientDrawable gradientDrawable = (GradientDrawable) circleView.getBackground();
+        GradientDrawable gradientDrawable = (GradientDrawable)circleView.getBackground();
         gradientDrawable.setColor(Color.WHITE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
             circleView.setBackground(gradientDrawable);
-        } else {
+        }
+        else{
             circleView.setBackgroundDrawable(gradientDrawable);
         }
 
@@ -102,7 +103,7 @@ public class ActionActivity
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
+    protected void onNewIntent(Intent intent){
         super.onNewIntent(intent);
         Log.d("ActionActivity", "onNewIntent");
         fetchAction(getIntent().getIntExtra(ACTION_ID_KEY, -1));
@@ -113,20 +114,21 @@ public class ActionActivity
      *
      * @param actionId the id of the action to be fetched.
      */
-    private void fetchAction(int actionId) {
+    private void fetchAction(int actionId){
         Log.d("ActionActivity", "action: " + actionId);
-        CompassApplication application = (CompassApplication) getApplication();
+        CompassApplication application = (CompassApplication)getApplication();
         String token = application.getToken();
-        if (token == null || token.isEmpty()) {
+        if (token == null || token.isEmpty()){
             // Read from shared preferences instead.
             SharedPreferences settings = PreferenceManager
                     .getDefaultSharedPreferences(getApplicationContext());
             token = settings.getString("auth_token", "");
         }
 
-        if (token != null && !token.isEmpty()) {
+        if (token != null && !token.isEmpty()){
             new GetUserActionsTask(this).execute(token, "action:" + actionId);
-        } else {
+        }
+        else{
             //Something is wrong and we don't have an auth token for the user, so fail.
             Log.e("ActionActivity", "AUTH Token is null, giving up!");
             finish();
@@ -134,8 +136,8 @@ public class ActionActivity
     }
 
     @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
+    public void onClick(View view){
+        switch (view.getId()){
             case R.id.action_later:
                 later();
                 break;
@@ -149,15 +151,15 @@ public class ActionActivity
     /**
      * Later clicked.
      */
-    private void later() {
+    private void later(){
         finish();
     }
 
     /**
      * I did it clicked.
      */
-    private void didIt() {
-        if (!mActionComplete) {
+    private void didIt(){
+        if (!mActionComplete){
             mActionComplete = true;
             mTickSwitcher.showNext();
             Intent completeAction = new Intent(this, CompleteActionService.class);
@@ -165,9 +167,9 @@ public class ActionActivity
             startService(completeAction);
 
             //Finish the activity after one second
-            new Handler().postDelayed(new Runnable() {
+            new Handler().postDelayed(new Runnable(){
                 @Override
-                public void run() {
+                public void run(){
                     finish();
                 }
             }, 1000);
@@ -175,31 +177,33 @@ public class ActionActivity
     }
 
     @Override
-    public void actionsLoaded(ArrayList<Action> actions) {
-        if (actions.size() > 0) {
+    public void actionsLoaded(ArrayList<Action> actions){
+        if (actions.size() > 0){
             mAction = actions.get(0);
 
             //Populate UI
             ImageLoader.loadBitmap(mActionImage, mAction.getIconUrl(), false);
             mActionTitle.setText(mAction.getTitle());
-            if (!mAction.getHTMLDescription().isEmpty()) {
+            if (!mAction.getHTMLDescription().isEmpty()){
                 mActionDescription.setText(Html.fromHtml(mAction.getHTMLDescription(), null, new CompassTagHandler()));
-            } else {
+            }
+            else{
                 mActionDescription.setText(mAction.getDescription());
             }
             mActionDescription.setText(mAction.getDescription());
 
-            if (!mAction.getExternalResource().isEmpty()) {
+            if (!mAction.getExternalResource().isEmpty()){
                 mExternalResourceHeader.setVisibility(View.VISIBLE);
                 mExternalResource.setVisibility(View.VISIBLE);
                 mExternalResource.setText(mAction.getExternalResource());
             }
 
-            if (!mAction.getMoreInfo().isEmpty()) {
+            if (!mAction.getMoreInfo().isEmpty()){
                 mMoreInfoHeader.setVisibility(View.VISIBLE);
-                if (!mAction.getHTMLMoreInfo().isEmpty()) {
+                if (!mAction.getHTMLMoreInfo().isEmpty()){
                     mMoreInfo.setText(Html.fromHtml(mAction.getHTMLMoreInfo(), null, new CompassTagHandler()));
-                } else {
+                }
+                else{
                     mMoreInfo.setText(mAction.getMoreInfo());
                 }
                 mMoreInfo.setVisibility(View.VISIBLE);
