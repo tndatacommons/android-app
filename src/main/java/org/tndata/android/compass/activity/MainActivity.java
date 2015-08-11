@@ -55,8 +55,8 @@ public class MainActivity extends ActionBarActivity implements
     private static final int MY_PRIORITIES = 1;
     private static final int MYSELF = 2;
     private static final int MY_PRIVACY = 3;
-    private static final int SETTINGS = 4;
-    private static final int TOUR = 5;
+    private static final int TOUR = 4;
+    private static final int SETTINGS = 5;
     private static final int DRAWER_COUNT = 6;
 
 
