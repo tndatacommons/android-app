@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +24,7 @@ import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.task.AddActionTask;
 import org.tndata.android.compass.task.DeleteActionTask;
 import org.tndata.android.compass.ui.CompassPopupMenu;
+import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.ImageHelper;
 
 import java.util.ArrayList;
@@ -156,18 +158,21 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
         if (mAction != null) {
             // this is a learn more screen for an Action
             titleTextView.setText(mAction.getTitle());
-            descriptionTextView.setText(mAction.getDescription());
-
+            if (!mAction.getHTMLDescription().isEmpty()) {
+                descriptionTextView.setText(Html.fromHtml(mAction.getHTMLDescription(), null, new CompassTagHandler()));
+            } else {
+                descriptionTextView.setText(mAction.getDescription());
+            }
             // Display different content in the "Add this" label when the user
             // has already selected the item.
             Trigger trigger = mAction.getTrigger();
-            if(trigger != null) {
+            if (trigger != null) {
                 // Construct a string for the Action's Label
                 String recurrence = trigger.getRecurrencesDisplay();
                 String trigger_date = trigger.getFormattedDate();
                 String trigger_time = trigger.getFormattedTime();
 
-                if(!recurrence.isEmpty() && !trigger_time.isEmpty()) {
+                if (!recurrence.isEmpty() && !trigger_time.isEmpty()) {
                     addLabelTextView.setText(getString(
                             R.string.trigger_details, recurrence, trigger_time));
                 } else if (!trigger_date.isEmpty() && !trigger_time.isEmpty()) {
@@ -175,38 +180,53 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
                             R.string.trigger_details, trigger_date, trigger_time));
                 }
 
-            } else if(mAction.getMappingId() > 0) {
+            } else if (mAction.getMappingId() > 0) {
                 addLabelTextView.setText(getText(R.string.action_management_label));
             } else {
                 addLabelTextView.setText(getText(R.string.action_i_want_this_label));
             }
             if (!mAction.getMoreInfo().isEmpty()) {
                 separator.setVisibility(View.VISIBLE);
-                moreInfo.setText(mAction.getMoreInfo());
+                if (!mAction.getHTMLMoreInfo().isEmpty()) {
+                    moreInfo.setText(Html.fromHtml(mAction.getHTMLMoreInfo(), null, new CompassTagHandler()));
+                } else {
+                    moreInfo.setText(mAction.getMoreInfo());
+                }
                 moreInfo.setVisibility(View.VISIBLE);
                 moreInfoHeader.setVisibility(View.VISIBLE);
             }
         } else if (mGoal != null) {
             // this is a learn more screen for a Goal
             titleTextView.setText(mGoal.getTitle());
-            descriptionTextView.setText(mGoal.getDescription());
+            if (!mGoal.getHTMLDescription().isEmpty()) {
+                descriptionTextView.setText(Html.fromHtml(mGoal.getHTMLDescription(), null, new CompassTagHandler()));
+            } else {
+                descriptionTextView.setText(mGoal.getDescription());
+            }
             addLabelTextView.setVisibility(View.GONE);
             mAddImageView.setVisibility(View.GONE);
         } else {
             // this is a learn more screen for a Behavior
             titleTextView.setText(mBehavior.getTitle());
-            descriptionTextView.setText((mBehavior.getDescription()));
-
+            if (!mGoal.getHTMLDescription().isEmpty()) {
+                descriptionTextView.setText(Html.fromHtml(mBehavior.getHTMLDescription(), null, new CompassTagHandler()));
+            } else {
+                descriptionTextView.setText(mBehavior.getDescription());
+            }
             // Display different content in the "Add this" label when the user
             // has already selected the item.
-            if(mBehavior.getMappingId() > 0) {
+            if (mBehavior.getMappingId() > 0) {
                 addLabelTextView.setText(getText(R.string.behavior_management_label));
             } else {
                 addLabelTextView.setText(getText(R.string.behavior_add_to_priorities_label));
             }
             if (!mBehavior.getMoreInfo().isEmpty()) {
                 separator.setVisibility(View.VISIBLE);
-                moreInfo.setText(mBehavior.getMoreInfo());
+                if (!mBehavior.getHTMLMoreInfo().isEmpty()) {
+                    moreInfo.setText(Html.fromHtml(mBehavior.getHTMLMoreInfo(), null, new CompassTagHandler()));
+                } else {
+                    moreInfo.setText(mBehavior.getMoreInfo());
+                }
                 moreInfo.setVisibility(View.VISIBLE);
                 moreInfoHeader.setVisibility(View.VISIBLE);
             }
@@ -269,10 +289,10 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
     private void showPopup() {
         CompassPopupMenu popup = CompassPopupMenu.newInstance(getActivity(), mAddImageView);
         // Inflating the correct menu depending on which kind of content we're viewing.
-        if(mAction != null) {
+        if (mAction != null) {
             popup.getMenuInflater()
                     .inflate(R.menu.menu_action_popup_chooser, popup.getMenu());
-        }else {
+        } else {
             popup.getMenuInflater().inflate(R.menu.menu_behavior_popup_chooser, popup.getMenu());
         }
 

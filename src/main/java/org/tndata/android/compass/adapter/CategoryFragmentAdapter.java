@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +21,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.ui.CompassPopupMenu;
+import org.tndata.android.compass.util.CompassTagHandler;
 
 public class CategoryFragmentAdapter extends
         RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -121,8 +123,11 @@ public class CategoryFragmentAdapter extends
                                  final int position) {
         final Goal goal = mApplication.getCategoryGoals(mCategory).get(position);
         ((CategoryGoalViewHolder) viewHolder).titleTextView.setText(goal.getTitle());
-        ((CategoryGoalViewHolder) viewHolder).descriptionTextView.setText(
-                goal.getDescription());
+        if (!goal.getHTMLDescription().isEmpty()) {
+            ((CategoryGoalViewHolder) viewHolder).descriptionTextView.setText(Html.fromHtml(goal.getHTMLDescription(), null, new CompassTagHandler()));
+        } else {
+            ((CategoryGoalViewHolder) viewHolder).descriptionTextView.setText(goal.getDescription());
+        }
         ((CategoryGoalViewHolder) viewHolder).setCircleViewBackgroundColor(
                 mCategory.getColor());
 

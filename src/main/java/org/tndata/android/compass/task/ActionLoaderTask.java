@@ -1,5 +1,17 @@
 package org.tndata.android.compass.task;
 
+import android.os.AsyncTask;
+
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.util.NetworkHelper;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,19 +21,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.util.Constants;
-import org.tndata.android.compass.util.NetworkHelper;
-
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import android.os.AsyncTask;
-import android.text.Html;
 
 public class ActionLoaderTask extends
         AsyncTask<String, Void, ArrayList<Action>> {
@@ -70,7 +69,7 @@ public class ActionLoaderTask extends
             }
             bReader.close();
 
-            createResponse = Html.fromHtml(result).toString();
+            createResponse = result;
 
             JSONObject jObject = new JSONObject(createResponse);
             ArrayList<Action> actions = new ArrayList<Action>();
