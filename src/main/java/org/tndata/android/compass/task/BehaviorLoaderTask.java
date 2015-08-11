@@ -1,12 +1,10 @@
 package org.tndata.android.compass.task;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import android.os.AsyncTask;
+
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,12 +12,13 @@ import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import android.os.AsyncTask;
-import android.text.Html;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BehaviorLoaderTask extends
         AsyncTask<String, Void, ArrayList<Behavior>> {
@@ -67,7 +66,7 @@ public class BehaviorLoaderTask extends
             }
             bReader.close();
 
-            createResponse = Html.fromHtml(result).toString();
+            createResponse = result;
 
             JSONObject jObject = new JSONObject(createResponse);
             ArrayList<Behavior> behaviors = new ArrayList<Behavior>();

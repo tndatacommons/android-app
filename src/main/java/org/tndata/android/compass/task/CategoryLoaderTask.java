@@ -1,7 +1,6 @@
 package org.tndata.android.compass.task;
 
 import android.os.AsyncTask;
-import android.text.Html;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -68,7 +67,7 @@ public class CategoryLoaderTask extends
             }
             bReader.close();
 
-            createResponse = Html.fromHtml(result).toString();
+            createResponse = result;
 
             JSONObject jObject = new JSONObject(createResponse);
             ArrayList<Category> categories = new ArrayList<Category>();

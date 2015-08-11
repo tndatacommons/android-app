@@ -2,7 +2,6 @@ package org.tndata.android.compass.task;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.text.Html;
 import android.util.Log;
 
 import com.google.gson.FieldNamingPolicy;
@@ -68,7 +67,7 @@ public class GoalLoaderTask extends
             }
             bReader.close();
 
-            createResponse = Html.fromHtml(result).toString();
+            createResponse = result;
 
             JSONObject jObject = new JSONObject(createResponse);
             Log.d("goal response", jObject.toString(2));

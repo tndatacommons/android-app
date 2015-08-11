@@ -16,6 +16,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -40,6 +41,7 @@ import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter.OnClickEvent;
+import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.ImageLoader;
 
@@ -48,7 +50,6 @@ import java.util.HashSet;
 
 /**
  * The GoalTryActivity is where a user selects Behaviors for a chosen Goal.
- * 
  */
 public class GoalTryActivity extends ActionBarActivity implements
         BehaviorLoaderListener, AddBehaviorTask.AddBehaviorsTaskListener,
@@ -77,13 +78,13 @@ public class GoalTryActivity extends ActionBarActivity implements
                     .findViewById(R.id.list_item_behavior_title_textview);
             descriptionTextView = (TextView) itemView
                     .findViewById(R.id.list_item_behavior_description_textview);
-            externalResource = (TextView)itemView.findViewById(R.id.list_item_behavior_external_resource);
+            externalResource = (TextView) itemView.findViewById(R.id.list_item_behavior_external_resource);
 
             iconsWrapper = (LinearLayout) itemView.findViewById(R.id.list_icons_wrapper);
             tryItImageView = (ImageView) itemView.findViewById(R.id.list_item_behavior_try_it_imageview);
             selectActionsImageView = (ImageView) itemView.findViewById(R.id.list_item_select_action_imageview);
             moreInfoImageView = (ImageView) itemView.findViewById(R.id.list_item_behavior_info_imageview);
-            doItNow = (TextView)itemView.findViewById(R.id.list_item_behavior_do_it_now);
+            doItNow = (TextView) itemView.findViewById(R.id.list_item_behavior_do_it_now);
         }
 
         TextView titleTextView;
@@ -147,11 +148,15 @@ public class GoalTryActivity extends ActionBarActivity implements
                 final Behavior behavior = mBehaviorList.get(i);
                 final boolean behavior_is_selected = application.getBehaviors().contains(behavior);
 
-                if(i == 0 && behavior.getId() == 0) {
+                if (i == 0 && behavior.getId() == 0) {
 
                     // Display the Header Card
 
-                    ((TryGoalViewHolder) viewHolder).headerCardTextView.setText(behavior.getDescription());
+                    if (!behavior.getHTMLDescription().isEmpty()) {
+                        ((TryGoalViewHolder) viewHolder).headerCardTextView.setText(Html.fromHtml(behavior.getHTMLDescription(), null, new CompassTagHandler()));
+                    } else {
+                        ((TryGoalViewHolder) viewHolder).headerCardTextView.setText(behavior.getDescription());
+                    }
                     ((TryGoalViewHolder) viewHolder).headerCardTextView.setVisibility(View.VISIBLE);
                     ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View.GONE);
                     ((TryGoalViewHolder) viewHolder).externalResource.setVisibility(View.GONE);
@@ -164,8 +169,11 @@ public class GoalTryActivity extends ActionBarActivity implements
 
                     ((TryGoalViewHolder) viewHolder).titleTextView.setText(behavior
                             .getTitle());
-                    ((TryGoalViewHolder) viewHolder).descriptionTextView
-                            .setText(behavior.getDescription());
+                    if (!behavior.getHTMLDescription().isEmpty()) {
+                        ((TryGoalViewHolder) viewHolder).descriptionTextView.setText(Html.fromHtml(behavior.getHTMLDescription(), null, new CompassTagHandler()));
+                    } else {
+                        ((TryGoalViewHolder) viewHolder).descriptionTextView.setText(behavior.  getDescription());
+                    }
 
                     if (mExpandedBehaviors.contains(behavior)) {
                         ((TryGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
@@ -180,65 +188,61 @@ public class GoalTryActivity extends ActionBarActivity implements
                     }
                     if (behavior.getIconUrl() != null
                             && !behavior.getIconUrl().isEmpty()) {
-                        ImageLoader.loadBitmap(((TryGoalViewHolder)viewHolder).iconImageView,
+                        ImageLoader.loadBitmap(((TryGoalViewHolder) viewHolder).iconImageView,
                                 behavior.getIconUrl(), false);
                     }
 
-                    if(behavior_is_selected) {
+                    if (behavior_is_selected) {
                         // If the user has already selected the behavior, update the icon
                         ((TryGoalViewHolder) viewHolder).tryItImageView.setImageResource(
                                 R.drawable.ic_blue_check_circle);
                     }
 
-                    if (behavior.getMoreInfo().equals("")){
-                        ((TryGoalViewHolder)viewHolder).moreInfoImageView.setVisibility(View.GONE);
-                    }
-                    else{
-                        ((TryGoalViewHolder)viewHolder).moreInfoImageView.setVisibility(View.VISIBLE);
+                    if (behavior.getMoreInfo().equals("")) {
+                        ((TryGoalViewHolder) viewHolder).moreInfoImageView.setVisibility(View.GONE);
+                    } else {
+                        ((TryGoalViewHolder) viewHolder).moreInfoImageView.setVisibility(View.VISIBLE);
                         // Set up a Click Listener for all other cards.
                         ((TryGoalViewHolder) viewHolder).moreInfoImageView.setOnClickListener(new View
-                                .OnClickListener(){
+                                .OnClickListener() {
 
                             @Override
-                            public void onClick(View v){
+                            public void onClick(View v) {
                                 Log.d("GoalTryActivity", "Launch More Info");
                                 moreInfoPressed(behavior);
                             }
                         });
                     }
 
-                    if (behavior.getActionCount() == 0){
+                    if (behavior.getActionCount() == 0) {
                         ((TryGoalViewHolder) viewHolder).selectActionsImageView.setVisibility(View.GONE);
-                    }
-                    else{
+                    } else {
                         ((TryGoalViewHolder) viewHolder).selectActionsImageView.setVisibility(View.VISIBLE);
                         ((TryGoalViewHolder) viewHolder).selectActionsImageView.setOnClickListener(new View
-                                .OnClickListener(){
+                                .OnClickListener() {
 
                             @Override
-                            public void onClick(View v){
+                            public void onClick(View v) {
                                 Log.d("GoalTryActivity", "Launch Action Picker");
                                 launchActionPicker(behavior);
                             }
                         });
                     }
 
-                    if (behavior.getExternalResource().isEmpty()){
-                        ((TryGoalViewHolder)viewHolder).doItNow.setVisibility(View.GONE);
-                        ((TryGoalViewHolder)viewHolder).externalResource.setVisibility(View.GONE);
-                    }
-                    else{
-                        if (mExpandedBehaviors.contains(behavior)){
-                            ((TryGoalViewHolder)viewHolder).externalResource.setVisibility(View.VISIBLE);
+                    if (behavior.getExternalResource().isEmpty()) {
+                        ((TryGoalViewHolder) viewHolder).doItNow.setVisibility(View.GONE);
+                        ((TryGoalViewHolder) viewHolder).externalResource.setVisibility(View.GONE);
+                    } else {
+                        if (mExpandedBehaviors.contains(behavior)) {
+                            ((TryGoalViewHolder) viewHolder).externalResource.setVisibility(View.VISIBLE);
+                        } else {
+                            ((TryGoalViewHolder) viewHolder).externalResource.setVisibility(View.GONE);
                         }
-                        else{
-                            ((TryGoalViewHolder)viewHolder).externalResource.setVisibility(View.GONE);
-                        }
-                        ((TryGoalViewHolder)viewHolder).doItNow.setVisibility(View.VISIBLE);
-                        ((TryGoalViewHolder)viewHolder).externalResource.setText(behavior.getExternalResource());
-                        ((TryGoalViewHolder)viewHolder).doItNow.setOnClickListener(new View.OnClickListener(){
+                        ((TryGoalViewHolder) viewHolder).doItNow.setVisibility(View.VISIBLE);
+                        ((TryGoalViewHolder) viewHolder).externalResource.setText(behavior.getExternalResource());
+                        ((TryGoalViewHolder) viewHolder).doItNow.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public void onClick(View v){
+                            public void onClick(View v) {
                                 doItNow(behavior);
                             }
                         });
@@ -249,7 +253,7 @@ public class GoalTryActivity extends ActionBarActivity implements
 
                         @Override
                         public void onClick(View v) {
-                            if(behavior_is_selected) {
+                            if (behavior_is_selected) {
                                 // Tapping this again should remove the behavior
                                 Log.d("GoalTryActivity", "Trying to remove behavior: " + behavior.getTitle());
                                 deleteBehavior(behavior);
@@ -354,14 +358,14 @@ public class GoalTryActivity extends ActionBarActivity implements
 
     /**
      * Checks whether the provided string has one of the following formats, X being a number:
-     *
+     * <p/>
      * (XXX) XXX-XXX
      * XXX-XXX-XXXX
      *
      * @param resource the resource to be checked.
      * @return true if the resource is a phone number, false otherwise.
      */
-    private boolean isPhoneNumber(String resource){
+    private boolean isPhoneNumber(String resource) {
         return resource.matches("[(][0-9]{3}[)] [0-9]{3}[-][0-9]{4}") ||
                 resource.matches("[0-9]{3}[-][0-9]{3}[-][0-9]{4}");
     }
@@ -371,35 +375,34 @@ public class GoalTryActivity extends ActionBarActivity implements
      *
      * @param behavior the behavior of the card whose "do it now" was pressed.
      */
-    private void doItNow(Behavior behavior){
+    private void doItNow(Behavior behavior) {
         String resource = behavior.getExternalResource();
         //If a link
-        if (resource.startsWith("http")){
+        if (resource.startsWith("http")) {
             //If an app
             if (resource.startsWith("http://play.google.com/store/apps/") ||
-                    resource.startsWith("https://play.google.com/store/apps/")){
+                    resource.startsWith("https://play.google.com/store/apps/")) {
                 String id = resource.substring(resource.indexOf('/', 32));
                 //Try, if the user does not have the store installed, launch as web link
-                try{
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://"+id)));
-                }
-                catch (ActivityNotFoundException anfx){
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://" + id)));
+                } catch (ActivityNotFoundException anfx) {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(resource)));
                 }
             }
             //Otherwise opened with the browser
-            else{
+            else {
                 Uri uri = Uri.parse(resource);
                 startActivity(new Intent(Intent.ACTION_VIEW, uri));
             }
         }
         //If a phone number
-        else if (isPhoneNumber(resource)){
+        else if (isPhoneNumber(resource)) {
             //First of all, the number needs to be extracted from the resource
             String number = "";
-            for (int i = 0; i < resource.length(); i++){
+            for (int i = 0; i < resource.length(); i++) {
                 char digit = resource.charAt(i);
-                if (digit >= '0' && digit <= '9'){
+                if (digit >= '0' && digit <= '9') {
                     number += digit;
                 }
             }
@@ -419,7 +422,12 @@ public class GoalTryActivity extends ActionBarActivity implements
     public void moreInfoPressed(Behavior behavior) {
         try {
             AlertDialog.Builder builder = new AlertDialog.Builder(GoalTryActivity.this);
-            builder.setMessage(behavior.getMoreInfo()).setTitle(behavior.getTitle());
+            if (!behavior.getHTMLMoreInfo().isEmpty()) {
+                builder.setMessage(Html.fromHtml(behavior.getHTMLMoreInfo(), null, new CompassTagHandler()));
+            } else {
+                builder.setMessage(behavior.getMoreInfo());
+            }
+            builder.setTitle(behavior.getTitle());
             builder.setPositiveButton(android.R.string.ok,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -462,7 +470,7 @@ public class GoalTryActivity extends ActionBarActivity implements
         behaviors.add(String.valueOf(behavior.getId()));
         new AddBehaviorTask(this, this, behaviors).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-        if (behavior.getActionCount() > 0){
+        if (behavior.getActionCount() > 0) {
             // Launch the ChooseActionsActivity (where users choose actions for this Behavior)
             Intent intent = new Intent(getApplicationContext(), ChooseActionsActivity.class);
             intent.putExtra("category", mCategory);
@@ -474,8 +482,8 @@ public class GoalTryActivity extends ActionBarActivity implements
 
     @Override
     public void behaviorsAdded(ArrayList<Behavior> behaviors) {
-        if(behaviors != null) {
-            for(Behavior b : behaviors) {
+        if (behaviors != null) {
+            for (Behavior b : behaviors) {
                 application.addBehavior(b);
             }
         } else {
@@ -488,9 +496,9 @@ public class GoalTryActivity extends ActionBarActivity implements
     public void deleteBehavior(Behavior behavior) {
 
         // Make sure we find the behavior that contains the user's mapping id.
-        if(behavior.getMappingId() <= 0) {
-            for(Behavior b : application.getBehaviors()) {
-                if(behavior.getId() == b.getId()) {
+        if (behavior.getMappingId() <= 0) {
+            for (Behavior b : application.getBehaviors()) {
+                if (behavior.getId() == b.getId()) {
                     behavior.setMappingId(b.getMappingId());
                     break;
                 }

@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ import org.tndata.android.compass.task.GoalLoaderTask;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
+import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.ImageHelper;
 import org.tndata.android.compass.util.ImageLoader;
 
@@ -39,7 +41,6 @@ import java.util.HashSet;
 
 /**
  * The ChooseGoalsActivity is where a user selects Goals within a selected Category.
- *
  */
 public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTask
         .AddGoalsTaskListener,
@@ -135,7 +136,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                                          final int i) {
                 final Goal goal = mItems.get(i);
 
-                if(i == 0 && goal.getId() == 0) {
+                if (i == 0 && goal.getId() == 0) {
 
                     // Display the Header Card
 
@@ -143,7 +144,11 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                     ((ChooseGoalViewHolder) viewHolder).iconContainerView.setVisibility(View.GONE);
                     ((ChooseGoalViewHolder) viewHolder).detailContainerView.setVisibility(View.GONE);
                     ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View.GONE);
-                    ((ChooseGoalViewHolder) viewHolder).headerCardTextView.setText(goal.getDescription());
+                    if (!goal.getHTMLDescription().isEmpty()) {
+                        ((ChooseGoalViewHolder) viewHolder).headerCardTextView.setText(Html.fromHtml(goal.getHTMLDescription(), null, new CompassTagHandler()));
+                    } else {
+                        ((ChooseGoalViewHolder) viewHolder).headerCardTextView.setText(goal.getDescription());
+                    }
                     ((ChooseGoalViewHolder) viewHolder).headerCardTextView.setVisibility(View.VISIBLE);
                 } else {
 
@@ -161,15 +166,18 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                         ((ChooseGoalViewHolder) viewHolder).iconContainerView.setVisibility(View
                                 .VISIBLE);
                     }
-                    ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setText(goal
-                            .getDescription());
+                    if (!goal.getHTMLDescription().isEmpty()) {
+                        ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setText(Html.fromHtml(goal.getHTMLDescription(), null, new CompassTagHandler()));
+                    } else {
+                        ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setText(goal.getDescription());
+                    }
                     if (goal.getIconUrl() != null
                             && !goal.getIconUrl().isEmpty()) {
-                        ImageLoader.loadBitmap(((ChooseGoalViewHolder)viewHolder).iconImageView,
+                        ImageLoader.loadBitmap(((ChooseGoalViewHolder) viewHolder).iconImageView,
                                 goal.getIconUrl(), false);
                     }
 
-                    if(application.getGoals().contains(goal)) {
+                    if (application.getGoals().contains(goal)) {
                         ImageHelper.setupImageViewButton(getResources(),
                                 ((ChooseGoalViewHolder) viewHolder).selectButton, ImageHelper.SELECTED);
                     } else {
@@ -220,7 +228,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         mHeaderCircleView = (RelativeLayout) mFakeHeader.findViewById(R.id.choose_goals_header_circle_view);
         mHeaderImageView = (ImageView) mFakeHeader.findViewById(R.id.choose_goals_header_imageview);
         mCategory.loadImageIntoView(getApplicationContext(), mHeaderImageView);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mHeaderCircleView.setClipToOutline(true);
         }
 
@@ -305,7 +313,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
     public void goalsAdded(ArrayList<Goal> goals) {
         // we've already added the goal to the application's collection.
         Log.d("ChooseGoalsActivity", "Goal added via API");
-        for(Goal goal : goals) {
+        for (Goal goal : goals) {
             application.addGoal(goal); // should include the user's goal mapping id.
         }
         mAdapter.notifyDataSetChanged();
@@ -315,20 +323,19 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         // When a goal has been selected, save it in our list of selected goals, and then
         // immediately launch the user into the Behavior Selection workflow.
 
-        if(application.getGoals().contains(goal)) {
+        if (application.getGoals().contains(goal)) {
             deleteGoal(goal);
         } else {
             //mSelectedGoals.add(goal);
             addGoal(goal);
 
-            if (goal.getBehaviorCount() > 0){
+            if (goal.getBehaviorCount() > 0) {
                 // Launch the GoalTryActivity (where users choose a behavior for the Goal)
                 Intent intent = new Intent(getApplicationContext(), GoalTryActivity.class);
                 intent.putExtra("goal", goal);
                 intent.putExtra("category", mCategory);
                 startActivity(intent);
-            }
-            else{
+            } else {
                 Toast.makeText(this, R.string.goal_selected, Toast.LENGTH_SHORT).show();
             }
         }
@@ -338,7 +345,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         // Remove the goal from the application's collection and DELETE from the API
 
         // Ensure the goal contains the usermapping id
-        if(goal.getMappingId() <= 0) {
+        if (goal.getMappingId() <= 0) {
             for (Goal g : application.getGoals()) {
                 if (goal.getId() == g.getId()) {
                     goal.setMappingId(g.getMappingId());
