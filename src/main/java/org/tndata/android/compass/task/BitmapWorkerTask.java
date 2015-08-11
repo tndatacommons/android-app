@@ -24,6 +24,8 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>{
     private final Context mContext;
     private final OnDownloadCompleteCallback mCallback;
     private final WeakReference<ImageView> mImageViewReference;
+    private final int mWidth;
+    private final int mHeight;
 
     private String mUrl;
 
@@ -41,6 +43,25 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>{
         mCallback = callback;
 
         mImageViewReference = new WeakReference<>(imageView);
+        mWidth = -1;
+        mHeight = -1;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param context the application context.
+     * @param imageView the ImageView to which the new downloaded Bitmap shall be set.
+     * @param callback the callback object.
+     */
+    public BitmapWorkerTask(@NonNull Context context, ImageView imageView, int width, int height,
+                            @NonNull OnDownloadCompleteCallback callback){
+        mContext = context;
+        mCallback = callback;
+
+        mImageViewReference = new WeakReference<>(imageView);
+        mWidth = width;
+        mHeight = height;
     }
 
     @Override
@@ -66,8 +87,13 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>{
             BitmapFactory.decodeStream(boundStream, null, options);
 
             //Calculate inSampleSize and flag to decode the entire Bitmap
-            options.inSampleSize = ImageHelper.calculateInSampleSize(options,
-                    imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
+            if (mWidth == -1){
+                options.inSampleSize = ImageHelper.calculateInSampleSize(options,
+                        imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
+            }
+            else{
+                options.inSampleSize = ImageHelper.calculateInSampleSize(options, mWidth, mHeight);
+            }
             options.inJustDecodeBounds = false;
 
             //Open the download stream and download the bitmap

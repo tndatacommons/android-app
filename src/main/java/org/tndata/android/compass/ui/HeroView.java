@@ -58,6 +58,7 @@ public class HeroView extends FrameLayout{
         for (int i = 0; i < getChildCount(); i++){
             View child = getChildAt(i);
             child.measure(size.x, size.y);
+            child.requestLayout();
         }
         setMeasuredDimension(size.x, size.y);
     }

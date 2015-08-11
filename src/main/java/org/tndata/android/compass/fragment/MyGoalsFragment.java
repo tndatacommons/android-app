@@ -88,7 +88,7 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
         mRecyclerView = (RecyclerView) v
                 .findViewById(R.id.my_goals_recyclerview);
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.addItemDecoration(new SpacingItemDecoration(30));
+        mRecyclerView.addItemDecoration(new SpacingItemDecoration(getActivity(), 10));
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new MyGoalsAdapter(getActivity(), mItems, this);
         mRecyclerView.setAdapter(mAdapter);

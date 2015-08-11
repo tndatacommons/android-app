@@ -172,6 +172,29 @@ public final class ImageLoader{
         }
     }
 
+    public static void loadBitmap(ImageView view, int width, int height, String url,
+                                  boolean flinging, boolean usePlaceholder){
+
+        //1.- Check memory cache
+        Bitmap bitmap = MemoryCache.instance().getBitmapFromMemCache(url);
+        //2.- On hit, load, on miss, check disk cache
+        if (bitmap != null){
+            Log.d("MemoryCache", "Hit: " + url);
+            view.setImageBitmap(bitmap);
+        }
+        else{
+            Log.d("MemoryCache", "Miss: " + url);
+
+            //Add to queue and start the task if necessary
+            queueLoadRequest(new LoadRequest(view, width, height, url, flinging, usePlaceholder));
+            if (workerTask == null){
+                File dir = new File(mContext.getCacheDir().getPath() + File.separator + DISK_CACHE_SUB_DIR);
+                workerTask = new CacheWorkerTask();
+                workerTask.execute(dir);
+            }
+        }
+    }
+
     /**
      * Tells whether the key exists in the disk cache.
      *
@@ -421,6 +444,8 @@ public final class ImageLoader{
      */
     private static class LoadRequest{
         private final ImageView mImageView;
+        private final int mWidth;
+        private final int mHeight;
         private final String mUrl;
         private final boolean mFlinging;
         private final boolean mUsePlaceholder;
@@ -435,6 +460,25 @@ public final class ImageLoader{
          */
         private LoadRequest(ImageView imageView, String url, boolean flinging, boolean usePlaceholder){
             mImageView = imageView;
+            mWidth = -1;
+            mHeight = -1;
+            mUrl = url;
+            mFlinging = flinging;
+            mUsePlaceholder = usePlaceholder;
+            mResult = null;
+        }
+
+        /**
+         * Constructor.
+         *
+         * @param imageView the target ImageView.
+         * @param url the source url.
+         */
+        private LoadRequest(ImageView imageView, int width, int height, String url,
+                            boolean flinging, boolean usePlaceholder){
+            mImageView = imageView;
+            mWidth = width;
+            mHeight = height;
             mUrl = url;
             mFlinging = flinging;
             mUsePlaceholder = usePlaceholder;
@@ -604,7 +648,13 @@ public final class ImageLoader{
                         }
 
                         //The proper task is created
-                        task = new BitmapWorkerTask(mContext, request.mImageView, this);
+                        if (request.mWidth == -1){
+                            task = new BitmapWorkerTask(mContext, request.mImageView, this);
+                        }
+                        else{
+                            task = new BitmapWorkerTask(mContext, request.mImageView, request.mWidth,
+                                    request.mHeight, this);
+                        }
                         //An AsyncDrawable is created with the selected configuration and set
                         //  as the drawable of the ImageView
                         final AsyncDrawable asyncDrawable;

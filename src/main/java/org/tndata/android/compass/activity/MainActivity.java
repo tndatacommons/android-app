@@ -19,6 +19,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +37,7 @@ import org.tndata.android.compass.model.DrawerItem;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.task.GetUserDataTask;
 import org.tndata.android.compass.task.UpdateProfileTask;
+import org.tndata.android.compass.ui.HeroView;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.GcmRegistration;
@@ -65,6 +67,7 @@ public class MainActivity extends ActionBarActivity implements
     private ArrayList<DrawerItem> mDrawerItems;
     private Toolbar mToolbar;
     private ViewPager mViewPager;
+    //private HeroView mHeroView;
     private ImageView mHeaderImageView;
     private MainViewPagerAdapter mAdapter;
     private FloatingActionButton mFloatingActionButton;
@@ -130,6 +133,7 @@ public class MainActivity extends ActionBarActivity implements
 
         mFloatingActionButton = (FloatingActionButton) findViewById(R.id.category_fab_button);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        //mHeroView = (HeroView)findViewById(R.id.main_hero_container);
         mHeaderImageView = (ImageView) findViewById(R.id.main_material_imageview);
         mAdapter = new MainViewPagerAdapter(getSupportFragmentManager(), this);
         mAdapter.setFloatingActionButton(mFloatingActionButton);
@@ -149,6 +153,9 @@ public class MainActivity extends ActionBarActivity implements
             public void onPageSelected(int position) {
                 String url = mAdapter.getPositionImageUrl(position);
                 if (url != null) {
+                    mHeaderImageView.invalidate();
+                    //Log.d("MEASURE", mHeroView.getMeasuredWidth()+"");
+                    //Log.d("MEASURE", mHeroView.getMeasuredHeight()+"");
                     ImageLoader.loadBitmap(mHeaderImageView, url, false, false);
                 } else {
                     //TODO there is a bug here, when the user scrolls fast, the resource gets
