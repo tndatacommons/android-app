@@ -222,38 +222,6 @@ public class MainActivity extends ActionBarActivity implements
 
             case DRAWER_COUNT:
                 //Debug button
-                try {
-                    NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-
-                    Intent intento = new Intent(getApplicationContext(), ActionActivity.class);
-                    intento.putExtra(ActionActivity.ACTION_ID_KEY, Integer.valueOf(1575));
-                    //intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-                    Context ctx = getApplicationContext();
-                    PendingIntent contentIntent = PendingIntent.getActivity(ctx,
-                            (int) System.currentTimeMillis(), intento,
-                            PendingIntent.FLAG_UPDATE_CURRENT);
-
-                    Bundle args = new Bundle();
-                    args.putSerializable("objectType", Constants.ACTION_TYPE);
-
-                    Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-                    Notification notification = new NotificationCompat.Builder(ctx)
-                            .setSmallIcon(R.drawable.ic_action_compass_white)
-                            .setContentTitle("Test notification")
-                            .setStyle(new NotificationCompat.BigTextStyle().bigText("message"))
-                            .setContentText("message")
-                            .setLargeIcon(icon)
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                            .addExtras(args)
-                            .setContentIntent(contentIntent)
-                            .setAutoCancel(true)
-                            .build();
-
-                    mNotificationManager.notify(1, notification);
-                } catch (NumberFormatException nfx) {
-                    nfx.printStackTrace();
-                }
                 break;
         }
         mDrawerLayout.closeDrawers();
