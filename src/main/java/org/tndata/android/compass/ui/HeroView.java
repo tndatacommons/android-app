@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 
@@ -57,8 +59,9 @@ public class HeroView extends FrameLayout{
         size.y = size.x*2/3;
         for (int i = 0; i < getChildCount(); i++){
             View child = getChildAt(i);
-            child.measure(size.x, size.y);
-            child.requestLayout();
+            FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams)child.getLayoutParams();
+            child.measure(MeasureSpec.makeMeasureSpec(size.x - lp.leftMargin - lp.rightMargin, MeasureSpec.AT_MOST),
+                    MeasureSpec.makeMeasureSpec(size.y - lp.topMargin - lp.bottomMargin, MeasureSpec.AT_MOST));
         }
         setMeasuredDimension(size.x, size.y);
     }
