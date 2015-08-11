@@ -120,7 +120,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         mRecyclerView = (RecyclerView) findViewById(R.id.choose_goals_recyclerview);
         HeaderLayoutManagerFixed manager = new HeaderLayoutManagerFixed(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView.addItemDecoration(new SpacingItemDecoration(30));
+        mRecyclerView.addItemDecoration(new SpacingItemDecoration(this, 10));
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setHasFixedSize(true);
         mErrorTextView = (TextView) findViewById(R.id.choose_goals_error_textview);

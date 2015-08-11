@@ -59,7 +59,7 @@ public class UserProfileActivity extends ActionBarActivity implements UserProfil
         setContentView(R.layout.activity_myself);
 
         mToolbar = (Toolbar) findViewById(R.id.tool_bar);
-        mToolbar.setTitle(R.string.action_myself);
+        mToolbar.setTitle(R.string.action_my_information);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

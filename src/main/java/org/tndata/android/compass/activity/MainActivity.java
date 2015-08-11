@@ -1,10 +1,16 @@
 package org.tndata.android.compass.activity;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -13,12 +19,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 
 import com.astuetz.PagerSlidingTabStrip;
 
@@ -32,7 +37,7 @@ import org.tndata.android.compass.model.DrawerItem;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.task.GetUserDataTask;
 import org.tndata.android.compass.task.UpdateProfileTask;
-import org.tndata.android.compass.ui.DividerItemDecoration;
+import org.tndata.android.compass.ui.HeroView;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.GcmRegistration;
@@ -52,11 +57,8 @@ public class MainActivity extends ActionBarActivity implements
     private static final int MY_PRIVACY = 3;
     private static final int SETTINGS = 4;
     private static final int TOUR = 5;
-    // NOTE: The Drawer menu option to launch the BehaviorProgressActivity is here for demo purposes.
-    // We should remove before submitting to the play store.
-    private static final int TEMP_MENU_FOR_BEHAVIOR_PROGRESS = 6;
-    private static final int DRAWER_COUNT = 7;
-    //private static final int DRAWER_COUNT = 6; // TODO: Remove the temporary menu item for Behavior Progress
+    private static final int DRAWER_COUNT = 6;
+
 
     private CompassApplication application;
     private DrawerLayout mDrawerLayout;
@@ -65,6 +67,7 @@ public class MainActivity extends ActionBarActivity implements
     private ArrayList<DrawerItem> mDrawerItems;
     private Toolbar mToolbar;
     private ViewPager mViewPager;
+    //private HeroView mHeroView;
     private ImageView mHeaderImageView;
     private MainViewPagerAdapter mAdapter;
     private FloatingActionButton mFloatingActionButton;
@@ -106,12 +109,12 @@ public class MainActivity extends ActionBarActivity implements
         mDrawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
         mDrawerList = (RecyclerView)findViewById(R.id.main_left_drawer);
         mDrawerList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mDrawerList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
         mDrawerItems = drawerItems();
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
                 GravityCompat.START);
         DrawerAdapter drawerAdapter = new DrawerAdapter(this, this, mDrawerItems);
         mDrawerList.setAdapter(drawerAdapter);
+        mDrawerList.addItemDecoration(DrawerAdapter.getItemPadding(this));
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.string.nav_drawer_action, R.string.nav_drawer_action) {
 
@@ -130,6 +133,7 @@ public class MainActivity extends ActionBarActivity implements
 
         mFloatingActionButton = (FloatingActionButton) findViewById(R.id.category_fab_button);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        //mHeroView = (HeroView)findViewById(R.id.main_hero_container);
         mHeaderImageView = (ImageView) findViewById(R.id.main_material_imageview);
         mAdapter = new MainViewPagerAdapter(getSupportFragmentManager(), this);
         mAdapter.setFloatingActionButton(mFloatingActionButton);
@@ -149,6 +153,9 @@ public class MainActivity extends ActionBarActivity implements
             public void onPageSelected(int position) {
                 String url = mAdapter.getPositionImageUrl(position);
                 if (url != null) {
+                    mHeaderImageView.invalidate();
+                    //Log.d("MEASURE", mHeroView.getMeasuredWidth()+"");
+                    //Log.d("MEASURE", mHeroView.getMeasuredHeight()+"");
                     ImageLoader.loadBitmap(mHeaderImageView, url, false, false);
                 } else {
                     //TODO there is a bug here, when the user scrolls fast, the resource gets
@@ -195,91 +202,73 @@ public class MainActivity extends ActionBarActivity implements
 
     @Override
     public void onItemClick(int position){
-        Intent intent = null;
         switch (position) {
             case IMPORTANT_TO_ME:
+                startActivity(new Intent(getApplicationContext(), BehaviorProgressActivity.class));
                 break;
+
             case MY_PRIORITIES:
                 startActivity(new Intent(getApplicationContext(), MyPrioritiesActivity.class));
                 break;
+
             case MYSELF:
-                intent = new Intent(getApplicationContext(), UserProfileActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(getApplicationContext(), UserProfileActivity.class));
                 break;
+
             case MY_PRIVACY:
                 break;
 
             case SETTINGS:
-                intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
                 startActivityForResult(intent, Constants.SETTINGS_REQUEST_CODE);
                 break;
-            case TEMP_MENU_FOR_BEHAVIOR_PROGRESS:
-                intent = new Intent(getApplicationContext(), BehaviorProgressActivity.class);
-                startActivity(intent);
-                break;
+
             case TOUR:
                 startActivity(new Intent(getApplicationContext(), TourActivity.class));
+                break;
+
+            case DRAWER_COUNT:
+                //Debug button
                 break;
         }
         mDrawerLayout.closeDrawers();
     }
 
-    private ArrayList<DrawerItem> drawerItems() {
-        ArrayList<DrawerItem> items = new ArrayList<DrawerItem>();
-        for (int i = 0; i < DRAWER_COUNT; i++) {
-            DrawerItem item = new DrawerItem();
-            switch (i) {
+    /**
+     * Creates the list of drawer items.
+     * TODO move to DrawerAdapter?
+     *
+     * @return the list of drawer items.
+     */
+    private ArrayList<DrawerItem> drawerItems(){
+        ArrayList<DrawerItem> items = new ArrayList<>();
+        for (int i = 0; i < DRAWER_COUNT; i++){
+            switch (i){
                 case IMPORTANT_TO_ME:
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        item.drawable = getResources().getDrawable(
-                                R.drawable.ic_favorite_grey, null);
-                    } else {
-                        item.drawable = getResources().getDrawable(R.drawable.ic_favorite_grey);
-                    }
-                    item.text = getResources().getString(
-                            R.string.action_important_to_me);
+                    items.add(new DrawerItem(getResources().getString(R.string.action_my_progress),
+                            R.drawable.ic_clipboard));
                     break;
                 case MY_PRIORITIES:
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        item.drawable = getResources().getDrawable(
-                                R.drawable.ic_check_circle_grey, null);
-                    } else {
-                        item.drawable = getResources().getDrawable(R.drawable.ic_check_circle_grey);
-                    }
-                    item.text = getResources().getString(
-                            R.string.action_my_priorities);
+                    items.add(new DrawerItem(getResources().getString(R.string.action_my_priorities),
+                            R.drawable.ic_list_bullet));
                     break;
                 case MYSELF:
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        item.drawable = getResources().getDrawable(
-                                R.drawable.ic_face_grey, null);
-                    } else {
-                        item.drawable = getResources().getDrawable(R.drawable.ic_face_grey);
-                    }
-                    item.text = getResources().getString(R.string.action_myself);
+                    items.add(new DrawerItem(getResources().getString(R.string.action_my_information),
+                            R.drawable.ic_profile));
                     break;
                 case MY_PRIVACY:
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        item.drawable = getResources().getDrawable(
-                                R.drawable.ic_info_grey, null);
-                    } else {
-                        item.drawable = getResources().getDrawable(R.drawable.ic_info_grey);
-                    }
-                    item.text = getResources()
-                            .getString(R.string.action_my_privacy);
+                    items.add(new DrawerItem(getResources().getString(R.string.action_my_privacy),
+                            R.drawable.ic_info));
                     break;
                 case SETTINGS:
-                    item.text = getResources().getString(R.string.action_settings);
-                    break;
-                case TEMP_MENU_FOR_BEHAVIOR_PROGRESS:
-                    item.text = "Behavior Progress";
+                    items.add(new DrawerItem(getResources().getString(R.string.action_settings),
+                            R.drawable.ic_settings));
                     break;
                 case TOUR:
-                    item.text = getResources()
-                            .getString(R.string.action_tour);
+                    items.add(new DrawerItem(getResources().getString(R.string.action_tour),
+                            R.drawable.ic_tour));
                     break;
             }
-            items.add(item);
         }
 
         return items;

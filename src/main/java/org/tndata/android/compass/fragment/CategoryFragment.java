@@ -103,7 +103,7 @@ public class CategoryFragment extends Fragment implements
         mRecyclerView = (RecyclerView) v
                 .findViewById(R.id.category_recyclerview);
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.addItemDecoration(new SpacingItemDecoration(30));
+        mRecyclerView.addItemDecoration(new SpacingItemDecoration(getActivity(), 10));
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new CategoryFragmentAdapter(getActivity().getApplicationContext(),
                 application, mCategory, this);

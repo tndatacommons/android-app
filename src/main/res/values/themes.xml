@@ -6,11 +6,14 @@
         <item name="android:actionMenuTextColor">@color/actionbar_text</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="android:windowActionBarOverlay">false</item>
-        
+
         <item name="colorPrimary">@color/grow_primary</item>
         <item name="colorPrimaryDark">@color/grow_primary_dark</item>
-        <item name="colorAccent">@color/grow_secondary</item>
-        
+        <item name="colorAccent">@color/grow_accent</item>
+    </style>
+
+    <style name="LogInTheme" parent="CustomActionBarTheme">
+        <item name="colorAccent">@color/grow_accent_login</item>
     </style>
 
 </resources>

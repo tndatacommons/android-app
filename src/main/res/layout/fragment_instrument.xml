@@ -77,7 +77,7 @@
         android:text="@string/qol_next_button"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@drawable/button_paper_flat_text_selector"
-        android:background="@drawable/button_paper_flat" />
+        android:background="@drawable/button_positive_rounded" />
 
 
 </RelativeLayout>

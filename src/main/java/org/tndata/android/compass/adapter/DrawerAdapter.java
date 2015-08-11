@@ -2,20 +2,21 @@ package org.tndata.android.compass.adapter;
 
 import java.util.List;
 
+import org.tndata.android.compass.BuildConfig;
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.DrawerItem;
+import org.tndata.android.compass.model.User;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
+import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
@@ -46,6 +47,10 @@ public class DrawerAdapter extends RecyclerView.Adapter{
         mContext = context;
         mListener = listener;
         mItems = items;
+
+        if (BuildConfig.DEBUG){
+            mItems.add(new DrawerItem("Debug"));
+        }
     }
 
     /**
@@ -61,55 +66,40 @@ public class DrawerAdapter extends RecyclerView.Adapter{
     @Override
     @SuppressWarnings("deprecation")
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+
         if (viewType == VIEW_TYPE_HEADER){
-            ImageView header = new ImageView(mContext);
-            header.setLayoutParams(new LinearLayout.LayoutParams(getPixels(240), getPixels(160)));
-            header.setScaleType(ImageView.ScaleType.FIT_CENTER);
-
-            return new HeaderViewHolder(header);
+            return new HeaderViewHolder(inflater.inflate(R.layout.item_drawer_header, parent, false));
         }
 
-        LinearLayout.LayoutParams params;
-        params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
+        View root = inflater.inflate(R.layout.item_drawer_item, parent, false);
+        ItemViewHolder holder = new ItemViewHolder((TextView)root);
 
-        TextView item = new TextView(mContext);
-        item.setLayoutParams(params);
-        item.setGravity(Gravity.CENTER_VERTICAL);
-        item.setPadding(getPixels(16), getPixels(10), getPixels(16), getPixels(10));
-        item.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+        holder.mItem.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Medium.ttf"));
 
-        int[] attrs = new int[]{android.R.attr.selectableItemBackground};
-        TypedArray array = mContext.obtainStyledAttributes(attrs);
-        Drawable feedback = array.getDrawable(0);
-        array.recycle();
-        if (Build.VERSION.SDK_INT < 16){
-            item.setBackgroundDrawable(feedback);
-        }
-        else{
-            item.setBackground(feedback);
-        }
-
-        return new ItemViewHolder(item);
+        return holder;
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position){
+    public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
         if (getItemViewType(position) == VIEW_TYPE_HEADER){
-            ((HeaderViewHolder)holder).mHeader.setImageResource(R.drawable.compass_master_illustration);
+            User user = ((CompassApplication)((Activity)mContext).getApplication()).getUser();
+
+            HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
+            holder.mName.setText(user.getFullName());
+            holder.mAddress.setText(user.getEmail());
         }
         else{
             DrawerItem item = getItem(position);
 
-            TextView itemView = ((ItemViewHolder)holder).mItem;
-            itemView.setText(item.text);
-            if (item.drawable != null){
-                itemView.setCompoundDrawablesWithIntrinsicBounds(item.drawable, null, null, null);
-                itemView.setCompoundDrawablePadding(getPixels(10));
+            TextView itemView = ((ItemViewHolder)rawHolder).mItem;
+            itemView.setText(item.getCaption());
+            itemView.setCompoundDrawablesWithIntrinsicBounds(item.getIconResId(), 0, 0, 0);
+            if (item.getIconResId() == 0){
+                itemView.setCompoundDrawablePadding(0);
             }
             else{
-                itemView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-                itemView.setCompoundDrawablePadding(0);
+                itemView.setCompoundDrawablePadding(getPixels(mContext, 32));
             }
         }
     }
@@ -130,12 +120,23 @@ public class DrawerAdapter extends RecyclerView.Adapter{
     /**
      * Converts density pixels to pixels.
      *
+     * @param context the application context.
      * @param densityPixels the amount of dp to be converted.
      * @return the converter number of pixels.
      */
-    private int getPixels(int densityPixels){
+    private static int getPixels(Context context, int densityPixels){
         return (int)Math.ceil(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, densityPixels,
-                mContext.getResources().getDisplayMetrics()));
+                context.getResources().getDisplayMetrics()));
+    }
+
+    /**
+     * ItemPadding specification getter.
+     *
+     * @param context the application context.
+     * @return the item decoration object that specify the drawer item padding.
+     */
+    public static ItemPadding getItemPadding(Context context){
+        return new ItemPadding(context);
     }
 
 
@@ -146,7 +147,8 @@ public class DrawerAdapter extends RecyclerView.Adapter{
      * @version 1.0.0
      */
     private class HeaderViewHolder extends RecyclerView.ViewHolder{
-        private ImageView mHeader;
+        private TextView mName;
+        private TextView mAddress;
 
 
         /**
@@ -154,9 +156,13 @@ public class DrawerAdapter extends RecyclerView.Adapter{
          *
          * @param itemView the header view.
          */
-        public HeaderViewHolder(ImageView itemView){
+        public HeaderViewHolder(View itemView){
             super(itemView);
-            mHeader = itemView;
+
+            mName = (TextView)itemView.findViewById(R.id.drawer_header_name);
+            mAddress = (TextView)itemView.findViewById(R.id.drawer_header_address);
+
+            mName.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Medium.ttf"));
         }
     }
 
@@ -185,6 +191,38 @@ public class DrawerAdapter extends RecyclerView.Adapter{
         @Override
         public void onClick(View v){
             mListener.onItemClick(getLayoutPosition()-1);
+        }
+    }
+
+
+    /**
+     * Item decoration class that specifies the padding of drawer items.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    public static class ItemPadding extends RecyclerView.ItemDecoration{
+        private int firstItemPadding;
+
+
+        /**
+         * Constructor.
+         *
+         * @param context the application context.
+         */
+        private ItemPadding(Context context){
+            firstItemPadding = getPixels(context, 8);
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
+                                   RecyclerView.State state){
+            if (parent.getChildLayoutPosition(view) == 1){
+                outRect.top = firstItemPadding;
+            }
+            else{
+                outRect.top = 0;
+            }
         }
     }
 

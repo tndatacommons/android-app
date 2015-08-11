@@ -17,26 +17,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
-            <RelativeLayout
+            <org.tndata.android.compass.ui.HeroView
+                android:id="@+id/action_hero_container"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="wrap_content"
                 android:background="@color/grow_primary" >
 
                 <RelativeLayout
                     android:id="@+id/action_circle_view"
                     android:layout_width="85dp"
                     android:layout_height="85dp"
-                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
                     android:background="@drawable/circle" >
 
                     <ImageView
                         android:id="@+id/action_image"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
                         android:contentDescription="@string/action_icon_cd" />
 
                 </RelativeLayout>
-            </RelativeLayout>
+            </org.tndata.android.compass.ui.HeroView>
 
             <TextView
                 android:id="@+id/action_title"
@@ -160,4 +162,5 @@
         android:layout_height="10dp"
         android:layout_above="@id/action_tick_switcher"
         android:background="@drawable/activity_action_gradient" />
+
 </RelativeLayout>

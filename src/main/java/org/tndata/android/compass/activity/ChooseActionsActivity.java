@@ -134,7 +134,7 @@ public class ChooseActionsActivity extends ActionBarActivity implements
         mRecyclerView = (RecyclerView) findViewById(R.id.choose_actions_recyclerview);
         HeaderLayoutManagerFixed manager = new HeaderLayoutManagerFixed(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView.addItemDecoration(new SpacingItemDecoration(30));
+        mRecyclerView.addItemDecoration(new SpacingItemDecoration(this, 10));
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setHasFixedSize(true);
 
