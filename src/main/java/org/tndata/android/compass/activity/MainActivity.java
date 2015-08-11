@@ -265,7 +265,8 @@ public class MainActivity extends ActionBarActivity implements
                             R.drawable.ic_settings));
                     break;
                 case TOUR:
-                    items.add(new DrawerItem(getResources().getString(R.string.action_tour)));
+                    items.add(new DrawerItem(getResources().getString(R.string.action_tour),
+                            R.drawable.ic_tour));
                     break;
             }
         }
