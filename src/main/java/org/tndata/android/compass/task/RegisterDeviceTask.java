@@ -2,6 +2,7 @@ package org.tndata.android.compass.task;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.text.Html;
 import android.util.Log;
 
@@ -48,6 +49,7 @@ public class RegisterDeviceTask extends AsyncTask<Void, Void, Void> {
         JSONObject body = new JSONObject();
         try {
             body.put("registration_id", mRegistrationId);
+            body.put("device_name", Build.MANUFACTURER+ " " + Build.PRODUCT);
         } catch (JSONException e1) {
             e1.printStackTrace();
             return null;
