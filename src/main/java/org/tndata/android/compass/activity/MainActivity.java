@@ -174,9 +174,14 @@ public class MainActivity extends ActionBarActivity implements
             }
         });
 
-        // Load all user-selected content from the API
-        new GetUserDataTask(this).executeOnExecutor(
-                AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
+        if (application.getCategories().isEmpty()) {
+            // Load all user-selected content from the API
+            new GetUserDataTask(this).executeOnExecutor(
+                    AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
+        } else {
+            showUserData();
+            application.getUserData().logSelectedData("MainActivity.onCreate", false);
+        }
     }
 
     @Override
@@ -211,7 +216,6 @@ public class MainActivity extends ActionBarActivity implements
                 break;
 
             case MY_PRIVACY:
-                startActivity(new Intent(getApplicationContext(), PrivacyActivity.class));
                 break;
 
             case SETTINGS:
