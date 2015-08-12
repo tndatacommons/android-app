@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class ChooseCategoryAdapter
         extends RecyclerView.Adapter
-        implements Animation.AnimationListener {
+        implements Animation.AnimationListener{
 
     private static final int VIEW_TYPE_HEADER = 1;
     private static final int VIEW_TYPE_CATEGORY = 2;
@@ -62,7 +62,7 @@ public class ChooseCategoryAdapter
      * @param applyRestrictions whether the 3 to 5 vtegory restriction should be applied.
      */
     public ChooseCategoryAdapter(Context context, OnCategoriesSelectedListener callback,
-                                 boolean applyRestrictions) {
+                                 boolean applyRestrictions){
         mContext = context;
         mCallback = callback;
         mApplyRestrictions = applyRestrictions;
@@ -78,7 +78,7 @@ public class ChooseCategoryAdapter
     /**
      * Makes the progress bar go away in the header view.
      */
-    public void hideProgressBar() {
+    public void hideProgressBar(){
         mHideProgressBar = true;
         notifyItemChanged(0);
     }
@@ -88,7 +88,7 @@ public class ChooseCategoryAdapter
      *
      * @param all the list of all available categories.
      */
-    public void setCategories(@NonNull List<Category> all, @NonNull List<Category> selected) {
+    public void setCategories(@NonNull List<Category> all, @NonNull List<Category> selected){
         //Let the GC take care of the previous list and fill a new one
         mCategories = new ArrayList<>();
         mCategories.addAll(all);
@@ -105,20 +105,22 @@ public class ChooseCategoryAdapter
      * @param position the position of the category in the dataset.
      * @return the Category in the requested position.
      */
-    public Category getItem(int position) {
+    public Category getItem(int position){
         return mCategories.get(position);
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        if (viewType == VIEW_TYPE_HEADER) {
+        if (viewType == VIEW_TYPE_HEADER){
             View root = inflater.inflate(R.layout.item_choose_categories_header, parent, false);
             return new HeaderViewHolder(root);
-        } else if (viewType == VIEW_TYPE_NEXT) {
+        }
+        else if (viewType == VIEW_TYPE_NEXT){
             View root = inflater.inflate(R.layout.item_choose_categories_next, parent, false);
             return new NextViewHolder(root);
-        } else if (viewType == VIEW_TYPE_CATEGORY) {
+        }
+        else if (viewType == VIEW_TYPE_CATEGORY){
             View root = inflater.inflate(R.layout.item_choose_categories_category, parent, false);
             return new CategoryViewHolder(root);
         }
@@ -126,62 +128,79 @@ public class ChooseCategoryAdapter
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position) {
-        if (getItemViewType(position) == VIEW_TYPE_HEADER) {
-            HeaderViewHolder holder = (HeaderViewHolder) rawHolder;
+    public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
+        if (getItemViewType(position) == VIEW_TYPE_HEADER){
+            HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
             StaggeredGridLayoutManager.LayoutParams params;
-            params = (StaggeredGridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
+            params = (StaggeredGridLayoutManager.LayoutParams)holder.itemView.getLayoutParams();
             params.setFullSpan(true);
 
-            if (mCategories != null || mHideProgressBar) {
+            if (mCategories != null || mHideProgressBar){
                 holder.progressBar.setVisibility(View.GONE);
             }
-        } else if (getItemViewType(position) == VIEW_TYPE_NEXT) {
-            NextViewHolder holder = (NextViewHolder) rawHolder;
+        }
+        else if (getItemViewType(position) == VIEW_TYPE_NEXT){
+            NextViewHolder holder = (NextViewHolder)rawHolder;
             holder.itemView.setVisibility(View.GONE);
             StaggeredGridLayoutManager.LayoutParams params;
-            params = (StaggeredGridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
+            params = (StaggeredGridLayoutManager.LayoutParams)holder.itemView.getLayoutParams();
             params.setFullSpan(true);
             setAnimation(holder, position);
-        } else if (getItemViewType(position) == VIEW_TYPE_CATEGORY) {
-            CategoryViewHolder holder = (CategoryViewHolder) rawHolder;
+        }
+        else if (getItemViewType(position) == VIEW_TYPE_CATEGORY){
+            CategoryViewHolder holder = (CategoryViewHolder)rawHolder;
             Category category = getItem(position - 1);
             holder.itemView.setVisibility(View.GONE);
-            if (!mSelectedCategories.contains(category)) {
+            if (!mSelectedCategories.contains(category)){
                 holder.mOverlay.setVisibility(View.VISIBLE);
-            } else {
+            }
+            else{
                 holder.mOverlay.setVisibility(View.GONE);
             }
 
-            if (category.getTitle().equalsIgnoreCase("Happiness")) {
+            if (category.getTitle().equalsIgnoreCase("Happiness")){
                 holder.mBackground.setImageResource(R.drawable.tile_happiness);
-            } else if (category.getTitle().equalsIgnoreCase("Community")) {
+            }
+            else if (category.getTitle().equalsIgnoreCase("Community")){
                 holder.mBackground.setImageResource(R.drawable.tile_community);
-            } else if (category.getTitle().equalsIgnoreCase("Family")) {
+            }
+            else if (category.getTitle().equalsIgnoreCase("Family")){
                 holder.mBackground.setImageResource(R.drawable.tile_family);
-            } else if (category.getTitle().equalsIgnoreCase("Home")) {
+            }
+            else if (category.getTitle().equalsIgnoreCase("Home")){
                 holder.mBackground.setImageResource(R.drawable.tile_home);
-            } else if (category.getTitle().equalsIgnoreCase("Romance")) {
+            }
+            else if (category.getTitle().equalsIgnoreCase("Romance")){
                 holder.mBackground.setImageResource(R.drawable.tile_romance);
-            } else if (category.getTitle().equalsIgnoreCase("Health")) {
+            }
+            else if (category.getTitle().equalsIgnoreCase("Health")){
                 holder.mBackground.setImageResource(R.drawable.tile_health);
-            } else if (category.getTitle().equalsIgnoreCase("Wellness")) {
+            }
+            else if (category.getTitle().equalsIgnoreCase("Wellness")){
                 holder.mBackground.setImageResource(R.drawable.tile_wellness);
-            } else if (category.getTitle().equalsIgnoreCase("Safety")) {
+            }
+            else if (category.getTitle().equalsIgnoreCase("Safety")){
                 holder.mBackground.setImageResource(R.drawable.tile_safety);
-            } else if (category.getTitle().equalsIgnoreCase("Parenting")) {
+            }
+            else if (category.getTitle().equalsIgnoreCase("Parenting")){
                 holder.mBackground.setImageResource(R.drawable.tile_parenting);
-            } else if (category.getTitle().equalsIgnoreCase("Education")) {
+            }
+            else if (category.getTitle().equalsIgnoreCase("Education")){
                 holder.mBackground.setImageResource(R.drawable.tile_education);
-            } else if (category.getTitle().equalsIgnoreCase("Skills")) {
+            }
+            else if (category.getTitle().equalsIgnoreCase("Skills")){
                 holder.mBackground.setImageResource(R.drawable.tile_skills);
-            } else if (category.getTitle().equalsIgnoreCase("Work")) {
+            }
+            else if (category.getTitle().equalsIgnoreCase("Work")){
                 holder.mBackground.setImageResource(R.drawable.tile_work);
-            } else if (category.getTitle().equalsIgnoreCase("Prosperity")) {
+            }
+            else if (category.getTitle().equalsIgnoreCase("Prosperity")){
                 holder.mBackground.setImageResource(R.drawable.tile_prosperity);
-            } else if (category.getTitle().equalsIgnoreCase("Fun")) {
+            }
+            else if (category.getTitle().equalsIgnoreCase("Fun")){
                 holder.mBackground.setImageResource(R.drawable.tile_fun);
-            } else {
+            }
+            else{
                 holder.mBackground.setImageResource(0);
             }
 
@@ -197,9 +216,9 @@ public class ChooseCategoryAdapter
      * @param rawHolder the holder containing the tile to animate in.
      * @param position  the position of the tile.
      */
-    private void setAnimation(RecyclerView.ViewHolder rawHolder, int position) {
+    private void setAnimation(RecyclerView.ViewHolder rawHolder, int position){
         // If the bound tile wasn't previously displayed on screen, it's animated
-        if (position > mLastAnimation) {
+        if (position > mLastAnimation){
             Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.category_in);
             animation.setAnimationListener(this);
             animation.setStartOffset(100 * mCurrentAnimations);
@@ -207,7 +226,8 @@ public class ChooseCategoryAdapter
             rawHolder.itemView.startAnimation(animation);
             rawHolder.itemView.setVisibility(View.VISIBLE);
             mLastAnimation = position;
-        } else {
+        }
+        else{
             Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.category_set);
             rawHolder.itemView.startAnimation(animation);
             rawHolder.itemView.setVisibility(View.VISIBLE);
@@ -215,35 +235,37 @@ public class ChooseCategoryAdapter
     }
 
     @Override
-    public int getItemCount() {
+    public int getItemCount(){
         //If the categories haven't been set, yet, display the header, otherwise, display
         //  the header, the categories, and the next button.
         return mCategories == null ? 1 : mCategories.size() + 2;
     }
 
     @Override
-    public int getItemViewType(int position) {
-        if (position == 0) {
+    public int getItemViewType(int position){
+        if (position == 0){
             return VIEW_TYPE_HEADER;
-        } else if (position == getItemCount() - 1) {
+        }
+        else if (position == getItemCount() - 1){
             return VIEW_TYPE_NEXT;
-        } else {
+        }
+        else{
             return VIEW_TYPE_CATEGORY;
         }
     }
 
     @Override
-    public void onAnimationStart(Animation animation) {
+    public void onAnimationStart(Animation animation){
         //Unused
     }
 
     @Override
-    public void onAnimationEnd(Animation animation) {
+    public void onAnimationEnd(Animation animation){
         mCurrentAnimations--;
     }
 
     @Override
-    public void onAnimationRepeat(Animation animation) {
+    public void onAnimationRepeat(Animation animation){
         //Unused
     }
 
@@ -254,7 +276,7 @@ public class ChooseCategoryAdapter
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    class HeaderViewHolder extends RecyclerView.ViewHolder {
+    class HeaderViewHolder extends RecyclerView.ViewHolder{
         private ProgressBar progressBar;
 
         /**
@@ -262,10 +284,10 @@ public class ChooseCategoryAdapter
          *
          * @param itemView the root view of the cell.
          */
-        public HeaderViewHolder(View itemView) {
+        public HeaderViewHolder(View itemView){
             super(itemView);
 
-            progressBar = (ProgressBar) itemView.findViewById(R.id.choose_categories_header_progress_bar);
+            progressBar = (ProgressBar)itemView.findViewById(R.id.choose_categories_header_progress_bar);
         }
     }
 
@@ -276,7 +298,7 @@ public class ChooseCategoryAdapter
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    class CategoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, Animation.AnimationListener {
+    class CategoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, Animation.AnimationListener{
         private ImageView mBackground;
         private View mOverlay;
         private TextView mCaption;
@@ -287,13 +309,13 @@ public class ChooseCategoryAdapter
          *
          * @param itemView the root view of the cell.
          */
-        public CategoryViewHolder(View itemView) {
+        public CategoryViewHolder(View itemView){
             super(itemView);
 
             //UI components
-            mBackground = (ImageView) itemView.findViewById(R.id.choose_categories_category_tile);
+            mBackground = (ImageView)itemView.findViewById(R.id.choose_categories_category_tile);
             mOverlay = itemView.findViewById(R.id.choose_categories_category_overlay);
-            mCaption = (TextView) itemView.findViewById(R.id.choose_categories_category_caption);
+            mCaption = (TextView)itemView.findViewById(R.id.choose_categories_category_caption);
 
             //Listeners
             itemView.setOnClickListener(this);
@@ -301,20 +323,20 @@ public class ChooseCategoryAdapter
         }
 
         @Override
-        public void onClick(final View view) {
+        public void onClick(final View view){
             //In any event the Category is needed, so it is fetched
             Category category = getItem(getAdapterPosition() - 1);
 
             //If the tile was clicked
-            if (view == itemView) {
+            if (view == itemView){
                 AlphaAnimation animation;
                 //If the category was selected, remove it and fade in the overlay
-                if (mSelectedCategories.contains(category)) {
+                if (mSelectedCategories.contains(category)){
                     mSelectedCategories.remove(category);
                     animation = new AlphaAnimation(0, 1);
                 }
                 //Otherwise add it and fade out the overlay
-                else {
+                else{
                     mSelectedCategories.add(category);
                     animation = new AlphaAnimation(1, 0);
                 }
@@ -328,18 +350,19 @@ public class ChooseCategoryAdapter
                 notifyItemChanged(getLayoutPosition());
             }
             //If the description was clicked
-            else {
+            else{
                 //Create a dialog with the description
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                if (!category.getHTMLDescription().isEmpty()) {
+                if (!category.getHTMLDescription().isEmpty()){
                     builder.setMessage(Html.fromHtml(category.getHTMLDescription(), null, new CompassTagHandler()));
-                } else {
+                }
+                else{
                     builder.setMessage(category.getDescription());
                 }
                 builder.setTitle(category.getTitle());
                 builder.setPositiveButton(android.R.string.ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
+                        new DialogInterface.OnClickListener(){
+                            public void onClick(DialogInterface dialog, int id){
                                 dialog.dismiss();
                             }
                         });
@@ -348,7 +371,7 @@ public class ChooseCategoryAdapter
         }
 
         @Override
-        public void onAnimationStart(Animation animation) {
+        public void onAnimationStart(Animation animation){
             //In any event, the overlay is made visible at the beginning of the animation, It
             //  will be already visible if the category is not selected, which won't have any
             //  effect, but will make it visible if the category is visible.
@@ -356,18 +379,18 @@ public class ChooseCategoryAdapter
         }
 
         @Override
-        public void onAnimationEnd(Animation animation) {
+        public void onAnimationEnd(Animation animation){
             //When the category has been selected, make the overlay gone, otherwise, when the
             //  animation ends, the overlay will restore to its original alpha state.
-            if (getLayoutPosition() != -1) {
-                if (mSelectedCategories.contains(getItem(getLayoutPosition() - 1))) {
+            if (getLayoutPosition() != -1){
+                if (mSelectedCategories.contains(getItem(getLayoutPosition() - 1))){
                     mOverlay.setVisibility(View.GONE);
                 }
             }
         }
 
         @Override
-        public void onAnimationRepeat(Animation animation) {
+        public void onAnimationRepeat(Animation animation){
             //Unused
         }
     }
@@ -379,25 +402,28 @@ public class ChooseCategoryAdapter
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    class NextViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public NextViewHolder(View itemView) {
+    class NextViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        public NextViewHolder(View itemView){
             super(itemView);
             itemView.setOnClickListener(this);
         }
 
         @Override
-        public void onClick(View v) {
-            if (mApplyRestrictions) {
-                if (mSelectedCategories.size() < 3) {
+        public void onClick(View v){
+            if (mApplyRestrictions){
+                if (mSelectedCategories.size() < 3){
                     Toast.makeText(mContext, R.string.choose_categories_at_least_three,
                             Toast.LENGTH_SHORT).show();
-                } else if (mSelectedCategories.size() > 5) {
+                }
+                else if (mSelectedCategories.size() > 5){
                     Toast.makeText(mContext, R.string.choose_categories_at_most_five,
                             Toast.LENGTH_SHORT).show();
-                } else {
+                }
+                else{
                     mCallback.onCategoriesSelected(mSelectedCategories);
                 }
-            } else {
+            }
+            else{
                 mCallback.onCategoriesSelected(mSelectedCategories);
             }
         }
@@ -410,7 +436,7 @@ public class ChooseCategoryAdapter
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    public interface OnCategoriesSelectedListener {
+    public interface OnCategoriesSelectedListener{
         /**
          * Called when the next button is clicked if the conditions are right.
          *

@@ -190,6 +190,8 @@
     <string name="choose_categories_info">Tell Compass some things you care about. You can add or change choices later.</string>
     <string name="choose_categories_at_least_three">Pick a minimum of three things you care about most.</string>
     <string name="choose_categories_at_most_five">Just pick the five things you care about most. You can choose more later.</string>
+    <string name="choose_categories_syncing_title">Synchronizing</string>
+    <string name="choose_categories_syncing">Please, wait while the application synchronizes.</string>
 
     <!-- My privacy activity -->
     <string name="activity_my_privacy">My Privacy</string>

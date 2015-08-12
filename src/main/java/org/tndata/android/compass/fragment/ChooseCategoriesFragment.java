@@ -1,6 +1,7 @@
 package org.tndata.android.compass.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import org.tndata.android.compass.task.CategoryLoaderTask;
 import org.tndata.android.compass.task.CategoryLoaderTask.CategoryLoaderListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -31,7 +33,12 @@ import java.util.ArrayList;
  * @author Edited by Ismael Alonso
  * @version 2.0.0
  */
-public class ChooseCategoriesFragment extends Fragment implements CategoryLoaderListener{
+public class ChooseCategoriesFragment
+        extends Fragment
+        implements
+                CategoryLoaderListener,
+                ChooseCategoryAdapter.OnCategoriesSelectedListener{
+
     public static final String RESTRICTIONS_KEY = "restrictions";
 
     //10 seconds worth in milliseconds
@@ -40,6 +47,8 @@ public class ChooseCategoriesFragment extends Fragment implements CategoryLoader
     private View mMaterialHeader;
     private ChooseCategoryAdapter mAdapter;
     private boolean mApplyRestrictions;
+
+    private AlertDialog mDialog;
 
     private ChooseCategoryAdapter.OnCategoriesSelectedListener mCallback;
     private CompassApplication application;
@@ -78,7 +87,7 @@ public class ChooseCategoriesFragment extends Fragment implements CategoryLoader
         RecyclerView grid = (RecyclerView)root.findViewById(R.id.choose_categories_grid);
         grid.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
-        mAdapter = new ChooseCategoryAdapter(getActivity(), mCallback, mApplyRestrictions);
+        mAdapter = new ChooseCategoryAdapter(getActivity(), this, mApplyRestrictions);
         grid.setAdapter(mAdapter);
         grid.addItemDecoration(new ItemPadding());
         grid.setOnScrollListener(new ParallaxEffect());
@@ -118,6 +127,9 @@ public class ChooseCategoriesFragment extends Fragment implements CategoryLoader
     public void onDetach(){
         super.onDetach();
         mCallback = null;
+        if (mDialog != null){
+            mDialog.dismiss();
+        }
     }
 
     @Override
@@ -141,6 +153,17 @@ public class ChooseCategoriesFragment extends Fragment implements CategoryLoader
     private void notifyError(@StringRes int resId){
         mAdapter.hideProgressBar();
         Toast.makeText(getActivity(), resId, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onCategoriesSelected(List<Category> selection){
+        mDialog = new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.choose_categories_syncing_title)
+                .setCancelable(false)
+                .setView(getActivity().getLayoutInflater().inflate(R.layout.dialog_syncing, null))
+                .create();
+        mDialog.show();
+        mCallback.onCategoriesSelected(selection);
     }
 
 
