@@ -216,6 +216,7 @@ public class MainActivity extends ActionBarActivity implements
                 break;
 
             case MY_PRIVACY:
+                startActivity(new Intent(getApplicationContext(), PrivacyActivity.class));
                 break;
 
             case SETTINGS:
