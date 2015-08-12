@@ -174,14 +174,9 @@ public class MainActivity extends ActionBarActivity implements
             }
         });
 
-        if (application.getCategories().isEmpty()) {
-            // Load all user-selected content from the API
-            new GetUserDataTask(this).executeOnExecutor(
-                    AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
-        } else {
-            showUserData();
-            application.getUserData().logSelectedData("MainActivity.onCreate", false);
-        }
+        // Load all user-selected content from the API
+        new GetUserDataTask(this).executeOnExecutor(
+                AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
     }
 
     @Override
