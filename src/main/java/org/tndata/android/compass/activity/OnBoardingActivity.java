@@ -16,8 +16,10 @@ import org.tndata.android.compass.fragment.CheckProgressFragment;
 import org.tndata.android.compass.fragment.InstrumentFragment;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.User;
+import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.task.AddCategoryTask;
 import org.tndata.android.compass.task.AddCategoryTask.AddCategoryTaskListener;
+import org.tndata.android.compass.task.GetUserDataTask;
 import org.tndata.android.compass.task.UpdateProfileTask;
 import org.tndata.android.compass.util.Constants;
 
@@ -28,7 +30,8 @@ public class OnBoardingActivity extends ActionBarActivity implements
         CheckProgressFragment.CheckProgressFragmentListener,
         AddCategoryTaskListener,
         InstrumentFragment.InstrumentFragmentListener,
-        ChooseCategoryAdapter.OnCategoriesSelectedListener{
+        ChooseCategoryAdapter.OnCategoriesSelectedListener,
+        GetUserDataTask.GetUserDataListener{
     private static final int CHOOSE_CATEGORIES = 0;
     private static final int QOL = 1;
     private static final int BIO = 2;
@@ -86,11 +89,12 @@ public class OnBoardingActivity extends ActionBarActivity implements
 
     @Override
     public void categoriesAdded(ArrayList<Category> categories) {
-        if (categories != null) {
-            mCategories = categories;
-            ((CompassApplication) getApplication()).setCategories(mCategories);
-        }
+        CompassApplication application = (CompassApplication)getApplication();
         mCategoriesSaved = true;
+
+        // Load all user-selected content from the API
+        new GetUserDataTask(this).executeOnExecutor(
+                AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
     }
 
     @Override
@@ -119,8 +123,15 @@ public class OnBoardingActivity extends ActionBarActivity implements
         for (Category cat : mCategories) {
             cats.add(String.valueOf(cat.getId()));
         }
-        swapFragments(CHECK_PROGRESS);
         new AddCategoryTask(this, this, cats)
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    @Override
+    public void userDataLoaded(UserData userData){
+        if (userData != null){
+            ((CompassApplication)getApplication()).setUserData(userData);
+        }
+        swapFragments(CHECK_PROGRESS);
     }
 }
