@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,11 +17,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 
-import com.astuetz.PagerSlidingTabStrip;
+import com.github.florent37.materialviewpager.MaterialViewPager;
+import com.github.florent37.materialviewpager.header.HeaderDesign;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -36,7 +36,6 @@ import org.tndata.android.compass.ui.DividerItemDecoration;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.GcmRegistration;
-import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 
@@ -44,7 +43,7 @@ import java.util.ArrayList;
 public class MainActivity extends ActionBarActivity implements
         GetUserDataTask.GetUserDataListener,
         MyGoalsFragmentListener,
-        DrawerAdapter.OnItemClickListener{
+        DrawerAdapter.OnItemClickListener {
 
     private static final int IMPORTANT_TO_ME = 0;
     private static final int MY_PRIORITIES = 1;
@@ -64,7 +63,7 @@ public class MainActivity extends ActionBarActivity implements
     private RecyclerView mDrawerList;
     private ArrayList<DrawerItem> mDrawerItems;
     private Toolbar mToolbar;
-    private ViewPager mViewPager;
+    private MaterialViewPager mViewPager;
     private ImageView mHeaderImageView;
     private MainViewPagerAdapter mAdapter;
     private FloatingActionButton mFloatingActionButton;
@@ -98,13 +97,8 @@ public class MainActivity extends ActionBarActivity implements
         // Register the device with Google Cloud Messaging
         new GcmRegistration(getApplicationContext());
 
-        mToolbar = (Toolbar) findViewById(R.id.transparent_tool_bar);
-        mToolbar.setTitle("");
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        mDrawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
-        mDrawerList = (RecyclerView)findViewById(R.id.main_left_drawer);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawer_layout);
+        mDrawerList = (RecyclerView) findViewById(R.id.main_left_drawer);
         mDrawerList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mDrawerList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
         mDrawerItems = drawerItems();
@@ -130,14 +124,8 @@ public class MainActivity extends ActionBarActivity implements
 
         mFloatingActionButton = (FloatingActionButton) findViewById(R.id.category_fab_button);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-        mHeaderImageView = (ImageView) findViewById(R.id.main_material_imageview);
-        mAdapter = new MainViewPagerAdapter(getSupportFragmentManager(), this);
-        mAdapter.setFloatingActionButton(mFloatingActionButton);
-        mViewPager = (ViewPager) findViewById(R.id.main_viewpager);
-        mViewPager.setAdapter(mAdapter);
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.main_pager_tabstrip);
-        tabs.setViewPager(mViewPager);
-        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewPager = (MaterialViewPager) findViewById(R.id.main_viewpager);
+        mViewPager.getViewPager().setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset,
                                        int positionOffsetPixels) {
@@ -147,18 +135,6 @@ public class MainActivity extends ActionBarActivity implements
 
             @Override
             public void onPageSelected(int position) {
-                String url = mAdapter.getPositionImageUrl(position);
-                if (url != null) {
-                    ImageLoader.loadBitmap(mHeaderImageView, url, false, false);
-                } else {
-                    //TODO there is a bug here, when the user scrolls fast, the resource gets
-                    //TODO  loaded before the cached image. When that happens, some other
-                    //TODO  category image is displayed. The next line will only fix that
-                    //TODO  if the resource is being pulled from the web. Need to make a
-                    //TODO  couple of minor adjustments to the tasks spawned by the cache.
-                    ImageLoader.cancelPotentialWork("", mHeaderImageView);
-                    mHeaderImageView.setImageResource(R.drawable.compass_master_illustration);
-                }
             }
 
             @Override
@@ -175,6 +151,50 @@ public class MainActivity extends ActionBarActivity implements
             showUserData();
             application.getUserData().logSelectedData("MainActivity.onCreate", false);
         }
+
+
+        mViewPager = (MaterialViewPager) findViewById(R.id.main_viewpager);
+
+        mToolbar = mViewPager.getToolbar();
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawer_layout);
+
+        if (mToolbar != null) {
+            setSupportActionBar(mToolbar);
+
+            final ActionBar actionBar = getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setDisplayHomeAsUpEnabled(true);
+            }
+        }
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, 0, 0);
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        mAdapter = new MainViewPagerAdapter(getSupportFragmentManager(), this);
+        mAdapter.setFloatingActionButton(mFloatingActionButton);
+        mViewPager.getViewPager().setAdapter(mAdapter);
+
+        mViewPager.setMaterialViewPagerListener(new MaterialViewPager.Listener() {
+            @Override
+            public HeaderDesign getHeaderDesign(int page) {
+                String url = mAdapter.getPositionImageUrl(page);
+                switch (page) {
+                    case 0:
+                        return HeaderDesign.fromColorResAndDrawable(R.color.white, getResources().getDrawable(R.drawable.compass_master_illustration));
+                    default:
+                        return HeaderDesign.fromColorResAndUrl(
+                                R.color.white,
+                                url);
+                }
+
+
+            }
+        });
+
+        mViewPager.getViewPager().setOffscreenPageLimit(mViewPager.getViewPager().getAdapter().getCount());
+        mViewPager.getPagerTitleStrip().setViewPager(mViewPager.getViewPager());
+
+
     }
 
     @Override
@@ -194,7 +214,7 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     @Override
-    public void onItemClick(int position){
+    public void onItemClick(int position) {
         Intent intent = null;
         switch (position) {
             case IMPORTANT_TO_ME:
@@ -333,15 +353,17 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     public void showUserData() {
-        mAdapter.setCategories(application.getCategories());
-        mAdapter.notifyDataSetChanged();
+        if (null != mAdapter) {
+            mAdapter.setCategories(application.getCategories());
+            mAdapter.notifyDataSetChanged();
+        }
         // broadcast that goals are available.
         Intent intent = new Intent(Constants.GOAL_UPDATED_BROADCAST_ACTION);
         sendBroadcast(intent);
     }
 
     public void activateTab(int tabIndex) {
-        mViewPager.setCurrentItem(tabIndex);
+        mViewPager.getViewPager().setCurrentItem(tabIndex);
     }
 
     @Override

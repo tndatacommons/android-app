@@ -17,6 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.github.florent37.materialviewpager.MaterialViewPagerHelper;
+import com.github.florent37.materialviewpager.adapter.RecyclerViewMaterialAdapter;
+
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ChooseGoalsActivity;
@@ -25,7 +28,6 @@ import org.tndata.android.compass.adapter.CategoryFragmentAdapter;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.task.DeleteGoalTask;
-import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.Constants;
 
@@ -45,7 +47,7 @@ public class CategoryFragment extends Fragment implements
     private FloatingActionButton mFloatingActionButton;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private CategoryFragmentAdapter mAdapter;
+    private RecyclerView.Adapter mAdapter;
     private ArrayList<Goal> mItems = new ArrayList<Goal>();
     private boolean mBroadcastIsRegistered = false;
     private static final String TAG = "CategoryFragment";
@@ -103,13 +105,14 @@ public class CategoryFragment extends Fragment implements
         mRecyclerView = (RecyclerView) v
                 .findViewById(R.id.category_recyclerview);
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.addItemDecoration(new SpacingItemDecoration(30));
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new CategoryFragmentAdapter(getActivity().getApplicationContext(),
-                application, mCategory, this);
+        mAdapter = new RecyclerViewMaterialAdapter(new CategoryFragmentAdapter(getActivity().getApplicationContext(),
+                application, mCategory, this));
         mRecyclerView.setAdapter(mAdapter);
         mFloatingActionButton.attachToRecyclerView(mRecyclerView);
         registerReceivers();
+
+        MaterialViewPagerHelper.registerRecyclerView(getActivity(), mRecyclerView, null);
     }
 
     @Override
@@ -122,7 +125,8 @@ public class CategoryFragment extends Fragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setGoals();
-        mAdapter = new CategoryFragmentAdapter(getActivity(), application, mCategory, this);
+        mAdapter = new RecyclerViewMaterialAdapter(new CategoryFragmentAdapter(getActivity().getApplicationContext(),
+                application, mCategory, this));
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -254,8 +258,8 @@ public class CategoryFragment extends Fragment implements
     }
 
     @Override
-    public void cardCollapse(){
-        if (mRecyclerView.canScrollVertically(1)){
+    public void cardCollapse() {
+        if (mRecyclerView.canScrollVertically(1)) {
             mFloatingActionButton.show();
         }
     }

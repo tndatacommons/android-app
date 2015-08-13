@@ -15,6 +15,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.florent37.materialviewpager.MaterialViewPagerHelper;
+import com.github.florent37.materialviewpager.adapter.RecyclerViewMaterialAdapter;
+
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ChooseGoalsActivity;
@@ -26,7 +29,6 @@ import org.tndata.android.compass.model.MyGoalsViewItem;
 import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.task.SurveyFinderTask;
 import org.tndata.android.compass.task.SurveyResponseTask;
-import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.Constants;
 
@@ -36,7 +38,7 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
         SurveyResponseTask.SurveyResponseListener, MyGoalsAdapter.MyGoalsAdapterInterface {
     private FloatingActionButton mFloatingActionButton;
     private RecyclerView mRecyclerView;
-    private MyGoalsAdapter mAdapter;
+    private RecyclerView.Adapter mAdapter;
     private ArrayList<MyGoalsViewItem> mItems = new ArrayList<MyGoalsViewItem>();
     private boolean mBroadcastIsRegistered = false;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -84,16 +86,17 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
     @Override
     public void onViewCreated(View v, Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
+
+        mRecyclerView = (RecyclerView) v.findViewById(R.id.my_goals_recyclerview);
         mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView = (RecyclerView) v
-                .findViewById(R.id.my_goals_recyclerview);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.addItemDecoration(new SpacingItemDecoration(30));
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new MyGoalsAdapter(getActivity(), mItems, this);
+        mRecyclerView.setHasFixedSize(true);
+        mAdapter = new RecyclerViewMaterialAdapter(new MyGoalsAdapter(getActivity(), mItems, this));
         mRecyclerView.setAdapter(mAdapter);
         mFloatingActionButton.attachToRecyclerView(mRecyclerView);
         registerReceivers();
+
+        MaterialViewPagerHelper.registerRecyclerView(getActivity(), mRecyclerView, null);
     }
 
     @Override
@@ -111,7 +114,7 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
             }
         }
 
-        mAdapter = new MyGoalsAdapter(getActivity(), mItems, this);
+        mAdapter = new RecyclerViewMaterialAdapter(new MyGoalsAdapter(getActivity(), mItems, this));
         mRecyclerView.setAdapter(mAdapter);
 
         if (mItems.isEmpty()) {
