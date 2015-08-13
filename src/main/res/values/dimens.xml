@@ -5,7 +5,8 @@
     <dimen name="paper_flat_button_min_height">36dp</dimen>
     <dimen name="paper_flat_login_button_min_width">120dp</dimen>
     <dimen name="launcher_tagline_text_size">25dp</dimen>
-    <dimen name="launcher_image_top_margin">25dp</dimen>
+    <dimen name="launcher_image_top_margin">100dp</dimen>
+    <dimen name="launcher_image_side_margin">25dp</dimen>
     <dimen name="nav_drawer_header_min_height">125dp</dimen>
     <dimen name="category_grid_spacing">8dp</dimen>
     <dimen name="category_grid_column_width">140dp</dimen>
