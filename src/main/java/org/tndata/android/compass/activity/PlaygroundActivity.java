@@ -35,6 +35,15 @@ public class PlaygroundActivity extends ActionBarActivity implements View.OnClic
         }
         else if (state == 1){
             button.setActive(true);
+            state = 2;
+        }
+        else if (state == 2){
+            button.setTransitioningToInactive(true);
+            state = 3;
+        }
+        else if (state == 3){
+            button.setInactive(true);
+            state = 0;
         }
     }
 }

@@ -4,10 +4,10 @@
      android:fillAfter="true" >
 
     <rotate
-        android:fromDegrees="-45"
-        android:toDegrees="-405"
+        android:fromDegrees="405"
+        android:toDegrees="0"
         android:pivotX="50%"
         android:pivotY="50%"
-        android:duration="600" />
+        android:duration="675" />
 
 </set>
