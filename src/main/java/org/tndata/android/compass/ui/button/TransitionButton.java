@@ -39,6 +39,8 @@ public class TransitionButton extends ImageView implements Animation.AnimationLi
     private int mColorTransition;
     private int mColorInactive;
 
+    private boolean mApplyColorToBackground;
+
     //Animations
     private Animation rotationLeft;
     private Animation rotationRight;
@@ -90,12 +92,19 @@ public class TransitionButton extends ImageView implements Animation.AnimationLi
         mColorTransition = getResources().getColor(R.color.grey_placeholder);
         mColorInactive = getResources().getColor(R.color.grow_primary);
 
+        mApplyColorToBackground = false;
+
         if (attrs != null){
             retrieveAttributes(attrs);
         }
 
         //The drawable needs a state of its own
-        getDrawable().mutate();
+        if (mApplyColorToBackground){
+            getBackground().mutate();
+        }
+        else{
+            getDrawable().mutate();
+        }
 
         //The initial state is inactive
         mState = STATE_INACTIVE;
@@ -127,6 +136,7 @@ public class TransitionButton extends ImageView implements Animation.AnimationLi
                         getResources().getColor(R.color.grey_placeholder));
                 mColorInactive = ta.getColor(R.styleable.TransitionButton_color_inactive,
                         getResources().getColor(R.color.grow_primary));
+                mApplyColorToBackground = ta.getInt(R.styleable.TransitionButton_color_apply_to, 0) == 1;
             }
             finally{
                 ta.recycle();
@@ -262,7 +272,14 @@ public class TransitionButton extends ImageView implements Animation.AnimationLi
      * @param color the color of the drawable.
      */
     private void setDrawableColor(int color){
-        Drawable drawable = getDrawable();
+        Drawable drawable;
+        if (mApplyColorToBackground){
+            drawable = getBackground();
+        }
+        else{
+            drawable = getDrawable();
+        }
+
         if (drawable != null){
             drawable.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY));
         }

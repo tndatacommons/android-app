@@ -7,6 +7,7 @@ import android.view.View;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.ui.button.TransitionButton;
 
+
 /**
  * An activity to test new features without compromising the integrity of the
  * rest of the application.
