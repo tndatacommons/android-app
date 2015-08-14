@@ -9,7 +9,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -34,7 +34,6 @@ import org.tndata.android.compass.ui.button.TransitionButton;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
 import org.tndata.android.compass.util.CompassTagHandler;
-import org.tndata.android.compass.util.ImageHelper;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
@@ -43,7 +42,7 @@ import java.util.HashSet;
 /**
  * The ChooseGoalsActivity is where a user selects Goals within a selected Category.
  */
-public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTask
+public class ChooseGoalsActivity extends AppCompatActivity implements AddGoalTask
         .AddGoalsTaskListener,
         GoalLoaderTask.GoalLoaderListener, DeleteGoalTask.DeleteGoalTaskListener {
 

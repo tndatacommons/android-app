@@ -3,11 +3,11 @@ package org.tndata.android.compass.fragment;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
@@ -90,7 +90,7 @@ public class TriggerFragment
         TextView title = (TextView)view.findViewById(R.id.action_title_textview);
         title.setText(mAction.getTitle());
 
-        Switch notificationSwitch = (Switch)view.findViewById(R.id.notification_option_switch);
+        SwitchCompat notificationSwitch = (SwitchCompat)view.findViewById(R.id.notification_option_switch);
         notificationSwitch.setChecked(!mTrigger.isDisabled());
         notificationSwitch.setOnCheckedChangeListener(this);
 

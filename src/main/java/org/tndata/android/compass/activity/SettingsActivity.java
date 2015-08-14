@@ -4,8 +4,6 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.SettingsFragment;
 import org.tndata.android.compass.fragment.SettingsFragment.OnSettingsClickListener;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.util.Constants;
 
@@ -13,13 +11,11 @@ import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Window;
 
-import java.util.ArrayList;
-
-public class SettingsActivity extends ActionBarActivity implements
+public class SettingsActivity extends AppCompatActivity implements
         OnSettingsClickListener {
     private Toolbar mToolbar;
 

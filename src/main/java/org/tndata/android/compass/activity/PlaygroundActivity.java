@@ -1,7 +1,7 @@
 package org.tndata.android.compass.activity;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import org.tndata.android.compass.R;
@@ -12,7 +12,7 @@ import org.tndata.android.compass.ui.button.TransitionButton;
  * An activity to test new features without compromising the integrity of the
  * rest of the application.
  */
-public class PlaygroundActivity extends ActionBarActivity implements View.OnClickListener{
+public class PlaygroundActivity extends AppCompatActivity implements View.OnClickListener{
     private TransitionButton button;
     private int state;
 

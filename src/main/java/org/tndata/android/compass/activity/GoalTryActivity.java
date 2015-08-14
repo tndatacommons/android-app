@@ -12,7 +12,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -51,7 +51,7 @@ import java.util.HashSet;
 /**
  * The GoalTryActivity is where a user selects Behaviors for a chosen Goal.
  */
-public class GoalTryActivity extends ActionBarActivity implements
+public class GoalTryActivity extends AppCompatActivity implements
         BehaviorLoaderListener, AddBehaviorTask.AddBehaviorsTaskListener,
         DeleteBehaviorTask.DeleteBehaviorTaskListener {
 

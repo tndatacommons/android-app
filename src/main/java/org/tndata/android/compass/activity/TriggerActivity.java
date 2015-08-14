@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.Time;
 import android.util.Log;
@@ -48,7 +48,7 @@ import java.util.Locale;
  * @version 2.0.0
  */
 public class TriggerActivity
-        extends ActionBarActivity
+        extends AppCompatActivity
         implements
                 RecurrencePickerDialog.OnRecurrenceSetListener,
                 RadialTimePickerDialog.OnTimeSetListener,

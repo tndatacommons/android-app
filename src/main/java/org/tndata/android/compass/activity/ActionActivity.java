@@ -8,7 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
@@ -36,7 +36,7 @@ import java.util.ArrayList;
  * @version 1.1.0
  */
 public class ActionActivity
-        extends ActionBarActivity
+        extends AppCompatActivity
         implements
                 View.OnClickListener,
                 GetUserActionsTask.GetUserActionsListener{

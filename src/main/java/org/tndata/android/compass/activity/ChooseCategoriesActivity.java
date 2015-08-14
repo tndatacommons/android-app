@@ -2,11 +2,8 @@ package org.tndata.android.compass.activity;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
-import android.view.MenuItem;
-import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -21,7 +18,7 @@ import org.tndata.android.compass.task.GetUserDataTask;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChooseCategoriesActivity extends ActionBarActivity implements
+public class ChooseCategoriesActivity extends AppCompatActivity implements
         AddCategoryTask.AddCategoryTaskListener,
         ChooseCategoryAdapter.OnCategoriesSelectedListener,
         GetUserDataTask.GetUserDataListener{

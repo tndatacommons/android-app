@@ -1,14 +1,12 @@
 package org.tndata.android.compass.activity;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.ProgressBar;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -29,7 +27,7 @@ import java.util.LinkedList;
  * @version 2.1.0
  */
 public class BehaviorProgressActivity
-        extends Activity
+        extends AppCompatActivity
         implements
                 View.OnClickListener,
                 BehaviorProgressTask.BehaviorProgressTaskListener,
