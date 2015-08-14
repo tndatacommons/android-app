@@ -207,4 +207,9 @@ public class CategoryFragmentAdapter extends
         popup.show();
     }
 
+    public boolean isLastCardExpanded(RecyclerView rv){
+        int index = mApplication.getCategoryGoals(mCategory).size()-1;
+        CategoryGoalViewHolder holder = (CategoryGoalViewHolder)rv.findViewHolderForLayoutPosition(index);
+        return holder != null && holder.descriptionTextView.getVisibility() == View.VISIBLE;
+    }
 }
