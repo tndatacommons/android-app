@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -29,7 +29,7 @@ import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
 
-public class LoginActivity extends ActionBarActivity implements
+public class LoginActivity extends AppCompatActivity implements
         LauncherFragmentListener, SignUpFragmentListener,
         LoginFragmentListener, LoginTaskListener, TourFragmentListener {
     private static final int DEFAULT = 0;

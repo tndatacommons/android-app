@@ -11,7 +11,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -49,7 +49,7 @@ import java.util.HashSet;
 /**
  * The ChooseActionsActivity is where a user selects Actions for a chosen Behavior.
  */
-public class ChooseActionsActivity extends ActionBarActivity implements
+public class ChooseActionsActivity extends AppCompatActivity implements
         ActionLoaderTask.ActionLoaderListener, AddActionTask.AddActionTaskListener,
         DeleteActionTask.DeleteActionTaskListener {
 

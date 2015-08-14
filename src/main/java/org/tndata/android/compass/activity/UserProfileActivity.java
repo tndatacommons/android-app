@@ -2,7 +2,7 @@ package org.tndata.android.compass.activity;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,7 +21,7 @@ import org.tndata.android.compass.task.SurveyResponseTask;
 
 import java.util.ArrayList;
 
-public class UserProfileActivity extends ActionBarActivity implements UserProfileTaskInterface,
+public class UserProfileActivity extends AppCompatActivity implements UserProfileTaskInterface,
         SurveyFinderTask.SurveyFinderInterface, SurveyDialogFragment.SurveyDialogListener,
         SurveyResponseTask.SurveyResponseListener {
     private Toolbar mToolbar;

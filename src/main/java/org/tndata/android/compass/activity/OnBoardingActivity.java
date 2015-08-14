@@ -4,7 +4,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
@@ -26,7 +26,7 @@ import org.tndata.android.compass.util.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OnBoardingActivity extends ActionBarActivity implements
+public class OnBoardingActivity extends AppCompatActivity implements
         CheckProgressFragment.CheckProgressFragmentListener,
         AddCategoryTaskListener,
         InstrumentFragment.InstrumentFragmentListener,

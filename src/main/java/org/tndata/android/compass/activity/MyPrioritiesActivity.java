@@ -3,7 +3,7 @@ package org.tndata.android.compass.activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
@@ -26,7 +26,7 @@ import java.util.ArrayList;
  * @version 1.0.0
  */
 public class MyPrioritiesActivity
-        extends ActionBarActivity
+        extends AppCompatActivity
         implements
                 MyPrioritiesCategoriesFragment.OnCategorySelectedListener,
                 MyPrioritiesGoalAdapter.OnItemClickListener{
