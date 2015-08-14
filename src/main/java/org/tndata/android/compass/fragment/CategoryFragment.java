@@ -190,7 +190,7 @@ public class CategoryFragment extends Fragment implements
         // Delete the goal from the backend api.
         ArrayList<String> goals = new ArrayList<String>();
         goals.add(String.valueOf(goal.getMappingId()));
-        new DeleteGoalTask(getActivity(), this, goals).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new DeleteGoalTask(getActivity(), this, goals, goal).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         // Remove the goal from the category's collection
         mCategory.removeGoal(goal);
@@ -203,7 +203,7 @@ public class CategoryFragment extends Fragment implements
     }
 
     @Override
-    public void goalsDeleted() {
+    public void goalsDeleted(Goal goal) {
         Toast.makeText(getActivity(), getText(R.string.goal_deleted), Toast.LENGTH_SHORT).show();
         mAdapter.notifyDataSetChanged();
     }

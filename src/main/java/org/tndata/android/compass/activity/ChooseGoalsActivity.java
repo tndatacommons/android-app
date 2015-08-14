@@ -30,6 +30,7 @@ import org.tndata.android.compass.task.AddGoalTask;
 import org.tndata.android.compass.task.DeleteGoalTask;
 import org.tndata.android.compass.task.GoalLoaderTask;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
+import org.tndata.android.compass.ui.button.TransitionButton;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
 import org.tndata.android.compass.util.CompassTagHandler;
@@ -46,6 +47,11 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         .AddGoalsTaskListener,
         GoalLoaderTask.GoalLoaderListener, DeleteGoalTask.DeleteGoalTaskListener {
 
+    private static final byte STATE_NOT_ADDED = 0;
+    private static final byte STATE_ADDING = 1;
+    private static final byte STATE_ADDED = 2;
+    private static final byte STATE_REMOVING = 3;
+
     private CompassApplication application;
     private Toolbar mToolbar;
     private RecyclerView mRecyclerView;
@@ -55,6 +61,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
     private View mHeaderView;
     private RelativeLayout mHeaderCircleView;
     private ArrayList<Goal> mItems; // Array of available Goals to choose
+    private byte goalStates[];
     private ParallaxRecyclerAdapter<Goal> mAdapter;
     private Category mCategory = null;
 
@@ -70,7 +77,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                     .list_item_choose_goal_imageview_container);
             titleTextView = (TextView) itemView
                     .findViewById(R.id.list_item_choose_goal_title_textview);
-            selectButton = (ImageView) itemView
+            selectButton = (TransitionButton) itemView
                     .findViewById(R.id.list_item_choose_goal_select_button);
             descriptionTextView = (TextView) itemView
                     .findViewById(R.id.list_item_choose_goal_description_textview);
@@ -83,7 +90,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         TextView titleTextView;
         TextView descriptionTextView;
         ImageView iconImageView;
-        ImageView selectButton;
+        TransitionButton selectButton;
         RelativeLayout iconContainerView;
         RelativeLayout detailContainerView;
         TextView headerCardTextView;
@@ -177,12 +184,23 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
                                 goal.getIconUrl(), false);
                     }
 
-                    if (application.getGoals().contains(goal)) {
-                        ImageHelper.setupImageViewButton(getResources(),
-                                ((ChooseGoalViewHolder) viewHolder).selectButton, ImageHelper.SELECTED);
-                    } else {
-                        ImageHelper.setupImageViewButton(getResources(),
-                                ((ChooseGoalViewHolder) viewHolder).selectButton, ImageHelper.ADD);
+                    final ChooseGoalViewHolder holder = (ChooseGoalViewHolder)viewHolder;
+                    switch (goalStates[i-1]){
+                        case STATE_NOT_ADDED:
+                            holder.selectButton.setInactive(false);
+                            break;
+
+                        case STATE_ADDING:
+                            holder.selectButton.setTransitioningToActive(false);
+                            break;
+
+                        case STATE_ADDED:
+                            holder.selectButton.setActive(false);
+                            break;
+
+                        case STATE_REMOVING:
+                            holder.selectButton.setTransitioningToInactive(false);
+                            break;
                     }
 
                     ((ChooseGoalViewHolder) viewHolder).selectButton.setOnClickListener(new View
@@ -190,7 +208,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
 
                         @Override
                         public void onClick(View v) {
-                            goalSelected(goal);
+                            goalSelected(goal, holder);
                         }
                     });
 
@@ -310,34 +328,63 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
     }
 
     @Override
-    public void goalsAdded(ArrayList<Goal> goals) {
-        // we've already added the goal to the application's collection.
-        Log.d("ChooseGoalsActivity", "Goal added via API");
-        for (Goal goal : goals) {
-            application.addGoal(goal); // should include the user's goal mapping id.
+    public void goalsAdded(ArrayList<Goal> goals, Goal goal2) {
+        if (goals != null){
+            // we've already added the goal to the application's collection.
+            Log.d("ChooseGoalsActivity", "Goal added via API");
+            for (Goal goal : goals){
+                application.addGoal(goal); // should include the user's goal mapping id.
+            }
+
+            int index = mItems.indexOf(goal2);
+            Log.d("Index", index + "");
+            goalStates[index-1] = STATE_ADDED;
+            ChooseGoalViewHolder holder = (ChooseGoalViewHolder)mRecyclerView.findViewHolderForLayoutPosition(index+1);
+            if (holder != null){
+                holder.selectButton.setActive(true);
+            }
+            mAdapter.notifyDataSetChanged();
         }
-        mAdapter.notifyDataSetChanged();
+        else{
+            int index = mItems.indexOf(goal2);
+            Log.d("Index", index + "");
+            goalStates[index-1] = STATE_NOT_ADDED;
+            ChooseGoalViewHolder holder = (ChooseGoalViewHolder)mRecyclerView.findViewHolderForLayoutPosition(index+1);
+            if (holder != null){
+                holder.selectButton.setInactive(true);
+            }
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
-    public void goalSelected(Goal goal) {
+    public void goalSelected(Goal goal, ChooseGoalViewHolder holder) {
         // When a goal has been selected, save it in our list of selected goals, and then
         // immediately launch the user into the Behavior Selection workflow.
 
-        if (application.getGoals().contains(goal)) {
-            deleteGoal(goal);
-        } else {
-            //mSelectedGoals.add(goal);
-            addGoal(goal);
+        switch (goalStates[holder.getAdapterPosition()-2]){
+            case STATE_NOT_ADDED:
+                addGoal(goal);
 
-            if (goal.getBehaviorCount() > 0) {
-                // Launch the GoalTryActivity (where users choose a behavior for the Goal)
-                Intent intent = new Intent(getApplicationContext(), GoalTryActivity.class);
-                intent.putExtra("goal", goal);
-                intent.putExtra("category", mCategory);
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, R.string.goal_selected, Toast.LENGTH_SHORT).show();
-            }
+                if (goal.getBehaviorCount() > 0) {
+                    // Launch the GoalTryActivity (where users choose a behavior for the Goal)
+                    Intent intent = new Intent(getApplicationContext(), GoalTryActivity.class);
+                    intent.putExtra("goal", goal);
+                    intent.putExtra("category", mCategory);
+                    startActivity(intent);
+                    goalStates[holder.getAdapterPosition()-2] = STATE_ADDED;
+                    mAdapter.notifyItemChanged(holder.getAdapterPosition());
+                } else {
+                    goalStates[holder.getAdapterPosition()-2] = STATE_ADDING;
+                    holder.selectButton.setTransitioningToActive();
+                    Toast.makeText(this, R.string.goal_selected, Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+            case STATE_ADDED:
+                goalStates[holder.getAdapterPosition()-2] = STATE_REMOVING;
+                holder.selectButton.setTransitioningToInactive();
+                deleteGoal(goal);
+                break;
         }
     }
 
@@ -359,7 +406,7 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         Log.d("ChooseGoalsActivity", "About to delete goal: id = " + goal.getId() +
                 ", usergoal.id = " + goal.getMappingId() + "; " + goal.getTitle());
 
-        new DeleteGoalTask(this, this, goalsToDelete).executeOnExecutor(
+        new DeleteGoalTask(this, this, goalsToDelete, goal).executeOnExecutor(
                 AsyncTask.THREAD_POOL_EXECUTOR);
 
         application.removeGoal(goal);
@@ -370,12 +417,17 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
         // Save the user's selected goal via the API, and add it to the application's collection.
         ArrayList<String> goalsToAdd = new ArrayList<String>();
         goalsToAdd.add(String.valueOf(goal.getId()));
-        new AddGoalTask(this, this, goalsToAdd).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new AddGoalTask(this, this, goalsToAdd, goal).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
     public void goalLoaderFinished(ArrayList<Goal> goals) {
         if (goals != null && !goals.isEmpty()) {
+            goalStates = new byte[goals.size()];
+            for (int i = 0; i < goals.size(); i++){
+                Goal goal = goals.get(i);
+                goalStates[i] = application.getGoals().contains(goal) ? STATE_ADDED : STATE_NOT_ADDED;
+            }
             mItems.addAll(goals);
             mAdapter.notifyDataSetChanged();
         } else {
@@ -384,8 +436,15 @@ public class ChooseGoalsActivity extends ActionBarActivity implements AddGoalTas
     }
 
     @Override
-    public void goalsDeleted() {
+    public void goalsDeleted(Goal goal){
         Toast.makeText(this, getText(R.string.choose_goals_goal_removed), Toast.LENGTH_SHORT).show();
+        int index = mItems.indexOf(goal);
+        //Log.d("Index", index + "");
+        ChooseGoalViewHolder holder = (ChooseGoalViewHolder)mRecyclerView.findViewHolderForLayoutPosition(index+1);
 
+        goalStates[index-1] = STATE_NOT_ADDED;
+        if (holder != null){
+            holder.selectButton.setInactive(true);
+        }
     }
 }

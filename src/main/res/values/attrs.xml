@@ -19,4 +19,14 @@
         <attr name="android:horizontalSpacing" tools:ignore="ResourceName"/>
     </declare-styleable>
 
+    <declare-styleable name="TransitionButton">
+        <attr name="color_active" format="color" />
+        <attr name="color_transition" format="color" />
+        <attr name="color_inactive" format="color" />
+        <attr name="color_apply_to" format="enum" >
+            <enum name="drawable" value="0" />
+            <enum name="background" value="1" />
+        </attr>
+    </declare-styleable>
+
 </resources>

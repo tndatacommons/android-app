@@ -15,6 +15,7 @@
     <color name="image_background">#DEDEDE</color>
     <color name="action_background_opaque">#FFEEEEEE</color>
     <color name="action_background_transparent">#00EEEEEE</color>
+    <color name="grey_placeholder">#888</color>
 
     <color name="tour_color">#3fb3e6</color>
 

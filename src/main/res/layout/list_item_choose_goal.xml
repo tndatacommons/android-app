@@ -42,7 +42,8 @@
                     android:layout_margin="10dp"/>
             </RelativeLayout>
 
-            <ImageView
+            <org.tndata.android.compass.ui.button.TransitionButton
+                xmlns:transition="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/list_item_choose_goal_select_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -51,8 +52,9 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="15dp"
-                android:background="@drawable/circle_secondary"
+                android:background="@drawable/circle_white"
                 android:padding="3dp"
+                transition:color_apply_to="background"
                 android:src="@drawable/ic_action_new_large"/>
 
             <TextView

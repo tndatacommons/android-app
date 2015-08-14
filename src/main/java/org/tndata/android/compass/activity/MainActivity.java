@@ -230,6 +230,7 @@ public class MainActivity extends ActionBarActivity implements
 
             case DRAWER_COUNT:
                 //Debug button
+                startActivity(new Intent(getApplicationContext(), PlaygroundActivity.class));
                 break;
         }
         mDrawerLayout.closeDrawers();

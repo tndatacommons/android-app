@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
+import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
 
@@ -26,16 +27,18 @@ public class DeleteGoalTask extends AsyncTask<Void, Void, Void> {
             FieldNamingPolicy.IDENTITY).create();
     private DeleteGoalTaskListener mCallback;
     private ArrayList<String> mGoalIds;
+    private Goal mGoal;
 
     public interface DeleteGoalTaskListener {
-        void goalsDeleted();
+        void goalsDeleted(Goal goal);
     }
 
     public DeleteGoalTask(Context context, DeleteGoalTaskListener callback,
-                          ArrayList<String> goalIds) {
+                          ArrayList<String> goalIds, Goal goal) {
         mContext = context;
         mCallback = callback;
         mGoalIds = goalIds;
+        mGoal = goal;
     }
 
     @Override
@@ -73,7 +76,7 @@ public class DeleteGoalTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected void onPostExecute(Void result) {
-        mCallback.goalsDeleted();
+        mCallback.goalsDeleted(mGoal);
     }
 
 }
