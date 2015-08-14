@@ -157,8 +157,14 @@ public class TransitionButton extends ImageView implements Animation.AnimationLi
      * @param animate true if the transition should be animated.
      */
     public void setActive(boolean animate){
-        mAnimateStateChange = animate;
         mState = STATE_ACTIVE;
+        if (animate){
+            mAnimateStateChange = animate;
+        }
+        else{
+            setRotation(45);
+            setDrawableColor(mColorActive);
+        }
     }
 
     /**
@@ -212,8 +218,14 @@ public class TransitionButton extends ImageView implements Animation.AnimationLi
      * @param animate true if the transition should be animated.
      */
     public void setInactive(boolean animate){
-        mAnimateStateChange = animate;
         mState = STATE_INACTIVE;
+        if (animate){
+            mAnimateStateChange = true;
+        }
+        else{
+            setRotation(0);
+            setDrawableColor(mColorInactive);
+        }
     }
 
     /**
@@ -301,8 +313,7 @@ public class TransitionButton extends ImageView implements Animation.AnimationLi
             else if (mPreviousState == STATE_ACTIVE){
                 //IMPORTANT NOTE: this is here because onAnimationEnd gets called before this
                 //  particular animation actually finishes. This is but a hackish workaround
-                //  over some of Android's broken baloney, not actually what I actually
-                //  intended to do.
+                //  over some of Android's broken baloney, not what I actually intended to do.
                 new Handler().postDelayed(new Runnable(){
                     @Override
                     public void run(){

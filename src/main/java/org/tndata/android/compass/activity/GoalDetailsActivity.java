@@ -125,7 +125,7 @@ public class GoalDetailsActivity extends TriggerActivity implements
         // Delete the goal from the backend api.
         ArrayList<String> goals = new ArrayList<String>();
         goals.add(String.valueOf(goal.getMappingId()));
-        new DeleteGoalTask(this, this, goals).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new DeleteGoalTask(this, this, goals, goal).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         // Delete the goal from the Compass Application (will affect the UI)
         ((CompassApplication) getApplication()).removeGoal(goal);
@@ -133,7 +133,7 @@ public class GoalDetailsActivity extends TriggerActivity implements
     }
 
     @Override
-    public void goalsDeleted() {
+    public void goalsDeleted(Goal goal) {
         // Tell the parent that the user's selected goals have been updated.
         Intent intent = new Intent(Constants.GOAL_UPDATED_BROADCAST_ACTION);
         sendBroadcast(intent);

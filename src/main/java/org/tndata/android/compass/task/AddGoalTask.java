@@ -33,16 +33,18 @@ public class AddGoalTask extends AsyncTask<Void, Void, ArrayList<Goal>> {
             FieldNamingPolicy.IDENTITY).create();
     private AddGoalsTaskListener mCallback;
     private ArrayList<String> mGoalIds;
+    private Goal mGoal;
 
     public interface AddGoalsTaskListener {
-        public void goalsAdded(ArrayList<Goal> goals);
+        public void goalsAdded(ArrayList<Goal> goals, Goal goal);
     }
 
     public AddGoalTask(Context context, AddGoalsTaskListener callback,
-                       ArrayList<String> goalIds) {
+                       ArrayList<String> goalIds, Goal goal) {
         mContext = context;
         mCallback = callback;
         mGoalIds = goalIds;
+        mGoal = goal;
     }
 
     @Override
@@ -114,7 +116,7 @@ public class AddGoalTask extends AsyncTask<Void, Void, ArrayList<Goal>> {
 
     @Override
     protected void onPostExecute(ArrayList<Goal> goals) {
-        mCallback.goalsAdded(goals);
+        mCallback.goalsAdded(goals, mGoal);
     }
 
 }
