@@ -255,7 +255,16 @@ public class CategoryFragment extends Fragment implements
 
     @Override
     public void cardCollapse(){
-        if (mRecyclerView.canScrollVertically(1)){
+        if (cantScroll()){
+            Log.d("CategoryFragment", "FAB case: not scrollable");
+            mFloatingActionButton.show();
+        }
+        else if (mRecyclerView.canScrollVertically(1)){
+            Log.d("CategoryFragment", "FAB case: scrollable vertically");
+            mFloatingActionButton.show();
+        }
+        else if (!mRecyclerView.canScrollVertically(1) && !mAdapter.isLastCardExpanded(mRecyclerView)){
+            Log.d("CategoryFragment", "FAB case: not scrollable vertically and last card collapsed");
             mFloatingActionButton.show();
         }
     }
@@ -264,4 +273,7 @@ public class CategoryFragment extends Fragment implements
         mFloatingActionButton = fab;
     }
 
+    private boolean cantScroll(){
+        return !mRecyclerView.canScrollVertically(1) && !mRecyclerView.canScrollVertically(-1);
+    }
 }
