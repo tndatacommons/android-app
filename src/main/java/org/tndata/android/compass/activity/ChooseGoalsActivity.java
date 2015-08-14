@@ -3,9 +3,18 @@ package org.tndata.android.compass.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -245,8 +254,27 @@ public class ChooseGoalsActivity extends AppCompatActivity implements AddGoalTas
         mHeaderCircleView = (RelativeLayout) mFakeHeader.findViewById(R.id.choose_goals_header_circle_view);
         mHeaderImageView = (ImageView) mFakeHeader.findViewById(R.id.choose_goals_header_imageview);
         mCategory.loadImageIntoView(getApplicationContext(), mHeaderImageView);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mHeaderCircleView.setClipToOutline(true);
+        Bitmap bmp = ((BitmapDrawable)mHeaderImageView.getDrawable()).getBitmap();
+        if (bmp != null){
+            int size = (int)getResources().getDimension(R.dimen.header_category_icon_image_size);
+            Bitmap thumbnail = ThumbnailUtils.extractThumbnail(bmp, size, size);
+            Bitmap output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(output);
+
+            int color = Color.RED;
+            Paint paint = new Paint();
+            Rect rect = new Rect(0, 0, size, size);
+            RectF rectF = new RectF(rect);
+
+            paint.setAntiAlias(true);
+            canvas.drawARGB(0, 0, 0, 0);
+            paint.setColor(color);
+            canvas.drawOval(rectF, paint);
+
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+            canvas.drawBitmap(thumbnail, rect, rect, paint);
+
+            mHeaderImageView.setImageBitmap(output);
         }
 
         mHeaderView = findViewById(R.id.choose_goals_material_view);
