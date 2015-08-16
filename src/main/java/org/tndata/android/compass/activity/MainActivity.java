@@ -164,6 +164,7 @@ public class MainActivity extends ActionBarActivity implements
             final ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
                 actionBar.setDisplayHomeAsUpEnabled(true);
+                actionBar.setDisplayShowTitleEnabled(false);
             }
         }
 
