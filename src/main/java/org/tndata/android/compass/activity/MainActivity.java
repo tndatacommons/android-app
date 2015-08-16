@@ -123,9 +123,8 @@ public class MainActivity extends ActionBarActivity implements
         };
 
         mFloatingActionButton = (FloatingActionButton) findViewById(R.id.category_fab_button);
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
         mViewPager = (MaterialViewPager) findViewById(R.id.main_viewpager);
-        mViewPager.getViewPager().setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewPager.getViewPager().addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset,
                                        int positionOffsetPixels) {
@@ -135,6 +134,7 @@ public class MainActivity extends ActionBarActivity implements
 
             @Override
             public void onPageSelected(int position) {
+
             }
 
             @Override
@@ -154,7 +154,6 @@ public class MainActivity extends ActionBarActivity implements
 
 
         mViewPager = (MaterialViewPager) findViewById(R.id.main_viewpager);
-
         mToolbar = mViewPager.getToolbar();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawer_layout);
 
