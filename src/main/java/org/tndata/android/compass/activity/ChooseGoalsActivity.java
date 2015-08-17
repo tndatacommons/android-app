@@ -32,11 +32,17 @@ import java.util.ArrayList;
 
 /**
  * The ChooseGoalsActivity is where a user selects Goals within a selected Category.
+ *
+ * @author Edited by Ismael Alonso
+ * @version 2.0.0
  */
-public class ChooseGoalsActivity extends AppCompatActivity implements AddGoalTask
-        .AddGoalsTaskListener,
-        GoalLoaderTask.GoalLoaderListener, DeleteGoalTask.DeleteGoalTaskListener,
-        ChooseGoalsAdapter.ChooseGoalsListener{
+public class ChooseGoalsActivity
+        extends AppCompatActivity
+        implements
+                AddGoalTask.AddGoalsTaskListener,
+                GoalLoaderTask.GoalLoaderListener,
+                DeleteGoalTask.DeleteGoalTaskListener,
+                ChooseGoalsAdapter.ChooseGoalsListener{
 
     private CompassApplication mApplication;
     private Toolbar mToolbar;
@@ -89,11 +95,17 @@ public class ChooseGoalsActivity extends AppCompatActivity implements AddGoalTas
         loadGoals();
     }
 
+    /**
+     * Displays an error.
+     */
     private void showError() {
         mRecyclerView.setVisibility(View.GONE);
         mErrorTextView.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Fires the goal loader task.
+     */
     private void loadGoals() {
         if (mCategory == null) {
             return;
@@ -125,6 +137,7 @@ public class ChooseGoalsActivity extends AppCompatActivity implements AddGoalTas
             mAdapter.goalAdded(goal);
         }
         else{
+            Log.d("ChooseGoalsActivity", "Goal not added");
             mAdapter.goalNotAdded(goal);
         }
     }

@@ -1,8 +1,18 @@
 package org.tndata.android.compass.util;
 
+import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.GradientDrawable;
+import android.media.ThumbnailUtils;
 import android.os.Build;
 import android.widget.ImageView;
 
@@ -65,4 +75,25 @@ public class ImageHelper {
         }
     }
 
+    public static Bitmap getCircleBitmap(Bitmap bmp, int size){
+        Bitmap thumbnail = ThumbnailUtils.extractThumbnail(bmp, size, size);
+        Bitmap output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        int color = Color.RED;
+        Paint paint = new Paint();
+        Rect rect = new Rect(0, 0, size, size);
+        RectF rectF = new RectF(rect);
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawOval(rectF, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(thumbnail, rect, rect, paint);
+
+        thumbnail.recycle();
+        return output;
+    }
 }

@@ -2,16 +2,9 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
-import android.media.ThumbnailUtils;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -32,6 +25,7 @@ import org.tndata.android.compass.ui.button.TransitionButton;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
 import org.tndata.android.compass.util.CompassTagHandler;
+import org.tndata.android.compass.util.ImageHelper;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
@@ -54,7 +48,7 @@ public class ChooseGoalsAdapter
     private static final byte STATE_REMOVING = 3;
 
     private byte goalStates[];
-    
+
 
     private Context mContext;
     private ChooseGoalsListener mListener;
@@ -66,6 +60,15 @@ public class ChooseGoalsAdapter
     private int mExpandedGoal;
 
 
+    /**
+     * Constructor.
+     *
+     * @param context the application context.
+     * @param listener the event listener.
+     * @param app the application object.
+     * @param recyclerView the RecyclerView hosting this adapter.
+     * @param category the category from where the goals are pulled.
+     */
     public ChooseGoalsAdapter(@NonNull Context context, @NonNull ChooseGoalsListener listener,
                               @NonNull CompassApplication app, @NonNull RecyclerView recyclerView,
                               @NonNull Category category){
@@ -78,68 +81,27 @@ public class ChooseGoalsAdapter
         mCategory = category;
         mGoals = new ArrayList<>();
 
+        //Create the header goal and add it to the list
         Goal headerGoal = new Goal();
         headerGoal.setDescription(mCategory.getDescription());
         headerGoal.setId(0);
         mGoals.add(headerGoal);
         setData(mGoals);
 
+        //Mark no card expanded
         mExpandedGoal = -1;
 
+        //Set the header
         setHeader();
 
+        //Add listeners and interfaces
         implementRecyclerAdapterMethods(new ChooseGoalsAdapterMethods());
         setOnClickEvent(this);
     }
 
-    private void populateStateArray(){
-        if (mGoals != null && mGoals.size() > 1){
-            goalStates = new byte[mGoals.size()-1];
-            List<Goal> userGoals = mApplication.getGoals();
-            for (int i = 1; i < mGoals.size(); i++){
-                goalStates[i-1] = userGoals.contains(getItem(i)) ? STATE_ADDED : STATE_NOT_ADDED;
-            }
-        }
-    }
-
-    public void addGoals(List<Goal> goals){
-        mGoals.addAll(goals);
-        populateStateArray();
-        notifyDataSetChanged();
-    }
-
-    public Goal getItem(int position){
-        return mGoals.get(position);
-    }
-
-    public void goalAdded(Goal goal){
-        int index = mGoals.indexOf(goal);
-        goalStates[index-1] = STATE_ADDED;
-        ChooseGoalsViewHolder holder = (ChooseGoalsViewHolder)mRecyclerView.findViewHolderForLayoutPosition(index+1);
-        if (holder != null){
-            holder.select.setActive(true);
-        }
-    }
-
-    public void goalNotAdded(Goal goal){
-        int index = mGoals.indexOf(goal);
-        goalStates[index-1] = STATE_NOT_ADDED;
-        ChooseGoalsViewHolder holder = (ChooseGoalsViewHolder)mRecyclerView.findViewHolderForLayoutPosition(index+1);
-        if (holder != null){
-            holder.select.setInactive(true);
-        }
-    }
-
-    public void goalDeleted(Goal goal){
-        int index = mGoals.indexOf(goal);
-        ChooseGoalsViewHolder holder = (ChooseGoalsViewHolder)mRecyclerView.findViewHolderForLayoutPosition(index+1);
-
-        goalStates[index-1] = STATE_NOT_ADDED;
-        if (holder != null){
-            holder.select.setInactive(true);
-        }
-    }
-
+    /**
+     * Creates the parallax header view and sets it in the list.
+     */
     private void setHeader(){
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View header = inflater.inflate(R.layout.header_choose_goals, mRecyclerView, false);
@@ -149,24 +111,7 @@ public class ChooseGoalsAdapter
         Bitmap bmp = ((BitmapDrawable)headerImageView.getDrawable()).getBitmap();
         if (bmp != null){
             int size = (int)mContext.getResources().getDimension(R.dimen.header_category_icon_image_size);
-            Bitmap thumbnail = ThumbnailUtils.extractThumbnail(bmp, size, size);
-            Bitmap output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(output);
-
-            int color = Color.RED;
-            Paint paint = new Paint();
-            Rect rect = new Rect(0, 0, size, size);
-            RectF rectF = new RectF(rect);
-
-            paint.setAntiAlias(true);
-            canvas.drawARGB(0, 0, 0, 0);
-            paint.setColor(color);
-            canvas.drawOval(rectF, paint);
-
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-            canvas.drawBitmap(thumbnail, rect, rect, paint);
-
-            headerImageView.setImageBitmap(output);
+            headerImageView.setImageBitmap(ImageHelper.getCircleBitmap(bmp, size));
         }
 
         ((HeaderLayoutManagerFixed)mRecyclerView.getLayoutManager()).setHeaderIncrementFixer(header);
@@ -180,7 +125,115 @@ public class ChooseGoalsAdapter
         });
     }
 
+    /**
+     * Populates the state array with the appropriate values.
+     */
+    private void populateStateArray(){
+        if (mGoals != null && mGoals.size() > 1){
+            goalStates = new byte[mGoals.size()-1];
+            List<Goal> userGoals = mApplication.getGoals();
+            for (int i = 1; i < mGoals.size(); i++){
+                goalStates[i-1] = userGoals.contains(getItem(i)) ? STATE_ADDED : STATE_NOT_ADDED;
+            }
+        }
+    }
 
+    /**
+     * Adds the goals in the list to the backing array.
+     *
+     * @param goals the list of goals to be added.
+     */
+    public void addGoals(List<Goal> goals){
+        mGoals.addAll(goals);
+        populateStateArray();
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Returns the goal at the requested position.
+     *
+     * @param position the position of the goal in the backing array.
+     * @return the goal requested.
+     */
+    public Goal getItem(int position){
+        return mGoals.get(position);
+    }
+
+    /**
+     * Notifies the adapter that a goal has been added to the user's list.
+     *
+     * @param goal the goal recently added.
+     */
+    public void goalAdded(Goal goal){
+        int index = mGoals.indexOf(goal);
+        goalStates[index-1] = STATE_ADDED;
+        ChooseGoalsViewHolder holder = (ChooseGoalsViewHolder)mRecyclerView.findViewHolderForLayoutPosition(index+1);
+        if (holder != null){
+            holder.select.setActive(true);
+        }
+        //notifyItemChanged(index+1);
+    }
+
+    /**
+     * Notifies the adapter that a selected goal wasn't added to the user's list.
+     *
+     * @param goal the goal that was not added.
+     */
+    public void goalNotAdded(Goal goal){
+        int index = mGoals.indexOf(goal);
+        goalStates[index-1] = STATE_NOT_ADDED;
+        ChooseGoalsViewHolder holder = (ChooseGoalsViewHolder)mRecyclerView.findViewHolderForLayoutPosition(index+1);
+        if (holder != null){
+            holder.select.setInactive(true);
+        }
+        //notifyItemChanged(index+1);
+    }
+
+    /**
+     * Notifies the adapter that a selected goal was deleted from the user's list.
+     *
+     * @param goal the goal that was deleted.
+     */
+    public void goalDeleted(Goal goal){
+        int index = mGoals.indexOf(goal);
+        goalStates[index-1] = STATE_NOT_ADDED;
+        ChooseGoalsViewHolder holder = (ChooseGoalsViewHolder)mRecyclerView.findViewHolderForLayoutPosition(index+1);
+        if (holder != null){
+            holder.select.setInactive(true);
+        }
+        //notifyItemChanged(index+1);
+    }
+
+    @Override
+    public void onClick(View v, int position){
+        if (position > 0){
+            int lastExpanded = mExpandedGoal;
+
+            //Add one to the position to account for the header
+            if (mExpandedGoal == position+1){
+                mExpandedGoal = -1;
+                notifyItemChanged(lastExpanded);
+            }
+            else{
+                mExpandedGoal = position+1;
+                notifyItemChanged(mExpandedGoal);
+                //Let us redraw the item that has changed, this forces the RecyclerView to
+                //  respect the layout of each item, and none will overlap
+                if (lastExpanded != -1){
+                    notifyItemChanged(lastExpanded);
+                }
+                mRecyclerView.scrollToPosition(mExpandedGoal);
+            }
+        }
+    }
+
+
+    /**
+     * Adapter methods (as requested by ParallaxRecyclerAdapter).
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     class ChooseGoalsAdapterMethods implements RecyclerAdapterMethods{
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int position){
@@ -213,7 +266,7 @@ public class ChooseGoalsAdapter
             //Otherwise, handle all other cards
             else{
                 holder.title.setText(goal.getTitle());
-                if (mExpandedGoal == position){
+                if (mExpandedGoal == position+1){
                     holder.iconContainer.setVisibility(View.GONE);
                     holder.description.setVisibility(View.VISIBLE);
                 }
@@ -273,32 +326,12 @@ public class ChooseGoalsAdapter
     }
 
 
-    @Override
-    public void onClick(View v, int position){
-        if (position > 0){
-            if (mExpandedGoal == position){
-                mExpandedGoal = -1;
-            }
-            else{
-                if (mExpandedGoal >= 0){
-                    notifyItemChanged(mExpandedGoal);
-                }
-            }
-            try{
-                //Let us redraw the item that has changed, this forces the RecyclerView to
-                //  respect the layout of each item, and none will overlap. Add 1 to position
-                //  to account for the header view.
-                mExpandedGoal = position+1;
-                notifyItemChanged(mExpandedGoal);
-                mRecyclerView.scrollToPosition(mExpandedGoal);
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-    }
-
-
+    /**
+     * The ViewHolder for a goal.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     class ChooseGoalsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView title;
         private TextView description;
@@ -309,8 +342,15 @@ public class ChooseGoalsAdapter
         private TextView header;
 
 
-        public ChooseGoalsViewHolder(View itemView) {
+        /**
+         * Constructor. Extracts the UI components from the root view.
+         *
+         * @param itemView the root view held by this view holder.
+         */
+        public ChooseGoalsViewHolder(View itemView){
             super(itemView);
+
+            //Fetch UI components
             icon = (ImageView)itemView.findViewById(R.id.choose_goal_icon);
             iconContainer = (RelativeLayout)itemView.findViewById(R.id.choose_goal_icon_container);
             title = (TextView)itemView.findViewById(R.id.choose_goal_title);
@@ -319,6 +359,7 @@ public class ChooseGoalsAdapter
             detailContainer = (RelativeLayout)itemView.findViewById(R.id.choose_goal_detail_container);
             header = (TextView)itemView.findViewById(R.id.choose_goal_header);
 
+            //Listeners
             select.setOnClickListener(this);
         }
 
@@ -352,9 +393,33 @@ public class ChooseGoalsAdapter
     }
 
 
+    /**
+     * Listener interface for the adapter.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface ChooseGoalsListener{
+        /**
+         * Called when the add button is tapped.
+         *
+         * @param goal the goal whose add was tapped.
+         */
         void onGoalAddClicked(Goal goal);
+
+        /**
+         * Called when the delete button is tapped.
+         *
+         * @param goal the goal whose delete was tapped.
+         */
         void onGoalDeleteClicked(Goal goal);
+
+        /**
+         * Called when the RecyclerView scrolls.
+         *
+         * @param percentage the scroll percentage.
+         * @param offset the scroll offset.
+         */
         void onScroll(float percentage, float offset);
     }
 }
