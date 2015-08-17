@@ -202,8 +202,6 @@ public class ActionActivity
                 } else {
                     mMoreInfo.setText(mAction.getMoreInfo());
                 }
-                mMoreInfo.setVisibility(View.VISIBLE);
-                mMoreInfo.setText(mAction.getMoreInfo());
             }
         }
     }
