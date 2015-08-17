@@ -1,20 +1,9 @@
 package org.tndata.android.compass.activity;
 
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,115 +11,62 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.adapter.ChooseGoalsAdapter;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.task.AddGoalTask;
 import org.tndata.android.compass.task.DeleteGoalTask;
 import org.tndata.android.compass.task.GoalLoaderTask;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
-import org.tndata.android.compass.ui.button.TransitionButton;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
-import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
-import org.tndata.android.compass.util.CompassTagHandler;
-import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+
 
 /**
  * The ChooseGoalsActivity is where a user selects Goals within a selected Category.
  */
 public class ChooseGoalsActivity extends AppCompatActivity implements AddGoalTask
         .AddGoalsTaskListener,
-        GoalLoaderTask.GoalLoaderListener, DeleteGoalTask.DeleteGoalTaskListener {
+        GoalLoaderTask.GoalLoaderListener, DeleteGoalTask.DeleteGoalTaskListener,
+        ChooseGoalsAdapter.ChooseGoalsListener{
 
-    private static final byte STATE_NOT_ADDED = 0;
-    private static final byte STATE_ADDING = 1;
-    private static final byte STATE_ADDED = 2;
-    private static final byte STATE_REMOVING = 3;
-
-    private CompassApplication application;
+    private CompassApplication mApplication;
     private Toolbar mToolbar;
+
     private RecyclerView mRecyclerView;
-    private ImageView mHeaderImageView;
+    private ChooseGoalsAdapter mAdapter;
+
     private TextView mErrorTextView;
-    private View mFakeHeader;
     private View mHeaderView;
-    private RelativeLayout mHeaderCircleView;
-    private ArrayList<Goal> mItems; // Array of available Goals to choose
-    private byte goalStates[];
-    private ParallaxRecyclerAdapter<Goal> mAdapter;
     private Category mCategory = null;
 
-    private HashSet<Goal> mExpandedGoals = new HashSet<>();
-    private int mCurrentlyExpandedPosition = -1;
-
-    static class ChooseGoalViewHolder extends RecyclerView.ViewHolder {
-        public ChooseGoalViewHolder(View itemView) {
-            super(itemView);
-            iconImageView = (ImageView) itemView
-                    .findViewById(R.id.list_item_choose_goal_icon_imageview);
-            iconContainerView = (RelativeLayout) itemView.findViewById(R.id
-                    .list_item_choose_goal_imageview_container);
-            titleTextView = (TextView) itemView
-                    .findViewById(R.id.list_item_choose_goal_title_textview);
-            selectButton = (TransitionButton) itemView
-                    .findViewById(R.id.list_item_choose_goal_select_button);
-            descriptionTextView = (TextView) itemView
-                    .findViewById(R.id.list_item_choose_goal_description_textview);
-            detailContainerView = (RelativeLayout) itemView.findViewById(R.id
-                    .list_item_choose_goal_detail_container);
-            headerCardTextView = (TextView) itemView
-                    .findViewById(R.id.list_item_choose_goal_header_textview);
-        }
-
-        TextView titleTextView;
-        TextView descriptionTextView;
-        ImageView iconImageView;
-        TransitionButton selectButton;
-        RelativeLayout iconContainerView;
-        RelativeLayout detailContainerView;
-        TextView headerCardTextView;
-    }
-
-    private Goal createHeaderObject() {
-        // NOTE: We want a single _Header Card_ for each collection; It'll contain the
-        // parent's description (in this case the Category), but so the card can be created
-        // with he rest of the collection, we'll construct a Goal object with only
-        // a description.
-        Goal headerGoal = new Goal();
-        headerGoal.setDescription(mCategory.getDescription());
-        headerGoal.setId(0); // it's not a real object, so it doesn't have a real ID.
-
-        return headerGoal;
-    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_goals);
 
-        application = (CompassApplication) getApplication();
+        mApplication = (CompassApplication)getApplication();
 
         mCategory = (Category) getIntent().getSerializableExtra("category");
 
         mToolbar = (Toolbar) findViewById(R.id.choose_goals_toolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
-        mToolbar.setTitle(getString(R.string.choose_goals_header_label,
-                mCategory.getTitle()));
+        mToolbar.setTitle(getString(R.string.choose_goals_header_label, mCategory.getTitle()));
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
+        mHeaderView = findViewById(R.id.choose_goals_material_view);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.choose_goals_recyclerview);
         HeaderLayoutManagerFixed manager = new HeaderLayoutManagerFixed(this);
@@ -138,196 +74,11 @@ public class ChooseGoalsActivity extends AppCompatActivity implements AddGoalTas
         mRecyclerView.addItemDecoration(new SpacingItemDecoration(this, 10));
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setHasFixedSize(true);
-        mErrorTextView = (TextView) findViewById(R.id.choose_goals_error_textview);
 
-        mItems = new ArrayList<Goal>();
-        mItems.add(0, createHeaderObject());
+        mErrorTextView = (TextView)findViewById(R.id.choose_goals_error_textview);
 
-        mAdapter = new ParallaxRecyclerAdapter<>(mItems);
-        mAdapter.implementRecyclerAdapterMethods(new ParallaxRecyclerAdapter
-                .RecyclerAdapterMethods() {
-            @Override
-            public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder,
-                                         final int i) {
-                final Goal goal = mItems.get(i);
+        mAdapter = new ChooseGoalsAdapter(this, this, mApplication, mRecyclerView, mCategory);
 
-                if (i == 0 && goal.getId() == 0) {
-
-                    // Display the Header Card
-
-                    ((ChooseGoalViewHolder) viewHolder).titleTextView.setVisibility(View.GONE);
-                    ((ChooseGoalViewHolder) viewHolder).iconContainerView.setVisibility(View.GONE);
-                    ((ChooseGoalViewHolder) viewHolder).detailContainerView.setVisibility(View.GONE);
-                    ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View.GONE);
-                    if (!goal.getHTMLDescription().isEmpty()) {
-                        ((ChooseGoalViewHolder) viewHolder).headerCardTextView.setText(Html.fromHtml(goal.getHTMLDescription(), null, new CompassTagHandler()));
-                    } else {
-                        ((ChooseGoalViewHolder) viewHolder).headerCardTextView.setText(goal.getDescription());
-                    }
-                    ((ChooseGoalViewHolder) viewHolder).headerCardTextView.setVisibility(View.VISIBLE);
-                } else {
-
-                    // Handle all other cards
-
-                    ((ChooseGoalViewHolder) viewHolder).titleTextView.setText(goal
-                            .getTitle());
-                    if (mExpandedGoals.contains(goal)) {
-                        ((ChooseGoalViewHolder) viewHolder).iconContainerView.setVisibility(View.GONE);
-                        ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
-                                .VISIBLE);
-                    } else {
-                        ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setVisibility(View
-                                .GONE);
-                        ((ChooseGoalViewHolder) viewHolder).iconContainerView.setVisibility(View
-                                .VISIBLE);
-                    }
-                    if (!goal.getHTMLDescription().isEmpty()) {
-                        ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setText(Html.fromHtml(goal.getHTMLDescription(), null, new CompassTagHandler()));
-                    } else {
-                        ((ChooseGoalViewHolder) viewHolder).descriptionTextView.setText(goal.getDescription());
-                    }
-                    if (goal.getIconUrl() != null
-                            && !goal.getIconUrl().isEmpty()) {
-                        ImageLoader.loadBitmap(((ChooseGoalViewHolder) viewHolder).iconImageView,
-                                goal.getIconUrl(), false);
-                    }
-
-                    final ChooseGoalViewHolder holder = (ChooseGoalViewHolder)viewHolder;
-                    switch (goalStates[i-1]){
-                        case STATE_NOT_ADDED:
-                            holder.selectButton.setInactive(false);
-                            break;
-
-                        case STATE_ADDING:
-                            holder.selectButton.setTransitioningToActive(false);
-                            break;
-
-                        case STATE_ADDED:
-                            holder.selectButton.setActive(false);
-                            break;
-
-                        case STATE_REMOVING:
-                            holder.selectButton.setTransitioningToInactive(false);
-                            break;
-                    }
-
-                    ((ChooseGoalViewHolder) viewHolder).selectButton.setOnClickListener(new View
-                            .OnClickListener() {
-
-                        @Override
-                        public void onClick(View v) {
-                            goalSelected(goal, holder);
-                        }
-                    });
-
-                    GradientDrawable gradientDrawable = (GradientDrawable) ((ChooseGoalViewHolder)
-                            viewHolder).iconContainerView.getBackground();
-                    String colorString = mCategory.getColor();
-                    if (colorString != null && !colorString.isEmpty()) {
-                        gradientDrawable.setColor(Color.parseColor(colorString));
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                            ((ChooseGoalViewHolder) viewHolder).iconContainerView.setBackground
-                                    (gradientDrawable);
-                        } else {
-                            ((ChooseGoalViewHolder) viewHolder).iconContainerView
-                                    .setBackgroundDrawable(gradientDrawable);
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public RecyclerView.ViewHolder onCreateViewHolder(
-                    ViewGroup viewGroup, int i) {
-                return new ChooseGoalViewHolder(getLayoutInflater().inflate(
-                        R.layout.list_item_choose_goal, viewGroup, false));
-            }
-
-            @Override
-            public int getItemCount() {
-                return mItems.size();
-            }
-        });
-
-        mFakeHeader = getLayoutInflater().inflate(R.layout.header_choose_goals,
-                mRecyclerView, false);
-        mHeaderCircleView = (RelativeLayout) mFakeHeader.findViewById(R.id.choose_goals_header_circle_view);
-        mHeaderImageView = (ImageView) mFakeHeader.findViewById(R.id.choose_goals_header_imageview);
-        mCategory.loadImageIntoView(getApplicationContext(), mHeaderImageView);
-        Bitmap bmp = ((BitmapDrawable)mHeaderImageView.getDrawable()).getBitmap();
-        if (bmp != null){
-            int size = (int)getResources().getDimension(R.dimen.header_category_icon_image_size);
-            Bitmap thumbnail = ThumbnailUtils.extractThumbnail(bmp, size, size);
-            Bitmap output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(output);
-
-            int color = Color.RED;
-            Paint paint = new Paint();
-            Rect rect = new Rect(0, 0, size, size);
-            RectF rectF = new RectF(rect);
-
-            paint.setAntiAlias(true);
-            canvas.drawARGB(0, 0, 0, 0);
-            paint.setColor(color);
-            canvas.drawOval(rectF, paint);
-
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-            canvas.drawBitmap(thumbnail, rect, rect, paint);
-
-            mHeaderImageView.setImageBitmap(output);
-        }
-
-        mHeaderView = findViewById(R.id.choose_goals_material_view);
-        manager.setHeaderIncrementFixer(mFakeHeader);
-        mAdapter.setShouldClipView(false);
-        mAdapter.setParallaxHeader(mFakeHeader, mRecyclerView);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            mAdapter.setOnParallaxScroll(new ParallaxRecyclerAdapter.OnParallaxScroll() {
-                @SuppressLint("NewApi")
-                @Override
-                public void onParallaxScroll(float percentage, float offset,
-                                             View parallax) {
-                    Drawable c = mToolbar.getBackground();
-                    c.setAlpha(Math.round(percentage * 255));
-                    mToolbar.setBackground(c);
-                    mHeaderView.setTranslationY(-offset * 0.5f);
-
-                }
-            });
-        }
-        mAdapter.setOnClickEvent(new ParallaxRecyclerAdapter.OnClickEvent() {
-
-            @Override
-            public void onClick(View v, int position) {
-                if (position <= 0) {
-                    // This is the header, ignore. This fixes a bug when clicking a description
-                    return;
-                }
-                Goal goal = mItems.get(position);
-
-                if (mExpandedGoals.contains(goal)) {
-                    mExpandedGoals.remove(goal);
-                } else {
-                    mExpandedGoals.clear();
-                    if (mCurrentlyExpandedPosition >= 0) {
-                        mAdapter.notifyItemChanged(mCurrentlyExpandedPosition);
-                    }
-                    mExpandedGoals.add(goal);
-                }
-                try {
-                    // let us redraw the item that has changed, this forces the RecyclerView to
-                    // respect
-                    //  the layout of each item, and none will overlap. Add 1 to position to account
-                    //  for the header view
-                    mCurrentlyExpandedPosition = position + 1;
-                    mAdapter.notifyItemChanged(mCurrentlyExpandedPosition);
-                    mRecyclerView.scrollToPosition(mCurrentlyExpandedPosition);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-        });
         mRecyclerView.setAdapter(mAdapter);
 
         if (mCategory != null && !mCategory.getColor().isEmpty()) {
@@ -343,84 +94,70 @@ public class ChooseGoalsActivity extends AppCompatActivity implements AddGoalTas
         mErrorTextView.setVisibility(View.VISIBLE);
     }
 
-    @SuppressLint("DefaultLocale")
     private void loadGoals() {
         if (mCategory == null) {
             return;
         }
         new GoalLoaderTask(getApplicationContext(), this).executeOnExecutor(
                 AsyncTask.THREAD_POOL_EXECUTOR,
-                application.getToken(),
+                mApplication.getToken(),
                 String.valueOf(mCategory.getId()));
     }
 
     @Override
-    public void goalsAdded(ArrayList<Goal> goals, Goal goal2) {
-        if (goals != null){
-            // we've already added the goal to the application's collection.
-            Log.d("ChooseGoalsActivity", "Goal added via API");
-            for (Goal goal : goals){
-                application.addGoal(goal); // should include the user's goal mapping id.
-            }
-
-            int index = mItems.indexOf(goal2);
-            Log.d("Index", index + "");
-            goalStates[index-1] = STATE_ADDED;
-            ChooseGoalViewHolder holder = (ChooseGoalViewHolder)mRecyclerView.findViewHolderForLayoutPosition(index+1);
-            if (holder != null){
-                holder.selectButton.setActive(true);
-            }
-            mAdapter.notifyDataSetChanged();
+    public void goalLoaderFinished(ArrayList<Goal> goals){
+        if (goals != null && !goals.isEmpty()){
+            mAdapter.addGoals(goals);
         }
         else{
-            int index = mItems.indexOf(goal2);
-            Log.d("Index", index + "");
-            goalStates[index-1] = STATE_NOT_ADDED;
-            ChooseGoalViewHolder holder = (ChooseGoalViewHolder)mRecyclerView.findViewHolderForLayoutPosition(index+1);
-            if (holder != null){
-                holder.selectButton.setInactive(true);
+            showError();
+        }
+    }
+
+    @Override
+    public void goalsAdded(ArrayList<Goal> goals, Goal goal) {
+        if (goals != null){
+            //We've already added the goal to the mApplication's collection.
+            Log.d("ChooseGoalsActivity", "Goal added via API");
+            for (Goal userGoal:goals){
+                mApplication.addGoal(userGoal); // should include the user's goal mapping id.
             }
-            mAdapter.notifyDataSetChanged();
+            mAdapter.goalAdded(goal);
+        }
+        else{
+            mAdapter.goalNotAdded(goal);
         }
     }
 
-    public void goalSelected(Goal goal, ChooseGoalViewHolder holder) {
-        // When a goal has been selected, save it in our list of selected goals, and then
-        // immediately launch the user into the Behavior Selection workflow.
+    @Override
+    public void goalsDeleted(Goal goal){
+        Toast.makeText(this, getText(R.string.choose_goals_goal_removed), Toast.LENGTH_SHORT).show();
+        mAdapter.goalDeleted(goal);
+    }
 
-        switch (goalStates[holder.getAdapterPosition()-2]){
-            case STATE_NOT_ADDED:
-                addGoal(goal);
+    @Override
+    public void onGoalAddClicked(Goal goal){
+        // Save the user's selected goal via the API, and add it to the mApplication's collection.
+        ArrayList<String> goalsToAdd = new ArrayList<>();
+        goalsToAdd.add(String.valueOf(goal.getId()));
+        new AddGoalTask(this, this, goalsToAdd, goal).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-                if (goal.getBehaviorCount() > 0) {
-                    // Launch the GoalTryActivity (where users choose a behavior for the Goal)
-                    Intent intent = new Intent(getApplicationContext(), GoalTryActivity.class);
-                    intent.putExtra("goal", goal);
-                    intent.putExtra("category", mCategory);
-                    startActivity(intent);
-                    goalStates[holder.getAdapterPosition()-2] = STATE_ADDED;
-                    mAdapter.notifyItemChanged(holder.getAdapterPosition());
-                } else {
-                    goalStates[holder.getAdapterPosition()-2] = STATE_ADDING;
-                    holder.selectButton.setTransitioningToActive();
-                    Toast.makeText(this, R.string.goal_selected, Toast.LENGTH_SHORT).show();
-                }
-                break;
-
-            case STATE_ADDED:
-                goalStates[holder.getAdapterPosition()-2] = STATE_REMOVING;
-                holder.selectButton.setTransitioningToInactive();
-                deleteGoal(goal);
-                break;
+        if (goal.getBehaviorCount() > 0){
+            //Launch the GoalTryActivity (where users choose a behavior for the Goal)
+            Intent intent = new Intent(getApplicationContext(), GoalTryActivity.class);
+            intent.putExtra("goal", goal);
+            intent.putExtra("category", mCategory);
+            startActivity(intent);
         }
     }
 
-    protected void deleteGoal(Goal goal) {
-        // Remove the goal from the application's collection and DELETE from the API
+    @Override
+    public void onGoalDeleteClicked(Goal goal){
+        // Remove the goal from the mApplication's collection and DELETE from the API
 
         // Ensure the goal contains the usermapping id
         if (goal.getMappingId() <= 0) {
-            for (Goal g : application.getGoals()) {
+            for (Goal g: mApplication.getGoals()) {
                 if (goal.getId() == g.getId()) {
                     goal.setMappingId(g.getMappingId());
                     break;
@@ -428,7 +165,7 @@ public class ChooseGoalsActivity extends AppCompatActivity implements AddGoalTas
             }
         }
 
-        ArrayList<String> goalsToDelete = new ArrayList<String>();
+        ArrayList<String> goalsToDelete = new ArrayList<>();
         goalsToDelete.add(String.valueOf(goal.getMappingId()));
         Log.d("ChooseGoalsActivity", "About to delete goal: id = " + goal.getId() +
                 ", usergoal.id = " + goal.getMappingId() + "; " + goal.getTitle());
@@ -436,42 +173,17 @@ public class ChooseGoalsActivity extends AppCompatActivity implements AddGoalTas
         new DeleteGoalTask(this, this, goalsToDelete, goal).executeOnExecutor(
                 AsyncTask.THREAD_POOL_EXECUTOR);
 
-        application.removeGoal(goal);
+        mApplication.removeGoal(goal);
         mAdapter.notifyDataSetChanged();
     }
 
-    protected void addGoal(Goal goal) {
-        // Save the user's selected goal via the API, and add it to the application's collection.
-        ArrayList<String> goalsToAdd = new ArrayList<String>();
-        goalsToAdd.add(String.valueOf(goal.getId()));
-        new AddGoalTask(this, this, goalsToAdd, goal).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
     @Override
-    public void goalLoaderFinished(ArrayList<Goal> goals) {
-        if (goals != null && !goals.isEmpty()) {
-            goalStates = new byte[goals.size()];
-            for (int i = 0; i < goals.size(); i++){
-                Goal goal = goals.get(i);
-                goalStates[i] = application.getGoals().contains(goal) ? STATE_ADDED : STATE_NOT_ADDED;
-            }
-            mItems.addAll(goals);
-            mAdapter.notifyDataSetChanged();
-        } else {
-            showError();
+    public void onScroll(float percentage, float offset){
+        Drawable drawable = mToolbar.getBackground();
+        drawable.setAlpha(Math.round(percentage*255));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+            mToolbar.setBackground(drawable);
         }
-    }
-
-    @Override
-    public void goalsDeleted(Goal goal){
-        Toast.makeText(this, getText(R.string.choose_goals_goal_removed), Toast.LENGTH_SHORT).show();
-        int index = mItems.indexOf(goal);
-        //Log.d("Index", index + "");
-        ChooseGoalViewHolder holder = (ChooseGoalViewHolder)mRecyclerView.findViewHolderForLayoutPosition(index+1);
-
-        goalStates[index-1] = STATE_NOT_ADDED;
-        if (holder != null){
-            holder.selectButton.setInactive(true);
-        }
+        mHeaderView.setTranslationY(-offset*0.5f);
     }
 }
