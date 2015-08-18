@@ -50,8 +50,6 @@ public class ActionActivity
     private ImageView mActionImage;
     private TextView mActionTitle;
     private TextView mActionDescription;
-    private TextView mExternalResourceHeader;
-    private TextView mExternalResource;
     private TextView mMoreInfoHeader;
     private TextView mMoreInfo;
     private ViewSwitcher mTickSwitcher;
@@ -73,8 +71,6 @@ public class ActionActivity
         mActionImage = (ImageView)findViewById(R.id.action_image);
         mActionTitle = (TextView)findViewById(R.id.action_title);
         mActionDescription = (TextView)findViewById(R.id.action_description);
-        mExternalResourceHeader = (TextView)findViewById(R.id.action_external_resource_header);
-        mExternalResource = (TextView)findViewById(R.id.action_external_resource);
         mMoreInfoHeader = (TextView)findViewById(R.id.action_more_info_header);
         mMoreInfo = (TextView)findViewById(R.id.action_more_info);
         mTickSwitcher = (ViewSwitcher)findViewById(R.id.action_tick_switcher);
@@ -192,14 +188,9 @@ public class ActionActivity
             }
             mActionDescription.setText(mAction.getDescription());
 
-            if (!mAction.getExternalResource().isEmpty()){
-                mExternalResourceHeader.setVisibility(View.VISIBLE);
-                mExternalResource.setVisibility(View.VISIBLE);
-                mExternalResource.setText(mAction.getExternalResource());
-            }
-
             if (!mAction.getMoreInfo().isEmpty()){
                 mMoreInfoHeader.setVisibility(View.VISIBLE);
+                mMoreInfo.setVisibility(View.VISIBLE);
                 if (!mAction.getHTMLMoreInfo().isEmpty()){
                     mMoreInfo.setText(Html.fromHtml(mAction.getHTMLMoreInfo(), null, new CompassTagHandler()));
                 }
