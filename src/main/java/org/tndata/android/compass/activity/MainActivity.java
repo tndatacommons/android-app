@@ -26,7 +26,6 @@ import org.tndata.android.compass.adapter.MainViewPagerAdapter;
 import org.tndata.android.compass.fragment.MyGoalsFragment.MyGoalsFragmentListener;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.DrawerItem;
-import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.task.GetUserDataTask;
 import org.tndata.android.compass.task.UpdateProfileTask;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
@@ -38,7 +37,6 @@ import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity implements
-        GetUserDataTask.GetUserDataListener,
         MyGoalsFragmentListener,
         DrawerAdapter.OnItemClickListener{
 
@@ -164,15 +162,6 @@ public class MainActivity extends AppCompatActivity implements
                 mFloatingActionButton.showPager(true);
             }
         });
-
-        if (application.getCategories().isEmpty()) {
-            // Load all user-selected content from the API
-            new GetUserDataTask(this).executeOnExecutor(
-                    AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
-        } else {
-            showUserData();
-            application.getUserData().logSelectedData("MainActivity.onCreate", false);
-        }
     }
 
     @Override
@@ -305,12 +294,6 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onResume() {
         super.onResume();
-        showUserData();
-    }
-
-    @Override
-    public void userDataLoaded(UserData userData) {
-        application.setUserData(userData);
         showUserData();
     }
 
