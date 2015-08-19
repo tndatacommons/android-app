@@ -153,7 +153,7 @@ public class GoalTryActivity extends AppCompatActivity implements
                     // Display the Header Card
 
                     if (!behavior.getHTMLDescription().isEmpty()) {
-                        ((TryGoalViewHolder) viewHolder).headerCardTextView.setText(Html.fromHtml(behavior.getHTMLDescription(), null, new CompassTagHandler()));
+                        ((TryGoalViewHolder) viewHolder).headerCardTextView.setText(Html.fromHtml(behavior.getHTMLDescription(), null, new CompassTagHandler(getApplicationContext())));
                     } else {
                         ((TryGoalViewHolder) viewHolder).headerCardTextView.setText(behavior.getDescription());
                     }
@@ -170,7 +170,7 @@ public class GoalTryActivity extends AppCompatActivity implements
                     ((TryGoalViewHolder) viewHolder).titleTextView.setText(behavior
                             .getTitle());
                     if (!behavior.getHTMLDescription().isEmpty()) {
-                        ((TryGoalViewHolder) viewHolder).descriptionTextView.setText(Html.fromHtml(behavior.getHTMLDescription(), null, new CompassTagHandler()));
+                        ((TryGoalViewHolder) viewHolder).descriptionTextView.setText(Html.fromHtml(behavior.getHTMLDescription(), null, new CompassTagHandler(getApplicationContext())));
                     } else {
                         ((TryGoalViewHolder) viewHolder).descriptionTextView.setText(behavior.  getDescription());
                     }
@@ -423,7 +423,7 @@ public class GoalTryActivity extends AppCompatActivity implements
         try {
             AlertDialog.Builder builder = new AlertDialog.Builder(GoalTryActivity.this);
             if (!behavior.getHTMLMoreInfo().isEmpty()) {
-                builder.setMessage(Html.fromHtml(behavior.getHTMLMoreInfo(), null, new CompassTagHandler()));
+                builder.setMessage(Html.fromHtml(behavior.getHTMLMoreInfo(), null, new CompassTagHandler(this)));
             } else {
                 builder.setMessage(behavior.getMoreInfo());
             }

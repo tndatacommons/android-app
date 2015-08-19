@@ -153,7 +153,7 @@ public class ChooseActionsActivity extends AppCompatActivity implements
                     // Display the Header Card
 
                     if (!action.getHTMLDescription().isEmpty()) {
-                        ((ActionViewHolder) viewHolder).headerCardTextView.setText(Html.fromHtml(action.getHTMLDescription(), null, new CompassTagHandler()));
+                        ((ActionViewHolder) viewHolder).headerCardTextView.setText(Html.fromHtml(action.getHTMLDescription(), null, new CompassTagHandler(getApplicationContext())));
                     } else {
                         ((ActionViewHolder) viewHolder).headerCardTextView.setText(action.getDescription());
                     }
@@ -168,7 +168,7 @@ public class ChooseActionsActivity extends AppCompatActivity implements
 
                     ((ActionViewHolder) viewHolder).titleTextView.setText(action.getTitle());
                     if (!action.getHTMLDescription().isEmpty()) {
-                        ((ActionViewHolder) viewHolder).descriptionTextView.setText(Html.fromHtml(action.getHTMLDescription(), null, new CompassTagHandler()));
+                        ((ActionViewHolder) viewHolder).descriptionTextView.setText(Html.fromHtml(action.getHTMLDescription(), null, new CompassTagHandler(getApplicationContext())));
                     } else {
                         ((ActionViewHolder) viewHolder).descriptionTextView.setText(action.getDescription());
                     }
@@ -439,7 +439,7 @@ public class ChooseActionsActivity extends AppCompatActivity implements
         try {
             AlertDialog.Builder builder = new AlertDialog.Builder(ChooseActionsActivity.this);
             if (!action.getHTMLMoreInfo().isEmpty()) {
-                builder.setMessage(Html.fromHtml(action.getHTMLMoreInfo(), null, new CompassTagHandler()));
+                builder.setMessage(Html.fromHtml(action.getHTMLMoreInfo(), null, new CompassTagHandler(this)));
             } else {
                 builder.setMessage(action.getMoreInfo());
             }

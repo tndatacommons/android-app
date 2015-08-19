@@ -181,7 +181,7 @@ public class ActionActivity
             ImageLoader.loadBitmap(mActionImage, mAction.getIconUrl(), false);
             mActionTitle.setText(mAction.getTitle());
             if (!mAction.getHTMLDescription().isEmpty()){
-                mActionDescription.setText(Html.fromHtml(mAction.getHTMLDescription(), null, new CompassTagHandler()));
+                mActionDescription.setText(Html.fromHtml(mAction.getHTMLDescription(), null, new CompassTagHandler(this)));
             }
             else{
                 mActionDescription.setText(mAction.getDescription());
@@ -192,7 +192,7 @@ public class ActionActivity
                 mMoreInfoHeader.setVisibility(View.VISIBLE);
                 mMoreInfo.setVisibility(View.VISIBLE);
                 if (!mAction.getHTMLMoreInfo().isEmpty()){
-                    mMoreInfo.setText(Html.fromHtml(mAction.getHTMLMoreInfo(), null, new CompassTagHandler()));
+                    mMoreInfo.setText(Html.fromHtml(mAction.getHTMLMoreInfo(), null, new CompassTagHandler(this)));
                 }
                 else{
                     mMoreInfo.setText(mAction.getMoreInfo());

@@ -159,7 +159,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
             // this is a learn more screen for an Action
             titleTextView.setText(mAction.getTitle());
             if (!mAction.getHTMLDescription().isEmpty()) {
-                descriptionTextView.setText(Html.fromHtml(mAction.getHTMLDescription(), null, new CompassTagHandler()));
+                descriptionTextView.setText(Html.fromHtml(mAction.getHTMLDescription(), null, new CompassTagHandler(getActivity())));
             } else {
                 descriptionTextView.setText(mAction.getDescription());
             }
@@ -188,7 +188,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
             if (!mAction.getMoreInfo().isEmpty()) {
                 separator.setVisibility(View.VISIBLE);
                 if (!mAction.getHTMLMoreInfo().isEmpty()) {
-                    moreInfo.setText(Html.fromHtml(mAction.getHTMLMoreInfo(), null, new CompassTagHandler()));
+                    moreInfo.setText(Html.fromHtml(mAction.getHTMLMoreInfo(), null, new CompassTagHandler(getActivity())));
                 } else {
                     moreInfo.setText(mAction.getMoreInfo());
                 }
@@ -199,7 +199,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
             // this is a learn more screen for a Goal
             titleTextView.setText(mGoal.getTitle());
             if (!mGoal.getHTMLDescription().isEmpty()) {
-                descriptionTextView.setText(Html.fromHtml(mGoal.getHTMLDescription(), null, new CompassTagHandler()));
+                descriptionTextView.setText(Html.fromHtml(mGoal.getHTMLDescription(), null, new CompassTagHandler(getActivity())));
             } else {
                 descriptionTextView.setText(mGoal.getDescription());
             }
@@ -209,7 +209,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
             // this is a learn more screen for a Behavior
             titleTextView.setText(mBehavior.getTitle());
             if (!mGoal.getHTMLDescription().isEmpty()) {
-                descriptionTextView.setText(Html.fromHtml(mBehavior.getHTMLDescription(), null, new CompassTagHandler()));
+                descriptionTextView.setText(Html.fromHtml(mBehavior.getHTMLDescription(), null, new CompassTagHandler(getActivity())));
             } else {
                 descriptionTextView.setText(mBehavior.getDescription());
             }
@@ -223,7 +223,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
             if (!mBehavior.getMoreInfo().isEmpty()) {
                 separator.setVisibility(View.VISIBLE);
                 if (!mBehavior.getHTMLMoreInfo().isEmpty()) {
-                    moreInfo.setText(Html.fromHtml(mBehavior.getHTMLMoreInfo(), null, new CompassTagHandler()));
+                    moreInfo.setText(Html.fromHtml(mBehavior.getHTMLMoreInfo(), null, new CompassTagHandler(getActivity())));
                 } else {
                     moreInfo.setText(mBehavior.getMoreInfo());
                 }
