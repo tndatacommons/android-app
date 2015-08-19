@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 
@@ -117,13 +118,19 @@ public class LoginActivity extends AppCompatActivity implements
             Fragment fragment = mFragmentStack.get(mFragmentStack.size() - 1);
 
             int index = DEFAULT;
-            if (fragment instanceof LoginFragment) {
+            if (fragment instanceof LauncherFragment){
+                ((LauncherFragment)fragment).showProgress(false);
+            }
+            else if (fragment instanceof LoginFragment){
                 index = LOGIN;
-            } else if (fragment instanceof SignUpFragment) {
+            }
+            else if (fragment instanceof SignUpFragment){
                 index = SIGN_UP;
-            } else if (fragment instanceof WebFragment) {
+            }
+            else if (fragment instanceof WebFragment){
                 index = TERMS;
-            } else if (fragment instanceof TourFragment) {
+            }
+            else if (fragment instanceof TourFragment){
                 index = TOUR;
             }
 
@@ -148,8 +155,11 @@ public class LoginActivity extends AppCompatActivity implements
         User user = new User();
         user.setEmail(emailAddress);
         user.setPassword(password);
+        int i = 0;
         for (Fragment fragment : mFragmentStack) {
+            Log.d("LoginActivity", (++i)+" fragment");
             if (fragment instanceof LauncherFragment) {
+                Log.d("LoginActivity", "instance");
                 ((LauncherFragment) fragment).showProgress(true);
             }
         }
@@ -200,14 +210,12 @@ public class LoginActivity extends AppCompatActivity implements
             default:
                 break;
         }
-        if (fragment != null) {
-            if (addToStack) {
+        if (fragment != null){
+            if (addToStack){
                 mFragmentStack.add(fragment);
             }
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.base_content, fragment).commit();
+            getFragmentManager().beginTransaction().replace(R.id.base_content, fragment).commit();
         }
-
     }
 
     @Override
@@ -253,15 +261,11 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void loginResult(User result) {
-        for (Fragment fragment : mFragmentStack) {
-            if (fragment instanceof LauncherFragment) {
-                ((LauncherFragment) fragment).showProgress(false);
-            }
-        }
-        if ((result != null) && (result.getError().isEmpty())) {
+    public void loginResult(User result){
+        if (result != null && result.getError().isEmpty()){
             saveUserInfo(result, false);
-        } else {
+        }
+        else{
             swapFragments(LOGIN, true);
         }
     }
