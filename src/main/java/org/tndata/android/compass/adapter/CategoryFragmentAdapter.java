@@ -124,7 +124,7 @@ public class CategoryFragmentAdapter extends
         final Goal goal = mApplication.getCategoryGoals(mCategory).get(position);
         ((CategoryGoalViewHolder) viewHolder).titleTextView.setText(goal.getTitle());
         if (!goal.getHTMLDescription().isEmpty()) {
-            ((CategoryGoalViewHolder) viewHolder).descriptionTextView.setText(Html.fromHtml(goal.getHTMLDescription(), null, new CompassTagHandler()));
+            ((CategoryGoalViewHolder) viewHolder).descriptionTextView.setText(Html.fromHtml(goal.getHTMLDescription(), null, new CompassTagHandler(mContext)));
         } else {
             ((CategoryGoalViewHolder) viewHolder).descriptionTextView.setText(goal.getDescription());
         }

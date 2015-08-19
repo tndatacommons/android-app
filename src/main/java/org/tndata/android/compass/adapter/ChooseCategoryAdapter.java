@@ -354,7 +354,7 @@ public class ChooseCategoryAdapter
                 //Create a dialog with the description
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                 if (!category.getHTMLDescription().isEmpty()){
-                    builder.setMessage(Html.fromHtml(category.getHTMLDescription(), null, new CompassTagHandler()));
+                    builder.setMessage(Html.fromHtml(category.getHTMLDescription(), null, new CompassTagHandler(mContext)));
                 }
                 else{
                     builder.setMessage(category.getDescription());

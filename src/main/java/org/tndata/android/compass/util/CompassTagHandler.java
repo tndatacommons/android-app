@@ -1,5 +1,6 @@
 package org.tndata.android.compass.util;
 
+import android.content.Context;
 import android.text.Editable;
 import android.text.Html.TagHandler;
 import android.text.Spanned;
@@ -26,9 +27,16 @@ public class CompassTagHandler implements TagHandler {
     /**
      * List indentation in pixels. Nested lists use multiple of this.
      */
-    private static final int indent = 10;
-    private static final int listItemIndent = indent * 2;
-    private static final BulletSpan bullet = new BulletSpan(indent);
+    private final int indent;
+    private final int listItemIndent;
+    private final BulletSpan bullet;
+
+
+    public CompassTagHandler(Context context){
+        indent = CompassUtil.getPixels(context, 15);
+        listItemIndent = indent * 2;
+        bullet = new BulletSpan(indent);
+    }
 
     @Override
     public void handleTag(boolean opening, String tag, Editable output, XMLReader xmlReader) {

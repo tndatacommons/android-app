@@ -257,7 +257,7 @@ public class ChooseGoalsAdapter
                 holder.header.setVisibility(View.VISIBLE);
                 if (!goal.getHTMLDescription().isEmpty()){
                     holder.header.setText(Html.fromHtml(goal.getHTMLDescription(), null,
-                            new CompassTagHandler()));
+                            new CompassTagHandler(mContext)));
                 }
                 else{
                     holder.header.setText(goal.getDescription());
@@ -277,7 +277,7 @@ public class ChooseGoalsAdapter
 
                 if (!goal.getHTMLDescription().isEmpty()){
                     holder.description.setText(Html.fromHtml(goal.getHTMLDescription(), null,
-                            new CompassTagHandler()));
+                            new CompassTagHandler(mContext)));
                 }
                 else{
                     holder.description.setText(goal.getDescription());
