@@ -78,7 +78,6 @@ public class ChooseActionsActivity extends AppCompatActivity implements
                     .findViewById(R.id.list_item_action_title_textview);
             descriptionTextView = (TextView) itemView
                     .findViewById(R.id.list_item_action_description_textview);
-            externalResource = (TextView) itemView.findViewById(R.id.list_item_action_external_resource);
 
             iconsWrapper = (LinearLayout) itemView.findViewById(R.id.list_action_icons_wrapper);
             moreInfoImageView = (ImageView) itemView.findViewById(
@@ -92,7 +91,6 @@ public class ChooseActionsActivity extends AppCompatActivity implements
 
         TextView titleTextView;
         TextView descriptionTextView;
-        TextView externalResource;
         ImageView iconImageView;
         TextView headerCardTextView;
 
@@ -161,7 +159,6 @@ public class ChooseActionsActivity extends AppCompatActivity implements
                     }
                     ((ActionViewHolder) viewHolder).headerCardTextView.setVisibility(View.VISIBLE);
                     ((ActionViewHolder) viewHolder).descriptionTextView.setVisibility(View.GONE);
-                    ((ActionViewHolder) viewHolder).externalResource.setVisibility(View.GONE);
                     ((ActionViewHolder) viewHolder).titleTextView.setVisibility(View.GONE);
                     ((ActionViewHolder) viewHolder).iconImageView.setVisibility(View.GONE);
                     ((ActionViewHolder) viewHolder).iconsWrapper.setVisibility(View.GONE);
@@ -205,15 +202,8 @@ public class ChooseActionsActivity extends AppCompatActivity implements
 
                     if (action.getExternalResource().isEmpty()) {
                         ((ActionViewHolder) viewHolder).doItNow.setVisibility(View.GONE);
-                        ((ActionViewHolder) viewHolder).externalResource.setVisibility(View.GONE);
                     } else {
-                        if (mExpandedActions.contains(action)) {
-                            ((ActionViewHolder) viewHolder).externalResource.setVisibility(View.VISIBLE);
-                        } else {
-                            ((ActionViewHolder) viewHolder).externalResource.setVisibility(View.GONE);
-                        }
                         ((ActionViewHolder) viewHolder).doItNow.setVisibility(View.VISIBLE);
-                        ((ActionViewHolder) viewHolder).externalResource.setText(action.getExternalResource());
                         ((ActionViewHolder) viewHolder).doItNow.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
