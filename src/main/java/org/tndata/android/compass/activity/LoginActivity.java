@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 
@@ -24,30 +23,46 @@ import org.tndata.android.compass.fragment.TourFragment;
 import org.tndata.android.compass.fragment.TourFragment.TourFragmentListener;
 import org.tndata.android.compass.fragment.WebFragment;
 import org.tndata.android.compass.model.User;
+import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.task.GetUserDataTask;
+import org.tndata.android.compass.task.GetUserDataTask.GetUserDataListener;
 import org.tndata.android.compass.task.LoginTask;
 import org.tndata.android.compass.task.LoginTask.LoginTaskListener;
 import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
 
-public class LoginActivity extends AppCompatActivity implements
-        LauncherFragmentListener, SignUpFragmentListener,
-        LoginFragmentListener, LoginTaskListener, TourFragmentListener {
+
+public class LoginActivity
+        extends AppCompatActivity
+        implements
+                LauncherFragmentListener,
+                SignUpFragmentListener,
+                LoginFragmentListener,
+                LoginTaskListener,
+                TourFragmentListener,
+                GetUserDataListener{
+
     private static final int DEFAULT = 0;
     private static final int LOGIN = 1;
     private static final int SIGN_UP = 2;
     private static final int TERMS = 3;
     private static final int TOUR = 4;
+
+
     private Toolbar mToolbar;
+
     private WebFragment mWebFragment = null;
     private LauncherFragment mLauncherFragment = null;
     private LoginFragment mLoginFragment = null;
     private SignUpFragment mSignUpFragment = null;
     private TourFragment mTourFragment = null;
-    private ArrayList<Fragment> mFragmentStack = new ArrayList<Fragment>();
+
+    private ArrayList<Fragment> mFragmentStack = new ArrayList<>();
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
 
@@ -59,24 +74,25 @@ public class LoginActivity extends AppCompatActivity implements
 
         SharedPreferences settings = getSharedPreferences(Constants.PREFERENCES_NAME, 0);
 
-        if (settings.getBoolean(Constants.PREFERENCES_NEW_USER, true)) {
+        if (settings.getBoolean(Constants.PREFERENCES_NEW_USER, true)){
             swapFragments(TOUR, true);
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean(Constants.PREFERENCES_NEW_USER, false);
             editor.commit();
-        } else {
+        }
+        else{
             swapFragments(DEFAULT, true);
         }
     }
 
     @Override
-    public void onResume() {
+    public void onResume(){
         super.onResume();
         SharedPreferences settings = PreferenceManager
                 .getDefaultSharedPreferences(getApplicationContext());
         String email = settings.getString("email", "");
         String password = settings.getString("password", "");
-        if (!email.isEmpty() && !password.isEmpty()) {
+        if (!email.isEmpty() && !password.isEmpty()){
             logUserIn(email, password);
         }
     }
@@ -138,33 +154,26 @@ public class LoginActivity extends AppCompatActivity implements
         }
     }
 
-    private void transitionToMain() {
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
+    private void transitionToMain(){
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
         finish();
     }
 
-    private void transitionToOnBoarding() {
-        Intent intent = new Intent(getApplicationContext(),
-                OnBoardingActivity.class);
-        startActivity(intent);
+    private void transitionToOnBoarding(){
+        startActivity(new Intent(getApplicationContext(), OnBoardingActivity.class));
         finish();
     }
 
-    private void logUserIn(String emailAddress, String password) {
+    private void logUserIn(String emailAddress, String password){
         User user = new User();
         user.setEmail(emailAddress);
         user.setPassword(password);
-        int i = 0;
-        for (Fragment fragment : mFragmentStack) {
-            Log.d("LoginActivity", (++i)+" fragment");
-            if (fragment instanceof LauncherFragment) {
-                Log.d("LoginActivity", "instance");
+        for (Fragment fragment : mFragmentStack){
+            if (fragment instanceof LauncherFragment){
                 ((LauncherFragment) fragment).showProgress(true);
             }
         }
-        new LoginTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                user);
+        new LoginTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, user);
     }
 
     private void swapFragments(int index, boolean addToStack) {
@@ -256,7 +265,7 @@ public class LoginActivity extends AppCompatActivity implements
             transitionToOnBoarding();
         }
         else{
-            transitionToMain();
+            new GetUserDataTask(this).execute(user.getToken());
         }
     }
 
@@ -283,5 +292,11 @@ public class LoginActivity extends AppCompatActivity implements
     @Override
     public void tourFinish() {
         swapFragments(DEFAULT, true);
+    }
+
+    @Override
+    public void userDataLoaded(UserData userData){
+        ((CompassApplication)getApplication()).setUserData(userData);
+        transitionToMain();
     }
 }
