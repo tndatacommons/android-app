@@ -83,15 +83,11 @@ public class LoginActivity
         else{
             swapFragments(DEFAULT, true);
         }
-    }
 
-    @Override
-    public void onResume(){
-        super.onResume();
-        SharedPreferences settings = PreferenceManager
+        SharedPreferences loginInfo = PreferenceManager
                 .getDefaultSharedPreferences(getApplicationContext());
-        String email = settings.getString("email", "");
-        String password = settings.getString("password", "");
+        String email = loginInfo.getString("email", "");
+        String password = loginInfo.getString("password", "");
         if (!email.isEmpty() && !password.isEmpty()){
             logUserIn(email, password);
         }

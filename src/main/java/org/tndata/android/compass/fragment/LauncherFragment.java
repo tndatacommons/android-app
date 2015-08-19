@@ -12,86 +12,141 @@ import android.widget.ProgressBar;
 
 import org.tndata.android.compass.R;
 
-public class LauncherFragment extends Fragment {
-    private LauncherFragmentListener mCallback;
+
+/**
+ * Fragment acting as splash and initial action switch.
+ *
+ * @author Edited by Ismael Alonso
+ * @version 1.1.0
+ */
+public class LauncherFragment extends Fragment implements OnClickListener{
+    //Listener
+    private LauncherFragmentListener mListener;
+
+    //UI components
     private ProgressBar mProgressBar;
     private Button mSignUpButton;
     private Button mLoginButton;
     private Button mTourButton;
 
-    public interface LauncherFragmentListener {
-        public void signUp();
+    //Flags
+    private boolean viewsLoaded;
+    private boolean shouldShowProgressOnLoad;
 
-        public void logIn();
 
-        public void tour();
+    /**
+     * Constructor.
+     */
+    public LauncherFragment(){
+        viewsLoaded = false;
+        shouldShowProgressOnLoad = false;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        View v = getActivity().getLayoutInflater().inflate(
-                R.layout.fragment_launcher, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        View root = inflater.inflate(R.layout.fragment_launcher, container, false);
 
-        mProgressBar = (ProgressBar) v
-                .findViewById(R.id.launcher_load_progress);
-        mSignUpButton = (Button) v.findViewById(R.id.launcher_sign_up_button);
-        mLoginButton = (Button) v.findViewById(R.id.launcher_login_button);
-        mSignUpButton.setOnClickListener(new OnClickListener() {
+        //Fetch UI components
+        mProgressBar = (ProgressBar)root.findViewById(R.id.launcher_load_progress);
+        mSignUpButton = (Button)root.findViewById(R.id.launcher_sign_up_button);
+        mLoginButton = (Button)root.findViewById(R.id.launcher_login_button);
+        mTourButton = (Button)root.findViewById(R.id.launcher_tour_button);
 
-            @Override
-            public void onClick(View v) {
-                mCallback.signUp();
-            }
-        });
-        mLoginButton.setOnClickListener(new OnClickListener() {
+        //Set listeners
+        mSignUpButton.setOnClickListener(this);
+        mLoginButton.setOnClickListener(this);
+        mTourButton.setOnClickListener(this);
 
-            @Override
-            public void onClick(View v) {
-                mCallback.logIn();
-            }
-        });
-        mTourButton = (Button) v.findViewById(R.id.launcher_tour_button);
-        mTourButton.setOnClickListener(new OnClickListener() {
+        //Update the flags and show progress if necessary
+        viewsLoaded = true;
+        if (shouldShowProgressOnLoad){
+            showProgress(true);
+        }
 
-            @Override
-            public void onClick(View v) {
-                mCallback.tour();
-            }
-        });
-        return v;
+        return root;
     }
 
-    public void showProgress(boolean show) {
-        if (show) {
-            mProgressBar.setVisibility(View.VISIBLE);
-            mSignUpButton.setVisibility(View.GONE);
-            mLoginButton.setVisibility(View.GONE);
-            mTourButton.setVisibility(View.GONE);
-        } else {
-            mProgressBar.setVisibility(View.GONE);
-            mSignUpButton.setVisibility(View.VISIBLE);
-            mLoginButton.setVisibility(View.VISIBLE);
-            mTourButton.setVisibility(View.VISIBLE);
+    @Override
+    public void onClick(View view){
+        switch (view.getId()){
+            case R.id.launcher_sign_up_button:
+                mListener.signUp();
+                break;
+
+            case R.id.launcher_login_button:
+                mListener.logIn();
+                break;
+
+            case R.id.launcher_tour_button:
+                mListener.tour();
+        }
+    }
+
+    /**
+     * Shows the splash screen or the switch.
+     *
+     * @param show true to show the splash screen, false to show the switch.
+     */
+    public void showProgress(boolean show){
+        if (viewsLoaded){
+            if (show){
+                mProgressBar.setVisibility(View.VISIBLE);
+                mSignUpButton.setVisibility(View.GONE);
+                mLoginButton.setVisibility(View.GONE);
+                mTourButton.setVisibility(View.GONE);
+            }
+            else{
+                mProgressBar.setVisibility(View.GONE);
+                mSignUpButton.setVisibility(View.VISIBLE);
+                mLoginButton.setVisibility(View.VISIBLE);
+                mTourButton.setVisibility(View.VISIBLE);
+            }
+        }
+        else{
+            shouldShowProgressOnLoad = show;
         }
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity); // This makes sure that the container activity
-        // has implemented the callback interface. If not, it throws an
-        // exception
-        try {
-            mCallback = (LauncherFragmentListener) activity;
-        } catch (ClassCastException e) {
+    public void onAttach(Activity activity){
+        super.onAttach(activity);
+        //This makes sure that the container activity has implemented the callback
+        //  interface. If not, it throws an exception
+        try{
+            mListener = (LauncherFragmentListener)activity;
+        }
+        catch (ClassCastException e){
             throw new ClassCastException(activity.toString()
                     + " must implement LauncherFragmentListener");
         }
     }
 
     @Override
-    public void onDetach() {
+    public void onDetach(){
         super.onDetach();
-        mCallback = null;
+        mListener = null;
+    }
+
+
+    /**
+     * Listener interface for the switch.
+     *
+     * @version 1.0.0
+     */
+    public interface LauncherFragmentListener{
+        /**
+         * Called when the sign up button is clicked.
+         */
+        void signUp();
+
+        /**
+         * Called when the log in button is clicked.
+         */
+        void logIn();
+
+        /**
+         * Called when the tour button is clicked.
+         */
+        void tour();
     }
 }
