@@ -13,7 +13,8 @@
         <ImageView
             android:id="@+id/choose_categories_category_tile"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:contentDescription="@string/choose_categories_tile_cd"/>
 
         <View
             android:id="@+id/choose_categories_category_overlay"
@@ -46,7 +47,8 @@
                 android:id="@+id/choose_categories_category_more_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_blue_info" />
+                android:src="@drawable/ic_blue_info"
+                android:contentDescription="@string/choose_categories_info_cd"/>
 
         </LinearLayout>
     </RelativeLayout>
