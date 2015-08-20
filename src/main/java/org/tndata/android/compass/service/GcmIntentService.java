@@ -15,13 +15,12 @@ import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import org.json.JSONObject;
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ActionActivity;
 import org.tndata.android.compass.activity.BehaviorProgressActivity;
-import org.tndata.android.compass.activity.LoginActivity;
 import org.tndata.android.compass.activity.TriggerActivity;
 import org.tndata.android.compass.util.Constants;
+
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -123,9 +122,12 @@ public class GcmIntentService extends IntentService {
                         (int)System.currentTimeMillis(), laterIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
 
-                PendingIntent didItIntent = PendingIntent.getActivity(ctx,
-                        (int)System.currentTimeMillis(),
-                        new Intent(ctx, LoginActivity.class),
+                Intent didItIntent = new Intent(this, CompleteActionService.class)
+                        .putExtra(CompleteActionService.NOTIFICATION_ID_KEY, notificationId)
+                        .putExtra(CompleteActionService.ACTION_ID_KEY, Integer.valueOf(object_id));
+
+                PendingIntent didItPendingIntent = PendingIntent.getService(ctx,
+                        (int)System.currentTimeMillis(), didItIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
 
                 Bundle args = new Bundle();
@@ -140,7 +142,7 @@ public class GcmIntentService extends IntentService {
                         .setLargeIcon(icon)
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                         .addAction(R.drawable.ic_blue_notifications, "Later", laterPendingIntent)
-                        .addAction(R.drawable.ic_check_normal_dark, "Did it", didItIntent)
+                        .addAction(R.drawable.ic_check_normal_dark, "Did it", didItPendingIntent)
                         .addExtras(args)
                         .setContentIntent(contentIntent)
                         .setAutoCancel(true)
@@ -154,7 +156,6 @@ public class GcmIntentService extends IntentService {
         }
         else{
             // We're launching the BehaviorProgressActivity
-            CompassApplication application = (CompassApplication) getApplication();
             Intent intent = new Intent(ctx, BehaviorProgressActivity.class);
             PendingIntent contentIntent = PendingIntent.getActivity(ctx,
                     (int) System.currentTimeMillis(), intent,

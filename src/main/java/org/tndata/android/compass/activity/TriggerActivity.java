@@ -149,21 +149,11 @@ public class TriggerActivity
      * @param actionId the id of the action to be fetched.
      */
     private void fetchAction(int actionId){
-        CompassApplication application = (CompassApplication)getApplication();
-        String token = application.getToken();
-        if (token == null || token.isEmpty()){
-            // Read from shared preferences instead.
-            SharedPreferences settings = PreferenceManager
-                    .getDefaultSharedPreferences(getApplicationContext());
-            token = settings.getString("auth_token", "");
-        }
-
-        if (token != null && !token.isEmpty()){
+        String token = ((CompassApplication)getApplication()).getToken();
+        if (!token.isEmpty()){
             new GetUserActionsTask(this).execute(token, "action:" + actionId);
         }
         else{
-            //Something is wrong and we don't have an auth token for the user, so fail.
-            Log.e("ActionActivity", "AUTH Token is null, giving up!");
             finish();
         }
     }
