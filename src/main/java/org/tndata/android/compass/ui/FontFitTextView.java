@@ -7,6 +7,13 @@ import android.util.TypedValue;
 import android.widget.TextView;
 
 
+/**
+ * A class that scales down the font size if needed to make it fit inside a TextView
+ * of a fixed size.
+ *
+ * @author Original author unknown
+ * @author Edited by Ismael Alonso
+ */
 public class FontFitTextView extends TextView{
     private static final float THRESHOLD = 0.5f;
 
@@ -14,28 +21,45 @@ public class FontFitTextView extends TextView{
     private Paint mTestPaint;
 
 
+    /**
+     * Constructor.
+     *
+     * @param context the context.
+     */
     public FontFitTextView(Context context){
         super(context);
         initialise();
     }
 
+    /**
+     * Constructor. For xml initialisation.
+     *
+     * @param context the context.
+     * @param attrs the attribute set.
+     */
     public FontFitTextView(Context context, AttributeSet attrs){
         super(context, attrs);
         initialise();
     }
 
+    /**
+     * Creates the test paint, which will be used later on to take measures of the text.
+     */
     private void initialise(){
         mTestPaint = new Paint();
         mTestPaint.set(this.getPaint());
     }
 
     /**
-     * Re size the font so the specified text fits in the text box
-     * assuming the text box is the specified width.
+     * Decreases the font size so that the text fits in the TextView in the cases where
+     * the text would be wider than the TextView.
+     *
+     * @param text the TextView's text.
+     * @param viewWidth the width of this TextView.
      */
-    private void refitText(String text, int textWidth){
-        if (textWidth > 0){
-            int targetWidth = textWidth-this.getPaddingLeft()-this.getPaddingRight();
+    private void refitText(String text, int viewWidth){
+        if (viewWidth > 0){
+            int targetWidth = viewWidth-this.getPaddingLeft()-this.getPaddingRight();
             float high, low;
 
             //Test the current size
@@ -62,9 +86,11 @@ public class FontFitTextView extends TextView{
                         high = size;
                     }
                     else{
-                        low = size; // too small
+                        low = size;
                     }
                 }
+
+                //Finally, set the size as the lower value to avoid overestimating.
                 setTextSize(TypedValue.COMPLEX_UNIT_PX, low);
             }
         }
