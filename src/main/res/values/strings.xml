@@ -192,6 +192,8 @@
     <string name="choose_categories_at_most_five">Just pick the five things you care about most. You can choose more later.</string>
     <string name="choose_categories_syncing_title">Synchronizing</string>
     <string name="choose_categories_syncing">Please, wait while the application synchronizes.</string>
+    <string name="choose_categories_tile_cd">Tile image</string>
+    <string name="choose_categories_info_cd">More information</string>
 
     <!-- My privacy activity -->
     <string name="activity_my_privacy">My Privacy</string>

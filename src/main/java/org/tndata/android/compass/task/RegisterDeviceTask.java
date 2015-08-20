@@ -37,7 +37,7 @@ public class RegisterDeviceTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        String token = ((CompassApplication) (mContext)).getToken();
+        String token = ((CompassApplication) (mContext.getApplicationContext())).getToken();
         String url = Constants.BASE_URL + "notifications/devices/";
 
         Log.d(TAG, "POSTing to: " + url);

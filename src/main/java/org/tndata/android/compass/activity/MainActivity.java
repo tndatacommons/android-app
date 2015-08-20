@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements
         new UpdateProfileTask(null).execute(application.getUser());
 
         // Register the device with Google Cloud Messaging
-        new GcmRegistration(getApplicationContext());
+        new GcmRegistration(this);
 
         mToolbar = (Toolbar) findViewById(R.id.transparent_tool_bar);
         mToolbar.setTitle("");
