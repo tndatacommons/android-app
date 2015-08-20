@@ -142,7 +142,7 @@ public class GcmIntentService extends IntentService {
                         .setLargeIcon(icon)
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                         .addAction(R.drawable.ic_blue_notifications, "Later", laterPendingIntent)
-                        .addAction(R.drawable.ic_check_normal_dark, "Did it", didItPendingIntent)
+                        .addAction(R.drawable.ic_check_normal_dark, "I did it", didItPendingIntent)
                         .addExtras(args)
                         .setContentIntent(contentIntent)
                         .setAutoCancel(true)
