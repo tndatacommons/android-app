@@ -25,7 +25,7 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_alignParentBottom="true"
             android:gravity="center_vertical"
             android:paddingTop="5dp"
@@ -34,11 +34,12 @@
             android:paddingRight="10dp"
             android:background="@color/white" >
 
-            <TextView
+            <org.tndata.android.compass.ui.FontFitTextView
                 android:id="@+id/choose_categories_category_caption"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingRight="5dp"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <ImageView

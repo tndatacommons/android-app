@@ -1,5 +1,4 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
@@ -11,7 +10,7 @@
         android:layout_marginTop="@dimen/launcher_image_top_margin"
         android:adjustViewBounds="true"
         android:contentDescription="@string/launcher_grow_image"
-        android:scaleType="centerCrop"
+        android:scaleType="fitCenter"
         android:src="@drawable/splash_logo"
         android:layout_marginRight="@dimen/launcher_image_side_margin"
         android:layout_marginLeft="@dimen/launcher_image_side_margin"
