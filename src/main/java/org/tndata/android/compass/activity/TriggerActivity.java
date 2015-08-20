@@ -1,5 +1,6 @@
 package org.tndata.android.compass.activity;
 
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -63,6 +64,7 @@ public class TriggerActivity
                 GetUserActionsTask.GetUserActionsListener{
 
     public static final String NEEDS_FETCHING_KEY = "org.tndata.compass.Trigger.NeedsFetching";
+    public static final String NOTIFICATION_ID_KEY = "org.tndata.compass.Trigger.NotificationId";
     public static final String ACTION_ID_KEY = "org.tndata.compass.Trigger.ActionId";
 
     private static final String TAG = "BaseTriggerActivity";
@@ -118,15 +120,17 @@ public class TriggerActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        boolean needsFetching = getIntent().getBooleanExtra(NEEDS_FETCHING_KEY, false);
-
-        if (needsFetching){
-            toolbar.setTitle("Reschedule reminder");
+        //If we are comming from a notification
+        if (getIntent().getBooleanExtra(NEEDS_FETCHING_KEY, false)){
+            getSupportActionBar().setTitle("Reschedule reminder");
 
             ProgressFragment progressFragment = new ProgressFragment();
             getFragmentManager().beginTransaction()
                     .replace(R.id.base_content, progressFragment)
                     .commit();
+
+            int notificationId = getIntent().getIntExtra(NOTIFICATION_ID_KEY, -1);
+            ((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).cancel(notificationId);
 
             fetchAction(getIntent().getIntExtra(ACTION_ID_KEY, -1));
         }
@@ -134,7 +138,7 @@ public class TriggerActivity
             Goal goal = (Goal)getIntent().getSerializableExtra("goal");
             mAction = (Action)getIntent().getSerializableExtra("action");
 
-            toolbar.setTitle(goal.getTitle());
+            getSupportActionBar().setTitle(goal.getTitle());
             setAction();
         }
     }
