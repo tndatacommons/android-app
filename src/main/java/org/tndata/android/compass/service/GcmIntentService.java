@@ -19,6 +19,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ActionActivity;
 import org.tndata.android.compass.activity.BehaviorProgressActivity;
+import org.tndata.android.compass.activity.LoginActivity;
 import org.tndata.android.compass.util.Constants;
 
 /**
@@ -112,6 +113,16 @@ public class GcmIntentService extends IntentService {
                         (int) System.currentTimeMillis(), intent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
 
+                PendingIntent laterIntent = PendingIntent.getActivity(ctx,
+                        (int)System.currentTimeMillis(),
+                        new Intent(ctx, LoginActivity.class),
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+
+                PendingIntent didItIntent = PendingIntent.getActivity(ctx,
+                        (int)System.currentTimeMillis(),
+                        new Intent(ctx, LoginActivity.class),
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+
                 Bundle args = new Bundle();
                 args.putSerializable("objectType", Constants.ACTION_TYPE);
 
@@ -123,6 +134,8 @@ public class GcmIntentService extends IntentService {
                         .setContentText(msg)
                         .setLargeIcon(icon)
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .addAction(0, "Later", laterIntent)
+                        .addAction(0, "Did it", didItIntent)
                         .addExtras(args)
                         .setContentIntent(contentIntent)
                         .setAutoCancel(true)

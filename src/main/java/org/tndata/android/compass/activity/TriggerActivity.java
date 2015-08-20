@@ -1,8 +1,10 @@
 package org.tndata.android.compass.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,15 +21,18 @@ import com.doomonafireball.betterpickers.recurrencepicker.RecurrencePickerDialog
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.fragment.ProgressFragment;
 import org.tndata.android.compass.fragment.TriggerFragment;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.task.AddActionTriggerTask;
+import org.tndata.android.compass.task.GetUserActionsTask;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -54,7 +59,11 @@ public class TriggerActivity
                 RadialTimePickerDialog.OnTimeSetListener,
                 CalendarDatePickerDialog.OnDateSetListener,
                 AddActionTriggerTask.AddActionTriggerTaskListener,
-                TriggerFragment.TriggerFragmentListener{
+                TriggerFragment.TriggerFragmentListener,
+                GetUserActionsTask.GetUserActionsListener{
+
+    public static final String NEEDS_FETCHING_KEY = "org.tndata.compass.Trigger.NeedsFetching";
+    public static final String ACTION_ID_KEY = "org.tndata.compass.Trigger.ActionId";
 
     private static final String TAG = "BaseTriggerActivity";
     private static final String FRAG_TAG_RECUR_PICKER = "recurrencePickerDialogFragment";
@@ -91,9 +100,6 @@ public class TriggerActivity
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        Goal goal = (Goal)getIntent().getSerializableExtra("goal");
-        mAction = (Action)getIntent().getSerializableExtra("action");
-
         mDateTime = new Date();
         mTimeSelected = false;
         mDateSelected = false;
@@ -104,16 +110,73 @@ public class TriggerActivity
         mApiDateFormat = new SimpleDateFormat("yyyy-MM-d", Locale.getDefault());
         mApiDateTimeFormat = new SimpleDateFormat("y-MM-d HH:mm", Locale.getDefault());
 
-        initializeReminders(mAction.getTrigger());
-
         setContentView(R.layout.activity_base);
 
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.tool_bar);
-        mToolbar.setTitle(goal.getTitle());
-        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
-        mToolbar.getBackground().setAlpha(255);
-        setSupportActionBar(mToolbar);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.tool_bar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
+        toolbar.getBackground().setAlpha(255);
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        boolean needsFetching = getIntent().getBooleanExtra(NEEDS_FETCHING_KEY, false);
+
+        if (needsFetching){
+            toolbar.setTitle("Reschedule reminder");
+
+            ProgressFragment progressFragment = new ProgressFragment();
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.base_content, progressFragment)
+                    .commit();
+
+            fetchAction(getIntent().getIntExtra(ACTION_ID_KEY, -1));
+        }
+        else{
+            Goal goal = (Goal)getIntent().getSerializableExtra("goal");
+            mAction = (Action)getIntent().getSerializableExtra("action");
+
+            toolbar.setTitle(goal.getTitle());
+            setAction();
+        }
+    }
+
+    /**
+     * Retrieves an action from an id.
+     *
+     * @param actionId the id of the action to be fetched.
+     */
+    private void fetchAction(int actionId){
+        CompassApplication application = (CompassApplication)getApplication();
+        String token = application.getToken();
+        if (token == null || token.isEmpty()){
+            // Read from shared preferences instead.
+            SharedPreferences settings = PreferenceManager
+                    .getDefaultSharedPreferences(getApplicationContext());
+            token = settings.getString("auth_token", "");
+        }
+
+        if (token != null && !token.isEmpty()){
+            new GetUserActionsTask(this).execute(token, "action:" + actionId);
+        }
+        else{
+            //Something is wrong and we don't have an auth token for the user, so fail.
+            Log.e("ActionActivity", "AUTH Token is null, giving up!");
+            finish();
+        }
+    }
+
+    @Override
+    public void actionsLoaded(ArrayList<Action> actions){
+        if (actions.size() > 0){
+            mAction = actions.get(0);
+            setAction();
+        }
+    }
+
+    /**
+     * Calls the initialisation routine and brongs in the TriggerFragment.
+     */
+    private void setAction(){
+        initializeReminders(mAction.getTrigger());
 
         fragment = TriggerFragment.newInstance(mAction);
         if (fragment != null) {
