@@ -159,7 +159,7 @@ public class ActionActivity
             mActionComplete = true;
             mTickSwitcher.showNext();
             Intent completeAction = new Intent(this, CompleteActionService.class);
-            completeAction.putExtra(CompleteActionService.ACTION_KEY, mAction.getMappingId());
+            completeAction.putExtra(CompleteActionService.ACTION_MAPPING_ID_KEY, mAction.getMappingId());
             startService(completeAction);
 
             //Finish the activity after one second

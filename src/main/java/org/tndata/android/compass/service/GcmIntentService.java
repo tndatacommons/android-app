@@ -15,11 +15,12 @@ import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import org.json.JSONObject;
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ActionActivity;
 import org.tndata.android.compass.activity.BehaviorProgressActivity;
+import org.tndata.android.compass.activity.TriggerActivity;
 import org.tndata.android.compass.util.Constants;
+
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -98,18 +99,35 @@ public class GcmIntentService extends IntentService {
     // Put the message into a notification and post it.
     private void sendNotification(String msg, String title, String object_type, String object_id) {
         Log.d(TAG, "object_id = " + object_id);
-        NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        String activity;
+        Context ctx = getApplicationContext();
+        NotificationManager mNotificationManager = (NotificationManager)ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        if (object_type.equals(Constants.ACTION_TYPE)) {
+        int notificationId = (int)(Math.random()*1000000);
+        if (object_type.equals(Constants.ACTION_TYPE)){
             try {
                 Intent intent = new Intent(getApplicationContext(), ActionActivity.class);
                 intent.putExtra(ActionActivity.ACTION_ID_KEY, Integer.valueOf(object_id));
                 //intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-                Context ctx = getApplicationContext();
                 PendingIntent contentIntent = PendingIntent.getActivity(ctx,
-                        (int) System.currentTimeMillis(), intent,
+                        (int)System.currentTimeMillis(), intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+
+                Intent laterIntent = new Intent(this, TriggerActivity.class)
+                        .putExtra(TriggerActivity.NEEDS_FETCHING_KEY, true)
+                        .putExtra(TriggerActivity.NOTIFICATION_ID_KEY, notificationId)
+                        .putExtra(TriggerActivity.ACTION_ID_KEY, Integer.valueOf(object_id));
+
+                PendingIntent laterPendingIntent = PendingIntent.getActivity(ctx,
+                        (int)System.currentTimeMillis(), laterIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+
+                Intent didItIntent = new Intent(this, CompleteActionService.class)
+                        .putExtra(CompleteActionService.NOTIFICATION_ID_KEY, notificationId)
+                        .putExtra(CompleteActionService.ACTION_ID_KEY, Integer.valueOf(object_id));
+
+                PendingIntent didItPendingIntent = PendingIntent.getService(ctx,
+                        (int)System.currentTimeMillis(), didItIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
 
                 Bundle args = new Bundle();
@@ -123,19 +141,21 @@ public class GcmIntentService extends IntentService {
                         .setContentText(msg)
                         .setLargeIcon(icon)
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .addAction(R.drawable.ic_blue_notifications, "Later", laterPendingIntent)
+                        .addAction(R.drawable.ic_check_normal_dark, "I did it", didItPendingIntent)
                         .addExtras(args)
                         .setContentIntent(contentIntent)
                         .setAutoCancel(true)
                         .build();
 
-                mNotificationManager.notify(NOTIFICATION_ID, notification);
-            } catch (NumberFormatException nfx) {
+                mNotificationManager.notify(notificationId, notification);
+            }
+            catch (NumberFormatException nfx){
                 nfx.printStackTrace();
             }
-        } else {
+        }
+        else{
             // We're launching the BehaviorProgressActivity
-            CompassApplication application = (CompassApplication) getApplication();
-            Context ctx = getApplicationContext();
             Intent intent = new Intent(ctx, BehaviorProgressActivity.class);
             PendingIntent contentIntent = PendingIntent.getActivity(ctx,
                     (int) System.currentTimeMillis(), intent,

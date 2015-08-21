@@ -1,6 +1,8 @@
 package org.tndata.android.compass;
 
 import android.app.Application;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -30,8 +32,11 @@ public class CompassApplication extends Application {
         mToken = token;
     }
 
-    public String getToken() {
-        return mToken;
+    public String getToken(){
+        if (mToken != null && !mToken.isEmpty()){
+            return mToken;
+        }
+        return PreferenceManager.getDefaultSharedPreferences(this).getString("auth_token", "");
     }
 
     public User getUser() {
