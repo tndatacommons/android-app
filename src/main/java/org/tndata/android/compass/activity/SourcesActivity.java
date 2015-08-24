@@ -1,5 +1,7 @@
 package org.tndata.android.compass.activity;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,7 +38,7 @@ public class SourcesActivity extends AppCompatActivity implements SourcesAdapter
 
     @Override
     public void onSourceClick(String url){
-        //Open the browser
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
     }
 
 
