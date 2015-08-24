@@ -15,6 +15,7 @@ import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import org.json.JSONObject;
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ActionActivity;
 import org.tndata.android.compass.activity.BehaviorProgressActivity;
@@ -55,40 +56,42 @@ public class GcmIntentService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        Bundle extras = intent.getExtras();
-        GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
-        // The getMessageType() intent parameter must be the intent you received
-        // in your BroadcastReceiver.
-        String messageType = gcm.getMessageType(intent);
+    protected void onHandleIntent(Intent intent){
+        String token = ((CompassApplication)getApplication()).getToken();
+        if (token != null && !token.equals("")){
+            Bundle extras = intent.getExtras();
+            GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
+            // The getMessageType() intent parameter must be the intent you received
+            // in your BroadcastReceiver.
+            String messageType = gcm.getMessageType(intent);
 
-        if (extras != null && !extras.isEmpty()) {  // has effect of un-parcelling Bundle
-            Log.d(TAG, "GCM message: " + extras.get("message"));
+            if (extras != null && !extras.isEmpty()){  // has effect of un-parcelling Bundle
+                Log.d(TAG, "GCM message: " + extras.get("message"));
             /*
              * Filter messages based on message type. Since it is likely that GCM
              * will be extended in the future with new message types, just ignore
              * any message types you're not interested in, or that you don't
              * recognize.
              */
-            if (GoogleCloudMessaging.
-                    MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-                Log.d(TAG, "Send error: " + extras.toString());
-            } else if (GoogleCloudMessaging.
-                    MESSAGE_TYPE_DELETED.equals(messageType)) {
-                Log.d(TAG, "Deleted messages on server: " + extras.toString());
-            } else if (GoogleCloudMessaging.
-                    MESSAGE_TYPE_MESSAGE.equals(messageType)) {
-
-                try {
-                    JSONObject jsonObject = new JSONObject(extras.getString("message"));
-                    sendNotification(
-                            jsonObject.optString("message"),
-                            jsonObject.optString("title"),
-                            jsonObject.optString("object_type"),
-                            jsonObject.optString("object_id")
-                    );
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)){
+                    Log.d(TAG, "Send error: " + extras.toString());
+                }
+                else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)){
+                    Log.d(TAG, "Deleted messages on server: " + extras.toString());
+                }
+                else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)){
+                    try{
+                        JSONObject jsonObject = new JSONObject(extras.getString("message"));
+                        sendNotification(
+                                jsonObject.optString("message"),
+                                jsonObject.optString("title"),
+                                jsonObject.optString("object_type"),
+                                jsonObject.optString("object_id")
+                        );
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }
             }
         }
