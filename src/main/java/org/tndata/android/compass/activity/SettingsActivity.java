@@ -8,6 +8,7 @@ import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.util.Constants;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -60,6 +61,6 @@ public class SettingsActivity extends AppCompatActivity implements OnSettingsCli
 
     @Override
     public void sources(){
-
+        startActivity(new Intent(this, SourcesActivity.class));
     }
 }

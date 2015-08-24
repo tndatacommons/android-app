@@ -55,6 +55,7 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
                 R.string.settings_logout_summary, displayName));
 
         mSources = findPreference("pref_key_sources");
+        mSources.setOnPreferenceClickListener(this);
     }
 
     @Override
