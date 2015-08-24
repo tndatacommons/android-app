@@ -1,7 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content" >
 
     <ImageView
         android:id="@+id/login_background_imageview"
@@ -14,7 +13,8 @@
         android:contentDescription="@string/app_name"
         android:src="@drawable/path_main_image" />
 
-    <RelativeLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
@@ -24,10 +24,9 @@
         android:padding="20dp">
 
         <TextView
-            android:id="@+id/login_header_label_textview"
+            android:id="@+id/login_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="5dp"
             android:text="@string/login_header_label"
@@ -35,66 +34,72 @@
             android:textColor="@color/white" />
 
         <EditText
-            android:id="@+id/login_email_edittext"
+            android:id="@+id/login_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/login_header_label_textview"
             android:hint="@string/login_email_hint"
             android:inputType="textEmailAddress" />
 
         <TextView
-            android:id="@+id/login_email_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/login_email_edittext"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="5dp"
             android:text="@string/login_email_label"
             android:textColor="@color/white" />
 
         <EditText
-            android:id="@+id/login_password_edittext"
+            android:id="@+id/login_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/login_email_textview"
             android:hint="@string/login_password_hint"
             android:inputType="textPassword" />
 
         <TextView
-            android:id="@+id/login_password_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/login_password_edittext"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="5dp"
             android:text="@string/login_password_label"
             android:textColor="@color/white" />
 
-        <Button
-            android:id="@+id/login_login_button"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/login_password_textview"
-            android:layout_marginRight="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/button_positive_rounded"
-            android:minHeight="@dimen/paper_flat_button_min_height"
-            android:minWidth="@dimen/paper_flat_login_button_min_width"
-            android:text="@string/launcher_login"
-            android:textColor="@color/button_positive_text_color" />
+            android:layout_gravity="right"
+            android:gravity="center_vertical" >
 
-        <TextView
-            android:id="@+id/login_error_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/login_login_button"
-            android:layout_below="@id/login_password_textview"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:textColor="@color/white"
-            android:visibility="invisible" />
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/login_error"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="10dp"
+                android:textColor="@color/white"
+                android:visibility="invisible" />
+
+            <ProgressBar
+                android:id="@+id/login_progress"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="5dp"
+                android:indeterminate="true"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/login_button"
+                android:layout_width="@dimen/paper_flat_login_button_min_width"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/button_positive_rounded"
+                android:minHeight="@dimen/paper_flat_button_min_height"
+                android:minWidth="@dimen/paper_flat_login_button_min_width"
+                android:text="@string/launcher_sign_up"
+                android:textColor="@color/button_positive_text_color" />
+
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>
