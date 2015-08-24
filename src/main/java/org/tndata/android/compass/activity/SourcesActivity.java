@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.SourcesAdapter;
@@ -25,6 +26,13 @@ public class SourcesActivity extends AppCompatActivity implements SourcesAdapter
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sources);
+
+        Toolbar toolbar = (Toolbar)findViewById(R.id.sources_tool_bar);
+        toolbar.setTitle("Sources");
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         List<Source> sources = new ArrayList<>();
         sources.add(new Source("Illustrations: Michael Cook (Cookicons)", "http://cookicons.co"));
