@@ -3,19 +3,26 @@
     <PreferenceCategory
         android:key="pref_key_general_settings"
         android:title="@string/pref_general" >
+
         <Preference
             android:key="pref_key_logout"
             android:summary="@string/settings_logout_summary"
             android:title="@string/settings_logout_title" />
+
     </PreferenceCategory>
 
     <PreferenceCategory
         android:key="pref_key_about_settings"
         android:title="@string/pref_about" >
+
+        <Preference
+            android:key="pref_key_sources"
+            android:title="@string/settings_sources_title" />
+
         <Preference
             android:key="pref_key_version"
             android:summary="@string/version_num"
             android:title="@string/settings_version_title" />
-    </PreferenceCategory>
 
+    </PreferenceCategory>
 </PreferenceScreen>
