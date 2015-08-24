@@ -16,106 +16,128 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class LoginFragment extends Fragment implements LoginTaskListener {
-    private Button mLoginButton;
-    private EditText mEmailEditText;
-    private EditText mPasswordEditText;
-    private TextView mErrorTextView;
+
+public class LoginFragment extends Fragment implements LoginTaskListener, OnClickListener{
+    //Listener interface.
+    private LoginFragmentListener mListener;
+
+    //UI components
+    private EditText mEmail;
+    private EditText mPassword;
+    private TextView mError;
+    private ProgressBar mProgress;
+    private Button mLogIn;
+
+    //Attributes
     private String mErrorString = "";
-    private LoginFragmentListener mCallback;
 
-    public interface LoginFragmentListener {
-        public void loginSuccess(User user);
-    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        View v = getActivity().getLayoutInflater().inflate(
-                R.layout.fragment_login, container, false);
-        mEmailEditText = (EditText) v.findViewById(R.id.login_email_edittext);
-        mPasswordEditText = (EditText) v
-                .findViewById(R.id.login_password_edittext);
-        mErrorTextView = (TextView) v.findViewById(R.id.login_error_textview);
-        mLoginButton = (Button) v.findViewById(R.id.login_login_button);
-        mLoginButton.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                doLogin();
-            }
-        });
-        return v;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity); // This makes sure that the container activity
-        // has implemented the callback interface. If not, it throws an
-        // exception
-        try {
-            mCallback = (LoginFragmentListener) activity;
-        } catch (ClassCastException e) {
+    public void onAttach(Activity activity){
+        super.onAttach(activity);
+        //This makes sure that the host activity has implemented the callback interface.
+        //  If not, it throws an exception
+        try{
+            mListener = (LoginFragmentListener)activity;
+        }
+        catch (ClassCastException ccx){
             throw new ClassCastException(activity.toString()
                     + " must implement LoginFragmentListener");
         }
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        mCallback = null;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+
+        mEmail = (EditText)rootView.findViewById(R.id.login_email);
+        mPassword = (EditText)rootView.findViewById(R.id.login_password);
+        mError = (TextView)rootView.findViewById(R.id.login_error);
+        mProgress = (ProgressBar)rootView.findViewById(R.id.login_progress);
+        mLogIn = (Button)rootView.findViewById(R.id.login_button);
+
+        mLogIn.setOnClickListener(this);
+
+        return rootView;
     }
 
-    private void doLogin() {
-        String emailAddress = mEmailEditText.getText().toString();
-        String password = mPasswordEditText.getText().toString();
-        if (isValidEmail(emailAddress) && !password.isEmpty()) {
-            mErrorTextView.setVisibility(View.INVISIBLE);
-            mErrorString = "";
-            mErrorTextView.setText(mErrorString);
-            User user = new User();
-            user.setEmail(emailAddress);
-            user.setPassword(password);
-            new LoginTask(this).executeOnExecutor(
-                    AsyncTask.THREAD_POOL_EXECUTOR, user);
-        } else {
-            mErrorTextView.setText(mErrorString);
-            mErrorTextView.setVisibility(View.VISIBLE);
+    @Override
+    public void onClick(View view){
+        switch (view.getId()){
+            case R.id.login_button:
+                doLogin();
         }
     }
 
-    private boolean isValidEmail(CharSequence target) {
-        if (target == null) {
+    private void doLogin(){
+        String emailAddress = mEmail.getText().toString();
+        String password = mPassword.getText().toString();
+        if (isValidEmail(emailAddress) && !password.isEmpty()){
+            mError.setVisibility(View.INVISIBLE);
+            mErrorString = "";
+            mError.setText(mErrorString);
+            mProgress.setVisibility(View.VISIBLE);
+            mLogIn.setEnabled(false);
+
+            User user = new User();
+            user.setEmail(emailAddress);
+            user.setPassword(password);
+            new LoginTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, user);
+        }
+        else{
+            mError.setText(mErrorString);
+            mError.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private boolean isValidEmail(CharSequence target){
+        if (target == null){
             return false;
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(target).matches()) {
-            mErrorString = getActivity().getResources().getString(
-                    R.string.login_email_error);
+        }
+        else if (!Patterns.EMAIL_ADDRESS.matcher(target).matches()){
+            mErrorString = getActivity().getResources().getString(R.string.login_email_error);
             return false;
-        } else {
+        }
+        else{
             mErrorString = "";
             return true;
         }
     }
 
     @Override
-    public void loginResult(User result) {
-        if (result != null) {
-            if (result.getError().isEmpty()) {
-                mCallback.loginSuccess(result);
-            } else {
-                mErrorString = result.getError();
-                mErrorTextView.setText(mErrorString);
-                mErrorTextView.setVisibility(View.VISIBLE);
+    public void loginResult(User result){
+        if (result != null){
+            if (result.getError().isEmpty()){
+                mListener.loginSuccess(result);
             }
-        } else {
-            mErrorString = getActivity().getResources().getString(
-                    R.string.login_auth_error);
-            mErrorTextView.setText(mErrorString);
-            mErrorTextView.setVisibility(View.VISIBLE);
+            else{
+                mErrorString = result.getError();
+                mError.setText(mErrorString);
+                mError.setVisibility(View.VISIBLE);
+                mProgress.setVisibility(View.GONE);
+                mLogIn.setEnabled(true);
+            }
         }
+        else{
+            mErrorString = getActivity().getResources().getString(R.string.login_auth_error);
+            mError.setText(mErrorString);
+            mError.setVisibility(View.VISIBLE);
+            mProgress.setVisibility(View.GONE);
+            mLogIn.setEnabled(true);
+        }
+    }
 
+    @Override
+    public void onDetach(){
+        super.onDetach();
+        mListener = null;
+    }
+
+
+    public interface LoginFragmentListener{
+        void loginSuccess(User user);
     }
 }

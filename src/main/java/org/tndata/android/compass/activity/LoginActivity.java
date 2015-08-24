@@ -74,14 +74,12 @@ public class LoginActivity
 
         SharedPreferences settings = getSharedPreferences(Constants.PREFERENCES_NAME, 0);
 
+        swapFragments(DEFAULT, true);
         if (settings.getBoolean(Constants.PREFERENCES_NEW_USER, true)){
             swapFragments(TOUR, true);
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean(Constants.PREFERENCES_NEW_USER, false);
             editor.commit();
-        }
-        else{
-            swapFragments(DEFAULT, true);
         }
 
         SharedPreferences loginInfo = PreferenceManager
@@ -286,8 +284,8 @@ public class LoginActivity
     }
 
     @Override
-    public void tourFinish() {
-        swapFragments(DEFAULT, true);
+    public void tourFinish(){
+        handleBackStack();
     }
 
     @Override
