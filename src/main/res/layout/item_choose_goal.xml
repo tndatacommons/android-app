@@ -44,20 +44,28 @@
 
             </RelativeLayout>
 
-            <org.tndata.android.compass.ui.button.TransitionButton
-                xmlns:transition="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/choose_goal_select"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <RelativeLayout
+                android:id="@+id/choose_goal_select_area"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="15dp"
-                android:background="@drawable/circle_white"
-                android:padding="3dp"
-                transition:color_apply_to="background"
-                android:src="@drawable/ic_action_new_large" />
+                android:layout_centerVertical="true" >
+
+                <org.tndata.android.compass.ui.button.TransitionButton
+                    xmlns:transition="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/choose_goal_select"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/circle_white"
+                    android:padding="3dp"
+                    transition:color_apply_to="background"
+                    android:src="@drawable/ic_action_new_large" />
+
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/choose_goal_title"
@@ -68,7 +76,7 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="5dp"
                 android:layout_marginTop="15dp"
-                android:layout_toLeftOf="@id/choose_goal_select"
+                android:layout_toLeftOf="@id/choose_goal_select_area"
                 android:layout_toRightOf="@id/choose_goal_icon_container"
                 android:paddingLeft="2dp"
                 android:text="My very cool cool goal"
