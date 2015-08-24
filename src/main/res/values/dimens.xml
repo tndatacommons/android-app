@@ -3,7 +3,7 @@
     <dimen name="default_activity_padding">15dp</dimen>
     <dimen name="paper_flat_button_min_width">88dp</dimen>
     <dimen name="paper_flat_button_min_height">36dp</dimen>
-    <dimen name="paper_flat_login_button_min_width">120dp</dimen>
+    <dimen name="paper_flat_login_button_min_width">140dp</dimen>
     <dimen name="launcher_tagline_text_size">25dp</dimen>
     <dimen name="launcher_image_top_margin">100dp</dimen>
     <dimen name="launcher_image_side_margin">25dp</dimen>
