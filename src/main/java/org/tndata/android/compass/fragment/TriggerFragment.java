@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
@@ -31,7 +32,7 @@ public class TriggerFragment
                 View.OnClickListener,
                 CompoundButton.OnCheckedChangeListener{
 
-    //private static final String TAG = "ActionTriggerFragment";
+    private static final String TAG = "TriggerFragment";
 
     private TriggerFragmentListener mCallback;
 
@@ -41,6 +42,8 @@ public class TriggerFragment
     private TextView datePickerTextView;
     private TextView timePickerTextView;
     private TextView recurrencePickerTextView;
+    private ProgressBar mProgress;
+    private TextView mUpdateTrigger;
 
 
     /**
@@ -76,9 +79,7 @@ public class TriggerFragment
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        mAction = (getArguments() != null) ? ((Action) getArguments().get(
-                "action")) : new Action();
-
+        mAction = (getArguments() != null) ? ((Action)getArguments().get("action")) : new Action();
     }
 
     @Override
@@ -87,7 +88,7 @@ public class TriggerFragment
 
         View view = inflater.inflate(R.layout.fragment_trigger, container, false);
 
-        TextView title = (TextView)view.findViewById(R.id.action_title_textview);
+        TextView title = (TextView)view.findViewById(R.id.action_title);
         title.setText(mAction.getTitle());
 
         SwitchCompat notificationSwitch = (SwitchCompat)view.findViewById(R.id.notification_option_switch);
@@ -103,7 +104,9 @@ public class TriggerFragment
         recurrencePickerTextView = (TextView)view.findViewById(R.id.recurrence_picker_textview);
         view.findViewById(R.id.recurrence_picker_container).setOnClickListener(this);
 
-        view.findViewById(R.id.trigger_update_textview).setOnClickListener(this);
+        mProgress = (ProgressBar)view.findViewById(R.id.trigger_progress);
+        mUpdateTrigger = (TextView)view.findViewById(R.id.trigger_update);
+        mUpdateTrigger.setOnClickListener(this);
 
         // Update labels with Trigger details if applicable.
         if(!mTrigger.getRawTime().isEmpty()) {
@@ -150,7 +153,9 @@ public class TriggerFragment
                 }
                 break;
 
-            case R.id.trigger_update_textview:
+            case R.id.trigger_update:
+                mProgress.setVisibility(View.VISIBLE);
+                mUpdateTrigger.setEnabled(false);
                 mCallback.onSaveTrigger();
                 break;
         }
@@ -180,6 +185,11 @@ public class TriggerFragment
         } else {
             recurrencePickerTextView.setText(getText(R.string.trigger_recurrence_picker_label));
         }
+    }
+
+    public void reportError(){
+        mProgress.setVisibility(View.GONE);
+        mUpdateTrigger.setEnabled(true);
     }
 
 

@@ -511,6 +511,9 @@ public class TriggerActivity
         }
         else{
             Log.d(TAG, "actionTriggerAdded: received null Action");
+            if (fragment != null){
+                fragment.reportError();
+            }
             Toast.makeText(this, getText(R.string.reminder_failed), Toast.LENGTH_SHORT).show();
             return false;
         }
