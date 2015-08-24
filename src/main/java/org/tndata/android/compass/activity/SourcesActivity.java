@@ -38,6 +38,12 @@ public class SourcesActivity extends AppCompatActivity implements SourcesAdapter
         sources.add(new Source("Illustrations: Michael Cook (Cookicons)", "http://cookicons.co"));
         sources.add(new Source("Icons: designed by flaticon", "http://www.flaticon.com"));
         sources.add(new Source("Misc art: designed by freepik", "http://www.freepik.com"));
+        sources.add(new Source("Robolectric", "http://robolectric.org/"));
+        sources.add(new Source("BetterPickers", "https://github.com/derekbrameyer/android-betterpickers"));
+        sources.add(new Source("Hamcrest", "https://github.com/hamcrest/JavaHamcrest"));
+        sources.add(new Source("Circle Indicator", "https://github.com/ongakuer/CircleIndicator"));
+        sources.add(new Source("PagerSlidingTabStrip", "https://github.com/jpardogo/PagerSlidingTabStrip"));
+        sources.add(new Source("CircleImageView", "https://github.com/hdodenhof/CircleImageView"));
 
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.sources_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
