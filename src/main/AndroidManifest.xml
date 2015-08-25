@@ -224,6 +224,11 @@
             android:name=".activity.PlaygroundActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".activity.SnoozeActivity"
+            android:theme="@style/Theme.AppCompat.Light.Dialog"
+            android:screenOrientation="portrait" />
+
         <receiver
             android:name="org.tndata.android.compass.service.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
@@ -239,6 +244,8 @@
 
         <service
             android:name="org.tndata.android.compass.service.CompleteActionService" />
+
+        <service android:enabled="true" android:name=".service.SnoozeService" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
