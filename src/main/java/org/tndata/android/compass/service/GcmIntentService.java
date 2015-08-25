@@ -19,8 +19,6 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ActionActivity;
 import org.tndata.android.compass.activity.BehaviorProgressActivity;
-import org.tndata.android.compass.activity.SnoozeActivity;
-import org.tndata.android.compass.activity.TriggerActivity;
 import org.tndata.android.compass.util.Constants;
 
 
@@ -88,7 +86,8 @@ public class GcmIntentService extends IntentService {
                                 jsonObject.optString("message"),
                                 jsonObject.optString("title"),
                                 jsonObject.optString("object_type"),
-                                jsonObject.optString("object_id")
+                                jsonObject.optString("object_id"),
+                                jsonObject.optString("user_mapping_id")
                         );
                     }
                     catch (Exception e){
@@ -102,7 +101,7 @@ public class GcmIntentService extends IntentService {
     }
 
     // Put the message into a notification and post it.
-    private void sendNotification(String id, String msg, String title, String object_type, String object_id) {
+    private void sendNotification(String id, String msg, String title, String object_type, String object_id, String mapping_id) {
         Log.d(TAG, "object_id = " + object_id);
         Context ctx = getApplicationContext();
         NotificationManager mNotificationManager = (NotificationManager)ctx.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -128,7 +127,7 @@ public class GcmIntentService extends IntentService {
 
                 Intent didItIntent = new Intent(this, CompleteActionService.class)
                         .putExtra(CompleteActionService.NOTIFICATION_ID_KEY, notificationId)
-                        .putExtra(CompleteActionService.ACTION_ID_KEY, Integer.valueOf(object_id));
+                        .putExtra(CompleteActionService.ACTION_MAPPING_ID_KEY, Integer.valueOf(mapping_id));
 
                 PendingIntent didItPendingIntent = PendingIntent.getService(ctx,
                         (int)System.currentTimeMillis(), didItIntent,

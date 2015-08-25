@@ -43,6 +43,11 @@ public class CompleteActionService
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
+        int notificationId = intent.getIntExtra(NOTIFICATION_ID_KEY, -1);
+        if (notificationId != -1){
+            ((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).cancel(notificationId);
+        }
+
         int actionMappingId = intent.getIntExtra(ACTION_MAPPING_ID_KEY, -1);
         if (actionMappingId != -1){
             if (isQueueEmpty()){
@@ -54,9 +59,6 @@ public class CompleteActionService
             }
         }
         else{
-            int notificationId = intent.getIntExtra(NOTIFICATION_ID_KEY, -1);
-            ((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).cancel(notificationId);
-
             fetchAction(intent.getIntExtra(ACTION_ID_KEY, -1));
         }
 
