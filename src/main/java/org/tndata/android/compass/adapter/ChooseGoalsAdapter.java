@@ -361,6 +361,7 @@ public class ChooseGoalsAdapter
 
             //Listeners
             select.setOnClickListener(this);
+            itemView.findViewById(R.id.choose_goal_select_area).setOnClickListener(this);
         }
 
         @Override
