@@ -145,7 +145,7 @@ public class GcmIntentService extends IntentService {
                         .setContentText(msg)
                         .setLargeIcon(icon)
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                        .addAction(R.drawable.ic_blue_notifications, "Snooze", snoozePendingIntent)
+                        .addAction(R.drawable.ic_alarm_black_24dp, "Snooze", snoozePendingIntent)
                         .addAction(R.drawable.ic_check_normal_dark, "I did it", didItPendingIntent)
                         .addExtras(args)
                         .setContentIntent(contentIntent)
