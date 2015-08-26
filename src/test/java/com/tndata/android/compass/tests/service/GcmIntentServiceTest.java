@@ -72,7 +72,7 @@ public class GcmIntentServiceTest {
         ShadowNotificationManager manager = Shadows.shadowOf(notificationManager);
         assertEquals(1, manager.size());
 
-        Notification notification = manager.getNotification(GcmIntentService.NOTIFICATION_TAG, GcmIntentService.NOTIFICATION_ID);
+        Notification notification = manager.getNotification(GcmIntentService.NOTIFICATION_TYPE_BEHAVIOR, GcmIntentService.NOTIFICATION_TYPE_BEHAVIOR_ID);
         assertNotNull(notification);
 
         ShadowNotification shadowNotification = Shadows.shadowOf(notification);

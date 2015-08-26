@@ -45,7 +45,8 @@ public class CompleteActionService
     public int onStartCommand(Intent intent, int flags, int startId){
         int notificationId = intent.getIntExtra(NOTIFICATION_ID_KEY, -1);
         if (notificationId != -1){
-            ((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).cancel(notificationId);
+            NotificationManager manager = ((NotificationManager)getSystemService(NOTIFICATION_SERVICE));
+            manager.cancel(GcmIntentService.NOTIFICATION_TYPE_ACTION, notificationId);
         }
 
         int actionMappingId = intent.getIntExtra(ACTION_MAPPING_ID_KEY, -1);
