@@ -46,8 +46,13 @@ import org.tndata.android.compass.util.Constants;
  * }
  */
 public class GcmIntentService extends IntentService {
-    public static final int NOTIFICATION_ID = 1;
-    public final static String NOTIFICATION_TAG = "COMPASS_ACTION";
+    public static final String NOTIFICATION_TYPE_ACTION = "org.tndata.compass.ActionNotification";
+    public static final String NOTIFICATION_TYPE_BEHAVIOR = "org.tndata.compass.BehaviorNotification";
+
+    //A behavior notification will always replace a previous one, that's why the (Tag, Id) tuple
+    //  needs to be fixed
+    public static final int NOTIFICATION_TYPE_BEHAVIOR_ID = 1;
+
     private String TAG = "GcmIntentService";
 
     public GcmIntentService() {
@@ -106,12 +111,12 @@ public class GcmIntentService extends IntentService {
         Context ctx = getApplicationContext();
         NotificationManager mNotificationManager = (NotificationManager)ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        int notificationId = (int)(Math.random()*1000000);
         if (object_type.equals(Constants.ACTION_TYPE)){
-            try {
+            try{
                 Intent intent = new Intent(getApplicationContext(), ActionActivity.class);
                 intent.putExtra(ActionActivity.ACTION_ID_KEY, Integer.valueOf(object_id));
-                //intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                int notificationId = Integer.valueOf(object_id);
 
                 PendingIntent contentIntent = PendingIntent.getActivity(ctx,
                         (int)System.currentTimeMillis(), intent,
@@ -151,7 +156,9 @@ public class GcmIntentService extends IntentService {
                         .setAutoCancel(true)
                         .build();
 
-                mNotificationManager.notify(notificationId, notification);
+                mNotificationManager.notify(NOTIFICATION_TYPE_ACTION,
+                        notificationId,
+                        notification);
             }
             catch (NumberFormatException nfx){
                 nfx.printStackTrace();
@@ -180,7 +187,9 @@ public class GcmIntentService extends IntentService {
                     .setAutoCancel(true)
                     .build();
 
-            mNotificationManager.notify(NOTIFICATION_TAG, NOTIFICATION_ID, notification);
+            mNotificationManager.notify(NOTIFICATION_TYPE_BEHAVIOR,
+                    NOTIFICATION_TYPE_BEHAVIOR_ID,
+                    notification);
         }
     }
 }

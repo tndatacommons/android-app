@@ -38,7 +38,8 @@ public class SnoozeService extends IntentService{
     @Override
     protected void onHandleIntent(Intent intent){
         int pushNotificationId = intent.getIntExtra(PUSH_NOTIFICATION_ID_KEY, -1);
-        ((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).cancel(pushNotificationId);
+        NotificationManager manager = ((NotificationManager)getSystemService(NOTIFICATION_SERVICE));
+        manager.cancel(GcmIntentService.NOTIFICATION_TYPE_ACTION, pushNotificationId);
         int notificationId = intent.getIntExtra(NOTIFICATION_ID_KEY, -1);
         if (notificationId != -1){
             Map<String, String> headers = new HashMap<>();
