@@ -28,9 +28,11 @@ android {
     buildTypes{
         debug{
             buildConfigField STRING, GCM_SENDER_ID_VAR_NAME, GCM_SENDER_ID
+            manifestPlaceholders = [fabricApiKey: FabricApiKey]
         }
         release{
             buildConfigField STRING, GCM_SENDER_ID_VAR_NAME, GCM_SENDER_ID
+            manifestPlaceholders = [fabricApiKey: FabricApiKey]
         }
     }
 
