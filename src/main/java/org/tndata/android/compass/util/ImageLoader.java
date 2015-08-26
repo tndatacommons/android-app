@@ -642,7 +642,7 @@ public final class ImageLoader{
             //  to be written to cache. If the task was cancelled, the Bitmap might be corrupt.
             if (!wasCancelled && request.mResult != null){
                 MemoryCache.instance().addBitmapToMemoryCache(request.mUrl, request.mResult);
-                completeLodRequest(request);
+                completeLoadRequest(request);
                 queueWriteRequest(new WriteRequest(request.mResult, request.mUrl));
             }
             //The request is closed
@@ -665,7 +665,7 @@ public final class ImageLoader{
         }
     }
 
-    private static void completeLodRequest(LoadRequest request){
+    private static void completeLoadRequest(LoadRequest request){
         Bitmap result = request.mResult;
         if (result != null){
             if (request.mOptions.mCropToCircle){
