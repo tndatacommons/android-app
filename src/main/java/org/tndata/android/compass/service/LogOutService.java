@@ -2,7 +2,6 @@ package org.tndata.android.compass.service;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
