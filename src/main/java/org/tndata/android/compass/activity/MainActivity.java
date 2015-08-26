@@ -2,7 +2,6 @@ package org.tndata.android.compass.activity;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -12,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +26,7 @@ import org.tndata.android.compass.adapter.MainViewPagerAdapter;
 import org.tndata.android.compass.fragment.MyGoalsFragment.MyGoalsFragmentListener;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.DrawerItem;
-import org.tndata.android.compass.task.GetUserDataTask;
+import org.tndata.android.compass.service.LogOutService;
 import org.tndata.android.compass.task.UpdateProfileTask;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.Constants;
@@ -165,10 +165,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Constants.LOGGED_OUT_RESULT_CODE) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (resultCode == Constants.LOGGED_OUT_RESULT_CODE){
+            startService(new Intent(this, LogOutService.class));
             finish();
-        } else if (requestCode == Constants.CHOOSE_CATEGORIES_REQUEST_CODE) {
+        }
+        else if (requestCode == Constants.CHOOSE_CATEGORIES_REQUEST_CODE){
             showUserData();
         }
         super.onActivityResult(requestCode, resultCode, data);
