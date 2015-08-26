@@ -1,7 +1,7 @@
 package org.tndata.android.compass;
 
 import android.app.Application;
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
@@ -12,17 +12,20 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 
 import io.fabric.sdk.android.Fabric;
 
-public class CompassApplication extends Application {
+
+public class CompassApplication extends Application{
     private String TAG = "CompassApplication";
     private String mToken;
     private User mUser; // The logged-in user
     private UserData mUserData = new UserData(); // The user's selected content.
+
 
     public CompassApplication() {
         super();
@@ -37,6 +40,11 @@ public class CompassApplication extends Application {
             return mToken;
         }
         return PreferenceManager.getDefaultSharedPreferences(this).getString("auth_token", "");
+    }
+
+    public String getGcmRegistrationId(){
+        return getSharedPreferences(GcmRegistration.class.getSimpleName(), Context.MODE_PRIVATE)
+                .getString(GcmRegistration.PROPERTY_REG_ID, "");
     }
 
     public User getUser() {
