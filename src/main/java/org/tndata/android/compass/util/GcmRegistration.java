@@ -12,6 +12,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.task.RegisterDeviceTask;
 
 import java.io.IOException;
@@ -134,7 +135,7 @@ public class GcmRegistration implements RegisterDeviceTask.RegisterDeviceTaskLis
                     if (gcm == null) {
                         gcm = GoogleCloudMessaging.getInstance(mContext);
                     }
-                    registration_id = gcm.register(Constants.GCM_SENDER_ID);
+                    registration_id = gcm.register(BuildConfig.GCM_SENDER_ID);
                     msg = "Device registered, registration ID=" + registration_id;
 
                     // You should send the registration ID to your server over HTTP,
