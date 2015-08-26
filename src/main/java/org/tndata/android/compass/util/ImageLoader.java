@@ -8,7 +8,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -137,56 +136,24 @@ public final class ImageLoader{
      *
      * @param view the view to where the bitmap shall be set.
      * @param url the urk of the bitmap. This acts as a key for the cache.
-     * @param flinging avoid downloading on cache miss.
+     * @param options the option bundle.
      */
-    public static void loadBitmap(ImageView view, String url, boolean flinging){
-        loadBitmap(view, url, flinging, true);
-    }
-
-    /**
-     * Loads the bitmap at the provided url, but checks the cache first.
-     *
-     * @param view the view to where the bitmap shall be set.
-     * @param url the urk of the bitmap. This acts as a key for the cache.
-     * @param flinging avoid downloading on cache miss.
-     * @param usePlaceholder use a placeholder while the bitmap loads.
-     */
-    public static void loadBitmap(ImageView view, String url, boolean flinging, boolean usePlaceholder){
+    public static void loadBitmap(ImageView view, String url, Options options){
         //1.- Check memory cache
         Bitmap bitmap = MemoryCache.instance().getBitmapFromMemCache(url);
         //2.- On hit, load, on miss, check disk cache
         if (bitmap != null){
             Log.d("MemoryCache", "Hit: " + url);
-            view.setImageBitmap(bitmap);
-        }
-        else{
-            Log.d("MemoryCache", "Miss: " + url);
-
-            //Add to queue and start the task if necessary
-            queueLoadRequest(new LoadRequest(view, url, flinging, usePlaceholder));
-            if (workerTask == null){
-                File dir = new File(mContext.getCacheDir().getPath() + File.separator + DISK_CACHE_SUB_DIR);
-                workerTask = new CacheWorkerTask();
-                workerTask.execute(dir);
+            if (options.mCropToCircle){
+                bitmap = ImageHelper.getCircleBitmap(bitmap, bitmap.getWidth());
             }
-        }
-    }
-
-    public static void loadBitmap(ImageView view, int width, int height, String url,
-                                  boolean flinging, boolean usePlaceholder){
-
-        //1.- Check memory cache
-        Bitmap bitmap = MemoryCache.instance().getBitmapFromMemCache(url);
-        //2.- On hit, load, on miss, check disk cache
-        if (bitmap != null){
-            Log.d("MemoryCache", "Hit: " + url);
             view.setImageBitmap(bitmap);
         }
         else{
             Log.d("MemoryCache", "Miss: " + url);
 
             //Add to queue and start the task if necessary
-            queueLoadRequest(new LoadRequest(view, width, height, url, flinging, usePlaceholder));
+            queueLoadRequest(new LoadRequest(view, url, options));
             if (workerTask == null){
                 File dir = new File(mContext.getCacheDir().getPath() + File.separator + DISK_CACHE_SUB_DIR);
                 workerTask = new CacheWorkerTask();
@@ -442,13 +409,10 @@ public final class ImageLoader{
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    private static class LoadRequest{
+    public static class LoadRequest{
         private final ImageView mImageView;
-        private final int mWidth;
-        private final int mHeight;
         private final String mUrl;
-        private final boolean mFlinging;
-        private final boolean mUsePlaceholder;
+        private final Options mOptions;
         private Bitmap mResult;
 
 
@@ -457,31 +421,12 @@ public final class ImageLoader{
          *
          * @param imageView the target ImageView.
          * @param url the source url.
+         * @param options the option bundle.
          */
-        private LoadRequest(ImageView imageView, String url, boolean flinging, boolean usePlaceholder){
+        private LoadRequest(ImageView imageView, String url, Options options){
             mImageView = imageView;
-            mWidth = -1;
-            mHeight = -1;
             mUrl = url;
-            mFlinging = flinging;
-            mUsePlaceholder = usePlaceholder;
-            mResult = null;
-        }
-
-        /**
-         * Constructor.
-         *
-         * @param imageView the target ImageView.
-         * @param url the source url.
-         */
-        private LoadRequest(ImageView imageView, int width, int height, String url,
-                            boolean flinging, boolean usePlaceholder){
-            mImageView = imageView;
-            mWidth = width;
-            mHeight = height;
-            mUrl = url;
-            mFlinging = flinging;
-            mUsePlaceholder = usePlaceholder;
+            mOptions = options;
             mResult = null;
         }
 
@@ -490,8 +435,26 @@ public final class ImageLoader{
          *
          * @param result the downloaded bitmap.
          */
-        private void setResult(Bitmap result){
+        public void setResult(Bitmap result){
             mResult = result;
+        }
+
+        /**
+         * ImageView getter.
+         *
+         * @return the request's ImageView.
+         */
+        public ImageView getImageView(){
+            return mImageView;
+        }
+
+        /**
+         * Url getter.
+         *
+         * @return the request's url.
+         */
+        public String getUrl(){
+            return mUrl;
         }
     }
 
@@ -632,7 +595,7 @@ public final class ImageLoader{
                 //The bitmap needs to be downloaded
                 if (request.mResult == null){
                     //If the download is NOT to be performed
-                    if (request.mFlinging){
+                    if (request.mOptions.mFlinging){
                         //The placeholder is set to the view and the request is closed.
                         request.mImageView.setImageBitmap(mPlaceHolderBitmap);
                         closeRequest();
@@ -647,18 +610,12 @@ public final class ImageLoader{
                             closeRequest();
                         }
 
-                        //The proper task is created
-                        if (request.mWidth == -1){
-                            task = new BitmapWorkerTask(mContext, request.mImageView, this);
-                        }
-                        else{
-                            task = new BitmapWorkerTask(mContext, request.mImageView, request.mWidth,
-                                    request.mHeight, this);
-                        }
+                        //The task is created
+                        task = new BitmapWorkerTask(request, this);
                         //An AsyncDrawable is created with the selected configuration and set
                         //  as the drawable of the ImageView
                         final AsyncDrawable asyncDrawable;
-                        if (request.mUsePlaceholder){
+                        if (request.mOptions.mUsePlaceholder){
                             asyncDrawable = new AsyncDrawable(mContext.getResources(),
                                     mPlaceHolderBitmap, task);
                         }
@@ -679,14 +636,14 @@ public final class ImageLoader{
         }
 
         @Override
-        public void onDownloadComplete(BitmapWorkerTask caller, String url, @Nullable Bitmap result,
-                                       boolean wasCancelled){
-            Log.d("ImageLoader", "Download complete: " + url);
+        public void onDownloadComplete(LoadRequest request, boolean wasCancelled){
+            Log.d("ImageLoader", "Download complete: " + request.mUrl);
             //When a download is completed, if the task wasn't cancelled the content is queued
             //  to be written to cache. If the task was cancelled, the Bitmap might be corrupt.
-            if (!wasCancelled && result != null){
-                MemoryCache.instance().addBitmapToMemoryCache(url, result);
-                queueWriteRequest(new WriteRequest(result, url));
+            if (!wasCancelled && request.mResult != null){
+                MemoryCache.instance().addBitmapToMemoryCache(request.mUrl, request.mResult);
+                completeLodRequest(request);
+                queueWriteRequest(new WriteRequest(request.mResult, request.mUrl));
             }
             //The request is closed
             closeRequest();
@@ -705,6 +662,71 @@ public final class ImageLoader{
             else{
                 workerTask = null;
             }
+        }
+    }
+
+    private static void completeLodRequest(LoadRequest request){
+        Bitmap result = request.mResult;
+        if (result != null){
+            if (request.mOptions.mCropToCircle){
+                result = ImageHelper.getCircleBitmap(result, result.getWidth());
+            }
+            request.mImageView.setImageBitmap(result);
+        }
+    }
+
+    /**
+     * A bundle of image loading options.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    public static final class Options{
+        private boolean mFlinging;
+        private boolean mUsePlaceholder;
+        private boolean mCropToCircle;
+
+        /**
+         * Constructor. Defaults all options to false except for the use of a placeholder,
+         * which defaults to true.
+         */
+        public Options(){
+            mFlinging = false;
+            mUsePlaceholder = true;
+            mCropToCircle = false;
+        }
+
+        /**
+         * Sets the flinging.
+         *
+         * @param flinging true to avoid downloading on cache miss, false otherwise.
+         * @return this bundle.
+         */
+        public Options setFlinging(boolean flinging){
+            mFlinging = flinging;
+            return this;
+        }
+
+        /**
+         * Sets the flag to use a placeholder.
+         *
+         * @param usePlaceholder true use a placeholder image while loading, false otherwise.
+         * @return this bundle.
+         */
+        public Options setUsePlaceholder(boolean usePlaceholder){
+            mUsePlaceholder = usePlaceholder;
+            return this;
+        }
+
+        /**
+         * Sets the flag to crop the loaded image to a circle before setting it ti the target.
+         *
+         * @param cropToCircle true if the image should be cropped to a circle, false otherwise.
+         * @return this bundle.
+         */
+        public Options setCropToCircle(boolean cropToCircle){
+            mCropToCircle = cropToCircle;
+            return this;
         }
     }
 }

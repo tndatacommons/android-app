@@ -2,17 +2,14 @@ package org.tndata.android.compass.task;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
 
 import org.tndata.android.compass.util.ImageHelper;
 import org.tndata.android.compass.util.ImageLoader;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -21,11 +18,8 @@ import android.widget.ImageView;
  * Downloads a Bitmap in the background. And notifies the callback when the process is over.
  */
 public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>{
-    private final Context mContext;
+    private final ImageLoader.LoadRequest mRequest;
     private final OnDownloadCompleteCallback mCallback;
-    private final WeakReference<ImageView> mImageViewReference;
-    private final int mWidth;
-    private final int mHeight;
 
     private String mUrl;
 
@@ -33,35 +27,13 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>{
     /**
      * Constructor.
      *
-     * @param context the application context.
-     * @param imageView the ImageView to which the new downloaded Bitmap shall be set.
+     * @param request the request object. It contains all the required information.
      * @param callback the callback object.
      */
-    public BitmapWorkerTask(@NonNull Context context, ImageView imageView,
+    public BitmapWorkerTask(@NonNull ImageLoader.LoadRequest request,
                             @NonNull OnDownloadCompleteCallback callback){
-        mContext = context;
+        mRequest = request;
         mCallback = callback;
-
-        mImageViewReference = new WeakReference<>(imageView);
-        mWidth = -1;
-        mHeight = -1;
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param context the application context.
-     * @param imageView the ImageView to which the new downloaded Bitmap shall be set.
-     * @param callback the callback object.
-     */
-    public BitmapWorkerTask(@NonNull Context context, ImageView imageView, int width, int height,
-                            @NonNull OnDownloadCompleteCallback callback){
-        mContext = context;
-        mCallback = callback;
-
-        mImageViewReference = new WeakReference<>(imageView);
-        mWidth = width;
-        mHeight = height;
     }
 
     @Override
@@ -69,7 +41,8 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>{
         Log.d("BitmapWorker", "Download started");
         //The url passed and two streams the first one is to calculate the bounds,
         //  the second to download the bitmap.
-        mUrl = params[0];
+        mUrl = mRequest.getUrl()
+                ;
         InputStream boundStream = null;
         InputStream downloadStream = null;
         
@@ -77,7 +50,7 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>{
         
         try{
             final BitmapFactory.Options options = new BitmapFactory.Options();
-            final ImageView imageView = mImageViewReference.get();
+            final ImageView imageView = mRequest.getImageView();
 
             //Flag to decode only the bounds
             options.inJustDecodeBounds = true;
@@ -86,14 +59,12 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>{
             boundStream = new java.net.URL(mUrl).openStream();
             BitmapFactory.decodeStream(boundStream, null, options);
 
+            Log.d("Worker", mUrl);
+            Log.d("Worker", imageView.getMeasuredWidth() + ", " + imageView.getMeasuredHeight());
+
             //Calculate inSampleSize and flag to decode the entire Bitmap
-            if (mWidth == -1){
-                options.inSampleSize = ImageHelper.calculateInSampleSize(options,
-                        imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
-            }
-            else{
-                options.inSampleSize = ImageHelper.calculateInSampleSize(options, mWidth, mHeight);
-            }
+            options.inSampleSize = ImageHelper.calculateInSampleSize(options,
+                    imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
             options.inJustDecodeBounds = false;
 
             //Open the download stream and download the bitmap
@@ -132,15 +103,8 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>{
 
     @Override
     protected void onPostExecute(Bitmap result){
-        if (result != null){
-            final ImageView imageView = mImageViewReference.get();
-            final BitmapWorkerTask bitmapWorkerTask = ImageLoader.getBitmapWorkerTask(imageView);
-            if (this == bitmapWorkerTask){
-                imageView.setImageBitmap(result);
-            }
-        }
-
-        mCallback.onDownloadComplete(this, mUrl, result, isCancelled());
+        mRequest.setResult(result);
+        mCallback.onDownloadComplete(mRequest, isCancelled());
     }
 
     /**
@@ -158,18 +122,15 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>{
      * Callback interface for download complete events.
      *
      * @author Ismael Alonso
-     * @version 1.0.0
+     * @version 1.0.1
      */
     public interface OnDownloadCompleteCallback{
         /**
          * Called when the download is complete.
          *
-         * @param caller the calling BitmapWorkerTask
-         * @param url the url of the downloaded bitmap
-         * @param result the bitmap obtained through the process; null if the download failed.
+         * @param loadRequest the request object.
          * @param wasCancelled true if the download was cancelled.
          */
-        void onDownloadComplete(BitmapWorkerTask caller, String url, @Nullable Bitmap result,
-                                boolean wasCancelled);
+        void onDownloadComplete(ImageLoader.LoadRequest loadRequest, boolean wasCancelled);
     }
 }

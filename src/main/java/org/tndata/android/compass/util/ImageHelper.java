@@ -1,6 +1,5 @@
 package org.tndata.android.compass.util;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,6 +16,7 @@ import android.os.Build;
 import android.widget.ImageView;
 
 import org.tndata.android.compass.R;
+
 
 public class ImageHelper {
     public final static int SELECTED = 1;
@@ -93,7 +93,7 @@ public class ImageHelper {
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(thumbnail, rect, rect, paint);
 
-        thumbnail.recycle();
+        //thumbnail.recycle();
         return output;
     }
 }

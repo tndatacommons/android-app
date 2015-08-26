@@ -73,7 +73,7 @@ public class BehaviorListView extends LinearLayout {
         try {
             mTitleTextView.setText(mBehavior.getTitle());
             if (mBehavior.getIconUrl() != null && !mBehavior.getIconUrl().isEmpty()){
-                ImageLoader.loadBitmap(mIconImageView, mBehavior.getIconUrl(), false);
+                ImageLoader.loadBitmap(mIconImageView, mBehavior.getIconUrl(), new ImageLoader.Options());
             }
         } catch (Exception e) {
             e.printStackTrace();

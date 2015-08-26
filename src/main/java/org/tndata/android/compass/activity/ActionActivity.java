@@ -178,7 +178,7 @@ public class ActionActivity
             mAction = actions.get(0);
 
             //Populate UI
-            ImageLoader.loadBitmap(mActionImage, mAction.getIconUrl(), false);
+            ImageLoader.loadBitmap(mActionImage, mAction.getIconUrl(), new ImageLoader.Options());
             mActionTitle.setText(mAction.getTitle());
             if (!mAction.getHTMLDescription().isEmpty()){
                 mActionDescription.setText(Html.fromHtml(mAction.getHTMLDescription(), null, new CompassTagHandler(this)));

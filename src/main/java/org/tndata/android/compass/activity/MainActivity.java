@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements
                     mHeaderImageView.invalidate();
                     //Log.d("MEASURE", mHeroView.getMeasuredWidth()+"");
                     //Log.d("MEASURE", mHeroView.getMeasuredHeight()+"");
-                    ImageLoader.loadBitmap(mHeaderImageView, url, false, false);
+                    ImageLoader.loadBitmap(mHeaderImageView, url, new ImageLoader.Options().setUsePlaceholder(false));
                 } else {
                     //TODO there is a bug here, when the user scrolls fast, the resource gets
                     //TODO  loaded before the cached image. When that happens, some other
