@@ -2,6 +2,7 @@
 *.iml
 .idea/
 .gradle
+fabric.properties
 /build
 /local.properties
 /.idea/workspace.xml
