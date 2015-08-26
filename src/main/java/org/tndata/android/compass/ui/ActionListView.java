@@ -58,7 +58,7 @@ public class ActionListView extends LinearLayout {
             if (mAction.getIconUrl() != null
                     && !mAction.getIconUrl().isEmpty()) {
                 mImageLoader.loadBitmap(mIconImageView,
-                        mAction.getIconUrl(), false);
+                        mAction.getIconUrl(), new ImageLoader.Options());
             }
         } catch (Exception e) {
             e.printStackTrace();

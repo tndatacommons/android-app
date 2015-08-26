@@ -103,7 +103,7 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
         });
         if (mBehavior.getIconUrl() != null && !mBehavior.getIconUrl().isEmpty()) {
             ImageView iconImageView = (ImageView) v.findViewById(R.id.behavior_icon_imageview);
-            ImageLoader.loadBitmap(iconImageView, mBehavior.getIconUrl(), false);
+            ImageLoader.loadBitmap(iconImageView, mBehavior.getIconUrl(), new ImageLoader.Options());
 
         }
         mProgressBar = (ProgressBar) v.findViewById(R.id.behavior_progressbar);

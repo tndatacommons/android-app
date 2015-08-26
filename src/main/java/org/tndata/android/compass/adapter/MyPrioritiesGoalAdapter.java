@@ -122,7 +122,7 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter<MyPrioritiesGo
             behaviorView.setLeftPadding(20);
             behaviorView.getTextView().setText(behavior.getTitle());
             if (behavior.getIconUrl() != null){
-                ImageLoader.loadBitmap(behaviorView.getImageView(), behavior.getIconUrl(), false);
+                ImageLoader.loadBitmap(behaviorView.getImageView(), behavior.getIconUrl(), new ImageLoader.Options());
             }
             behaviorView.setOnClickListener(holder);
 
@@ -137,7 +137,7 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter<MyPrioritiesGo
                 actionView.setLeftPadding(30);
                 actionView.getTextView().setText(action.getTitle());
                 if (action.getIconUrl() != null){
-                    ImageLoader.loadBitmap(actionView.getImageView(), action.getIconUrl(), false);
+                    ImageLoader.loadBitmap(actionView.getImageView(), action.getIconUrl(), new ImageLoader.Options());
                 }
                 actionView.setOnClickListener(holder);
                 holder.offspring.addView(actionView);

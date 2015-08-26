@@ -189,7 +189,7 @@ public class GoalTryActivity extends AppCompatActivity implements
                     if (behavior.getIconUrl() != null
                             && !behavior.getIconUrl().isEmpty()) {
                         ImageLoader.loadBitmap(((TryGoalViewHolder) viewHolder).iconImageView,
-                                behavior.getIconUrl(), false);
+                                behavior.getIconUrl(), new ImageLoader.Options());
                     }
 
                     if (behavior_is_selected) {

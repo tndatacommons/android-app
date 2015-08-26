@@ -1,9 +1,7 @@
 package org.tndata.android.compass.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -25,7 +23,6 @@ import org.tndata.android.compass.ui.button.TransitionButton;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
 import org.tndata.android.compass.util.CompassTagHandler;
-import org.tndata.android.compass.util.ImageHelper;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
@@ -108,11 +105,6 @@ public class ChooseGoalsAdapter
 
         ImageView headerImageView = (ImageView)header.findViewById(R.id.choose_goals_header_imageview);
         mCategory.loadImageIntoView(mContext, headerImageView);
-        Bitmap bmp = ((BitmapDrawable)headerImageView.getDrawable()).getBitmap();
-        if (bmp != null){
-            int size = (int)mContext.getResources().getDimension(R.dimen.header_category_icon_image_size);
-            headerImageView.setImageBitmap(ImageHelper.getCircleBitmap(bmp, size));
-        }
 
         ((HeaderLayoutManagerFixed)mRecyclerView.getLayoutManager()).setHeaderIncrementFixer(header);
         setShouldClipView(false);
@@ -284,7 +276,7 @@ public class ChooseGoalsAdapter
                 }
 
                 if (goal.getIconUrl() != null && !goal.getIconUrl().isEmpty()){
-                    ImageLoader.loadBitmap(holder.icon, goal.getIconUrl(), false);
+                    ImageLoader.loadBitmap(holder.icon, goal.getIconUrl(), new ImageLoader.Options());
                 }
 
                 switch (goalStates[position-1]){

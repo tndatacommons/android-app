@@ -214,7 +214,7 @@ public class ChooseActionsActivity extends AppCompatActivity implements
 
                     if (action.getIconUrl() != null && !action.getIconUrl().isEmpty()) {
                         ImageLoader.loadBitmap(((ActionViewHolder) viewHolder).iconImageView,
-                                action.getIconUrl(), false);
+                                action.getIconUrl(), new ImageLoader.Options());
                     }
 
                     if (action_is_selected) {

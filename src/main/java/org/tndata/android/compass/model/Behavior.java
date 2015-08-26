@@ -185,7 +185,7 @@ public class Behavior extends TDCBase implements Serializable,
     public void loadIconIntoView(Context context, ImageView imageView) {
         String iconUrl = getIconUrl();
         if(iconUrl != null && !iconUrl.isEmpty()) {
-            ImageLoader.loadBitmap(imageView, iconUrl, false);
+            ImageLoader.loadBitmap(imageView, iconUrl, new ImageLoader.Options());
         }
     }
 
