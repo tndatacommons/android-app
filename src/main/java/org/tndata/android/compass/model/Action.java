@@ -35,6 +35,7 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
         this.image_url = imageUrl;
         this.behavior_id = behaviorId;
         this.html_more_info = htmlMoreInfo;
+
         custom_triggers_allowed = true;
     }
 
@@ -52,7 +53,7 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
         this.icon_url = iconUrl;
         this.image_url = imageUrl;
         this.behavior_id = behaviorId;
-        
+
         custom_triggers_allowed = true;
     }
 
@@ -183,6 +184,10 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
             return -1;
         } else
             return 1;
+    }
+
+    public void setCustomTriggersAllowed(boolean customTriggersAllowed){
+        custom_triggers_allowed = customTriggersAllowed;
     }
 
     public boolean areCustomTriggersAllowed(){

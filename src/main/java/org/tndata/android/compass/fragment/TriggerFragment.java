@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,20 +94,27 @@ public class TriggerFragment
 
         SwitchCompat notificationSwitch = (SwitchCompat)view.findViewById(R.id.notification_option_switch);
         notificationSwitch.setChecked(!mTrigger.isDisabled());
-        notificationSwitch.setOnCheckedChangeListener(this);
 
         timePickerTextView = (TextView)view.findViewById(R.id.time_picker_textview);
-        view.findViewById(R.id.time_picker_container).setOnClickListener(this);
-
         datePickerTextView = (TextView)view.findViewById(R.id.date_picker_textview);
-        view.findViewById(R.id.date_picker_container).setOnClickListener(this);
-
         recurrencePickerTextView = (TextView)view.findViewById(R.id.recurrence_picker_textview);
-        view.findViewById(R.id.recurrence_picker_container).setOnClickListener(this);
 
         mProgress = (ProgressBar)view.findViewById(R.id.trigger_progress);
         mUpdateTrigger = (TextView)view.findViewById(R.id.trigger_update);
         mUpdateTrigger.setOnClickListener(this);
+
+        Log.d(TAG, "Custom triggers allowed: " + mAction.areCustomTriggersAllowed());
+
+        if (mAction.areCustomTriggersAllowed()){
+            notificationSwitch.setEnabled(true);
+            notificationSwitch.setOnCheckedChangeListener(this);
+            view.findViewById(R.id.time_picker_container).setOnClickListener(this);
+            view.findViewById(R.id.date_picker_container).setOnClickListener(this);
+            view.findViewById(R.id.recurrence_picker_container).setOnClickListener(this);
+        }
+        else{
+            notificationSwitch.setEnabled(false);
+        }
 
         // Update labels with Trigger details if applicable.
         if(!mTrigger.getRawTime().isEmpty()) {
