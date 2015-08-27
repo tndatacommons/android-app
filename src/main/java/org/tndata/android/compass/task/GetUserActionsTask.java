@@ -86,6 +86,7 @@ public class GetUserActionsTask extends AsyncTask<String, Void, ArrayList<Action
                 //Log.d("USER ACTION", userAction.toString(2));
                 Action action = gson.fromJson(userAction.getString("action"), Action.class);
                 action.setMappingId(userAction.getInt("id"));
+                action.setCustomTriggersAllowed(userAction.getBoolean("custom_triggers_allowed"));
                 actions.add(action);
 
                 Log.d("UserAction", "Created UserAction ("+

@@ -232,6 +232,7 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData> {
                 JSONObject actionJson = actionArray.getJSONObject(i);
                 Action action = gson.fromJson(actionJson.getString("action"), Action.class);
                 action.setMappingId(actionJson.getInt("id"));
+                action.setCustomTriggersAllowed(actionJson.getBoolean("custom_triggers_allowed"));
                 actions.add(action);
 
                 Log.d(TAG, "Created UserAction (" +

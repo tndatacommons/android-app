@@ -467,25 +467,31 @@ public class TriggerActivity
      *
      * @param action the action to which the trigger belongs to.
      */
-    private void saveActionTrigger(Action action) {
-        String rrule = getRRULE();
-        String date = getApiDate();
-        String time = getApiTime();
+    private void saveActionTrigger(Action action){
+        if (mAction.areCustomTriggersAllowed()){
+            String rrule = getRRULE();
+            String date = getApiDate();
+            String time = getApiTime();
 
-        Log.d(TAG, "saveActionTrigger, for Action: " + action.getTitle());
-        Log.d(TAG, "Time: " + time);
-        Log.d(TAG, "Date: " + date);
-        Log.d(TAG, "RRULE: " + rrule);
+            Log.d(TAG, "saveActionTrigger, for Action: " + action.getTitle());
+            Log.d(TAG, "Time: " + time);
+            Log.d(TAG, "Date: " + date);
+            Log.d(TAG, "RRULE: " + rrule);
 
-        // Time is required and one of date or rule is required
-        if (action != null) {
-            // TODO: Fails when time/date/rrule is empty or null
-            new AddActionTriggerTask(this,
-                    ((CompassApplication) getApplication()).getToken(),
-                    rrule, time, date, String.valueOf(action.getMappingId()))
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            // Time is required and one of date or rule is required
+            if (action != null){
+                //TODO: Fails when time/date/rrule is empty or null
+                new AddActionTriggerTask(this,
+                        ((CompassApplication)getApplication()).getToken(),
+                        rrule, time, date, String.valueOf(action.getMappingId()))
+                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+            //We want to know that we've attempted to save, even if saving fails.
+            savingTrigger = true;
         }
-        savingTrigger = true; // We want to know that we've attempted to save, even if saving fails.
+        else{
+            finish();
+        }
     }
 
     @Override
