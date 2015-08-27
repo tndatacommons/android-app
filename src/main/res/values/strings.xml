@@ -199,4 +199,7 @@
     <!-- My privacy activity -->
     <string name="activity_my_privacy">My Privacy</string>
 
+    <!-- Search -->
+    <string name="search_filter">Filter</string>
+
 </resources>
