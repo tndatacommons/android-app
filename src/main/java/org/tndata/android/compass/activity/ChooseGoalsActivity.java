@@ -1,18 +1,24 @@
 package org.tndata.android.compass.activity;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,10 +48,16 @@ public class ChooseGoalsActivity
                 AddGoalTask.AddGoalsTaskListener,
                 GoalLoaderTask.GoalLoaderListener,
                 DeleteGoalTask.DeleteGoalTaskListener,
-                ChooseGoalsAdapter.ChooseGoalsListener{
+                ChooseGoalsAdapter.ChooseGoalsListener,
+                MenuItemCompat.OnActionExpandListener,
+                SearchView.OnQueryTextListener,
+                SearchView.OnCloseListener{
 
     private CompassApplication mApplication;
+
     private Toolbar mToolbar;
+    private MenuItem mSearchItem;
+    private SearchView mSearchView;
 
     private RecyclerView mRecyclerView;
     private ChooseGoalsAdapter mAdapter;
@@ -93,6 +105,54 @@ public class ChooseGoalsActivity
         }
 
         loadGoals();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu_filter, menu);
+        mSearchItem = menu.findItem(R.id.filter);
+        MenuItemCompat.setOnActionExpandListener(mSearchItem, this);
+
+        mSearchView = (SearchView)mSearchItem.getActionView();
+        mSearchView.setIconified(false);
+        mSearchView.setOnCloseListener(this);
+        mSearchView.setOnQueryTextListener(this);
+        mSearchView.clearFocus();
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onMenuItemActionExpand(MenuItem item){
+        mSearchView.requestFocus();
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionCollapse(MenuItem item){
+        mSearchView.setQuery("", false);
+        mSearchView.clearFocus();
+        return true;
+    }
+
+    @Override
+    public boolean onClose(){
+        mSearchItem.collapseActionView();
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query){
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText){
+        Log.d("Search", newText);
+        mAdapter.filter(newText);
+        return false;
     }
 
     /**
@@ -168,7 +228,7 @@ public class ChooseGoalsActivity
     public void onGoalDeleteClicked(Goal goal){
         // Remove the goal from the mApplication's collection and DELETE from the API
 
-        // Ensure the goal contains the usermapping id
+        // Ensure the goal contains the user mapping id
         if (goal.getMappingId() <= 0) {
             for (Goal g: mApplication.getGoals()) {
                 if (goal.getId() == g.getId()) {
@@ -181,7 +241,7 @@ public class ChooseGoalsActivity
         ArrayList<String> goalsToDelete = new ArrayList<>();
         goalsToDelete.add(String.valueOf(goal.getMappingId()));
         Log.d("ChooseGoalsActivity", "About to delete goal: id = " + goal.getId() +
-                ", usergoal.id = " + goal.getMappingId() + "; " + goal.getTitle());
+                ", user_goal.id = " + goal.getMappingId() + "; " + goal.getTitle());
 
         new DeleteGoalTask(this, this, goalsToDelete, goal).executeOnExecutor(
                 AsyncTask.THREAD_POOL_EXECUTOR);

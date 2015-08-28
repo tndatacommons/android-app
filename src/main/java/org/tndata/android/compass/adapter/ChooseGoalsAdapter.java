@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.filter.GoalFilter;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.ui.button.TransitionButton;
@@ -53,6 +54,7 @@ public class ChooseGoalsAdapter
     private RecyclerView mRecyclerView;
     private Category mCategory;
     private List<Goal> mGoals;
+    private GoalFilter mFilter;
 
     private int mExpandedGoal;
 
@@ -77,6 +79,7 @@ public class ChooseGoalsAdapter
         mRecyclerView = recyclerView;
         mCategory = category;
         mGoals = new ArrayList<>();
+        mFilter = null;
 
         //Create the header goal and add it to the list
         Goal headerGoal = new Goal();
@@ -136,9 +139,19 @@ public class ChooseGoalsAdapter
      * @param goals the list of goals to be added.
      */
     public void addGoals(List<Goal> goals){
+        mGoals.clear();
+
+        Goal headerGoal = new Goal();
+        headerGoal.setDescription(mCategory.getDescription());
+        headerGoal.setId(0);
+        mGoals.add(headerGoal);
+
         mGoals.addAll(goals);
         populateStateArray();
         notifyDataSetChanged();
+        if (mFilter == null){
+            mFilter = new GoalFilter(this, goals);
+        }
     }
 
     /**
@@ -382,6 +395,12 @@ public class ChooseGoalsAdapter
                     mListener.onGoalDeleteClicked(goal);
                     break;
             }
+        }
+    }
+
+    public void filter(CharSequence constraint){
+        if (mFilter != null){
+            mFilter.filter(constraint);
         }
     }
 
