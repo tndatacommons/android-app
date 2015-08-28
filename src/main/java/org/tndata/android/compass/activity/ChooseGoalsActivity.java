@@ -139,7 +139,6 @@ public class ChooseGoalsActivity
 
     @Override
     public boolean onClose(){
-        //mAdapter.filter("");
         mSearchItem.collapseActionView();
         return true;
     }

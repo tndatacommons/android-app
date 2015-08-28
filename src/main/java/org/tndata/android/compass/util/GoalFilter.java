@@ -33,9 +33,10 @@ public class GoalFilter extends Filter{
 
     @Override
     protected FilterResults performFiltering(CharSequence constraint){
+        String lowerCaseConstraint = constraint.toString().toLowerCase();
         List<Goal> output = new ArrayList<>();
         for (Goal goal:mList){
-            if (goal.getTitle().contains(constraint)){
+            if (goal.getTitle().toLowerCase().contains(lowerCaseConstraint)){
                 output.add(goal);
             }
         }
