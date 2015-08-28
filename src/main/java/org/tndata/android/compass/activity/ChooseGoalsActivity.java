@@ -28,7 +28,7 @@ import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 
 import java.util.ArrayList;
-
+import java.util.List;
 
 /**
  * The ChooseGoalsActivity is where a user selects Goals within a selected Category.
@@ -63,6 +63,11 @@ public class ChooseGoalsActivity
         mApplication = (CompassApplication)getApplication();
 
         mCategory = (Category) getIntent().getSerializableExtra("category");
+        List<Category> categories = mApplication.getUserData().getCategories();
+        int index = categories.indexOf(mCategory);
+        if (index != -1){
+            mCategory = categories.get(index);
+        }
 
         mToolbar = (Toolbar) findViewById(R.id.choose_goals_toolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
@@ -188,6 +193,17 @@ public class ChooseGoalsActivity
 
         mApplication.removeGoal(goal);
         mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onGoalOkClicked(Goal goal){
+        if (goal.getBehaviorCount() > 0){
+            //Launch the GoalTryActivity (where users choose a behavior for the Goal)
+            Intent intent = new Intent(getApplicationContext(), GoalTryActivity.class);
+            intent.putExtra("goal", goal);
+            intent.putExtra("category", mCategory);
+            startActivity(intent);
+        }
     }
 
     @Override

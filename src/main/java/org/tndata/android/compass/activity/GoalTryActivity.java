@@ -47,6 +47,7 @@ import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * The GoalTryActivity is where a user selects Behaviors for a chosen Goal.
@@ -122,6 +123,12 @@ public class GoalTryActivity extends AppCompatActivity implements
         mGoal = (Goal) getIntent().getSerializableExtra("goal");
         Log.d("mGoal?", "id:" + mGoal.getId() + " title:" + mGoal.getTitle());
         mCategory = (Category) getIntent().getSerializableExtra("category");
+
+        List<Goal> goals = application.getUserData().getGoals();
+        int index = goals.indexOf(mGoal);
+        if (index != -1){
+            mGoal = goals.get(index);
+        }
 
         mToolbar = (Toolbar) findViewById(R.id.goal_try_toolbar);
         mToolbar.setTitle(mGoal.getTitle());
@@ -253,15 +260,18 @@ public class GoalTryActivity extends AppCompatActivity implements
 
                         @Override
                         public void onClick(View v) {
-                            if (behavior_is_selected) {
-                                // Tapping this again should remove the behavior
-                                Log.d("GoalTryActivity", "Trying to remove behavior: " + behavior.getTitle());
-                                deleteBehavior(behavior);
-                                ((ImageView) v).setImageResource(R.drawable.ic_blue_plus_circle);
-                            } else {
-                                // We need to add the behavior to the user's selections.
-                                addBehavior(behavior);
-                                ((ImageView) v).setImageResource(R.drawable.ic_blue_check_circle);
+                            if (mGoal.areCustomTriggersAllowed()){
+                                if (behavior_is_selected){
+                                    // Tapping this again should remove the behavior
+                                    Log.d("GoalTryActivity", "Trying to remove behavior: " + behavior.getTitle());
+                                    deleteBehavior(behavior);
+                                    ((ImageView)v).setImageResource(R.drawable.ic_blue_plus_circle);
+                                }
+                                else{
+                                    // We need to add the behavior to the user's selections.
+                                    addBehavior(behavior);
+                                    ((ImageView)v).setImageResource(R.drawable.ic_blue_check_circle);
+                                }
                             }
                         }
                     });
