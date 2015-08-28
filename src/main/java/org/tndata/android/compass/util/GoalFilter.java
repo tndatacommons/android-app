@@ -33,10 +33,24 @@ public class GoalFilter extends Filter{
 
     @Override
     protected FilterResults performFiltering(CharSequence constraint){
-        String lowerCaseConstraint = constraint.toString().toLowerCase();
+        //The constraint is split into words
+        String constraintArray[] = constraint.toString().toLowerCase().split(" ");
         List<Goal> output = new ArrayList<>();
+        int matchCount;
+        //For each goal
         for (Goal goal:mList){
-            if (goal.getTitle().toLowerCase().contains(lowerCaseConstraint)){
+            //The match count is reset
+            matchCount = 0;
+            //For each item in the constraint array
+            for (String constraintItem:constraintArray){
+                //If either title or description match, increase the match count
+                if (goal.getTitle().toLowerCase().contains(constraintItem) ||
+                        goal.getDescription().toLowerCase().contains(constraintItem)){
+                    matchCount++;
+                }
+            }
+            //If all the words were present, add the goal to the output
+            if (matchCount == constraintArray.length){
                 output.add(goal);
             }
         }
