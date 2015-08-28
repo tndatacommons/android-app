@@ -2,9 +2,9 @@ package org.tndata.android.compass.model;
 
 import java.io.Serializable;
 
-public class TDCBase implements Serializable {
-
+public class TDCBase implements Serializable{
     private static final long serialVersionUID = -7297141782846963404L;
+
     private int id = -1;
     private String title = "";
     private String title_slug = "";
@@ -12,10 +12,14 @@ public class TDCBase implements Serializable {
     private String html_description = "";
     private int mappingId = -1;
 
-    public TDCBase() {
+    private boolean custom_triggers_allowed = true;
+
+
+    public TDCBase(){
+
     }
 
-    public TDCBase(int id, String name, String nameSlug, String description, String html_description) {
+    public TDCBase(int id, String name, String nameSlug, String description, String html_description){
         this.setId(id);
         this.setTitle(name);
         this.setTitleSlug(nameSlug);
@@ -65,5 +69,13 @@ public class TDCBase implements Serializable {
 
     public void setMappingId(int mappingId) {
         this.mappingId = mappingId;
+    }
+
+    public void setCustomTriggersAllowed(boolean customTriggersAllowed){
+        custom_triggers_allowed = customTriggersAllowed;
+    }
+
+    public boolean areCustomTriggersAllowed(){
+        return custom_triggers_allowed;
     }
 }

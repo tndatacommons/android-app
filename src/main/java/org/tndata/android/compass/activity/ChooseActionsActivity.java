@@ -45,6 +45,7 @@ import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * The ChooseActionsActivity is where a user selects Actions for a chosen Behavior.
@@ -122,6 +123,12 @@ public class ChooseActionsActivity extends AppCompatActivity implements
         mBehavior = (Behavior) getIntent().getSerializableExtra("behavior");
         mGoal = (Goal) getIntent().getSerializableExtra("goal");
         mCategory = (Category) getIntent().getSerializableExtra("category");
+
+        List<Behavior> behaviors = application.getUserData().getBehaviors();
+        int index = behaviors.indexOf(mBehavior);
+        if (index != -1){
+            mBehavior = behaviors.get(index);
+        }
 
         mToolbar = (Toolbar) findViewById(R.id.choose_actions_toolbar);
         mToolbar.setTitle(mBehavior.getTitle());
@@ -237,11 +244,14 @@ public class ChooseActionsActivity extends AppCompatActivity implements
                             .OnClickListener() {
 
                         @Override
-                        public void onClick(View v) {
-                            if (action_is_selected) {
-                                deleteAction(action);
-                            } else {
-                                addAction(action);
+                        public void onClick(View v){
+                            if (mBehavior.areCustomTriggersAllowed()){
+                                if (action_is_selected){
+                                    deleteAction(action);
+                                }
+                                else{
+                                    addAction(action);
+                                }
                             }
                         }
                     });

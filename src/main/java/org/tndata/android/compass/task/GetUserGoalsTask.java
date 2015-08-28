@@ -66,6 +66,7 @@ public class GetUserGoalsTask extends AsyncTask<String, Void, ArrayList<Goal>> {
                 Goal goal = gson.fromJson(userGoal.getString("goal"), Goal.class);
                 goal.setProgressValue(userGoal.getDouble("progress_value"));
                 goal.setMappingId(userGoal.getInt("id"));
+                goal.setCustomTriggersAllowed(userGoal.getBoolean("custom_triggers_allowed"));
                 JSONArray categoryArray = userGoal.getJSONArray("user_categories");
                 ArrayList<Category> categories = goal.getCategories();
                 for (int x = 0; x < categoryArray.length(); x++) {

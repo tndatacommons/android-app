@@ -77,6 +77,7 @@ public class GetUserBehaviorsTask extends AsyncTask<String, Void, ArrayList<Beha
                 Behavior behavior = gson.fromJson(userBehavior.getString("behavior"),
                         Behavior.class);
                 behavior.setMappingId(userBehavior.getInt("id"));
+                behavior.setCustomTriggersAllowed(userBehavior.getBoolean("custom_triggers_allowed"));
                 JSONArray goalArray = userBehavior.getJSONArray("user_goals");
                 ArrayList<Goal> goals = behavior.getGoals();
                 for (int x = 0; x < goalArray.length(); x++) {
