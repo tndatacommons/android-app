@@ -108,6 +108,7 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData> {
                 Category category = gson.fromJson(categoryJson.getString("category"), Category.class);
                 category.setProgressValue(categoryJson.getDouble("progress_value"));
                 category.setMappingId(categoryJson.getInt("id"));
+                category.setCustomTriggersAllowed(categoryJson.getBoolean("custom_triggers_allowed"));
 
                 // Set the Category's goals
                 // NOTE: Can't reuse parseUserGoals because now we're parsing a Goal, not a UserGoal
@@ -142,6 +143,7 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData> {
                 Goal goal = gson.fromJson(goalJson.getString("goal"), Goal.class);
                 goal.setProgressValue(goalJson.getDouble("progress_value"));
                 goal.setMappingId(goalJson.getInt("id"));
+                goal.setCustomTriggersAllowed(goalJson.getBoolean("custom_triggers_allowed"));
                 goals.add(goal);
 
                 // Set the Goal's parent categories
@@ -187,6 +189,7 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData> {
                 JSONObject behaviorJson = behaviorArray.getJSONObject(i);
                 Behavior behavior = gson.fromJson(behaviorJson.getString("behavior"), Behavior.class);
                 behavior.setMappingId(behaviorJson.getInt("id"));
+                behavior.setCustomTriggersAllowed(behaviorJson.getBoolean("custom_triggers_allowed"));
                 behaviors.add(behavior);
 
                 // Set the Behavior's parent goals
@@ -232,6 +235,7 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData> {
                 JSONObject actionJson = actionArray.getJSONObject(i);
                 Action action = gson.fromJson(actionJson.getString("action"), Action.class);
                 action.setMappingId(actionJson.getInt("id"));
+                action.setCustomTriggersAllowed(actionJson.getBoolean("custom_triggers_allowed"));
                 action.setCustomTriggersAllowed(actionJson.getBoolean("custom_triggers_allowed"));
                 actions.add(action);
 

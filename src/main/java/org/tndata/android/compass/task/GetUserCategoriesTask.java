@@ -67,6 +67,7 @@ public class GetUserCategoriesTask extends
                         userCategory.getString("category"), Category.class);
                 category.setProgressValue(userCategory.getDouble("progress_value"));
                 category.setMappingId(userCategory.getInt("id"));
+                category.setCustomTriggersAllowed(userCategory.getBoolean("custom_triggers_allowed"));
                 categories.add(category);
             }
             return categories;
