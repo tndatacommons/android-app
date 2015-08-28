@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.util.GoalFilter;
+import org.tndata.android.compass.filter.GoalFilter;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.ui.button.TransitionButton;

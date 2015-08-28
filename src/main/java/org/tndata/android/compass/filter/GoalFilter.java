@@ -1,4 +1,4 @@
-package org.tndata.android.compass.util;
+package org.tndata.android.compass.filter;
 
 import android.widget.Filter;
 
@@ -10,7 +10,7 @@ import java.util.List;
 
 
 /**
- * Filters goals by title.
+ * Filters goals by title and description.
  *
  * @author Ismael Alonso
  * @version 1.0.0
