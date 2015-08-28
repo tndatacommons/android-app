@@ -1,12 +1,14 @@
 package org.tndata.android.compass.activity;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,12 +49,15 @@ public class ChooseGoalsActivity
                 GoalLoaderTask.GoalLoaderListener,
                 DeleteGoalTask.DeleteGoalTaskListener,
                 ChooseGoalsAdapter.ChooseGoalsListener,
+                MenuItemCompat.OnActionExpandListener,
                 SearchView.OnQueryTextListener,
                 SearchView.OnCloseListener{
 
     private CompassApplication mApplication;
+
     private Toolbar mToolbar;
     private MenuItem mSearchItem;
+    private SearchView mSearchView;
 
     private RecyclerView mRecyclerView;
     private ChooseGoalsAdapter mAdapter;
@@ -105,17 +111,36 @@ public class ChooseGoalsActivity
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_filter, menu);
         mSearchItem = menu.findItem(R.id.filter);
-        SearchView searchView = (SearchView)mSearchItem.getActionView();
-        searchView.setIconified(false);
-        searchView.setOnCloseListener(this);
-        searchView.setOnQueryTextListener(this);
+        MenuItemCompat.setOnActionExpandListener(mSearchItem, this);
+
+        mSearchView = (SearchView)mSearchItem.getActionView();
+        mSearchView.setIconified(false);
+        mSearchView.setOnCloseListener(this);
+        mSearchView.setOnQueryTextListener(this);
+        mSearchView.clearFocus();
+
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
+    public boolean onMenuItemActionExpand(MenuItem item){
+        mSearchView.requestFocus();
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionCollapse(MenuItem item){
+        mSearchView.setQuery("", false);
+        mSearchView.clearFocus();
+        return true;
+    }
+
+    @Override
     public boolean onClose(){
+        //mAdapter.filter("");
         mSearchItem.collapseActionView();
-        mAdapter.filter("");
         return true;
     }
 

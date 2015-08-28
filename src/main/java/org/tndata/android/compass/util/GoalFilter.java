@@ -19,7 +19,7 @@ public class GoalFilter extends Filter{
     private ChooseGoalsAdapter mAdapter;
     private List<Goal> mList;
 
-    
+
     /**
      * Constructor.
      *
@@ -58,7 +58,7 @@ public class GoalFilter extends Filter{
      * @version 1.0.0
      */
     private class GoalFilterResults extends FilterResults{
-        private List<Goal> mOutput;
+        private final List<Goal> mOutput;
 
         /**
          * Constructor.
