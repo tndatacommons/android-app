@@ -31,7 +31,10 @@ import java.util.List;
 
 
 /**
- * Created by isma on 8/31/15.
+ * Adapter for the behavior picker.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class ChooseBehaviorsAdapter
         extends ParallaxRecyclerAdapter<Behavior>
@@ -48,29 +51,41 @@ public class ChooseBehaviorsAdapter
     private List<Behavior> mBehaviors;
     private int mExpandedBehavior;
 
-
+    /**
+     * Constructor,
+     *
+     * @param context the context.
+     * @param listener an implementation of the listener to act upon events.
+     * @param app a reference to the application class.
+     * @param recyclerView the view that will contain this adapter.
+     * @param category the parent category of this goal.
+     * @param goal the goal whose behaviors are to be listed.
+     */
     public ChooseBehaviorsAdapter(@NonNull Context context, @NonNull ChooseBehaviorsListener listener,
                                   @NonNull CompassApplication app, @NonNull RecyclerView recyclerView,
                                   @NonNull Category category, @NonNull Goal goal){
         super(new ArrayList<Behavior>());
 
+        //Assign the references
         mContext = context;
         mApplication = app;
         mListener = listener;
         mRecyclerView = recyclerView;
         mGoal = goal;
 
+        //The tag handler is used in a couple of places, so previous instantiation and
+        //  reuse might help performance.
         mTagHandler = new CompassTagHandler(mContext);
 
+        //Create an empty list and "nullify" the expanded goal.
         mBehaviors = new ArrayList<>();
         mExpandedBehavior = -1;
 
+        //Create and set the header
         Behavior headerBehavior = new Behavior();
         headerBehavior.setDescription(mGoal.getDescription());
         headerBehavior.setId(0);
         mBehaviors.add(headerBehavior);
-
-        //Set the header
         setHeader(category);
 
         //Add listeners and interfaces
@@ -79,7 +94,9 @@ public class ChooseBehaviorsAdapter
     }
 
     /**
-     * Creates the parallax header view and sets it in the list.
+     * Creates the parallax header view containing the goal's icon and sets it in the list.
+     *
+     * @param category the parent category of the goal whose behaviors are to be listed.
      */
     @SuppressWarnings("deprecation")
     private void setHeader(Category category){
@@ -112,7 +129,12 @@ public class ChooseBehaviorsAdapter
         });
     }
 
-    public void addBehaviors(List<Behavior> behaviors){
+    /**
+     * Sets the list of behaviors. and notifies the adapter.
+     *
+     * @param behaviors the list of behaviors to be set.
+     */
+    public void setBehaviors(List<Behavior> behaviors){
         mBehaviors.clear();
 
         Behavior headerBehavior = new Behavior();
@@ -124,8 +146,13 @@ public class ChooseBehaviorsAdapter
         notifyDataSetChanged();
     }
 
-    private void selectBehaviorClicked(ChooseBehaviorsViewHolder holder, int position){
-        Behavior behavior = mBehaviors.get(position);
+    /**
+     * Called when the select button is clicked.
+     *
+     * @param holder the view holder containing the behavior.
+     */
+    private void selectBehaviorClicked(ChooseBehaviorsViewHolder holder){
+        Behavior behavior = mBehaviors.get(holder.getAdapterPosition()-1);
         boolean isBehaviorSelected = mApplication.getBehaviors().contains(behavior);
 
         if (mGoal.areCustomTriggersAllowed()){
@@ -143,14 +170,29 @@ public class ChooseBehaviorsAdapter
         }
     }
 
+    /**
+     * Called when the select actions button is clicked.
+     *
+     * @param position the position of the containing behavior.
+     */
     private void selectActionsClicked(int position){
         mListener.selectActions(mBehaviors.get(position));
     }
 
+    /**
+     * Called when the more info button is clicked.
+     *
+     * @param position the position of the containing behavior.
+     */
     private void moreInfoClicked(int position){
         mListener.moreInfo(mBehaviors.get(position));
     }
 
+    /**
+     * Called when the do it now button is clicked.
+     *
+     * @param position the position of the containing behavior.
+     */
     private void doItNowClicked(int position){
         mListener.doItNow(mBehaviors.get(position));
     }
@@ -178,6 +220,12 @@ public class ChooseBehaviorsAdapter
         }
     }
 
+    /**
+     * Implementation of the RecyclerAdapterMethods class.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     private class ChooseBehaviorsAdapterMethods implements ParallaxRecyclerAdapter.RecyclerAdapterMethods{
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int position){
@@ -194,7 +242,7 @@ public class ChooseBehaviorsAdapter
             boolean isBehaviorSelected = mApplication.getBehaviors().contains(behavior);
 
             if (position == 0 && behavior.getId() == 0){
-                //Display the Header Card
+                //Display the header card
                 if (!behavior.getHTMLDescription().isEmpty()){
                     holder.mHeader.setText(Html.fromHtml(behavior.getHTMLDescription(), null, mTagHandler));
                 }
@@ -276,7 +324,12 @@ public class ChooseBehaviorsAdapter
         }
     }
 
-
+    /**
+     * View holder for a list item.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     private class ChooseBehaviorsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mHeader;
         private ImageView mIcon;
@@ -290,7 +343,11 @@ public class ChooseBehaviorsAdapter
         private ImageView mSelectBehavior;
         private TextView mDoItNow;
 
-
+        /**
+         * Constructor.
+         *
+         * @param rootView a view inflated from R.layout.item_choose_behavior
+         */
         public ChooseBehaviorsViewHolder(View rootView){
             super(rootView);
 
@@ -316,7 +373,7 @@ public class ChooseBehaviorsAdapter
         public void onClick(View view){
             switch (view.getId()){
                 case R.id.choose_behavior_select:
-                    selectBehaviorClicked(this, getAdapterPosition()-1);
+                    selectBehaviorClicked(this);
                     break;
 
                 case R.id.choose_behavior_select_actions:
@@ -334,12 +391,46 @@ public class ChooseBehaviorsAdapter
         }
     }
 
-
+    /**
+     * Listener interface for the adapter.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface ChooseBehaviorsListener{
+        /**
+         * Called when the add behavior button is clicked.
+         *
+         * @param behavior the containing behavior.
+         */
         void addBehavior(Behavior behavior);
+
+        /**
+         * Called when the delete behavior button is clicked.
+         *
+         * @param behavior the containing behavior.
+         */
         void deleteBehavior(Behavior behavior);
+
+        /**
+         * Called when the select actions button is clicked.
+         *
+         * @param behavior the containing behavior.
+         */
         void selectActions(Behavior behavior);
+
+        /**
+         * Called when the more info button is clicked.
+         *
+         * @param behavior the containing behavior.
+         */
         void moreInfo(Behavior behavior);
+
+        /**
+         * Called when the do it now button is clicked.
+         *
+         * @param behavior the containing behavior.
+         */
         void doItNow(Behavior behavior);
 
         /**

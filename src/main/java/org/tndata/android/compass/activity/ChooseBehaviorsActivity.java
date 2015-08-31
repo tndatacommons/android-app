@@ -40,6 +40,9 @@ import java.util.List;
 
 /**
  * The ChooseBehaviorsActivity is where a user selects Behaviors for a chosen Goal.
+ *
+ * @author Edited by Ismael Alonso
+ * @version 2.0.0
  */
 public class ChooseBehaviorsActivity
         extends AppCompatActivity
@@ -229,7 +232,7 @@ public class ChooseBehaviorsActivity
             color.setAlpha(Math.round(percentage * 255));
             mToolbar.setBackground(color);
         }
-        mHeaderView.setTranslationY(-offset*0.5f);
+        mHeaderView.setTranslationY(-offset * 0.5f);
     }
 
     @Override
@@ -243,7 +246,7 @@ public class ChooseBehaviorsActivity
     @Override
     public void behaviorsLoaded(ArrayList<Behavior> behaviors){
         if (behaviors != null){
-            mAdapter.addBehaviors(behaviors);
+            mAdapter.setBehaviors(behaviors);
         }
         mAdapter.notifyDataSetChanged();
     }
