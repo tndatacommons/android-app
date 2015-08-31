@@ -20,7 +20,7 @@ import android.widget.Toast;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ChooseGoalsActivity;
-import org.tndata.android.compass.activity.GoalTryActivity;
+import org.tndata.android.compass.activity.ChooseBehaviorsActivity;
 import org.tndata.android.compass.adapter.CategoryFragmentAdapter;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
@@ -211,7 +211,7 @@ public class CategoryFragment extends Fragment implements
     @Override
     public void chooseBehaviors(Goal goal) {
         Intent intent = new Intent(getActivity()
-                .getApplicationContext(), GoalTryActivity.class);
+                .getApplicationContext(), ChooseBehaviorsActivity.class);
         intent.putExtra("goal", goal);
         intent.putExtra("category", mCategory);
         startActivityForResult(intent, Constants.CHOOSE_BEHAVIORS_REQUEST_CODE);
@@ -220,7 +220,7 @@ public class CategoryFragment extends Fragment implements
     @Override
     public void viewGoal(Goal goal) {
         Intent intent = new Intent(getActivity()
-                .getApplicationContext(), GoalTryActivity.class);
+                .getApplicationContext(), ChooseBehaviorsActivity.class);
         intent.putExtra("goal", goal);
         intent.putExtra("category", mCategory);
         startActivityForResult(intent, Constants.CHOOSE_BEHAVIORS_REQUEST_CODE);

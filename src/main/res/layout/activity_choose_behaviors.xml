@@ -1,28 +1,30 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true">
+    android:animateLayoutChanges="true" >
 
     <View
-        android:id="@+id/goal_try_material_view"
+        android:id="@+id/choose_behaviors_material_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/material_header_size"
         android:background="@color/grow_primary" />
 
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/goal_try_recyclerview"
+        android:id="@+id/choose_behaviors_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"></android.support.v7.widget.RecyclerView>
+        android:background="@android:color/transparent" />
 
-    <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/goal_try_toolbar"
+    <android.support.v7.widget.Toolbar
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/choose_behaviors_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/grow_primary"
         android:minHeight="?attr/actionBarSize"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"></android.support.v7.widget.Toolbar>
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
 </RelativeLayout>

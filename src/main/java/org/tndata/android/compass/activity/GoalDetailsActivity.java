@@ -112,7 +112,7 @@ public class GoalDetailsActivity extends TriggerActivity implements
 
     @Override
     public void chooseBehaviors(Goal goal) {
-        Intent intent = new Intent(getApplicationContext(), GoalTryActivity.class);
+        Intent intent = new Intent(getApplicationContext(), ChooseBehaviorsActivity.class);
         intent.putExtra("goal", goal);
         intent.putExtra("category", mCategory);
         startActivityForResult(intent, Constants.CHOOSE_BEHAVIORS_REQUEST_CODE);

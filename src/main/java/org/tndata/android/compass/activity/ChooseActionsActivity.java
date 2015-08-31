@@ -84,7 +84,7 @@ public class ChooseActionsActivity extends AppCompatActivity implements
             moreInfoImageView = (ImageView) itemView.findViewById(
                     R.id.list_item_action_info_imageview);
             selectActionImageView = (ImageView) itemView.findViewById(
-                    R.id.list_item_select_action_imageview);
+                    R.id.choose_behavior_select_actions);
 
             editReminder = (ImageView) itemView.findViewById(R.id.list_item_action_edit_reminder);
             doItNow = (TextView) itemView.findViewById(R.id.list_item_action_do_it_now);

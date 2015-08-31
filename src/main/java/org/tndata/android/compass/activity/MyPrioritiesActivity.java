@@ -162,7 +162,7 @@ public class MyPrioritiesActivity
 
     @Override
     public void onAddBehaviorsClick(Category category, Goal goal){
-        Intent goalIntent = new Intent(this, GoalTryActivity.class);
+        Intent goalIntent = new Intent(this, ChooseBehaviorsActivity.class);
         goalIntent.putExtra("category", category);
         goalIntent.putExtra("goal", goal);
         startActivityForResult(goalIntent, 1);
