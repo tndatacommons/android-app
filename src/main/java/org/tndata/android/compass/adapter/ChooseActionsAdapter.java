@@ -1,6 +1,5 @@
 package org.tndata.android.compass.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -26,7 +25,10 @@ import java.util.List;
 
 
 /**
- * Created by isma on 8/31/15.
+ * Adapter for the action picker.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class ChooseActionsAdapter
         extends ParallaxRecyclerAdapter<Action>
@@ -43,6 +45,15 @@ public class ChooseActionsAdapter
     private List<Action> mActions;
     private int mExpandedAction;
 
+    /**
+     * Constructor.
+     *
+     * @param context the context.
+     * @param listener an implementation of the listener to act upon events.
+     * @param app a reference to the application class.
+     * @param recyclerView the view that will contain this adapter.
+     * @param behavior the behavior whose actions are to be listed.
+     */
     public ChooseActionsAdapter(@NonNull Context context, @NonNull ChooseActionsListener listener,
                                 @NonNull CompassApplication app, @NonNull RecyclerView recyclerView,
                                 @NonNull Behavior behavior){
@@ -75,6 +86,9 @@ public class ChooseActionsAdapter
         setOnClickEvent(this);
     }
 
+    /**
+     * Creates the parallax header view containing the behavior's icon and sets it in the list.
+     */
     private void setHeader(){
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View header = inflater.inflate(R.layout.header_choose_actions, mRecyclerView, false);
@@ -84,7 +98,6 @@ public class ChooseActionsAdapter
         ((HeaderLayoutManagerFixed)mRecyclerView.getLayoutManager()).setHeaderIncrementFixer(header);
         setParallaxHeader(header, mRecyclerView);
         setOnParallaxScroll(new ParallaxRecyclerAdapter.OnParallaxScroll(){
-            @SuppressLint("NewApi")
             @Override
             public void onParallaxScroll(float percentage, float offset, View parallax){
                 mListener.onScroll(percentage, offset);
@@ -92,6 +105,11 @@ public class ChooseActionsAdapter
         });
     }
 
+    /**
+     * Sets the list of actions. and notifies the adapter.
+     *
+     * @param actions the list of actions to be set.
+     */
     public void setActions(List<Action> actions){
         mActions.clear();
 
@@ -104,14 +122,29 @@ public class ChooseActionsAdapter
         notifyDataSetChanged();
     }
 
+    /**
+     * Called when the more info button is clicked.
+     *
+     * @param position the position of the containing action.
+     */
     private void moreInfoClicked(int position){
         mListener.moreInfo(mActions.get(position));
     }
 
+    /**
+     * Called when the edit reminder button is clicked.
+     *
+     * @param position the position of the containing action.
+     */
     private void editReminderClicked(int position){
         mListener.editReminder(mActions.get(position));
     }
 
+    /**
+     * Called when th select action button is clicked.
+     *
+     * @param holder the view holder containing the action.
+     */
     private void selectActionClicked(ActionViewHolder holder){
         Action action = mActions.get(holder.getAdapterPosition()-1);
         boolean isActionSelected = mApplication.getActions().contains(action);
@@ -126,6 +159,11 @@ public class ChooseActionsAdapter
         }
     }
 
+    /**
+     * Called when the do it now button is clicked.
+     *
+     * @param position the position of the containing action.
+     */
     private void doItNowClicked(int position){
         mListener.doItNow(mActions.get(position));
     }
@@ -154,6 +192,12 @@ public class ChooseActionsAdapter
     }
 
 
+    /**
+     * Implementation of the RecyclerAdapterMethods interface.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     private class ChooseActionsAdapterMethods implements ParallaxRecyclerAdapter.RecyclerAdapterMethods{
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int position){
@@ -241,6 +285,12 @@ public class ChooseActionsAdapter
     }
 
 
+    /**
+     * View holder for an action.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     private class ActionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mHeader;
         private ImageView mIcon;
@@ -254,19 +304,24 @@ public class ChooseActionsAdapter
         private TextView mDoItNow;
 
 
-        public ActionViewHolder(View itemView){
-            super(itemView);
+        /**
+         * Constructor.
+         *
+         * @param rootView a view inflated from R.layout.item_choose_action
+         */
+        public ActionViewHolder(View rootView){
+            super(rootView);
 
-            mHeader = (TextView)itemView.findViewById(R.id.choose_action_header);
-            mIcon = (ImageView)itemView.findViewById(R.id.choose_action_icon);
-            mTitle = (TextView)itemView.findViewById(R.id.choose_icon_title);
-            mDescription = (TextView)itemView.findViewById(R.id.choose_action_description);
+            mHeader = (TextView)rootView.findViewById(R.id.choose_action_header);
+            mIcon = (ImageView)rootView.findViewById(R.id.choose_action_icon);
+            mTitle = (TextView)rootView.findViewById(R.id.choose_icon_title);
+            mDescription = (TextView)rootView.findViewById(R.id.choose_action_description);
 
-            mActionWrapper = (LinearLayout)itemView.findViewById(R.id.choose_action_action_wrapper);
-            mMoreInfo = (ImageView)itemView.findViewById(R.id.choose_action_more_info);
-            mEditReminder = (ImageView)itemView.findViewById(R.id.choose_action_edit_reminder);
-            mSelectAction = (ImageView)itemView.findViewById(R.id.choose_action_select);
-            mDoItNow = (TextView)itemView.findViewById(R.id.choose_action_do_it_now);
+            mActionWrapper = (LinearLayout)rootView.findViewById(R.id.choose_action_action_wrapper);
+            mMoreInfo = (ImageView)rootView.findViewById(R.id.choose_action_more_info);
+            mEditReminder = (ImageView)rootView.findViewById(R.id.choose_action_edit_reminder);
+            mSelectAction = (ImageView)rootView.findViewById(R.id.choose_action_select);
+            mDoItNow = (TextView)rootView.findViewById(R.id.choose_action_do_it_now);
 
             mMoreInfo.setOnClickListener(this);
             mEditReminder.setOnClickListener(this);
@@ -297,12 +352,54 @@ public class ChooseActionsAdapter
     }
 
 
+    /**
+     * Listener interface for adapter events.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface ChooseActionsListener{
+        /**
+         * Called when more info is clicked.
+         *
+         * @param action the action more info was called upon.
+         */
         void moreInfo(Action action);
+
+        /**
+         * Called when edit reminder is clicked.
+         *
+         * @param action the action edit reminder was called upon.
+         */
         void editReminder(Action action);
+
+        /**
+         * Called when add action is clicked.
+         *
+         * @param action the action add action was called upon.
+         */
         void addAction(Action action);
+
+        /**
+         * Called when delete action is clicked.
+         *
+         * @param action the action delete action was called upon.
+         */
         void deleteAction(Action action);
+
+        /**
+         * Called when do it now is clicked.
+         *
+         * @param action the action do it now was called upon.
+         */
         void doItNow(Action action);
+        
+        /**
+         * Called when the RecyclerView scrolls.
+         *
+         * @param percentage the scroll percentage.
+         * @param offset the scroll offset.
+         */
         void onScroll(float percentage, float offset);
     }
 }

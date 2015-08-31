@@ -221,7 +221,7 @@ public class ChooseBehaviorsAdapter
     }
 
     /**
-     * Implementation of the RecyclerAdapterMethods class.
+     * Implementation of the RecyclerAdapterMethods interface.
      *
      * @author Ismael Alonso
      * @version 1.0.0
@@ -342,6 +342,7 @@ public class ChooseBehaviorsAdapter
         private ImageView mSelectActions;
         private ImageView mSelectBehavior;
         private TextView mDoItNow;
+
 
         /**
          * Constructor.
