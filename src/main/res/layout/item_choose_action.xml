@@ -2,6 +2,7 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
@@ -12,13 +13,13 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
         android:padding="10dp" >
 
         <!-- NOTE: When the following view is displayed, it will be the only thing on the card -->
         <TextView
-            android:id="@+id/choose_behavior_header"
+            android:id="@+id/choose_action_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -38,15 +39,15 @@
                 android:gravity="center_vertical" >
 
                 <ImageView
-                    android:id="@+id/choose_behavior_icon"
+                    android:id="@+id/choose_action_icon"
                     android:layout_width="@dimen/action_item_image_size"
                     android:layout_height="@dimen/action_item_image_size"
                     android:layout_margin="10dp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_action_compass_white" />
+                    android:src="@drawable/ic_directions_run_black_36dp"/>
 
                 <TextView
-                    android:id="@+id/choose_behavior_title"
+                    android:id="@+id/choose_icon_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
@@ -59,52 +60,40 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/choose_behavior_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:paddingLeft="2dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/choose_behavior_external_resource"
+                android:id="@+id/choose_action_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_marginBottom="0dp"
-                android:paddingTop="5dp"
                 android:paddingLeft="2dp"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textSize="16sp"
                 android:visibility="gone" />
 
             <LinearLayout
-                android:id="@+id/choose_behavior_action_wrapper"
-                android:orientation="horizontal"
+                android:id="@+id/choose_action_action_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:gravity="center_vertical|right" >
+                android:gravity="center_vertical|right">
 
                 <ImageView
-                    android:id="@+id/choose_behavior_more_info"
+                    android:id="@+id/choose_action_more_info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
                     android:layout_margin="5dp"
-                    android:src="@drawable/ic_blue_info" />
+                    android:src="@drawable/ic_blue_info"/>
 
                 <ImageView
-                    android:id="@+id/choose_behavior_select_actions"
+                    android:id="@+id/choose_action_edit_reminder"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
                     android:layout_margin="5dp"
-                    android:src="@drawable/ic_blue_directions_run" />
+                    android:src="@drawable/ic_blue_notifications" />
 
                 <ImageView
-                    android:id="@+id/choose_behavior_select"
+                    android:id="@+id/choose_action_select"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
@@ -112,7 +101,7 @@
                     android:src="@drawable/ic_blue_plus_circle" />
 
                 <TextView
-                    android:id="@+id/choose_behavior_do_it_now"
+                    android:id="@+id/choose_action_do_it_now"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"

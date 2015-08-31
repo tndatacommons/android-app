@@ -77,11 +77,11 @@ public class ChooseBehaviorsAdapter
         //  reuse might help performance.
         mTagHandler = new CompassTagHandler(mContext);
 
-        //Create an empty list and "nullify" the expanded goal.
+        //Create an empty list and "nullify" the expanded behavior.
         mBehaviors = new ArrayList<>();
         mExpandedBehavior = -1;
 
-        //Create and set the header
+        //Create and set the headers
         Behavior headerBehavior = new Behavior();
         headerBehavior.setDescription(mGoal.getDescription());
         headerBehavior.setId(0);
@@ -151,7 +151,7 @@ public class ChooseBehaviorsAdapter
      *
      * @param holder the view holder containing the behavior.
      */
-    private void selectBehaviorClicked(ChooseBehaviorsViewHolder holder){
+    private void selectBehaviorClicked(BehaviorViewHolder holder){
         Behavior behavior = mBehaviors.get(holder.getAdapterPosition()-1);
         boolean isBehaviorSelected = mApplication.getBehaviors().contains(behavior);
 
@@ -231,12 +231,12 @@ public class ChooseBehaviorsAdapter
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int position){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             View rootView = inflater.inflate(R.layout.item_choose_behavior, viewGroup, false);
-            return new ChooseBehaviorsViewHolder(rootView);
+            return new BehaviorViewHolder(rootView);
         }
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
-            ChooseBehaviorsViewHolder holder = (ChooseBehaviorsViewHolder)rawHolder;
+            BehaviorViewHolder holder = (BehaviorViewHolder)rawHolder;
             Behavior behavior = mBehaviors.get(position);
 
             boolean isBehaviorSelected = mApplication.getBehaviors().contains(behavior);
@@ -330,7 +330,7 @@ public class ChooseBehaviorsAdapter
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    private class ChooseBehaviorsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    private class BehaviorViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mHeader;
         private ImageView mIcon;
         private TextView mTitle;
@@ -348,10 +348,10 @@ public class ChooseBehaviorsAdapter
          *
          * @param rootView a view inflated from R.layout.item_choose_behavior
          */
-        public ChooseBehaviorsViewHolder(View rootView){
+        public BehaviorViewHolder(View rootView){
             super(rootView);
 
-            mHeader = (TextView)rootView.findViewById(R.id.list_item_behavior_header_textview);
+            mHeader = (TextView)rootView.findViewById(R.id.choose_behavior_header);
             mIcon = (ImageView)rootView.findViewById(R.id.choose_behavior_icon);
             mTitle = (TextView)rootView.findViewById(R.id.choose_behavior_title);
             mDescription = (TextView)rootView.findViewById(R.id.choose_behavior_description);
