@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -112,6 +114,8 @@ public class GcmIntentService extends IntentService {
         Context ctx = getApplicationContext();
         NotificationManager mNotificationManager = (NotificationManager)ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 
+        Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
         if (object_type.equals(Constants.ACTION_TYPE)){
             try{
                 Intent intent = new Intent(getApplicationContext(), ActionActivity.class);
@@ -150,6 +154,7 @@ public class GcmIntentService extends IntentService {
                         .setContentText(msg)
                         .setLargeIcon(icon)
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setSound(sound)
                         .addAction(R.drawable.ic_alarm_black_24dp, "Later", snoozePendingIntent)
                         .addAction(R.drawable.ic_check_normal_dark, "I did it", didItPendingIntent)
                         .addExtras(args)
@@ -183,6 +188,7 @@ public class GcmIntentService extends IntentService {
                     .setContentText(msg)
                     .setLargeIcon(icon)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setSound(sound)
                     .addExtras(args)
                     .setContentIntent(contentIntent)
                     .setAutoCancel(true)
