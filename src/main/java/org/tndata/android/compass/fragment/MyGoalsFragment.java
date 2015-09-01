@@ -18,7 +18,7 @@ import android.view.ViewGroup;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ChooseGoalsActivity;
-import org.tndata.android.compass.activity.GoalTryActivity;
+import org.tndata.android.compass.activity.ChooseBehaviorsActivity;
 import org.tndata.android.compass.adapter.MyGoalsAdapter;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
@@ -256,7 +256,7 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
     @Override
     public void chooseBehaviors(Goal goal, Category category) {
         Intent intent = new Intent(getActivity()
-                .getApplicationContext(), GoalTryActivity.class);
+                .getApplicationContext(), ChooseBehaviorsActivity.class);
         intent.putExtra("goal", goal);
         intent.putExtra("category", category);
         startActivity(intent);

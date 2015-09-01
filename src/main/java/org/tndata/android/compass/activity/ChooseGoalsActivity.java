@@ -222,7 +222,7 @@ public class ChooseGoalsActivity
 
         if (goal.getBehaviorCount() > 0){
             //Launch the GoalTryActivity (where users choose a behavior for the Goal)
-            Intent intent = new Intent(getApplicationContext(), GoalTryActivity.class);
+            Intent intent = new Intent(getApplicationContext(), ChooseBehaviorsActivity.class);
             intent.putExtra("goal", goal);
             intent.putExtra("category", mCategory);
             startActivity(intent);
@@ -259,7 +259,7 @@ public class ChooseGoalsActivity
     public void onGoalOkClicked(Goal goal){
         if (goal.getBehaviorCount() > 0){
             //Launch the GoalTryActivity (where users choose a behavior for the Goal)
-            Intent intent = new Intent(getApplicationContext(), GoalTryActivity.class);
+            Intent intent = new Intent(getApplicationContext(), ChooseBehaviorsActivity.class);
             intent.putExtra("goal", goal);
             intent.putExtra("category", mCategory);
             startActivity(intent);

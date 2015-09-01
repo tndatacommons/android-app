@@ -5,7 +5,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/material_header_content_size">
+        android:layout_height="@dimen/material_header_content_size" >
 
         <RelativeLayout
             android:id="@+id/choose_actions_header_circle_view"
@@ -15,10 +15,10 @@
             android:layout_gravity="center|bottom"
             android:contentDescription="@string/behavior_image_description"
             android:background="@drawable/circle_white"
-            android:layout_marginBottom="40dp">
+            android:layout_marginBottom="40dp" >
 
             <ImageView
-                android:id="@+id/choose_actions_header_imageview"
+                android:id="@+id/choose_actions_header_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
