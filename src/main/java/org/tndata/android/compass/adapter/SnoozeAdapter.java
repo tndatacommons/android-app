@@ -55,13 +55,13 @@ public class SnoozeAdapter extends BaseAdapter{
 
         TextView title = (TextView)convertView;
         if (position == 0){
-            title.setText("In an hour");
+            title.setText(R.string.later_in_an_hour);
         }
         else if (position == 1){
-            title.setText("This time tomorrow");
+            title.setText(R.string.later_tomorrow);
         }
         else if (position == 2){
-            title.setText("Pick a date and time");
+            title.setText(R.string.later_pick);
         }
 
         return convertView;

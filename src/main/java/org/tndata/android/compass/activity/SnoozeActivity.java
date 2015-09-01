@@ -46,7 +46,7 @@ public class SnoozeActivity
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_snooze);
-        setTitle("Later");
+        setTitle(R.string.later_title);
 
         notificationId = getIntent().getIntExtra(NOTIFICATION_ID_KEY, -1);
         pushNotificationId = getIntent().getIntExtra(PUSH_NOTIFICATION_ID_KEY, -1);
