@@ -19,6 +19,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ActionActivity;
 import org.tndata.android.compass.activity.BehaviorProgressActivity;
+import org.tndata.android.compass.activity.SnoozeActivity;
 import org.tndata.android.compass.util.Constants;
 
 
@@ -122,11 +123,11 @@ public class GcmIntentService extends IntentService {
                         (int)System.currentTimeMillis(), intent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
 
-                Intent snoozeIntent = new Intent(this, SnoozeService.class)
+                Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
                         .putExtra(SnoozeService.NOTIFICATION_ID_KEY, Integer.valueOf(id))
                         .putExtra(SnoozeService.PUSH_NOTIFICATION_ID_KEY, notificationId);
 
-                PendingIntent snoozePendingIntent = PendingIntent.getService(ctx,
+                PendingIntent snoozePendingIntent = PendingIntent.getActivity(ctx,
                         (int)System.currentTimeMillis(), snoozeIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -149,7 +150,7 @@ public class GcmIntentService extends IntentService {
                         .setContentText(msg)
                         .setLargeIcon(icon)
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                        .addAction(R.drawable.ic_alarm_black_24dp, "Snooze", snoozePendingIntent)
+                        .addAction(R.drawable.ic_alarm_black_24dp, "Later", snoozePendingIntent)
                         .addAction(R.drawable.ic_check_normal_dark, "I did it", didItPendingIntent)
                         .addExtras(args)
                         .setContentIntent(contentIntent)
