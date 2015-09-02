@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.filter.BehaviorFilter;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
@@ -45,6 +46,7 @@ public class ChooseBehaviorsAdapter
     private ChooseBehaviorsListener mListener;
     private RecyclerView mRecyclerView;
     private Goal mGoal;
+    private BehaviorFilter mFilter;
 
     private CompassTagHandler mTagHandler;
 
@@ -72,6 +74,7 @@ public class ChooseBehaviorsAdapter
         mListener = listener;
         mRecyclerView = recyclerView;
         mGoal = goal;
+        mFilter = null;
 
         //The tag handler is used in a couple of places, so previous instantiation and
         //  reuse might help performance.
@@ -144,6 +147,16 @@ public class ChooseBehaviorsAdapter
 
         mBehaviors.addAll(behaviors);
         notifyDataSetChanged();
+
+        if (mFilter == null){
+            mFilter = new BehaviorFilter(this, behaviors);
+        }
+    }
+
+    public void filter(CharSequence constraint){
+        if (mFilter != null){
+            mFilter.filter(constraint);
+        }
     }
 
     /**

@@ -2,8 +2,8 @@ package org.tndata.android.compass.filter;
 
 import android.widget.Filter;
 
-import org.tndata.android.compass.adapter.ChooseBehaviorsAdapter;
-import org.tndata.android.compass.model.Behavior;
+import org.tndata.android.compass.adapter.ChooseActionsAdapter;
+import org.tndata.android.compass.model.Action;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +15,9 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class BehaviorFilter extends Filter{
-    private ChooseBehaviorsAdapter mAdapter;
-    private List<Behavior> mList;
+public class ActionFilter extends Filter{
+    private ChooseActionsAdapter mAdapter;
+    private List<Action> mList;
 
 
     /**
@@ -26,7 +26,7 @@ public class BehaviorFilter extends Filter{
      * @param adapter the adapter to be filtered.
      * @param list the original list of the adapter.
      */
-    public BehaviorFilter(ChooseBehaviorsAdapter adapter, List<Behavior> list){
+    public ActionFilter(ChooseActionsAdapter adapter, List<Action> list){
         mAdapter = adapter;
         mList = list;
     }
@@ -35,23 +35,23 @@ public class BehaviorFilter extends Filter{
     protected FilterResults performFiltering(CharSequence constraint){
         //The constraint is split into words
         String constraintArray[] = constraint.toString().toLowerCase().split(" ");
-        List<Behavior> output = new ArrayList<>();
+        List<Action> output = new ArrayList<>();
         int matchCount;
         //For each goal
-        for (Behavior behavior:mList){
+        for (Action action:mList){
             //The match count is reset
             matchCount = 0;
             //For each item in the constraint array
             for (String constraintItem:constraintArray){
                 //If either title or description match, increase the match count
-                if (behavior.getTitle().toLowerCase().contains(constraintItem) ||
-                        behavior.getDescription().toLowerCase().contains(constraintItem)){
+                if (action.getTitle().toLowerCase().contains(constraintItem) ||
+                        action.getDescription().toLowerCase().contains(constraintItem)){
                     matchCount++;
                 }
             }
             //If all the words were present, add the goal to the output
             if (matchCount == constraintArray.length){
-                output.add(behavior);
+                output.add(action);
             }
         }
 
@@ -61,7 +61,7 @@ public class BehaviorFilter extends Filter{
     @Override
     protected void publishResults(CharSequence constraint, FilterResults results){
         if (results instanceof BehaviorFilterResults){
-            mAdapter.setBehaviors(((BehaviorFilterResults)results).mOutput);
+            mAdapter.setActions(((BehaviorFilterResults)results).mOutput);
         }
     }
 
@@ -73,14 +73,14 @@ public class BehaviorFilter extends Filter{
      * @version 1.0.0
      */
     private class BehaviorFilterResults extends FilterResults{
-        private final List<Behavior> mOutput;
+        private final List<Action> mOutput;
 
         /**
          * Constructor.
          *
          * @param output the result of the filtering.
          */
-        BehaviorFilterResults(List<Behavior> output){
+        BehaviorFilterResults(List<Action> output){
             mOutput = output;
         }
     }

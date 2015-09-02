@@ -74,14 +74,14 @@ public class ChooseGoalsActivity
 
         mApplication = (CompassApplication)getApplication();
 
-        mCategory = (Category) getIntent().getSerializableExtra("category");
+        mCategory = (Category)getIntent().getSerializableExtra("category");
         List<Category> categories = mApplication.getUserData().getCategories();
         int index = categories.indexOf(mCategory);
         if (index != -1){
             mCategory = categories.get(index);
         }
 
-        mToolbar = (Toolbar) findViewById(R.id.choose_goals_toolbar);
+        mToolbar = (Toolbar)findViewById(R.id.choose_goals_toolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
         mToolbar.setTitle(getString(R.string.choose_goals_header_label, mCategory.getTitle()));
         setSupportActionBar(mToolbar);
@@ -91,7 +91,7 @@ public class ChooseGoalsActivity
 
         mHeaderView = findViewById(R.id.choose_goals_material_view);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.choose_goals_recyclerview);
+        mRecyclerView = (RecyclerView)findViewById(R.id.choose_goals_recyclerview);
         HeaderLayoutManagerFixed manager = new HeaderLayoutManagerFixed(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.addItemDecoration(new SpacingItemDecoration(this, 10));
@@ -104,7 +104,7 @@ public class ChooseGoalsActivity
 
         mRecyclerView.setAdapter(mAdapter);
 
-        if (mCategory != null && !mCategory.getColor().isEmpty()) {
+        if (mCategory != null && !mCategory.getColor().isEmpty()){
             mHeaderView.setBackgroundColor(Color.parseColor(mCategory.getColor()));
             mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }

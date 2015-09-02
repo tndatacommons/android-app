@@ -2,6 +2,7 @@ package org.tndata.android.compass.activity;
 
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -9,14 +10,18 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
@@ -47,11 +52,17 @@ public class ChooseActionsActivity
                 ActionLoaderTask.ActionLoaderListener,
                 AddActionTask.AddActionTaskListener,
                 DeleteActionTask.DeleteActionTaskListener,
-                ChooseActionsAdapter.ChooseActionsListener{
+                ChooseActionsAdapter.ChooseActionsListener,
+                MenuItemCompat.OnActionExpandListener,
+                SearchView.OnQueryTextListener,
+                SearchView.OnCloseListener{
 
     private static final String TAG = "ChooseActionsActivity";
 
     private Toolbar mToolbar;
+    private MenuItem mSearchItem;
+    private SearchView mSearchView;
+
     private Goal mGoal;
     private ChooseActionsAdapter mAdapter;
     private View mHeaderView;
@@ -100,6 +111,54 @@ public class ChooseActionsActivity
         }
 
         new ActionLoaderTask(this).execute(mApplication.getToken(), String.valueOf(behavior.getId()));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu_filter, menu);
+        mSearchItem = menu.findItem(R.id.filter);
+        MenuItemCompat.setOnActionExpandListener(mSearchItem, this);
+
+        mSearchView = (SearchView)mSearchItem.getActionView();
+        mSearchView.setIconified(false);
+        mSearchView.setOnCloseListener(this);
+        mSearchView.setOnQueryTextListener(this);
+        mSearchView.clearFocus();
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onMenuItemActionExpand(MenuItem item){
+        mSearchView.requestFocus();
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionCollapse(MenuItem item){
+        mSearchView.setQuery("", false);
+        mSearchView.clearFocus();
+        return true;
+    }
+
+    @Override
+    public boolean onClose(){
+        mSearchItem.collapseActionView();
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query){
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText){
+        Log.d("Search", newText);
+        mAdapter.filter(newText);
+        return false;
     }
 
     /**
