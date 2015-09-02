@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -19,6 +21,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ActionActivity;
 import org.tndata.android.compass.activity.BehaviorProgressActivity;
+import org.tndata.android.compass.activity.SnoozeActivity;
 import org.tndata.android.compass.util.Constants;
 
 
@@ -111,6 +114,8 @@ public class GcmIntentService extends IntentService {
         Context ctx = getApplicationContext();
         NotificationManager mNotificationManager = (NotificationManager)ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 
+        Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
         if (object_type.equals(Constants.ACTION_TYPE)){
             try{
                 Intent intent = new Intent(getApplicationContext(), ActionActivity.class);
@@ -122,11 +127,11 @@ public class GcmIntentService extends IntentService {
                         (int)System.currentTimeMillis(), intent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
 
-                Intent snoozeIntent = new Intent(this, SnoozeService.class)
+                Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
                         .putExtra(SnoozeService.NOTIFICATION_ID_KEY, Integer.valueOf(id))
                         .putExtra(SnoozeService.PUSH_NOTIFICATION_ID_KEY, notificationId);
 
-                PendingIntent snoozePendingIntent = PendingIntent.getService(ctx,
+                PendingIntent snoozePendingIntent = PendingIntent.getActivity(ctx,
                         (int)System.currentTimeMillis(), snoozeIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -149,8 +154,9 @@ public class GcmIntentService extends IntentService {
                         .setContentText(msg)
                         .setLargeIcon(icon)
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                        .addAction(R.drawable.ic_alarm_black_24dp, "Snooze", snoozePendingIntent)
-                        .addAction(R.drawable.ic_check_normal_dark, "I did it", didItPendingIntent)
+                        .setSound(sound)
+                        .addAction(R.drawable.ic_alarm_black_24dp, getString(R.string.later_title), snoozePendingIntent)
+                        .addAction(R.drawable.ic_check_normal_dark, getString(R.string.did_it_title), didItPendingIntent)
                         .addExtras(args)
                         .setContentIntent(contentIntent)
                         .setAutoCancel(true)
@@ -182,6 +188,7 @@ public class GcmIntentService extends IntentService {
                     .setContentText(msg)
                     .setLargeIcon(icon)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setSound(sound)
                     .addExtras(args)
                     .setContentIntent(contentIntent)
                     .setAutoCancel(true)
