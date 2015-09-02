@@ -12,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -47,6 +49,7 @@ public class ActionActivity
     private Action mAction;
 
     //UI components
+    private FrameLayout mHeroContainer;
     private ImageView mActionImage;
     private TextView mActionTitle;
     private TextView mActionDescription;
@@ -67,6 +70,7 @@ public class ActionActivity
         mAction = null;
 
         //Fetch UI components
+        mHeroContainer = (FrameLayout)findViewById(R.id.action_hero_container);
         RelativeLayout circleView = (RelativeLayout)findViewById(R.id.action_circle_view);
         mActionImage = (ImageView)findViewById(R.id.action_image);
         mActionTitle = (TextView)findViewById(R.id.action_title);
@@ -74,6 +78,21 @@ public class ActionActivity
         mMoreInfoHeader = (TextView)findViewById(R.id.action_more_info_header);
         mMoreInfo = (TextView)findViewById(R.id.action_more_info);
         mTickSwitcher = (ViewSwitcher)findViewById(R.id.action_tick_switcher);
+
+        mHeroContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
+            @Override
+            @SuppressWarnings("deprecation")
+            public void onGlobalLayout(){
+                int width = mHeroContainer.getWidth();
+                mHeroContainer.getLayoutParams().height = (width*2)/3;
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
+                    mHeroContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+                else{
+                    mHeroContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            }
+        });
 
         //Animate the switcher.
         mTickSwitcher.setInAnimation(this, R.anim.action_switcher_fade_in);
