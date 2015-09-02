@@ -149,6 +149,7 @@ public class ChooseGoalsAdapter
         mGoals.addAll(goals);
         populateStateArray();
         notifyDataSetChanged();
+
         if (mFilter == null){
             mFilter = new GoalFilter(this, goals);
         }
