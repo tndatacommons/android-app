@@ -230,6 +230,11 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".activity.PlacesActivity"
+            android:label="Places"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".activity.PlaceActivity"
             android:label="Place"
             android:screenOrientation="portrait" />
