@@ -10,6 +10,8 @@ import com.google.android.gms.maps.model.LatLng;
  * @version 1.0.0
  */
 public class Place{
+    private int id = 0;
+
     private String name = "";
 
     private double latitude = 0;
@@ -28,11 +30,20 @@ public class Place{
         this.longitude = longitude;
     }
 
+    public int getId(){
+        return id;
+    }
+
     public String getName(){
         return name;
     }
 
     public LatLng getLocation(){
         return new LatLng(latitude, longitude);
+    }
+
+    @Override
+    public boolean equals(Object o){
+        return (o instanceof Place) && (((Place)o).id == id);
     }
 }
