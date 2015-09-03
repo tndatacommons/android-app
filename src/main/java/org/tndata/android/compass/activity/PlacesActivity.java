@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -49,7 +50,9 @@ public class PlacesActivity extends AppCompatActivity{
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         if (item.getItemId() == R.id.places_add){
-            startActivityForResult(new Intent(this, PlaceActivity.class), 0);
+            Intent add = new Intent(this, PlaceActivity.class);
+            add.putExtra(PlaceActivity.EDIT_MODE_KEY, false);
+            startActivityForResult(add, 0);
             return true;
         }
         return false;
@@ -58,7 +61,9 @@ public class PlacesActivity extends AppCompatActivity{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (resultCode == RESULT_OK){
-
+            Place place = (Place)data.getSerializableExtra(PlaceActivity.PLACE_RESULT_KEY);
+            Log.d("PlacesActivity", place.toString());
+            mAdapter.addPlace(place);
         }
     }
 }

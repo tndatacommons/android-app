@@ -2,6 +2,8 @@ package org.tndata.android.compass.model;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.Serializable;
+
 
 /**
  * A representation of a place.
@@ -9,7 +11,9 @@ import com.google.android.gms.maps.model.LatLng;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class Place{
+public class Place implements Serializable{
+    static final long serialVersionUID = 9654318439L;
+
     private int id = 0;
 
     private String name = "";
@@ -45,5 +49,10 @@ public class Place{
     @Override
     public boolean equals(Object o){
         return (o instanceof Place) && (((Place)o).id == id);
+    }
+
+    @Override
+    public String toString(){
+        return "(" + id + ") " + name + ": " + latitude + ", " + longitude;
     }
 }
