@@ -12,6 +12,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Place;
@@ -53,8 +54,13 @@ public class PlaceActivity extends AppCompatActivity{
         if (mEditMode){
             mPlace = (Place)getIntent().getSerializableExtra(PLACE_KEY);
 
-            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(mPlace.getLocation(), 16);
+            mName.setText(mPlace.getName());
+            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(mPlace.getLocation(), 15);
             mMap.animateCamera(update);
+
+            mName.setEnabled(false);
+            UiSettings settings = mMap.getUiSettings();
+            settings.setAllGesturesEnabled(false);
         }
     }
 
@@ -73,6 +79,10 @@ public class PlaceActivity extends AppCompatActivity{
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         if (item == mActionItem && mEditMode){
+            mName.setEnabled(true);
+            UiSettings settings = mMap.getUiSettings();
+            settings.setAllGesturesEnabled(true);
+
             mActionItem.setTitle("Save place");
             mActionItem.setTitleCondensed("Save");
             mActionItem.setIcon(R.drawable.ic_save);

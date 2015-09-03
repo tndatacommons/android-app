@@ -7,6 +7,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import org.tndata.android.compass.R;
@@ -19,7 +21,7 @@ import java.util.ArrayList;
 /**
  * Created by isma on 9/3/15.
  */
-public class PlacesActivity extends AppCompatActivity{
+public class PlacesActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
     private PlacesAdapter mAdapter;
 
 
@@ -39,6 +41,7 @@ public class PlacesActivity extends AppCompatActivity{
 
         ListView list = (ListView)findViewById(R.id.places_list);
         list.setAdapter(mAdapter);
+        list.setOnItemClickListener(this);
     }
 
     @Override
@@ -65,5 +68,14 @@ public class PlacesActivity extends AppCompatActivity{
             Log.d("PlacesActivity", place.toString());
             mAdapter.addPlace(place);
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+        Place place = mAdapter.getItem(position);
+        Intent add = new Intent(this, PlaceActivity.class);
+        add.putExtra(PlaceActivity.EDIT_MODE_KEY, true);
+        add.putExtra(PlaceActivity.PLACE_KEY, place);
+        startActivityForResult(add, 0);
     }
 }
