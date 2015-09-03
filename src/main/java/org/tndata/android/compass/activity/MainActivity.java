@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements
 
             case DRAWER_COUNT:
                 //Debug button
-                startActivity(new Intent(getApplicationContext(), PlaygroundActivity.class));
+                startActivity(new Intent(getApplicationContext(), PlaceActivity.class));
                 break;
         }
         mDrawerLayout.closeDrawers();
