@@ -7,7 +7,7 @@
         android:id="@+id/places_add"
         android:title="Save place"
         android:titleCondensed="Save"
-        android:icon="@drawable/ic_add_white_24dp"
+        android:icon="@drawable/ic_save"
         app:showAsAction="always" />
 
 </menu>
