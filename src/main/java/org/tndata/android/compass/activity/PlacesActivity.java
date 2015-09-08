@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.android.gms.location.places.ui.PlacePicker;
+
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.PlacesAdapter;
 import org.tndata.android.compass.model.Place;
@@ -53,9 +55,17 @@ public class PlacesActivity extends AppCompatActivity implements AdapterView.OnI
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         if (item.getItemId() == R.id.places_add){
-            Intent add = new Intent(this, PlaceActivity.class);
+            /*Intent add = new Intent(this, PlaceActivity.class);
             add.putExtra(PlaceActivity.EDIT_MODE_KEY, false);
-            startActivityForResult(add, 0);
+            startActivityForResult(add, 0);*/
+            int PLACE_PICKER_REQUEST = 1;
+            PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+            try{
+                startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
             return true;
         }
         return false;

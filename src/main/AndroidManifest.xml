@@ -20,13 +20,14 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="org.tndata.android.compass.permission.C2D_MESSAGE" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".CompassApplication"
@@ -35,9 +36,24 @@
         android:label="@string/app_name"
         android:theme="@style/CustomActionBarTheme">
 
+        <!-- Maps stuff -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="${mapsApiKey}" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${mapsApiKey}"/>
+
+
+        <!-- Fabric stuff -->
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="${fabricApiKey}" />
 
         <activity
             android:name="org.tndata.android.compass.activity.LoginActivity"
@@ -264,9 +280,9 @@
 
         <service android:name="org.tndata.android.compass.service.LogOutService" />
 
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="${fabricApiKey}" />
+        <service android:name="service.GeofenceTransitionService"/>
+
+        <service android:name=".service.LocationProviderService" />
 
     </application>
 </manifest>

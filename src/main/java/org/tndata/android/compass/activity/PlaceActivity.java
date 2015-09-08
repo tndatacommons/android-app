@@ -88,7 +88,7 @@ public class PlaceActivity extends AppCompatActivity{
             mActionItem.setIcon(R.drawable.ic_save);
             mEditMode = false;
         }
-        else if (item == mActionItem && !mEditMode){
+        else if (item == mActionItem){
             mPlace = new Place();
             mPlace.setName(mName.getText().toString().trim());
             mPlace.setLatitude(mMap.getCameraPosition().target.latitude);
