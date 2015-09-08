@@ -37,9 +37,6 @@
         android:theme="@style/CustomActionBarTheme">
 
         <!-- Maps stuff -->
-        <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="${mapsApiKey}" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -47,7 +44,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="${mapsApiKey}"/>
+            android:value="${mapsApiKey}" />
 
 
         <!-- Fabric stuff -->
@@ -259,6 +256,16 @@
             android:name=".activity.SnoozeActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activity.PlacePickerActivity"
+            android:screenOrientation="portrait" >
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.tndata.android.compass.activity.PlacesActivity" />
+
+        </activity>
 
         <receiver
             android:name="org.tndata.android.compass.service.GcmBroadcastReceiver"

@@ -55,17 +55,17 @@ public class PlacesActivity extends AppCompatActivity implements AdapterView.OnI
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         if (item.getItemId() == R.id.places_add){
-            /*Intent add = new Intent(this, PlaceActivity.class);
+            Intent add = new Intent(this, PlacePickerActivity.class);
             add.putExtra(PlaceActivity.EDIT_MODE_KEY, false);
-            startActivityForResult(add, 0);*/
-            int PLACE_PICKER_REQUEST = 1;
+            startActivityForResult(add, 0);
+            /*int PLACE_PICKER_REQUEST = 1;
             PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
             try{
                 startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
             }
             catch (Exception e){
                 e.printStackTrace();
-            }
+            }*/
             return true;
         }
         return false;
