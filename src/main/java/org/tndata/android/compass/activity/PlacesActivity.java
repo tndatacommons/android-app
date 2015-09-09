@@ -24,6 +24,8 @@ import java.util.ArrayList;
  * Created by isma on 9/3/15.
  */
 public class PlacesActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
+    private static final int PLACE_PICKER_REQUEST_CODE = 65485;
+
     private PlacesAdapter mAdapter;
 
 
@@ -55,17 +57,7 @@ public class PlacesActivity extends AppCompatActivity implements AdapterView.OnI
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         if (item.getItemId() == R.id.places_add){
-            Intent add = new Intent(this, PlacePickerActivity.class);
-            add.putExtra(PlaceActivity.EDIT_MODE_KEY, false);
-            startActivityForResult(add, 0);
-            /*int PLACE_PICKER_REQUEST = 1;
-            PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-            try{
-                startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }*/
+            startActivityForResult(new Intent(this, PlacePickerActivity.class), PLACE_PICKER_REQUEST_CODE);
             return true;
         }
         return false;
@@ -74,18 +66,19 @@ public class PlacesActivity extends AppCompatActivity implements AdapterView.OnI
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (resultCode == RESULT_OK){
-            Place place = (Place)data.getSerializableExtra(PlaceActivity.PLACE_RESULT_KEY);
-            Log.d("PlacesActivity", place.toString());
-            mAdapter.addPlace(place);
+            if (requestCode == PLACE_PICKER_REQUEST_CODE){
+                Place place = (Place)data.getSerializableExtra(PlacePickerActivity.PLACE_RESULT_KEY);
+                Log.d("PlacesActivity", place.toString());
+                mAdapter.addPlace(place);
+            }
         }
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id){
         Place place = mAdapter.getItem(position);
-        Intent add = new Intent(this, PlaceActivity.class);
-        add.putExtra(PlaceActivity.EDIT_MODE_KEY, true);
-        add.putExtra(PlaceActivity.PLACE_KEY, place);
-        startActivityForResult(add, 0);
+        Intent add = new Intent(this, PlacePickerActivity.class);
+        add.putExtra(PlacePickerActivity.PLACE_KEY, place);
+        startActivityForResult(add, PLACE_PICKER_REQUEST_CODE);
     }
 }

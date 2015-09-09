@@ -1,11 +1,13 @@
 package org.tndata.android.compass.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -16,17 +18,19 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.PlacePickerAdapter;
+import org.tndata.android.compass.model.Place;
 
 
 /**
@@ -37,7 +41,14 @@ public class PlacePickerActivity
         implements
                 GoogleApiClient.ConnectionCallbacks,
                 GoogleApiClient.OnConnectionFailedListener,
-                AdapterView.OnItemClickListener{
+                AdapterView.OnItemClickListener,
+                OnMapReadyCallback{
+
+    public static final String PLACE_KEY = "org.tndata.compass.Place";
+    public static final String PLACE_RESULT_KEY = "org.tndata.compass.ResultPlace";
+
+
+    private Place mPlace;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -48,10 +59,15 @@ public class PlacePickerActivity
     private GoogleMap mMap;
     private Marker mMarker;
 
+    private MenuItem mSave;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_picker);
+
+        mPlace = (Place)getIntent().getSerializableExtra(PLACE_KEY);
 
         //Get and set the toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.place_picker_toolbar);
@@ -66,11 +82,13 @@ public class PlacePickerActivity
         mResults.setAdapter(mAdapter);
         mResults.setOnItemClickListener(this);
 
-        ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE))
-                .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        if (mPlace == null){
+            ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE))
+                    .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }
 
         mMapContainer = (FrameLayout)findViewById(R.id.place_picker_map_container);
-        mMap = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.place_picker_map)).getMap();
+        ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.place_picker_map)).getMapAsync(this);
         mMarker = null;
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -83,9 +101,33 @@ public class PlacePickerActivity
     }
 
     @Override
+    public void onMapReady(GoogleMap googleMap){
+        mMap = googleMap;
+        if (mPlace != null){
+            placeMarker(mPlace.getLocation());
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_place_picker, menu);
+        mSave = menu.findItem(R.id.place_picker_save);
+        if (mPlace != null){
+            mSave.setEnabled(true);
+        }
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        if (item.getItemId() == R.id.place_picker_save){
+            Intent data = new Intent();
+            data.putExtra(PLACE_RESULT_KEY, mPlace);
+            setResult(RESULT_OK, data);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -133,17 +175,28 @@ public class PlacePickerActivity
                     @Override
                     public void onResult(PlaceBuffer places){
                         if (places.getStatus().isSuccess()){
-                            final Place myPlace = places.get(0);
-                            Log.d("PlacePicker", "Place found: " + myPlace.getName() + ", " + myPlace.getLatLng());
-                            mMapContainer.setVisibility(View.VISIBLE);
-                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myPlace.getLatLng(), 16));
-                            if (mMarker != null){
-                                mMarker.remove();
+                            if (mPlace == null){
+                                mPlace = new Place();
                             }
-                            mMarker = mMap.addMarker(new MarkerOptions().position(myPlace.getLatLng()));
+                            LatLng latLng = places.get(0).getLatLng();
+                            mPlace.setLatitude(latLng.latitude);
+                            mPlace.setLongitude(latLng.longitude);
+                            placeMarker(latLng);
                         }
                         places.release();
                     }
                 });
+    }
+
+    private void placeMarker(LatLng position){
+        mMapContainer.setVisibility(View.VISIBLE);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position, 16));
+        if (mMarker != null){
+            mMarker.remove();
+        }
+        mMarker = mMap.addMarker(new MarkerOptions().position(position));
+        if (mSave != null){
+            mSave.setEnabled(true);
+        }
     }
 }
