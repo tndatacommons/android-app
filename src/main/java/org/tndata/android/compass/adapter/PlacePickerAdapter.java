@@ -3,6 +3,7 @@ package org.tndata.android.compass.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,11 +31,16 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * Created by isma on 9/8/15.
+ * Adapter for the auto-complete text view in the PlacePickerActivity.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class PlacePickerAdapter
         extends BaseAdapter
-        implements Filterable, ResultCallback<AutocompletePredictionBuffer>{
+        implements
+                Filterable,
+                ResultCallback<AutocompletePredictionBuffer>{
 
     private Context mContext;
     private GoogleApiClient mGoogleApiClient;
@@ -44,6 +50,11 @@ public class PlacePickerAdapter
     private int mQueryLength;
 
 
+    /**
+     * Constructor.
+     *
+     * @param context the containing activity.
+     */
     public PlacePickerAdapter(Context context){
         mContext = context;
         mPlaces = new ArrayList<>();
@@ -65,6 +76,12 @@ public class PlacePickerAdapter
         return position;
     }
 
+    /**
+     * Getter for the id of the place as given by the google places api.
+     *
+     * @param position the position of the item in the adapter.
+     * @return the id of the place.
+     */
     public String getPlaceId(int position){
         return mPlaces.get(position).mPlaceId;
     }
@@ -88,7 +105,12 @@ public class PlacePickerAdapter
         return convertView;
     }
 
-    public void setGoogleApiClient(GoogleApiClient googleApiClient){
+    /**
+     * Sets an api client to the adapter.
+     *
+     * @param googleApiClient the google api client.
+     */
+    public void setGoogleApiClient(@NonNull GoogleApiClient googleApiClient){
         this.mGoogleApiClient = googleApiClient;
     }
 
@@ -97,8 +119,10 @@ public class PlacePickerAdapter
         return new Filter(){
             @Override
             protected FilterResults performFiltering(CharSequence constraint){
+                //Only show results when typing, not when deleting
                 if (constraint.length() < mQueryLength){
                     if (mPlaces.size() != 0){
+                        //Clear in the UI thread
                         ((Activity)mContext).runOnUiThread(new Runnable(){
                             @Override
                             public void run(){
@@ -115,7 +139,7 @@ public class PlacePickerAdapter
                     }
 
                     Log.d("PlacePicker", constraint.toString());
-                    displayPredictiveResults(constraint.toString());
+                    getPlacePredictions(constraint.toString());
                 }
                 mQueryLength = constraint.length();
                 return null;
@@ -128,11 +152,16 @@ public class PlacePickerAdapter
         };
     }
 
-    private void displayPredictiveResults(String query){
+    /**
+     * Sets up the call to google to get predictions on locations.
+     *
+     * @param query the string searched by the user.
+     */
+    private void getPlacePredictions(String query){
+        //If there is a location available use it with a ~20 Km radius
         LatLngBounds bounds;
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location == null){
-            //Southwest corner to Northeast corner.
             bounds = new LatLngBounds(new LatLng(-90, -180), new LatLng(90, 180));
             Log.d("PlacePicker", "No location");
         }
@@ -149,6 +178,7 @@ public class PlacePickerAdapter
 
     @Override
     public void onResult(final AutocompletePredictionBuffer autocompletePredictions){
+        //Update the list with the results in the UI thread
         ((Activity)mContext).runOnUiThread(new Runnable(){
             @Override
             public void run(){
@@ -172,11 +202,23 @@ public class PlacePickerAdapter
     }
 
 
+    /**
+     * Data holder for a place's description and id.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     private class GooglePlace{
         private String mPlaceId;
         private String mDescription;
 
 
+        /**
+         * Constructor.
+         *
+         * @param placeId the id of the place as given by the places api.
+         * @param description the description of the place as given by the places api.
+         */
         private GooglePlace(String placeId, String description){
             mPlaceId = placeId;
             mDescription = description;
@@ -184,6 +226,12 @@ public class PlacePickerAdapter
     }
 
 
+    /**
+     * View holder for the adapter.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     private class ViewHolder{
         private TextView mPlace;
     }
