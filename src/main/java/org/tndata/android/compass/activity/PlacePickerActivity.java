@@ -34,16 +34,22 @@ import org.tndata.android.compass.model.Place;
 
 
 /**
- * Created by isma on 9/8/15.
+ * Allows the user to pick a spot in the map by typing a place in the form of an address,
+ * the name of an establishment, or code.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class PlacePickerActivity
         extends AppCompatActivity
         implements
                 GoogleApiClient.ConnectionCallbacks,
                 GoogleApiClient.OnConnectionFailedListener,
+                ResultCallback<PlaceBuffer>,
                 AdapterView.OnItemClickListener,
                 OnMapReadyCallback{
 
+    //Data keys
     public static final String PLACE_KEY = "org.tndata.compass.Place";
     public static final String PLACE_RESULT_KEY = "org.tndata.compass.ResultPlace";
 
@@ -67,6 +73,7 @@ public class PlacePickerActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_picker);
 
+        //Retrieve the place, which may be null
         mPlace = (Place)getIntent().getSerializableExtra(PLACE_KEY);
 
         //Get and set the toolbar
@@ -77,20 +84,25 @@ public class PlacePickerActivity
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
+        //Create and set the adapter
         mAdapter = new PlacePickerAdapter(this);
         mResults = (AutoCompleteTextView)findViewById(R.id.place_picker_results);
         mResults.setAdapter(mAdapter);
         mResults.setOnItemClickListener(this);
 
+        //Show the keyboard only if no place is being edited
         if (mPlace == null){
             ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE))
                     .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         }
 
+        //Retrieve the map
         mMapContainer = (FrameLayout)findViewById(R.id.place_picker_map_container);
-        ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.place_picker_map)).getMapAsync(this);
+        ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.place_picker_map))
+                .getMapAsync(this);
         mMarker = null;
 
+        //Initialise the api client
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
@@ -102,9 +114,10 @@ public class PlacePickerActivity
 
     @Override
     public void onMapReady(GoogleMap googleMap){
+        //Set the map and place a marker if a place was passed
         mMap = googleMap;
         if (mPlace != null){
-            placeMarker(mPlace.getLocation());
+            onPlaceSelected(mPlace.getLocation());
         }
     }
 
@@ -112,6 +125,7 @@ public class PlacePickerActivity
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_place_picker, menu);
         mSave = menu.findItem(R.id.place_picker_save);
+        //If a place was passed, enable save
         if (mPlace != null){
             mSave.setEnabled(true);
         }
@@ -167,28 +181,39 @@ public class PlacePickerActivity
     public void onItemClick(AdapterView<?> parent, View view, int position, long id){
         Log.d("PlacePicker", mAdapter.getItem(position));
 
+        //Hide the keyboard
         ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mResults.getWindowToken(), 0);
 
+        //Make the api call to retrieve the place information
         Places.GeoDataApi.getPlaceById(mGoogleApiClient, mAdapter.getPlaceId(position))
-                .setResultCallback(new ResultCallback<PlaceBuffer>(){
-                    @Override
-                    public void onResult(PlaceBuffer places){
-                        if (places.getStatus().isSuccess()){
-                            if (mPlace == null){
-                                mPlace = new Place();
-                            }
-                            LatLng latLng = places.get(0).getLatLng();
-                            mPlace.setLatitude(latLng.latitude);
-                            mPlace.setLongitude(latLng.longitude);
-                            placeMarker(latLng);
-                        }
-                        places.release();
-                    }
-                });
+                .setResultCallback(this);
     }
 
-    private void placeMarker(LatLng position){
+    @Override
+    public void onResult(PlaceBuffer placeBuffer){
+        if (placeBuffer.getStatus().isSuccess()){
+            //If the place doesn't exist, create it
+            if (mPlace == null){
+                mPlace = new Place();
+            }
+            //Populate the place
+            LatLng latLng = placeBuffer.get(0).getLatLng();
+            mPlace.setLatitude(latLng.latitude);
+            mPlace.setLongitude(latLng.longitude);
+            onPlaceSelected(latLng);
+        }
+        placeBuffer.release();
+    }
+
+    /**
+     * Makes the map visible, animates the camera towards the selected place, cleans up
+     * the previously placed marker, places a new one in the selected place, and enables
+     * the save button..
+     *
+     * @param position the position of the selected place.
+     */
+    private void onPlaceSelected(LatLng position){
         mMapContainer.setVisibility(View.VISIBLE);
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position, 16));
         if (mMarker != null){
