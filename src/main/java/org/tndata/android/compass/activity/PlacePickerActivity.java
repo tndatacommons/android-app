@@ -1,11 +1,13 @@
 package org.tndata.android.compass.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.FrameLayout;
@@ -64,6 +66,9 @@ public class PlacePickerActivity
         mResults.setAdapter(mAdapter);
         mResults.setOnItemClickListener(this);
 
+        ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE))
+                .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
         mMapContainer = (FrameLayout)findViewById(R.id.place_picker_map_container);
         mMap = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.place_picker_map)).getMap();
         mMarker = null;
@@ -119,6 +124,9 @@ public class PlacePickerActivity
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id){
         Log.d("PlacePicker", mAdapter.getItem(position));
+
+        ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE))
+                .hideSoftInputFromWindow(mResults.getWindowToken(), 0);
 
         Places.GeoDataApi.getPlaceById(mGoogleApiClient, mAdapter.getPlaceId(position))
                 .setResultCallback(new ResultCallback<PlaceBuffer>(){
