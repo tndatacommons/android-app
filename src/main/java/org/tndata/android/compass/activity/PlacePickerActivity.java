@@ -3,12 +3,25 @@ package org.tndata.android.compass.activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.FrameLayout;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.PlacePickerAdapter;
@@ -21,13 +34,17 @@ public class PlacePickerActivity
         extends AppCompatActivity
         implements
                 GoogleApiClient.ConnectionCallbacks,
-                GoogleApiClient.OnConnectionFailedListener{
+                GoogleApiClient.OnConnectionFailedListener,
+                AdapterView.OnItemClickListener{
 
     private GoogleApiClient mGoogleApiClient;
 
     private AutoCompleteTextView mResults;
     private PlacePickerAdapter mAdapter;
 
+    private FrameLayout mMapContainer;
+    private GoogleMap mMap;
+    private Marker mMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -45,6 +62,11 @@ public class PlacePickerActivity
         mAdapter = new PlacePickerAdapter(this);
         mResults = (AutoCompleteTextView)findViewById(R.id.place_picker_results);
         mResults.setAdapter(mAdapter);
+        mResults.setOnItemClickListener(this);
+
+        mMapContainer = (FrameLayout)findViewById(R.id.place_picker_map_container);
+        mMap = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.place_picker_map)).getMap();
+        mMarker = null;
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Places.GEO_DATA_API)
@@ -53,6 +75,12 @@ public class PlacePickerActivity
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu_place_picker, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -86,5 +114,28 @@ public class PlacePickerActivity
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult){
         //Unused
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+        Log.d("PlacePicker", mAdapter.getItem(position));
+
+        Places.GeoDataApi.getPlaceById(mGoogleApiClient, mAdapter.getPlaceId(position))
+                .setResultCallback(new ResultCallback<PlaceBuffer>(){
+                    @Override
+                    public void onResult(PlaceBuffer places){
+                        if (places.getStatus().isSuccess()){
+                            final Place myPlace = places.get(0);
+                            Log.d("PlacePicker", "Place found: " + myPlace.getName() + ", " + myPlace.getLatLng());
+                            mMapContainer.setVisibility(View.VISIBLE);
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myPlace.getLatLng(), 16));
+                            if (mMarker != null){
+                                mMarker.remove();
+                            }
+                            mMarker = mMap.addMarker(new MarkerOptions().position(myPlace.getLatLng()));
+                        }
+                        places.release();
+                    }
+                });
     }
 }

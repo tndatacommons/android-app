@@ -19,16 +19,20 @@
             android:id="@+id/place_picker_results"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:hint="Search"
+            android:singleLine="true"
             android:layout_below="@id/place_picker_toolbar"
             android:completionThreshold="1" />
 
     </android.support.v7.widget.Toolbar>
 
     <FrameLayout
+        android:id="@+id/place_picker_map_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/place_picker_toolbar">
+        android:layout_below="@id/place_picker_toolbar"
+        android:visibility="gone" >
 
         <fragment
             android:id="@+id/place_picker_map"
