@@ -156,7 +156,7 @@ public class GcmIntentService extends IntentService {
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                         .setSound(sound)
                         .addAction(R.drawable.ic_alarm_black_24dp, getString(R.string.later_title), snoozePendingIntent)
-                        .addAction(R.drawable.ic_check_normal_dark, getString(R.string.did_it_title), didItPendingIntent)
+                        .addAction(R.drawable.ic_check, getString(R.string.did_it_title), didItPendingIntent)
                         .addExtras(args)
                         .setContentIntent(contentIntent)
                         .setAutoCancel(true)
