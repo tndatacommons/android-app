@@ -116,7 +116,7 @@ public class PlacePickerActivity
     public void onMapReady(GoogleMap googleMap){
         //Set the map and place a marker if a place was passed
         mMap = googleMap;
-        if (mPlace != null){
+        if (mPlace != null && !(mPlace.isPrimary() && !mPlace.isSet())){
             onPlaceSelected(mPlace.getLocation());
         }
     }

@@ -35,6 +35,7 @@ public class PlacesActivity
         implements
                 AdapterView.OnItemClickListener,
                 PrimaryPlaceLoaderTask.PrimaryPlaceLoaderCallback,
+                DialogInterface.OnClickListener,
                 DialogInterface.OnShowListener,
                 View.OnClickListener{
 
@@ -51,6 +52,8 @@ public class PlacesActivity
     private boolean mEdition;
 
     private PlacesAdapter mAdapter;
+
+    private Place mCurrentPlace;
 
 
     @Override
@@ -103,16 +106,17 @@ public class PlacesActivity
 
             //The user places are added to the list in the appropriate order
             for (Place place:currentPlaces){
+                place.setSet(true);
                 //If the place is primary it is added at the head, otherwise it is added at the tail
                 if (primaryPlaces.contains(place)){
                     place.setPrimary(true);
-                    place.setSet(true);
                     places.add(place);
                     //The primary place is removed from the list to keep track of which ones have
                     //  been added already
                     primaryPlaces.remove(place);
                 }
                 else{
+                    place.setPrimary(false);
                     userPlaces.add(place);
                 }
             }
@@ -142,16 +146,13 @@ public class PlacesActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         if (item.getItemId() == R.id.places_add){
-            beginAddProcess();
+            mCurrentPlace = null;
+            mEdition = false;
+            mName.setText("");
+            mNameDialog.show();
             return true;
         }
         return false;
-    }
-
-    private void beginAddProcess(){
-        mEdition = false;
-        mName.setText("");
-        mNameDialog.show();
     }
 
     @Override
@@ -179,7 +180,7 @@ public class PlacesActivity
             else{
                 mNameDialog.dismiss();
                 if (mEdition){
-                    //savePlace();
+                    savePlace();
                 }
                 else{
                     firePlacePicker();
@@ -188,8 +189,44 @@ public class PlacesActivity
         }
     }
 
+    private void savePlace(){
+        mCurrentPlace.setName(mName.getText().toString().trim());
+        mAdapter.notifyDataSetChanged();
+    }
+
     private void firePlacePicker(){
         startActivityForResult(new Intent(this, PlacePickerActivity.class), PLACE_PICKER_REQUEST_CODE);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+        mCurrentPlace = mAdapter.getItem(position);
+        if (mCurrentPlace.isPrimary()){
+            Intent add = new Intent(this, PlacePickerActivity.class);
+            add.putExtra(PlacePickerActivity.PLACE_KEY, mCurrentPlace);
+            startActivityForResult(add, PLACE_PICKER_REQUEST_CODE);
+        }
+        else{
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle("Select an action")
+                    .setItems(new String[]{"Change the name", "Change the location"}, this)
+                    .create();
+            dialog.show();
+        }
+    }
+
+    @Override
+    public void onClick(DialogInterface dialog, int which){
+        if (which == 0){
+            mEdition = true;
+            mName.setText(mCurrentPlace.getName());
+            mNameDialog.show();
+        }
+        else if (which == 1){
+            Intent add = new Intent(PlacesActivity.this, PlacePickerActivity.class);
+            add.putExtra(PlacePickerActivity.PLACE_KEY, mCurrentPlace);
+            startActivityForResult(add, PLACE_PICKER_REQUEST_CODE);
+        }
     }
 
     @Override
@@ -198,16 +235,17 @@ public class PlacesActivity
             if (requestCode == PLACE_PICKER_REQUEST_CODE){
                 Place place = (Place)data.getSerializableExtra(PlacePickerActivity.PLACE_RESULT_KEY);
                 Log.d("PlacesActivity", place.toString());
-                mAdapter.addPlace(place);
+                if (mCurrentPlace == null){
+                    place.setName(mName.getText().toString().trim());
+                    mAdapter.addPlace(place);
+                }
+                else{
+                    mCurrentPlace.setLatitude(place.getLocation().latitude);
+                    mCurrentPlace.setLongitude(place.getLocation().longitude);
+                    mCurrentPlace.setSet(true);
+                    mAdapter.notifyDataSetChanged();
+                }
             }
         }
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id){
-        Place place = mAdapter.getItem(position);
-        Intent add = new Intent(this, PlacePickerActivity.class);
-        add.putExtra(PlacePickerActivity.PLACE_KEY, place);
-        startActivityForResult(add, PLACE_PICKER_REQUEST_CODE);
     }
 }
