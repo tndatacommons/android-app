@@ -91,8 +91,8 @@ public class PlacesActivity
         mNameDialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.places_name_dialog_title)
                 .setView(mName)
-                .setNegativeButton(R.string.places_name_dialog_accept, null)
-                .setPositiveButton(R.string.places_name_dialog_cancel, null)
+                .setNegativeButton(R.string.places_name_dialog_cancel, null)
+                .setPositiveButton(R.string.places_name_dialog_accept, null)
                 .create();
         mNameDialog.setOnShowListener(this);
 

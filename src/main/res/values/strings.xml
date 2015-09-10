@@ -213,7 +213,7 @@
 
     <!-- Places -->
     <string name="places_load_error">There was an error loading the place list</string>
-    <string name="places_name_dialog_title">What's the name of the place?</string>
+    <string name="places_name_dialog_title">What\'s the name of the place?</string>
     <string name="places_name_dialog_accept">Accept</string>
     <string name="places_name_dialog_cancel">Cancel</string>
     <string name="places_name_dialog_empty">You must set a name</string>
