@@ -21,6 +21,9 @@ public class Place implements Serializable{
     private double latitude = 0;
     private double longitude = 0;
 
+    private boolean primary = false;
+    private boolean set = false;
+
 
     public void setName(String name){
         this.name = name;
@@ -32,6 +35,14 @@ public class Place implements Serializable{
 
     public void setLongitude(double longitude){
         this.longitude = longitude;
+    }
+
+    public void setPrimary(boolean primary){
+        this.primary = primary;
+    }
+
+    public void setSet(boolean set){
+        this.set = set;
     }
 
     public int getId(){
@@ -46,13 +57,25 @@ public class Place implements Serializable{
         return new LatLng(latitude, longitude);
     }
 
+    public boolean isPrimary(){
+        return primary;
+    }
+
+    public boolean isSet(){
+        return set;
+    }
+
     @Override
     public boolean equals(Object o){
-        return (o instanceof Place) && (((Place)o).id == id);
+        return (o instanceof Place) && (((Place)o).name.equals(name));
     }
 
     @Override
     public String toString(){
         return "(" + id + ") " + name + ": " + latitude + ", " + longitude;
+    }
+
+    public String getDisplayString(){
+        return name + ((primary&&!set) ? " (not set)" : "");
     }
 }

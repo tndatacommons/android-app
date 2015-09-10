@@ -7,7 +7,7 @@
         android:id="@+id/places_add"
         android:title="Add Place"
         android:titleCondensed="Add"
-        android:icon="@drawable/ic_add_white_24dp"
+        android:enabled="false"
         app:showAsAction="always" />
 
 </menu>

@@ -49,7 +49,7 @@ public class PlacesAdapter extends BaseAdapter{
             convertView = inflater.inflate(R.layout.item_place, parent, false);
         }
 
-        ((TextView)convertView.findViewById(R.id.item_place_name)).setText(getItem(position).toString());
+        ((TextView)convertView.findViewById(R.id.item_place_name)).setText(getItem(position).getDisplayString());
 
         return convertView;
     }
@@ -57,5 +57,9 @@ public class PlacesAdapter extends BaseAdapter{
     public void addPlace(Place place){
         mPlaces.add(place);
         notifyDataSetChanged();
+    }
+
+    public List<Place> getPlaces(){
+        return mPlaces;
     }
 }

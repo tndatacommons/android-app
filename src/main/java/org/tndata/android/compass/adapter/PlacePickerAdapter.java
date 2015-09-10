@@ -3,7 +3,6 @@ package org.tndata.android.compass.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -110,7 +109,7 @@ public class PlacePickerAdapter
      *
      * @param googleApiClient the google api client.
      */
-    public void setGoogleApiClient(@NonNull GoogleApiClient googleApiClient){
+    public void setGoogleApiClient(GoogleApiClient googleApiClient){
         this.mGoogleApiClient = googleApiClient;
     }
 
