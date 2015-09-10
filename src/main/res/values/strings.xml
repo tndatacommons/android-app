@@ -21,7 +21,7 @@
     <string name="popup_menu_content_description">View more options</string>
     <string name="goal_deleted">Goal deleted</string>
     <string name="goal_card_add_label">SHOW ME HOW</string>
-    <string name="goal_card_details_label">MY ACTIONS</string>
+    <string name="goal_card_details_label">MY ACTIVITIES</string>
     <string name="goal_dialog_delete_title">Delete goal?</string>
     <string name="goal_dialog_delete_message">You are about to permanently remove this</string>
 
