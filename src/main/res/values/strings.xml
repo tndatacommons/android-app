@@ -211,4 +211,17 @@
     <!-- I did it -->
     <string name="did_it_title">I did it</string>
 
+    <!-- Places -->
+    <string name="places_load_error">There was an error loading the place list</string>
+    <string name="places_name_dialog_title">What's the name of the place?</string>
+    <string name="places_name_dialog_accept">Accept</string>
+    <string name="places_name_dialog_cancel">Cancel</string>
+    <string name="places_name_dialog_empty">You must set a name</string>
+    <string name="places_name_dialog_chosen">There is already a place with that name</string>
+    <string name="places_edit_dialog_title">Select an action</string>
+    <string-array name="places_edit_dialog_options">
+        <item>Change the name</item>
+        <item>Change the location</item>
+    </string-array>
+
 </resources>

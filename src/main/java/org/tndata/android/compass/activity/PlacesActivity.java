@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,7 +29,11 @@ import java.util.List;
 
 
 /**
- * Created by isma on 9/3/15.
+ * This activity lists the places defined by the user plus all of the primary places, either
+ * set or not by the user. It allows place edition and addition.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class PlacesActivity
         extends AppCompatActivity
@@ -39,20 +44,24 @@ public class PlacesActivity
                 DialogInterface.OnShowListener,
                 View.OnClickListener{
 
+    //Request codes
     private static final int PLACE_PICKER_REQUEST_CODE = 65485;
+
 
     private CompassApplication mApplication;
 
+    //Activity UI components
     private ProgressBar mProgress;
     private ListView mList;
     private MenuItem mAdd;
 
+    //Dialog components
     private EditText mName;
     private AlertDialog mNameDialog;
     private boolean mEdition;
 
+    //Adapter and selected item
     private PlacesAdapter mAdapter;
-
     private Place mCurrentPlace;
 
 
@@ -63,6 +72,7 @@ public class PlacesActivity
 
         mApplication = (CompassApplication)getApplication();
 
+        //Get and set the toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.places_toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
         setSupportActionBar(toolbar);
@@ -73,19 +83,20 @@ public class PlacesActivity
         mProgress = (ProgressBar)findViewById(R.id.places_progress);
         mList = (ListView)findViewById(R.id.places_list);
 
+        //Create the name dialog. This needs to be done only once
         mName = new EditText(this);
         mName.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
-
+        mName.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         mNameDialog = new AlertDialog.Builder(this)
-                .setTitle("What's the name of the place?")
+                .setTitle(R.string.places_name_dialog_title)
                 .setView(mName)
-                .setNegativeButton("Cancel", null)
-                .setPositiveButton("Accept", null)
+                .setNegativeButton(R.string.places_name_dialog_accept, null)
+                .setPositiveButton(R.string.places_name_dialog_cancel, null)
                 .create();
-
         mNameDialog.setOnShowListener(this);
 
+        //Load the primary places
         new PrimaryPlaceLoaderTask(this).execute();
     }
 
@@ -95,7 +106,7 @@ public class PlacesActivity
         mProgress.setVisibility(View.GONE);
         //If the data couldn't be retrieved the user is notified
         if (primaryPlaces == null){
-            Toast.makeText(this, "There was an error loading the data", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.places_load_error, Toast.LENGTH_SHORT).show();
         }
         //Otherwise, the list is loaded
         else{
@@ -128,6 +139,7 @@ public class PlacesActivity
             //The list of user places are added to the final list
             places.addAll(userPlaces);
 
+            //Finally, set the adapter and enable the add button.
             mAdapter = new PlacesAdapter(this, places);
             mList.setAdapter(mAdapter);
             mList.setOnItemClickListener(this);
@@ -157,16 +169,22 @@ public class PlacesActivity
 
     @Override
     public void onShow(DialogInterface dialog){
+        //We need to override the default dismissal effect when a dialog button is clicked.
+        //  The solution is to set an onClick listener to the button itself to deprive the
+        //  dialog from having the opportunity to dismiss the dialog.
         mNameDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view){
         String name = mName.getText().toString().trim();
+
+        //If the user didn't input a name, don't let him continue
         if (name.equals("")){
-            Toast.makeText(this, "You must set a name!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.places_name_dialog_empty, Toast.LENGTH_SHORT).show();
         }
         else{
+            //Check if the name is already set
             boolean duplicate = false;
             for (Place place:mAdapter.getPlaces()){
                 if (place.getName().equals(name)){
@@ -174,42 +192,42 @@ public class PlacesActivity
                     break;
                 }
             }
+            //If the name exists, don't let the user continue
             if (duplicate){
-                Toast.makeText(this, "There is already a place with that name", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.places_name_dialog_chosen, Toast.LENGTH_SHORT).show();
             }
             else{
+                //If everything checks out, dismiss the dialog
                 mNameDialog.dismiss();
+                //If we are editing the name, then save it
                 if (mEdition){
-                    savePlace();
+                    mCurrentPlace.setName(mName.getText().toString().trim());
+                    mAdapter.notifyDataSetChanged();
                 }
+                //Otherwise this is a new place request, fire the place picker
                 else{
-                    firePlacePicker();
+                    startActivityForResult(new Intent(this, PlacePickerActivity.class),
+                            PLACE_PICKER_REQUEST_CODE);
                 }
             }
         }
     }
 
-    private void savePlace(){
-        mCurrentPlace.setName(mName.getText().toString().trim());
-        mAdapter.notifyDataSetChanged();
-    }
-
-    private void firePlacePicker(){
-        startActivityForResult(new Intent(this, PlacePickerActivity.class), PLACE_PICKER_REQUEST_CODE);
-    }
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+        //Record the selected item
         mCurrentPlace = mAdapter.getItem(position);
+        //If the place is primary, the name cannot be edited, so go straight to the picker
         if (mCurrentPlace.isPrimary()){
             Intent add = new Intent(this, PlacePickerActivity.class);
             add.putExtra(PlacePickerActivity.PLACE_KEY, mCurrentPlace);
             startActivityForResult(add, PLACE_PICKER_REQUEST_CODE);
         }
+        //Otherwise prompt an option dialog (change name or change location)
         else{
             AlertDialog dialog = new AlertDialog.Builder(this)
-                    .setTitle("Select an action")
-                    .setItems(new String[]{"Change the name", "Change the location"}, this)
+                    .setTitle(R.string.places_edit_dialog_title)
+                    .setItems(R.array.places_edit_dialog_options, this)
                     .create();
             dialog.show();
         }
@@ -217,11 +235,14 @@ public class PlacesActivity
 
     @Override
     public void onClick(DialogInterface dialog, int which){
+        //This onClick responds to events from the option dialog
+        //Edit the name
         if (which == 0){
             mEdition = true;
             mName.setText(mCurrentPlace.getName());
             mNameDialog.show();
         }
+        //Edit the location
         else if (which == 1){
             Intent add = new Intent(PlacesActivity.this, PlacePickerActivity.class);
             add.putExtra(PlacePickerActivity.PLACE_KEY, mCurrentPlace);
@@ -235,10 +256,12 @@ public class PlacesActivity
             if (requestCode == PLACE_PICKER_REQUEST_CODE){
                 Place place = (Place)data.getSerializableExtra(PlacePickerActivity.PLACE_RESULT_KEY);
                 Log.d("PlacesActivity", place.toString());
+                //If a place wasn't selected this is a new place, so save it.
                 if (mCurrentPlace == null){
                     place.setName(mName.getText().toString().trim());
                     mAdapter.addPlace(place);
                 }
+                //Otherwise, this place was edited, so update both, the place and the adapter
                 else{
                     mCurrentPlace.setLatitude(place.getLocation().latitude);
                     mCurrentPlace.setLongitude(place.getLocation().longitude);
