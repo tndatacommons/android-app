@@ -75,7 +75,8 @@ public class SavePlaceTask extends AsyncTask<Place, Void, Integer>{
                 stream = NetworkHelper.httpPostStream(url, headers, body.toString());
             }
             else{
-                stream = NetworkHelper.httpPutStream(url + place.getId(), headers, body.toString());
+                url += place.getId() + "/";
+                stream = NetworkHelper.httpPutStream(url, headers, body.toString());
             }
             if (stream == null){
                 return null;
