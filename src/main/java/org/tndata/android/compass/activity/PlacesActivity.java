@@ -23,6 +23,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.PlacesAdapter;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.task.PrimaryPlaceLoaderTask;
+import org.tndata.android.compass.task.SavePlaceTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -203,6 +204,7 @@ public class PlacesActivity
                 if (mEdition){
                     mCurrentPlace.setName(mName.getText().toString().trim());
                     mAdapter.notifyDataSetChanged();
+                    new SavePlaceTask(null, mApplication.getToken()).execute(mCurrentPlace);
                 }
                 //Otherwise this is a new place request, fire the place picker
                 else{

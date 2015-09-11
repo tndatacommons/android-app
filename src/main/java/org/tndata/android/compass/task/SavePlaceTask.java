@@ -2,6 +2,8 @@ package org.tndata.android.compass.task;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,7 +36,7 @@ public class SavePlaceTask extends AsyncTask<Place, Void, Integer>{
      * @param callback the callback interface.
      * @param token the user token.
      */
-    public SavePlaceTask(@NonNull SavePlaceCallback callback, @NonNull String token){
+    public SavePlaceTask(@Nullable SavePlaceCallback callback, @NonNull String token){
         mCallback = callback;
         mToken = token;
     }
@@ -63,8 +65,18 @@ public class SavePlaceTask extends AsyncTask<Place, Void, Integer>{
             body.put("latitude", place.getLatitude());
             body.put("longitude", place.getLongitude());
 
-            //Retrieve the stream
-            InputStream stream = NetworkHelper.httpPostStream(url, headers, body.toString());
+            Log.d("SavePlace", place.toString());
+
+            //Retrieve the appropriate stream; if the id is -1 then the place is new and
+            //  therefore it should be POSTed, otherwise, the place already exists and
+            //  therefore it should be PUT.
+            InputStream stream;
+            if (place.getId() == -1){
+                stream = NetworkHelper.httpPostStream(url, headers, body.toString());
+            }
+            else{
+                stream = NetworkHelper.httpPutStream(url + place.getId(), headers, body.toString());
+            }
             if (stream == null){
                 return null;
             }
@@ -76,6 +88,8 @@ public class SavePlaceTask extends AsyncTask<Place, Void, Integer>{
                 result += line;
             }
             bReader.close();
+
+            Log.d("SavePlace", result);
 
             //Return the id so it can be set to the place
             return new JSONObject(result).getInt("id");
@@ -89,7 +103,9 @@ public class SavePlaceTask extends AsyncTask<Place, Void, Integer>{
 
     @Override
     protected void onPostExecute(Integer integer){
-        mCallback.onPlaceSaved(integer == null ? -1 : integer);
+        if (mCallback != null){
+            mCallback.onPlaceSaved(integer == null ? -1 : integer);
+        }
     }
 
 

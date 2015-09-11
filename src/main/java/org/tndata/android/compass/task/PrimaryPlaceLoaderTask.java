@@ -66,7 +66,9 @@ public class PrimaryPlaceLoaderTask extends AsyncTask<Void, Void, List<Place>>{
                 List<Place> places = new ArrayList<>();
                 Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).create();
                 for (int i = 0; i < placeArray.length(); i++){
-                    places.add(gson.fromJson(placeArray.getString(i), Place.class));
+                    Place place = gson.fromJson(placeArray.getString(i), Place.class);
+                    place.setId(-1);
+                    places.add(place);
                 }
                 return places;
             }
