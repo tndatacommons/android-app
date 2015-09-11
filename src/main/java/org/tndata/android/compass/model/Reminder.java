@@ -1,12 +1,17 @@
 package org.tndata.android.compass.model;
 
+import java.io.Serializable;
+
+
 /**
  * Model class for a reminder.
  *
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class Reminder{
+public class Reminder implements Serializable{
+    static final long serialVersionUID = 94124918239L;
+
     private int mId;
     private int mPlaceId;
     private String mTitle;
@@ -26,6 +31,10 @@ public class Reminder{
 
     public void setId(int id){
         mId = id;
+    }
+
+    public void setPlaceId(int placeId){
+        mPlaceId = placeId;
     }
 
     public int getId(){

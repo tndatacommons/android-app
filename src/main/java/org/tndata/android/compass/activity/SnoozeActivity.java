@@ -1,6 +1,7 @@
 package org.tndata.android.compass.activity;
 
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +18,9 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.SnoozeAdapter;
 import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.model.Place;
+import org.tndata.android.compass.model.Reminder;
+import org.tndata.android.compass.service.GcmIntentService;
+import org.tndata.android.compass.service.LocationProviderService;
 import org.tndata.android.compass.service.SnoozeService;
 
 import java.util.Calendar;
@@ -38,11 +42,13 @@ public class SnoozeActivity
                 RadialTimePickerDialog.OnTimeSetListener,
                 DialogInterface.OnClickListener{
 
+    public static final String REMINDER_KEY = "org.tndata.compass.Snooze.Reminder";
     public static final String NOTIFICATION_ID_KEY = "org.tndata.compass.Snooze.NotificationId";
     public static final String PUSH_NOTIFICATION_ID_KEY = "org.tndata.compass.Snooze.PushNotificationId";
 
     private static final String TAG = "SnoozeActivity";
 
+    private Reminder mReminder;
     private int notificationId;
     private int pushNotificationId;
     private int mYear, mMonth, mDay;
@@ -56,6 +62,7 @@ public class SnoozeActivity
         setContentView(R.layout.activity_snooze);
         setTitle(R.string.later_title);
 
+        mReminder = (Reminder)getIntent().getSerializableExtra(REMINDER_KEY);
         notificationId = getIntent().getIntExtra(NOTIFICATION_ID_KEY, -1);
         pushNotificationId = getIntent().getIntExtra(PUSH_NOTIFICATION_ID_KEY, -1);
 
@@ -94,7 +101,6 @@ public class SnoozeActivity
             datePickerDialog.show(getSupportFragmentManager(), "SnoozeDate");
         }
         else if (position == 3){
-
             CharSequence[] placeNames = new CharSequence[mPlaces.size()];
             for (int i = 0; i < mPlaces.size(); i++){
                 placeNames[i] = mPlaces.get(i).getName();
@@ -173,6 +179,16 @@ public class SnoozeActivity
 
     @Override
     public void onClick(DialogInterface dialog, int which){
-        //TODO handle a selection
+        mReminder.setPlaceId(mPlaces.get(which).getId());
+        CompassDbHelper dbHelper = new CompassDbHelper(this);
+        dbHelper.saveReminder(mReminder);
+        dbHelper.close();
+
+        NotificationManager manager = ((NotificationManager)getSystemService(NOTIFICATION_SERVICE));
+        manager.cancel(GcmIntentService.NOTIFICATION_TYPE_ACTION, pushNotificationId);
+
+        startService(new Intent(this, LocationProviderService.class));
+
+        finish();
     }
 }
