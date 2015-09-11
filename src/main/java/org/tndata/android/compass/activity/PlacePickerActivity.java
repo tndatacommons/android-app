@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -28,9 +29,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.PlacePickerAdapter;
 import org.tndata.android.compass.model.Place;
+import org.tndata.android.compass.task.SavePlaceTask;
 
 
 /**
@@ -47,7 +50,8 @@ public class PlacePickerActivity
                 GoogleApiClient.OnConnectionFailedListener,
                 ResultCallback<PlaceBuffer>,
                 AdapterView.OnItemClickListener,
-                OnMapReadyCallback{
+                OnMapReadyCallback,
+                SavePlaceTask.SavePlaceCallback{
 
     //Data keys
     public static final String PLACE_KEY = "org.tndata.compass.Place";
@@ -91,7 +95,7 @@ public class PlacePickerActivity
         mResults.setOnItemClickListener(this);
 
         //Show the keyboard only if no place is being edited
-        if (mPlace == null){
+        if (mPlace.getId() == -1){
             ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE))
                     .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         }
@@ -116,7 +120,7 @@ public class PlacePickerActivity
     public void onMapReady(GoogleMap googleMap){
         //Set the map and place a marker if a place was passed
         mMap = googleMap;
-        if (mPlace != null && !(mPlace.isPrimary() && !mPlace.isSet())){
+        if (mPlace.getId() != -1 && !(mPlace.isPrimary() && !mPlace.isSet())){
             onPlaceSelected(mPlace.getLocation());
         }
     }
@@ -135,13 +139,24 @@ public class PlacePickerActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         if (item.getItemId() == R.id.place_picker_save){
+            new SavePlaceTask(this, ((CompassApplication)getApplication()).getToken()).execute(mPlace);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPlaceSaved(int id){
+        if (id == -1){
+            Toast.makeText(this, R.string.places_save_error, Toast.LENGTH_SHORT).show();
+        }
+        else{
+            mPlace.setId(id);
             Intent data = new Intent();
             data.putExtra(PLACE_RESULT_KEY, mPlace);
             setResult(RESULT_OK, data);
             finish();
-            return true;
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

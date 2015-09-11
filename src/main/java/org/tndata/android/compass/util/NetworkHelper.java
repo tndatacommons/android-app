@@ -46,6 +46,7 @@ public class NetworkHelper {
             HttpContext responseHandler = new BasicHttpContext();
             httpResponse = client.execute(httpPost, responseHandler);
             int code = httpResponse.getStatusLine().getStatusCode();
+            Log.d("POST", httpResponse.getStatusLine().toString());
             if (code != 201 && code != 200) {
                 return null;
             }

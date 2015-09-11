@@ -206,8 +206,11 @@ public class PlacesActivity
                 }
                 //Otherwise this is a new place request, fire the place picker
                 else{
-                    startActivityForResult(new Intent(this, PlacePickerActivity.class),
-                            PLACE_PICKER_REQUEST_CODE);
+                    Place newPlace = new Place();
+                    newPlace.setName(name);
+                    Intent add = new Intent(this, PlacePickerActivity.class);
+                    add.putExtra(PlacePickerActivity.PLACE_KEY, newPlace);
+                    startActivityForResult(add, PLACE_PICKER_REQUEST_CODE);
                 }
             }
         }

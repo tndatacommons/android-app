@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class Place implements Serializable{
     static final long serialVersionUID = 9654318439L;
 
-    private int id = 0;
+    private int id = -1;
 
     private String name = "";
 
@@ -24,6 +24,10 @@ public class Place implements Serializable{
     private boolean primary = false;
     private boolean set = false;
 
+
+    public void setId(int id){
+        this.id = id;
+    }
 
     public void setName(String name){
         this.name = name;
@@ -55,6 +59,14 @@ public class Place implements Serializable{
 
     public LatLng getLocation(){
         return new LatLng(latitude, longitude);
+    }
+
+    public double getLatitude(){
+        return latitude;
+    }
+
+    public double getLongitude(){
+        return longitude;
     }
 
     public boolean isPrimary(){

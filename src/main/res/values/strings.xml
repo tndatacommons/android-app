@@ -223,5 +223,6 @@
         <item>Change the name</item>
         <item>Change the location</item>
     </string-array>
+    <string name="places_save_error">The place couldn\'t be saved</string>
 
 </resources>
