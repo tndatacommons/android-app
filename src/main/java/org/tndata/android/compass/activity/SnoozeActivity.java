@@ -1,5 +1,7 @@
 package org.tndata.android.compass.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,9 +15,12 @@ import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.SnoozeAdapter;
+import org.tndata.android.compass.database.CompassDbHelper;
+import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.service.SnoozeService;
 
 import java.util.Calendar;
+import java.util.List;
 
 
 /**
@@ -30,7 +35,8 @@ public class SnoozeActivity
         implements
                 AdapterView.OnItemClickListener,
                 CalendarDatePickerDialog.OnDateSetListener,
-                RadialTimePickerDialog.OnTimeSetListener{
+                RadialTimePickerDialog.OnTimeSetListener,
+                DialogInterface.OnClickListener{
 
     public static final String NOTIFICATION_ID_KEY = "org.tndata.compass.Snooze.NotificationId";
     public static final String PUSH_NOTIFICATION_ID_KEY = "org.tndata.compass.Snooze.PushNotificationId";
@@ -40,6 +46,8 @@ public class SnoozeActivity
     private int notificationId;
     private int pushNotificationId;
     private int mYear, mMonth, mDay;
+
+    private List<Place> mPlaces;
 
 
     @Override
@@ -54,16 +62,10 @@ public class SnoozeActivity
         ListView list = (ListView)findViewById(R.id.snooze_list);
         list.setAdapter(new SnoozeAdapter(this));
         list.setOnItemClickListener(this);
-    }
 
-    @Override
-    protected void onResume(){
-        super.onResume();
-    }
-
-    @Override
-    public void onBackPressed(){
-        finish();
+        CompassDbHelper dbHelper = new CompassDbHelper(this);
+        mPlaces = dbHelper.getPlaces();
+        dbHelper.close();
     }
 
     @Override
@@ -90,6 +92,19 @@ public class SnoozeActivity
                     calendar.get(Calendar.DAY_OF_MONTH));
 
             datePickerDialog.show(getSupportFragmentManager(), "SnoozeDate");
+        }
+        else if (position == 3){
+
+            CharSequence[] placeNames = new CharSequence[mPlaces.size()];
+            for (int i = 0; i < mPlaces.size(); i++){
+                placeNames[i] = mPlaces.get(i).getName();
+            }
+
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle(R.string.later_pick_place)
+                    .setItems(placeNames, this)
+                    .create();
+            dialog.show();
         }
     }
 
@@ -154,5 +169,10 @@ public class SnoozeActivity
 
         //Kill the activity
         finish();
+    }
+
+    @Override
+    public void onClick(DialogInterface dialog, int which){
+
     }
 }

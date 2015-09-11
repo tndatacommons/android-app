@@ -161,7 +161,7 @@ public class CompassDbHelper extends SQLiteOpenHelper{
     public List<Place> getPlaces(){
         //Open a readable database and execute the query
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + PlaceEntry.TABLE, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + PlaceEntry.TABLE + " ORDER BY " + PlaceEntry.NAME + " ASC", null);
 
         List<Place> places = new ArrayList<>();
 

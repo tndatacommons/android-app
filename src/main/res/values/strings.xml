@@ -207,7 +207,8 @@
     <string name="later_title">Later</string>
     <string name="later_in_an_hour">In an hour</string>
     <string name="later_tomorrow">This time tomorrow</string>
-    <string name="later_pick">Pick a date and time</string>
+    <string name="later_pick_time">Pick a date and time</string>
+    <string name="later_pick_place">Pick a place</string>
 
     <!-- I did it -->
     <string name="did_it_title">I did it</string>

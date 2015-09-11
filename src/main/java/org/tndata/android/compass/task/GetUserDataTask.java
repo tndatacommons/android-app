@@ -1,5 +1,6 @@
 package org.tndata.android.compass.task;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -10,6 +11,7 @@ import com.google.gson.GsonBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
@@ -35,29 +37,29 @@ import java.util.Map;
  *
  * See: https://app.tndata.org/api/users/
  */
-public class GetUserDataTask extends AsyncTask<String, Void, UserData> {
-
+public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
     private static final String TAG = "GetUserDataTask";
+
+    private Context mContext;
     private GetUserDataListener mCallback;
+
     private static Gson gson = new GsonBuilder().setFieldNamingPolicy(
             FieldNamingPolicy.IDENTITY).create();
 
-    public interface GetUserDataListener {
-        public void userDataLoaded(UserData userData);
-    }
 
-    public GetUserDataTask(GetUserDataListener callback) {
+    public GetUserDataTask(Context context, GetUserDataListener callback){
+        mContext = context;
         mCallback = callback;
     }
 
     @Override
-    protected UserData doInBackground(String... params) {
+    protected UserData doInBackground(String... params){
         String token = params[0];
         String url = Constants.BASE_URL + "users/";
         UserData userData = new UserData();
         String result = ""; // result of http request
 
-        Map<String, String> headers = new HashMap<String, String>();
+        Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
         headers.put("Content-type", "application/json");
         headers.put("Authorization", "Token " + token);
@@ -89,8 +91,12 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData> {
             userData.sync();
 
             userData.setPlaces(parseUserPlaces(userJson.getJSONArray("places")));
+            CompassDbHelper dbHelper = new CompassDbHelper(mContext);
+            dbHelper.emptyPlacesTable();
+            dbHelper.savePlaces(userData.getPlaces());
+            dbHelper.close();
 
-            Log.e(TAG, "... finishing up GetUserDataTask.");
+            Log.d(TAG, "... finishing up GetUserDataTask.");
             userData.logData();
             
             return userData;
@@ -288,4 +294,8 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData> {
         mCallback.userDataLoaded(userData);
     }
 
+
+    public interface GetUserDataListener{
+        void userDataLoaded(UserData userData);
+    }
 }

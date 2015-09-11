@@ -93,7 +93,7 @@ public class OnBoardingActivity extends AppCompatActivity implements
         mCategoriesSaved = true;
 
         // Load all user-selected content from the API
-        new GetUserDataTask(this).executeOnExecutor(
+        new GetUserDataTask(this, this).executeOnExecutor(
                 AsyncTask.THREAD_POOL_EXECUTOR, application.getToken());
     }
 
