@@ -28,6 +28,13 @@ public class CompassContract{
         public static final String LONGITUDE = "longitude";
     }
 
+
+    /**
+     * The definition of all the Reminder tables.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public static abstract class ReminderEntry implements BaseColumns{
         //Table name information
         public static final String TABLE = "Reminder";

@@ -180,14 +180,14 @@ public class CompassDbHelper extends SQLiteOpenHelper{
         if (cursor.moveToFirst()){
             //For each item
             do{
-                //Create the Spot and populate it
+                //Create the Place and populate it
                 Place place = new Place();
                 place.setId(cursor.getInt(cursor.getColumnIndex(PlaceEntry.CLOUD_ID)));
                 place.setName(cursor.getString(cursor.getColumnIndex(PlaceEntry.NAME)));
                 place.setLatitude(cursor.getDouble(cursor.getColumnIndex(PlaceEntry.LATITUDE)));
                 place.setLongitude(cursor.getDouble(cursor.getColumnIndex(PlaceEntry.LONGITUDE)));
 
-                //Add the spot to the target list
+                //Add the place to the target list
                 places.add(place);
             }
             //Move on until the cursor is empty
@@ -236,11 +236,50 @@ public class CompassDbHelper extends SQLiteOpenHelper{
         stmt.bindString(5, reminder.getUserMappingId());
 
         //Execute the query
-        stmt.executeInsert();
+        reminder.setId((int)stmt.executeInsert());
 
         //Close up
         stmt.close();
         db.close();
+    }
+
+    /**
+     * Returns all the reminders in the reminder table.
+     *
+     * @return a list of reminders.
+     */
+    public List<Reminder> getReminders(){
+        List<Reminder> reminders = new ArrayList<>();
+
+        //Open a readable database and execute the query
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + ReminderEntry.TABLE, null);
+
+        //If there are rows in the cursor returned by the query
+        if (cursor.moveToFirst()){
+            //For each item
+            do{
+                //Create the Reminder and populate it
+                Reminder place = new Reminder(
+                        cursor.getInt(cursor.getColumnIndex(ReminderEntry.PLACE_ID)),
+                        cursor.getString(cursor.getColumnIndex(ReminderEntry.TITLE)),
+                        cursor.getString(cursor.getColumnIndex(ReminderEntry.MESSAGE)),
+                        cursor.getString(cursor.getColumnIndex(ReminderEntry.OBJECT_ID)),
+                        cursor.getString(cursor.getColumnIndex(ReminderEntry.USER_MAPPING_ID)));
+                place.setId(cursor.getInt(cursor.getColumnIndex(ReminderEntry.ID)));
+
+                //Add the reminder to the target list
+                reminders.add(place);
+            }
+            //Move on until the cursor is empty
+            while(cursor.moveToNext());
+        }
+
+        //Close both, the cursor and the database
+        cursor.close();
+        db.close();
+
+        return reminders;
     }
 
     /**
@@ -252,5 +291,6 @@ public class CompassDbHelper extends SQLiteOpenHelper{
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM " + ReminderEntry.TABLE + " WHERE " + ReminderEntry.ID + "=" + reminder.getId());
         db.close();
+        reminder.setId(-1);
     }
 }

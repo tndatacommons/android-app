@@ -15,13 +15,17 @@ public class Reminder{
     private String mUserMappingId;
 
 
-    public Reminder(int id, int placeId, String title, String message, String objectId, String userMappingId){
-        mId = id;
+    public Reminder(int placeId, String title, String message, String objectId, String userMappingId){
+        mId = -1;
         mPlaceId = placeId;
         mTitle = title;
         mMessage = message;
         mObjectId = objectId;
         mUserMappingId = userMappingId;
+    }
+
+    public void setId(int id){
+        mId = id;
     }
 
     public int getId(){
