@@ -21,7 +21,8 @@ public class CompassContract{
         public static final String TABLE = "Places";
 
         //Column information
-        public static final String ID = _ID;
+        public static final String LOCAL_ID = _ID;
+        public static final String CLOUD_ID = "cloud_id";
         public static final String NAME = "name";
         public static final String LATITUDE = "latitude";
         public static final String LONGITUDE = "longitude";
