@@ -173,6 +173,6 @@ public class SnoozeActivity
 
     @Override
     public void onClick(DialogInterface dialog, int which){
-
+        //TODO handle a selection
     }
 }

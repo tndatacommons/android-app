@@ -27,4 +27,17 @@ public class CompassContract{
         public static final String LATITUDE = "latitude";
         public static final String LONGITUDE = "longitude";
     }
+
+    public static abstract class ReminderEntry implements BaseColumns{
+        //Table name information
+        public static final String TABLE = "Reminder";
+
+        //Column information
+        public static final String ID = _ID;
+        public static final String PLACE_ID = "place_id";
+        public static final String TITLE = "title";
+        public static final String MESSAGE = "message";
+        public static final String OBJECT_ID = "object_id";
+        public static final String USER_MAPPING_ID = "user_mapping_id";
+    }
 }
