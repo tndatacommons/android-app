@@ -43,10 +43,11 @@ public class MainActivity extends AppCompatActivity implements
     private static final int IMPORTANT_TO_ME = 0;
     private static final int MY_PRIORITIES = 1;
     private static final int MYSELF = 2;
-    private static final int MY_PRIVACY = 3;
-    private static final int TOUR = 4;
-    private static final int SETTINGS = 5;
-    private static final int DRAWER_COUNT = 6;
+    private static final int PLACES = 3;
+    private static final int MY_PRIVACY = 4;
+    private static final int TOUR = 5;
+    private static final int SETTINGS = 6;
+    private static final int DRAWER_COUNT = 7;
 
 
     private CompassApplication application;
@@ -197,6 +198,10 @@ public class MainActivity extends AppCompatActivity implements
                 startActivity(new Intent(getApplicationContext(), UserProfileActivity.class));
                 break;
 
+            case PLACES:
+                startActivity(new Intent(getApplicationContext(), PlacesActivity.class));
+                break;
+
             case MY_PRIVACY:
                 startActivity(new Intent(getApplicationContext(), PrivacyActivity.class));
                 break;
@@ -239,6 +244,10 @@ public class MainActivity extends AppCompatActivity implements
                 case MYSELF:
                     items.add(new DrawerItem(getResources().getString(R.string.action_my_information),
                             R.drawable.ic_profile));
+                    break;
+                case PLACES:
+                    items.add(new DrawerItem(getResources().getString(R.string.action_my_places),
+                            R.drawable.ic_place));
                     break;
                 case MY_PRIVACY:
                     items.add(new DrawerItem(getResources().getString(R.string.action_my_privacy),

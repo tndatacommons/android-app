@@ -33,7 +33,7 @@ public class UserProfileAdapter extends ArrayAdapter<Survey> {
 
     @Override
     public int getCount() {
-        return mItems.size()+1;
+        return mItems.size();
     }
 
     @SuppressLint("InflateParams")
@@ -55,29 +55,23 @@ public class UserProfileAdapter extends ArrayAdapter<Survey> {
             viewHolder = (UserProfileViewHolder) convertView.getTag();
         }
 
-        if (position == mItems.size()){
-            viewHolder.questionTextView.setText("Places");
-            viewHolder.responseTextView.setText("");
+        final Survey survey = mItems.get(position);
+        String question = survey.getText();
+        String response = null;
+        if (survey.getQuestionType().equals(Constants.SURVEY_OPENENDED)){
+            response = survey.getResponse();
         }
         else{
-            final Survey survey = mItems.get(position);
-            String question = survey.getText();
-            String response = null;
-            if (survey.getQuestionType().equals(Constants.SURVEY_OPENENDED)){
-                response = survey.getResponse();
+            if (survey.getSelectedOption() != null && survey.getSelectedOption().getText() != null){
+                response = survey.getSelectedOption().getText();
             }
-            else{
-                if (survey.getSelectedOption() != null && survey.getSelectedOption().getText() != null){
-                    response = survey.getSelectedOption().getText();
-                }
-            }
+        }
 
-            if (question != null && !question.isEmpty()){
-                viewHolder.questionTextView.setText(question);
-            }
-            if (response != null && !response.isEmpty()){
-                viewHolder.responseTextView.setText(response);
-            }
+        if (question != null && !question.isEmpty()){
+            viewHolder.questionTextView.setText(question);
+        }
+        if (response != null && !response.isEmpty()){
+            viewHolder.responseTextView.setText(response);
         }
 
         return convertView;
