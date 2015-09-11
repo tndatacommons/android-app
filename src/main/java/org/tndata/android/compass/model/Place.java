@@ -79,7 +79,7 @@ public class Place implements Serializable{
 
     @Override
     public boolean equals(Object o){
-        return (o instanceof Place) && (((Place)o).name.equals(name));
+        return (o instanceof Place) && (((Place)o).id == id);
     }
 
     @Override

@@ -205,6 +205,7 @@ public class PlacesActivity
                     mCurrentPlace.setName(mName.getText().toString().trim());
                     mAdapter.notifyDataSetChanged();
                     new SavePlaceTask(null, mApplication.getToken()).execute(mCurrentPlace);
+                    addPlaceToLocalList(mCurrentPlace);
                 }
                 //Otherwise this is a new place request, fire the place picker
                 else{
@@ -273,7 +274,20 @@ public class PlacesActivity
                     mCurrentPlace.setSet(true);
                     mAdapter.notifyDataSetChanged();
                 }
+                addPlaceToLocalList(place);
             }
+        }
+    }
+
+    public void addPlaceToLocalList(Place place){
+        List<Place> places = mApplication.getUserData().getPlaces();
+        if (!places.contains(place)){
+            places.add(place);
+        }
+        else{
+            int index = places.indexOf(place);
+            places.remove(index);
+            places.add(index, place);
         }
     }
 }
