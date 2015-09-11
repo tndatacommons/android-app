@@ -119,13 +119,22 @@ public class PlacesActivity
             //The user places are added to the list in the appropriate order
             for (Place place:currentPlaces){
                 place.setSet(true);
+
+                int primaryIndex = -1;
+                for (int i = 0; i < primaryPlaces.size(); i++){
+                    if (primaryPlaces.get(i).getName().equals(place.getName())){
+                        primaryIndex = i;
+                        break;
+                    }
+                }
+
                 //If the place is primary it is added at the head, otherwise it is added at the tail
-                if (primaryPlaces.contains(place)){
+                if (primaryIndex != -1){
                     place.setPrimary(true);
                     places.add(place);
                     //The primary place is removed from the list to keep track of which ones have
                     //  been added already
-                    primaryPlaces.remove(place);
+                    primaryPlaces.remove(primaryIndex);
                 }
                 else{
                     place.setPrimary(false);
