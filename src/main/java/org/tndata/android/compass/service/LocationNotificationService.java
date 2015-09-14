@@ -16,7 +16,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -30,37 +29,55 @@ import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.LocationRequest;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
 /**
- * Created by isma on 9/8/15.
+ * Service that checks the user's location and creates reminders accordingly.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
-public class LocationNotificationService extends Service implements LocationRequest.OnLocationAcquiredCallback{
-    private static final int CHECKING_INTERVAL = 30*1000; //30 seconds
-    private static final int GEOFENCE_RADIUS = 25; //25 meters
+public class LocationNotificationService
+        extends Service
+        implements LocationRequest.OnLocationAcquiredCallback{
 
+    //Constants
+    private static final int CHECKING_INTERVAL = 10*1000; //30 seconds
+    private static final int GEOFENCE_RADIUS = 50; //50 meters
+
+    //Cancellation boolean, mainly for testing purposes
     private static boolean cancelled;
-    private boolean mRunning;
 
-    private LocationRequest mLocationRequest;
-    private Map<Integer, Place> mPlaces;
-    private List<Reminder> mReminders;
-
-    private long mNextUpdateTime;
-
-
+    /**
+     * Shuts down the service if it is running.
+     */
     public static void cancel(){
         cancelled = true;
     }
 
 
+    //Running boolean, to work around some LocationRequest edge cases
+    private boolean mRunning;
+
+    //The location request
+    private LocationRequest mLocationRequest;
+
+    //Map of places and list of reminders
+    private Map<Integer, Place> mPlaces;
+    private List<Reminder> mReminders;
+
+    //Next update time
+    private long mNextUpdateTime;
+
+
     @Override
     public void onCreate(){
         super.onCreate();
-        mLocationRequest = new LocationRequest(this);
+        mLocationRequest = new LocationRequest(this, this, 0);
         mRunning = false;
         cancelled = false;
     }
@@ -83,6 +100,10 @@ public class LocationNotificationService extends Service implements LocationRequ
         return START_STICKY;
     }
 
+    /**
+     * Requests a location from the LocationRequest, but checks if the service should
+     * shut down first.
+     */
     private void requestLocation(){
         //If the service was cancelled, clean up and stop
         if (cancelled){
@@ -91,7 +112,7 @@ public class LocationNotificationService extends Service implements LocationRequ
         }
         //Otherwise, request a location
         else{
-            mLocationRequest.requestLocation(this);
+            mLocationRequest.requestLocation();
         }
     }
 
@@ -104,11 +125,22 @@ public class LocationNotificationService extends Service implements LocationRequ
         //The maximum surface distance between two points in the planet is about 20Mm
         double minDistance = 20*1000*1000;
         LatLng current = new LatLng(location.getLatitude(), location.getLongitude());
+
+        //To avoid concurrent modification exceptions, the list of reminders to be
+        //  removed are put into a separate list and removed from the main list
+        //  once the iterator is done iterating
+        List<Reminder> remindersToRemove = new ArrayList<>();
+
+        //For every location based reminder in sight
         for (Reminder reminder:mReminders){
+            //The place is retrieved from the map and the distance calculated
             Place place = mPlaces.get(reminder.getPlaceId());
             double distance = CompassUtil.getDistance(place.getLocation(), current);
-            Toast.makeText(this, "distance: " + distance, Toast.LENGTH_SHORT).show();
+
+            //If the pone is within the geofence a notification is created
             if (distance < GEOFENCE_RADIUS){
+                //NOTE: I am doing this here to avoid conflicts, once the PR is merged
+                //  I'll fix all the notification related code.
                 try{
                     Intent intent = new Intent(getApplicationContext(), ActionActivity.class);
                     intent.putExtra(ActionActivity.ACTION_ID_KEY, Integer.valueOf(reminder.getObjectId()));
@@ -163,16 +195,25 @@ public class LocationNotificationService extends Service implements LocationRequ
                     nfx.printStackTrace();
                 }
 
+                //The reminder is removed from the database and added to the removal list
                 CompassDbHelper dbHelper = new CompassDbHelper(this);
                 dbHelper.deleteReminder(reminder);
                 dbHelper.close();
-                mReminders.remove(reminder);
+                remindersToRemove.add(reminder);
             }
+            //If the phone is not in the fence but the distance is the minimum seen so far
             else if (distance < minDistance){
+                //The distance is recorded as the minimum
                 minDistance = distance;
             }
         }
-        //If there are no more reminders, stop the service
+
+        //The reminders that have been dealt with are removed from the main list
+        for (Reminder reminder:remindersToRemove){
+            mReminders.remove(reminder);
+        }
+
+        //If there are no more reminders, shut down the service
         if (mReminders.size() == 0){
             stopSelf();
         }
@@ -188,15 +229,25 @@ public class LocationNotificationService extends Service implements LocationRequ
         }
     }
 
+    /**
+     * Sets the next update time given the distance to the nearest place for which the user has
+     * a reminder set. It calculates the time it would take the user to travel that distance at
+     * about 50mph and divides that time by 2.
+     *
+     * @param distance the distance for which a time estimate needs to be calculated.
+     */
     private void setNextUpdateTime(double distance){
         //25m/s is a bit over 50mph, calculate the time to cover that distance and divide by 2
         mNextUpdateTime = (long)((distance/25)/2);
     }
 
+    /**
+     * Checks whether it is time to request a location update, if not it goes to sleep.
+     */
     private void checkTiming(){
         //If there is a location update scheduled, request a location
         if (mNextUpdateTime < System.currentTimeMillis()){
-            mLocationRequest.requestLocation(this);
+            requestLocation();
         }
         //Otherwise, schedule another check in 30 seconds
         else{

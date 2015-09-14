@@ -19,7 +19,7 @@ import com.google.android.gms.location.LocationServices;
  * stopped on onStop.
  *
  * @author Ismael Alonso
- * @version 1.0.0
+ * @version 1.1.0
  */
 public class LocationRequest
         implements
@@ -27,19 +27,22 @@ public class LocationRequest
                 GoogleApiClient.OnConnectionFailedListener,
                 LocationListener{
 
-
+    //Constants
     private static final int DEFAULT_LOCATION_TIMEOUT = 10*60*1000; //10 minutes
+    private static final int MINIMUM_LOCATION_TIMEOUT = 5*1000; //5 seconds
 
-    private Context context;
+
+    //Context, callback, and timeout
+    private final Context context;
+    private final OnLocationAcquiredCallback callback;
+    private final int timeout;
+
     //Google api client
     private GoogleApiClient googleApiClient;
     private boolean connected, updateQueued;
+
     //Backup system
     private LocationManager locationManager;
-    //Location callback
-    private OnLocationAcquiredCallback callback;
-
-    private final int timeout;
 
 
     /**
@@ -47,23 +50,11 @@ public class LocationRequest
      * onCreate() method of the activity/fragment it is used in and kept until the activity
      * is disposed of.
      *
-     * @param context the activity/fragment context.
+     * @param context the context.
+     * @param callback the callback object.
      */
-    public LocationRequest(Context context){
-        this.context = context;
-
-        //Start the API client up
-        googleApiClient = new GoogleApiClient.Builder(context)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-
-        //At the beginning, neither the service is connected nor a request is queued
-        connected = false;
-        updateQueued = false;
-
-        timeout = DEFAULT_LOCATION_TIMEOUT;
+    public LocationRequest(@NonNull Context context, @NonNull OnLocationAcquiredCallback callback){
+        this(context, callback, DEFAULT_LOCATION_TIMEOUT);
     }
 
     /**
@@ -71,11 +62,19 @@ public class LocationRequest
      * onCreate() method of the activity/fragment it is used in and kept until the activity
      * is disposed of.
      *
-     * @param context the activity/fragment context.
+     * @param context the context.
+     * @param callback the callback object.
      * @param timeout the location timeout;
      */
-    public LocationRequest(Context context, int timeout){
+    public LocationRequest(@NonNull Context context, @NonNull OnLocationAcquiredCallback callback, int timeout){
         this.context = context;
+        this.callback = callback;
+        if (timeout < MINIMUM_LOCATION_TIMEOUT){
+            this.timeout = MINIMUM_LOCATION_TIMEOUT;
+        }
+        else{
+            this.timeout = timeout;
+        }
 
         //Start the API client up
         googleApiClient = new GoogleApiClient.Builder(context)
@@ -87,8 +86,6 @@ public class LocationRequest
         //At the beginning, neither the service is connected nor a request is queued
         connected = false;
         updateQueued = false;
-
-        this.timeout = timeout;
     }
 
     /**
@@ -114,13 +111,9 @@ public class LocationRequest
     }
 
     /**
-     * Queues a location update.
-     *
-     * @param callback the callback object.
+     * Queues a location update request.
      */
-    public void requestLocation(@NonNull OnLocationAcquiredCallback callback){
-        //The callback is set
-        this.callback = callback;
+    public void requestLocation(){
         //If play services is connected
         if (connected){
             //Let it provide an update
