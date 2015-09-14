@@ -60,6 +60,8 @@ public class GcmIntentService extends IntentService {
             // in your BroadcastReceiver.
             String messageType = gcm.getMessageType(intent);
 
+            Log.d(TAG, "Got the intent");
+
             if (extras != null && !extras.isEmpty()){  // has effect of un-parcelling Bundle
                 Log.d(TAG, "GCM message: " + extras.get("message"));
             /*

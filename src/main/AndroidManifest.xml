@@ -295,7 +295,7 @@
 
         <service android:name="service.GeofenceTransitionService"/>
 
-        <service android:name=".service.LocationProviderService" />
+        <service android:name=".service.LocationNotificationService" />
 
     </application>
 </manifest>

@@ -28,7 +28,8 @@ public class LocationRequest
                 LocationListener{
 
 
-    private static final int LOCATION_TIMEOUT = 5000; //5 seconds
+    private static final int DEFAULT_LOCATION_TIMEOUT = 10*60*1000; //10 minutes
+
     private Context context;
     //Google api client
     private GoogleApiClient googleApiClient;
@@ -37,6 +38,8 @@ public class LocationRequest
     private LocationManager locationManager;
     //Location callback
     private OnLocationAcquiredCallback callback;
+
+    private final int timeout;
 
 
     /**
@@ -59,6 +62,33 @@ public class LocationRequest
         //At the beginning, neither the service is connected nor a request is queued
         connected = false;
         updateQueued = false;
+
+        timeout = DEFAULT_LOCATION_TIMEOUT;
+    }
+
+    /**
+     * Creates the location request object. This object is meant to be constructed on the
+     * onCreate() method of the activity/fragment it is used in and kept until the activity
+     * is disposed of.
+     *
+     * @param context the activity/fragment context.
+     * @param timeout the location timeout;
+     */
+    public LocationRequest(Context context, int timeout){
+        this.context = context;
+
+        //Start the API client up
+        googleApiClient = new GoogleApiClient.Builder(context)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
+        //At the beginning, neither the service is connected nor a request is queued
+        connected = false;
+        updateQueued = false;
+
+        this.timeout = timeout;
     }
 
     /**
@@ -110,7 +140,7 @@ public class LocationRequest
      */
     private void setLocation(Location location){
         //If the location is null or has expired
-        if (location == null || location.getTime() + LOCATION_TIMEOUT < System.currentTimeMillis()){
+        if (location == null || location.getTime() + timeout < System.currentTimeMillis()){
             //Log for debugging purposes
             Log.d("LocationRequest", "The location was not valid");
 

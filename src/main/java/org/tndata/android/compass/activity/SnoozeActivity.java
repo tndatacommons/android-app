@@ -20,7 +20,7 @@ import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.service.GcmIntentService;
-import org.tndata.android.compass.service.LocationProviderService;
+import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.service.SnoozeService;
 
 import java.util.Calendar;
@@ -187,7 +187,7 @@ public class SnoozeActivity
         NotificationManager manager = ((NotificationManager)getSystemService(NOTIFICATION_SERVICE));
         manager.cancel(GcmIntentService.NOTIFICATION_TYPE_ACTION, pushNotificationId);
 
-        startService(new Intent(this, LocationProviderService.class));
+        startService(new Intent(this, LocationNotificationService.class));
 
         finish();
     }
