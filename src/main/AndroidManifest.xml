@@ -243,11 +243,6 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".activity.PlaceActivity"
-            android:label="Place"
-            android:screenOrientation="portrait" />
-
-        <activity
             android:name=".activity.SnoozeActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog"
             android:screenOrientation="portrait" />

@@ -46,5 +46,7 @@ public class CompassContract{
         public static final String MESSAGE = "message";
         public static final String OBJECT_ID = "object_id";
         public static final String USER_MAPPING_ID = "user_mapping_id";
+        public static final String SNOOZED = "snoozed";
+        public static final String LAST_DELIVERED = "last_delivered";
     }
 }

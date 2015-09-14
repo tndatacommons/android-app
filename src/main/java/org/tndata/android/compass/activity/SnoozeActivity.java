@@ -180,6 +180,7 @@ public class SnoozeActivity
     @Override
     public void onClick(DialogInterface dialog, int which){
         mReminder.setPlaceId(mPlaces.get(which).getId());
+        mReminder.setSnoozed(true);
         CompassDbHelper dbHelper = new CompassDbHelper(this);
         dbHelper.saveReminder(mReminder);
         dbHelper.close();

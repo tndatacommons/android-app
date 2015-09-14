@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -65,6 +66,7 @@ public class LocationNotificationService
 
     //The location request
     private LocationRequest mLocationRequest;
+    private boolean mRequestInProgress;
 
     //Map of places and list of reminders
     private Map<Integer, Place> mPlaces;
@@ -77,9 +79,10 @@ public class LocationNotificationService
     @Override
     public void onCreate(){
         super.onCreate();
-        mLocationRequest = new LocationRequest(this, this, 0);
-        mRunning = false;
         cancelled = false;
+        mRunning = false;
+        mLocationRequest = new LocationRequest(this, this, 0);
+        mRequestInProgress = false;
     }
 
     @Override
@@ -92,11 +95,13 @@ public class LocationNotificationService
         mReminders = dbHelper.getReminders();
         dbHelper.close();
 
+        Toast.makeText(this, mReminders.size() + " reminders", Toast.LENGTH_SHORT).show();
+
         if (!mRunning){
             mRunning = true;
             mLocationRequest.onStart();
-            requestLocation();
         }
+        requestLocation();
         return START_STICKY;
     }
 
@@ -112,12 +117,16 @@ public class LocationNotificationService
         }
         //Otherwise, request a location
         else{
-            mLocationRequest.requestLocation();
+            if (!mRequestInProgress){
+                mRequestInProgress = true;
+                mLocationRequest.requestLocation();
+            }
         }
     }
 
     @Override
     public synchronized void onLocationAcquired(Location location){
+        mRequestInProgress = false;
         NotificationManager mNotificationManager =
                 (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -213,6 +222,8 @@ public class LocationNotificationService
             mReminders.remove(reminder);
         }
 
+        Toast.makeText(this, mReminders.size() + " reminders left", Toast.LENGTH_SHORT).show();
+
         //If there are no more reminders, shut down the service
         if (mReminders.size() == 0){
             stopSelf();
@@ -238,7 +249,9 @@ public class LocationNotificationService
      */
     private void setNextUpdateTime(double distance){
         //25m/s is a bit over 50mph, calculate the time to cover that distance and divide by 2
-        mNextUpdateTime = (long)((distance/25)/2);
+        int estimate = (int)((distance/25)*1000/2);
+        mNextUpdateTime = System.currentTimeMillis() + estimate;
+        Toast.makeText(this, distance + ", " + estimate, Toast.LENGTH_SHORT).show();
     }
 
     /**

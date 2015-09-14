@@ -13,6 +13,7 @@ import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Reminder;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -52,7 +53,9 @@ public class CompassDbHelper extends SQLiteOpenHelper{
                 + ReminderEntry.TITLE + " TEXT, "
                 + ReminderEntry.MESSAGE + " TEXT, "
                 + ReminderEntry.OBJECT_ID + " TEXT, "
-                + ReminderEntry.USER_MAPPING_ID + " TEXT)";
+                + ReminderEntry.USER_MAPPING_ID + " TEXT, "
+                + ReminderEntry.SNOOZED + " TINYINT, "
+                + ReminderEntry.LAST_DELIVERED + " INTEGER)";
         db.execSQL(createReminders);
     }
 
@@ -224,8 +227,10 @@ public class CompassDbHelper extends SQLiteOpenHelper{
                 + ReminderEntry.TITLE + ", "
                 + ReminderEntry.MESSAGE + ", "
                 + ReminderEntry.OBJECT_ID + ", "
-                + ReminderEntry.USER_MAPPING_ID + ") "
-                + "VALUES (?, ?, ?, ?, ?)";
+                + ReminderEntry.USER_MAPPING_ID + ", "
+                + ReminderEntry.SNOOZED + ", "
+                + ReminderEntry.LAST_DELIVERED + ") "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         //Prepare the statement
         SQLiteStatement stmt = db.compileStatement(query);
@@ -234,6 +239,8 @@ public class CompassDbHelper extends SQLiteOpenHelper{
         stmt.bindString(3, reminder.getMessage());
         stmt.bindString(4, reminder.getObjectId());
         stmt.bindString(5, reminder.getUserMappingId());
+        stmt.bindLong(6, reminder.isSnoozed() ? 1 : 0);
+        stmt.bindLong(7, reminder.getLastDelivered());
 
         //Execute the query
         reminder.setId((int)stmt.executeInsert());
@@ -251,9 +258,19 @@ public class CompassDbHelper extends SQLiteOpenHelper{
     public List<Reminder> getReminders(){
         List<Reminder> reminders = new ArrayList<>();
 
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+
+        String query = "SELECT * FROM " + ReminderEntry.TABLE
+                + " WHERE "
+                +       ReminderEntry.SNOOZED + "<>0"
+                +       " OR "
+                +       ReminderEntry.LAST_DELIVERED + "<" + calendar.getTimeInMillis();
+
         //Open a readable database and execute the query
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + ReminderEntry.TABLE, null);
+        Cursor cursor = db.rawQuery(query, null);
 
         //If there are rows in the cursor returned by the query
         if (cursor.moveToFirst()){
@@ -267,6 +284,8 @@ public class CompassDbHelper extends SQLiteOpenHelper{
                         cursor.getString(cursor.getColumnIndex(ReminderEntry.OBJECT_ID)),
                         cursor.getString(cursor.getColumnIndex(ReminderEntry.USER_MAPPING_ID)));
                 place.setId(cursor.getInt(cursor.getColumnIndex(ReminderEntry.ID)));
+                place.setSnoozed(cursor.getLong(cursor.getColumnIndex(ReminderEntry.SNOOZED)) != 0);
+                place.setLastDelivered(cursor.getLong(cursor.getColumnIndex(ReminderEntry.LAST_DELIVERED)));
 
                 //Add the reminder to the target list
                 reminders.add(place);
@@ -292,5 +311,14 @@ public class CompassDbHelper extends SQLiteOpenHelper{
         db.execSQL("DELETE FROM " + ReminderEntry.TABLE + " WHERE " + ReminderEntry.ID + "=" + reminder.getId());
         db.close();
         reminder.setId(-1);
+    }
+
+    /**
+     * Truncates the reminder table.
+     */
+    public void emptyReminderTable(){
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM " + ReminderEntry.TABLE);
+        db.close();
     }
 }
