@@ -27,7 +27,7 @@ public class CompleteActionService
                 GetUserActionsTask.GetUserActionsListener{
 
     public static final String ACTION_ID_KEY = "org.tndata.compass.CompleteAction.Id";
-    public static final String NOTIFICATION_ID_KEY = "org.tndata.compass.CompleteAction.NotificationId";
+    public static final String PUSH_NOTIFICATION_ID_KEY = "org.tndata.compass.CompleteAction.NotificationId";
     public static final String ACTION_MAPPING_ID_KEY = "org.tndata.compass.CompleteAction.MappingId";
 
     private LinkedList<Integer> mCompletedActions;
@@ -43,7 +43,7 @@ public class CompleteActionService
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
-        int notificationId = intent.getIntExtra(NOTIFICATION_ID_KEY, -1);
+        int notificationId = intent.getIntExtra(PUSH_NOTIFICATION_ID_KEY, -1);
         if (notificationId != -1){
             NotificationManager manager = ((NotificationManager)getSystemService(NOTIFICATION_SERVICE));
             manager.cancel(GcmIntentService.NOTIFICATION_TYPE_ACTION, notificationId);
