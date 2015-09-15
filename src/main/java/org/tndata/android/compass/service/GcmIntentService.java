@@ -1,28 +1,16 @@
 package org.tndata.android.compass.service;
 
 import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
-import org.tndata.android.compass.R;
-import org.tndata.android.compass.activity.ActionActivity;
-import org.tndata.android.compass.activity.BehaviorProgressActivity;
-import org.tndata.android.compass.activity.SnoozeActivity;
 import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.util.NotificationUtil;
 
 
 /**
@@ -109,94 +97,22 @@ public class GcmIntentService extends IntentService {
     }
 
     // Put the message into a notification and post it.
-    private void sendNotification(String id, String msg, String title, String object_type, String object_id, String mapping_id) {
-        Log.d(TAG, "object_id = " + object_id);
-        Context ctx = getApplicationContext();
-        NotificationManager mNotificationManager = (NotificationManager)ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+    private void sendNotification(String id, String msg, String title, String object_type,
+                                  String object_id, String mapping_id){
 
-        Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Log.d(TAG, "object_id = " + object_id);
 
         if (object_type.equals(Constants.ACTION_TYPE)){
             try{
-                Intent intent = new Intent(getApplicationContext(), ActionActivity.class);
-                intent.putExtra(ActionActivity.ACTION_ID_KEY, Integer.valueOf(object_id));
-
-                int notificationId = Integer.valueOf(object_id);
-
-                PendingIntent contentIntent = PendingIntent.getActivity(ctx,
-                        (int)System.currentTimeMillis(), intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT);
-
-                Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
-                        .putExtra(SnoozeService.NOTIFICATION_ID_KEY, Integer.valueOf(id))
-                        .putExtra(SnoozeService.PUSH_NOTIFICATION_ID_KEY, notificationId);
-
-                PendingIntent snoozePendingIntent = PendingIntent.getActivity(ctx,
-                        (int)System.currentTimeMillis(), snoozeIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT);
-
-                Intent didItIntent = new Intent(this, CompleteActionService.class)
-                        .putExtra(CompleteActionService.NOTIFICATION_ID_KEY, notificationId)
-                        .putExtra(CompleteActionService.ACTION_MAPPING_ID_KEY, Integer.valueOf(mapping_id));
-
-                PendingIntent didItPendingIntent = PendingIntent.getService(ctx,
-                        (int)System.currentTimeMillis(), didItIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT);
-
-                Bundle args = new Bundle();
-                args.putSerializable("objectType", Constants.ACTION_TYPE);
-
-                Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-                Notification notification = new NotificationCompat.Builder(ctx)
-                        .setSmallIcon(R.drawable.ic_action_compass_white)
-                        .setContentTitle(title)
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
-                        .setContentText(msg)
-                        .setLargeIcon(icon)
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                        .setSound(sound)
-                        .addAction(R.drawable.ic_alarm_black_24dp, getString(R.string.later_title), snoozePendingIntent)
-                        .addAction(R.drawable.ic_check, getString(R.string.did_it_title), didItPendingIntent)
-                        .addExtras(args)
-                        .setContentIntent(contentIntent)
-                        .setAutoCancel(true)
-                        .build();
-
-                mNotificationManager.notify(NOTIFICATION_TYPE_ACTION,
-                        notificationId,
-                        notification);
+                NotificationUtil.generateActionNotification(this, Integer.valueOf(id), title, msg,
+                        Integer.valueOf(object_id), Integer.valueOf(mapping_id));
             }
             catch (NumberFormatException nfx){
                 nfx.printStackTrace();
             }
         }
         else{
-            // We're launching the BehaviorProgressActivity
-            Intent intent = new Intent(ctx, BehaviorProgressActivity.class);
-            PendingIntent contentIntent = PendingIntent.getActivity(ctx,
-                    (int) System.currentTimeMillis(), intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-
-            Bundle args = new Bundle();
-            args.putSerializable("objectType", Constants.BEHAVIOR_TYPE);
-
-            Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-            Notification notification = new NotificationCompat.Builder(ctx)
-                    .setSmallIcon(R.drawable.ic_action_compass_white)
-                    .setContentTitle(title)
-                    .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
-                    .setContentText(msg)
-                    .setLargeIcon(icon)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .setSound(sound)
-                    .addExtras(args)
-                    .setContentIntent(contentIntent)
-                    .setAutoCancel(true)
-                    .build();
-
-            mNotificationManager.notify(NOTIFICATION_TYPE_BEHAVIOR,
-                    NOTIFICATION_TYPE_BEHAVIOR_ID,
-                    notification);
+            NotificationUtil.generateBehaviorNotification(this, title, msg);
         }
     }
 }
