@@ -21,6 +21,7 @@ import android.widget.Toast;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.PlacesAdapter;
+import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.task.PrimaryPlaceLoaderTask;
 import org.tndata.android.compass.task.SavePlaceTask;
@@ -214,6 +215,12 @@ public class PlacesActivity
                     mCurrentPlace.setName(mName.getText().toString().trim());
                     mAdapter.notifyDataSetChanged();
                     new SavePlaceTask(null, mApplication.getToken()).execute(mCurrentPlace);
+
+                    //Update the place in the database
+                    CompassDbHelper dbHelper = new CompassDbHelper(this);
+                    dbHelper.updatePlace(mCurrentPlace);
+                    dbHelper.close();
+
                     addPlaceToLocalList(mCurrentPlace);
                 }
                 //Otherwise this is a new place request, fire the place picker
@@ -274,6 +281,12 @@ public class PlacesActivity
                 //If a place wasn't selected this is a new place, so save it.
                 if (mCurrentPlace == null){
                     place.setName(mName.getText().toString().trim());
+
+                    //Write the place to the database
+                    CompassDbHelper dbHelper = new CompassDbHelper(this);
+                    dbHelper.savePlace(place);
+                    dbHelper.close();
+
                     mAdapter.addPlace(place);
                 }
                 //Otherwise, this place was edited, so update both, the place and the adapter
@@ -281,6 +294,12 @@ public class PlacesActivity
                     mCurrentPlace.setLatitude(place.getLocation().latitude);
                     mCurrentPlace.setLongitude(place.getLocation().longitude);
                     mCurrentPlace.setSet(true);
+
+                    //Update the place in the database
+                    CompassDbHelper dbHelper = new CompassDbHelper(this);
+                    dbHelper.updatePlace(mCurrentPlace);
+                    dbHelper.close();
+
                     mAdapter.notifyDataSetChanged();
                 }
                 addPlaceToLocalList(place);

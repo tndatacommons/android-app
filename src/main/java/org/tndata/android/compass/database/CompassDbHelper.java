@@ -149,7 +149,7 @@ public class CompassDbHelper extends SQLiteOpenHelper{
         String query = "UPDATE " + PlaceEntry.TABLE + " SET "
                 + PlaceEntry.NAME + "=?, "
                 + PlaceEntry.LATITUDE + "=?, "
-                + PlaceEntry.LONGITUDE + "=?, "
+                + PlaceEntry.LONGITUDE + "=? "
                 + "WHERE " + PlaceEntry.CLOUD_ID + "=?";
 
         //Prepare the statement

@@ -16,8 +16,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -81,7 +79,6 @@ public class LocationNotificationService
     @Override
     public void onCreate(){
         super.onCreate();
-        Log.d("LocationNotification", "Service fired");
         cancelled = false;
         mRunning = false;
         mLocationRequest = new LocationRequest(this, this, 0);
@@ -253,7 +250,7 @@ public class LocationNotificationService
             estimate = UPDATE_INTERVAL;
         }
         mNextUpdateTime = System.currentTimeMillis() + estimate;
-        Toast.makeText(this, distance + ", " + estimate, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, distance + ", " + estimate, Toast.LENGTH_SHORT).show();
     }
 
     /**

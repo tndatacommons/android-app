@@ -155,11 +155,6 @@ public class PlacePickerActivity
             //Set the id
             mPlace.setId(id);
 
-            //Write the place to the database
-            CompassDbHelper dbHelper = new CompassDbHelper(this);
-            dbHelper.savePlace(mPlace);
-            dbHelper.close();
-
             //Return the place
             Intent data = new Intent();
             data.putExtra(PLACE_RESULT_KEY, mPlace);
