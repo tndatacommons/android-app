@@ -32,6 +32,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.PlacePickerAdapter;
+import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.task.SavePlaceTask;
 
@@ -151,7 +152,15 @@ public class PlacePickerActivity
             Toast.makeText(this, R.string.places_save_error, Toast.LENGTH_SHORT).show();
         }
         else{
+            //Set the id
             mPlace.setId(id);
+
+            //Write the place to the database
+            CompassDbHelper dbHelper = new CompassDbHelper(this);
+            dbHelper.savePlace(mPlace);
+            dbHelper.close();
+
+            //Return the place
             Intent data = new Intent();
             data.putExtra(PLACE_RESULT_KEY, mPlace);
             setResult(RESULT_OK, data);

@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -47,8 +48,9 @@ public class LocationNotificationService
         implements LocationRequest.OnLocationAcquiredCallback{
 
     //Constants
-    private static final int CHECKING_INTERVAL = 10*1000; //30 seconds
-    private static final int GEOFENCE_RADIUS = 50; //50 meters
+    private static final int UPDATE_INTERVAL = 60*1000; //60 seconds
+    private static final int CHECKING_INTERVAL = 31*1000; //31 seconds
+    private static final int GEOFENCE_RADIUS = 40; //40 meters
 
     //Cancellation boolean, mainly for testing purposes
     private static boolean cancelled;
@@ -79,6 +81,7 @@ public class LocationNotificationService
     @Override
     public void onCreate(){
         super.onCreate();
+        Log.d("LocationNotification", "Service fired");
         cancelled = false;
         mRunning = false;
         mLocationRequest = new LocationRequest(this, this, 0);
@@ -94,8 +97,6 @@ public class LocationNotificationService
         }
         mReminders = dbHelper.getReminders();
         dbHelper.close();
-
-        Toast.makeText(this, mReminders.size() + " reminders", Toast.LENGTH_SHORT).show();
 
         if (!mRunning){
             mRunning = true;
@@ -222,8 +223,6 @@ public class LocationNotificationService
             mReminders.remove(reminder);
         }
 
-        Toast.makeText(this, mReminders.size() + " reminders left", Toast.LENGTH_SHORT).show();
-
         //If there are no more reminders, shut down the service
         if (mReminders.size() == 0){
             stopSelf();
@@ -250,6 +249,9 @@ public class LocationNotificationService
     private void setNextUpdateTime(double distance){
         //25m/s is a bit over 50mph, calculate the time to cover that distance and divide by 2
         int estimate = (int)((distance/25)*1000/2);
+        if (estimate < UPDATE_INTERVAL){
+            estimate = UPDATE_INTERVAL;
+        }
         mNextUpdateTime = System.currentTimeMillis() + estimate;
         Toast.makeText(this, distance + ", " + estimate, Toast.LENGTH_SHORT).show();
     }
