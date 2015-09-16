@@ -15,6 +15,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ActionActivity;
 import org.tndata.android.compass.activity.BehaviorProgressActivity;
 import org.tndata.android.compass.activity.SnoozeActivity;
+import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.service.CompleteActionService;
 import org.tndata.android.compass.service.SnoozeService;
 
@@ -103,9 +104,12 @@ public final class NotificationUtil{
         PendingIntent contentIntent = PendingIntent.getActivity(context,
                 (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        Reminder reminder = new Reminder(notificationId, -1, title, message, actionId, userMappingId);
+
         Intent snoozeIntent = new Intent(context, SnoozeActivity.class)
-                .putExtra(SnoozeService.PUSH_NOTIFICATION_ID_KEY, actionId)
-                .putExtra(SnoozeService.NOTIFICATION_ID_KEY, notificationId);
+                .putExtra(SnoozeActivity.REMINDER_KEY, reminder)
+                .putExtra(SnoozeActivity.PUSH_NOTIFICATION_ID_KEY, actionId)
+                .putExtra(SnoozeActivity.NOTIFICATION_ID_KEY, notificationId);
 
         PendingIntent snoozePendingIntent = PendingIntent.getActivity(context,
                 (int)System.currentTimeMillis(), snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);

@@ -41,6 +41,7 @@ public class CompassContract{
 
         //Column information
         public static final String ID = _ID;
+        public static final String NOTIFICATION_ID = "notification_id";
         public static final String PLACE_ID = "place_id";
         public static final String TITLE = "title";
         public static final String MESSAGE = "message";

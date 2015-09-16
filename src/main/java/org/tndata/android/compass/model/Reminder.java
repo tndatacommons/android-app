@@ -13,11 +13,12 @@ public class Reminder implements Serializable{
     static final long serialVersionUID = 94124918239L;
 
     private int mId;
+    private int mNotificationId;
     private int mPlaceId;
     private String mTitle;
     private String mMessage;
-    private String mObjectId;
-    private String mUserMappingId;
+    private int mObjectId;
+    private int mUserMappingId;
     private boolean mSnoozed;
     private long mLastDelivered;
 
@@ -31,8 +32,9 @@ public class Reminder implements Serializable{
      * @param objectId the id of the action reminder.
      * @param userMappingId the mapping id of the action in the reminder.
      */
-    public Reminder(int placeId, String title, String message, String objectId, String userMappingId){
+    public Reminder(int notificationId, int placeId, String title, String message, int objectId, int userMappingId){
         mId = -1;
+        mNotificationId = notificationId;
         mPlaceId = placeId;
         mTitle = title;
         mMessage = message;
@@ -87,6 +89,15 @@ public class Reminder implements Serializable{
     }
 
     /**
+     * Notification id getter.
+     *
+     * @return the id of the notification.
+     */
+    public int getNotificationId(){
+        return mNotificationId;
+    }
+
+    /**
      * Place id getter.
      *
      * @return the place id.
@@ -118,7 +129,7 @@ public class Reminder implements Serializable{
      *
      * @return the object id of the reminder.
      */
-    public String getObjectId(){
+    public int getObjectId(){
         return mObjectId;
     }
 
@@ -127,7 +138,7 @@ public class Reminder implements Serializable{
      *
      * @return the mapping id of the reminder.
      */
-    public String getUserMappingId(){
+    public int getUserMappingId(){
         return mUserMappingId;
     }
 

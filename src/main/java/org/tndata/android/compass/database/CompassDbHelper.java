@@ -50,10 +50,11 @@ public class CompassDbHelper extends SQLiteOpenHelper{
         String createReminders = "CREATE TABLE " + ReminderEntry.TABLE + " ("
                 + ReminderEntry.ID + " INTEGER PRIMARY KEY, "
                 + ReminderEntry.PLACE_ID + " INTEGER, "
+                + ReminderEntry.NOTIFICATION_ID + " INTEGER, "
                 + ReminderEntry.TITLE + " TEXT, "
                 + ReminderEntry.MESSAGE + " TEXT, "
-                + ReminderEntry.OBJECT_ID + " TEXT, "
-                + ReminderEntry.USER_MAPPING_ID + " TEXT, "
+                + ReminderEntry.OBJECT_ID + " INTEGER, "
+                + ReminderEntry.USER_MAPPING_ID + " INTEGER, "
                 + ReminderEntry.SNOOZED + " TINYINT, "
                 + ReminderEntry.LAST_DELIVERED + " INTEGER)";
         db.execSQL(createReminders);
@@ -223,6 +224,7 @@ public class CompassDbHelper extends SQLiteOpenHelper{
         SQLiteDatabase db = getWritableDatabase();
 
         String query = "INSERT INTO " + ReminderEntry.TABLE + " ("
+                + ReminderEntry.NOTIFICATION_ID + ", "
                 + ReminderEntry.PLACE_ID + ", "
                 + ReminderEntry.TITLE + ", "
                 + ReminderEntry.MESSAGE + ", "
@@ -230,17 +232,18 @@ public class CompassDbHelper extends SQLiteOpenHelper{
                 + ReminderEntry.USER_MAPPING_ID + ", "
                 + ReminderEntry.SNOOZED + ", "
                 + ReminderEntry.LAST_DELIVERED + ") "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         //Prepare the statement
         SQLiteStatement stmt = db.compileStatement(query);
-        stmt.bindLong(1, reminder.getPlaceId());
-        stmt.bindString(2, reminder.getTitle());
-        stmt.bindString(3, reminder.getMessage());
-        stmt.bindString(4, reminder.getObjectId());
-        stmt.bindString(5, reminder.getUserMappingId());
-        stmt.bindLong(6, reminder.isSnoozed() ? 1 : 0);
-        stmt.bindLong(7, reminder.getLastDelivered());
+        stmt.bindLong(1, reminder.getNotificationId());
+        stmt.bindLong(2, reminder.getPlaceId());
+        stmt.bindString(3, reminder.getTitle());
+        stmt.bindString(4, reminder.getMessage());
+        stmt.bindLong(5, reminder.getObjectId());
+        stmt.bindLong(6, reminder.getUserMappingId());
+        stmt.bindLong(7, reminder.isSnoozed() ? 1 : 0);
+        stmt.bindLong(8, reminder.getLastDelivered());
 
         //Execute the query
         reminder.setId((int)stmt.executeInsert());
@@ -278,11 +281,12 @@ public class CompassDbHelper extends SQLiteOpenHelper{
             do{
                 //Create the Reminder and populate it
                 Reminder place = new Reminder(
+                        cursor.getInt(cursor.getColumnIndex(ReminderEntry.NOTIFICATION_ID)),
                         cursor.getInt(cursor.getColumnIndex(ReminderEntry.PLACE_ID)),
                         cursor.getString(cursor.getColumnIndex(ReminderEntry.TITLE)),
                         cursor.getString(cursor.getColumnIndex(ReminderEntry.MESSAGE)),
-                        cursor.getString(cursor.getColumnIndex(ReminderEntry.OBJECT_ID)),
-                        cursor.getString(cursor.getColumnIndex(ReminderEntry.USER_MAPPING_ID)));
+                        cursor.getInt(cursor.getColumnIndex(ReminderEntry.OBJECT_ID)),
+                        cursor.getInt(cursor.getColumnIndex(ReminderEntry.USER_MAPPING_ID)));
                 place.setId(cursor.getInt(cursor.getColumnIndex(ReminderEntry.ID)));
                 place.setSnoozed(cursor.getLong(cursor.getColumnIndex(ReminderEntry.SNOOZED)) != 0);
                 place.setLastDelivered(cursor.getLong(cursor.getColumnIndex(ReminderEntry.LAST_DELIVERED)));

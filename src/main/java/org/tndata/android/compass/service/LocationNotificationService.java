@@ -168,7 +168,7 @@ public class LocationNotificationService
                             PendingIntent.FLAG_UPDATE_CURRENT);
 
                     Intent didItIntent = new Intent(this, CompleteActionService.class)
-                            .putExtra(CompleteActionService.NOTIFICATION_ID_KEY, notificationId)
+                            .putExtra(CompleteActionService.PUSH_NOTIFICATION_ID_KEY, notificationId)
                             .putExtra(CompleteActionService.ACTION_MAPPING_ID_KEY, Integer.valueOf(reminder.getObjectId()));
 
                     PendingIntent didItPendingIntent = PendingIntent.getService(this,
