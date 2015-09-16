@@ -266,7 +266,7 @@ public class PlacesActivity
         }
         //Edit the location
         else if (which == 1){
-            Intent add = new Intent(PlacesActivity.this, PlacePickerActivity.class);
+            Intent add = new Intent(this, PlacePickerActivity.class);
             add.putExtra(PlacePickerActivity.PLACE_KEY, mCurrentPlace);
             startActivityForResult(add, PLACE_PICKER_REQUEST_CODE);
         }

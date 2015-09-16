@@ -48,6 +48,9 @@ public class SnoozeActivity
 
     private static final String TAG = "SnoozeActivity";
 
+    private static final int PLACES_REQUEST_CODE = 600;
+
+
     private Reminder mReminder;
     private int notificationId;
     private int pushNotificationId;
@@ -101,17 +104,29 @@ public class SnoozeActivity
             datePickerDialog.show(getSupportFragmentManager(), "SnoozeDate");
         }
         else if (position == 3){
-            CharSequence[] placeNames = new CharSequence[mPlaces.size()];
+            displayPlacesDialog();
+        }
+    }
+
+    /**
+     * Opens a dialog with a list of places or an item telling the user to pick places.
+     */
+    private void displayPlacesDialog(){
+        Log.d(TAG, mPlaces.size() + " places found");
+        CharSequence[] placeNames = new CharSequence[mPlaces.size()==0 ? 1 : mPlaces.size()];
+        if (mPlaces.size() == 0){
+            placeNames[0] = getString(R.string.later_no_places);
+        }
+        else{
             for (int i = 0; i < mPlaces.size(); i++){
                 placeNames[i] = mPlaces.get(i).getName();
             }
-
-            AlertDialog dialog = new AlertDialog.Builder(this)
-                    .setTitle(R.string.later_pick_place)
-                    .setItems(placeNames, this)
-                    .create();
-            dialog.show();
         }
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.later_pick_place)
+                .setItems(placeNames, this)
+                .create().show();
     }
 
     @Override
@@ -137,6 +152,15 @@ public class SnoozeActivity
         snooze(mYear, mMonth, mDay, hour, minute);
     }
 
+    /**
+     * Snoozes a notification time-wise.
+     *
+     * @param year the year to snooze to.
+     * @param month the month to snooze to.
+     * @param day the day to snooze to.
+     * @param hour the hour to snooze to.
+     * @param minute the minute to snooze to.
+     */
     private void snooze(int year, int month, int day, int hour, int minute){
         //Translate to strings
         String monthString = month + "";
@@ -179,17 +203,36 @@ public class SnoozeActivity
 
     @Override
     public void onClick(DialogInterface dialog, int which){
-        mReminder.setPlaceId(mPlaces.get(which).getId());
-        mReminder.setSnoozed(true);
-        CompassDbHelper dbHelper = new CompassDbHelper(this);
-        dbHelper.saveReminder(mReminder);
-        dbHelper.close();
+        if (mPlaces.size() == 0){
+            startActivityForResult(new Intent(this, PlacesActivity.class), PLACES_REQUEST_CODE);
+        }
+        else{
+            Log.d(TAG, mPlaces.get(which).getName() + " selected");
+            mReminder.setPlaceId(mPlaces.get(which).getId());
+            mReminder.setSnoozed(true);
+            CompassDbHelper dbHelper = new CompassDbHelper(this);
+            dbHelper.saveReminder(mReminder);
+            dbHelper.close();
 
-        NotificationManager manager = ((NotificationManager)getSystemService(NOTIFICATION_SERVICE));
-        manager.cancel(GcmIntentService.NOTIFICATION_TYPE_ACTION, pushNotificationId);
+            NotificationManager manager = ((NotificationManager)getSystemService(NOTIFICATION_SERVICE));
+            manager.cancel(GcmIntentService.NOTIFICATION_TYPE_ACTION, pushNotificationId);
 
-        startService(new Intent(this, LocationNotificationService.class));
+            startService(new Intent(this, LocationNotificationService.class));
 
-        finish();
+            finish();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (requestCode == PLACES_REQUEST_CODE){
+            //Reload the list of places
+            CompassDbHelper dbHelper = new CompassDbHelper(this);
+            mPlaces = dbHelper.getPlaces();
+            dbHelper.close();
+
+            //Create the dialog
+            displayPlacesDialog();
+        }
     }
 }

@@ -32,7 +32,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.PlacePickerAdapter;
-import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.task.SavePlaceTask;
 
