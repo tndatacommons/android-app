@@ -28,6 +28,7 @@ import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.LocationRequest;
+import org.tndata.android.compass.util.NotificationUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,9 +126,6 @@ public class LocationNotificationService
     @Override
     public synchronized void onLocationAcquired(Location location){
         mRequestInProgress = false;
-        NotificationManager mNotificationManager =
-                (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-        Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         //The maximum surface distance between two points in the planet is about 20Mm
         double minDistance = 20*1000*1000;
@@ -146,63 +144,13 @@ public class LocationNotificationService
 
             //If the pone is within the geofence a notification is created
             if (distance < GEOFENCE_RADIUS){
-                //NOTE: I am doing this here to avoid conflicts, once the PR is merged
-                //  I'll fix all the notification related code.
-                try{
-                    Intent intent = new Intent(getApplicationContext(), ActionActivity.class);
-                    intent.putExtra(ActionActivity.ACTION_ID_KEY, Integer.valueOf(reminder.getObjectId()));
-
-                    int notificationId = Integer.valueOf(reminder.getObjectId());
-
-                    PendingIntent contentIntent = PendingIntent.getActivity(this,
-                            (int)System.currentTimeMillis(), intent,
-                            PendingIntent.FLAG_UPDATE_CURRENT);
-
-                    Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
-                            .putExtra(SnoozeActivity.REMINDER_KEY, reminder)
-                            .putExtra(SnoozeActivity.NOTIFICATION_ID_KEY, Integer.valueOf(20))
-                            .putExtra(SnoozeActivity.PUSH_NOTIFICATION_ID_KEY, notificationId);
-
-                    PendingIntent snoozePendingIntent = PendingIntent.getActivity(this,
-                            (int)System.currentTimeMillis(), snoozeIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT);
-
-                    Intent didItIntent = new Intent(this, CompleteActionService.class)
-                            .putExtra(CompleteActionService.PUSH_NOTIFICATION_ID_KEY, notificationId)
-                            .putExtra(CompleteActionService.ACTION_MAPPING_ID_KEY, Integer.valueOf(reminder.getObjectId()));
-
-                    PendingIntent didItPendingIntent = PendingIntent.getService(this,
-                            (int)System.currentTimeMillis(), didItIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT);
-
-                    Bundle args = new Bundle();
-                    args.putSerializable("objectType", Constants.ACTION_TYPE);
-
-                    Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-                    Notification notification = new NotificationCompat.Builder(this)
-                            .setSmallIcon(R.drawable.ic_action_compass_white)
-                            .setContentTitle(reminder.getTitle())
-                            .setStyle(new NotificationCompat.BigTextStyle().bigText(reminder.getMessage()))
-                            .setContentText(reminder.getMessage())
-                            .setLargeIcon(icon)
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                            .setSound(sound)
-                            .addAction(R.drawable.ic_alarm_black_24dp, getString(R.string.later_title), snoozePendingIntent)
-                            .addAction(R.drawable.ic_check_normal_dark, getString(R.string.did_it_title), didItPendingIntent)
-                            .addExtras(args)
-                            .setContentIntent(contentIntent)
-                            .setAutoCancel(true)
-                            .build();
-
-                    mNotificationManager.notify("org.tndata.compass.ActionNotification",
-                            notificationId,
-                            notification);
-                }
-                catch (NumberFormatException nfx){
-                    nfx.printStackTrace();
-                }
+                NotificationUtil.generateActionNotification(this, reminder.getNotificationId(),
+                        reminder.getTitle(), reminder.getMessage(), reminder.getObjectId(),
+                        reminder.getUserMappingId());
 
                 //The reminder is removed from the database and added to the removal list
+                //NOTE: This is the case because all reminders in the database are snoozed
+                //  at the moment, which means that they should be triggered only once.
                 CompassDbHelper dbHelper = new CompassDbHelper(this);
                 dbHelper.deleteReminder(reminder);
                 dbHelper.close();
