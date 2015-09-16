@@ -126,7 +126,7 @@ public final class NotificationUtil{
         String didIt = context.getString(R.string.did_it_title);
 
         Notification notification = getBuilder(context, title, message)
-                .addAction(R.drawable.ic_alarm_black_24dp, later, snoozePendingIntent)
+                .addAction(R.drawable.ic_snooze, later, snoozePendingIntent)
                 .addAction(R.drawable.ic_check, didIt, didItPendingIntent)
                 .setContentIntent(contentIntent)
                 .build();

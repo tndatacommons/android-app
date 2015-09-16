@@ -54,7 +54,7 @@ public class ImageHelper {
         switch (style) {
             case SELECTED:
                 color = resources.getColor(R.color.grow_primary_dark);
-                imageView.setImageResource(R.drawable.ic_check_white_24dp);
+                imageView.setImageResource(R.drawable.ic_check);
                 break;
             case ADD:
                 color = resources.getColor(R.color.grow_accent);
