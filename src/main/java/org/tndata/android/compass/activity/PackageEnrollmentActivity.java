@@ -2,6 +2,7 @@ package org.tndata.android.compass.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
 import org.tndata.android.compass.CompassApplication;
@@ -30,6 +31,10 @@ public class PackageEnrollmentActivity extends AppCompatActivity implements Pack
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_package_enrollment);
+
+        //Get and set the toolbar
+        Toolbar toolbar = (Toolbar)findViewById(R.id.package_toolbar);
+        setSupportActionBar(toolbar);
 
         mTitle = (TextView)findViewById(R.id.package_title);
         mDescription = (TextView)findViewById(R.id.package_description);

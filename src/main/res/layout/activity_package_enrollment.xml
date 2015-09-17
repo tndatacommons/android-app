@@ -1,47 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <LinearLayout
+    <android.support.v7.widget.Toolbar
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/package_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/grow_primary"
+        android:minHeight="?attr/actionBarSize"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <ScrollView
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="match_parent" >
 
-        <TextView
-            android:id="@+id/package_title"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="20dp"
-            android:gravity="center" />
+            android:layout_height="wrap_content" >
 
-        <TextView
-            android:id="@+id/package_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="20dp" />
+            <TextView
+                android:id="@+id/package_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:gravity="center" />
 
-        <TextView
-            android:id="@+id/package_consent_summary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="20dp" />
+            <TextView
+                android:id="@+id/package_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:padding="20dp" />
 
-        <TextView
-            android:id="@+id/package_consent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="20dp" />
+            <TextView
+                android:id="@+id/package_consent_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:padding="20dp" />
 
-        <Button
-            android:id="@+id/package_accept"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="20dp"
-            android:layout_gravity="center"
-            android:text="Accept" />
+            <TextView
+                android:id="@+id/package_consent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:padding="20dp" />
 
-    </LinearLayout>
-</ScrollView>
+            <Button
+                android:id="@+id/package_accept"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:layout_gravity="center"
+                android:text="Accept" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

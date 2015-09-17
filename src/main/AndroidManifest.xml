@@ -271,9 +271,8 @@
 
         <activity
             android:name=".activity.PackageEnrollmentActivity"
-            android:screenOrientation="portrait" >
-
-        </activity>
+            android:label="Package Enrollment Consent"
+            android:screenOrientation="portrait" />
 
         <receiver
             android:name="org.tndata.android.compass.service.GcmBroadcastReceiver"
