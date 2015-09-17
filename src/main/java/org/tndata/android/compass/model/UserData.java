@@ -26,6 +26,8 @@ public class UserData {
     private ArrayList<Goal> mGoals = new ArrayList<Goal>();  // The user's selected Goals
     private ArrayList<Behavior> mBehaviors = new ArrayList<Behavior>(); // The user's selected behaviors
     private ArrayList<Action> mActions = new ArrayList<Action>(); // The user's selected actions
+    private List<Place> mPlaces = new ArrayList<>();
+
 
     public UserData() {
     }
@@ -409,6 +411,18 @@ public class UserData {
                 }
             }
         }
+    }
+
+    public void setPlaces(List<Place> places){
+        mPlaces = places;
+    }
+
+    public void addPlace(Place place){
+        mPlaces.add(place);
+    }
+
+    public List<Place> getPlaces(){
+        return mPlaces;
     }
 
     /* -----------------------------------------------------------------

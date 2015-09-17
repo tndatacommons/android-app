@@ -259,7 +259,7 @@ public class LoginActivity
             transitionToOnBoarding();
         }
         else{
-            new GetUserDataTask(this).execute(user.getToken());
+            new GetUserDataTask(this, this).execute(user.getToken());
         }
     }
 

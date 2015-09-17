@@ -113,7 +113,7 @@ public class ChooseCategoriesActivity extends AppCompatActivity implements
     }
 
     private void getUserData(){
-        new GetUserDataTask(this).execute(application.getToken());
+        new GetUserDataTask(this, this).execute(application.getToken());
     }
 
     @Override

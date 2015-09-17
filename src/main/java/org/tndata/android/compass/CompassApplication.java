@@ -2,6 +2,7 @@ package org.tndata.android.compass;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
@@ -12,6 +13,7 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.ImageLoader;
 
@@ -151,6 +153,7 @@ public class CompassApplication extends Application{
         if(!BuildConfig.DEBUG) {
             Fabric.with(this, new Crashlytics());
         }
+        startService(new Intent(this, LocationNotificationService.class));
         ImageLoader.initialize(getApplicationContext());
     }
 }

@@ -8,6 +8,7 @@
     <!-- MainActivity -->
     <string name="action_my_progress">My progress</string>
     <string name="action_my_information">My information</string>
+    <string name="action_my_places">My places</string>
     <string name="action_my_priorities">My activities</string>
     <string name="action_my_privacy">My privacy</string>
     <string name="action_settings">Settings</string>
@@ -206,9 +207,26 @@
     <string name="later_title">Later</string>
     <string name="later_in_an_hour">In an hour</string>
     <string name="later_tomorrow">This time tomorrow</string>
-    <string name="later_pick">Pick a date and time</string>
+    <string name="later_pick_time">Pick a date and time</string>
+    <string name="later_pick_place">Pick a place</string>
+    <string name="later_no_places">Create a new place</string>
 
     <!-- I did it -->
     <string name="did_it_title">I did it</string>
+
+    <!-- Places -->
+    <string name="places_load_error">There was an error loading the place list</string>
+    <string name="places_name_dialog_title">What\'s the name of the place?</string>
+    <string name="places_name_dialog_accept">Accept</string>
+    <string name="places_name_dialog_cancel">Cancel</string>
+    <string name="places_name_dialog_empty">You must set a name</string>
+    <string name="places_name_dialog_chosen">There is already a place with that name</string>
+    <string name="places_edit_dialog_title">Select an action</string>
+    <string-array name="places_edit_dialog_options">
+        <item>Change the name</item>
+        <item>Change the location</item>
+    </string-array>
+    <string name="places_save_error">The place couldn\'t be saved</string>
+    <string name="places_picker_hint">Search a place or address</string>
 
 </resources>

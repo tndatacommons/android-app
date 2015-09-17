@@ -54,22 +54,23 @@ public class UserProfileAdapter extends ArrayAdapter<Survey> {
         } else {
             viewHolder = (UserProfileViewHolder) convertView.getTag();
         }
+
         final Survey survey = mItems.get(position);
         String question = survey.getText();
         String response = null;
-        if (survey.getQuestionType().equals(Constants.SURVEY_OPENENDED)) {
+        if (survey.getQuestionType().equals(Constants.SURVEY_OPENENDED)){
             response = survey.getResponse();
-        } else {
-            if (survey.getSelectedOption() != null && survey.getSelectedOption().getText() !=
-                    null) {
+        }
+        else{
+            if (survey.getSelectedOption() != null && survey.getSelectedOption().getText() != null){
                 response = survey.getSelectedOption().getText();
             }
         }
 
-        if (question != null && !question.isEmpty()) {
+        if (question != null && !question.isEmpty()){
             viewHolder.questionTextView.setText(question);
         }
-        if (response != null && !response.isEmpty()) {
+        if (response != null && !response.isEmpty()){
             viewHolder.responseTextView.setText(response);
         }
 

@@ -1,5 +1,6 @@
 package org.tndata.android.compass.activity;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -35,20 +36,23 @@ public class UserProfileActivity extends AppCompatActivity implements UserProfil
 
     private AdapterView.OnItemClickListener mProfileItemClickListener = new AdapterView
             .OnItemClickListener() {
-
-
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            if (!mSurveyLoading && !mSurveyShown) {
-                mProgressBar.setVisibility(View.VISIBLE);
-                mSelectedSurvey = mProfileSurveyItems.get(position);
-                String surveyUrlExtra = mSelectedSurvey.getQuestionType() + "-" + String.valueOf
-                        (mSelectedSurvey.getId());
-                new SurveyFinderTask(UserProfileActivity.this).executeOnExecutor(AsyncTask
-                                .THREAD_POOL_EXECUTOR, ((CompassApplication) getApplication())
-                                .getToken(),
-                        surveyUrlExtra);
-                mSurveyLoading = true;
+            if (position == mProfileSurveyItems.size()){
+                startActivity(new Intent(UserProfileActivity.this, PlacesActivity.class));
+            }
+            else{
+                if (!mSurveyLoading && !mSurveyShown){
+                    mProgressBar.setVisibility(View.VISIBLE);
+                    mSelectedSurvey = mProfileSurveyItems.get(position);
+                    String surveyUrlExtra = mSelectedSurvey.getQuestionType() + "-" + String.valueOf
+                            (mSelectedSurvey.getId());
+                    new SurveyFinderTask(UserProfileActivity.this).executeOnExecutor(AsyncTask
+                                    .THREAD_POOL_EXECUTOR, ((CompassApplication)getApplication())
+                                    .getToken(),
+                            surveyUrlExtra);
+                    mSurveyLoading = true;
+                }
             }
         }
     };

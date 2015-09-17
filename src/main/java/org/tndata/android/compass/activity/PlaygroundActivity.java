@@ -1,10 +1,12 @@
 package org.tndata.android.compass.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.ui.button.TransitionButton;
 
 
@@ -13,6 +15,7 @@ import org.tndata.android.compass.ui.button.TransitionButton;
  * rest of the application.
  */
 public class PlaygroundActivity extends AppCompatActivity implements View.OnClickListener{
+
     private TransitionButton button;
     private int state;
 
@@ -26,6 +29,8 @@ public class PlaygroundActivity extends AppCompatActivity implements View.OnClic
         button.setOnClickListener(this);
 
         state = 0;
+
+        startService(new Intent(this, LocationNotificationService.class));
     }
 
     @Override
@@ -46,5 +51,11 @@ public class PlaygroundActivity extends AppCompatActivity implements View.OnClic
             button.setInactive(true);
             state = 0;
         }
+    }
+
+    @Override
+    protected void onDestroy(){
+        LocationNotificationService.cancel();
+        super.onDestroy();
     }
 }

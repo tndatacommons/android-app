@@ -28,7 +28,7 @@
             android:layout_marginTop="50dp"
             android:padding="3dp"
             android:contentDescription="@string/behavior_add_to_priorities_label"
-            android:src="@drawable/ic_check_white_24dp"
+            android:src="@drawable/ic_check"
             android:background="@drawable/circle_secondary"/>
 
         <TextView

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <!-- This item will switch between save and edit, but defaults to save -->
+    <item
+        android:id="@+id/place_action"
+        android:title="Save place"
+        android:titleCondensed="Save"
+        android:icon="@drawable/ic_save"
+        app:showAsAction="always" />
+
+</menu>
