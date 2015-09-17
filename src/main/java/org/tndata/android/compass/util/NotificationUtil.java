@@ -17,7 +17,6 @@ import org.tndata.android.compass.activity.BehaviorProgressActivity;
 import org.tndata.android.compass.activity.SnoozeActivity;
 import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.service.CompleteActionService;
-import org.tndata.android.compass.service.SnoozeService;
 
 
 /**
@@ -27,8 +26,8 @@ import org.tndata.android.compass.service.SnoozeService;
  * @version 1.0.0
  */
 public final class NotificationUtil{
-    public static final String NOTIFICATION_TYPE_ACTION = "org.tndata.compass.ActionNotification";
-    public static final String NOTIFICATION_TYPE_BEHAVIOR = "org.tndata.compass.BehaviorNotification";
+    public static final String NOTIFICATION_TYPE_ACTION_TAG = "org.tndata.compass.ActionNotification";
+    public static final String NOTIFICATION_TYPE_BEHAVIOR_TAG = "org.tndata.compass.BehaviorNotification";
 
     //A behavior notification will always replace a previous one, that's why the (Tag, Id) tuple
     //  needs to be fixed
@@ -82,7 +81,7 @@ public final class NotificationUtil{
                 .build();
 
         ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
-                .notify(NOTIFICATION_TYPE_BEHAVIOR, NOTIFICATION_TYPE_BEHAVIOR_ID, notification);
+                .notify(NOTIFICATION_TYPE_BEHAVIOR_TAG, NOTIFICATION_TYPE_BEHAVIOR_ID, notification);
     }
 
     /**
@@ -132,6 +131,6 @@ public final class NotificationUtil{
                 .build();
 
         ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
-                .notify(NOTIFICATION_TYPE_ACTION, actionId, notification);
+                .notify(NOTIFICATION_TYPE_ACTION_TAG, actionId, notification);
     }
 }

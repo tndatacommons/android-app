@@ -7,9 +7,9 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
-import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NotificationUtil;
 
 
@@ -36,18 +36,16 @@ import org.tndata.android.compass.util.NotificationUtil;
  * "object_type": null,
  * }
  */
-public class GcmIntentService extends IntentService {
-    public static final String NOTIFICATION_TYPE_ACTION = "org.tndata.compass.ActionNotification";
-    public static final String NOTIFICATION_TYPE_BEHAVIOR = "org.tndata.compass.BehaviorNotification";
+public class GcmIntentService extends IntentService{
+    private static final String TAG = "GcmIntentService";
 
-    //A behavior notification will always replace a previous one, that's why the (Tag, Id) tuple
-    //  needs to be fixed
-    public static final int NOTIFICATION_TYPE_BEHAVIOR_ID = 1;
+    private static final String MESSAGE_TYPE_ACTION = "action";
+    private static final String MESSAGE_TYPE_BEHAVIOR = "behavior";
+    private static final String MESSAGE_TYPE_ENROLLMENT = "package enrollment";
 
-    private String TAG = "GcmIntentService";
 
-    public GcmIntentService() {
-        super("GcmIntentService");
+    public GcmIntentService(){
+        super(TAG);
     }
 
     @Override
@@ -56,18 +54,18 @@ public class GcmIntentService extends IntentService {
         if (token != null && !token.equals("")){
             Bundle extras = intent.getExtras();
             GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
-            // The getMessageType() intent parameter must be the intent you received
-            // in your BroadcastReceiver.
+            //The getMessageType() intent parameter must be the intent you received
+            //  in your BroadcastReceiver
             String messageType = gcm.getMessageType(intent);
 
-            if (extras != null && !extras.isEmpty()){  // has effect of un-parcelling Bundle
+            if (extras != null && !extras.isEmpty()){  //Has effect of un-parcelling Bundle
                 Log.d(TAG, "GCM message: " + extras.get("message"));
-            /*
-             * Filter messages based on message type. Since it is likely that GCM
-             * will be extended in the future with new message types, just ignore
-             * any message types you're not interested in, or that you don't
-             * recognize.
-             */
+                /*
+                 * Filter messages based on message type. Since it is likely that GCM
+                 * will be extended in the future with new message types, just ignore
+                 * any message types you're not interested in, or that you don't
+                 * recognize.
+                 */
                 if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)){
                     Log.d(TAG, "Send error: " + extras.toString());
                 }
@@ -86,33 +84,40 @@ public class GcmIntentService extends IntentService {
                                 jsonObject.optString("user_mapping_id")
                         );
                     }
-                    catch (Exception e){
-                        e.printStackTrace();
+                    catch (JSONException jsonx){
+                        jsonx.printStackTrace();
                     }
                 }
             }
         }
-        // Release the wake lock provided by the WakefulBroadcastReceiver.
+        //Release the wake lock provided by the WakefulBroadcastReceiver
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
     // Put the message into a notification and post it.
-    private void sendNotification(String id, String msg, String title, String object_type,
-                                  String object_id, String mapping_id){
+    private void sendNotification(String id, String msg, String title, String objectType,
+                                  String objectId, String mappingId){
 
-        Log.d(TAG, "object_id = " + object_id);
+        Log.d(TAG, "object_id = " + objectId);
 
-        if (object_type.equals(Constants.ACTION_TYPE)){
-            try{
-                NotificationUtil.generateActionNotification(this, Integer.valueOf(id), title, msg,
-                        Integer.valueOf(object_id), Integer.valueOf(mapping_id));
-            }
-            catch (NumberFormatException nfx){
-                nfx.printStackTrace();
-            }
-        }
-        else{
-            NotificationUtil.generateBehaviorNotification(this, title, msg);
+        switch (objectType){
+            case MESSAGE_TYPE_ACTION:
+                try{
+                    NotificationUtil.generateActionNotification(this, Integer.valueOf(id), title, msg,
+                            Integer.valueOf(objectId), Integer.valueOf(mappingId));
+                }
+                catch (NumberFormatException nfx){
+                    nfx.printStackTrace();
+                }
+                break;
+
+            case MESSAGE_TYPE_BEHAVIOR:
+                NotificationUtil.generateBehaviorNotification(this, title, msg);
+                break;
+
+            case MESSAGE_TYPE_ENROLLMENT:
+
+                break;
         }
     }
 }

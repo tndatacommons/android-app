@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
+import org.tndata.android.compass.util.NotificationUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +48,7 @@ public class SnoozeService extends IntentService{
 
         //Cancel the notification
         NotificationManager manager = ((NotificationManager)getSystemService(NOTIFICATION_SERVICE));
-        manager.cancel(GcmIntentService.NOTIFICATION_TYPE_ACTION, pushNotificationId);
+        manager.cancel(NotificationUtil.NOTIFICATION_TYPE_ACTION_TAG, pushNotificationId);
 
         //If the notification id is not -1, create the request.
         if (notificationId != -1){

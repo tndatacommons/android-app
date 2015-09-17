@@ -43,12 +43,5 @@ public class Constants {
     public final static int BEHAVIOR_ON_COURSE = 3;
 
 
-    // For GCM Notifications
-    public final static String ACTION_TYPE = "action";
-    public final static String BEHAVIOR_TYPE = "behavior";
-    public final static String GCM_DEFAULT_ACTIVITY = "org.tndata.android.compass.activity.LoginActivity";
-    public final static String GCM_ACTION_ACTIVITY = "org.tndata.android.compass.activity.ActionActivity";
-    public final static String GCM_BEHAVIOR_ACTIVITY = "org.tndata.android.compass.activity.BehaviorProgressActivity";
-
     public final static boolean ENABLE_SURVEYS = false;
 }

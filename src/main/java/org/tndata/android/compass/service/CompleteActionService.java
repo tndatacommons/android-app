@@ -9,6 +9,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.task.CompleteActionTask;
 import org.tndata.android.compass.task.GetUserActionsTask;
+import org.tndata.android.compass.util.NotificationUtil;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -46,7 +47,7 @@ public class CompleteActionService
         int notificationId = intent.getIntExtra(PUSH_NOTIFICATION_ID_KEY, -1);
         if (notificationId != -1){
             NotificationManager manager = ((NotificationManager)getSystemService(NOTIFICATION_SERVICE));
-            manager.cancel(GcmIntentService.NOTIFICATION_TYPE_ACTION, notificationId);
+            manager.cancel(NotificationUtil.NOTIFICATION_TYPE_ACTION_TAG, notificationId);
         }
 
         int actionMappingId = intent.getIntExtra(ACTION_MAPPING_ID_KEY, -1);
