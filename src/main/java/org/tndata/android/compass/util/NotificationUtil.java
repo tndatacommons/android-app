@@ -28,6 +28,7 @@ import org.tndata.android.compass.service.CompleteActionService;
 public final class NotificationUtil{
     public static final String NOTIFICATION_TYPE_ACTION_TAG = "org.tndata.compass.ActionNotification";
     public static final String NOTIFICATION_TYPE_BEHAVIOR_TAG = "org.tndata.compass.BehaviorNotification";
+    public static final String NOTIFICATION_TYPE_ENROLLMENT_TAG = "org.tndata.compass.EnrollmentNotification";
 
     //A behavior notification will always replace a previous one, that's why the (Tag, Id) tuple
     //  needs to be fixed
@@ -132,5 +133,20 @@ public final class NotificationUtil{
 
         ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
                 .notify(NOTIFICATION_TYPE_ACTION_TAG, actionId, notification);
+    }
+
+    public static void generateEnrollmentNotification(Context context, int packageId, String title,
+                                                      String message){
+
+        Intent intent = new Intent();//.putExtra(packageId);
+        PendingIntent contentIntent = PendingIntent.getActivity(context,
+                (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification notification = getBuilder(context, title, message)
+                .setContentIntent(contentIntent)
+                .build();
+
+        ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
+                .notify(NOTIFICATION_TYPE_ENROLLMENT_TAG, packageId, notification);
     }
 }
