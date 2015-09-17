@@ -18,6 +18,10 @@ public class Package{
     private String html_consent_more;
 
 
+    public void setId(int id){
+        this.id = id;
+    }
+
     public int getId(){
         return id;
     }
@@ -42,11 +46,11 @@ public class Package{
         return html_consent_summary;
     }
 
-    public String getConsentMore(){
+    public String getConsent(){
         return consent_more;
     }
 
-    public String getHtmlConsentMore(){
+    public String getHtmlConsent(){
         return html_consent_more;
     }
 }

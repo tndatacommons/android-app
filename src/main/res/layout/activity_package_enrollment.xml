@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/package_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/package_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp" />
+
+        <TextView
+            android:id="@+id/package_consent_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp" />
+
+        <TextView
+            android:id="@+id/package_consent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp" />
+
+        <Button
+            android:id="@+id/package_accept"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:layout_gravity="center"
+            android:text="Accept" />
+
+    </LinearLayout>
+</ScrollView>

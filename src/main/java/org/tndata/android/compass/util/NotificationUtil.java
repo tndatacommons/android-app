@@ -14,6 +14,7 @@ import android.support.v4.app.NotificationCompat;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ActionActivity;
 import org.tndata.android.compass.activity.BehaviorProgressActivity;
+import org.tndata.android.compass.activity.PackageEnrollmentActivity;
 import org.tndata.android.compass.activity.SnoozeActivity;
 import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.service.CompleteActionService;
@@ -138,12 +139,14 @@ public final class NotificationUtil{
     public static void generateEnrollmentNotification(Context context, int packageId, String title,
                                                       String message){
 
-        Intent intent = new Intent();//.putExtra(packageId);
+        Intent intent = new Intent(context, PackageEnrollmentActivity.class)
+                .putExtra(PackageEnrollmentActivity.PACKAGE_ID_KEY, packageId);
         PendingIntent contentIntent = PendingIntent.getActivity(context,
                 (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification notification = getBuilder(context, title, message)
                 .setContentIntent(contentIntent)
+                .setAutoCancel(false)
                 .build();
 
         ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))

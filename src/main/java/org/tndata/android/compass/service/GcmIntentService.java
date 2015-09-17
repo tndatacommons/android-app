@@ -100,7 +100,7 @@ public class GcmIntentService extends IntentService{
 
         Log.d(TAG, "object_id = " + objectId);
 
-        switch (objectType){
+        switch (objectType.toLowerCase()){
             case MESSAGE_TYPE_ACTION:
                 try{
                     NotificationUtil.generateActionNotification(this, Integer.valueOf(id), title, msg,
@@ -116,7 +116,13 @@ public class GcmIntentService extends IntentService{
                 break;
 
             case MESSAGE_TYPE_ENROLLMENT:
-
+                try{
+                    NotificationUtil.generateEnrollmentNotification(this, Integer.valueOf(objectId),
+                            title, msg);
+                }
+                catch (NumberFormatException nfx){
+                    nfx.printStackTrace();
+                }
                 break;
         }
     }
