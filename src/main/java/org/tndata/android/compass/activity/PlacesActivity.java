@@ -293,13 +293,19 @@ public class PlacesActivity
                 else{
                     mCurrentPlace.setLatitude(place.getLocation().latitude);
                     mCurrentPlace.setLongitude(place.getLocation().longitude);
-                    mCurrentPlace.setSet(true);
 
-                    //Update the place in the database
                     CompassDbHelper dbHelper = new CompassDbHelper(this);
-                    dbHelper.updatePlace(mCurrentPlace);
+                    //If the place is primary and not set it won't be in the database, so save
+                    if (mCurrentPlace.isPrimary() && !mCurrentPlace.isSet()){
+                        dbHelper.savePlace(mCurrentPlace);
+                    }
+                    //Otherwise it will, so update
+                    else{
+                        dbHelper.updatePlace(mCurrentPlace);
+                    }
                     dbHelper.close();
-
+                    
+                    mCurrentPlace.setSet(true);
                     mAdapter.notifyDataSetChanged();
                 }
                 addPlaceToLocalList(place);
