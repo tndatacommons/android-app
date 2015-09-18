@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -80,6 +81,10 @@ public class PackageEnrollmentActivity
         mConsentSummary = (TextView)findViewById(R.id.package_consent_summary);
         mConsent = (TextView)findViewById(R.id.package_consent);
         findViewById(R.id.package_accept).setOnClickListener(this);
+
+        //This setting cannot be set from XML
+        TextView explanation = (TextView)findViewById(R.id.package_accept_explanation);
+        explanation.setMovementMethod(LinkMovementMethod.getInstance());
 
         //Fetch the package
         new PackageLoaderTask(mApplication.getToken(), this).execute(mPackageId);
