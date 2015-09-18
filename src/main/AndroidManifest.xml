@@ -269,6 +269,11 @@
 
         </activity>
 
+        <activity
+            android:name=".activity.PackageEnrollmentActivity"
+            android:label="@string/package_enrollment_consent_title"
+            android:screenOrientation="portrait" />
+
         <receiver
             android:name="org.tndata.android.compass.service.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">

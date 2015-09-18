@@ -228,5 +228,23 @@
     </string-array>
     <string name="places_save_error">The place couldn\'t be saved</string>
     <string name="places_picker_hint">Search a place or address</string>
+    
+    <!-- Package consent -->
+    <string name="package_enrollment_consent_title">Package Enrollment Consent</string>
+    <string name="package_accept_explanation">
+        <p><em>By tapping I CONSENT, you agree to the following:</em></p>\n<ul>\n
+            <li>I wish to participate</li>\n
+            <li>I am at least 14 years old</li>\n
+            <li>I accept the Data Commons/Compass
+                <a href="https://app.tndata.org/terms/">Terms of Service</a> and
+                <a href="https://app.tndata.org/privacy/">Privacy Notice</a>
+            </li>
+        </ul>
+    </string>
+    <string name="package_accept">I CONSENT</string>
+    <string name="package_info">About the package</string>
+    <string name="package_consent">Consent</string>
+    <string name="package_load_error">The package information could not be loaded</string>
+    <string name="package_consent_error">There was a problem consenting the package</string>
 
 </resources>

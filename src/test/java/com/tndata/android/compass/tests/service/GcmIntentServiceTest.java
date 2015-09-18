@@ -17,6 +17,7 @@ import org.robolectric.shadows.ShadowNotification;
 import org.robolectric.shadows.ShadowNotificationManager;
 import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.service.GcmIntentService;
+import org.tndata.android.compass.util.NotificationUtil;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -72,7 +73,8 @@ public class GcmIntentServiceTest {
         ShadowNotificationManager manager = Shadows.shadowOf(notificationManager);
         assertEquals(1, manager.size());
 
-        Notification notification = manager.getNotification(GcmIntentService.NOTIFICATION_TYPE_BEHAVIOR, GcmIntentService.NOTIFICATION_TYPE_BEHAVIOR_ID);
+        Notification notification = manager.getNotification(NotificationUtil.NOTIFICATION_TYPE_BEHAVIOR_TAG,
+                NotificationUtil.NOTIFICATION_TYPE_BEHAVIOR_ID);
         assertNotNull(notification);
 
         ShadowNotification shadowNotification = Shadows.shadowOf(notification);

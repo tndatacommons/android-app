@@ -14,10 +14,10 @@ import android.support.v4.app.NotificationCompat;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ActionActivity;
 import org.tndata.android.compass.activity.BehaviorProgressActivity;
+import org.tndata.android.compass.activity.PackageEnrollmentActivity;
 import org.tndata.android.compass.activity.SnoozeActivity;
 import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.service.CompleteActionService;
-import org.tndata.android.compass.service.SnoozeService;
 
 
 /**
@@ -27,8 +27,9 @@ import org.tndata.android.compass.service.SnoozeService;
  * @version 1.0.0
  */
 public final class NotificationUtil{
-    public static final String NOTIFICATION_TYPE_ACTION = "org.tndata.compass.ActionNotification";
-    public static final String NOTIFICATION_TYPE_BEHAVIOR = "org.tndata.compass.BehaviorNotification";
+    public static final String NOTIFICATION_TYPE_ACTION_TAG = "org.tndata.compass.ActionNotification";
+    public static final String NOTIFICATION_TYPE_BEHAVIOR_TAG = "org.tndata.compass.BehaviorNotification";
+    public static final String NOTIFICATION_TYPE_ENROLLMENT_TAG = "org.tndata.compass.EnrollmentNotification";
 
     //A behavior notification will always replace a previous one, that's why the (Tag, Id) tuple
     //  needs to be fixed
@@ -82,7 +83,7 @@ public final class NotificationUtil{
                 .build();
 
         ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
-                .notify(NOTIFICATION_TYPE_BEHAVIOR, NOTIFICATION_TYPE_BEHAVIOR_ID, notification);
+                .notify(NOTIFICATION_TYPE_BEHAVIOR_TAG, NOTIFICATION_TYPE_BEHAVIOR_ID, notification);
     }
 
     /**
@@ -132,6 +133,32 @@ public final class NotificationUtil{
                 .build();
 
         ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
-                .notify(NOTIFICATION_TYPE_ACTION, actionId, notification);
+                .notify(NOTIFICATION_TYPE_ACTION_TAG, actionId, notification);
+    }
+
+    /**
+     * Creates a package enrollment notification.
+     *
+     * @param context an instance of the context.
+     * @param packageId the package id.
+     * @param title the title of the notification.
+     * @param message the message of the notification.
+     */
+    public static void generateEnrollmentNotification(Context context, int packageId, String title,
+                                                      String message){
+
+        Intent intent = new Intent(context, PackageEnrollmentActivity.class)
+                .putExtra(PackageEnrollmentActivity.PACKAGE_ID_KEY, packageId);
+        PendingIntent contentIntent = PendingIntent.getActivity(context,
+                (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification notification = getBuilder(context, title, message)
+                .setContentIntent(contentIntent)
+                .setAutoCancel(false)
+                .build();
+
+        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+        ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
+                .notify(NOTIFICATION_TYPE_ENROLLMENT_TAG, packageId, notification);
     }
 }
