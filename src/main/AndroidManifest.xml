@@ -271,7 +271,7 @@
 
         <activity
             android:name=".activity.PackageEnrollmentActivity"
-            android:label="Package Enrollment Consent"
+            android:label="@string/package_enrollment_consent_title"
             android:screenOrientation="portrait" />
 
         <receiver

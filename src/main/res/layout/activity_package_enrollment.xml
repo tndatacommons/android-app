@@ -56,7 +56,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="20dp"
                         android:layout_gravity="center"
-                        android:text="I CONSENT" />
+                        android:text="@string/package_accept" />
 
                     <ProgressBar
                         android:layout_width="30dp"
@@ -80,7 +80,7 @@
                     android:gravity="center"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:paddingBottom="10dp"
-                    android:text="About the package" />
+                    android:text="@string/package_info" />
 
                 <TextView
                     android:id="@+id/package_consent_summary"
@@ -96,7 +96,7 @@
                     android:gravity="center"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:layout_marginBottom="10dp"
-                    android:text="Consent" />
+                    android:text="@string/package_consent" />
 
                 <TextView
                     android:id="@+id/package_consent"

@@ -76,7 +76,7 @@ public class PackageEnrollmentActivity
     public void onPackagesLoaded(List<Package> packages){
         mProgressBar.setVisibility(View.GONE);
         if (packages == null){
-            Toast.makeText(this, "The package information couldn't be loaded", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.package_load_error, Toast.LENGTH_SHORT).show();
             new Handler().postDelayed(new Runnable(){
                 @Override
                 public void run(){
@@ -127,6 +127,6 @@ public class PackageEnrollmentActivity
     @Override
     public void onAcknowledgementFailed(){
         mAcceptSwitcher.showPrevious();
-        Toast.makeText(this, "The package couldn't be consented", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.package_consent_error, Toast.LENGTH_SHORT).show();
     }
 }

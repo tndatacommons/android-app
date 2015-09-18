@@ -228,5 +228,13 @@
     </string-array>
     <string name="places_save_error">The place couldn\'t be saved</string>
     <string name="places_picker_hint">Search a place or address</string>
+    
+    <!-- Package consent -->
+    <string name="package_enrollment_consent_title">Package Enrollment Consent</string>
+    <string name="package_accept">I CONSENT</string>
+    <string name="package_info">About the package</string>
+    <string name="package_consent">Consent</string>
+    <string name="package_load_error">The package information could not be loaded</string>
+    <string name="package_consent_error">There was a problem consenting the package</string>
 
 </resources>
