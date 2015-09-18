@@ -2,6 +2,7 @@ package org.tndata.android.compass.activity;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -23,7 +24,11 @@ import java.util.List;
 
 
 /**
- * Created by isma on 9/17/15.
+ * Activity that displays the package enrollment consent form and lets the user
+ * consent to it.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class PackageEnrollmentActivity
         extends AppCompatActivity
@@ -32,12 +37,16 @@ public class PackageEnrollmentActivity
                 PackageLoaderTask.PackageLoaderCallback,
                 ConsentAcknowledgementTask.ConsentAcknowledgementCallback{
 
+    //Keys
     public static final String PACKAGE_ID_KEY = "org.tndata.compass.PackageId";
 
+    //The package id for this consent
     private int mPackageId;
 
+    //A reference to the application class
     private CompassApplication mApplication;
 
+    //UI components
     private ProgressBar mProgressBar;
     private ScrollView mContent;
     private TextView mTitle;
@@ -60,6 +69,7 @@ public class PackageEnrollmentActivity
         Toolbar toolbar = (Toolbar)findViewById(R.id.package_toolbar);
         setSupportActionBar(toolbar);
 
+        //Retrieve the UI components and set the button's listener
         mProgressBar = (ProgressBar)findViewById(R.id.package_progress);
         mContent = (ScrollView)findViewById(R.id.package_content);
         mTitle = (TextView)findViewById(R.id.package_title);
@@ -69,12 +79,14 @@ public class PackageEnrollmentActivity
         mConsent = (TextView)findViewById(R.id.package_consent);
         findViewById(R.id.package_accept).setOnClickListener(this);
 
+        //Fetch the package
         new PackageLoaderTask(mApplication.getToken(), this).execute(mPackageId);
     }
 
     @Override
-    public void onPackagesLoaded(List<Package> packages){
+    public void onPackagesLoaded(@Nullable List<Package> packages){
         mProgressBar.setVisibility(View.GONE);
+        //Upon failure, let the user know and close the activity
         if (packages == null){
             Toast.makeText(this, R.string.package_load_error, Toast.LENGTH_SHORT).show();
             new Handler().postDelayed(new Runnable(){
@@ -84,6 +96,7 @@ public class PackageEnrollmentActivity
                 }
             }, 2000);
         }
+        //Otherwise, populate the content and make it visible
         else{
             mContent.setVisibility(View.VISIBLE);
             CompassTagHandler tagHandler = new CompassTagHandler(this);
@@ -114,18 +127,22 @@ public class PackageEnrollmentActivity
     public void onClick(View view){
         switch (view.getId()){
             case R.id.package_accept:
+                //Show the progress bar and fire up the acknowledgement task
                 mAcceptSwitcher.showNext();
                 new ConsentAcknowledgementTask(mApplication.getToken(), this).execute(mPackageId);
+                break;
         }
     }
 
     @Override
     public void onAcknowledgementSuccessful(){
+        //If the acknowledgement was successful, kill the activity
         finish();
     }
 
     @Override
     public void onAcknowledgementFailed(){
+        //If the acknowledgement failed let the user know
         mAcceptSwitcher.showPrevious();
         Toast.makeText(this, R.string.package_consent_error, Toast.LENGTH_SHORT).show();
     }

@@ -2,6 +2,7 @@ package org.tndata.android.compass.task;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.gson.FieldNamingPolicy;
@@ -28,7 +29,11 @@ import java.util.Map;
 
 
 /**
- * Created by isma on 9/17/15.
+ * Task to load the user packages. It loads all the packages matching an id passed
+ * through the execute() method.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class PackageLoaderTask extends AsyncTask<Integer, Void, List<Package>>{
     private static final String TAG = "PackageLoaderTask";
@@ -38,6 +43,12 @@ public class PackageLoaderTask extends AsyncTask<Integer, Void, List<Package>>{
     private PackageLoaderCallback mCallback;
 
 
+    /**
+     * Constructor.
+     *
+     * @param token the user authentication token.
+     * @param callback the load callback.
+     */
     public PackageLoaderTask(@NonNull String token, @NonNull PackageLoaderCallback callback){
         mToken = token;
         mCallback = callback;
@@ -122,7 +133,18 @@ public class PackageLoaderTask extends AsyncTask<Integer, Void, List<Package>>{
     }
 
 
+    /**
+     * Callback interface for load events.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface PackageLoaderCallback{
-        void onPackagesLoaded(List<Package> packages);
+        /**
+         * Called when the task is done loading the packages.
+         *
+         * @param packages a list of packages if successful, null otherwise.
+         */
+        void onPackagesLoaded(@Nullable List<Package> packages);
     }
 }
