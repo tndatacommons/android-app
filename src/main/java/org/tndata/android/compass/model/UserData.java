@@ -25,7 +25,7 @@ public class UserData {
     private ArrayList<Category> mCategories = new ArrayList<Category>(); // The user's selected Categories
     private ArrayList<Goal> mGoals = new ArrayList<Goal>();  // The user's selected Goals
     private ArrayList<Behavior> mBehaviors = new ArrayList<Behavior>(); // The user's selected behaviors
-    private ArrayList<Action> mActions = new ArrayList<Action>(); // The user's selected actions
+    private List<Action> mActions = new ArrayList<Action>(); // The user's selected actions
     private List<Place> mPlaces = new ArrayList<>();
 
 
@@ -298,7 +298,7 @@ public class UserData {
      *
      * @return an ArrayList of Action objects.
      */
-    public ArrayList<Action> getActions() {
+    public List<Action> getActions() {
         return mActions;
     }
 
@@ -310,10 +310,10 @@ public class UserData {
      *
      * @param actions
      */
-    public void setActions(ArrayList<Action> actions) {
+    public void setActions(List<Action> actions) {
         setActions(actions, true);
     }
-    public void setActions(ArrayList<Action> actions, boolean sync) {
+    public void setActions(List<Action> actions, boolean sync) {
         mActions = actions;
         if(sync) {
             assignActionsToBehaviors();

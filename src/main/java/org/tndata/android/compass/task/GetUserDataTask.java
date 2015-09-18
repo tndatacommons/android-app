@@ -21,6 +21,7 @@ import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
+import org.tndata.android.compass.util.Parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -82,12 +83,14 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
             JSONArray jArray = response.getJSONArray("results");
             JSONObject userJson = jArray.getJSONObject(0); // 1 user, so 1 result
 
+            Parser parser = new Parser();
+
             // Parse the user-selected content, store in userData; wait till all data is set
             // before syncing parent/child relationships.
             userData.setCategories(parseUserCategories(userJson.getJSONArray("categories")), false);
             userData.setGoals(parseUserGoals(userJson.getJSONArray("goals")), false);
             userData.setBehaviors(parseUserBehaviors(userJson.getJSONArray("behaviors")), false);
-            userData.setActions(parseUserActions(userJson.getJSONArray("actions")), false);
+            userData.setActions(parser.parseActions(userJson.getJSONArray("actions"), true), false);
             userData.sync();
 
             userData.setPlaces(parseUserPlaces(userJson.getJSONArray("places")));

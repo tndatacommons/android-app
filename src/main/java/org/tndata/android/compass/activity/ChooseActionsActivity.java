@@ -197,7 +197,7 @@ public class ChooseActionsActivity
 
     @Override
     public void editReminder(Action action) {
-        ArrayList<Action> actions = mApplication.getActions();
+        List<Action> actions = mApplication.getActions();
 
         Intent intent = new Intent(getApplicationContext(), TriggerActivity.class);
         intent.putExtra("goal", mGoal);
@@ -284,7 +284,7 @@ public class ChooseActionsActivity
     }
 
     @Override
-    public void actionsLoaded(ArrayList<Action> actions){
+    public void actionsLoaded(List<Action> actions){
         if (actions != null && !actions.isEmpty()){
             mAdapter.setActions(actions);
         }

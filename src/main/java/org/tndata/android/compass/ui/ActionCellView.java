@@ -20,6 +20,8 @@ import org.tndata.android.compass.task.DeleteActionTask;
 import org.tndata.android.compass.util.ImageHelper;
 
 import java.util.ArrayList;
+import java.util.List;
+
 
 public class ActionCellView extends RelativeLayout implements AddActionTask
         .AddActionTaskListener, DeleteActionTask.DeleteActionTaskListener {
@@ -63,7 +65,7 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
             public void onClick(View v) {
 
                 if (mContext instanceof Activity) {
-                    ArrayList<Action> actions = ((CompassApplication) ((Activity) mContext)
+                    List<Action> actions = ((CompassApplication) ((Activity) mContext)
                             .getApplication()
                     ).getActions();
                     if (!actions.contains(mAction)) {
@@ -120,7 +122,7 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
 
     public void setAction(Action action) {
         if (mContext instanceof Activity) {
-            ArrayList<Action> actions = ((CompassApplication) ((Activity) mContext).getApplication()
+            List<Action> actions = ((CompassApplication) ((Activity) mContext).getApplication()
             ).getActions();
             for (Action userAction : actions) {
                 if (userAction.getId() == action.getId()) {
@@ -160,7 +162,7 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
 
     public void updateImage() {
         if (mContext instanceof Activity) {
-            ArrayList<Action> actions = ((CompassApplication) ((Activity) mContext)
+            List<Action> actions = ((CompassApplication) ((Activity) mContext)
                     .getApplication()).getActions();
             if (actions.contains(mAction)) {
                 ImageHelper.setupImageViewButton(getResources(), mAddImageView, ImageHelper.CHOOSE);
@@ -180,7 +182,7 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
 
         mAction = action;
         if (mContext instanceof Activity) {
-            ArrayList<Action> actions = ((CompassApplication) ((Activity) mContext)
+            List<Action> actions = ((CompassApplication) ((Activity) mContext)
                     .getApplication()).getActions();
 
             actions.add(mAction);
@@ -198,7 +200,7 @@ public class ActionCellView extends RelativeLayout implements AddActionTask
         mProgressBar.setVisibility(View.GONE);
         mAddImageView.setEnabled(true);
         if (mContext instanceof Activity) {
-            ArrayList<Action> actions = ((CompassApplication) ((Activity) mContext)
+            List<Action> actions = ((CompassApplication) ((Activity) mContext)
                     .getApplication()).getActions();
             actions.remove(mAction);
             ((CompassApplication) ((Activity) mContext).getApplication()).setActions(actions);

@@ -18,6 +18,7 @@ import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -123,7 +124,7 @@ public class CompassApplication extends Application{
         mUserData.logSelectedData("AFTER CompassApplication.addBehavior", false);
     }
 
-    public ArrayList<Action> getActions() {
+    public List<Action> getActions() {
         return mUserData.getActions();
     }
 
@@ -132,7 +133,7 @@ public class CompassApplication extends Application{
         mUserData.logSelectedData("AFTER CompassApplication.removeAction: ", false);
     }
 
-    public void setActions(ArrayList<Action> actions) {
+    public void setActions(List<Action> actions) {
         mUserData.setActions(actions);
         mUserData.logSelectedData("AFTER CompassApplication.setActions", false);
     }

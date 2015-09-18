@@ -28,6 +28,8 @@ import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.ImageHelper;
 
 import java.util.ArrayList;
+import java.util.List;
+
 
 public class LearnMoreFragment extends Fragment implements AddActionTask
         .AddActionTaskListener, DeleteActionTask.DeleteActionTaskListener {
@@ -129,7 +131,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
             @Override
             public void onClick(View v) {
                 if (mAction != null) {
-                    ArrayList<Action> actions = ((CompassApplication) getActivity()
+                    List<Action> actions = ((CompassApplication) getActivity()
                             .getApplication()
                     ).getActions();
                     if (!actions.contains(mAction)) {
@@ -261,7 +263,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
 
     public void setImageView() {
         if (mAction != null) {
-            ArrayList<Action> actions = ((CompassApplication) getActivity().getApplication()
+            List<Action> actions = ((CompassApplication) getActivity().getApplication()
             ).getActions();
             if (actions.contains(mAction)) {
                 ImageHelper.setupImageViewButton(getResources(), mAddImageView,
@@ -325,7 +327,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
 
     public void actionChanged(Action action) {
         mCallback.actionChanged();
-        ArrayList<Action> actions = ((CompassApplication) getActivity().getApplication()
+        List<Action> actions = ((CompassApplication) getActivity().getApplication()
         ).getActions();
         if (actions.contains(action)) {
             for (Goal goal : ((CompassApplication) getActivity().getApplication()).getGoals()) {
@@ -346,7 +348,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
         }
 
         mAction = action;
-        ArrayList<Action> actions = ((CompassApplication) getActivity().getApplication()
+        List<Action> actions = ((CompassApplication) getActivity().getApplication()
         ).getActions();
 
         actions.add(mAction);
@@ -362,7 +364,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
     public void actionDeleted() {
         mProgressBar.setVisibility(View.GONE);
         mAddImageView.setEnabled(true);
-        ArrayList<Action> actions = ((CompassApplication) getActivity().getApplication()
+        List<Action> actions = ((CompassApplication) getActivity().getApplication()
         ).getActions();
         actions.remove(mAction);
         ((CompassApplication) getActivity().getApplication()).setActions(actions);

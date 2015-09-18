@@ -30,6 +30,8 @@ import org.tndata.android.compass.util.ImageHelper;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.List;
+
 
 public class BehaviorFragment extends Fragment implements ActionLoaderListener, ActionCellView
         .ActionViewListener {
@@ -39,7 +41,7 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
     private ImageView mAddImageView;
     private ProgressBar mProgressBar;
     private BehaviorFragmentListener mCallback;
-    private ArrayList<Action> mActionList;
+    private List<Action> mActionList;
 
     public interface BehaviorFragmentListener {
         public void learnMoreBehavior();
@@ -161,7 +163,7 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
     }
 
     @Override
-    public void actionsLoaded(ArrayList<Action> actions) {
+    public void actionsLoaded(List<Action> actions) {
         mActionList = actions;
         if (mActionList != null) {
             drawActions();
@@ -236,7 +238,7 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
     @Override
     public void actionChanged(Action action) {
         mCallback.actionChanged();
-        ArrayList<Action> actions = ((CompassApplication) getActivity().getApplication()
+        List<Action> actions = ((CompassApplication) getActivity().getApplication()
         ).getActions();
         if (actions.contains(action)) {
             for (Goal goal : ((CompassApplication) getActivity().getApplication()).getGoals()) {
