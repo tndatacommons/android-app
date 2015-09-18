@@ -1,17 +1,23 @@
 package org.tndata.android.compass.activity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Package;
 import org.tndata.android.compass.task.ConsentAcknowledgementTask;
 import org.tndata.android.compass.task.PackageLoaderTask;
+import org.tndata.android.compass.util.CompassTagHandler;
 
 import java.util.List;
 
@@ -32,6 +38,8 @@ public class PackageEnrollmentActivity
 
     private CompassApplication mApplication;
 
+    private ProgressBar mProgressBar;
+    private ScrollView mContent;
     private TextView mTitle;
     private TextView mDescription;
     private TextView mConsentSummary;
@@ -51,6 +59,8 @@ public class PackageEnrollmentActivity
         Toolbar toolbar = (Toolbar)findViewById(R.id.package_toolbar);
         setSupportActionBar(toolbar);
 
+        mProgressBar = (ProgressBar)findViewById(R.id.package_progress);
+        mContent = (ScrollView)findViewById(R.id.package_content);
         mTitle = (TextView)findViewById(R.id.package_title);
         mDescription = (TextView)findViewById(R.id.package_description);
         mConsentSummary = (TextView)findViewById(R.id.package_consent_summary);
@@ -62,10 +72,40 @@ public class PackageEnrollmentActivity
 
     @Override
     public void onPackagesLoaded(List<Package> packages){
-        mTitle.setText(packages.get(0).getTitle());
-        mDescription.setText(packages.get(0).getDescription());
-        mConsentSummary.setText(packages.get(0).getConsentSummary());
-        mConsent.setText(packages.get(0).getConsent());
+        mProgressBar.setVisibility(View.GONE);
+        if (packages == null){
+            Toast.makeText(this, "The package information couldn't be loaded", Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(new Runnable(){
+                @Override
+                public void run(){
+                    finish();
+                }
+            }, 2000);
+        }
+        else{
+            mContent.setVisibility(View.VISIBLE);
+            CompassTagHandler tagHandler = new CompassTagHandler(this);
+            Package myPackage = packages.get(0);
+            mTitle.setText(myPackage.getTitle());
+            if (myPackage.getHtmlDescription().isEmpty()){
+                mDescription.setText(myPackage.getDescription());
+            }
+            else{
+                mDescription.setText(Html.fromHtml(myPackage.getHtmlDescription(), null, tagHandler));
+            }
+            if (myPackage.getHtmlConsentSummary().isEmpty()){
+                mConsentSummary.setText(myPackage.getConsentSummary());
+            }
+            else{
+                mConsentSummary.setText(Html.fromHtml(myPackage.getHtmlConsentSummary(), null, tagHandler));
+            }
+            if (myPackage.getHtmlConsent().isEmpty()){
+                mConsent.setText(myPackage.getConsent());
+            }
+            else{
+                mConsent.setText(Html.fromHtml(myPackage.getHtmlConsent(), null, tagHandler));
+            }
+        }
     }
 
     @Override
