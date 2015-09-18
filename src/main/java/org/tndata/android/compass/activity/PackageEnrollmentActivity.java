@@ -5,12 +5,12 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -41,6 +41,7 @@ public class PackageEnrollmentActivity
     private ProgressBar mProgressBar;
     private ScrollView mContent;
     private TextView mTitle;
+    private ViewSwitcher mAcceptSwitcher;
     private TextView mDescription;
     private TextView mConsentSummary;
     private TextView mConsent;
@@ -62,6 +63,7 @@ public class PackageEnrollmentActivity
         mProgressBar = (ProgressBar)findViewById(R.id.package_progress);
         mContent = (ScrollView)findViewById(R.id.package_content);
         mTitle = (TextView)findViewById(R.id.package_title);
+        mAcceptSwitcher = (ViewSwitcher)findViewById(R.id.package_accept_switcher);
         mDescription = (TextView)findViewById(R.id.package_description);
         mConsentSummary = (TextView)findViewById(R.id.package_consent_summary);
         mConsent = (TextView)findViewById(R.id.package_consent);
@@ -112,17 +114,19 @@ public class PackageEnrollmentActivity
     public void onClick(View view){
         switch (view.getId()){
             case R.id.package_accept:
+                mAcceptSwitcher.showNext();
                 new ConsentAcknowledgementTask(mApplication.getToken(), this).execute(mPackageId);
         }
     }
 
     @Override
     public void onAcknowledgementSuccessful(){
-        Log.d("PackageEnrollment", "succeeded");
+        finish();
     }
 
     @Override
     public void onAcknowledgementFailed(){
-        Log.d("PackageEnrollment", "failed");
+        mAcceptSwitcher.showPrevious();
+        Toast.makeText(this, "The package couldn't be consented", Toast.LENGTH_SHORT).show();
     }
 }
