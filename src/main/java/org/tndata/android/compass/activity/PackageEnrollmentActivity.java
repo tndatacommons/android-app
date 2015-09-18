@@ -1,5 +1,6 @@
 package org.tndata.android.compass.activity;
 
+import android.app.NotificationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -19,6 +20,7 @@ import org.tndata.android.compass.model.Package;
 import org.tndata.android.compass.task.ConsentAcknowledgementTask;
 import org.tndata.android.compass.task.PackageLoaderTask;
 import org.tndata.android.compass.util.CompassTagHandler;
+import org.tndata.android.compass.util.NotificationUtil;
 
 import java.util.List;
 
@@ -136,7 +138,9 @@ public class PackageEnrollmentActivity
 
     @Override
     public void onAcknowledgementSuccessful(){
-        //If the acknowledgement was successful, kill the activity
+        //If the acknowledgement was successful, dismiss the notification and kill the activity
+        ((NotificationManager)getSystemService(NOTIFICATION_SERVICE))
+                .cancel(NotificationUtil.NOTIFICATION_TYPE_ENROLLMENT_TAG, mPackageId);
         finish();
     }
 

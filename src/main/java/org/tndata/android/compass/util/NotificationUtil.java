@@ -136,6 +136,14 @@ public final class NotificationUtil{
                 .notify(NOTIFICATION_TYPE_ACTION_TAG, actionId, notification);
     }
 
+    /**
+     * Creates a package enrollment notification.
+     *
+     * @param context an instance of the context.
+     * @param packageId the package id.
+     * @param title the title of the notification.
+     * @param message the message of the notification.
+     */
     public static void generateEnrollmentNotification(Context context, int packageId, String title,
                                                       String message){
 
@@ -149,6 +157,7 @@ public final class NotificationUtil{
                 .setAutoCancel(false)
                 .build();
 
+        notification.flags |= Notification.FLAG_ONGOING_EVENT;
         ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
                 .notify(NOTIFICATION_TYPE_ENROLLMENT_TAG, packageId, notification);
     }
