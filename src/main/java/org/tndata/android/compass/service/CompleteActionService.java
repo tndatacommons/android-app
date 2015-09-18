@@ -12,6 +12,7 @@ import org.tndata.android.compass.task.GetUserActionsTask;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 
 /**
@@ -81,7 +82,7 @@ public class CompleteActionService
     }
 
     @Override
-    public synchronized void actionsLoaded(ArrayList<Action> actions){
+    public synchronized void actionsLoaded(List<Action> actions){
         boolean success = false;
         if (actions != null && actions.size() > 0){
             int actionMappingId = actions.get(0).getMappingId();

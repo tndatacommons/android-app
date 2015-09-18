@@ -17,7 +17,6 @@ import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Place;
-import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
@@ -238,37 +237,6 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
             e.printStackTrace();
         }
         return behaviors;
-    }
-
-    protected ArrayList<Action> parseUserActions(JSONArray actionArray) {
-        ArrayList<Action> actions = new ArrayList<Action>();
-
-        try {
-            for (int i = 0; i < actionArray.length(); i++) {
-                JSONObject actionJson = actionArray.getJSONObject(i);
-                Action action = gson.fromJson(actionJson.getString("action"), Action.class);
-                action.setMappingId(actionJson.getInt("id"));
-                action.setCustomTriggersAllowed(actionJson.getBoolean("custom_triggers_allowed"));
-                action.setCustomTriggersAllowed(actionJson.getBoolean("custom_triggers_allowed"));
-                actions.add(action);
-
-                Log.d(TAG, "Created UserAction (" +
-                        action.getMappingId() + ") with Action (" +
-                        action.getId() + ")" + action.getTitle());
-
-                Log.d(TAG, "Custom Trigger: " + actionJson.getString("custom_trigger"));
-
-                if (!actionJson.isNull("custom_trigger")) {
-                    action.setCustomTrigger(
-                            gson.fromJson(actionJson.getString("custom_trigger"), Trigger.class));
-
-                    Log.d(TAG, "loaded trigger: " + action.getTrigger().getName());
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return actions;
     }
 
     private List<Place> parseUserPlaces(JSONArray placeArray){

@@ -25,6 +25,7 @@ import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GoalDetailsFragment extends Fragment implements
@@ -158,7 +159,7 @@ public class GoalDetailsFragment extends Fragment implements
     }
 
     @Override
-    public void actionsLoaded(ArrayList<Action> actions) {
+    public void actionsLoaded(List<Action> actions) {
 
         for (Behavior behavior : mBehaviorActionMap.keySet()) {
             for (Action action : actions) {

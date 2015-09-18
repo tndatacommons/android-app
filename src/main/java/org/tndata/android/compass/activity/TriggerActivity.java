@@ -36,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -159,7 +160,7 @@ public class TriggerActivity
     }
 
     @Override
-    public void actionsLoaded(ArrayList<Action> actions){
+    public void actionsLoaded(List<Action> actions){
         if (actions.size() > 0){
             mAction = actions.get(0);
             setAction();
