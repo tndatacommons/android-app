@@ -110,53 +110,6 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
         return null;
     }
 
-    protected ArrayList<Goal> parseUserGoals(JSONArray goalArray) {
-        ArrayList<Goal> goals = new ArrayList<Goal>();
-
-        /*try {/*
-            for (int i = 0; i < goalArray.length(); i++) {
-                JSONObject goalJson = goalArray.getJSONObject(i);
-                Goal goal = gson.fromJson(goalJson.getString("goal"), Goal.class);
-                goal.setProgressValue(goalJson.getDouble("progress_value"));
-                goal.setMappingId(goalJson.getInt("id"));
-                goal.setCustomTriggersAllowed(goalJson.getBoolean("custom_triggers_allowed"));
-                goals.add(goal);
-
-                // Set the Goal's parent categories
-                // parse these into Category objects and set on the Goal
-                ArrayList<Category> goalCategories = goal.getCategories();
-                JSONArray user_categories = goalJson.getJSONArray("user_categories");
-                Log.d(TAG, "Goal.user_categories JSON: " + user_categories.toString(2));
-                for(int x = 0; x < user_categories.length(); x++) {
-                    JSONObject categoryJson = user_categories.getJSONObject(x);
-                    Category c = gson.fromJson(categoryJson.toString(), Category.class);
-                    goalCategories.add(c);
-                }
-                goal.setCategories(goalCategories);
-
-                // Set the Goal's child behaviors
-                // parse these into Behavior objects and set on the Goal
-                ArrayList<Behavior> goalBehaviors = goal.getBehaviors();
-                JSONArray user_behaviors = goalJson.getJSONArray("user_behaviors");
-                Log.d(TAG, "Goal.user_behaviors JSON: " + user_behaviors.toString(2));
-                for(int x = 0; x < user_behaviors.length(); x++) {
-                    JSONObject behaviorJson = user_behaviors.getJSONObject(x);
-                    Behavior b = gson.fromJson(behaviorJson.toString(), Behavior.class);
-                    goalBehaviors.add(b);
-                }
-                goal.setBehaviors(goalBehaviors);
-
-                Log.d(TAG, "Created UserGoal (" +
-                        goal.getMappingId() + ") with Goal (" +
-                        goal.getId() + ")" + goal.getTitle());
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
-        return goals;
-    }
-
     protected ArrayList<Behavior> parseUserBehaviors(JSONArray behaviorArray) {
         ArrayList<Behavior> behaviors = new ArrayList<Behavior>();
 

@@ -98,21 +98,12 @@ public class Parser{
                 }
                 Goal goal = gson.fromJson(categoryString, Goal.class);
 
+                JSONObject goalJson = goalArray.getJSONObject(i);
+                String categoryArrayName;
                 if (userGoals){
-                    JSONObject goalJson = goalArray.getJSONObject(i);
-                    
                     goal.setProgressValue(goalJson.getDouble("progress_value"));
                     goal.setMappingId(goalJson.getInt("id"));
                     goal.setCustomTriggersAllowed(goalJson.getBoolean("custom_triggers_allowed"));
-
-                    //Set the goal's parent categories
-                    List<Category> categories = new ArrayList<>();
-                    JSONArray categoryArray = goalJson.getJSONArray("user_categories");
-                    //Log.d(TAG, "Goal.user_categories JSON: " + user_categories.toString(2));
-                    for (int j = 0; j < categoryArray.length(); j++){
-                        categories.add(gson.fromJson(categoryArray.getString(j), Category.class));
-                    }
-                    goal.setCategories(categories);
 
                     //Set the goal's child behaviors
                     List<Behavior> behaviors = new ArrayList<>();
@@ -121,7 +112,20 @@ public class Parser{
                         behaviors.add(gson.fromJson(behaviorArray.getString(j), Behavior.class));
                     }
                     goal.setBehaviors(behaviors);
+
+                    categoryArrayName = "user_categories";
                 }
+                else{
+                    categoryArrayName = "categories";
+                }
+
+                //Set the goal's parent categories
+                List<Category> categories = new ArrayList<>();
+                JSONArray categoryArray = goalJson.getJSONArray(categoryArrayName);
+                for (int j = 0; j < categoryArray.length(); j++){
+                    categories.add(gson.fromJson(categoryArray.getString(j), Category.class));
+                }
+                goal.setCategories(categories);
 
                 Log.d("GoalParser", goal.toString());
                 goals.add(goal);
@@ -134,54 +138,10 @@ public class Parser{
         return goals;
     }
 
-    public List<Action> parseActions(JSONArray actionArray, boolean userActions){
-        List<Action> actions = new ArrayList<>();
-
-        try{
-            //For each action in the array
-            for (int i = 0; i < actionArray.length(); i++){
-                //The string to be parsed by GSON is extracted from the array
-                String actionString;
-                if (userActions){
-                    //If it is a user action, it will come as a nested object
-                    actionString = actionArray.getJSONObject(i).getString("action");
-                }
-                else{
-                    //If it is not, it will come as the object itself
-                    actionString = actionArray.getString(i);
-                }
-                Action action = gson.fromJson(actionString, Action.class);
-                //There are some other things that need to be parsed, but only if
-                //  this is a user action.
-                if (userActions){
-                    //Extract the relevant object from the array
-                    JSONObject actionObject = actionArray.getJSONObject(i);
-
-                    //Set the user mapping id and the trigger allowance flag
-                    action.setMappingId(actionObject.getInt("id"));
-                    action.setCustomTriggersAllowed(actionObject.getBoolean("custom_triggers_allowed"));
-
-                    //Parse the custom trigger if there is one
-                    if (!actionObject.isNull("custom_trigger")){
-                        String triggerString = actionObject.getString("custom_trigger");
-                        action.setCustomTrigger(gson.fromJson(triggerString, Trigger.class));
-                    }
-                }
-                Log.d("ActionParser", action.toString());
-                actions.add(action);
-            }
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-        }
-
-        return actions;
-    }
-
     public List<Behavior> parseBehaviors(JSONArray behaviorArray, boolean userBehaviors){
         List<Behavior> behaviors = new ArrayList<>();
-/*
-        try{
+
+        /*try{
             for (int i = 0; i < behaviorArray.length(); i++){
                 //The string to be parsed by GSON is extracted from the array
                 String behaviorString;
@@ -236,5 +196,49 @@ public class Parser{
         }*/
 
         return behaviors;
+    }
+
+    public List<Action> parseActions(JSONArray actionArray, boolean userActions){
+        List<Action> actions = new ArrayList<>();
+
+        try{
+            //For each action in the array
+            for (int i = 0; i < actionArray.length(); i++){
+                //The string to be parsed by GSON is extracted from the array
+                String actionString;
+                if (userActions){
+                    //If it is a user action, it will come as a nested object
+                    actionString = actionArray.getJSONObject(i).getString("action");
+                }
+                else{
+                    //If it is not, it will come as the object itself
+                    actionString = actionArray.getString(i);
+                }
+                Action action = gson.fromJson(actionString, Action.class);
+                //There are some other things that need to be parsed, but only if
+                //  this is a user action.
+                if (userActions){
+                    //Extract the relevant object from the array
+                    JSONObject actionObject = actionArray.getJSONObject(i);
+
+                    //Set the user mapping id and the trigger allowance flag
+                    action.setMappingId(actionObject.getInt("id"));
+                    action.setCustomTriggersAllowed(actionObject.getBoolean("custom_triggers_allowed"));
+
+                    //Parse the custom trigger if there is one
+                    if (!actionObject.isNull("custom_trigger")){
+                        String triggerString = actionObject.getString("custom_trigger");
+                        action.setCustomTrigger(gson.fromJson(triggerString, Trigger.class));
+                    }
+                }
+                Log.d("ActionParser", action.toString());
+                actions.add(action);
+            }
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+
+        return actions;
     }
 }
