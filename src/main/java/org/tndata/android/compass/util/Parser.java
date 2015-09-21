@@ -1,5 +1,6 @@
 package org.tndata.android.compass.util;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.gson.FieldNamingPolicy;
@@ -21,16 +22,30 @@ import java.util.List;
 
 
 /**
- * Created by isma on 9/18/15.
+ * A centralised parser. All the code that does parsing should go here. At the moment it
+ * includes category, goal, behavior, action, and place parsing.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class Parser{
     private Gson gson;
 
 
+    /**
+     * Constructor.
+     */
     public Parser(){
         gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).create();
     }
 
+    /**
+     * Parses out the category list.
+     *
+     * @param categoryArray a JSONArray containing categories.
+     * @param userCategories true if the data comes from a api/user/ prefixed endpoint.
+     * @return A list of categories.
+     */
     public List<Category> parseCategories(JSONArray categoryArray, boolean userCategories){
         List<Category> categories = new ArrayList<>();
 
@@ -81,6 +96,13 @@ public class Parser{
         return categories;
     }
 
+    /**
+     * Parses out the goal list.
+     *
+     * @param goalArray a JSONArray containing goals.
+     * @param userGoals true if the data comes from a api/user/ prefixed endpoint.
+     * @return A list of goals.
+     */
     public List<Goal> parseGoals(JSONArray goalArray, boolean userGoals){
         List<Goal> goals = new ArrayList<>();
 
@@ -139,6 +161,13 @@ public class Parser{
         return goals;
     }
 
+    /**
+     * Parses out the goal list.
+     *
+     * @param behaviorArray a JSONArray containing behaviors.
+     * @param userBehaviors true if the data comes from a api/user/ prefixed endpoint.
+     * @return A list of behaviors.
+     */
     public List<Behavior> parseBehaviors(JSONArray behaviorArray, boolean userBehaviors){
         List<Behavior> behaviors = new ArrayList<>();
 
@@ -195,6 +224,13 @@ public class Parser{
         return behaviors;
     }
 
+    /**
+     * Parses out the action list.
+     *
+     * @param actionArray a JSONArray containing actions.
+     * @param userActions true if the data comes from a api/user/ prefixed endpoint.
+     * @return A list of actions.
+     */
     public List<Action> parseActions(JSONArray actionArray, boolean userActions){
         List<Action> actions = new ArrayList<>();
 
@@ -211,6 +247,14 @@ public class Parser{
         return actions;
     }
 
+    /**
+     * Parses out a single action.
+     *
+     * @param actionObject the JSONObject containing the action.
+     * @param userAction true if the data is un user format.
+     * @return the parsed action.
+     */
+    @Nullable
     private Action parseAction(JSONObject actionObject, boolean userAction){
         //The string to be parsed by GSON is extracted from the array
         try{
@@ -247,6 +291,12 @@ public class Parser{
         return null;
     }
 
+    /**
+     * Parses out the place list.
+     *
+     * @param placeArray a JSONArray containing a list of places.
+     * @return a list of places.
+     */
     public List<Place> parsePlaces(JSONArray placeArray){
         List<Place> places = new ArrayList<>();
 
