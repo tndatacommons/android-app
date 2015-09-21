@@ -13,6 +13,7 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Trigger;
 
 import java.util.ArrayList;
@@ -244,5 +245,24 @@ public class Parser{
         }
 
         return null;
+    }
+
+    public List<Place> parsePlaces(JSONArray placeArray){
+        List<Place> places = new ArrayList<>();
+
+        try{
+            for (int i = 0; i < placeArray.length(); i++){
+                JSONObject placeObject = placeArray.getJSONObject(i);
+                Place place = gson.fromJson(placeObject.toString(), Place.class);
+                place.setName(placeObject.getJSONObject("place").getString("name"));
+                place.setPrimary(placeObject.getJSONObject("place").getBoolean("primary"));
+                places.add(place);
+            }
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+
+        return places;
     }
 }

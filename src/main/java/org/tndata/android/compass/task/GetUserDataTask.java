@@ -2,17 +2,13 @@ package org.tndata.android.compass.task;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.util.Log;
-
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.database.CompassDbHelper;
-import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
@@ -22,10 +18,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
 
 /**
  * A task that retrieves all of the user's selected data from the REST API, and returns
@@ -39,11 +34,8 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
     private Context mContext;
     private GetUserDataListener mCallback;
 
-    private static Gson gson = new GsonBuilder().setFieldNamingPolicy(
-            FieldNamingPolicy.IDENTITY).create();
 
-
-    public GetUserDataTask(Context context, GetUserDataListener callback){
+    public GetUserDataTask(@NonNull Context context, @NonNull GetUserDataListener callback){
         mContext = context;
         mCallback = callback;
     }
@@ -84,7 +76,7 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
             userData.setActions(parser.parseActions(userJson.getJSONArray("actions"), true), false);
             userData.sync();
 
-            userData.setPlaces(parseUserPlaces(userJson.getJSONArray("places")));
+            userData.setPlaces(parser.parsePlaces(userJson.getJSONArray("places")));
             CompassDbHelper dbHelper = new CompassDbHelper(mContext);
             dbHelper.emptyPlacesTable();
             dbHelper.savePlaces(userData.getPlaces());
@@ -103,27 +95,8 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
         return null;
     }
 
-    private List<Place> parseUserPlaces(JSONArray placeArray){
-        List<Place> places = new ArrayList<>();
-
-        try{
-            for (int i = 0; i < placeArray.length(); i++){
-                JSONObject placeObject = placeArray.getJSONObject(i);
-                Place place = gson.fromJson(placeObject.toString(), Place.class);
-                place.setName(placeObject.getJSONObject("place").getString("name"));
-                place.setPrimary(placeObject.getJSONObject("place").getBoolean("primary"));
-                places.add(place);
-            }
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-        }
-
-        return places;
-    }
-
     @Override
-    protected void onPostExecute(UserData userData) {
+    protected void onPostExecute(UserData userData){
         Log.d(TAG, "Finished");
         userData.logSelectedData("FROM UserDataTask.onPostExecute", false);
         mCallback.userDataLoaded(userData);
