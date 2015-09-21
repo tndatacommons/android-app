@@ -12,10 +12,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.database.CompassDbHelper;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Behavior;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.util.Constants;
@@ -54,31 +50,28 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
 
     @Override
     protected UserData doInBackground(String... params){
-        String token = params[0];
         String url = Constants.BASE_URL + "users/";
         UserData userData = new UserData();
 
         Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
         headers.put("Content-type", "application/json");
-        headers.put("Authorization", "Token " + token);
-        InputStream stream = NetworkHelper.httpGetStream(url, headers);
+        headers.put("Authorization", "Token " + params[0]);
 
-        if (stream == null) {
+        InputStream stream = NetworkHelper.httpGetStream(url, headers);
+        if (stream == null){
             return null;
         }
 
-        try {
-
+        try{
             BufferedReader bReader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
             String line, result = "";
-            while ((line = bReader.readLine()) != null) {
+            while ((line = bReader.readLine()) != null){
                 result += line;
             }
             bReader.close();
 
-            JSONObject response = new JSONObject(result);
-            JSONArray jArray = response.getJSONArray("results");
+            JSONArray jArray = new JSONObject(result).getJSONArray("results");
             JSONObject userJson = jArray.getJSONObject(0); // 1 user, so 1 result
 
             Parser parser = new Parser();
@@ -87,7 +80,7 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
             // before syncing parent/child relationships.
             userData.setCategories(parser.parseCategories(userJson.getJSONArray("categories"), true), false);
             userData.setGoals(parser.parseGoals(userJson.getJSONArray("goals"), true), false);
-            userData.setBehaviors(parseUserBehaviors(userJson.getJSONArray("behaviors")), false);
+            userData.setBehaviors(parser.parseBehaviors(userJson.getJSONArray("behaviors"), true), false);
             userData.setActions(parser.parseActions(userJson.getJSONArray("actions"), true), false);
             userData.sync();
 
@@ -102,58 +95,12 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
             
             return userData;
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        catch (IOException|JSONException x){
+            x.printStackTrace();
+        }
+
         return null;
-    }
-
-    protected ArrayList<Behavior> parseUserBehaviors(JSONArray behaviorArray) {
-        ArrayList<Behavior> behaviors = new ArrayList<Behavior>();
-
-        try {
-            for (int i = 0; i < behaviorArray.length(); i++) {
-                JSONObject behaviorJson = behaviorArray.getJSONObject(i);
-                Behavior behavior = gson.fromJson(behaviorJson.getString("behavior"), Behavior.class);
-                behavior.setMappingId(behaviorJson.getInt("id"));
-                behavior.setCustomTriggersAllowed(behaviorJson.getBoolean("custom_triggers_allowed"));
-                behaviors.add(behavior);
-
-                // Set the Behavior's parent goals
-                // parse these into Goal objects an set on the Behavior
-                ArrayList<Goal> behaviorGoals = behavior.getGoals();
-                JSONArray user_goals = behaviorJson.getJSONArray("user_goals");
-                Log.d(TAG, "Behavior.user_goals JSON: " + user_goals.toString(2));
-                for (int x = 0; x < user_goals.length(); x++) {
-                    JSONObject goalJson = user_goals.getJSONObject(x);
-                    Goal g = gson.fromJson(goalJson.toString(), Goal.class);
-                    behaviorGoals.add(g);
-                }
-                behavior.setGoals(behaviorGoals);
-
-                // Set the Behavior's child Actions
-                // parse these into Action objects an set on the Behavior
-                ArrayList<Action> behaviorActions = behavior.getActions();
-                JSONArray user_actions = behaviorJson.getJSONArray("user_actions");
-                Log.d(TAG, "Behavior.user_actions JSON: " + user_actions.toString(2));
-                for (int x = 0; x < user_actions.length(); x++) {
-                    JSONObject actionJson = user_actions.getJSONObject(x);
-                    Action a = gson.fromJson(actionJson.toString(), Action.class);
-                    behaviorActions.add(a);
-                }
-                behavior.setActions(behaviorActions);
-
-                Log.d(TAG, "Created UserBehavior (" +
-                        behavior.getMappingId() + ") with Behavior (" +
-                        behavior.getId() + ")" + behavior.getTitle());
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return behaviors;
     }
 
     private List<Place> parseUserPlaces(JSONArray placeArray){

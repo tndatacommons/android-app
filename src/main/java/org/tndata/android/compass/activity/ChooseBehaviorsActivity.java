@@ -304,7 +304,7 @@ public class ChooseBehaviorsActivity
     }
 
     @Override
-    public void behaviorsLoaded(ArrayList<Behavior> behaviors){
+    public void behaviorsLoaded(List<Behavior> behaviors){
         if (behaviors != null){
             mAdapter.setBehaviors(behaviors);
         }

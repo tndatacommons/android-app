@@ -110,7 +110,7 @@ public class CompassApplication extends Application{
         mUserData.logSelectedData("AFTER CompassApplication.setBehaviors", false);
     }
 
-    public ArrayList<Behavior> getBehaviors() {
+    public List<Behavior> getBehaviors() {
         return mUserData.getBehaviors();
     }
 

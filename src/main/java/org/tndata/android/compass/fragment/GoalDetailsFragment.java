@@ -151,7 +151,7 @@ public class GoalDetailsFragment extends Fragment implements
     }
 
     @Override
-    public void behaviorsLoaded(ArrayList<Behavior> behaviors) {
+    public void behaviorsLoaded(List<Behavior> behaviors) {
         for (Behavior behavior : behaviors) {
             mBehaviorActionMap.put(behavior, new ArrayList<Action>());
         }

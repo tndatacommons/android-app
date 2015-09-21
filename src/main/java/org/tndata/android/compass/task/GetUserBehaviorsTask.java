@@ -1,118 +1,89 @@
 package org.tndata.android.compass.task;
 
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.model.Behavior;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
+import org.tndata.android.compass.util.Parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class GetUserBehaviorsTask extends AsyncTask<String, Void, ArrayList<Behavior>> {
+
+public class GetUserBehaviorsTask extends AsyncTask<String, Void, List<Behavior>>{
     private GetUserBehaviorsListener mCallback;
-    private static Gson gson = new GsonBuilder().setFieldNamingPolicy(
-            FieldNamingPolicy.IDENTITY).create();
 
-    public interface GetUserBehaviorsListener {
-        public void behaviorsLoaded(ArrayList<Behavior> behaviors);
-    }
 
-    public GetUserBehaviorsTask(GetUserBehaviorsListener callback) {
+    public GetUserBehaviorsTask(@NonNull GetUserBehaviorsListener callback){
         mCallback = callback;
     }
 
     @Override
-    protected ArrayList<Behavior> doInBackground(String... params) {
-        String token = params[0];
+    protected List<Behavior> doInBackground(String... params){
         String goalFilter = null;
-
-        if(params.length == 2) {
+        if(params.length == 2){
             goalFilter = params[1];
         }
+
         String url = Constants.BASE_URL + "users/behaviors/";
-        if(goalFilter != null) {
+        if(goalFilter != null){
             url = url + "?goal=" + goalFilter;
         }
 
-        Map<String, String> headers = new HashMap<String, String>();
+        Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
         headers.put("Content-type", "application/json");
-        headers.put("Authorization", "Token " + token);
+        headers.put("Authorization", "Token " + params[0]);
+
         InputStream stream = NetworkHelper.httpGetStream(url, headers);
-        if (stream == null) {
+        if (stream == null){
             return null;
         }
-        String result = "";
-        try {
 
-            BufferedReader bReader = new BufferedReader(new InputStreamReader(
-                    stream, "UTF-8"));
+        try{
+            BufferedReader bReader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
 
-            String line = null;
-            while ((line = bReader.readLine()) != null) {
+            String line, result = "";
+            while ((line = bReader.readLine()) != null){
                 result += line;
             }
             bReader.close();
 
-            JSONObject response = new JSONObject(result);
-            JSONArray jArray = response.getJSONArray("results");
-            ArrayList<Behavior> behaviors = new ArrayList<Behavior>();
-            for (int i = 0; i < jArray.length(); i++) {
-                JSONObject userBehavior = jArray.getJSONObject(i);
-                Behavior behavior = gson.fromJson(userBehavior.getString("behavior"),
-                        Behavior.class);
-                behavior.setMappingId(userBehavior.getInt("id"));
-                behavior.setCustomTriggersAllowed(userBehavior.getBoolean("custom_triggers_allowed"));
-                JSONArray goalArray = userBehavior.getJSONArray("user_goals");
-                ArrayList<Goal> goals = behavior.getGoals();
-                for (int x = 0; x < goalArray.length(); x++) {
-                    Goal goal = gson.fromJson(goalArray.getString(x), Goal.class);
-                    goals.add(goal);
-                }
-                behavior.setGoals(goals);
-                JSONArray categoryArray = userBehavior.getJSONArray("user_categories");
-                ArrayList<Category> categories = behavior.getUserCategories();
-                for (int j = 0; j < categoryArray.length(); j++){
-                    Category userCategory = gson.fromJson(categoryArray.getString(j), Category.class);
-                    categories.add(userCategory);
-                }
-                behaviors.add(behavior);
-            }
-            return behaviors;
+            return new Parser().parseBehaviors(new JSONObject(result).getJSONArray("results"), true);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        catch (IOException|JSONException x){
+            x.printStackTrace();
+        }
+
         return null;
     }
 
     @Override
-    protected void onPostExecute(ArrayList<Behavior> behaviors) {
-        if(behaviors != null) {
-            for (Behavior b : behaviors) {
+    protected void onPostExecute(List<Behavior> behaviors){
+        if(behaviors != null){
+            for (Behavior b:behaviors){
                 Log.d("GetUserBehaviorsTask", "- (" + b.getId() + ") " + b.getTitle());
             }
-        } else {
+        }
+        else{
             Log.d("GetUserBehaviorTask", "^^^^^^^ behaviors is null");
         }
         mCallback.behaviorsLoaded(behaviors);
     }
 
+
+    public interface GetUserBehaviorsListener{
+        void behaviorsLoaded(List<Behavior> behaviors);
+    }
 }

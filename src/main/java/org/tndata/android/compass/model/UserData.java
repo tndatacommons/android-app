@@ -24,8 +24,8 @@ public class UserData {
     private static final String TAG = "UserData";
     private List<Category> mCategories = new ArrayList<>(); // The user's selected Categories
     private List<Goal> mGoals = new ArrayList<>();  // The user's selected Goals
-    private ArrayList<Behavior> mBehaviors = new ArrayList<Behavior>(); // The user's selected behaviors
-    private List<Action> mActions = new ArrayList<Action>(); // The user's selected actions
+    private List<Behavior> mBehaviors = new ArrayList<>(); // The user's selected behaviors
+    private List<Action> mActions = new ArrayList<>(); // The user's selected actions
     private List<Place> mPlaces = new ArrayList<>();
 
 
@@ -216,7 +216,7 @@ public class UserData {
      *
      * @return an ArrayList of Behavior objects.
      */
-    public ArrayList<Behavior> getBehaviors() {
+    public List<Behavior> getBehaviors() {
         return mBehaviors;
     }
 
@@ -226,10 +226,10 @@ public class UserData {
      *
      * @param behaviors an ArrayList of Behavior objects
      */
-    public void setBehaviors(ArrayList<Behavior> behaviors) {
+    public void setBehaviors(List<Behavior> behaviors) {
         setBehaviors(behaviors, true);
     }
-    public void setBehaviors(ArrayList<Behavior> behaviors, boolean sync) {
+    public void setBehaviors(List<Behavior> behaviors, boolean sync) {
         mBehaviors = behaviors;
         if(sync) {
             assignBehaviorsToGoals();
