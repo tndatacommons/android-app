@@ -86,7 +86,7 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
 
             // Parse the user-selected content, store in userData; wait till all data is set
             // before syncing parent/child relationships.
-            userData.setCategories(parseUserCategories(userJson.getJSONArray("categories")), false);
+            userData.setCategories(parser.parseCategories(userJson.getJSONArray("categories"), true), false);
             userData.setGoals(parseUserGoals(userJson.getJSONArray("goals")), false);
             userData.setBehaviors(parseUserBehaviors(userJson.getJSONArray("behaviors")), false);
             userData.setActions(parser.parseActions(userJson.getJSONArray("actions"), true), false);
@@ -109,41 +109,6 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
             e.printStackTrace();
         }
         return null;
-    }
-
-    protected ArrayList<Category> parseUserCategories(JSONArray categoryArray) {
-        ArrayList<Category> categories = new ArrayList<Category>();
-
-        try {
-            for (int i = 0; i < categoryArray.length(); i++) {
-                JSONObject categoryJson = categoryArray.getJSONObject(i);
-                Category category = gson.fromJson(categoryJson.getString("category"), Category.class);
-                category.setProgressValue(categoryJson.getDouble("progress_value"));
-                category.setMappingId(categoryJson.getInt("id"));
-                category.setCustomTriggersAllowed(categoryJson.getBoolean("custom_triggers_allowed"));
-
-                // Set the Category's goals
-                // NOTE: Can't reuse parseUserGoals because now we're parsing a Goal, not a UserGoal
-                ArrayList<Goal> categoryGoals = category.getGoals();
-                JSONArray user_goals = categoryJson.getJSONArray("user_goals");
-                Log.d(TAG, "Category.user_goals JSON: " + user_goals.toString(2));
-                for (int x = 0; x < user_goals.length(); x++) {
-                    JSONObject userGoal = user_goals.getJSONObject(x);
-                    Goal g = gson.fromJson(userGoal.toString(), Goal.class);
-                    categoryGoals.add(g);
-                }
-                category.setGoals(categoryGoals);
-                categories.add(category);
-
-                Log.d(TAG, "Created UserCategory (" +
-                        category.getMappingId() + ") with Category (" +
-                        category.getId() + ")" + category.getTitle());
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return categories;
     }
 
     protected ArrayList<Goal> parseUserGoals(JSONArray goalArray) {

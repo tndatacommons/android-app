@@ -31,6 +31,8 @@ import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
+import java.util.List;
+
 
 public class MyGoalsFragment extends Fragment implements SurveyFinderTask.SurveyFinderInterface,
         SurveyResponseTask.SurveyResponseListener, MyGoalsAdapter.MyGoalsAdapterInterface {
@@ -99,7 +101,7 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ArrayList<Category> categories = ((CompassApplication) getActivity().getApplication())
+        List<Category> categories = ((CompassApplication) getActivity().getApplication())
                 .getCategories();
         if (categories != null && !categories.isEmpty()) {
             Log.d("Categories?", String.valueOf(categories.size()));
@@ -180,7 +182,7 @@ public class MyGoalsFragment extends Fragment implements SurveyFinderTask.Survey
     }
 
     public void updateGoals() {
-        ArrayList<Category> categories = ((CompassApplication) getActivity().getApplication())
+        List<Category> categories = ((CompassApplication) getActivity().getApplication())
                 .getCategories();
         if (categories != null && !categories.isEmpty()) {
             Log.d("Categories?", String.valueOf(categories.size()));

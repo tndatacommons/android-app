@@ -22,7 +22,7 @@ import java.util.List;
 public class UserData {
 
     private static final String TAG = "UserData";
-    private ArrayList<Category> mCategories = new ArrayList<Category>(); // The user's selected Categories
+    private List<Category> mCategories = new ArrayList<>(); // The user's selected Categories
     private ArrayList<Goal> mGoals = new ArrayList<Goal>();  // The user's selected Goals
     private ArrayList<Behavior> mBehaviors = new ArrayList<Behavior>(); // The user's selected behaviors
     private List<Action> mActions = new ArrayList<Action>(); // The user's selected actions
@@ -47,7 +47,7 @@ public class UserData {
      *
      * @return an ArrayList of Category objects
      */
-    public ArrayList<Category> getCategories() {
+    public List<Category> getCategories() {
         return mCategories;
     }
 
@@ -56,11 +56,11 @@ public class UserData {
      *
      * @param categories
      */
-    public void setCategories(ArrayList<Category> categories) {
+    public void setCategories(List<Category> categories) {
         setCategories(categories, true);
     }
 
-    public void setCategories(ArrayList<Category> categories, boolean sync) {
+    public void setCategories(List<Category> categories, boolean sync) {
         if(categories != null && !categories.isEmpty()) {
             mCategories = categories;
         }
@@ -113,7 +113,7 @@ public class UserData {
      *
      * @return an ArrayList of Goal objects.
      */
-    public ArrayList<Goal> getCategoryGoals(Category category) {
+    public List<Goal> getCategoryGoals(Category category) {
         return category.getGoals();
     }
 

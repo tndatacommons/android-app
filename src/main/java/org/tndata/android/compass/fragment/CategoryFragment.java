@@ -30,6 +30,8 @@ import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * This class, along with the CategoryFragmentAdapter, manages the Goal Cards selected
@@ -177,7 +179,7 @@ public class CategoryFragment extends Fragment implements
      */
     private void setGoals() {
         Log.d(TAG, "setGoals");
-        ArrayList<Goal> goals = mCategory.getGoals();
+        List<Goal> goals = mCategory.getGoals();
         mItems.clear();
         if (goals != null && !goals.isEmpty()) {
             mItems.addAll(goals);

@@ -71,7 +71,7 @@ public class CompassApplication extends Application{
     // of this info used to be stored directly in the CompassApplication
     // class, so I've left these here for backwards compatibility.
     // -------------------------------------------------------------------
-    public ArrayList<Category> getCategories() {
+    public List<Category> getCategories() {
         return mUserData.getCategories();
     }
 
@@ -83,7 +83,7 @@ public class CompassApplication extends Application{
         mUserData.addCategory(category);
     }
 
-    public ArrayList<Goal> getCategoryGoals(Category category) {
+    public List<Goal> getCategoryGoals(Category category) {
         return mUserData.getCategoryGoals(category);
     }
 

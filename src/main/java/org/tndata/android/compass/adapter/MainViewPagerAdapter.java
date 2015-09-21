@@ -13,10 +13,12 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.List;
+
 
 public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     private Context mContext;
-    private ArrayList<Category> mCategories = new ArrayList<Category>();
+    private List<Category> mCategories = new ArrayList<Category>();
     private FloatingActionButton mFloatingActionButton;
 
 
@@ -25,7 +27,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
         mContext = context;
     }
 
-    public void setCategories(ArrayList<Category> categories) {
+    public void setCategories(List<Category> categories) {
         mCategories = categories;
     }
 

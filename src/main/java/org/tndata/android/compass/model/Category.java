@@ -8,6 +8,8 @@ import org.tndata.android.compass.util.ImageLoader;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
+
 
 public class Category extends TDCBase implements Serializable,
         Comparable<Category> {
@@ -16,7 +18,7 @@ public class Category extends TDCBase implements Serializable,
     private int order = -1;
     private String icon_url = "";
     private String image_url = "";
-    private ArrayList<Goal> goals = new ArrayList<Goal>();
+    private List<Goal> goals = new ArrayList<>();
     private String color = "";
     private String secondary_color = "";
     private int goals_count = 0;
@@ -81,11 +83,11 @@ public class Category extends TDCBase implements Serializable,
         return goals_count;
     }
 
-    public ArrayList<Goal> getGoals() {
+    public List<Goal> getGoals() {
         return goals;
     }
 
-    public void setGoals(ArrayList<Goal> goals) {
+    public void setGoals(List<Goal> goals) {
         this.goals = goals;
     }
 
@@ -199,5 +201,10 @@ public class Category extends TDCBase implements Serializable,
         if(url != null && !url.isEmpty()){
             ImageLoader.loadBitmap(imageView, url, new ImageLoader.Options().setUsePlaceholder(false).setCropToCircle(true));
         }
+    }
+
+    @Override
+    public String toString(){
+        return "Category #" + getId() + " (" + getMappingId() + "): " + getTitle();
     }
 }
