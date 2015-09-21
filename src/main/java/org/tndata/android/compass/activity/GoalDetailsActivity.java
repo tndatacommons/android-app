@@ -23,6 +23,8 @@ import org.tndata.android.compass.task.DeleteGoalTask;
 import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
+import java.util.List;
+
 
 // TODO: change back to subclass of BaseTriggerActivity, and remove trigger interface methods
 public class GoalDetailsActivity extends TriggerActivity implements
@@ -201,7 +203,7 @@ public class GoalDetailsActivity extends TriggerActivity implements
         behaviors.add(String.valueOf(behavior.getMappingId()));
         new DeleteBehaviorTask(this, this, behaviors).executeOnExecutor(AsyncTask
                 .THREAD_POOL_EXECUTOR);
-        ArrayList<Behavior> goalBehaviors = mGoal.getBehaviors();
+        List<Behavior> goalBehaviors = mGoal.getBehaviors();
         goalBehaviors.remove(behavior);
         mGoal.setBehaviors(goalBehaviors);
         ArrayList<Goal> goals = new ArrayList<Goal>();

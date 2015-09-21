@@ -23,7 +23,7 @@ public class UserData {
 
     private static final String TAG = "UserData";
     private List<Category> mCategories = new ArrayList<>(); // The user's selected Categories
-    private ArrayList<Goal> mGoals = new ArrayList<Goal>();  // The user's selected Goals
+    private List<Goal> mGoals = new ArrayList<>();  // The user's selected Goals
     private ArrayList<Behavior> mBehaviors = new ArrayList<Behavior>(); // The user's selected behaviors
     private List<Action> mActions = new ArrayList<Action>(); // The user's selected actions
     private List<Place> mPlaces = new ArrayList<>();
@@ -123,7 +123,7 @@ public class UserData {
      *
      * @return an ArrayList of Goal objects.
      */
-    public ArrayList<Goal> getGoals() {
+    public List<Goal> getGoals() {
         return mGoals;
     }
 
@@ -133,11 +133,11 @@ public class UserData {
      *
      * @param goals an ArrayList of Goal objects
      */
-    public void setGoals(ArrayList<Goal> goals) {
+    public void setGoals(List<Goal> goals) {
         setGoals(goals, true);
     }
 
-    public void setGoals(ArrayList<Goal> goals, boolean sync) {
+    public void setGoals(List<Goal> goals, boolean sync) {
         mGoals = goals;
         if(sync) {
             assignGoalsToCategories();

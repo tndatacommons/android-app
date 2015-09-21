@@ -175,14 +175,14 @@ public class ChooseGoalsActivity
         if (mCategory == null) {
             return;
         }
-        new GoalLoaderTask(getApplicationContext(), this).executeOnExecutor(
+        new GoalLoaderTask(this).executeOnExecutor(
                 AsyncTask.THREAD_POOL_EXECUTOR,
                 mApplication.getToken(),
                 String.valueOf(mCategory.getId()));
     }
 
     @Override
-    public void goalLoaderFinished(ArrayList<Goal> goals){
+    public void goalLoaderFinished(List<Goal> goals){
         if (goals != null && !goals.isEmpty()){
             mAdapter.addGoals(goals);
         }

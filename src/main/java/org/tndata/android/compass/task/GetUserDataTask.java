@@ -57,7 +57,6 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
         String token = params[0];
         String url = Constants.BASE_URL + "users/";
         UserData userData = new UserData();
-        String result = ""; // result of http request
 
         Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
@@ -72,7 +71,7 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
         try {
 
             BufferedReader bReader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
-            String line = null;
+            String line, result = "";
             while ((line = bReader.readLine()) != null) {
                 result += line;
             }
@@ -87,7 +86,7 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
             // Parse the user-selected content, store in userData; wait till all data is set
             // before syncing parent/child relationships.
             userData.setCategories(parser.parseCategories(userJson.getJSONArray("categories"), true), false);
-            userData.setGoals(parseUserGoals(userJson.getJSONArray("goals")), false);
+            userData.setGoals(parser.parseGoals(userJson.getJSONArray("goals"), true), false);
             userData.setBehaviors(parseUserBehaviors(userJson.getJSONArray("behaviors")), false);
             userData.setActions(parser.parseActions(userJson.getJSONArray("actions"), true), false);
             userData.sync();
@@ -114,7 +113,7 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
     protected ArrayList<Goal> parseUserGoals(JSONArray goalArray) {
         ArrayList<Goal> goals = new ArrayList<Goal>();
 
-        try {
+        /*try {/*
             for (int i = 0; i < goalArray.length(); i++) {
                 JSONObject goalJson = goalArray.getJSONObject(i);
                 Goal goal = gson.fromJson(goalJson.getString("goal"), Goal.class);
@@ -154,7 +153,7 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
             }
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        }*/
         return goals;
     }
 

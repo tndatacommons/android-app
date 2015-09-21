@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -96,7 +97,7 @@ public class AddGoalTask extends AsyncTask<Void, Void, ArrayList<Goal>> {
                 Goal goal = gson.fromJson(userGoal.getString("goal"), Goal.class);
                 goal.setMappingId(userGoal.getInt("id"));
                 JSONArray categoryArray = userGoal.getJSONArray("user_categories");
-                ArrayList<Category> categories = goal.getCategories();
+                List<Category> categories = goal.getCategories();
                 for (int x = 0; x < categoryArray.length(); x++) {
                     Category category = gson.fromJson(categoryArray.getString(x), Category.class);
                     categories.add(category);

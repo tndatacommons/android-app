@@ -87,11 +87,11 @@ public class CompassApplication extends Application{
         return mUserData.getCategoryGoals(category);
     }
 
-    public ArrayList<Goal> getGoals() {
+    public List<Goal> getGoals() {
         return mUserData.getGoals();
     }
 
-    public void setGoals(ArrayList<Goal> goals) {
+    public void setGoals(List<Goal> goals) {
         mUserData.setGoals(goals);
     }
 

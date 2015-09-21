@@ -61,16 +61,15 @@ public class Parser{
                     goalArrayName = "goals";
                 }
 
-                Log.d("CategoryParser", category.toString());
-
-                //Set the Category's goals
-                List<Goal> categoryGoals = new ArrayList<>();
+                //Set the category's goals
+                List<Goal> goals = new ArrayList<>();
                 JSONArray goalArray = categoryJson.getJSONArray(goalArrayName);
                 for (int j = 0; j < goalArray.length(); j++){
-                    categoryGoals.add(gson.fromJson(goalArray.getString(j), Goal.class));
-                    Log.d("CategoryParser", categoryGoals.get(j).toString());
+                    goals.add(gson.fromJson(goalArray.getString(j), Goal.class));
                 }
-                category.setGoals(categoryGoals);
+                category.setGoals(goals);
+
+                Log.d("CategoryParser", category.toString());
                 categories.add(category);
             }
         }
@@ -79,6 +78,60 @@ public class Parser{
         }
 
         return categories;
+    }
+
+    public List<Goal> parseGoals(JSONArray goalArray, boolean userGoals){
+        List<Goal> goals = new ArrayList<>();
+
+        try {
+            //For each category in the array
+            for (int i = 0; i < goalArray.length(); i++){
+                //The string to be parsed by GSON is extracted from the array
+                String categoryString;
+                if (userGoals){
+                    //If it is a user goal, it will come as a nested object
+                    categoryString = goalArray.getJSONObject(i).getString("goal");
+                }
+                else{
+                    //If it is not, it will come as the object itself
+                    categoryString = goalArray.getString(i);
+                }
+                Goal goal = gson.fromJson(categoryString, Goal.class);
+
+                if (userGoals){
+                    JSONObject goalJson = goalArray.getJSONObject(i);
+                    
+                    goal.setProgressValue(goalJson.getDouble("progress_value"));
+                    goal.setMappingId(goalJson.getInt("id"));
+                    goal.setCustomTriggersAllowed(goalJson.getBoolean("custom_triggers_allowed"));
+
+                    //Set the goal's parent categories
+                    List<Category> categories = new ArrayList<>();
+                    JSONArray categoryArray = goalJson.getJSONArray("user_categories");
+                    //Log.d(TAG, "Goal.user_categories JSON: " + user_categories.toString(2));
+                    for (int j = 0; j < categoryArray.length(); j++){
+                        categories.add(gson.fromJson(categoryArray.getString(j), Category.class));
+                    }
+                    goal.setCategories(categories);
+
+                    //Set the goal's child behaviors
+                    List<Behavior> behaviors = new ArrayList<>();
+                    JSONArray behaviorArray = goalJson.getJSONArray("user_behaviors");
+                    for (int j = 0; j < behaviorArray.length(); j++){
+                        behaviors.add(gson.fromJson(behaviorArray.getString(j), Behavior.class));
+                    }
+                    goal.setBehaviors(behaviors);
+                }
+
+                Log.d("GoalParser", goal.toString());
+                goals.add(goal);
+            }
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+
+        return goals;
     }
 
     public List<Action> parseActions(JSONArray actionArray, boolean userActions){
@@ -123,14 +176,6 @@ public class Parser{
         }
 
         return actions;
-    }
-
-    public List<Goal> parseGoals(JSONArray goalArray, boolean userGoals){
-        List<Goal> goals = new ArrayList<>();
-
-
-
-        return goals;
     }
 
     public List<Behavior> parseBehaviors(JSONArray behaviorArray, boolean userBehaviors){
