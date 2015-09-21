@@ -145,7 +145,7 @@ public class MyGoalsAdapter extends
                 break;
             case MyGoalsViewItem.TYPE_CATEGORY:
                 final Category category = mItems.get(position).getCategory();
-                ArrayList<Goal> goals = category.getGoals();
+                List<Goal> goals = category.getGoals();
 
                 // Check to see if the user has selected any goals for the category
                 if (goals != null && !goals.isEmpty()) {

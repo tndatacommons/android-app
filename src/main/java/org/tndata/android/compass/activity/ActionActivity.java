@@ -28,6 +28,7 @@ import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -192,7 +193,7 @@ public class ActionActivity
     }
 
     @Override
-    public void actionsLoaded(ArrayList<Action> actions){
+    public void actionsLoaded(List<Action> actions){
         if (actions.size() > 0){
             mAction = actions.get(0);
 

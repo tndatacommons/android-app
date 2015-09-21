@@ -179,4 +179,9 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
         } else
             return 1;
     }
+
+    @Override
+    public String toString(){
+        return "Action #" + getId() + " (" + getMappingId() + "): " + getTitle();
+    }
 }

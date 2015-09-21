@@ -22,10 +22,10 @@ import java.util.List;
 public class UserData {
 
     private static final String TAG = "UserData";
-    private ArrayList<Category> mCategories = new ArrayList<Category>(); // The user's selected Categories
-    private ArrayList<Goal> mGoals = new ArrayList<Goal>();  // The user's selected Goals
-    private ArrayList<Behavior> mBehaviors = new ArrayList<Behavior>(); // The user's selected behaviors
-    private ArrayList<Action> mActions = new ArrayList<Action>(); // The user's selected actions
+    private List<Category> mCategories = new ArrayList<>(); // The user's selected Categories
+    private List<Goal> mGoals = new ArrayList<>();  // The user's selected Goals
+    private List<Behavior> mBehaviors = new ArrayList<>(); // The user's selected behaviors
+    private List<Action> mActions = new ArrayList<>(); // The user's selected actions
     private List<Place> mPlaces = new ArrayList<>();
 
 
@@ -47,7 +47,7 @@ public class UserData {
      *
      * @return an ArrayList of Category objects
      */
-    public ArrayList<Category> getCategories() {
+    public List<Category> getCategories() {
         return mCategories;
     }
 
@@ -56,11 +56,11 @@ public class UserData {
      *
      * @param categories
      */
-    public void setCategories(ArrayList<Category> categories) {
+    public void setCategories(List<Category> categories) {
         setCategories(categories, true);
     }
 
-    public void setCategories(ArrayList<Category> categories, boolean sync) {
+    public void setCategories(List<Category> categories, boolean sync) {
         if(categories != null && !categories.isEmpty()) {
             mCategories = categories;
         }
@@ -113,7 +113,7 @@ public class UserData {
      *
      * @return an ArrayList of Goal objects.
      */
-    public ArrayList<Goal> getCategoryGoals(Category category) {
+    public List<Goal> getCategoryGoals(Category category) {
         return category.getGoals();
     }
 
@@ -123,7 +123,7 @@ public class UserData {
      *
      * @return an ArrayList of Goal objects.
      */
-    public ArrayList<Goal> getGoals() {
+    public List<Goal> getGoals() {
         return mGoals;
     }
 
@@ -133,11 +133,11 @@ public class UserData {
      *
      * @param goals an ArrayList of Goal objects
      */
-    public void setGoals(ArrayList<Goal> goals) {
+    public void setGoals(List<Goal> goals) {
         setGoals(goals, true);
     }
 
-    public void setGoals(ArrayList<Goal> goals, boolean sync) {
+    public void setGoals(List<Goal> goals, boolean sync) {
         mGoals = goals;
         if(sync) {
             assignGoalsToCategories();
@@ -216,7 +216,7 @@ public class UserData {
      *
      * @return an ArrayList of Behavior objects.
      */
-    public ArrayList<Behavior> getBehaviors() {
+    public List<Behavior> getBehaviors() {
         return mBehaviors;
     }
 
@@ -226,10 +226,10 @@ public class UserData {
      *
      * @param behaviors an ArrayList of Behavior objects
      */
-    public void setBehaviors(ArrayList<Behavior> behaviors) {
+    public void setBehaviors(List<Behavior> behaviors) {
         setBehaviors(behaviors, true);
     }
-    public void setBehaviors(ArrayList<Behavior> behaviors, boolean sync) {
+    public void setBehaviors(List<Behavior> behaviors, boolean sync) {
         mBehaviors = behaviors;
         if(sync) {
             assignBehaviorsToGoals();
@@ -298,7 +298,7 @@ public class UserData {
      *
      * @return an ArrayList of Action objects.
      */
-    public ArrayList<Action> getActions() {
+    public List<Action> getActions() {
         return mActions;
     }
 
@@ -310,10 +310,10 @@ public class UserData {
      *
      * @param actions
      */
-    public void setActions(ArrayList<Action> actions) {
+    public void setActions(List<Action> actions) {
         setActions(actions, true);
     }
-    public void setActions(ArrayList<Action> actions, boolean sync) {
+    public void setActions(List<Action> actions, boolean sync) {
         mActions = actions;
         if(sync) {
             assignActionsToBehaviors();

@@ -133,7 +133,7 @@ public class ChooseCategoriesFragment
     }
 
     @Override
-    public void categoryLoaderFinished(ArrayList<Category> categories){
+    public void categoryLoaderFinished(List<Category> categories){
         if (mFetchingCategories){
             if (categories == null){
                 notifyError(R.string.choose_categories_error);

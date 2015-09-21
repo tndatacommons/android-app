@@ -8,6 +8,8 @@ import org.tndata.android.compass.util.ImageLoader;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
+
 
 public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
 
@@ -16,8 +18,8 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
     private String outcome = "";
     private String icon_url = "";
     private int behaviors_count = 0;
-    private ArrayList<Category> categories = new ArrayList<Category>();
-    private ArrayList<Behavior> behaviors = new ArrayList<Behavior>();
+    private List<Category> categories = new ArrayList<>();
+    private List<Behavior> behaviors = new ArrayList<>();
     private double progress_value = 0.0; // Only used for UserGoals
 
     public Goal() {
@@ -66,7 +68,7 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
         this.icon_url = icon_url;
     }
 
-    public ArrayList<Category> getCategories() {
+    public List<Category> getCategories() {
         return categories;
     }
 
@@ -76,7 +78,7 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
         }
     }
 
-    public void setCategories(ArrayList<Category> categories) {
+    public void setCategories(List<Category> categories) {
         this.categories = categories;
     }
 
@@ -90,11 +92,11 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
         return behaviors_count;
     }
 
-    public ArrayList<Behavior> getBehaviors() {
+    public List<Behavior> getBehaviors() {
         return behaviors;
     }
 
-    public void setBehaviors(ArrayList<Behavior> behaviors) {
+    public void setBehaviors(List<Behavior> behaviors) {
         this.behaviors = behaviors;
     }
 
@@ -195,5 +197,10 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
             imageView.setImageResource(getProgressIcon());
         }
         */
+    }
+
+    @Override
+    public String toString(){
+        return "Goal #" + getId() + " (" + getMappingId() + "): " + getTitle();
     }
 }

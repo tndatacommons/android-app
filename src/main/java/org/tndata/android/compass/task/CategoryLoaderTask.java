@@ -1,16 +1,18 @@
 package org.tndata.android.compass.task;
 
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
+import org.tndata.android.compass.util.Parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,90 +20,76 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class CategoryLoaderTask extends
-        AsyncTask<String, Void, ArrayList<Category>> {
+
+public class CategoryLoaderTask extends AsyncTask<String, Void, List<Category>>{
     private CategoryLoaderListener mCallback;
-    private static Gson gson = new GsonBuilder().setFieldNamingPolicy(
-            FieldNamingPolicy.IDENTITY).create();
 
-    public interface CategoryLoaderListener {
-        public void categoryLoaderFinished(ArrayList<Category> categories);
-    }
 
-    public CategoryLoaderTask(CategoryLoaderListener callback) {
+    public CategoryLoaderTask(@NonNull CategoryLoaderListener callback){
         mCallback = callback;
     }
 
     @Override
-    protected ArrayList<Category> doInBackground(String... params) {
-        String token = params[0];
+    protected List<Category> doInBackground(String... params){
         String categoryId = null;
-        if (params.length > 1) {
+        if (params.length > 1){
             categoryId = params[1];
         }
+
         String url = Constants.BASE_URL + "categories/";
         if (categoryId != null) {
             url += categoryId + "/";
         }
-        Map<String, String> headers = new HashMap<String, String>();
+
+        Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
         headers.put("Content-type", "application/json");
-        headers.put("Authorization", "Token " + token);
+        headers.put("Authorization", "Token " + params[0]);
 
         InputStream stream = NetworkHelper.httpGetStream(url, headers);
-        if (stream == null) {
+        if (stream == null){
             return null;
         }
-        String result = "";
-        String createResponse = "";
-        try {
 
-            BufferedReader bReader = new BufferedReader(new InputStreamReader(
-                    stream, "UTF-8"));
+        try{
+            BufferedReader bReader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
 
-            String line = null;
-            while ((line = bReader.readLine()) != null) {
+            String line, result = "";
+            while ((line = bReader.readLine()) != null){
                 result += line;
             }
             bReader.close();
 
-            createResponse = result;
+            JSONObject jObject = new JSONObject(result);
+            List<Category> categories = new ArrayList<>();
 
-            JSONObject jObject = new JSONObject(createResponse);
-            ArrayList<Category> categories = new ArrayList<Category>();
-
-            // First, if this was just one category get request
-            if (categoryId != null) {
-                Category category = gson.fromJson(createResponse,
-                        Category.class);
-                categories.add(category);
+            //First, if this was just one category get request
+            if (categoryId != null){
+                Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).create();
+                categories.add(gson.fromJson(result, Category.class));
                 return categories;
             }
 
-            // Else this was a get for all categories
-            JSONArray categoryArray = jObject.optJSONArray("results");
-
-            if (categoryArray != null) {
-                for (int i = 0; i < categoryArray.length(); i++) {
-                    Category category = gson.fromJson(
-                            categoryArray.getString(i), Category.class);
-                    categories.add(category);
-                }
-            }
-            return categories;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+            //Else this was a get for all categories
+            return new Parser().parseCategories(jObject.getJSONArray("results"), false);
         }
+        catch (IOException|JSONException x){
+            x.printStackTrace();
+        }
+
         return null;
     }
 
     @Override
-    protected void onPostExecute(ArrayList<Category> result) {
+    protected void onPostExecute(List<Category> result){
         mCallback.categoryLoaderFinished(result);
     }
 
+
+    public interface CategoryLoaderListener{
+        void categoryLoaderFinished(List<Category> categories);
+    }
 }

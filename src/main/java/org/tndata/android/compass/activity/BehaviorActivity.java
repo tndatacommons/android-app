@@ -24,6 +24,7 @@ import org.tndata.android.compass.task.DeleteBehaviorTask;
 import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class BehaviorActivity extends TriggerActivity implements
@@ -160,7 +161,7 @@ public class BehaviorActivity extends TriggerActivity implements
         if (behaviors == null) {
             return;
         }
-        ArrayList<Behavior> goalBehaviors = mGoal.getBehaviors();
+        List<Behavior> goalBehaviors = mGoal.getBehaviors();
         goalBehaviors.addAll(behaviors);
         mGoal.setBehaviors(goalBehaviors);
         ArrayList<Goal> goals = new ArrayList<Goal>();
@@ -201,7 +202,7 @@ public class BehaviorActivity extends TriggerActivity implements
         behaviors.add(String.valueOf(behavior.getMappingId()));
         new DeleteBehaviorTask(this, this, behaviors).executeOnExecutor(AsyncTask
                 .THREAD_POOL_EXECUTOR);
-        ArrayList<Behavior> goalBehaviors = mGoal.getBehaviors();
+        List<Behavior> goalBehaviors = mGoal.getBehaviors();
         goalBehaviors.remove(behavior);
         mGoal.setBehaviors(goalBehaviors);
         ArrayList<Goal> goals = new ArrayList<Goal>();

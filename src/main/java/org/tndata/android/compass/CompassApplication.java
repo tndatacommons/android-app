@@ -18,6 +18,7 @@ import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -70,7 +71,7 @@ public class CompassApplication extends Application{
     // of this info used to be stored directly in the CompassApplication
     // class, so I've left these here for backwards compatibility.
     // -------------------------------------------------------------------
-    public ArrayList<Category> getCategories() {
+    public List<Category> getCategories() {
         return mUserData.getCategories();
     }
 
@@ -82,15 +83,15 @@ public class CompassApplication extends Application{
         mUserData.addCategory(category);
     }
 
-    public ArrayList<Goal> getCategoryGoals(Category category) {
+    public List<Goal> getCategoryGoals(Category category) {
         return mUserData.getCategoryGoals(category);
     }
 
-    public ArrayList<Goal> getGoals() {
+    public List<Goal> getGoals() {
         return mUserData.getGoals();
     }
 
-    public void setGoals(ArrayList<Goal> goals) {
+    public void setGoals(List<Goal> goals) {
         mUserData.setGoals(goals);
     }
 
@@ -109,7 +110,7 @@ public class CompassApplication extends Application{
         mUserData.logSelectedData("AFTER CompassApplication.setBehaviors", false);
     }
 
-    public ArrayList<Behavior> getBehaviors() {
+    public List<Behavior> getBehaviors() {
         return mUserData.getBehaviors();
     }
 
@@ -123,7 +124,7 @@ public class CompassApplication extends Application{
         mUserData.logSelectedData("AFTER CompassApplication.addBehavior", false);
     }
 
-    public ArrayList<Action> getActions() {
+    public List<Action> getActions() {
         return mUserData.getActions();
     }
 
@@ -132,7 +133,7 @@ public class CompassApplication extends Application{
         mUserData.logSelectedData("AFTER CompassApplication.removeAction: ", false);
     }
 
-    public void setActions(ArrayList<Action> actions) {
+    public void setActions(List<Action> actions) {
         mUserData.setActions(actions);
         mUserData.logSelectedData("AFTER CompassApplication.setActions", false);
     }

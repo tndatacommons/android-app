@@ -13,7 +13,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 
-import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -71,7 +71,7 @@ public class BehaviorProgressFragment extends Fragment{
                     + mBehavior.getTitle().substring(1) + ".");
 
             String label = "Because I care about my ";
-            ArrayList<Category> categories = mBehavior.getUserCategories();
+            List<Category> categories = mBehavior.getUserCategories();
             if (categories.size() == 1){
                 label += categories.get(0).getTitle().toUpperCase();
             }

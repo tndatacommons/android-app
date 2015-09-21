@@ -7,6 +7,8 @@ import org.tndata.android.compass.util.ImageLoader;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
+
 
 public class Behavior extends TDCBase implements Serializable,
         Comparable<Behavior> {
@@ -19,9 +21,9 @@ public class Behavior extends TDCBase implements Serializable,
     private String icon_url = "";
     private String image_url = "";
     private int actions_count = 0;
-    private ArrayList<Category> userCategories = new ArrayList<>();
-    private ArrayList<Goal> goals = new ArrayList<Goal>();
-    private ArrayList<Action> actions = new ArrayList<Action>();
+    private List<Category> userCategories = new ArrayList<>();
+    private List<Goal> goals = new ArrayList<>();
+    private List<Action> actions = new ArrayList<>();
 
     public Behavior() {
     }
@@ -96,15 +98,15 @@ public class Behavior extends TDCBase implements Serializable,
         this.image_url = image_url;
     }
 
-    public ArrayList<Category> getUserCategories(){
+    public List<Category> getUserCategories(){
         return userCategories;
     }
 
-    public ArrayList<Goal> getGoals() {
+    public List<Goal> getGoals() {
         return goals;
     }
 
-    public void setGoals(ArrayList<Goal> goals) {
+    public void setGoals(List<Goal> goals) {
         this.goals = goals;
     }
 
@@ -120,7 +122,7 @@ public class Behavior extends TDCBase implements Serializable,
         }
     }
 
-    public ArrayList<Action> getActions() {
+    public List<Action> getActions() {
         return actions;
     }
 
@@ -128,7 +130,7 @@ public class Behavior extends TDCBase implements Serializable,
         return actions_count;
     }
 
-    public void setActions(ArrayList<Action> actions) {
+    public void setActions(List<Action> actions) {
         this.actions = actions;
     }
 
@@ -189,4 +191,8 @@ public class Behavior extends TDCBase implements Serializable,
         }
     }
 
+    @Override
+    public String toString(){
+        return "Behavior #" + getId() + " (" + getMappingId() + "): " + getTitle();
+    }
 }

@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AddActionTask extends AsyncTask<Void, Void, Action> {
@@ -51,7 +52,7 @@ public class AddActionTask extends AsyncTask<Void, Void, Action> {
 
         // To associate the added Action with the currently selected behavior, we need the
         // applications list of selected Behaviors.
-        ArrayList<Behavior> selectedBehaviors = application.getBehaviors();
+        List<Behavior> selectedBehaviors = application.getBehaviors();
 
         String url = Constants.BASE_URL + "users/actions/";
         Map<String, String> headers = new HashMap<String, String>();

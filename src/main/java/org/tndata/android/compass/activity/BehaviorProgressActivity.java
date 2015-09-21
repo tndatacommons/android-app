@@ -18,6 +18,7 @@ import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 
 /**
@@ -91,7 +92,7 @@ public class BehaviorProgressActivity
     }
 
     @Override
-    public void behaviorsLoaded(ArrayList<Behavior> behaviors){
+    public void behaviorsLoaded(List<Behavior> behaviors){
         if (behaviors != null && !behaviors.isEmpty()){
             mBehaviorList.addAll(behaviors);
             Log.d(TAG, "Behaviors: " + behaviors.toString());

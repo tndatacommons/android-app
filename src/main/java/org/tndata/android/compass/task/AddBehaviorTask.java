@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AddBehaviorTask extends AsyncTask<Void, Void, ArrayList<Behavior>> {
@@ -97,7 +98,7 @@ public class AddBehaviorTask extends AsyncTask<Void, Void, ArrayList<Behavior>> 
 
                 // Include the Behavior's Parent goals that have been selected by the user
                 JSONArray goalArray = userBehavior.getJSONArray("user_goals");
-                ArrayList<Goal> goals = behavior.getGoals();
+                List<Goal> goals = behavior.getGoals();
                 for (int x = 0; x < goalArray.length(); x++) {
                     Goal goal = gson.fromJson(goalArray.getString(x), Goal.class);
                     goals.add(goal);
