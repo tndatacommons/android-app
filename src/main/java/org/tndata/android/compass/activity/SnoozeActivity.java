@@ -113,15 +113,11 @@ public class SnoozeActivity
      */
     private void displayPlacesDialog(){
         Log.d(TAG, mPlaces.size() + " places found");
-        CharSequence[] placeNames = new CharSequence[mPlaces.size()==0 ? 1 : mPlaces.size()];
-        if (mPlaces.size() == 0){
-            placeNames[0] = getString(R.string.later_no_places);
+        CharSequence[] placeNames = new CharSequence[mPlaces.size()+1];
+        for (int i = 0; i < mPlaces.size(); i++){
+            placeNames[i] = mPlaces.get(i).getName();
         }
-        else{
-            for (int i = 0; i < mPlaces.size(); i++){
-                placeNames[i] = mPlaces.get(i).getName();
-            }
-        }
+        placeNames[mPlaces.size()] = getString(R.string.later_create_place);
 
         new AlertDialog.Builder(this)
                 .setTitle(R.string.later_pick_place)
@@ -203,7 +199,7 @@ public class SnoozeActivity
 
     @Override
     public void onClick(DialogInterface dialog, int which){
-        if (mPlaces.size() == 0){
+        if (which == mPlaces.size()){
             startActivityForResult(new Intent(this, PlacesActivity.class), PLACES_REQUEST_CODE);
         }
         else{
