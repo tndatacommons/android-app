@@ -73,6 +73,12 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="org.tndata.android.compass.activity.NewMainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name="org.tndata.android.compass.activity.OnBoardingActivity"
             android:screenOrientation="portrait">

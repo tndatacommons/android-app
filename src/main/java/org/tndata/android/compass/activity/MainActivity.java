@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,9 +35,11 @@ import org.tndata.android.compass.util.ImageLoader;
 import java.util.ArrayList;
 
 
-public class MainActivity extends AppCompatActivity implements
-        MyGoalsFragmentListener,
-        DrawerAdapter.OnItemClickListener{
+public class MainActivity
+        extends AppCompatActivity
+        implements
+                MyGoalsFragmentListener,
+                DrawerAdapter.OnItemClickListener{
 
     private static final int IMPORTANT_TO_ME = 0;
     private static final int MY_PRIORITIES = 1;
@@ -217,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements
 
             case DRAWER_COUNT:
                 //Debug button
-                startActivity(new Intent(getApplicationContext(), PlaygroundActivity.class));
+                startActivity(new Intent(getApplicationContext(), NewMainActivity.class));
                 break;
         }
         mDrawerLayout.closeDrawers();
