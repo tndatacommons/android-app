@@ -19,4 +19,20 @@
         transition:color_inactive="@color/grow_primary"
         transition:color_apply_to="background" />
 
+    <at.grabner.circleprogress.CircleProgressView
+        xmlns:progress="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/playground_circle"
+        android:layout_width="277dp"
+        android:layout_height="277dp"
+        progress:barColor="#00796B"
+        progress:barWidth="35dp"
+        progress:contourSize="0dp"
+        progress:maxValue="100"
+        progress:rimColor="#B2DFDB"
+        progress:rimWidth="35dp"
+        progress:seekMode="true"
+        progress:textColor="#00796B"
+        progress:unit="%"
+        progress:unitColor="#009688"/>
+
 </LinearLayout>

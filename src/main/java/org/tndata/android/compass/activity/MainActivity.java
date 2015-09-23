@@ -205,7 +205,7 @@ public class MainActivity
 
             case DrawerAdapter.DRAWER_COUNT:
                 //Debug button
-                startActivity(new Intent(getApplicationContext(), NewMainActivity.class));
+                startActivity(new Intent(getApplicationContext(), PlaygroundActivity.class));
                 break;
         }
         mDrawerLayout.closeDrawers();

@@ -9,6 +9,8 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.ui.button.TransitionButton;
 
+import at.grabner.circleprogress.CircleProgressView;
+
 
 /**
  * An activity to test new features without compromising the integrity of the
@@ -30,7 +32,10 @@ public class PlaygroundActivity extends AppCompatActivity implements View.OnClic
 
         state = 0;
 
-        startService(new Intent(this, LocationNotificationService.class));
+        CircleProgressView progress = (CircleProgressView)findViewById(R.id.playground_circle);
+        progress.setShowUnit(true);
+        progress.setAutoTextSize(true);
+        //progress.
     }
 
     @Override
