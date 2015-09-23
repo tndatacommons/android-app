@@ -10,6 +10,7 @@ import android.view.View;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.MainFeedAdapter;
+import org.tndata.android.compass.util.ParallaxEffect;
 
 
 /**
@@ -21,10 +22,13 @@ public class NewMainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_main);
 
+        View header = findViewById(R.id.main_illustration);
+
         RecyclerView feed = (RecyclerView)findViewById(R.id.main_feed);
         feed.setAdapter(new MainFeedAdapter(this));
         feed.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         feed.addItemDecoration(new ItemPadding());
+        feed.setOnScrollListener(new ParallaxEffect(header, 0.5f));
     }
 
     /**

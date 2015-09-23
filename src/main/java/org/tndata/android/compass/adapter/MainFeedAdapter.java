@@ -51,6 +51,6 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
     @Override
     public int getItemCount(){
-        return 2;
+        return 5;
     }
 }
