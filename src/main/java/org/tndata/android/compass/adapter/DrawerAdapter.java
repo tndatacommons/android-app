@@ -1,5 +1,6 @@
 package org.tndata.android.compass.adapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.tndata.android.compass.BuildConfig;
@@ -7,13 +8,13 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.DrawerItem;
 import org.tndata.android.compass.model.User;
+import org.tndata.android.compass.util.CompassUtil;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,15 @@ public class DrawerAdapter extends RecyclerView.Adapter{
     private static final int VIEW_TYPE_HEADER = 1;
     private static final int VIEW_TYPE_ITEM = 2;
 
+    public static final int IMPORTANT_TO_ME = 0;
+    public static final int MY_PRIORITIES = 1;
+    public static final int MYSELF = 2;
+    public static final int PLACES = 3;
+    public static final int MY_PRIVACY = 4;
+    public static final int TOUR = 5;
+    public static final int SETTINGS = 6;
+    public static final int DRAWER_COUNT = 7;
+
 
     private final Context mContext;
     private final OnItemClickListener mListener;
@@ -41,12 +51,11 @@ public class DrawerAdapter extends RecyclerView.Adapter{
      *
      * @param context the application context.
      * @param listener the class object who will listen to click events.
-     * @param items the list of items to be displayed in the drawer list.
      */
-    public DrawerAdapter(Context context, OnItemClickListener listener, List<DrawerItem> items){
+    public DrawerAdapter(Context context, OnItemClickListener listener){
         mContext = context;
         mListener = listener;
-        mItems = items;
+        mItems = getItemList();
 
         if (BuildConfig.DEBUG){
             mItems.add(new DrawerItem("Debug"));
@@ -99,7 +108,7 @@ public class DrawerAdapter extends RecyclerView.Adapter{
                 itemView.setCompoundDrawablePadding(0);
             }
             else{
-                itemView.setCompoundDrawablePadding(getPixels(mContext, 32));
+                itemView.setCompoundDrawablePadding(CompassUtil.getPixels(mContext, 32));
             }
         }
     }
@@ -118,18 +127,6 @@ public class DrawerAdapter extends RecyclerView.Adapter{
     }
 
     /**
-     * Converts density pixels to pixels.
-     *
-     * @param context the application context.
-     * @param densityPixels the amount of dp to be converted.
-     * @return the converter number of pixels.
-     */
-    private static int getPixels(Context context, int densityPixels){
-        return (int)Math.ceil(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, densityPixels,
-                context.getResources().getDisplayMetrics()));
-    }
-
-    /**
      * ItemPadding specification getter.
      *
      * @param context the application context.
@@ -137,6 +134,49 @@ public class DrawerAdapter extends RecyclerView.Adapter{
      */
     public static ItemPadding getItemPadding(Context context){
         return new ItemPadding(context);
+    }
+
+    /**
+     * Creates the list of drawer items.
+     *
+     * @return the list of drawer items.
+     */
+    private List<DrawerItem> getItemList(){
+        List<DrawerItem> items = new ArrayList<>();
+        for (int i = 0; i < DRAWER_COUNT; i++){
+            switch (i){
+                case IMPORTANT_TO_ME:
+                    items.add(new DrawerItem(mContext.getString(R.string.action_my_progress),
+                            R.drawable.ic_clipboard));
+                    break;
+                case MY_PRIORITIES:
+                    items.add(new DrawerItem(mContext.getString(R.string.action_my_priorities),
+                            R.drawable.ic_list_bullet));
+                    break;
+                case MYSELF:
+                    items.add(new DrawerItem(mContext.getString(R.string.action_my_information),
+                            R.drawable.ic_profile));
+                    break;
+                case PLACES:
+                    items.add(new DrawerItem(mContext.getString(R.string.action_my_places),
+                            R.drawable.ic_place));
+                    break;
+                case MY_PRIVACY:
+                    items.add(new DrawerItem(mContext.getString(R.string.action_my_privacy),
+                            R.drawable.ic_info));
+                    break;
+                case SETTINGS:
+                    items.add(new DrawerItem(mContext.getString(R.string.action_settings),
+                            R.drawable.ic_settings));
+                    break;
+                case TOUR:
+                    items.add(new DrawerItem(mContext.getString(R.string.action_tour),
+                            R.drawable.ic_tour));
+                    break;
+            }
+        }
+
+        return items;
     }
 
 
@@ -211,7 +251,7 @@ public class DrawerAdapter extends RecyclerView.Adapter{
          * @param context the application context.
          */
         private ItemPadding(Context context){
-            firstItemPadding = getPixels(context, 8);
+            firstItemPadding = CompassUtil.getPixels(context, 8);
         }
 
         @Override

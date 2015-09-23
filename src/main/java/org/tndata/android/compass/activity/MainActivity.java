@@ -41,21 +41,10 @@ public class MainActivity
                 MyGoalsFragmentListener,
                 DrawerAdapter.OnItemClickListener{
 
-    private static final int IMPORTANT_TO_ME = 0;
-    private static final int MY_PRIORITIES = 1;
-    private static final int MYSELF = 2;
-    private static final int PLACES = 3;
-    private static final int MY_PRIVACY = 4;
-    private static final int TOUR = 5;
-    private static final int SETTINGS = 6;
-    private static final int DRAWER_COUNT = 7;
-
-
     private CompassApplication application;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private RecyclerView mDrawerList;
-    private ArrayList<DrawerItem> mDrawerItems;
     private Toolbar mToolbar;
     private ViewPager mViewPager;
     //private HeroView mHeroView;
@@ -100,10 +89,8 @@ public class MainActivity
         mDrawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
         mDrawerList = (RecyclerView)findViewById(R.id.main_left_drawer);
         mDrawerList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mDrawerItems = drawerItems();
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
-                GravityCompat.START);
-        DrawerAdapter drawerAdapter = new DrawerAdapter(this, this, mDrawerItems);
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        DrawerAdapter drawerAdapter = new DrawerAdapter(this, this);
         mDrawerList.setAdapter(drawerAdapter);
         mDrawerList.addItemDecoration(DrawerAdapter.getItemPadding(this));
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
@@ -187,85 +174,41 @@ public class MainActivity
     @Override
     public void onItemClick(int position){
         switch (position) {
-            case IMPORTANT_TO_ME:
+            case DrawerAdapter.IMPORTANT_TO_ME:
                 startActivity(new Intent(getApplicationContext(), BehaviorProgressActivity.class));
                 break;
 
-            case MY_PRIORITIES:
+            case DrawerAdapter.MY_PRIORITIES:
                 startActivity(new Intent(getApplicationContext(), MyPrioritiesActivity.class));
                 break;
 
-            case MYSELF:
+            case DrawerAdapter.MYSELF:
                 startActivity(new Intent(getApplicationContext(), UserProfileActivity.class));
                 break;
 
-            case PLACES:
+            case DrawerAdapter.PLACES:
                 startActivity(new Intent(getApplicationContext(), PlacesActivity.class));
                 break;
 
-            case MY_PRIVACY:
+            case DrawerAdapter.MY_PRIVACY:
                 startActivity(new Intent(getApplicationContext(), PrivacyActivity.class));
                 break;
 
-            case SETTINGS:
+            case DrawerAdapter.SETTINGS:
                 Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
                 startActivityForResult(intent, Constants.SETTINGS_REQUEST_CODE);
                 break;
 
-            case TOUR:
+            case DrawerAdapter.TOUR:
                 startActivity(new Intent(getApplicationContext(), TourActivity.class));
                 break;
 
-            case DRAWER_COUNT:
+            case DrawerAdapter.DRAWER_COUNT:
                 //Debug button
                 startActivity(new Intent(getApplicationContext(), NewMainActivity.class));
                 break;
         }
         mDrawerLayout.closeDrawers();
-    }
-
-    /**
-     * Creates the list of drawer items.
-     * TODO move to DrawerAdapter?
-     *
-     * @return the list of drawer items.
-     */
-    private ArrayList<DrawerItem> drawerItems(){
-        ArrayList<DrawerItem> items = new ArrayList<>();
-        for (int i = 0; i < DRAWER_COUNT; i++){
-            switch (i){
-                case IMPORTANT_TO_ME:
-                    items.add(new DrawerItem(getResources().getString(R.string.action_my_progress),
-                            R.drawable.ic_clipboard));
-                    break;
-                case MY_PRIORITIES:
-                    items.add(new DrawerItem(getResources().getString(R.string.action_my_priorities),
-                            R.drawable.ic_list_bullet));
-                    break;
-                case MYSELF:
-                    items.add(new DrawerItem(getResources().getString(R.string.action_my_information),
-                            R.drawable.ic_profile));
-                    break;
-                case PLACES:
-                    items.add(new DrawerItem(getResources().getString(R.string.action_my_places),
-                            R.drawable.ic_place));
-                    break;
-                case MY_PRIVACY:
-                    items.add(new DrawerItem(getResources().getString(R.string.action_my_privacy),
-                            R.drawable.ic_info));
-                    break;
-                case SETTINGS:
-                    items.add(new DrawerItem(getResources().getString(R.string.action_settings),
-                            R.drawable.ic_settings));
-                    break;
-                case TOUR:
-                    items.add(new DrawerItem(getResources().getString(R.string.action_tour),
-                            R.drawable.ic_tour));
-                    break;
-            }
-        }
-
-        return items;
     }
 
     @Override
