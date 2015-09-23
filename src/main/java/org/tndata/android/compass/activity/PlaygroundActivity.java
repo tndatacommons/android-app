@@ -33,9 +33,10 @@ public class PlaygroundActivity extends AppCompatActivity implements View.OnClic
         state = 0;
 
         CircleProgressView progress = (CircleProgressView)findViewById(R.id.playground_circle);
+        progress.setValue(0);
         progress.setShowUnit(true);
         progress.setAutoTextSize(true);
-        //progress.
+        progress.setValueAnimated(0, 100, 1500);
     }
 
     @Override

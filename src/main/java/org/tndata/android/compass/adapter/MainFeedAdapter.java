@@ -20,6 +20,8 @@ import org.tndata.android.compass.model.Goal;
 
 import java.util.List;
 
+import at.grabner.circleprogress.CircleProgressView;
+
 
 /**
  * Created by isma on 9/22/15.
@@ -27,8 +29,9 @@ import java.util.List;
 public class MainFeedAdapter extends RecyclerView.Adapter{
     private static final int TYPE_BLANK = 0;
     private static final int TYPE_UP_NEXT = 1;
-    private static final int TYPE_GOAL = 2;
-    private static final int TYPE_OTHER = 3;
+    private static final int TYPE_PROGRESS = 2;
+    private static final int TYPE_GOAL = 3;
+    private static final int TYPE_OTHER = 4;
 
 
     private Context mContext;
@@ -49,6 +52,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             LayoutInflater inflater = LayoutInflater.from(mContext);
             return new UpNextHolder(inflater.inflate(R.layout.card_up_next, parent, false));
         }
+        else if (viewType == TYPE_PROGRESS){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            return new ProgressHolder(inflater.inflate(R.layout.card_progress, parent, false));
+        }
         else if (viewType == TYPE_GOAL){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             return new GoalHolder(inflater.inflate(R.layout.card_goal, parent, false));
@@ -63,6 +70,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
         if (position == 1){
             UpNextHolder holder = (UpNextHolder)rawHolder;
+        }
+        else if (position == 2){
+            ProgressHolder holder = (ProgressHolder)rawHolder;
+            holder.mIndicator.setValueAnimated(0, (int)(100*Math.random()), 1500);
         }
         else if (position > 2){
             GoalHolder holder = (GoalHolder)rawHolder;
@@ -100,6 +111,9 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         else if (position == 1){
             return TYPE_UP_NEXT;
         }
+        else if (position == 2){
+            return TYPE_PROGRESS;
+        }
         else if (position > 2){
             return TYPE_GOAL;
         }
@@ -118,6 +132,24 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
             mAction = (TextView)itemView.findViewById(R.id.up_next_action);
             mTime = (TextView)itemView.findViewById(R.id.up_next_time);
+        }
+    }
+
+    private class ProgressHolder extends RecyclerView.ViewHolder{
+        private CircleProgressView mIndicator;
+        private TextView mTitle;
+        private TextView mSubtitle;
+
+
+        public ProgressHolder(View itemView){
+            super(itemView);
+
+            mIndicator = (CircleProgressView)itemView.findViewById(R.id.card_progress_indicator);
+            mTitle = (TextView)itemView.findViewById(R.id.card_progress_title);
+
+            mIndicator.setValue(0);
+            mIndicator.setAutoTextSize(true);
+            mIndicator.setShowUnit(true);
         }
     }
 
