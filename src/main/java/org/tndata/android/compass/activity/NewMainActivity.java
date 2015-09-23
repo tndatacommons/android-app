@@ -1,8 +1,10 @@
 package org.tndata.android.compass.activity;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +18,7 @@ import android.view.View;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.MainFeedAdapter;
+import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.ParallaxEffect;
 
 
@@ -23,6 +26,7 @@ import org.tndata.android.compass.util.ParallaxEffect;
  * Created by isma on 9/22/15.
  */
 public class NewMainActivity extends AppCompatActivity implements DrawerAdapter.OnItemClickListener{
+    private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
 
@@ -38,9 +42,9 @@ public class NewMainActivity extends AppCompatActivity implements DrawerAdapter.
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        DrawerLayout drawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
+        mDrawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.string.nav_drawer_action, R.string.nav_drawer_action){
             @Override
             public void onDrawerClosed(View view){
@@ -54,7 +58,7 @@ public class NewMainActivity extends AppCompatActivity implements DrawerAdapter.
                 invalidateOptionsMenu();
             }
         };
-        drawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         RecyclerView drawerList = (RecyclerView)findViewById(R.id.main_drawer);
         drawerList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -76,6 +80,16 @@ public class NewMainActivity extends AppCompatActivity implements DrawerAdapter.
     }
 
     @Override
+    public void onBackPressed(){
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+            mDrawerLayout.closeDrawers();
+        }
+        else{
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     protected void onPostCreate(Bundle savedInstanceState){
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
@@ -89,7 +103,42 @@ public class NewMainActivity extends AppCompatActivity implements DrawerAdapter.
 
     @Override
     public void onItemClick(int position){
+        switch (position){
+            case DrawerAdapter.IMPORTANT_TO_ME:
+                startActivity(new Intent(this, BehaviorProgressActivity.class));
+                break;
 
+            case DrawerAdapter.MY_PRIORITIES:
+                startActivity(new Intent(this, MyPrioritiesActivity.class));
+                break;
+
+            case DrawerAdapter.MYSELF:
+                startActivity(new Intent(this, UserProfileActivity.class));
+                break;
+
+            case DrawerAdapter.PLACES:
+                startActivity(new Intent(this, PlacesActivity.class));
+                break;
+
+            case DrawerAdapter.MY_PRIVACY:
+                startActivity(new Intent(this, PrivacyActivity.class));
+                break;
+
+            case DrawerAdapter.SETTINGS:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivityForResult(intent, Constants.SETTINGS_REQUEST_CODE);
+                break;
+
+            case DrawerAdapter.TOUR:
+                startActivity(new Intent(this, TourActivity.class));
+                break;
+
+            case DrawerAdapter.DRAWER_COUNT:
+                //Debug button
+                startActivity(new Intent(this, NewMainActivity.class));
+                break;
+        }
+        mDrawerLayout.closeDrawers();
     }
 
     /**
