@@ -98,6 +98,10 @@ public class Behavior extends TDCBase implements Serializable,
         this.image_url = image_url;
     }
 
+    public void setUserCategories(List<Category> categories){
+        userCategories = categories;
+    }
+
     public List<Category> getUserCategories(){
         return userCategories;
     }
