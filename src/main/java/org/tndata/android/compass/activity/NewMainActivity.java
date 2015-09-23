@@ -15,6 +15,7 @@ import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.MainFeedAdapter;
@@ -68,7 +69,7 @@ public class NewMainActivity extends AppCompatActivity implements DrawerAdapter.
         View header = findViewById(R.id.main_illustration);
 
         RecyclerView feed = (RecyclerView)findViewById(R.id.main_feed);
-        feed.setAdapter(new MainFeedAdapter(this));
+        feed.setAdapter(new MainFeedAdapter(this, ((CompassApplication)getApplication()).getGoals()));
         feed.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         feed.addItemDecoration(new ItemPadding());
         feed.setOnScrollListener(new ParallaxEffect(header, 0.5f));
