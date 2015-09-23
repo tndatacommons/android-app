@@ -199,6 +199,13 @@ public class Parser{
                     }
                     behavior.setActions(actions);
 
+                    JSONArray categoryArray = behaviorJson.getJSONArray("user_categories");
+                    List<Category> categories = behavior.getUserCategories();
+                    for (int j = 0; j < categoryArray.length(); j++){
+                        categories.add(gson.fromJson(categoryArray.getString(j), Category.class));
+                    }
+                    behavior.setUserCategories(categories);
+
                     goalArrayName = "user_goals";
                 }
                 else{
