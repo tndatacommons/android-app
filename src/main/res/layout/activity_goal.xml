@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/goal_hero"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop" />
+
+    <at.grabner.circleprogress.CircleProgressView
+        xmlns:progress="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/goal_indicator"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        progress:barColor="#00796B"
+        progress:barWidth="15dp"
+        progress:contourSize="0dp"
+        progress:maxValue="100"
+        progress:rimColor="#B2DFDB"
+        progress:rimWidth="15dp"
+        progress:seekMode="false"
+        progress:textColor="#00796B"
+        progress:unit="%"
+        progress:unitColor="#009688" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#999"
+        android:layout_below="@id/goal_hero" />
+
+    <TextView
+        android:id="@+id/goal_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Goal title goes here" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#999"
+        android:layout_below="@id/goal_title" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/goal_item_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</RelativeLayout>

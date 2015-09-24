@@ -2,21 +2,19 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.util.CompassUtil;
 
 import java.util.List;
 
@@ -35,11 +33,14 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
 
     private Context mContext;
+    private MainFeedAdapterListener mListener;
     private List<Goal> mGoals;
 
 
-    public MainFeedAdapter(@NonNull Context context, @NonNull List<Goal> goals){
+    public MainFeedAdapter(@NonNull Context context, @NonNull MainFeedAdapterListener listener,
+                           @NonNull List<Goal> goals){
         mContext = context;
+        mListener = listener;
         mGoals = goals;
     }
 
@@ -82,11 +83,8 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             goal.loadIconIntoView(mContext, holder.mIcon);
         }
         else{
-            WindowManager wm = (WindowManager)mContext.getSystemService(Context.WINDOW_SERVICE);
-            Display display = wm.getDefaultDisplay();
-            Point size = new Point();
-            display.getSize(size);
-            LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, (int)((size.x * 2 / 3) * 0.8));
+            int width = CompassUtil.getScreenWidth(mContext);
+            LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, (int)((width*2/3)*0.8));
             rawHolder.itemView.setLayoutParams(params);
             if (position == 0){
                 //holder.itemView.setBackgroundColor(Color.RED);
@@ -153,7 +151,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
     }
 
-    private class GoalHolder extends RecyclerView.ViewHolder{
+    private class GoalHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private ImageView mIcon;
         private TextView mTitle;
 
@@ -163,6 +161,17 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
             mIcon = (ImageView)itemView.findViewById(R.id.card_goal_icon);
             mTitle = (TextView)itemView.findViewById(R.id.card_goal_title);
+            
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View view){
+            mListener.onGoalSelected(mGoals.get(getAdapterPosition()-3));
+        }
+    }
+
+    public interface MainFeedAdapterListener{
+        void onGoalSelected(Goal goal);
     }
 }

@@ -1,7 +1,10 @@
 package org.tndata.android.compass.util;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.util.TypedValue;
+import android.view.Display;
+import android.view.WindowManager;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -24,6 +27,20 @@ public final class CompassUtil{
      */
     private CompassUtil() throws IllegalAccessException{
         throw new IllegalAccessException(getClass().toString() + " is not to be instantiated");
+    }
+
+    /**
+     * Getter for the screen width in pixels.
+     *
+     * @param context a reference to the context.
+     * @return the screen width in pixels.
+     */
+    public static int getScreenWidth(Context context){
+        WindowManager manager = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = manager.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return size.x;
     }
 
     /**

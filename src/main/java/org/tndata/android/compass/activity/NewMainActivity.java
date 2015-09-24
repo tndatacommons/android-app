@@ -19,6 +19,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.MainFeedAdapter;
+import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.ParallaxEffect;
 
@@ -26,7 +27,12 @@ import org.tndata.android.compass.util.ParallaxEffect;
 /**
  * Created by isma on 9/22/15.
  */
-public class NewMainActivity extends AppCompatActivity implements DrawerAdapter.OnItemClickListener{
+public class NewMainActivity
+        extends AppCompatActivity
+        implements
+                DrawerAdapter.OnItemClickListener,
+                MainFeedAdapter.MainFeedAdapterListener{
+
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
@@ -69,7 +75,7 @@ public class NewMainActivity extends AppCompatActivity implements DrawerAdapter.
         View header = findViewById(R.id.main_illustration);
 
         RecyclerView feed = (RecyclerView)findViewById(R.id.main_feed);
-        feed.setAdapter(new MainFeedAdapter(this, ((CompassApplication)getApplication()).getGoals()));
+        feed.setAdapter(new MainFeedAdapter(this, this, ((CompassApplication)getApplication()).getGoals()));
         feed.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         feed.addItemDecoration(new ItemPadding());
         feed.setOnScrollListener(new ParallaxEffect(header, 0.5f));
@@ -140,6 +146,11 @@ public class NewMainActivity extends AppCompatActivity implements DrawerAdapter.
                 break;
         }
         mDrawerLayout.closeDrawers();
+    }
+
+    @Override
+    public void onGoalSelected(Goal goal){
+        startActivity(new Intent(this, GoalActivity.class));
     }
 
     /**
