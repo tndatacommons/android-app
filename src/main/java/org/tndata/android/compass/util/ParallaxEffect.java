@@ -1,6 +1,7 @@
 package org.tndata.android.compass.util;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -19,12 +20,17 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
     private View mParallaxView;
     private float mParallaxFactor;
 
+    //A condition to the parallax
+    private ParallaxCondition mParallaxCondition;
+
     //A stack of heights needs to be kept
     private Stack<Integer> mHeightStack;
 
     //The combined height of the rows that are off-screen. NOTE: This number will either
     //  be 0 or negative because the origin of coordinates is the top left corner
     private int mPreviousMargin;
+    //The top margin of the view atop the recycler view
+    private int mTopState;
     //The top margin of the first element is considered part of the top attribute, and needs
     //  to be taken out of the equation
     private int mInitialMargin;
@@ -44,10 +50,16 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
         mParallaxView = parallaxView;
         mParallaxFactor = parallaxFactor > 1 ? 1 : parallaxFactor;
 
+        mParallaxCondition = null;
+
         mHeightStack = new Stack<>();
         mPreviousMargin = 0;
         mCurrent = 0;
         mLastRecorded = 0;
+    }
+
+    public void setParallaxCondition(@Nullable ParallaxCondition parallaxCondition){
+        mParallaxCondition = parallaxCondition;
     }
 
     @Override
@@ -78,12 +90,32 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
         }
 
         //Retrieve the margin state of the current view
-        int topState = recyclerView.findViewHolderForLayoutPosition(mCurrent).itemView.getTop();
+        mTopState = recyclerView.findViewHolderForLayoutPosition(mCurrent).itemView.getTop();
 
         //Update the parameters of the material header
         RelativeLayout.LayoutParams params;
         params = (RelativeLayout.LayoutParams)mParallaxView.getLayoutParams();
-        params.topMargin = (int)((mPreviousMargin+topState-mInitialMargin)*mParallaxFactor);
+        params.topMargin = (int)((mPreviousMargin+mTopState-mInitialMargin)*mParallaxFactor);
         mParallaxView.setLayoutParams(params);
+    }
+
+    public abstract class ParallaxCondition{
+        protected final int getParallaxViewOffset(){
+            return ((RelativeLayout.LayoutParams)mParallaxView.getLayoutParams()).topMargin;
+        }
+
+        protected final int getRecyclerViewOffset(){
+            return mPreviousMargin+mTopState;
+        }
+
+        protected abstract boolean doParallax();
+
+        protected boolean hasFixedState(){
+            return false;
+        }
+
+        protected int getFixedState(){
+            return 0;
+        }
     }
 }

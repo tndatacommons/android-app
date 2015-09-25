@@ -3,11 +3,16 @@ package org.tndata.android.compass.activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.adapter.GoalAdapter;
 import org.tndata.android.compass.util.CompassUtil;
 
 import at.grabner.circleprogress.CircleProgressView;
@@ -38,9 +43,23 @@ public class GoalActivity extends AppCompatActivity{
         indicator.setShowUnit(true);
         indicator.setValueAnimated(0, (int)(100 * Math.random()), 1500);
 
-        TextView title = (TextView)findViewById(R.id.goal_title);
+        final TextView title = (TextView)findViewById(R.id.goal_title);
         params = (RelativeLayout.LayoutParams)title.getLayoutParams();
         params.topMargin += heroHeight+CompassUtil.getPixels(this, 1);
         title.setLayoutParams(params);
+
+        final RecyclerView list = (RecyclerView)findViewById(R.id.goal_item_list);
+        list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+
+        title.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
+            @Override
+            public void onGlobalLayout(){
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)title.getLayoutParams();
+                list.setAdapter(new GoalAdapter(GoalActivity.this, params.topMargin + title.getHeight() + params.bottomMargin + CompassUtil.getPixels(GoalActivity.this, 1)));
+                title.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                Log.d("GOALACTIVITY", title.getHeight()+"");
+            }
+        });
     }
 }
