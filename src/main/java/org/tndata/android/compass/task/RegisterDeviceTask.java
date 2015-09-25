@@ -13,6 +13,8 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,10 +60,17 @@ public class RegisterDeviceTask extends AsyncTask<Void, Void, Void>{
             return null;
         }
 
-        if (NetworkHelper.httpPostStream(url, headers, body.toString()) == null){
+        InputStream stream = NetworkHelper.httpPostStream(url, headers, body.toString());
+        if (stream == null){
             Log.d(TAG, "Bad stream");
         }
         else{
+            try{
+                stream.close();
+            }
+            catch (IOException iox){
+                iox.printStackTrace();
+            }
             Log.d(TAG, "Request complete");
         }
         return null;

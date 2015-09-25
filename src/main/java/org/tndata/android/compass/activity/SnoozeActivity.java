@@ -19,8 +19,10 @@ import org.tndata.android.compass.adapter.SnoozeAdapter;
 import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Reminder;
+import org.tndata.android.compass.service.CompleteActionService;
 import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.service.SnoozeService;
+import org.tndata.android.compass.task.ActionReportTask;
 import org.tndata.android.compass.util.NotificationUtil;
 
 import java.util.Calendar;
@@ -193,6 +195,9 @@ public class SnoozeActivity
         snooze.putExtra(SnoozeService.TIME_KEY, time);
         startService(snooze);
 
+        //Report the snooze
+        reportSnooze();
+
         //Kill the activity
         finish();
     }
@@ -215,6 +220,9 @@ public class SnoozeActivity
 
             startService(new Intent(this, LocationNotificationService.class));
 
+            //Report the snooze
+            reportSnooze();
+
             finish();
         }
     }
@@ -230,5 +238,13 @@ public class SnoozeActivity
             //Create the dialog
             displayPlacesDialog();
         }
+    }
+
+    private void reportSnooze(){
+        Log.d("Report", "Report Called");
+        Intent report = new Intent(this, CompleteActionService.class)
+                .putExtra(CompleteActionService.ACTION_MAPPING_ID_KEY, mReminder.getUserMappingId())
+                .putExtra(CompleteActionService.STATE_KEY, "snoozed");
+        startService(report);
     }
 }

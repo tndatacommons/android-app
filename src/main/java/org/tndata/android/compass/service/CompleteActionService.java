@@ -5,15 +5,10 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import org.tndata.android.compass.CompassApplication;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.task.CompleteActionTask;
-import org.tndata.android.compass.task.GetUserActionsTask;
+import org.tndata.android.compass.task.ActionReportTask;
 import org.tndata.android.compass.util.NotificationUtil;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 
 /**
@@ -24,22 +19,22 @@ import java.util.List;
  */
 public class CompleteActionService
         extends Service
-        implements
-                CompleteActionTask.CompleteActionInterface,
-                GetUserActionsTask.GetUserActionsListener{
+        implements ActionReportTask.CompleteActionInterface{
 
-    public static final String ACTION_ID_KEY = "org.tndata.compass.CompleteAction.Id";
     public static final String PUSH_NOTIFICATION_ID_KEY = "org.tndata.compass.CompleteAction.NotificationId";
     public static final String ACTION_MAPPING_ID_KEY = "org.tndata.compass.CompleteAction.MappingId";
+    public static final String STATE_KEY = "org.tndata.compass.CompleteAction.State";
 
-    private LinkedList<Integer> mCompletedActions;
+    private LinkedList<Integer> mActions;
+    private LinkedList<String> mStates;
     private int requestCount;
 
 
     @Override
     public void onCreate(){
         super.onCreate();
-        mCompletedActions = new LinkedList<>();
+        mActions = new LinkedList<>();
+        mStates = new LinkedList<>();
         requestCount = 0;
     }
 
@@ -52,56 +47,22 @@ public class CompleteActionService
         }
 
         int actionMappingId = intent.getIntExtra(ACTION_MAPPING_ID_KEY, -1);
-        if (actionMappingId != -1){
+        String state = intent.getStringExtra(STATE_KEY);
+        if (actionMappingId != -1 && state != null){
             if (isQueueEmpty()){
-                queueAction(actionMappingId);
-                new CompleteActionTask(this, this).execute();
+                queueAction(actionMappingId, state);
+                new ActionReportTask(this, this).execute();
             }
             else{
-                queueAction(actionMappingId);
+                queueAction(actionMappingId, state);
             }
         }
-        else{
-            fetchAction(intent.getIntExtra(ACTION_ID_KEY, -1));
+
+        if (isQueueEmpty()){
+            stopSelf();
         }
 
         return START_NOT_STICKY;
-    }
-
-    /**
-     * Retrieves an action from an id.
-     *
-     * @param actionId the id of the action to be fetched.
-     */
-    private void fetchAction(int actionId){
-        CompassApplication application = (CompassApplication)getApplication();
-        String token = application.getToken();
-        if (!token.isEmpty()){
-            new GetUserActionsTask(this).execute(token, "action:" + actionId);
-            requestCount++;
-        }
-    }
-
-    @Override
-    public synchronized void actionsLoaded(List<Action> actions){
-        boolean success = false;
-        if (actions != null && actions.size() > 0){
-            int actionMappingId = actions.get(0).getMappingId();
-            if (actionMappingId != -1){
-                success = true;
-                if (isQueueEmpty()){
-                    queueAction(actionMappingId);
-                    new CompleteActionTask(this, this).execute();
-                }
-                else{
-                    queueAction(actionMappingId);
-                }
-            }
-        }
-        requestCount--;
-        if (!success && requestCount == 0 && isQueueEmpty()){
-            stopSelf();
-        }
     }
 
     /**
@@ -109,24 +70,30 @@ public class CompleteActionService
      *
      * @param actionId the action to be marked as complete.
      */
-    public synchronized void queueAction(int actionId){
-        mCompletedActions.addLast(actionId);
+    public synchronized void queueAction(int actionId, String state){
+        mActions.addLast(actionId);
+        mStates.addLast(state);
     }
 
     @Override
     public synchronized boolean isQueueEmpty(){
-        return mCompletedActions.isEmpty();
+        return mActions.isEmpty();
     }
 
     @Override
     public synchronized int dequeueAction(){
-        return mCompletedActions.removeFirst();
+        return mActions.removeFirst();
+    }
+
+    @Override
+    public synchronized String dequeueState(){
+        return mStates.removeFirst();
     }
 
     @Override
     public synchronized void onTaskComplete(){
         if (!isQueueEmpty()){
-            new CompleteActionTask(this, this).execute();
+            new ActionReportTask(this, this).execute();
         }
         else if (requestCount == 0){
             stopSelf();

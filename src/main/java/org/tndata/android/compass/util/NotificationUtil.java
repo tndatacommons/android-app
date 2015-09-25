@@ -105,6 +105,13 @@ public final class NotificationUtil{
         PendingIntent contentIntent = PendingIntent.getActivity(context,
                 (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        Intent dismissIntent = new Intent(context, CompleteActionService.class)
+                .putExtra(CompleteActionService.ACTION_MAPPING_ID_KEY, userMappingId)
+                .putExtra(CompleteActionService.STATE_KEY, "dismissed");
+
+        PendingIntent dismissedPendingIntent = PendingIntent.getService(context,
+                (int)System.currentTimeMillis(), dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         Reminder reminder = new Reminder(notificationId, -1, title, message, actionId, userMappingId);
 
         Intent snoozeIntent = new Intent(context, SnoozeActivity.class)
@@ -119,7 +126,8 @@ public final class NotificationUtil{
 
         Intent didItIntent = new Intent(context, CompleteActionService.class)
                 .putExtra(CompleteActionService.PUSH_NOTIFICATION_ID_KEY, actionId)
-                .putExtra(CompleteActionService.ACTION_MAPPING_ID_KEY, userMappingId);
+                .putExtra(CompleteActionService.ACTION_MAPPING_ID_KEY, userMappingId)
+                .putExtra(CompleteActionService.STATE_KEY, "completed");
 
         PendingIntent didItPendingIntent = PendingIntent.getService(context,
                 (int)System.currentTimeMillis(), didItIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -130,6 +138,7 @@ public final class NotificationUtil{
                 .addAction(R.drawable.ic_snooze, later, snoozePendingIntent)
                 .addAction(R.drawable.ic_check, didIt, didItPendingIntent)
                 .setContentIntent(contentIntent)
+                .setDeleteIntent(dismissedPendingIntent)
                 .build();
 
         ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))

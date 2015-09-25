@@ -3,7 +3,10 @@ package org.tndata.android.compass.task;
 import android.app.Service;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
@@ -20,7 +23,10 @@ import java.util.Map;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class CompleteActionTask extends AsyncTask<Void, Void, Void>{
+public class ActionReportTask extends AsyncTask<String, Void, Void>{
+    private static final String TAG = "ActionReportTask";
+
+
     public final Context mContext;
     public final CompleteActionInterface mInterface;
 
@@ -31,13 +37,13 @@ public class CompleteActionTask extends AsyncTask<Void, Void, Void>{
      * @param context the application context.
      * @param actionInterface the interface to the object containing the action queue.
      */
-    public CompleteActionTask(Context context, CompleteActionInterface actionInterface){
+    public ActionReportTask(Context context, CompleteActionInterface actionInterface){
         mContext = context;
         mInterface = actionInterface;
     }
 
     @Override
-    protected Void doInBackground(Void... params){
+    protected Void doInBackground(String... params){
         while (!mInterface.isQueueEmpty()){
             int actionId = mInterface.dequeueAction();
             String url = Constants.BASE_URL + "users/actions/" + actionId + "/complete/";
@@ -51,8 +57,19 @@ public class CompleteActionTask extends AsyncTask<Void, Void, Void>{
             headers.put("Content-type", "application/json");
             headers.put("Authorization", "Token " + token);
 
+            JSONObject body = new JSONObject();
+            try{
+                body.put("state", mInterface.dequeueState());
+            }
+            catch (JSONException e1){
+                e1.printStackTrace();
+                return null;
+            }
+
+            Log.d(TAG, body.toString());
+
             //Post to the URL with the given headers and an empty body object
-            InputStream stream = NetworkHelper.httpPostStream(url, headers, "{}");
+            InputStream stream = NetworkHelper.httpPostStream(url, headers, body.toString());
             if (stream != null){
                 try{
                     stream.close();
@@ -93,6 +110,13 @@ public class CompleteActionTask extends AsyncTask<Void, Void, Void>{
          * @return the next action in the queue.
          */
         int dequeueAction();
+
+        /**
+         * Dequeues a state from the state queue.
+         *
+         * @return the next state in the queue.
+         */
+        String dequeueState();
 
         /**
          * Callback method called when the task isn't assigned any more work.
