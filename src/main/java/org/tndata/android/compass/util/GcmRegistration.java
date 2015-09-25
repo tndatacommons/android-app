@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -162,9 +164,11 @@ public class GcmRegistration implements RegisterDeviceTask.RegisterDeviceTaskLis
         }.execute(null, null, null);
     }
 
-    private void sendRegistrationIdToBackend(String registration_id) {
-        new RegisterDeviceTask(mContext, this, registration_id).executeOnExecutor(
-                AsyncTask.THREAD_POOL_EXECUTOR);
+    private void sendRegistrationIdToBackend(String registration_id){
+        WifiManager manager = (WifiManager)mContext.getSystemService(Context.WIFI_SERVICE);
+        WifiInfo info = manager.getConnectionInfo();
+        String address = info.getMacAddress();
+        new RegisterDeviceTask(mContext, this, registration_id, address).execute();
     }
 
     /**
