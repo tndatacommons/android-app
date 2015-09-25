@@ -3,7 +3,8 @@ package org.tndata.android.compass.task;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.text.Html;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -12,82 +13,66 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RegisterDeviceTask extends AsyncTask<Void, Void, Void> {
-    private Context mContext;
-    private RegisterDeviceTaskListener mCallBack;
-    private String mRegistrationId;
+
+public class RegisterDeviceTask extends AsyncTask<Void, Void, Void>{
     private static final String TAG = "RegisterDeviceTask";
 
-    public interface RegisterDeviceTaskListener {
-        public void deviceRegistered(String registration_id);
-    }
+    private Context mContext;
+    private RegisterDeviceTaskListener mCallback;
+    private String mRegistrationId;
+    private String mDeviceId;
 
-    public RegisterDeviceTask(Context context, RegisterDeviceTaskListener callback, String registration_id) {
+
+    public RegisterDeviceTask(@NonNull Context context, @NonNull RegisterDeviceTaskListener callback,
+                              @NonNull String registrationId, @Nullable String deviceId){
         mContext = context;
-        mCallBack = callback;
-        mRegistrationId = registration_id;
+        mCallback = callback;
+        mRegistrationId = registrationId;
+        mDeviceId = deviceId;
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
-        String token = ((CompassApplication) (mContext.getApplicationContext())).getToken();
+    protected Void doInBackground(Void... params){
+        String token = ((CompassApplication)(mContext.getApplicationContext())).getToken();
         String url = Constants.BASE_URL + "notifications/devices/";
 
         Log.d(TAG, "POSTing to: " + url);
-        Map<String, String> headers = new HashMap<String, String>();
+        Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
         headers.put("Content-type", "application/json");
         headers.put("Authorization", "Token " + token);
 
         JSONObject body = new JSONObject();
-        try {
+        try{
             body.put("registration_id", mRegistrationId);
-            body.put("device_name", Build.MANUFACTURER+ " " + Build.PRODUCT);
-        } catch (JSONException e1) {
+            body.put("device_name", Build.MANUFACTURER + " " + Build.PRODUCT);
+            if (mDeviceId != null){
+                body.put("device_id", mDeviceId);
+            }
+        }
+        catch (JSONException e1){
             e1.printStackTrace();
             return null;
         }
 
-        InputStream stream = NetworkHelper.httpPostStream(url, headers,
-                body.toString());
-        if (stream == null) {
-            Log.d(TAG, "----> null response");
-            return null;
+        if (NetworkHelper.httpPostStream(url, headers, body.toString()) == null){
+            Log.d(TAG, "Bad stream");
         }
-        String result = "";
-        String createResponse;
-        try {
-
-            BufferedReader bReader = new BufferedReader(new InputStreamReader(
-                    stream, "UTF-8"));
-
-            String line;
-            while ((line = bReader.readLine()) != null) {
-                result += line;
-            }
-            bReader.close();
-
-            Log.d(TAG, "result: " + result);
-
-            createResponse = Html.fromHtml(result).toString();
-            JSONObject device = new JSONObject(createResponse);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+        else{
+            Log.d(TAG, "Request complete");
         }
         return null;
     }
 
-    protected void onPostExecute() {
-        mCallBack.deviceRegistered(mRegistrationId);
+    protected void onPostExecute(){
+        mCallback.deviceRegistered(mRegistrationId);
     }
 
+
+    public interface RegisterDeviceTaskListener{
+        void deviceRegistered(String registration_id);
+    }
 }
