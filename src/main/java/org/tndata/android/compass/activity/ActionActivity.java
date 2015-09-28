@@ -22,12 +22,11 @@ import android.widget.ViewSwitcher;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.service.CompleteActionService;
+import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.task.GetUserActionsTask;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.ImageLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -178,8 +177,9 @@ public class ActionActivity
         if (!mActionComplete){
             mActionComplete = true;
             mTickSwitcher.showNext();
-            Intent completeAction = new Intent(this, CompleteActionService.class);
-            completeAction.putExtra(CompleteActionService.ACTION_MAPPING_ID_KEY, mAction.getMappingId());
+            Intent completeAction = new Intent(this, ActionReportService.class);
+            completeAction.putExtra(ActionReportService.ACTION_MAPPING_ID_KEY, mAction.getMappingId());
+            completeAction.putExtra(ActionReportService.STATE_KEY, "completed");
             startService(completeAction);
 
             //Finish the activity after one second

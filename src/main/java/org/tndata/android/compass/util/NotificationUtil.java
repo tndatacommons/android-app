@@ -17,7 +17,7 @@ import org.tndata.android.compass.activity.BehaviorProgressActivity;
 import org.tndata.android.compass.activity.PackageEnrollmentActivity;
 import org.tndata.android.compass.activity.SnoozeActivity;
 import org.tndata.android.compass.model.Reminder;
-import org.tndata.android.compass.service.CompleteActionService;
+import org.tndata.android.compass.service.ActionReportService;
 
 
 /**
@@ -105,6 +105,13 @@ public final class NotificationUtil{
         PendingIntent contentIntent = PendingIntent.getActivity(context,
                 (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        Intent dismissIntent = new Intent(context, ActionReportService.class)
+                .putExtra(ActionReportService.ACTION_MAPPING_ID_KEY, userMappingId)
+                .putExtra(ActionReportService.STATE_KEY, "dismissed");
+
+        PendingIntent dismissedPendingIntent = PendingIntent.getService(context,
+                (int)System.currentTimeMillis(), dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         Reminder reminder = new Reminder(notificationId, -1, title, message, actionId, userMappingId);
 
         Intent snoozeIntent = new Intent(context, SnoozeActivity.class)
@@ -117,9 +124,10 @@ public final class NotificationUtil{
 
         String later = context.getString(R.string.later_title);
 
-        Intent didItIntent = new Intent(context, CompleteActionService.class)
-                .putExtra(CompleteActionService.PUSH_NOTIFICATION_ID_KEY, actionId)
-                .putExtra(CompleteActionService.ACTION_MAPPING_ID_KEY, userMappingId);
+        Intent didItIntent = new Intent(context, ActionReportService.class)
+                .putExtra(ActionReportService.PUSH_NOTIFICATION_ID_KEY, actionId)
+                .putExtra(ActionReportService.ACTION_MAPPING_ID_KEY, userMappingId)
+                .putExtra(ActionReportService.STATE_KEY, "completed");
 
         PendingIntent didItPendingIntent = PendingIntent.getService(context,
                 (int)System.currentTimeMillis(), didItIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -130,6 +138,7 @@ public final class NotificationUtil{
                 .addAction(R.drawable.ic_snooze, later, snoozePendingIntent)
                 .addAction(R.drawable.ic_check, didIt, didItPendingIntent)
                 .setContentIntent(contentIntent)
+                .setDeleteIntent(dismissedPendingIntent)
                 .build();
 
         ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
