@@ -295,7 +295,7 @@
             android:exported="false" />
 
         <service
-            android:name="org.tndata.android.compass.service.CompleteActionService" />
+            android:name=".service.ActionReportService" />
 
         <service android:enabled="true" android:name=".service.SnoozeService" />
 

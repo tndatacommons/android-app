@@ -17,7 +17,7 @@ import java.util.LinkedList;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class CompleteActionService
+public class ActionReportService
         extends Service
         implements ActionReportTask.CompleteActionInterface{
 

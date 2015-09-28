@@ -19,10 +19,9 @@ import org.tndata.android.compass.adapter.SnoozeAdapter;
 import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Reminder;
-import org.tndata.android.compass.service.CompleteActionService;
+import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.service.SnoozeService;
-import org.tndata.android.compass.task.ActionReportTask;
 import org.tndata.android.compass.util.NotificationUtil;
 
 import java.util.Calendar;
@@ -242,9 +241,9 @@ public class SnoozeActivity
 
     private void reportSnooze(){
         Log.d("Report", "Report Called");
-        Intent report = new Intent(this, CompleteActionService.class)
-                .putExtra(CompleteActionService.ACTION_MAPPING_ID_KEY, mReminder.getUserMappingId())
-                .putExtra(CompleteActionService.STATE_KEY, "snoozed");
+        Intent report = new Intent(this, ActionReportService.class)
+                .putExtra(ActionReportService.ACTION_MAPPING_ID_KEY, mReminder.getUserMappingId())
+                .putExtra(ActionReportService.STATE_KEY, "snoozed");
         startService(report);
     }
 }
