@@ -179,6 +179,7 @@ public class ActionActivity
             mTickSwitcher.showNext();
             Intent completeAction = new Intent(this, ActionReportService.class);
             completeAction.putExtra(ActionReportService.ACTION_MAPPING_ID_KEY, mAction.getMappingId());
+            completeAction.putExtra(ActionReportService.STATE_KEY, "completed");
             startService(completeAction);
 
             //Finish the activity after one second
