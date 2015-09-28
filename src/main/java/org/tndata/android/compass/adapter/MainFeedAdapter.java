@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
@@ -75,15 +76,22 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
         if (position == 1){
             UpNextHolder holder = (UpNextHolder)rawHolder;
-            if (mFeedData != null){
-                holder.mIndicator.setValue(0);
-                holder.mIndicator.setValueAnimated(0, mFeedData.getProgress(), 1500);
-                Action action = mFeedData.getNextAction();
-                holder.mAction.setText(action.getTitle());
-                holder.mTime.setText(action.getTrigger().getFormattedTime());
+            if (mFeedData == null || mFeedData.getNextAction() == null){
+                holder.mNoActionsContainer.setVisibility(View.VISIBLE);
+                holder.mContentContainer.setVisibility(View.GONE);
+                holder.itemView.setOnClickListener(holder);
             }
             else{
+                Action action = mFeedData.getNextAction();
+                holder.mNoActionsContainer.setVisibility(View.GONE);
+                holder.mContentContainer.setVisibility(View.VISIBLE);
+                holder.itemView.setOnClickListener(null);
+                holder.mAction.setText(action.getTitle());
+                holder.mTime.setText(action.getTrigger().getFormattedTime());
+                holder.mIndicator.setAutoTextSize(true);
+                holder.mIndicator.setShowUnit(true);
                 holder.mIndicator.setValue(0);
+                holder.mIndicator.setValueAnimated(0, mFeedData.getProgress(), 1500);
             }
         }
         else if (position == 2){
@@ -134,7 +142,9 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
     }
 
-    private class UpNextHolder extends RecyclerView.ViewHolder{
+    private class UpNextHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private View mNoActionsContainer;
+        private View mContentContainer;
         private CircleProgressView mIndicator;
         private TextView mAction;
         private TextView mTime;
@@ -143,9 +153,16 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         public UpNextHolder(View itemView){
             super(itemView);
 
+            mNoActionsContainer = itemView.findViewById(R.id.up_next_no_actions);
+            mContentContainer = itemView.findViewById(R.id.up_next_content);
             mIndicator = (CircleProgressView)itemView.findViewById(R.id.up_next_indicator);
             mAction = (TextView)itemView.findViewById(R.id.up_next_action);
             mTime = (TextView)itemView.findViewById(R.id.up_next_time);
+        }
+
+        @Override
+        public void onClick(View v){
+            Toast.makeText(mContext, "No actions, card clicked", Toast.LENGTH_SHORT).show();
         }
     }
 

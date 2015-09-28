@@ -19,6 +19,30 @@
             android:text="Up Next" />
 
         <LinearLayout
+            android:id="@+id/up_next_no_actions"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="You have no activities selected for today." />
+
+            <TextView
+                android:id="@+id/up_next_select_actions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#4B7BF5"
+                android:text="Select an activity to help you reach one of your goals." />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/up_next_content"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
@@ -35,6 +59,7 @@
                 progress:maxValue="100"
                 progress:rimColor="#B2DFDB"
                 progress:rimWidth="10dp"
+                progress:unit="%"
                 progress:seekMode="false" />
 
             <LinearLayout
