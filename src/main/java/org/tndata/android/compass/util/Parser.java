@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Trigger;
@@ -321,5 +322,19 @@ public class Parser{
         }
 
         return places;
+    }
+
+    public FeedData parseFeedData(JSONObject feedData){
+        FeedData data = new FeedData();
+
+        try{
+            data.setNextAction(parseAction(feedData.getJSONObject("next_action"), true));
+            data.setProgress(feedData.getJSONObject("progress").getInt("progress"));
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+
+        return data;
     }
 }

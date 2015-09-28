@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.util.CompassUtil;
 
@@ -35,13 +37,15 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     private Context mContext;
     private MainFeedAdapterListener mListener;
     private List<Goal> mGoals;
+    private FeedData mFeedData;
 
 
     public MainFeedAdapter(@NonNull Context context, @NonNull MainFeedAdapterListener listener,
-                           @NonNull List<Goal> goals){
+                           @NonNull List<Goal> goals, FeedData feedData){
         mContext = context;
         mListener = listener;
         mGoals = goals;
+        mFeedData = feedData;
     }
 
     @Override
@@ -71,6 +75,16 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
         if (position == 1){
             UpNextHolder holder = (UpNextHolder)rawHolder;
+            if (mFeedData != null){
+                holder.mIndicator.setValue(0);
+                holder.mIndicator.setValueAnimated(0, mFeedData.getProgress(), 1500);
+                Action action = mFeedData.getNextAction();
+                holder.mAction.setText(action.getTitle());
+                holder.mTime.setText(action.getTrigger().getFormattedTime());
+            }
+            else{
+                holder.mIndicator.setValue(0);
+            }
         }
         else if (position == 2){
             ProgressHolder holder = (ProgressHolder)rawHolder;
@@ -121,6 +135,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     private class UpNextHolder extends RecyclerView.ViewHolder{
+        private CircleProgressView mIndicator;
         private TextView mAction;
         private TextView mTime;
 
@@ -128,6 +143,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         public UpNextHolder(View itemView){
             super(itemView);
 
+            mIndicator = (CircleProgressView)itemView.findViewById(R.id.up_next_indicator);
             mAction = (TextView)itemView.findViewById(R.id.up_next_action);
             mTime = (TextView)itemView.findViewById(R.id.up_next_time);
         }

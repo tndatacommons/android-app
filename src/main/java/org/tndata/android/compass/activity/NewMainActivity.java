@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -19,7 +20,9 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.MainFeedAdapter;
+import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.task.GetFeedDataTask;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.ParallaxEffect;
 
@@ -31,10 +34,13 @@ public class NewMainActivity
         extends AppCompatActivity
         implements
                 DrawerAdapter.OnItemClickListener,
+                GetFeedDataTask.GetFeedDataCallback,
                 MainFeedAdapter.MainFeedAdapterListener{
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+
+    private RecyclerView mFeed;
 
 
     @Override
@@ -74,11 +80,13 @@ public class NewMainActivity
 
         View header = findViewById(R.id.main_illustration);
 
-        RecyclerView feed = (RecyclerView)findViewById(R.id.main_feed);
-        feed.setAdapter(new MainFeedAdapter(this, this, ((CompassApplication)getApplication()).getGoals()));
-        feed.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        feed.addItemDecoration(new ItemPadding());
-        feed.setOnScrollListener(new ParallaxEffect(header, 0.5f));
+        mFeed = (RecyclerView)findViewById(R.id.main_feed);
+        mFeed.setAdapter(new MainFeedAdapter(this, this, ((CompassApplication)getApplication()).getGoals(), null));
+        mFeed.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mFeed.addItemDecoration(new ItemPadding());
+        mFeed.setOnScrollListener(new ParallaxEffect(header, 0.5f));
+
+        new GetFeedDataTask(this, ((CompassApplication)getApplication()).getToken()).execute();
     }
 
     @Override
@@ -146,6 +154,13 @@ public class NewMainActivity
                 break;
         }
         mDrawerLayout.closeDrawers();
+    }
+
+    @Override
+    public void onFeedDataLoaded(@Nullable FeedData feedData){
+        if (feedData != null){
+            mFeed.setAdapter(new MainFeedAdapter(this, this, ((CompassApplication)getApplication()).getGoals(), feedData));
+        }
     }
 
     @Override

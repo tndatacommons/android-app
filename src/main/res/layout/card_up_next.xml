@@ -10,27 +10,63 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp" >
+        android:padding="10dp" >
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Up Next:" />
-
-        <TextView
-            android:id="@+id/up_next_action"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Whatever the action" />
+            android:text="Up Next" />
 
-        <TextView
-            android:id="@+id/up_next_time"
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Recurrence time" />
+            android:layout_height="wrap_content" >
 
+            <at.grabner.circleprogress.CircleProgressView
+                xmlns:progress="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/up_next_indicator"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_gravity="center_vertical"
+                progress:barColor="#00796B"
+                progress:barWidth="10dp"
+                progress:contourSize="0dp"
+                progress:maxValue="100"
+                progress:rimColor="#B2DFDB"
+                progress:rimWidth="10dp"
+                progress:seekMode="false" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp" >
+
+                <TextView
+                    android:id="@+id/up_next_action"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Whatever the action" />
+
+                <TextView
+                    android:id="@+id/up_next_goal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/dark_text_color"
+                    android:textStyle="italic"
+                    android:text="Whichever the goal" />
+
+                <TextView
+                    android:id="@+id/up_next_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Recurrence time" />
+
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>
