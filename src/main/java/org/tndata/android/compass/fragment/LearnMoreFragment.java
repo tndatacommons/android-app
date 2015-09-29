@@ -27,7 +27,6 @@ import org.tndata.android.compass.ui.CompassPopupMenu;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.ImageHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -137,7 +136,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
                     if (!actions.contains(mAction)) {
                         mProgressBar.setVisibility(View.VISIBLE);
                         mAddImageView.setEnabled(false);
-                        new AddActionTask(getActivity(), LearnMoreFragment.this, mAction)
+                        new AddActionTask(getActivity(), LearnMoreFragment.this, mGoal, mAction)
                                 .executeOnExecutor(AsyncTask
                                         .THREAD_POOL_EXECUTOR);
                     } else {

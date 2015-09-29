@@ -39,7 +39,6 @@ import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFix
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.Constants;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -210,7 +209,7 @@ public class ChooseActionsActivity
     @Override
     public void addAction(Action action){
         Toast.makeText(getApplicationContext(), getText(R.string.action_saving), Toast.LENGTH_SHORT).show();
-        new AddActionTask(this, this, action).execute();
+        new AddActionTask(this, this, mGoal, action).execute();
     }
 
     @Override
