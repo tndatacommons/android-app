@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Compass</string>
-    <string name="version_num">1.15.0</string>
+    <string name="version_num">1.15.1</string>
     <string name="ok">OK</string>
 
     <!-- MainActivity -->
