@@ -83,7 +83,7 @@ public class NewMainActivity
         mFeed = (RecyclerView)findViewById(R.id.main_feed);
         mFeed.setAdapter(new MainFeedAdapter(this, this, ((CompassApplication)getApplication()).getGoals(), null));
         mFeed.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mFeed.addItemDecoration(new ItemPadding());
+        mFeed.addItemDecoration(((MainFeedAdapter)mFeed.getAdapter()).getMainFeedPadding());
         mFeed.setOnScrollListener(new ParallaxEffect(header, 0.5f));
 
         new GetFeedDataTask(this, ((CompassApplication)getApplication()).getToken()).execute();
@@ -166,34 +166,5 @@ public class NewMainActivity
     @Override
     public void onGoalSelected(Goal goal){
         startActivity(new Intent(this, GoalActivity.class));
-    }
-
-    /**
-     * Decoration class to establish the grid's items margin.
-     *
-     * @author Ismael Alonso
-     * @version 1.0.0
-     */
-    final class ItemPadding extends RecyclerView.ItemDecoration{
-        private int margin;
-
-
-        /**
-         * Constructor.
-         */
-        public ItemPadding(){
-            margin = (int)Math.ceil(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                    8, getResources().getDisplayMetrics()));
-        }
-
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
-                                   RecyclerView.State state){
-
-            outRect.top = margin / 2;
-            outRect.left = margin / 2;
-            outRect.bottom = margin / 2;
-            outRect.right = margin / 2;
-        }
     }
 }
