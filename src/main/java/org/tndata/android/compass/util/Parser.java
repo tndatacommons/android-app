@@ -328,8 +328,16 @@ public class Parser{
         FeedData data = new FeedData();
 
         try{
-            data.setNextAction(parseAction(feedData.getJSONObject("next_action"), true));
-            data.setProgress(feedData.getJSONObject("progress").getInt("progress"));
+            JSONObject action = feedData.getJSONObject("next_action");
+            data.setNextAction(parseAction(action, true));
+            data.getNextAction().setPrimaryGoal(gson.fromJson(action.getString("primary_goal"), Goal.class));
+
+            JSONObject progress = feedData.getJSONObject("progress");
+            data.setProgressPercentage(progress.getInt("progress"));
+            data.setCompletedActions(progress.getInt("completed"));
+            data.setTotalActions(progress.getInt("total"));
+
+            data.setUserGoals(parseGoals(feedData.getJSONArray("user_goals"), true));
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();

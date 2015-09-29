@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class Action extends TDCBase implements Serializable, Comparable<Action> {
 
     private static final long serialVersionUID = 2919447130236951923L;
+    private Goal primary_goal = null;
     private Behavior behavior = null;
     private int behavior_id = -1;
     private int sequence_order = -1;
@@ -49,6 +50,14 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
         this.icon_url = iconUrl;
         this.image_url = imageUrl;
         this.behavior_id = behaviorId;
+    }
+
+    public Goal getPrimaryGoal(){
+        return primary_goal;
+    }
+
+    public void setPrimaryGoal(Goal primary_goal){
+        this.primary_goal = primary_goal;
     }
 
     public Behavior getBehavior() {

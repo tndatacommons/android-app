@@ -15,7 +15,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/dark_text_color"
+            android:textSize="16sp"
             android:text="Up Next" />
 
         <LinearLayout
@@ -52,7 +53,6 @@
                 android:id="@+id/up_next_indicator"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
-                android:layout_gravity="center_vertical"
                 progress:barColor="#00796B"
                 progress:barWidth="10dp"
                 progress:contourSize="0dp"
@@ -72,15 +72,16 @@
                     android:id="@+id/up_next_action"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/dark_text_color"
+                    android:textSize="20sp"
                     android:text="Whatever the action" />
 
                 <TextView
                     android:id="@+id/up_next_goal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@color/dark_text_color"
+                    android:textSize="16sp"
                     android:textStyle="italic"
                     android:text="Whichever the goal" />
 
@@ -88,8 +89,10 @@
                     android:id="@+id/up_next_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Recurrence time" />
+                    android:gravity="right"
+                    android:textColor="@color/secondary_text_color"
+                    android:textSize="15sp"
+                    android:text="Next time" />
 
             </LinearLayout>
         </LinearLayout>

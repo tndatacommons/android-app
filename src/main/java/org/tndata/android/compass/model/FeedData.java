@@ -1,11 +1,19 @@
 package org.tndata.android.compass.model;
 
+import java.util.List;
+
+
 /**
  * Created by isma on 9/28/15.
  */
 public class FeedData{
     private Action mNextAction;
-    private int mProgress;
+
+    private int mTotalActions;
+    private int mCompletedActions;
+    private int mPercentage;
+
+    private List<Goal> mUserGoals;
 
 
     public void setNextAction(Action nextAction){
@@ -16,11 +24,31 @@ public class FeedData{
         return mNextAction;
     }
 
-    public void setProgress(int progress){
-        mProgress = progress;
+    public void setTotalActions(int totalActions){
+        mTotalActions = totalActions;
+    }
+
+    public void setCompletedActions(int completedActions){
+        mCompletedActions = completedActions;
+    }
+
+    public void setProgressPercentage(int percentage){
+        mPercentage = percentage;
     }
 
     public int getProgress(){
-        return mProgress;
+        return mPercentage;
+    }
+
+    public String getProgressFraction(){
+        return mCompletedActions + "/" + mTotalActions;
+    }
+
+    public void setUserGoals(List<Goal> userGoals){
+        mUserGoals = userGoals;
+    }
+
+    public List<Goal> getUserGoals(){
+        return mUserGoals;
     }
 }

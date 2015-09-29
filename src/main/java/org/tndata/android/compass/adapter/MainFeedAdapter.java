@@ -1,7 +1,6 @@
 package org.tndata.android.compass.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -29,10 +28,11 @@ import at.grabner.circleprogress.CircleProgressView;
  */
 public class MainFeedAdapter extends RecyclerView.Adapter{
     private static final int TYPE_BLANK = 0;
-    private static final int TYPE_UP_NEXT = 1;
-    private static final int TYPE_PROGRESS = 2;
-    private static final int TYPE_GOAL = 3;
-    private static final int TYPE_OTHER = 4;
+    private static final int TYPE_WELCOME = 1;
+    private static final int TYPE_UP_NEXT = 2;
+    private static final int TYPE_PROGRESS = 3;
+    private static final int TYPE_GOAL = 4;
+    private static final int TYPE_OTHER = 5;
 
 
     private Context mContext;
@@ -54,6 +54,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         if (viewType == TYPE_BLANK){
             return new RecyclerView.ViewHolder(new CardView(mContext)){};
         }
+        else if (viewType == TYPE_WELCOME){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            return new RecyclerView.ViewHolder(inflater.inflate(R.layout.card_welcome, parent, false)){};
+        }
         else if (viewType == TYPE_UP_NEXT){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             return new UpNextHolder(inflater.inflate(R.layout.card_up_next, parent, false));
@@ -74,6 +78,11 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
+        //Account for the welcome card if necessary
+        if (mFeedData == null || mFeedData.getUserGoals().isEmpty()){
+            position--;
+        }
+
         if (position == 1){
             UpNextHolder holder = (UpNextHolder)rawHolder;
             if (mFeedData == null || mFeedData.getNextAction() == null){
@@ -87,11 +96,15 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 holder.mContentContainer.setVisibility(View.VISIBLE);
                 holder.itemView.setOnClickListener(null);
                 holder.mAction.setText(action.getTitle());
-                holder.mTime.setText(action.getTrigger().getFormattedTime());
+                String goalTitle = action.getPrimaryGoal().getTitle().substring(0, 1).toLowerCase();
+                goalTitle += action.getPrimaryGoal().getTitle().substring(1);
+                holder.mGoal.setText("To help me " + goalTitle);
+                holder.mTime.setText(action.getTrigger().getFormattedTime().toLowerCase());
                 holder.mIndicator.setAutoTextSize(true);
                 holder.mIndicator.setShowUnit(true);
                 holder.mIndicator.setValue(0);
                 holder.mIndicator.setValueAnimated(0, mFeedData.getProgress(), 1500);
+                //holder.mIndicator.setText("Today");
             }
         }
         else if (position == 2){
@@ -105,15 +118,11 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             goal.loadIconIntoView(mContext, holder.mIcon);
         }
         else{
-            int width = CompassUtil.getScreenWidth(mContext);
-            LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, (int)((width*2/3)*0.8));
-            rawHolder.itemView.setLayoutParams(params);
-            if (position == 0){
-                //holder.itemView.setBackgroundColor(Color.RED);
+            if (position == -1 || (!(mFeedData == null || mFeedData.getUserGoals().isEmpty()) && position == 0)){
+                int width = CompassUtil.getScreenWidth(mContext);
+                LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, (int)((width*2/3)*0.8));
+                rawHolder.itemView.setLayoutParams(params);
                 rawHolder.itemView.setVisibility(View.INVISIBLE);
-            }
-            else{
-                ((CardView)rawHolder.itemView).setCardBackgroundColor(Color.GREEN);
             }
         }
     }
@@ -125,10 +134,24 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
     @Override
     public int getItemViewType(int position){
+        //The first card is always a blank card
         if (position == 0){
             return TYPE_BLANK;
         }
-        else if (position == 1){
+
+        //The second card may be a welcome card, but only if the user has no goals selected
+        if (mFeedData == null || mFeedData.getUserGoals().isEmpty()){
+            //If this is position 1 then it is a welcome card
+            if (position == 1){
+                return TYPE_WELCOME;
+            }
+            //Otherwise, decrement the position
+            else{
+                position--;
+            }
+        }
+
+        if (position == 1){
             return TYPE_UP_NEXT;
         }
         else if (position == 2){
@@ -147,6 +170,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         private View mContentContainer;
         private CircleProgressView mIndicator;
         private TextView mAction;
+        private TextView mGoal;
         private TextView mTime;
 
 
@@ -157,6 +181,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             mContentContainer = itemView.findViewById(R.id.up_next_content);
             mIndicator = (CircleProgressView)itemView.findViewById(R.id.up_next_indicator);
             mAction = (TextView)itemView.findViewById(R.id.up_next_action);
+            mGoal = (TextView)itemView.findViewById(R.id.up_next_goal);
             mTime = (TextView)itemView.findViewById(R.id.up_next_time);
         }
 

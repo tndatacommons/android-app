@@ -247,4 +247,10 @@
     <string name="package_load_error">The package information could not be loaded</string>
     <string name="package_consent_error">There was a problem consenting the package</string>
 
+    <!-- Feed -->
+    <!-- Welcome card -->
+    <string name="card_welcome_title">Welcome to Compass</string>
+    <string name="card_welcome_subtitle">Celery quandong swiss chard chicory earth nut pea potato. Salsify taro cat sear garlic gram celery bitter leaf wattle seed collard greens nori.</string>
+    <string name="card_welcome_instructions"><b>Instructions:</b> Select a goal that Mulberry has recommended for you, or browse your interests to find your own goal.</string>
+
 </resources>
