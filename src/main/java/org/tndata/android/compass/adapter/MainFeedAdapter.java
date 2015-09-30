@@ -278,7 +278,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
         @Override
         public void onClick(View view){
-            mListener.onGoalSelected(mGoals.get(getAdapterPosition()-3));
+            mListener.onGoalSelected(mGoals.get((getAdapterPosition()-getMyGoalsHeaderPosition()-1)/2));
         }
     }
 

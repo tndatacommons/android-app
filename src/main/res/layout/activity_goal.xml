@@ -5,6 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <!-- The recycler view goes in the back -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/goal_item_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- The hero on top of it -->
     <ImageView
         android:id="@+id/goal_hero"
         android:layout_width="match_parent"
@@ -12,6 +19,31 @@
         android:adjustViewBounds="true"
         android:scaleType="centerCrop" />
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#999"
+        android:layout_below="@id/goal_hero" />
+
+    <!-- The title on top of the hero, serving as the background for the title bar -->
+    <TextView
+        android:id="@+id/goal_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="29dp"
+        android:paddingLeft="15dp"
+        android:paddingBottom="29dp"
+        android:textColor="@color/white"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Goal title goes here" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#999"
+        android:layout_below="@id/goal_title" />
+
+    <!-- The progress indicator, right on top of the title bar -->
     <at.grabner.circleprogress.CircleProgressView
         xmlns:progress="http://schemas.android.com/apk/res-auto"
         android:id="@+id/goal_indicator"
@@ -28,29 +60,13 @@
         progress:unit="%"
         progress:unitColor="#009688" />
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#999"
-        android:layout_below="@id/goal_hero" />
-
-    <TextView
-        android:id="@+id/goal_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Goal title goes here" />
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#999"
-        android:layout_below="@id/goal_title" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/goal_item_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <!-- On top of everything, the FAB -->
+    <org.tndata.android.compass.ui.button.FloatingActionButton
+        android:id="@+id/goal_fab"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginRight="28dp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_add_white_24dp" />
 
 </RelativeLayout>

@@ -165,6 +165,6 @@ public class NewMainActivity
 
     @Override
     public void onGoalSelected(Goal goal){
-        startActivity(new Intent(this, GoalActivity.class));
+        startActivity(new Intent(this, GoalActivity.class).putExtra(GoalActivity.GOAL_KEY, goal));
     }
 }
