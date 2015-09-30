@@ -1,14 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    card_view:cardCornerRadius="@dimen/cardview_corner_radius" >
+    android:layout_height="wrap_content" >
 
-    <View
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/light_gray_text_color" />
+        android:layout_height="wrap_content"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp" >
 
+        <!-- Uncomment these for soft separators -->
+        <!--<View
+            android:layout_width="50dp"
+            android:layout_height="1dp"
+            android:background="@drawable/separator_left" />-->
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="@color/light_gray_text_color" />
+
+        <!--<View
+            android:layout_width="50dp"
+            android:layout_height="1dp"
+            android:background="@drawable/separator_right" />-->
+
+    </LinearLayout>
 </android.support.v7.widget.CardView>

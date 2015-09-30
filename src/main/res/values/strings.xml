@@ -250,7 +250,7 @@
     <!-- Feed -->
     <!-- Welcome card -->
     <string name="card_welcome_title">Welcome to Compass</string>
-    <string name="card_welcome_subtitle">Celery quandong swiss chard chicory earth nut pea potato. Salsify taro cat sear garlic gram celery bitter leaf wattle seed collard greens nori.</string>
+    <string name="card_welcome_subtitle">You have things you want to do. Mulberry has ways you can do them. Mulberry will remind you to take action on your goals, as well as keep track of how you are doing.</string>
     <string name="card_welcome_instructions"><b>Instructions:</b> Select a goal that Mulberry has recommended for you, or browse your interests to find your own goal.</string>
 
 </resources>
