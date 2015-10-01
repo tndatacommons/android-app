@@ -97,12 +97,9 @@ public class GoalActivity extends AppCompatActivity implements ViewTreeObserver.
             @Override
             protected void onStateChanged(int newMargin){
                 View view = getParallaxView();
-                if (newMargin < getParallaxViewInitialOffset()/2){
-                    view.setPadding(getParallaxViewInitialOffset()/2 - newMargin + CompassUtil.getPixels(GoalActivity.this, 15), view.getPaddingTop(), view.getPaddingRight(), view.getPaddingBottom());
-                }
-                else{
-                    view.setPadding(CompassUtil.getPixels(GoalActivity.this, 15), view.getPaddingTop(), view.getPaddingRight(), view.getPaddingBottom());
-                }
+                int padding = CompassUtil.getPixels(GoalActivity.this, 15);
+                padding += (int)(((float)(getParallaxViewInitialOffset()-newMargin)/getParallaxViewInitialOffset())*CompassUtil.getPixels(GoalActivity.this, 75));
+                view.setPadding(padding, view.getPaddingTop(), view.getPaddingRight(), view.getPaddingBottom());
             }
         });
         hub.addOnScrollListener(titleEffect);
@@ -116,7 +113,7 @@ public class GoalActivity extends AppCompatActivity implements ViewTreeObserver.
     public void onGlobalLayout(){
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)mTitle.getLayoutParams();
         int margin = params.topMargin + mTitle.getHeight() + params.bottomMargin + CompassUtil.getPixels(this, 1);
-        mList.setAdapter(new GoalAdapter(GoalActivity.this, margin));
+        mList.setAdapter(new GoalAdapter(this, mGoal, margin));
 
         //The listener is not needed any longer
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){

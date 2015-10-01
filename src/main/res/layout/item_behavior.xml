@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <at.grabner.circleprogress.CircleProgressView
+    xmlns:progress="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/behavior_indicator"
+    android:layout_width="80dp"
+    android:layout_height="80dp"
+    progress:barColor="#00796B"
+    progress:barWidth="12dp"
+    progress:contourSize="0dp"
+    progress:maxValue="100"
+    progress:rimColor="#B2DFDB"
+    progress:rimWidth="12dp"
+    progress:seekMode="false"
+    progress:textColor="#00796B"
+    progress:unit="%"
+    progress:unitColor="#009688" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" >
+
+        <ImageView
+            android:id="@+id/behavior_overflow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:src="@drawable/ic_more_horiz_black_18dp" />
+
+        <TextView
+            android:id="@+id/behavior_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <!-- The reminder of the content gets inserted dynamically here -->
+        <LinearLayout
+            android:id="@+id/behavior_actions"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+</LinearLayout>
