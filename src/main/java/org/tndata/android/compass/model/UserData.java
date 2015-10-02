@@ -28,6 +28,8 @@ public class UserData {
     private List<Action> mActions = new ArrayList<>(); // The user's selected actions
     private List<Place> mPlaces = new ArrayList<>();
 
+    private FeedData mFeedData;
+
 
     public UserData() {
     }
@@ -423,6 +425,14 @@ public class UserData {
 
     public List<Place> getPlaces(){
         return mPlaces;
+    }
+
+    public void setFeedData(FeedData feedData){
+        mFeedData = feedData;
+    }
+
+    public FeedData getFeedData(){
+        return mFeedData;
     }
 
     /* -----------------------------------------------------------------

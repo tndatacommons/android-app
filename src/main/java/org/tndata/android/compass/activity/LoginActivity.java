@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
@@ -25,7 +26,7 @@ import org.tndata.android.compass.fragment.WebFragment;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.task.GetUserDataTask;
-import org.tndata.android.compass.task.GetUserDataTask.GetUserDataListener;
+import org.tndata.android.compass.task.GetUserDataTask.GetUserDataCallback;
 import org.tndata.android.compass.task.LoginTask;
 import org.tndata.android.compass.task.LoginTask.LoginTaskListener;
 import org.tndata.android.compass.util.Constants;
@@ -41,7 +42,7 @@ public class LoginActivity
                 LoginFragmentListener,
                 LoginTaskListener,
                 TourFragmentListener,
-                GetUserDataListener{
+                GetUserDataCallback{
 
     private static final int DEFAULT = 0;
     private static final int LOGIN = 1;
@@ -149,7 +150,7 @@ public class LoginActivity
     }
 
     private void transitionToMain(){
-        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        startActivity(new Intent(getApplicationContext(), NewMainActivity.class));
         finish();
     }
 
@@ -289,7 +290,7 @@ public class LoginActivity
     }
 
     @Override
-    public void userDataLoaded(UserData userData){
+    public void userDataLoaded(@Nullable UserData userData){
         ((CompassApplication)getApplication()).setUserData(userData);
         transitionToMain();
     }

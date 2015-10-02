@@ -2,7 +2,6 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -34,10 +33,12 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     private static final int TYPE_WELCOME = 1;
     private static final int TYPE_UP_NEXT = 2;
     private static final int TYPE_PROGRESS = 3;
-    private static final int TYPE_GOAL_HEADER = 4;
+    private static final int TYPE_ACTION_HEADER = 4;
     private static final int TYPE_SEPARATOR = 5;
-    private static final int TYPE_GOAL = 6;
-    private static final int TYPE_OTHER = 7;
+    private static final int TYPE_ACTION = 6;
+    private static final int TYPE_GOAL_HEADER = 7;
+    private static final int TYPE_GOAL = 8;
+    private static final int TYPE_OTHER = 9;
 
 
     private Context mContext;
@@ -55,7 +56,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     private boolean hasWelcomeCard(){
-        return mFeedData == null || mFeedData.getUserGoals().isEmpty();
+        return mFeedData == null || mGoals.isEmpty();
     }
 
     private int getMyGoalsHeaderPosition(){
@@ -93,7 +94,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
         else if (viewType == TYPE_GOAL_HEADER){
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            return new RecyclerView.ViewHolder(inflater.inflate(R.layout.card_my_goals_header, parent, false)){};
+            return new RecyclerView.ViewHolder(inflater.inflate(R.layout.card_header, parent, false)){};
         }
         else if (viewType == TYPE_SEPARATOR){
             LayoutInflater inflater = LayoutInflater.from(mContext);

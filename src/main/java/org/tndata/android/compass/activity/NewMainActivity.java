@@ -2,9 +2,7 @@ package org.tndata.android.compass.activity;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -20,9 +17,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.MainFeedAdapter;
-import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.task.GetFeedDataTask;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.ParallaxEffect;
 
@@ -34,7 +29,6 @@ public class NewMainActivity
         extends AppCompatActivity
         implements
                 DrawerAdapter.OnItemClickListener,
-                GetFeedDataTask.GetFeedDataCallback,
                 MainFeedAdapter.MainFeedAdapterListener{
 
     private DrawerLayout mDrawerLayout;
@@ -80,13 +74,13 @@ public class NewMainActivity
 
         View header = findViewById(R.id.main_illustration);
 
+        CompassApplication app = (CompassApplication)getApplication();
+
         mFeed = (RecyclerView)findViewById(R.id.main_feed);
-        mFeed.setAdapter(new MainFeedAdapter(this, this, ((CompassApplication)getApplication()).getGoals(), null));
+        mFeed.setAdapter(new MainFeedAdapter(this, this, app.getGoals(), app.getUserData().getFeedData()));
         mFeed.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mFeed.addItemDecoration(((MainFeedAdapter)mFeed.getAdapter()).getMainFeedPadding());
         mFeed.setOnScrollListener(new ParallaxEffect(header, 0.5f));
-
-        new GetFeedDataTask(this, ((CompassApplication)getApplication()).getToken()).execute();
     }
 
     @Override
@@ -154,13 +148,6 @@ public class NewMainActivity
                 break;
         }
         mDrawerLayout.closeDrawers();
-    }
-
-    @Override
-    public void onFeedDataLoaded(@Nullable FeedData feedData){
-        if (feedData != null){
-            mFeed.setAdapter(new MainFeedAdapter(this, this, ((CompassApplication)getApplication()).getGoals(), feedData));
-        }
     }
 
     @Override

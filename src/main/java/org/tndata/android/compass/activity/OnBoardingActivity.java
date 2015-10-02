@@ -31,7 +31,7 @@ public class OnBoardingActivity extends AppCompatActivity implements
         AddCategoryTaskListener,
         InstrumentFragment.InstrumentFragmentListener,
         ChooseCategoryAdapter.OnCategoriesSelectedListener,
-        GetUserDataTask.GetUserDataListener{
+        GetUserDataTask.GetUserDataCallback{
     private static final int CHOOSE_CATEGORIES = 0;
     private static final int QOL = 1;
     private static final int BIO = 2;

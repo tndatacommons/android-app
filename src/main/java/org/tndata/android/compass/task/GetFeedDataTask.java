@@ -20,7 +20,7 @@ import java.util.Map;
 
 
 /**
- * Created by isma on 9/28/15.
+ * TODO Eventually, merge this into GetUserDataTask
  */
 public class GetFeedDataTask extends AsyncTask<Void, Void, FeedData>{
     private GetFeedDataCallback mCallback;
@@ -34,7 +34,7 @@ public class GetFeedDataTask extends AsyncTask<Void, Void, FeedData>{
 
     @Override
     protected FeedData doInBackground(Void... params){
-        String url = Constants.BASE_URL + "feed/";
+        String url = Constants.BASE_URL + "users/";
 
         Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");

@@ -1,5 +1,6 @@
 package org.tndata.android.compass.util;
 
+import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -10,6 +11,7 @@ import com.google.gson.GsonBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
@@ -17,6 +19,7 @@ import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Trigger;
+import org.tndata.android.compass.model.UserData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -324,6 +327,52 @@ public class Parser{
         return places;
     }
 
+    public UserData parseUserData(Context context, String src){
+        try{
+            UserData userData = new UserData();
+
+            JSONObject userJson = new JSONObject(src).getJSONArray("results").getJSONObject(0);
+
+            //Parse the user-selected content, store in userData; wait till all data is set
+            //  before syncing parent/child relationships
+            userData.setCategories(parseCategories(userJson.getJSONArray("categories"), true), false);
+            userData.setGoals(parseGoals(userJson.getJSONArray("goals"), true), false);
+            userData.setBehaviors(parseBehaviors(userJson.getJSONArray("behaviors"), true), false);
+            userData.setActions(parseActions(userJson.getJSONArray("actions"), true), false);
+            userData.sync();
+
+            //Parse the places and save write them into the database
+            userData.setPlaces(parsePlaces(userJson.getJSONArray("places")));
+            CompassDbHelper dbHelper = new CompassDbHelper(context);
+            dbHelper.emptyPlacesTable();
+            dbHelper.savePlaces(userData.getPlaces());
+            dbHelper.close();
+
+            //Feed data
+            FeedData feedData = new FeedData();
+
+            JSONObject action = userJson.getJSONObject("next_action");
+            feedData.setNextAction(parseAction(action, true));
+            feedData.getNextAction().setPrimaryGoal(gson.fromJson(action.getString("primary_goal"), Goal.class));
+
+            JSONObject progress = userJson.getJSONObject("progress");
+            feedData.setProgressPercentage(progress.getInt("progress"));
+            feedData.setCompletedActions(progress.getInt("completed"));
+            feedData.setTotalActions(progress.getInt("total"));
+
+            feedData.setUpcomingActions(parseActions(userJson.getJSONArray("upcoming_actions"), true));
+
+            userData.setFeedData(feedData);
+            userData.logData();
+
+            return userData;
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return null;
+    }
+
     public FeedData parseFeedData(JSONObject feedData){
         FeedData data = new FeedData();
 
@@ -337,7 +386,7 @@ public class Parser{
             data.setCompletedActions(progress.getInt("completed"));
             data.setTotalActions(progress.getInt("total"));
 
-            data.setUserGoals(parseGoals(feedData.getJSONArray("user_goals"), true));
+            data.setUpcomingActions(parseActions(feedData.getJSONArray("upcoming"), true));
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();

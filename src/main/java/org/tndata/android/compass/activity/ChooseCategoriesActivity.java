@@ -21,7 +21,7 @@ import java.util.List;
 public class ChooseCategoriesActivity extends AppCompatActivity implements
         AddCategoryTask.AddCategoryTaskListener,
         ChooseCategoryAdapter.OnCategoriesSelectedListener,
-        GetUserDataTask.GetUserDataListener{
+        GetUserDataTask.GetUserDataCallback{
 
     private CompassApplication application;
     private ArrayList<Category> mCategories;

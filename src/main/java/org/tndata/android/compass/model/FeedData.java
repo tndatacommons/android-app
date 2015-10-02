@@ -13,7 +13,7 @@ public class FeedData{
     private int mCompletedActions;
     private int mPercentage;
 
-    private List<Goal> mUserGoals;
+    private List<Action> mUpcomingActions;
 
 
     public void setNextAction(Action nextAction){
@@ -44,11 +44,11 @@ public class FeedData{
         return mCompletedActions + "/" + mTotalActions;
     }
 
-    public void setUserGoals(List<Goal> userGoals){
-        mUserGoals = userGoals;
+    public void setUpcomingActions(List<Action> upcomingActions){
+        mUpcomingActions = upcomingActions;
     }
 
-    public List<Goal> getUserGoals(){
-        return mUserGoals;
+    public List<Action> getUpcomingActions(){
+        return mUpcomingActions;
     }
 }
