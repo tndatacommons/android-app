@@ -243,6 +243,8 @@ public class Parser{
      * @return A list of actions.
      */
     public List<Action> parseActions(JSONArray actionArray, boolean userActions){
+
+        Log.d("ActionPArser", actionArray.length()+"");
         List<Action> actions = new ArrayList<>();
 
         try{
@@ -290,6 +292,8 @@ public class Parser{
                     String triggerString = actionObject.getString("custom_trigger");
                     action.setCustomTrigger(gson.fromJson(triggerString, Trigger.class));
                 }
+
+                action.setPrimaryGoal(gson.fromJson(actionObject.getString("primary_goal"), Goal.class));
             }
 
             Log.d("ActionParser", action.toString());

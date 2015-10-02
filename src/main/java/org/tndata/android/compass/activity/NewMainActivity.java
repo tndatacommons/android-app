@@ -77,7 +77,7 @@ public class NewMainActivity
         CompassApplication app = (CompassApplication)getApplication();
 
         mFeed = (RecyclerView)findViewById(R.id.main_feed);
-        mFeed.setAdapter(new MainFeedAdapter(this, this, app.getGoals(), app.getUserData().getFeedData()));
+        mFeed.setAdapter(new MainFeedAdapter(this, this));
         mFeed.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mFeed.addItemDecoration(((MainFeedAdapter)mFeed.getAdapter()).getMainFeedPadding());
         mFeed.setOnScrollListener(new ParallaxEffect(header, 0.5f));

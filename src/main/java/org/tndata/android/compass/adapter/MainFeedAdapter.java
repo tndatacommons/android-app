@@ -14,13 +14,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.util.CompassUtil;
-
-import java.util.List;
 
 import at.grabner.circleprogress.CircleProgressView;
 
@@ -33,46 +32,74 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     private static final int TYPE_WELCOME = 1;
     private static final int TYPE_UP_NEXT = 2;
     private static final int TYPE_PROGRESS = 3;
-    private static final int TYPE_ACTION_HEADER = 4;
+    private static final int TYPE_HEADER = 4;
     private static final int TYPE_SEPARATOR = 5;
     private static final int TYPE_ACTION = 6;
-    private static final int TYPE_GOAL_HEADER = 7;
-    private static final int TYPE_GOAL = 8;
-    private static final int TYPE_OTHER = 9;
+    private static final int TYPE_GOAL = 7;
+    private static final int TYPE_OTHER = 8;
 
 
     private Context mContext;
     private MainFeedAdapterListener mListener;
-    private List<Goal> mGoals;
-    private FeedData mFeedData;
+    private UserData mUserData;
 
 
-    public MainFeedAdapter(@NonNull Context context, @NonNull MainFeedAdapterListener listener,
-                           @NonNull List<Goal> goals, FeedData feedData){
+    public MainFeedAdapter(@NonNull Context context, @NonNull MainFeedAdapterListener listener){
         mContext = context;
         mListener = listener;
-        mGoals = goals;
-        mFeedData = feedData;
+        mUserData = ((CompassApplication)mContext.getApplicationContext()).getUserData();
     }
 
     private boolean hasWelcomeCard(){
-        return mFeedData == null || mGoals.isEmpty();
+        return mUserData.getGoals().isEmpty();
+    }
+
+    private int getUpNextPosition(){
+        return hasWelcomeCard() ? 2 : 1;
+    }
+
+    private boolean isUpNextPosition(int position){
+        return getUpNextPosition() == position;
+    }
+
+    private int getProgressPosition(){
+        return getUpNextPosition()+1;
+    }
+
+    private boolean isProgressPosition(int position){
+        return getProgressPosition() == position;
+    }
+
+    private int getUpcomingHeaderPosition(){
+        return getProgressPosition()+1;
+    }
+
+    private boolean isUpcomingHeaderPosition(int position){
+        return getUpcomingHeaderPosition() == position;
+    }
+
+    private int getUpcomingLastItemPosition(){
+        return getUpcomingHeaderPosition()+2*mUserData.getFeedData().getUpcomingActions().size();
+    }
+
+    private boolean isUpcomingInnerPosition(int position){
+        return position > getUpcomingHeaderPosition() && position <= getUpcomingLastItemPosition();
     }
 
     private int getMyGoalsHeaderPosition(){
-        int position = 2;
-        if (hasWelcomeCard()){
-            position++;
-        }
-        return position;
+        return getUpcomingLastItemPosition()+1;
+    }
+
+    private boolean isMyGoalsHeaderPosition(int position){
+        return getMyGoalsHeaderPosition() == position;
     }
 
     private int getMyGoalsLastItemPosition(){
-        return getMyGoalsHeaderPosition()+2*mGoals.size();
+        return getMyGoalsHeaderPosition()+2*mUserData.getGoals().size();
     }
 
     private boolean isMyGoalsInnerPosition(int position){
-        return position > getMyGoalsHeaderPosition() && position < getMyGoalsLastItemPosition();
+        return position > getMyGoalsHeaderPosition() && position <= getMyGoalsLastItemPosition();
     }
 
     @Override
@@ -92,13 +119,17 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             LayoutInflater inflater = LayoutInflater.from(mContext);
             return new ProgressHolder(inflater.inflate(R.layout.card_progress, parent, false));
         }
-        else if (viewType == TYPE_GOAL_HEADER){
+        else if (viewType == TYPE_HEADER){
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            return new RecyclerView.ViewHolder(inflater.inflate(R.layout.card_header, parent, false)){};
+            return new HeaderHolder(inflater.inflate(R.layout.card_header, parent, false));
         }
         else if (viewType == TYPE_SEPARATOR){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             return new RecyclerView.ViewHolder(inflater.inflate(R.layout.card_separator, parent, false)){};
+        }
+        else if (viewType == TYPE_ACTION){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            return new ActionHolder(inflater.inflate(R.layout.card_action, parent, false));
         }
         else if (viewType == TYPE_GOAL){
             LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -114,20 +145,21 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
         ((CardView)rawHolder.itemView).setRadius(CompassUtil.getPixels(mContext, 2));
 
-        //Account for the welcome card if necessary
-        if (hasWelcomeCard()){
-            position--;
+        if (position == 0){
+            int width = CompassUtil.getScreenWidth(mContext);
+            LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, (int)((width*2/3)*0.8));
+            rawHolder.itemView.setLayoutParams(params);
+            rawHolder.itemView.setVisibility(View.INVISIBLE);
         }
-
-        if (position == 1){
+        else if (isUpNextPosition(position)){
             UpNextHolder holder = (UpNextHolder)rawHolder;
-            if (mFeedData == null || mFeedData.getNextAction() == null){
+            if (mUserData.getFeedData().getNextAction() == null){
                 holder.mNoActionsContainer.setVisibility(View.VISIBLE);
                 holder.mContentContainer.setVisibility(View.GONE);
                 holder.itemView.setOnClickListener(holder);
             }
             else{
-                Action action = mFeedData.getNextAction();
+                Action action = mUserData.getFeedData().getNextAction();
                 holder.mNoActionsContainer.setVisibility(View.GONE);
                 holder.mContentContainer.setVisibility(View.VISIBLE);
                 holder.itemView.setOnClickListener(null);
@@ -139,32 +171,45 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 holder.mIndicator.setAutoTextSize(true);
                 holder.mIndicator.setShowUnit(true);
                 holder.mIndicator.setValue(0);
-                holder.mIndicator.setValueAnimated(0, mFeedData.getProgress(), 1500);
+                holder.mIndicator.setValueAnimated(0, mUserData.getFeedData().getProgress(), 1500);
                 //holder.mIndicator.setText("Today");
             }
         }
-        else if (position == 2){
+        else if (isProgressPosition(position)){
             ProgressHolder holder = (ProgressHolder)rawHolder;
             holder.mIndicator.setValueAnimated(0, (int)(100*Math.random()), 1500);
         }
-        else if (position == 3){
-            ((CardView)rawHolder.itemView).setRadius(0);
+        else if (isUpcomingHeaderPosition(position)){
+            HeaderHolder holder = (HeaderHolder)rawHolder;
+            ((CardView)holder.itemView).setRadius(0);
+            holder.mTitle.setText("Today's activities");
         }
-        else if (position > 3){
+        else if (isUpcomingInnerPosition(position)){
             ((CardView)rawHolder.itemView).setRadius(0);
-            if (position%2 == 1){
-                GoalHolder holder = (GoalHolder)rawHolder;
-                Goal goal = mGoals.get((position - 3)/2);
-                holder.mTitle.setText(goal.getTitle());
-                goal.loadIconIntoView(mContext, holder.mIcon);
+            if (position%2 == getUpcomingHeaderPosition()%2){
+                ActionHolder holder = (ActionHolder)rawHolder;
+                int actionPosition = (position - getUpcomingHeaderPosition() - 2) / 2;
+                Action action = mUserData.getFeedData().getUpcomingActions().get(actionPosition);
+                holder.mAction.setText(action.getTitle());
+                String goalTitle = action.getPrimaryGoal().getTitle().substring(0, 1).toLowerCase();
+                goalTitle += action.getPrimaryGoal().getTitle().substring(1);
+                holder.mGoal.setText("To help me " + goalTitle);
+                holder.mTime.setText(action.getTrigger().getFormattedTime());
             }
         }
-        else{
-            if (position == -1 || (!hasWelcomeCard() && position == 0)){
-                int width = CompassUtil.getScreenWidth(mContext);
-                LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, (int)((width*2/3)*0.8));
-                rawHolder.itemView.setLayoutParams(params);
-                rawHolder.itemView.setVisibility(View.INVISIBLE);
+        else if (isMyGoalsHeaderPosition(position)){
+            HeaderHolder holder = (HeaderHolder)rawHolder;
+            ((CardView)holder.itemView).setRadius(0);
+            holder.mTitle.setText("My Goals");
+        }
+        else if (isMyGoalsInnerPosition(position)){
+            ((CardView)rawHolder.itemView).setRadius(0);
+            if (position%2 == getMyGoalsHeaderPosition()%2){
+                GoalHolder holder = (GoalHolder)rawHolder;
+                int goalPosition = (position - getMyGoalsHeaderPosition() - 2) / 2;
+                Goal goal = mUserData.getGoals().get(goalPosition);
+                holder.mTitle.setText(goal.getTitle());
+                goal.loadIconIntoView(mContext, holder.mIcon);
             }
         }
     }
@@ -180,39 +225,38 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         if (position == 0){
             return TYPE_BLANK;
         }
-
         //The second card may be a welcome card, but only if the user has no goals selected
-        if (hasWelcomeCard()){
-            //If this is position 1 then it is a welcome card
-            if (position == 1){
-                return TYPE_WELCOME;
-            }
-            //Otherwise, decrement the position
-            else{
-                position--;
-            }
+        if (hasWelcomeCard() && position == 1){
+            return TYPE_WELCOME;
         }
-
-        if (position == 1){
+        //The rest of them have checker methods
+        if (isUpNextPosition(position)){
             return TYPE_UP_NEXT;
         }
-        else if (position == 2){
+        if (isProgressPosition(position)){
             return TYPE_PROGRESS;
         }
-        else if (position == 3){
-            return TYPE_GOAL_HEADER;
+        if (isUpcomingHeaderPosition(position) || isMyGoalsHeaderPosition(position)){
+            return TYPE_HEADER;
         }
-        else if (position > 3){
-            if (position%2 == 0){
-                return TYPE_SEPARATOR;
+        if (isUpcomingInnerPosition(position)){
+            if (position%2 == getUpcomingHeaderPosition()%2){
+                return TYPE_ACTION;
             }
             else{
-                return TYPE_GOAL;
+                return TYPE_SEPARATOR;
             }
         }
-        else{
-            return TYPE_OTHER;
+        if (isMyGoalsInnerPosition(position)){
+            if (position%2 == getMyGoalsHeaderPosition()%2){
+                return TYPE_GOAL;
+            }
+            else{
+                return TYPE_SEPARATOR;
+            }
         }
+
+        return TYPE_OTHER;
     }
 
     public MainFeedPadding getMainFeedPadding(){
@@ -263,6 +307,31 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
     }
 
+    private class HeaderHolder extends RecyclerView.ViewHolder{
+        private TextView mTitle;
+
+
+        public HeaderHolder(View itemView){
+            super(itemView);
+            mTitle = (TextView)itemView.findViewById(R.id.header_title);
+        }
+    }
+
+    private class ActionHolder extends RecyclerView.ViewHolder{
+        private TextView mAction;
+        private TextView mGoal;
+        private TextView mTime;
+
+
+        public ActionHolder(View itemView){
+            super(itemView);
+
+            mAction = (TextView)itemView.findViewById(R.id.action_title);
+            mGoal = (TextView)itemView.findViewById(R.id.action_goal);
+            mTime = (TextView)itemView.findViewById(R.id.action_time);
+        }
+    }
+
     private class GoalHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private ImageView mIcon;
         private TextView mTitle;
@@ -279,7 +348,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
         @Override
         public void onClick(View view){
-            mListener.onGoalSelected(mGoals.get((getAdapterPosition()-getMyGoalsHeaderPosition()-1)/2));
+            mListener.onGoalSelected(mUserData.getGoals().get((getAdapterPosition()-getMyGoalsHeaderPosition()-1)/2));
         }
     }
 
@@ -310,19 +379,19 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
             int position = parent.getChildLayoutPosition(view);
 
-            if (mAdapter.getMyGoalsHeaderPosition() == position){
+            if (mAdapter.isUpcomingHeaderPosition(position) || mAdapter.isMyGoalsHeaderPosition(position)){
                 outRect.top = mMargin / 2;
                 outRect.left = mMargin;
                 outRect.bottom = 0;
                 outRect.right = mMargin;
             }
-            else if (mAdapter.getMyGoalsLastItemPosition()-2 == position){
+            else if (mAdapter.getUpcomingLastItemPosition() == position || mAdapter.getMyGoalsLastItemPosition()-2 == position){
                 outRect.top = 0;
                 outRect.left = mMargin;
-                outRect.bottom = mMargin;
+                outRect.bottom = mMargin/2;
                 outRect.right = mMargin;
             }
-            else if (mAdapter.isMyGoalsInnerPosition(position)){
+            else if (mAdapter.isUpcomingInnerPosition(position) || mAdapter.isMyGoalsInnerPosition(position)){
                 outRect.top = 0;
                 outRect.left = mMargin;
                 outRect.bottom = 0;
