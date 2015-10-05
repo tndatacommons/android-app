@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -45,7 +47,8 @@ public class NewMainActivity
 
     private View mStopper;
     private FloatingActionMenu mMenu;
-    private FloatingActionButton mFab;
+
+    private Category mSelectedCategory;
 
 
     @Override
@@ -110,23 +113,56 @@ public class NewMainActivity
         mStopper = findViewById(R.id.main_stopper);
         mMenu = (FloatingActionMenu)findViewById(R.id.main_fab_menu);
         mMenu.setClosedOnTouchOutside(true);
+        mMenu.setOnMenuButtonClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if (!mMenu.isOpened()){
+                    mSelectedCategory = null;
+                    animateBackground(true);
+                }
+                mMenu.toggle(true);
+            }
+        });
         mMenu.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener(){
             @Override
             public void onMenuToggle(boolean opened){
-                animateBackground(opened);
+                if (!opened){
+                    animateBackground(false);
+                }
             }
         });
 
-        for (Category category:((CompassApplication)getApplication()).getUserData().getCategories()){
-            FloatingActionButton fab = new FloatingActionButton(this);
+        populateMenu();
+    }
+
+    private void populateMenu(){
+        CompassApplication app = (CompassApplication)getApplication();
+        mMenu.removeAllMenuButtons();
+        int i = 0;
+        for (Category category:app.getUserData().getCategories()){
+            final int position = i;
+            ContextThemeWrapper ctx = new ContextThemeWrapper(this, R.style.MenuButtonStyle);
+            FloatingActionButton fab = new FloatingActionButton(ctx);
             fab.setLabelText(category.getTitle());
             mMenu.addMenuButton(fab);
+            fab.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v){
+                    addGoalsClicked(position);
+                }
+            });
+            i++;
         }
+    }
 
-        //mFab = (FloatingActionButton)findViewById(R.id.main_fab);
+    private void addGoalsClicked(int position){
+        CompassApplication app = (CompassApplication)getApplication();
+        mSelectedCategory = app.getUserData().getCategories().get(position);
+        mMenu.toggle(true);
     }
 
     private void animateBackground(final boolean opening){
+        Log.d("MainFeed", "opening " + opening);
         AlphaAnimation animation;
         if (opening){
             animation = new AlphaAnimation(0, 1);
@@ -146,6 +182,11 @@ public class NewMainActivity
             public void onAnimationEnd(Animation animation){
                 if (!opening){
                     mStopper.setVisibility(View.GONE);
+                }
+                if (mSelectedCategory != null){
+                    Intent intent = new Intent(NewMainActivity.this, ChooseGoalsActivity.class);
+                    intent.putExtra("category", mSelectedCategory);
+                    startActivityForResult(intent, Constants.CHOOSE_GOALS_REQUEST_CODE);
                 }
             }
 

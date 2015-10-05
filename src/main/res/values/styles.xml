@@ -12,4 +12,8 @@
         <item name="android:background">?android:attr/listDivider</item>
     </style>
 
+    <style name="MenuButtonStyle">
+        <item name="fab_size">mini</item>
+    </style>
+
 </resources>
