@@ -12,13 +12,20 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.MainFeedAdapter;
+import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.util.OnScrollListenerHub;
 import org.tndata.android.compass.util.ParallaxEffect;
 
 
@@ -35,6 +42,10 @@ public class NewMainActivity
     private ActionBarDrawerToggle mDrawerToggle;
 
     private RecyclerView mFeed;
+
+    private View mStopper;
+    private FloatingActionMenu mMenu;
+    private FloatingActionButton mFab;
 
 
     @Override
@@ -74,13 +85,76 @@ public class NewMainActivity
 
         View header = findViewById(R.id.main_illustration);
 
-        CompassApplication app = (CompassApplication)getApplication();
-
         mFeed = (RecyclerView)findViewById(R.id.main_feed);
         mFeed.setAdapter(new MainFeedAdapter(this, this));
         mFeed.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mFeed.addItemDecoration(((MainFeedAdapter)mFeed.getAdapter()).getMainFeedPadding());
-        mFeed.setOnScrollListener(new ParallaxEffect(header, 0.5f));
+
+        OnScrollListenerHub hub = new OnScrollListenerHub();
+        ParallaxEffect parallax = new ParallaxEffect(header, 0.5f);
+        parallax.setItemDecoration(((MainFeedAdapter)mFeed.getAdapter()).getMainFeedPadding());
+        hub.addOnScrollListener(parallax);
+        hub.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+                if (dy > 0){
+                    mMenu.hideMenuButton(true);
+                }
+                else if (dy < 0){
+                    mMenu.showMenuButton(true);
+                }
+            }
+        });
+        mFeed.setOnScrollListener(hub);
+
+        mStopper = findViewById(R.id.main_stopper);
+        mMenu = (FloatingActionMenu)findViewById(R.id.main_fab_menu);
+        mMenu.setClosedOnTouchOutside(true);
+        mMenu.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener(){
+            @Override
+            public void onMenuToggle(boolean opened){
+                animateBackground(opened);
+            }
+        });
+
+        for (Category category:((CompassApplication)getApplication()).getUserData().getCategories()){
+            FloatingActionButton fab = new FloatingActionButton(this);
+            fab.setLabelText(category.getTitle());
+            mMenu.addMenuButton(fab);
+        }
+
+        //mFab = (FloatingActionButton)findViewById(R.id.main_fab);
+    }
+
+    private void animateBackground(final boolean opening){
+        AlphaAnimation animation;
+        if (opening){
+            animation = new AlphaAnimation(0, 1);
+        }
+        else{
+            animation = new AlphaAnimation(1, 0);
+        }
+        //Start the animation
+        animation.setDuration(300);
+        animation.setAnimationListener(new Animation.AnimationListener(){
+            @Override
+            public void onAnimationStart(Animation animation){
+                mStopper.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation){
+                if (!opening){
+                    mStopper.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation){
+                //Unused
+            }
+        });
+        mStopper.startAnimation(animation);
     }
 
     @Override

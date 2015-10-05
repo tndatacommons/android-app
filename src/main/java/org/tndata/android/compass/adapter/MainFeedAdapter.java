@@ -369,8 +369,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
          */
         private MainFeedPadding(Context context, MainFeedAdapter adapter){
             mAdapter = adapter;
-            mMargin = (int)Math.ceil(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                    12, context.getResources().getDisplayMetrics()));
+            mMargin = CompassUtil.getPixels(context, 12);
         }
 
         @Override

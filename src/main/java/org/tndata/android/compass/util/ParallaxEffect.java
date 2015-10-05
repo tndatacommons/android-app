@@ -1,5 +1,6 @@
 package org.tndata.android.compass.util;
 
+import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -24,8 +25,13 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
     //A condition to the parallax
     private ParallaxCondition mParallaxCondition;
 
+    //The decoration specification, to calculate margins
+    private RecyclerView.ItemDecoration mItemDecoration;
+
     //A stack of heights needs to be kept
     private Stack<Integer> mHeightStack;
+    private Stack<Integer> mTopMarginStack;
+    private Stack<Integer> mBottomMarginStack;
 
     //The combined height of the rows that are off-screen. NOTE: This number will either
     //  be 0 or negative because the origin of coordinates is the top left corner
@@ -56,6 +62,9 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
         mParallaxCondition = null;
 
         mHeightStack = new Stack<>();
+        mTopMarginStack = new Stack<>();
+        mBottomMarginStack = new Stack<>();
+
         mPreviousMargin = 0;
         mCurrent = 0;
         mLastRecorded = 0;
@@ -71,6 +80,10 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
         }
     }
 
+    public void setItemDecoration(@Nullable RecyclerView.ItemDecoration itemDecoration){
+        mItemDecoration = itemDecoration;
+    }
+
     @Override
     public void onScrolled(RecyclerView recyclerView, int dx, int dy){
         //If this is the first call
@@ -83,18 +96,32 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
         while (recyclerView.findViewHolderForLayoutPosition(mLastRecorded) != null){
             View itemView = recyclerView.findViewHolderForLayoutPosition(mLastRecorded).itemView;
             mHeightStack.push(itemView.getHeight());
+            if (mItemDecoration != null){
+                Rect rect = new Rect();
+                mItemDecoration.getItemOffsets(rect, itemView, recyclerView, null);
+                mTopMarginStack.push(rect.top);
+                mBottomMarginStack.push(rect.bottom);
+            }
+            else{
+                mTopMarginStack.push(0);
+                mBottomMarginStack.push(0);
+            }
             mLastRecorded++;
         }
 
-        //While there are views above the current
+        //While there are views above the current (scrolling up)
         while (mCurrent > 0 && recyclerView.findViewHolderForLayoutPosition(mCurrent-1) != null){
             mCurrent -= 1;
             mPreviousMargin += mHeightStack.get(mCurrent);
+            mPreviousMargin += mTopMarginStack.get(mCurrent);
+            mPreviousMargin += mBottomMarginStack.get(mCurrent);
         }
 
-        //While there are not views below the current
+        //While there are no views below the current (scrolling down)
         while (recyclerView.findViewHolderForLayoutPosition(mCurrent) == null){
             mPreviousMargin -= mHeightStack.get(mCurrent);
+            mPreviousMargin -= mTopMarginStack.get(mCurrent);
+            mPreviousMargin -= mBottomMarginStack.get(mCurrent);
             mCurrent += 1;
         }
 

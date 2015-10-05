@@ -85,6 +85,7 @@ dependencies {
         transitive = true;
     }
     compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.2'
+    compile 'com.github.clans:fab:1.6.1'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-library:1.3'
