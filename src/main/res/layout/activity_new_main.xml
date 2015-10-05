@@ -32,7 +32,7 @@
             android:id="@+id/main_stopper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#AFFF"
+            android:background="@drawable/feed_menu_background"
             android:visibility="gone" />
 
         <com.github.clans.fab.FloatingActionMenu
@@ -50,7 +50,8 @@
             fab:menu_colorNormal="@color/button_paper_fab_color"
             fab:menu_colorPressed="@color/button_paper_fab_selected_color"
             fab:menu_colorRipple="@color/white"
-            fab:menu_animationDelayPerItem="50" />
+            fab:menu_animationDelayPerItem="50"
+            fab:menu_labels_style="@style/MenuLabelStyle" />
 
     </RelativeLayout>
 
