@@ -294,14 +294,14 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
             popup.getMenuInflater()
                     .inflate(R.menu.menu_action_popup_chooser, popup.getMenu());
         } else {
-            popup.getMenuInflater().inflate(R.menu.menu_behavior_popup_chooser, popup.getMenu());
+            popup.getMenuInflater().inflate(R.menu.behavior_popup, popup.getMenu());
         }
 
         popup.setOnMenuItemClickListener(new CompassPopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_popup_remove_item:
-                    case R.id.menu_behavior_popup_remove_item:
+                    case R.id.behavior_popup_remove:
                         if (mAction != null) {
                             new DeleteActionTask(getActivity(), LearnMoreFragment.this, String
                                     .valueOf(mAction.getMappingId()))

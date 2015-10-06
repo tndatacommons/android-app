@@ -84,11 +84,11 @@ public class BehaviorListView extends LinearLayout {
         //Creating the instance of PopupMenu
         CompassPopupMenu popup = CompassPopupMenu.newInstance(mContext, mAddImageView);
         popup.getMenuInflater()
-                .inflate(R.menu.menu_behavior_popup_chooser, popup.getMenu());
+                .inflate(R.menu.behavior_popup, popup.getMenu());
         popup.setOnMenuItemClickListener(new CompassPopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.menu_behavior_popup_remove_item:
+                    case R.id.behavior_popup_remove:
                         mCallback.deleteUserBehavior(mBehavior);
                         break;
                 }

@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menu_behavior_popup_remove_item"
+        android:id="@+id/behavior_popup_remove"
         android:title="@string/menu_popup_remove"/>
 
 </menu>

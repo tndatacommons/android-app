@@ -4,18 +4,23 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Trigger;
+import org.tndata.android.compass.task.DeleteBehaviorTask;
+import org.tndata.android.compass.ui.CompassPopupMenu;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -35,6 +40,13 @@ public class GoalAdapter extends RecyclerView.Adapter{
     private Goal mGoal;
     private int mSpacingRowHeight;
 
+    private CompassApplication mApplication;
+
+    //This is a pool of ActionHolders to be reused. Any unused ActionHolders should be
+    //  placed here. Before creating new ones, the list should be checked to see if
+    //  there are any of them available.
+    private Stack<ActionHolder> mHolderPool;
+
 
     /**
      * Constructor.
@@ -47,6 +59,10 @@ public class GoalAdapter extends RecyclerView.Adapter{
         mContext = context;
         mGoal = goal;
         mSpacingRowHeight = spacingRowHeight;
+
+        mApplication = (CompassApplication)context.getApplicationContext();
+
+        mHolderPool = new Stack<>();
     }
 
     @Override
@@ -99,7 +115,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
         //Unnecessary holders (if any) are recycled
         while (actions.size() < holder.mActionContainer.getChildCount()){
             int last = holder.mActionContainer.getChildCount()-1;
-            BehaviorHolder.holderPool.push(getActionHolder(holder.mActionContainer, last));
+            mHolderPool.push(getActionHolder(holder.mActionContainer, last));
             holder.mActionContainer.removeViewAt(last);
         }
 
@@ -150,11 +166,32 @@ public class GoalAdapter extends RecyclerView.Adapter{
      * @return the holder.
      */
     private ActionHolder getActionHolder(ViewGroup parent){
-        if (!BehaviorHolder.holderPool.isEmpty()){
-            return BehaviorHolder.holderPool.pop();
+        if (!mHolderPool.isEmpty()){
+            return mHolderPool.pop();
         }
         LayoutInflater inflater = LayoutInflater.from(mContext);
         return new ActionHolder(inflater.inflate(R.layout.item_action, parent, false));
+    }
+
+    private void showPopup(View anchor, final int position){
+        CompassPopupMenu popup = CompassPopupMenu.newInstance(mContext, anchor);
+        popup.getMenuInflater().inflate(R.menu.behavior_popup, popup.getMenu());
+        popup.setOnMenuItemClickListener(new CompassPopupMenu.OnMenuItemClickListener(){
+            public boolean onMenuItemClick(MenuItem item){
+                switch (item.getItemId()){
+                    case R.id.behavior_popup_remove:
+                        Behavior behavior = mGoal.getBehaviors().get(position-1);
+                        mApplication.removeBehavior(behavior);
+                        List<String> behaviorId = new ArrayList<>();
+                        behaviorId.add(behavior.getMappingId()+"");
+                        new DeleteBehaviorTask(mApplication.getToken(), null, behaviorId).execute();
+                        notifyItemRemoved(position);
+                        break;
+                }
+                return true;
+            }
+        });
+        popup.show();
     }
 
 
@@ -164,13 +201,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    private static class BehaviorHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        //This is a pool of ActionHolders to be reused. Any unused ActionHolders should be
-        //  placed here. Before creating new ones, the list should be checked to see if
-        //  there are any of them available.
-        private static Stack<ActionHolder> holderPool = new Stack<>();
-
-
+    private class BehaviorHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mTitle;
         private LinearLayout mActionContainer;
 
@@ -189,8 +220,8 @@ public class GoalAdapter extends RecyclerView.Adapter{
         }
 
         @Override
-        public void onClick(View v){
-
+        public void onClick(View view){
+            showPopup(view, getAdapterPosition());
         }
     }
 
@@ -201,7 +232,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    private static class ActionHolder{
+    private class ActionHolder{
         private View mItemView;
         private TextView mTitle;
         private TextView mTime;

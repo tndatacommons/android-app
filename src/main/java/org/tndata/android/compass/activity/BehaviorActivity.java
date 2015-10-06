@@ -29,7 +29,7 @@ import java.util.List;
 
 public class BehaviorActivity extends TriggerActivity implements
         BehaviorFragmentListener, LearnMoreFragmentListener,
-        AddBehaviorTask.AddBehaviorsTaskListener, DeleteBehaviorTask.DeleteBehaviorTaskListener {
+        AddBehaviorTask.AddBehaviorsTaskListener, DeleteBehaviorTask.DeleteBehaviorCallback{
     private static final int BEHAVIOR = 0;
     private static final int LEARN_MORE_BEHAVIOR = 1;
     private static final int LEARN_MORE_ACTION = 2;
@@ -200,7 +200,7 @@ public class BehaviorActivity extends TriggerActivity implements
     public void deleteBehavior(Behavior behavior) {
         ArrayList<String> behaviors = new ArrayList<String>();
         behaviors.add(String.valueOf(behavior.getMappingId()));
-        new DeleteBehaviorTask(this, this, behaviors).executeOnExecutor(AsyncTask
+        new DeleteBehaviorTask(((CompassApplication)getApplication()).getToken(), this, behaviors).executeOnExecutor(AsyncTask
                 .THREAD_POOL_EXECUTOR);
         List<Behavior> goalBehaviors = mGoal.getBehaviors();
         goalBehaviors.remove(behavior);

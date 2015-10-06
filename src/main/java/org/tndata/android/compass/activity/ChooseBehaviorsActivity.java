@@ -54,7 +54,7 @@ public class ChooseBehaviorsActivity
         implements
                 BehaviorLoaderListener,
                 AddBehaviorTask.AddBehaviorsTaskListener,
-                DeleteBehaviorTask.DeleteBehaviorTaskListener,
+        DeleteBehaviorTask.DeleteBehaviorCallback,
                 ChooseBehaviorsAdapter.ChooseBehaviorsListener,
                 MenuItemCompat.OnActionExpandListener,
                 SearchView.OnQueryTextListener,
@@ -232,7 +232,7 @@ public class ChooseBehaviorsActivity
 
         ArrayList<String> behaviorsToDelete = new ArrayList<>();
         behaviorsToDelete.add(String.valueOf(behavior.getMappingId()));
-        new DeleteBehaviorTask(this, this, behaviorsToDelete).execute();
+        new DeleteBehaviorTask(mApplication.getToken(), this, behaviorsToDelete).execute();
 
         mApplication.removeBehavior(behavior);
         Toast.makeText(this, getText(R.string.choose_behaviors_behavior_removed), Toast.LENGTH_SHORT).show();
