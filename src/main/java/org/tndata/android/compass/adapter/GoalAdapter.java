@@ -120,8 +120,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
      * @param behavior the new behavior.
      */
     private void populate(BehaviorHolder holder, Behavior behavior){
-        int index = mApplication.getBehaviors().indexOf(behavior);
-        List<Action> actions = mApplication.getBehaviors().get(index).getActions();
+        List<Action> actions = mApplication.getUserData().getBehavior(behavior).getActions();
 
         //Unnecessary holders (if any) are recycled
         while (actions.size() < holder.mActionContainer.getChildCount()){
@@ -142,6 +141,8 @@ public class GoalAdapter extends RecyclerView.Adapter{
                 actionHolder = getActionHolder(holder.mActionContainer);
             }
             actionHolder.mTitle.setText(actions.get(i).getTitle());
+            actionHolder.setBehaviorPosition(mGoal.getBehaviors().indexOf(behavior));
+            actionHolder.setActionPosition(i);
 
             Trigger trigger = actions.get(i).getTrigger();
             String triggerText = trigger.getRecurrencesDisplay();
@@ -187,6 +188,12 @@ public class GoalAdapter extends RecyclerView.Adapter{
         return new ActionHolder(inflater.inflate(R.layout.item_action, parent, false));
     }
 
+    /**
+     * Display the popup menu for a specific goal.
+     *
+     * @param anchor the view it should be anchored to.
+     * @param position the position of the view.
+     */
     private void showPopup(View anchor, final int position){
         CompassPopupMenu popup = CompassPopupMenu.newInstance(mContext, anchor);
         popup.getMenuInflater().inflate(R.menu.behavior_popup, popup.getMenu());
@@ -263,10 +270,13 @@ public class GoalAdapter extends RecyclerView.Adapter{
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    private class ActionHolder{
+    private class ActionHolder implements View.OnClickListener{
         private View mItemView;
         private TextView mTitle;
         private TextView mTime;
+
+        private int mBehaviorPosition;
+        private int mActionPosition;
 
 
         /**
@@ -277,12 +287,59 @@ public class GoalAdapter extends RecyclerView.Adapter{
         public ActionHolder(View itemView){
             mItemView = itemView;
             mItemView.setTag(this);
+            mItemView.setOnClickListener(this);
             mTitle = (TextView)itemView.findViewById(R.id.action_title);
             mTime = (TextView)itemView.findViewById(R.id.action_time);
         }
+
+        /**
+         * Sets a parent behavior for this holder.
+         *
+         * @param position the position of the parent behavior of the action represented by
+         *                 this holder.
+         */
+        public void setBehaviorPosition(int position){
+            mBehaviorPosition = position;
+        }
+
+        /**
+         * Sets the position of this holder within the behavior.
+         *
+         * @param position the position of the holder.
+         */
+        public void setActionPosition(int position){
+            mActionPosition = position;
+        }
+
+        @Override
+        public void onClick(View v){
+            mSelectedBehaviorPosition = mBehaviorPosition+1;
+            Behavior behavior = mGoal.getBehaviors().get(mBehaviorPosition);
+            mListener.onActionSelected(behavior, behavior.getActions().get(mActionPosition));
+        }
     }
 
+
+    /**
+     * Listener interface for the adapter.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface GoalAdapterListener{
+        /**
+         * Called when a behavior title has been tapped.
+         *
+         * @param behavior the selected behavior.
+         */
         void onBehaviorSelected(Behavior behavior);
+
+        /**
+         * Called when an action has been tapped.
+         *
+         * @param behavior the parent behavior of the selected action.
+         * @param action the selected action.
+         */
+        void onActionSelected(Behavior behavior, Action action);
     }
 }

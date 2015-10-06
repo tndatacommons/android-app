@@ -16,6 +16,7 @@ import android.widget.TextView;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.GoalAdapter;
+import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
@@ -40,6 +41,7 @@ public class GoalActivity
 
     private static final int CHOOSE_BEHAVIORS_REQUEST_CODE = 57943;
     private static final int CHOOSE_ACTIONS_REQUEST_CODE = 45875;
+    private static final int TRIGGER_REQUEST_CODE = 15426;
 
 
     private CompassApplication mApplication;
@@ -174,6 +176,9 @@ public class GoalActivity
         else if (requestCode == CHOOSE_ACTIONS_REQUEST_CODE){
             mAdapter.updateSelectedBehavior();
         }
+        else if (requestCode == TRIGGER_REQUEST_CODE){
+            mAdapter.updateSelectedBehavior();
+        }
         //}
     }
 
@@ -184,5 +189,13 @@ public class GoalActivity
                 .putExtra("goal", mGoal)
                 .putExtra("behavior", behavior);
         startActivityForResult(actionPicker, CHOOSE_ACTIONS_REQUEST_CODE);
+    }
+
+    @Override
+    public void onActionSelected(Behavior behavior, Action action){
+        Intent trigger = new Intent(this, TriggerActivity.class)
+                .putExtra("action", action)
+                .putExtra("goal", mGoal);
+        startActivityForResult(trigger, TRIGGER_REQUEST_CODE);
     }
 }
