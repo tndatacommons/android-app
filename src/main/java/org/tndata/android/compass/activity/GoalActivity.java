@@ -26,7 +26,12 @@ import at.grabner.circleprogress.CircleProgressView;
 /**
  * Created by isma on 9/24/15.
  */
-public class GoalActivity extends AppCompatActivity implements ViewTreeObserver.OnGlobalLayoutListener{
+public class GoalActivity
+        extends AppCompatActivity
+        implements
+                ViewTreeObserver.OnGlobalLayoutListener,
+                View.OnClickListener{
+
     public static final String GOAL_KEY = "org.tndata.compass.GoalActivity.Goal";
 
 
@@ -54,6 +59,7 @@ public class GoalActivity extends AppCompatActivity implements ViewTreeObserver.
         params = (RelativeLayout.LayoutParams)fab.getLayoutParams();
         params.topMargin = heroHeight-params.height/2;
         fab.setLayoutParams(params);
+        fab.setOnClickListener(this);
 
         CircleProgressView indicator = (CircleProgressView)findViewById(R.id.goal_indicator);
         params = (RelativeLayout.LayoutParams)indicator.getLayoutParams();
@@ -121,6 +127,14 @@ public class GoalActivity extends AppCompatActivity implements ViewTreeObserver.
         }
         else{
             mTitle.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        }
+    }
+
+    @Override
+    public void onClick(View view){
+        switch (view.getId()){
+            case R.id.goal_fab:
+
         }
     }
 }

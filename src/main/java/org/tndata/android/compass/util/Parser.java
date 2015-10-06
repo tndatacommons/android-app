@@ -356,8 +356,10 @@ public class Parser{
             FeedData feedData = new FeedData();
 
             JSONObject action = userJson.getJSONObject("next_action");
-            feedData.setNextAction(parseAction(action, true));
-            feedData.getNextAction().setPrimaryGoal(gson.fromJson(action.getString("primary_goal"), Goal.class));
+            if (action.has("id")){
+                feedData.setNextAction(parseAction(action, true));
+                feedData.getNextAction().setPrimaryGoal(gson.fromJson(action.getString("primary_goal"), Goal.class));
+            }
 
             JSONObject progress = userJson.getJSONObject("progress");
             feedData.setProgressPercentage(progress.getInt("progress"));

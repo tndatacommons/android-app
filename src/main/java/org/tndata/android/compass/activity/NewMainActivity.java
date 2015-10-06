@@ -2,6 +2,7 @@ package org.tndata.android.compass.activity;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.ImageView;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -144,6 +146,10 @@ public class NewMainActivity
             ContextThemeWrapper ctx = new ContextThemeWrapper(this, R.style.MenuButtonStyle);
             FloatingActionButton fab = new FloatingActionButton(ctx);
             fab.setLabelText(category.getTitle());
+            fab.setColorNormal(Color.parseColor(category.getColor()));
+            fab.setColorPressed(Color.parseColor(category.getColor()));
+            fab.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            fab.setImageResource(R.drawable.ic_snooze);
             mMenu.addMenuButton(fab);
             fab.setOnClickListener(new View.OnClickListener(){
                 @Override
@@ -207,6 +213,9 @@ public class NewMainActivity
     public void onBackPressed(){
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)){
             mDrawerLayout.closeDrawers();
+        }
+        else if (mMenu.isOpened()){
+            mMenu.toggle(true);
         }
         else{
             super.onBackPressed();
