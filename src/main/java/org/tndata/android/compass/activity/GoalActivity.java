@@ -21,6 +21,7 @@ import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.CompassUtil;
+import org.tndata.android.compass.util.ImageLoader;
 import org.tndata.android.compass.util.OnScrollListenerHub;
 import org.tndata.android.compass.util.ParallaxEffect;
 
@@ -68,13 +69,15 @@ public class GoalActivity
         int heroHeight = CompassUtil.getScreenWidth(this)/2;
         params.height = heroHeight;
         hero.setLayoutParams(params);
-        hero.setBackgroundColor(Color.GREEN);
+        ImageLoader.loadBitmap(hero, mGoal.getPrimaryCategory().getImageUrl(), new ImageLoader.Options());
 
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.goal_fab);
         params = (RelativeLayout.LayoutParams)fab.getLayoutParams();
         params.topMargin = heroHeight-params.height/2;
         fab.setLayoutParams(params);
         fab.setOnClickListener(this);
+        fab.setColorNormal(Color.parseColor(mGoal.getPrimaryCategory().getSecondaryColor()));
+        fab.setColorPressed(Color.parseColor(mGoal.getPrimaryCategory().getSecondaryColor()));
 
         CircleProgressView indicator = (CircleProgressView)findViewById(R.id.goal_indicator);
         params = (RelativeLayout.LayoutParams)indicator.getLayoutParams();
@@ -86,7 +89,7 @@ public class GoalActivity
         indicator.setValueAnimated(0, (int)(100 * Math.random()), 1500);
 
         mTitle = (TextView)findViewById(R.id.goal_title);
-        mTitle.setBackgroundColor(Color.GREEN);
+        mTitle.setBackgroundColor(Color.parseColor(mGoal.getPrimaryCategory().getColor()));
         params = (RelativeLayout.LayoutParams)mTitle.getLayoutParams();
         params.topMargin += heroHeight+CompassUtil.getPixels(this, 1);
         mTitle.setLayoutParams(params);
