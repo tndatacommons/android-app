@@ -59,6 +59,7 @@ public class GoalActivity
         mApplication = (CompassApplication)getApplication();
 
         mGoal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
+        mGoal = mApplication.getUserData().getGoal(mGoal);
 
         ImageView hero = (ImageView)findViewById(R.id.goal_hero);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)hero.getLayoutParams();
@@ -170,7 +171,7 @@ public class GoalActivity
         if (requestCode == CHOOSE_BEHAVIORS_REQUEST_CODE){
             setAdapter();
         }
-        else if (resultCode == CHOOSE_ACTIONS_REQUEST_CODE){
+        else if (requestCode == CHOOSE_ACTIONS_REQUEST_CODE){
             mAdapter.updateSelectedBehavior();
         }
         //}

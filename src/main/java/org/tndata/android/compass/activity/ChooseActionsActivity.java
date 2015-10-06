@@ -195,14 +195,12 @@ public class ChooseActionsActivity
     }
 
     @Override
-    public void editReminder(Action action) {
-        List<Action> actions = mApplication.getActions();
-
+    public void editReminder(Action action){
         Intent intent = new Intent(getApplicationContext(), TriggerActivity.class);
         intent.putExtra("goal", mGoal);
         //Need to pass the action that contains the trigger set by the user (if any), not the
         //  action in the master list, which likely won't contain that information.
-        intent.putExtra("action", actions.get(actions.indexOf(action)));
+        intent.putExtra("action", mApplication.getUserData().getAction(action));
         startActivity(intent);
     }
 

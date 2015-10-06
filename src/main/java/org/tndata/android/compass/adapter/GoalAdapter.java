@@ -32,6 +32,8 @@ import java.util.Stack;
  * @version 1.0.0
  */
 public class GoalAdapter extends RecyclerView.Adapter{
+    public static final String TAG = "GoalAdapter";
+
     private static final int TYPE_SPACER = 0;
     private static final int TYPE_BEHAVIOR = 1;
 
@@ -153,7 +155,10 @@ public class GoalAdapter extends RecyclerView.Adapter{
             }
             actionHolder.mTime.setText(triggerText);
 
-            holder.mActionContainer.addView(actionHolder.mItemView);
+            //Add the view to the container only if it wasn't already there
+            if (i >= holder.mActionContainer.getChildCount()){
+                holder.mActionContainer.addView(actionHolder.mItemView);
+            }
         }
     }
 
@@ -205,8 +210,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
 
     public void updateSelectedBehavior(){
         if (mSelectedBehaviorPosition != -1){
-            //notifyItemChanged(mSelectedBehaviorPosition);
-            notifyDataSetChanged();
+            notifyItemChanged(mSelectedBehaviorPosition);
             mSelectedBehaviorPosition = -1;
         }
     }
