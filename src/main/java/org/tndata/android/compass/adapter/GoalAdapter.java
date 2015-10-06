@@ -36,6 +36,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
 
     private static final int TYPE_SPACER = 0;
     private static final int TYPE_BEHAVIOR = 1;
+    private static final int TYPE_SEPARATOR = 2;
 
 
     private Context mContext;
@@ -82,7 +83,12 @@ public class GoalAdapter extends RecyclerView.Adapter{
         }
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        return new BehaviorHolder(inflater.inflate(R.layout.item_behavior, parent, false));
+        if (viewType == TYPE_BEHAVIOR){
+            return new BehaviorHolder(inflater.inflate(R.layout.item_behavior, parent, false));
+        }
+        else{
+            return new RecyclerView.ViewHolder(inflater.inflate(R.layout.item_separator, parent, false)){};
+        }
     }
 
     @Override
@@ -92,8 +98,8 @@ public class GoalAdapter extends RecyclerView.Adapter{
             rawHolder.itemView.setLayoutParams(params);
             rawHolder.itemView.setVisibility(View.INVISIBLE);
         }
-        else{
-            Behavior behavior = mGoal.getBehaviors().get(position-1);
+        else if (getItemViewType(position) == TYPE_BEHAVIOR){
+            Behavior behavior = mGoal.getBehaviors().get(position/2);
             BehaviorHolder holder = (BehaviorHolder)rawHolder;
             holder.mTitle.setText(behavior.getTitle());
             populate(holder, behavior);
@@ -102,7 +108,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
 
     @Override
     public int getItemCount(){
-        return mGoal.getBehaviors().size()+1;
+        return 2*mGoal.getBehaviors().size();
     }
 
     @Override
@@ -110,7 +116,10 @@ public class GoalAdapter extends RecyclerView.Adapter{
         if (position == 0){
             return TYPE_SPACER;
         }
-        return TYPE_BEHAVIOR;
+        if (position % 2 == 1){
+            return TYPE_BEHAVIOR;
+        }
+        return TYPE_SEPARATOR;
     }
 
     /**
@@ -204,8 +213,14 @@ public class GoalAdapter extends RecyclerView.Adapter{
                         Behavior behavior = mGoal.getBehaviors().get(position-1);
                         mApplication.removeBehavior(behavior);
                         List<String> behaviorId = new ArrayList<>();
-                        behaviorId.add(behavior.getMappingId()+"");
+                        behaviorId.add(behavior.getMappingId() + "");
                         new DeleteBehaviorTask(mApplication.getToken(), null, behaviorId).execute();
+                        if (position == 1){
+                            notifyItemRemoved(2);
+                        }
+                        else{
+                            notifyItemRemoved(position-1);
+                        }
                         notifyItemRemoved(position);
                         break;
                 }
@@ -258,7 +273,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
 
                 case R.id.behavior_title:
                     mSelectedBehaviorPosition = getAdapterPosition();
-                    mListener.onBehaviorSelected(mGoal.getBehaviors().get(getAdapterPosition()-1));
+                    mListener.onBehaviorSelected(mGoal.getBehaviors().get(getAdapterPosition()/2));
             }
         }
     }

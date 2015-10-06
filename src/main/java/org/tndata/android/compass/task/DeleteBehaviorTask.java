@@ -1,7 +1,5 @@
 package org.tndata.android.compass.task;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -9,7 +7,6 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
 
@@ -17,7 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DeleteBehaviorTask extends AsyncTask<Void, Void, Void> {
+
+public class DeleteBehaviorTask extends AsyncTask<Void, Void, Void>{
     private String mToken;
     private DeleteBehaviorCallback mCallback;
     private List<String> mBehaviorIds;
