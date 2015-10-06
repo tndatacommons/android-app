@@ -60,7 +60,13 @@ public class ChooseBehaviorsActivity
                 SearchView.OnQueryTextListener,
                 SearchView.OnCloseListener{
 
+    //Bundle keys
+    public static final String CATEGORY_KEY = "org.tndata.compass.ChooseBehaviors.Category";
+    public static final String GOAL_KEY = "org.tndata.compass.ChooseBehaviors.Goal";
+
+    //Activity tag
     private static final String TAG = "ChooseBehaviorsActivity";
+
 
     public CompassApplication mApplication;
 
@@ -81,9 +87,23 @@ public class ChooseBehaviorsActivity
 
         mApplication = (CompassApplication)getApplication();
 
-        mGoal = (Goal)getIntent().getSerializableExtra("goal");
-        Log.d("mGoal?", "id:" + mGoal.getId() + " title:" + mGoal.getTitle());
-        mCategory = (Category)getIntent().getSerializableExtra("category");
+        //TODO remove the use of old keys in favor of the new ones from the app
+        //Pull the goal, try with the new key first, if that fails, try the old one, then log
+        mGoal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
+        if (mGoal == null){
+            mGoal = (Goal)getIntent().getSerializableExtra("goal");
+        }
+        Log.d(TAG, mGoal.toString());
+
+        //Pull the category, try with the new key first, if that fails try the old, of that
+        //  fails as well, pull it from the goal
+        mCategory = (Category)getIntent().getSerializableExtra(CATEGORY_KEY);
+        if (mCategory == null){
+            mCategory = (Category)getIntent().getSerializableExtra("category");
+            if (mCategory == null){
+                mCategory = mGoal.getPrimaryCategory();
+            }
+        }
 
         //Retrieve the user goal if it exists, since it is the one that contains
         //  the information regarding the custom trigger allowance.

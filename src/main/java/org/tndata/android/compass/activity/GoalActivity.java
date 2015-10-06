@@ -1,5 +1,6 @@
 package org.tndata.android.compass.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.GoalAdapter;
 import org.tndata.android.compass.model.Goal;
@@ -34,6 +36,10 @@ public class GoalActivity
 
     public static final String GOAL_KEY = "org.tndata.compass.GoalActivity.Goal";
 
+    private static final int CHOOSE_BEHAVIORS_REQUEST_CODE = 57943;
+
+
+    private CompassApplication mApplication;
 
     private Goal mGoal;
 
@@ -45,6 +51,8 @@ public class GoalActivity
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_goal);
+
+        mApplication = (CompassApplication)getApplication();
 
         mGoal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
 
@@ -114,12 +122,23 @@ public class GoalActivity
         mList.setOnScrollListener(hub);
     }
 
-    @Override
-    @SuppressWarnings("deprecation")
-    public void onGlobalLayout(){
+    private void setAdapter(){
+        //Since we are moving serializables around, the object that actually changes is not the
+        //  one we are referencing. The Goal with the new list of behaviors needs to be pulled
+        //  from the application's list
+        int index = mApplication.getGoals().indexOf(mGoal);
+        mGoal = mApplication.getGoals().get(index);
+
+        //Set the adapter with the fresh goal
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)mTitle.getLayoutParams();
         int margin = params.topMargin + mTitle.getHeight() + params.bottomMargin + CompassUtil.getPixels(this, 1);
         mList.setAdapter(new GoalAdapter(this, mGoal, margin));
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void onGlobalLayout(){
+        setAdapter();
 
         //The listener is not needed any longer
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
@@ -134,7 +153,18 @@ public class GoalActivity
     public void onClick(View view){
         switch (view.getId()){
             case R.id.goal_fab:
-
+                Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
+                        .putExtra(ChooseBehaviorsActivity.GOAL_KEY, mGoal);
+                startActivityForResult(chooseBehaviors, CHOOSE_BEHAVIORS_REQUEST_CODE);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        //if (resultCode == RESULT_OK){
+            if (requestCode == CHOOSE_BEHAVIORS_REQUEST_CODE){
+                setAdapter();
+            }
+        //}
     }
 }

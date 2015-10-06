@@ -140,6 +140,9 @@ public class Parser{
                     }
                     goal.setBehaviors(behaviors);
 
+                    //Set the primary category
+                    goal.setPrimaryCategory(gson.fromJson(goalJson.getString("primary_category"), Category.class));
+
                     categoryArrayName = "user_categories";
                 }
                 else{
