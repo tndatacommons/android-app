@@ -37,6 +37,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
 
 
     private Context mContext;
+    private GoalAdapterListener mListener;
     private Goal mGoal;
     private int mSpacingRowHeight;
 
@@ -47,22 +48,29 @@ public class GoalAdapter extends RecyclerView.Adapter{
     //  there are any of them available.
     private Stack<ActionHolder> mHolderPool;
 
+    private int mSelectedBehaviorPosition;
+
 
     /**
      * Constructor.
      *
      * @param context the application context.
+     * @param listener the object that should receive the events triggered from the adapter.
      * @param goal the goal whose content is to be displayed.
      * @param spacingRowHeight the height of the header.
      */
-    public GoalAdapter(@NonNull Context context, @NonNull Goal goal, int spacingRowHeight){
+    public GoalAdapter(@NonNull Context context, @NonNull GoalAdapterListener listener,
+                       @NonNull Goal goal, int spacingRowHeight){
         mContext = context;
+        mListener = listener;
         mGoal = goal;
         mSpacingRowHeight = spacingRowHeight;
 
         mApplication = (CompassApplication)context.getApplicationContext();
 
         mHolderPool = new Stack<>();
+
+        mSelectedBehaviorPosition = -1;
     }
 
     @Override
@@ -110,7 +118,8 @@ public class GoalAdapter extends RecyclerView.Adapter{
      * @param behavior the new behavior.
      */
     private void populate(BehaviorHolder holder, Behavior behavior){
-        List<Action> actions = behavior.getActions();
+        int index = mApplication.getBehaviors().indexOf(behavior);
+        List<Action> actions = mApplication.getBehaviors().get(index).getActions();
 
         //Unnecessary holders (if any) are recycled
         while (actions.size() < holder.mActionContainer.getChildCount()){
@@ -194,6 +203,14 @@ public class GoalAdapter extends RecyclerView.Adapter{
         popup.show();
     }
 
+    public void updateSelectedBehavior(){
+        if (mSelectedBehaviorPosition != -1){
+            //notifyItemChanged(mSelectedBehaviorPosition);
+            notifyDataSetChanged();
+            mSelectedBehaviorPosition = -1;
+        }
+    }
+
 
     /**
      * View holder for a behavior item.
@@ -214,14 +231,24 @@ public class GoalAdapter extends RecyclerView.Adapter{
         public BehaviorHolder(View itemView){
             super(itemView);
 
-            itemView.findViewById(R.id.behavior_overflow).setOnClickListener(this);
             mTitle = (TextView)itemView.findViewById(R.id.behavior_title);
             mActionContainer = (LinearLayout)itemView.findViewById(R.id.behavior_actions);
+
+            itemView.findViewById(R.id.behavior_overflow).setOnClickListener(this);
+            mTitle.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view){
-            showPopup(view, getAdapterPosition());
+            switch (view.getId()){
+                case R.id.behavior_overflow:
+                    showPopup(view, getAdapterPosition());
+                    break;
+
+                case R.id.behavior_title:
+                    mSelectedBehaviorPosition = getAdapterPosition();
+                    mListener.onBehaviorSelected(mGoal.getBehaviors().get(getAdapterPosition()-1));
+            }
         }
     }
 
@@ -249,5 +276,9 @@ public class GoalAdapter extends RecyclerView.Adapter{
             mTitle = (TextView)itemView.findViewById(R.id.action_title);
             mTime = (TextView)itemView.findViewById(R.id.action_time);
         }
+    }
+
+    public interface GoalAdapterListener{
+        void onBehaviorSelected(Behavior behavior);
     }
 }

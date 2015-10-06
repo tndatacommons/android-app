@@ -5,23 +5,26 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- * Created by brad on 07/22/2015.
- *
  * This class encapsulates all of the user-selected content from the online REST api:
  *
  * - Categories
  * - Goals
  * - Behaviors
  * - Actions
+ * - Places
  *
  * It includes methods to set & get those values, and keeps a consistently updated
  * hierarchy (i.e. Behaviors know about their parent goals & child actions, etc).
  *
+ * @author Brad Montgomery
+ * @author Ismael Alonso
  */
-public class UserData {
-
+public class UserData{
     private static final String TAG = "UserData";
+
+
     private List<Category> mCategories = new ArrayList<>(); // The user's selected Categories
     private List<Goal> mGoals = new ArrayList<>();  // The user's selected Goals
     private List<Behavior> mBehaviors = new ArrayList<>(); // The user's selected behaviors
@@ -31,13 +34,14 @@ public class UserData {
     private FeedData mFeedData;
 
 
-    public UserData() {
+    public UserData(){
+
     }
 
     /**
      * Sync up all parent/child objects.
      */
-    public void sync() {
+    public void sync(){
         assignGoalsToCategories();
         assignBehaviorsToGoals();
         assignActionsToBehaviors();
@@ -49,24 +53,24 @@ public class UserData {
      *
      * @return an ArrayList of Category objects
      */
-    public List<Category> getCategories() {
+    public List<Category> getCategories(){
         return mCategories;
     }
 
     /**
      * Initialize a list of user-selected Categories.
      *
-     * @param categories
+     * @param categories the list of categories selected by the user.
      */
-    public void setCategories(List<Category> categories) {
+    public void setCategories(List<Category> categories){
         setCategories(categories, true);
     }
 
-    public void setCategories(List<Category> categories, boolean sync) {
-        if(categories != null && !categories.isEmpty()) {
+    public void setCategories(List<Category> categories, boolean sync){
+        if(categories != null && !categories.isEmpty()){
             mCategories = categories;
         }
-        if(sync) {
+        if(sync){
             assignGoalsToCategories();
         }
     }
@@ -79,8 +83,8 @@ public class UserData {
      *
      * @param category the Category object to add.
      */
-    public void addCategory(Category category) {
-        if(!mCategories.contains(category)) {
+    public void addCategory(Category category){
+        if(!mCategories.contains(category)){
             mCategories.add(category);
             assignGoalsToCategories();
         }
@@ -111,21 +115,35 @@ public class UserData {
     }
 
     /**
-     * Returns all of the goals for a given Category.This is a wrapper for category.getGoals();
+     * Returns the original copy of the provided category.
      *
-     * @return an ArrayList of Goal objects.
+     * @param category the category whose original copy needs to be fetched.
+     * @return the original copy of such category.
      */
-    public List<Goal> getCategoryGoals(Category category) {
-        return category.getGoals();
+    public Category getCategory(Category category){
+        int index = mCategories.indexOf(category);
+        if (index != -1){
+            return mCategories.get(index);
+        }
+        return null;
+    }
+
+    /**
+     * Returns all of the goals for a given Category. This is a wrapper for category.getGoals().
+     *
+     * @return a List of Goal objects.
+     */
+    public List<Goal> getCategoryGoals(Category category){
+        return getCategory(category).getGoals();
     }
 
 
     /**
      * Returns the list of user-selected Goals.
      *
-     * @return an ArrayList of Goal objects.
+     * @return a List of Goal objects.
      */
-    public List<Goal> getGoals() {
+    public List<Goal> getGoals(){
         return mGoals;
     }
 
@@ -135,13 +153,13 @@ public class UserData {
      *
      * @param goals an ArrayList of Goal objects
      */
-    public void setGoals(List<Goal> goals) {
+    public void setGoals(List<Goal> goals){
         setGoals(goals, true);
     }
 
-    public void setGoals(List<Goal> goals, boolean sync) {
+    public void setGoals(List<Goal> goals, boolean sync){
         mGoals = goals;
-        if(sync) {
+        if (sync){
             assignGoalsToCategories();
         }
     }
@@ -150,13 +168,13 @@ public class UserData {
      * Goals are associated with one or more categories. This method will include
      * the user's selected goals within their selected Categories.
      */
-    public void assignGoalsToCategories() {
+    public void assignGoalsToCategories(){
         // add each goal to the correct category
-        for (Category category : getCategories()) {
-            ArrayList<Goal> categoryGoals = new ArrayList<Goal>();
-            for (Goal goal : getGoals()) {
-                for (Category goalCategory : goal.getCategories()) {
-                    if (goalCategory.getId() == category.getId()) {
+        for (Category category:getCategories()){
+            ArrayList<Goal> categoryGoals = new ArrayList<>();
+            for (Goal goal:getGoals()){
+                for (Category goalCategory:goal.getCategories()){
+                    if (goalCategory.getId() == category.getId()){
                         categoryGoals.add(goal);
                         break;
                     }
@@ -172,10 +190,10 @@ public class UserData {
      * Adding a Goal also assigns it to any existing user-selected categories,
      * as well as assigning any existing Behaviors to the Goal.
      *
-     * @param goal
+     * @param goal the goal to be added to the user list.
      */
-    public void addGoal(Goal goal) {
-        if(!mGoals.contains(goal)) {
+    public void addGoal(Goal goal){
+        if(!mGoals.contains(goal)){
             mGoals.add(goal);
             assignGoalsToCategories();
             assignBehaviorsToGoals();
@@ -188,9 +206,9 @@ public class UserData {
      * Removing a goal also removes its reference from the parent Categories
      * as well as the child Behaviors.
      *
-     * @param goal
+     * @param goal the goal to be removed from the user list.
      */
-    public void removeGoal(Goal goal) {
+    public void removeGoal(Goal goal){
         mGoals.remove(goal);
 
         // Remove the goal from its parent categories
@@ -214,11 +232,25 @@ public class UserData {
     }
 
     /**
+     * Returns the original copy of the provided goal.
+     *
+     * @param goal the goal whose original copy needs to be fetched.
+     * @return the original copy of such goal.
+     */
+    public Goal getGoal(Goal goal){
+        int index = mGoals.indexOf(goal);
+        if (index != -1){
+            return mGoals.get(index);
+        }
+        return null;
+    }
+
+    /**
      * Return the user-selected Behaviors.
      *
      * @return an ArrayList of Behavior objects.
      */
-    public List<Behavior> getBehaviors() {
+    public List<Behavior> getBehaviors(){
         return mBehaviors;
     }
 
@@ -228,12 +260,13 @@ public class UserData {
      *
      * @param behaviors an ArrayList of Behavior objects
      */
-    public void setBehaviors(List<Behavior> behaviors) {
+    public void setBehaviors(List<Behavior> behaviors){
         setBehaviors(behaviors, true);
     }
-    public void setBehaviors(List<Behavior> behaviors, boolean sync) {
+
+    public void setBehaviors(List<Behavior> behaviors, boolean sync){
         mBehaviors = behaviors;
-        if(sync) {
+        if (sync){
             assignBehaviorsToGoals();
         }
     }
@@ -245,11 +278,11 @@ public class UserData {
      *
      * @param behavior the Behavior instance to remove.
      */
-    public void removeBehavior(Behavior behavior) {
+    public void removeBehavior(Behavior behavior){
         mBehaviors.remove(behavior);
 
         // Remove the behavior from any parent Goals
-        for(Goal goal : getGoals()) {
+        for(Goal goal:getGoals()){
             goal.removeBehavior(behavior);
         }
 
@@ -277,15 +310,29 @@ public class UserData {
         }
     }
 
+    /**
+     * Returns the original copy of the provided behavior.
+     *
+     * @param behavior the behavior whose original copy needs to be fetched.
+     * @return the original copy of such behavior.
+     */
+    public Behavior getBehavior(Behavior behavior){
+        int index = mBehaviors.indexOf(behavior);
+        if (index != -1){
+            return mBehaviors.get(index);
+        }
+        return null;
+    }
+
     /** Behaviors are contained within a Goal. This method will take the list
      * of selected behaviors, and associate them with the user's selected goals.
      */
-    public void assignBehaviorsToGoals() {
-        for (Goal goal : getGoals()) { // Look at all the selected goals
-            ArrayList<Behavior> goalBehaviors = new ArrayList<Behavior>();
-            for (Behavior behavior : getBehaviors()) { // look at all the selected behaviors...
-                for (Goal behaviorGoal : behavior.getGoals()) { // The Behavior's Parent goals
-                    if (behaviorGoal.getId() == goal.getId()) {
+    public void assignBehaviorsToGoals(){
+        for (Goal goal:getGoals()){ // Look at all the selected goals
+            ArrayList<Behavior> goalBehaviors = new ArrayList<>();
+            for (Behavior behavior:getBehaviors()){ // look at all the selected behaviors...
+                for (Goal behaviorGoal:behavior.getGoals()){ // The Behavior's Parent goals
+                    if (behaviorGoal.getId() == goal.getId()){
                         goalBehaviors.add(behavior);
                         break;
                     }
@@ -300,7 +347,7 @@ public class UserData {
      *
      * @return an ArrayList of Action objects.
      */
-    public List<Action> getActions() {
+    public List<Action> getActions(){
         return mActions;
     }
 
@@ -312,12 +359,13 @@ public class UserData {
      *
      * @param actions
      */
-    public void setActions(List<Action> actions) {
+    public void setActions(List<Action> actions){
         setActions(actions, true);
     }
-    public void setActions(List<Action> actions, boolean sync) {
+
+    public void setActions(List<Action> actions, boolean sync){
         mActions = actions;
-        if(sync) {
+        if (sync){
             assignActionsToBehaviors();
         }
     }
@@ -328,11 +376,11 @@ public class UserData {
      *
      * @param action the Action object to remove.
      */
-    public void removeAction(Action action) {
+    public void removeAction(Action action){
         mActions.remove(action);
 
         // Remove the action from any related behaviors
-        for(Behavior behavior : mBehaviors) {
+        for (Behavior behavior : mBehaviors){
             behavior.removeAction(action);
         }
     }
@@ -344,11 +392,25 @@ public class UserData {
      *
      * @param action
      */
-    public void addAction(Action action) {
-        if(!mActions.contains(action)) {
+    public void addAction(Action action){
+        if(!mActions.contains(action)){
             mActions.add(action);
             assignActionsToBehaviors();
         }
+    }
+
+    /**
+     * Returns the original copy of the provided action.
+     *
+     * @param action the action whose original copy needs to be fetched.
+     * @return the original copy of such action.
+     */
+    public Action getAction(Action action){
+        int index = mActions.indexOf(action);
+        if (index != -1){
+            return mActions.get(index);
+        }
+        return null;
     }
 
     /**
