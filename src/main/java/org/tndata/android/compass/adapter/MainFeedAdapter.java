@@ -106,6 +106,9 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     private int getMyGoalsLastItemPosition(){
+        if (mUserData.getGoals().isEmpty()){
+            return getMyGoalsHeaderPosition()+2*mUserData.getFeedData().getSuggestions().size();
+        }
         return getMyGoalsHeaderPosition()+2*mUserData.getGoals().size();
     }
 
@@ -211,22 +214,33 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         else if (isMyGoalsHeaderPosition(position)){
             HeaderHolder holder = (HeaderHolder)rawHolder;
             ((CardView)holder.itemView).setRadius(0);
-            holder.mTitle.setText("My Goals");
+            if (mUserData.getGoals().isEmpty()){
+                holder.mTitle.setText("Suggested Goals");
+            }
+            else{
+                holder.mTitle.setText("My Goals");
+            }
         }
         else if (isMyGoalsInnerPosition(position)){
             ((CardView)rawHolder.itemView).setRadius(0);
             if (position%2 == getMyGoalsHeaderPosition()%2){
                 GoalHolder holder = (GoalHolder)rawHolder;
                 int goalPosition = (position - getMyGoalsHeaderPosition() - 2) / 2;
-                Goal goal = mUserData.getGoals().get(goalPosition);
-
-                GradientDrawable gradientDrawable = (GradientDrawable)holder.mIconContainer.getBackground();
-                gradientDrawable.setColor(Color.parseColor(goal.getPrimaryCategory().getColor()));
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-                    holder.mIconContainer.setBackground(gradientDrawable);
+                Goal goal;
+                if (mUserData.getGoals().isEmpty()){
+                    goal = mUserData.getFeedData().getSuggestions().get(goalPosition);
                 }
                 else{
-                    holder.mIconContainer.setBackgroundDrawable(gradientDrawable);
+                    goal = mUserData.getGoals().get(goalPosition);
+
+                    GradientDrawable gradientDrawable = (GradientDrawable)holder.mIconContainer.getBackground();
+                    gradientDrawable.setColor(Color.parseColor(goal.getPrimaryCategory().getColor()));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+                        holder.mIconContainer.setBackground(gradientDrawable);
+                    }
+                    else{
+                        holder.mIconContainer.setBackgroundDrawable(gradientDrawable);
+                    }
                 }
 
                 goal.loadIconIntoView(mContext, holder.mIcon);
@@ -237,7 +251,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
     @Override
     public int getItemCount(){
-        return getMyGoalsLastItemPosition();
+        return getMyGoalsLastItemPosition()+1;
     }
 
     @Override
@@ -366,7 +380,14 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
         @Override
         public void onClick(View view){
-            mListener.onGoalSelected(mUserData.getGoals().get((getAdapterPosition()-getMyGoalsHeaderPosition()-1)/2));
+            Goal goal;
+            if (mUserData.getGoals().isEmpty()){
+                goal = mUserData.getFeedData().getSuggestions().get((getAdapterPosition()-getMyGoalsHeaderPosition()-1)/2);
+            }
+            else{
+                goal = mUserData.getGoals().get((getAdapterPosition()-getMyGoalsHeaderPosition()-1)/2);
+            }
+            mListener.onGoalSelected(goal);
         }
     }
 
@@ -402,7 +423,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 outRect.bottom = 0;
                 outRect.right = mMargin;
             }
-            else if (mAdapter.getUpcomingLastItemPosition() == position || mAdapter.getMyGoalsLastItemPosition()-2 == position){
+            else if (mAdapter.getUpcomingLastItemPosition() == position || mAdapter.getMyGoalsLastItemPosition() == position){
                 outRect.top = 0;
                 outRect.left = mMargin;
                 outRect.bottom = mMargin/2;

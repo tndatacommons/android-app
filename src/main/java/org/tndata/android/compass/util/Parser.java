@@ -383,6 +383,7 @@ public class Parser{
             feedData.setTotalActions(progress.getInt("total"));
 
             feedData.setUpcomingActions(parseActions(userJson.getJSONArray("upcoming_actions"), true));
+            feedData.setSuggestions(parseGoals(userJson.getJSONArray("suggestions"), false));
 
             userData.setFeedData(feedData);
             userData.logData();

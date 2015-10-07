@@ -135,6 +135,8 @@ public class NewMainActivity
         });
 
         populateMenu();
+
+        Log.d("MainFeed", ((CompassApplication)getApplication()).getUserData().getFeedData().getSuggestions().size()+"");
     }
 
     private void populateMenu(){
@@ -324,6 +326,8 @@ public class NewMainActivity
 
     @Override
     public void onGoalSelected(Goal goal){
-        startActivity(new Intent(this, GoalActivity.class).putExtra(GoalActivity.GOAL_KEY, goal));
+        if (!((CompassApplication)getApplication()).getUserData().getGoals().isEmpty()){
+            startActivity(new Intent(this, GoalActivity.class).putExtra(GoalActivity.GOAL_KEY, goal));
+        }
     }
 }

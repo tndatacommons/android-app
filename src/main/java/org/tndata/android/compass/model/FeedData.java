@@ -17,6 +17,7 @@ public class FeedData{
     private int mPercentage;
 
     private List<Action> mUpcomingActions;
+    private List<Goal> mSuggestions;
 
 
     public void setNextAction(Action nextAction){
@@ -69,5 +70,13 @@ public class FeedData{
 
     public List<Action> getUpcomingActions(){
         return mUpcomingActions;
+    }
+
+    public void setSuggestions(List<Goal> suggestions){
+        mSuggestions = suggestions;
+    }
+
+    public List<Goal> getSuggestions(){
+        return mSuggestions;
     }
 }
