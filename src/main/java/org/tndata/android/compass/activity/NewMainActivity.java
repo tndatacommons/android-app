@@ -149,7 +149,7 @@ public class NewMainActivity
             fab.setColorNormal(Color.parseColor(category.getColor()));
             fab.setColorPressed(Color.parseColor(category.getColor()));
             fab.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            fab.setImageResource(R.drawable.ic_snooze);
+            fab.setImageResource(getIconResourceId(category));
             mMenu.addMenuButton(fab);
             fab.setOnClickListener(new View.OnClickListener(){
                 @Override
@@ -158,6 +158,54 @@ public class NewMainActivity
                 }
             });
             i++;
+        }
+    }
+
+    private int getIconResourceId(Category category){
+        if (category.getTitle().equalsIgnoreCase("Happiness")){
+            return R.drawable.ic_award8;
+        }
+        else if (category.getTitle().equalsIgnoreCase("Community")){
+            return R.drawable.ic_award12;
+        }
+        else if (category.getTitle().equalsIgnoreCase("Family")){
+            return R.drawable.ic_award17;
+        }
+        else if (category.getTitle().equalsIgnoreCase("Home")){
+            return R.drawable.ic_award18;
+        }
+        else if (category.getTitle().equalsIgnoreCase("Romance")){
+            return R.drawable.ic_award24;
+        }
+        else if (category.getTitle().equalsIgnoreCase("Health")){
+            return R.drawable.ic_award33;
+        }
+        else if (category.getTitle().equalsIgnoreCase("Wellness")){
+            return R.drawable.ic_commercial16;
+        }
+        else if (category.getTitle().equalsIgnoreCase("Safety")){
+            return R.drawable.ic_olive;
+        }
+        else if (category.getTitle().equalsIgnoreCase("Parenting")){
+            return R.drawable.ic_shield74;
+        }
+        else if (category.getTitle().equalsIgnoreCase("Education")){
+            return R.drawable.ic_sports27;
+        }
+        else if (category.getTitle().equalsIgnoreCase("Skills")){
+            return R.drawable.ic_sports28;
+        }
+        else if (category.getTitle().equalsIgnoreCase("Work")){
+            return R.drawable.ic_thumb34;
+        }
+        else if (category.getTitle().equalsIgnoreCase("Prosperity")){
+            return R.drawable.ic_thumb36;
+        }
+        else if (category.getTitle().equalsIgnoreCase("Fun")){
+            return R.drawable.ic_trophy40;
+        }
+        else{
+            return R.drawable.ic_add_white_24dp;
         }
     }
 
