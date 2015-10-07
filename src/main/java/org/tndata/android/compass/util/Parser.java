@@ -368,6 +368,15 @@ public class Parser{
                 feedData.getNextAction().setPrimaryGoal(gson.fromJson(action.getString("primary_goal"), Goal.class));
             }
 
+            Log.d("FeedParser", userJson.getString("action_feedback"));
+
+            if (!userJson.isNull("action_feedback")){
+                Log.d("Parser", "has feedback");
+                JSONObject feedback = userJson.getJSONObject("action_feedback");
+                feedData.setFeedbackTitle(feedback.getString("title"));
+                feedData.setFeedbackSubtitle(feedback.getString("subtitle"));
+            }
+
             JSONObject progress = userJson.getJSONObject("progress");
             feedData.setProgressPercentage(progress.getInt("progress"));
             feedData.setCompletedActions(progress.getInt("completed"));

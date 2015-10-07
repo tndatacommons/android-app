@@ -9,45 +9,37 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:padding="10dp" >
 
-        <at.grabner.circleprogress.CircleProgressView
-            xmlns:progress="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/card_progress_indicator"
+        <ImageView
             android:layout_width="90dp"
-            android:layout_height="90dp"
-            progress:barColor="#00796B"
-            progress:barWidth="10dp"
-            progress:contourSize="0dp"
-            progress:maxValue="100"
-            progress:rimColor="#B2DFDB"
-            progress:rimWidth="10dp"
-            progress:seekMode="false"
-            progress:textColor="#00796B"
-            progress:unit="%"
-            progress:unitColor="#009688"/>
+            android:layout_height="wrap_content" />
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical" >
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp" >
 
             <TextView
-                android:id="@+id/card_progress_title"
+                android:id="@+id/card_feedback_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="2dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Title" />
+                android:textColor="@color/dark_text_color"
+                android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/card_progress_subtitle"
+                android:id="@+id/card_feedback_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="2dp"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Subtitle" />
+                android:textStyle="italic"
+                android:textSize="16sp" />
 
         </LinearLayout>
     </LinearLayout>

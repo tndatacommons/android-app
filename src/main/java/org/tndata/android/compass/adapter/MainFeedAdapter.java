@@ -1,16 +1,20 @@
 package org.tndata.android.compass.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +35,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     private static final int TYPE_BLANK = 0;
     private static final int TYPE_WELCOME = 1;
     private static final int TYPE_UP_NEXT = 2;
-    private static final int TYPE_PROGRESS = 3;
+    private static final int TYPE_FEEDBACK = 3;
     private static final int TYPE_HEADER = 4;
     private static final int TYPE_SEPARATOR = 5;
     private static final int TYPE_ACTION = 6;
@@ -54,6 +58,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         return mUserData.getGoals().isEmpty();
     }
 
+    private boolean hasUpNextAction(){
+        return mUserData.getFeedData().getNextAction() != null;
+    }
+
     private int getUpNextPosition(){
         return hasWelcomeCard() ? 2 : 1;
     }
@@ -62,16 +70,19 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         return getUpNextPosition() == position;
     }
 
-    private int getProgressPosition(){
+    private int getFeedbackPosition(){
         return getUpNextPosition()+1;
     }
 
-    private boolean isProgressPosition(int position){
-        return getProgressPosition() == position;
+    private boolean isFeedbackPosition(int position){
+        return hasUpNextAction() && getFeedbackPosition() == position;
     }
 
     private int getUpcomingHeaderPosition(){
-        return getProgressPosition()+1;
+        if (hasUpNextAction()){
+            return getFeedbackPosition()+1;
+        }
+        return getUpNextPosition()+1;
     }
 
     private boolean isUpcomingHeaderPosition(int position){
@@ -115,9 +126,9 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             LayoutInflater inflater = LayoutInflater.from(mContext);
             return new UpNextHolder(inflater.inflate(R.layout.card_up_next, parent, false));
         }
-        else if (viewType == TYPE_PROGRESS){
+        else if (viewType == TYPE_FEEDBACK){
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            return new ProgressHolder(inflater.inflate(R.layout.card_progress, parent, false));
+            return new ProgressHolder(inflater.inflate(R.layout.card_feedback, parent, false));
         }
         else if (viewType == TYPE_HEADER){
             LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -153,7 +164,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
         else if (isUpNextPosition(position)){
             UpNextHolder holder = (UpNextHolder)rawHolder;
-            if (mUserData.getFeedData().getNextAction() == null){
+            if (!hasUpNextAction()){
                 holder.mNoActionsContainer.setVisibility(View.VISIBLE);
                 holder.mContentContainer.setVisibility(View.GONE);
                 holder.itemView.setOnClickListener(holder);
@@ -172,12 +183,12 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 holder.mIndicator.setShowUnit(true);
                 holder.mIndicator.setValue(0);
                 holder.mIndicator.setValueAnimated(0, mUserData.getFeedData().getProgress(), 1500);
-                //holder.mIndicator.setText("Today");
             }
         }
-        else if (isProgressPosition(position)){
+        else if (isFeedbackPosition(position)){
             ProgressHolder holder = (ProgressHolder)rawHolder;
-            holder.mIndicator.setValueAnimated(0, (int)(100*Math.random()), 1500);
+            holder.mTitle.setText(mUserData.getFeedData().getFeedbackTitle());
+            holder.mSubtitle.setText(mUserData.getFeedData().getFeedbackSubtitle());
         }
         else if (isUpcomingHeaderPosition(position)){
             HeaderHolder holder = (HeaderHolder)rawHolder;
@@ -208,8 +219,18 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 GoalHolder holder = (GoalHolder)rawHolder;
                 int goalPosition = (position - getMyGoalsHeaderPosition() - 2) / 2;
                 Goal goal = mUserData.getGoals().get(goalPosition);
-                holder.mTitle.setText(goal.getTitle());
+
+                GradientDrawable gradientDrawable = (GradientDrawable)holder.mIconContainer.getBackground();
+                gradientDrawable.setColor(Color.parseColor(goal.getPrimaryCategory().getColor()));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+                    holder.mIconContainer.setBackground(gradientDrawable);
+                }
+                else{
+                    holder.mIconContainer.setBackgroundDrawable(gradientDrawable);
+                }
+
                 goal.loadIconIntoView(mContext, holder.mIcon);
+                holder.mTitle.setText(goal.getTitle());
             }
         }
     }
@@ -233,8 +254,8 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         if (isUpNextPosition(position)){
             return TYPE_UP_NEXT;
         }
-        if (isProgressPosition(position)){
-            return TYPE_PROGRESS;
+        if (isFeedbackPosition(position)){
+            return TYPE_FEEDBACK;
         }
         if (isUpcomingHeaderPosition(position) || isMyGoalsHeaderPosition(position)){
             return TYPE_HEADER;
@@ -290,7 +311,6 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     private class ProgressHolder extends RecyclerView.ViewHolder{
-        private CircleProgressView mIndicator;
         private TextView mTitle;
         private TextView mSubtitle;
 
@@ -298,12 +318,8 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         public ProgressHolder(View itemView){
             super(itemView);
 
-            mIndicator = (CircleProgressView)itemView.findViewById(R.id.card_progress_indicator);
-            mTitle = (TextView)itemView.findViewById(R.id.card_progress_title);
-
-            mIndicator.setValue(0);
-            mIndicator.setAutoTextSize(true);
-            mIndicator.setShowUnit(true);
+            mTitle = (TextView)itemView.findViewById(R.id.card_feedback_title);
+            mSubtitle = (TextView)itemView.findViewById(R.id.card_feedback_subtitle);
         }
     }
 
@@ -333,6 +349,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     private class GoalHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private RelativeLayout mIconContainer;
         private ImageView mIcon;
         private TextView mTitle;
 
@@ -340,6 +357,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         public GoalHolder(View itemView){
             super(itemView);
 
+            mIconContainer = (RelativeLayout)itemView.findViewById(R.id.card_goal_icon_container);
             mIcon = (ImageView)itemView.findViewById(R.id.card_goal_icon);
             mTitle = (TextView)itemView.findViewById(R.id.card_goal_title);
             

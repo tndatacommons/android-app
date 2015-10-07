@@ -9,6 +9,9 @@ import java.util.List;
 public class FeedData{
     private Action mNextAction;
 
+    private String mFeedbackTitle;
+    private String mFeedbackSubtitle;
+
     private int mTotalActions;
     private int mCompletedActions;
     private int mPercentage;
@@ -22,6 +25,22 @@ public class FeedData{
 
     public Action getNextAction(){
         return mNextAction;
+    }
+
+    public void setFeedbackTitle(String feedbackTitle){
+        mFeedbackTitle = feedbackTitle;
+    }
+
+    public String getFeedbackTitle(){
+        return mFeedbackTitle;
+    }
+
+    public void setFeedbackSubtitle(String feedbackSubtitle){
+        mFeedbackSubtitle = feedbackSubtitle;
+    }
+
+    public String getFeedbackSubtitle(){
+        return mFeedbackSubtitle;
     }
 
     public void setTotalActions(int totalActions){
