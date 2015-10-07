@@ -41,14 +41,16 @@
             android:id="@+id/behavior_overflow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:layout_gravity="right"
-            android:src="@drawable/ic_more_horiz_black_18dp" />
+            android:src="@drawable/ic_more_vert_black_18dp" />
 
         <TextView
             android:id="@+id/behavior_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_marginBottom="18dp" />
 
         <!-- The reminder of the content gets inserted dynamically here -->
         <LinearLayout
