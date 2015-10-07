@@ -69,7 +69,8 @@ public class GoalActivity
         int heroHeight = CompassUtil.getScreenWidth(this)/2;
         params.height = heroHeight;
         hero.setLayoutParams(params);
-        ImageLoader.loadBitmap(hero, mGoal.getPrimaryCategory().getImageUrl(), new ImageLoader.Options());
+        ImageLoader.loadBitmap(hero, mGoal.getPrimaryCategory().getImageUrl(),
+                new ImageLoader.Options().setCropBottom(true));
 
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.goal_fab);
         params = (RelativeLayout.LayoutParams)fab.getLayoutParams();

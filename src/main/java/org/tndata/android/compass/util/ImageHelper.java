@@ -96,4 +96,11 @@ public class ImageHelper {
         //thumbnail.recycle();
         return output;
     }
+
+    public static Bitmap cropOutBottom(Bitmap bmp){
+        int width = bmp.getWidth();
+        int height = width/2;
+
+        return Bitmap.createBitmap(bmp, 0, 0, width, height);
+    }
 }
