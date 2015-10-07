@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -19,6 +20,7 @@ import org.tndata.android.compass.adapter.GoalAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.Progress;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ImageLoader;
@@ -80,6 +82,8 @@ public class GoalActivity
         fab.setColorNormal(Color.parseColor(mGoal.getPrimaryCategory().getSecondaryColor()));
         fab.setColorPressed(Color.parseColor(mGoal.getPrimaryCategory().getSecondaryColor()));
 
+        Progress progress = mGoal.getProgress();
+
         CircleProgressView indicator = (CircleProgressView)findViewById(R.id.goal_indicator);
         params = (RelativeLayout.LayoutParams)indicator.getLayoutParams();
         params.topMargin = heroHeight-params.height-2*params.topMargin;
@@ -87,7 +91,10 @@ public class GoalActivity
         indicator.setValue(0);
         indicator.setAutoTextSize(true);
         indicator.setShowUnit(true);
-        indicator.setValueAnimated(0, (int)(100 * Math.random()), 1500);
+        if (progress != null){
+            Log.d("GoalActivity", "Progress ain't null, setting...");
+            indicator.setValueAnimated(0, progress.getWeeklyActionsProgress(), 1500);
+        }
 
         mTitle = (TextView)findViewById(R.id.goal_title);
         mTitle.setBackgroundColor(Color.parseColor(mGoal.getPrimaryCategory().getColor()));

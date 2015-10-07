@@ -18,6 +18,7 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Place;
+import org.tndata.android.compass.model.Progress;
 import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.model.UserData;
 
@@ -142,6 +143,9 @@ public class Parser{
 
                     //Set the primary category
                     goal.setPrimaryCategory(gson.fromJson(goalJson.getString("primary_category"), Category.class));
+
+                    //Set the progress
+                    goal.setProgress(gson.fromJson(goalJson.getString("goal_progress"), Progress.class));
 
                     categoryArrayName = "user_categories";
                 }

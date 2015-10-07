@@ -1,5 +1,7 @@
 package org.tndata.android.compass.model;
 
+import java.io.Serializable;
+
 
 /**
  * Model class for progress reports.
@@ -7,7 +9,10 @@ package org.tndata.android.compass.model;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class Progress{
+public class Progress implements Serializable{
+    private static final long serialVersionUID = 7523638276434150671L;
+
+
     private String object_type = "";
 
     private float current_score = 0;

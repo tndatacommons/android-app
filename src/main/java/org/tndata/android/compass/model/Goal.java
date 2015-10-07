@@ -22,6 +22,7 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
     private List<Behavior> behaviors = new ArrayList<>();
     private double progress_value = 0.0; // Only used for UserGoals
     private Category primary_category;
+    private Progress progress;
 
     public Goal() {
     }
@@ -127,6 +128,14 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
 
     public Category getPrimaryCategory(){
         return primary_category;
+    }
+
+    public void setProgress(Progress progress){
+        this.progress = progress;
+    }
+
+    public Progress getProgress(){
+        return progress;
     }
 
     public int getProgressIcon() {
