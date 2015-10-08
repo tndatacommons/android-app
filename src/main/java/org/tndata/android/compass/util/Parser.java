@@ -382,7 +382,13 @@ public class Parser{
             feedData.setCompletedActions(progress.getInt("completed"));
             feedData.setTotalActions(progress.getInt("total"));
 
-            feedData.setUpcomingActions(parseActions(userJson.getJSONArray("upcoming_actions"), true));
+            List<Action> actions = parseActions(userJson.getJSONArray("upcoming_actions"), true);
+            if (actions.size() > 1){
+                feedData.setUpcomingActions(actions.subList(1, actions.size()));
+            }
+            else{
+                feedData.setUpcomingActions(new ArrayList<Action>());
+            }
             feedData.setSuggestions(parseGoals(userJson.getJSONArray("suggestions"), false));
 
             userData.setFeedData(feedData);

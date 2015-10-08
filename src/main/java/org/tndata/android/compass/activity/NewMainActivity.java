@@ -142,9 +142,11 @@ public class NewMainActivity
     private void populateMenu(){
         CompassApplication app = (CompassApplication)getApplication();
         mMenu.removeAllMenuButtons();
-        int i = 0;
-        for (Category category:app.getUserData().getCategories()){
-            final int position = i;
+        for (final Category category:app.getUserData().getCategories()){
+            if (category.isPackagedContent()){
+                continue;
+            }
+            final Category cat = category;
             ContextThemeWrapper ctx = new ContextThemeWrapper(this, R.style.MenuButtonStyle);
             FloatingActionButton fab = new FloatingActionButton(ctx);
             fab.setLabelText(category.getTitle());
@@ -156,11 +158,23 @@ public class NewMainActivity
             fab.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v){
-                    addGoalsClicked(position);
+                    addGoalsClicked(cat);
                 }
             });
-            i++;
         }
+
+        ContextThemeWrapper ctx = new ContextThemeWrapper(this, R.style.MenuButtonStyle);
+        FloatingActionButton fab = new FloatingActionButton(ctx);
+        fab.setLabelText("Add categories");
+        fab.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        fab.setImageResource(R.drawable.fab_add);
+        fab.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                addCategoriesClicked();
+            }
+        });
+        mMenu.addMenuButton(fab);
     }
 
     private int getIconResourceId(Category category){
@@ -211,10 +225,14 @@ public class NewMainActivity
         }
     }
 
-    private void addGoalsClicked(int position){
-        CompassApplication app = (CompassApplication)getApplication();
-        mSelectedCategory = app.getUserData().getCategories().get(position);
+    private void addGoalsClicked(Category category){
+        mSelectedCategory = category;
         mMenu.toggle(true);
+    }
+
+    private void addCategoriesClicked(){
+        startActivityForResult(new Intent(NewMainActivity.this, ChooseCategoriesActivity.class), 55565);
+        mMenu.toggle(false);
     }
 
     private void animateBackground(final boolean opening){
