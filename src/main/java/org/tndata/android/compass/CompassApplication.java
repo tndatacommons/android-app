@@ -151,9 +151,9 @@ public class CompassApplication extends Application{
     @Override
     public void onCreate(){
         super.onCreate();
-        if(!BuildConfig.DEBUG) {
+        //if(!BuildConfig.DEBUG){
             Fabric.with(this, new Crashlytics());
-        }
+        //}
         startService(new Intent(this, LocationNotificationService.class));
         ImageLoader.initialize(getApplicationContext());
     }

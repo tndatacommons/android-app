@@ -41,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#4B7BF5"
+                android:textColor="@color/dark_text_color"
                 android:text="Select an activity to help you reach one of your goals." />
 
         </LinearLayout>
