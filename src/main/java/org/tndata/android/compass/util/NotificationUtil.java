@@ -99,8 +99,11 @@ public final class NotificationUtil{
     public static void generateActionNotification(Context context, int notificationId, String title,
                                                   String message, int actionId, int userMappingId){
 
+        Reminder reminder = new Reminder(notificationId, -1, title, message, actionId, userMappingId);
+
         Intent intent = new Intent(context, ActionActivity.class)
-                .putExtra(ActionActivity.ACTION_ID_KEY, actionId);
+                .putExtra(ActionActivity.ACTION_ID_KEY, actionId)
+                .putExtra(ActionActivity.REMINDER_KEY, reminder);
 
         PendingIntent contentIntent = PendingIntent.getActivity(context,
                 (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -111,9 +114,7 @@ public final class NotificationUtil{
 
         PendingIntent dismissedPendingIntent = PendingIntent.getService(context,
                 (int)System.currentTimeMillis(), dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Reminder reminder = new Reminder(notificationId, -1, title, message, actionId, userMappingId);
-
+        
         Intent snoozeIntent = new Intent(context, SnoozeActivity.class)
                 .putExtra(SnoozeActivity.REMINDER_KEY, reminder)
                 .putExtra(SnoozeActivity.PUSH_NOTIFICATION_ID_KEY, actionId)
