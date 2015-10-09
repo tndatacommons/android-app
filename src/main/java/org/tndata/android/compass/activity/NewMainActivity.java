@@ -43,6 +43,7 @@ public class NewMainActivity
                 DrawerAdapter.OnItemClickListener,
                 MainFeedAdapter.MainFeedAdapterListener{
 
+    private static final int CATEGORIES_REQUEST_CODE = 4821;
     private static final int ACTION_REQUEST_CODE = 4582;
     private static final int TRIGGER_REQUEST_CODE = 7631;
 
@@ -154,7 +155,6 @@ public class NewMainActivity
             if (category.isPackagedContent()){
                 continue;
             }
-            final Category cat = category;
             ContextThemeWrapper ctx = new ContextThemeWrapper(this, R.style.MenuButtonStyle);
             FloatingActionButton fab = new FloatingActionButton(ctx);
             fab.setLabelText(category.getTitle());
@@ -166,7 +166,7 @@ public class NewMainActivity
             fab.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v){
-                    addGoalsClicked(cat);
+                    addGoalsClicked(category);
                 }
             });
         }
@@ -239,7 +239,7 @@ public class NewMainActivity
     }
 
     private void addCategoriesClicked(){
-        startActivityForResult(new Intent(NewMainActivity.this, ChooseCategoriesActivity.class), 55565);
+        startActivityForResult(new Intent(NewMainActivity.this, ChooseCategoriesActivity.class), CATEGORIES_REQUEST_CODE);
         mMenu.toggle(false);
     }
 
@@ -380,6 +380,10 @@ public class NewMainActivity
             }
             else if (requestCode == TRIGGER_REQUEST_CODE){
                 mAdapter.updateSelectedItem();
+            }
+            else if (requestCode == CATEGORIES_REQUEST_CODE){
+                populateMenu();
+                mAdapter.notifyDataSetChanged();
             }
         }
     }

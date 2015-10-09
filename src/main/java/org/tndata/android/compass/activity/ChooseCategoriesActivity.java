@@ -18,38 +18,39 @@ import org.tndata.android.compass.task.GetUserDataTask;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChooseCategoriesActivity extends AppCompatActivity implements
-        AddCategoryTask.AddCategoryTaskListener,
-        ChooseCategoryAdapter.OnCategoriesSelectedListener,
-        GetUserDataTask.GetUserDataCallback{
+public class ChooseCategoriesActivity
+        extends AppCompatActivity
+        implements
+                AddCategoryTask.AddCategoryTaskListener,
+                ChooseCategoryAdapter.OnCategoriesSelectedListener,
+                GetUserDataTask.GetUserDataCallback{
 
     private CompassApplication application;
-    private ArrayList<Category> mCategories;
-    private ChooseCategoriesFragment mFragment;
-    private Toolbar mToolbar;
 
     private List<Category> mSelection;
 
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
 
         application = (CompassApplication) getApplication();
 
-        mToolbar = (Toolbar) findViewById(R.id.tool_bar);
-        mToolbar.getBackground().setAlpha(255);
-        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.tool_bar);
+        toolbar.getBackground().setAlpha(255);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
 
         Bundle args = new Bundle();
         args.putBoolean(ChooseCategoriesFragment.RESTRICTIONS_KEY, false);
 
-        mFragment = new ChooseCategoriesFragment();
-        mFragment.setArguments(args);
-        getFragmentManager().beginTransaction()
-                .replace(R.id.base_content, mFragment).commit();
+        ChooseCategoriesFragment fragment = new ChooseCategoriesFragment();
+        fragment.setArguments(args);
+        getFragmentManager().beginTransaction().replace(R.id.base_content, fragment).commit();
     }
 
     @Override
@@ -100,7 +101,7 @@ public class ChooseCategoriesActivity extends AppCompatActivity implements
             new DeleteCategoryTask(this, new DeleteCategoryTask.DeleteCategoryTaskListener(){
                 @Override
                 public void categoriesDeleted(){
-                    for (Category category : toDelete){
+                    for (Category category:toDelete){
                         application.getUserData().removeCategory(category);
                     }
                     getUserData();
@@ -119,6 +120,7 @@ public class ChooseCategoriesActivity extends AppCompatActivity implements
     @Override
     public void userDataLoaded(UserData userData){
         application.setUserData(userData);
+        setResult(RESULT_OK);
         finish();
     }
 }
