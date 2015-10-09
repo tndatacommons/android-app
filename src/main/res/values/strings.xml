@@ -174,7 +174,8 @@
     <string name="action_icon_cd">Action icon</string>
     <string name="action_external_resource_header">Try this resource</string>
     <string name="action_more_info_header">More info</string>
-    <string name="action_later">Later</string>
+    <string name="action_snooze">Snooze</string>
+    <string name="action_reschedule">Reschedule</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_did_it">I did it</string>
     <string name="action_tick_cd">Action complete tick</string>
@@ -250,7 +251,7 @@
     <!-- Feed -->
     <!-- Welcome card -->
     <string name="card_welcome_title">Welcome to Compass</string>
-    <string name="card_welcome_subtitle">You have things you want to do. Mulberry has ways you can do them. Mulberry will remind you to take action on your goals, as well as keep track of how you are doing.</string>
-    <string name="card_welcome_instructions"><b>Instructions:</b> Select a goal that Mulberry has recommended for you, or browse your interests to find your own goal.</string>
+    <string name="card_welcome_subtitle">You want good things for yourself. Compass helps you know your goals, do things to achieve them, and track your progress over time.</string>
+    <string name="card_welcome_instructions"><i>Instructions</i>: Select a goal that Compass has recommended for you, or browse your interests to discover your own goal.</string>
 
 </resources>

@@ -2,10 +2,8 @@ package org.tndata.android.compass.activity;
 
 import android.app.NotificationManager;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -27,13 +25,13 @@ import org.tndata.android.compass.fragment.TriggerFragment;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Trigger;
+import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.task.AddActionTriggerTask;
 import org.tndata.android.compass.task.GetUserActionsTask;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -74,6 +72,8 @@ public class TriggerActivity
     private static final String FRAG_TAG_TIME_PICKER = "timePickerDialogFragment";
 
 
+    private CompassApplication mApplication;
+
     private TriggerFragment fragment;
 
     private Action mAction;
@@ -102,6 +102,8 @@ public class TriggerActivity
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+        mApplication = (CompassApplication)getApplication();
 
         mDateTime = new Date();
         mTimeSelected = false;
@@ -136,8 +138,10 @@ public class TriggerActivity
             fetchAction(getIntent().getIntExtra(ACTION_ID_KEY, -1));
         }
         else{
+            UserData userData = mApplication.getUserData();
+
             Goal goal = (Goal)getIntent().getSerializableExtra("goal");
-            mAction = (Action)getIntent().getSerializableExtra("action");
+            mAction = userData.getAction((Action)getIntent().getSerializableExtra("action"));
 
             getSupportActionBar().setTitle(goal.getTitle());
             setAction();
@@ -162,7 +166,7 @@ public class TriggerActivity
     @Override
     public void actionsLoaded(List<Action> actions){
         if (actions.size() > 0){
-            mAction = actions.get(0);
+            mAction = mApplication.getUserData().getAction(actions.get(0));
             setAction();
         }
     }
@@ -491,6 +495,7 @@ public class TriggerActivity
             savingTrigger = true;
         }
         else{
+            setResult(RESULT_OK);
             finish();
         }
     }
@@ -502,11 +507,11 @@ public class TriggerActivity
             Log.d(TAG, "Updated Action: " + action.getTitle());
             Log.d(TAG, "Updated Trigger: " + action.getTrigger());
 
-            mAction = action;
+            mAction.setCustomTrigger(action.getTrigger());
 
             // We'll return the updated Action to the parent activity (GoalDetailsActivity)
             // but we also want to tell the Application about the updated version of the Action.
-            ((CompassApplication) getApplication()).updateAction(action);
+            //((CompassApplication) getApplication()).updateAction(action);
 
             Toast.makeText(this, getText(R.string.trigger_saved_confirmation_toast), Toast.LENGTH_SHORT).show();
             Intent returnIntent = new Intent();

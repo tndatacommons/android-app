@@ -99,7 +99,7 @@ public class GoalActivity
         mTitle = (TextView)findViewById(R.id.goal_title);
         mTitle.setBackgroundColor(Color.parseColor(mGoal.getPrimaryCategory().getColor()));
         params = (RelativeLayout.LayoutParams)mTitle.getLayoutParams();
-        params.topMargin += heroHeight+CompassUtil.getPixels(this, 1);
+        params.topMargin += heroHeight;
         mTitle.setLayoutParams(params);
         mTitle.setText(mGoal.getTitle());
         mTitle.getViewTreeObserver().addOnGlobalLayoutListener(this);

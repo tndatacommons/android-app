@@ -362,10 +362,11 @@ public class Parser{
             //Feed data
             FeedData feedData = new FeedData();
 
-            JSONObject action = userJson.getJSONObject("next_action");
-            if (action.has("id")){
-                feedData.setNextAction(parseAction(action, true));
-                feedData.getNextAction().setPrimaryGoal(gson.fromJson(action.getString("primary_goal"), Goal.class));
+            JSONObject nextAction = userJson.getJSONObject("next_action");
+            //If there is a next_action
+            if (nextAction.has("id")){
+                //Parse it out and retrieve the reference to the original copy
+                feedData.setNextAction(userData.getAction(parseAction(nextAction, true)));
             }
 
             Log.d("FeedParser", userJson.getString("action_feedback"));
@@ -384,7 +385,11 @@ public class Parser{
 
             List<Action> actions = parseActions(userJson.getJSONArray("upcoming_actions"), true);
             if (actions.size() > 1){
-                feedData.setUpcomingActions(actions.subList(1, actions.size()));
+                List<Action> actionReferences = new ArrayList<>();
+                for (Action action:actions.subList(1, actions.size())){
+                    actionReferences.add(userData.getAction(action));
+                }
+                feedData.setUpcomingActions(actionReferences);
             }
             else{
                 feedData.setUpcomingActions(new ArrayList<Action>());

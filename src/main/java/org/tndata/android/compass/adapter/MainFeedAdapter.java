@@ -3,7 +3,6 @@ package org.tndata.android.compass.adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -26,6 +25,7 @@ import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.util.CompassUtil;
 
 import at.grabner.circleprogress.CircleProgressView;
+import at.grabner.circleprogress.TextMode;
 
 
 /**
@@ -47,6 +47,8 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     private MainFeedAdapterListener mListener;
     private UserData mUserData;
 
+    private int mSelectedItem;
+
 
     public MainFeedAdapter(@NonNull Context context, @NonNull MainFeedAdapterListener listener){
         mContext = context;
@@ -55,7 +57,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     private boolean hasWelcomeCard(){
-        return mUserData.getGoals().isEmpty();
+        return true;//mUserData.getGoals().isEmpty();
     }
 
     private boolean hasUpNextAction(){
@@ -78,27 +80,43 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         return hasUpNextAction() && getFeedbackPosition() == position;
     }
 
+    private boolean hasUpcoming(){
+        return !mUserData.getFeedData().getUpcomingActions().isEmpty();
+    }
+
     private int getUpcomingHeaderPosition(){
+        //If there is up next, then there is feedback
         if (hasUpNextAction()){
             return getFeedbackPosition()+1;
         }
+        //If there ain't up next, then there is no feedback and up next displays something else
         return getUpNextPosition()+1;
     }
 
     private boolean isUpcomingHeaderPosition(int position){
-        return getUpcomingHeaderPosition() == position;
+        return hasUpcoming() && getUpcomingHeaderPosition() == position;
     }
 
     private int getUpcomingLastItemPosition(){
         return getUpcomingHeaderPosition()+2*mUserData.getFeedData().getUpcomingActions().size();
     }
 
+    private boolean isUpcomingLastItemPosition(int position){
+        return hasUpcoming() && position == getUpcomingLastItemPosition();
+    }
+
     private boolean isUpcomingInnerPosition(int position){
-        return position > getUpcomingHeaderPosition() && position <= getUpcomingLastItemPosition();
+        return hasUpcoming() &&
+                position > getUpcomingHeaderPosition() && position <= getUpcomingLastItemPosition();
     }
 
     private int getMyGoalsHeaderPosition(){
-        return getUpcomingLastItemPosition()+1;
+        //If there are upcoming actions then my goals are right after
+        if (hasUpcoming()){
+            return getUpcomingLastItemPosition() + 1;
+        }
+        //If there ain't upcoming actions then my goals takes its place
+        return getUpcomingHeaderPosition();
     }
 
     private boolean isMyGoalsHeaderPosition(int position){
@@ -131,7 +149,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
         else if (viewType == TYPE_FEEDBACK){
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            return new ProgressHolder(inflater.inflate(R.layout.card_feedback, parent, false));
+            return new FeedbackHolder(inflater.inflate(R.layout.card_feedback, parent, false));
         }
         else if (viewType == TYPE_HEADER){
             LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -183,13 +201,15 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 holder.mGoal.setText("To help me " + goalTitle);
                 holder.mTime.setText(action.getTrigger().getFormattedTime().toLowerCase());
                 holder.mIndicator.setAutoTextSize(true);
-                holder.mIndicator.setShowUnit(true);
-                holder.mIndicator.setValue(0);
-                holder.mIndicator.setValueAnimated(0, mUserData.getFeedData().getProgress(), 1500);
+                //holder.mIndicator.setShowUnit(true);
+                holder.mIndicator.setValue(mUserData.getFeedData().getProgress());
+                holder.mIndicator.setTextMode(TextMode.TEXT);
+                holder.mIndicator.setText("Trial");
+                //holder.mIndicator.setValueAnimated(0, mUserData.getFeedData().getProgress(), 1500);
             }
         }
         else if (isFeedbackPosition(position)){
-            ProgressHolder holder = (ProgressHolder)rawHolder;
+            FeedbackHolder holder = (FeedbackHolder)rawHolder;
             holder.mTitle.setText(mUserData.getFeedData().getFeedbackTitle());
             holder.mSubtitle.setText(mUserData.getFeedData().getFeedbackSubtitle());
         }
@@ -208,17 +228,17 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 String goalTitle = action.getPrimaryGoal().getTitle().substring(0, 1).toLowerCase();
                 goalTitle += action.getPrimaryGoal().getTitle().substring(1);
                 holder.mGoal.setText("To help me " + goalTitle);
-                holder.mTime.setText(action.getTrigger().getFormattedTime());
+                holder.mTime.setText(action.getTrigger().getFormattedTime().toLowerCase());
             }
         }
         else if (isMyGoalsHeaderPosition(position)){
             HeaderHolder holder = (HeaderHolder)rawHolder;
             ((CardView)holder.itemView).setRadius(0);
             if (mUserData.getGoals().isEmpty()){
-                holder.mTitle.setText("Suggested Goals");
+                holder.mTitle.setText("Suggested goals");
             }
             else{
-                holder.mTitle.setText("My Goals");
+                holder.mTitle.setText("My goals");
             }
         }
         else if (isMyGoalsInnerPosition(position)){
@@ -298,6 +318,13 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         return new MainFeedPadding(mContext, this);
     }
 
+    public void updateSelectedItem(){
+        if (mSelectedItem != -1){
+            notifyItemChanged(mSelectedItem);
+            mSelectedItem = -1;
+        }
+    }
+
     private class UpNextHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private View mNoActionsContainer;
         private View mContentContainer;
@@ -316,20 +343,42 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             mAction = (TextView)itemView.findViewById(R.id.up_next_action);
             mGoal = (TextView)itemView.findViewById(R.id.up_next_goal);
             mTime = (TextView)itemView.findViewById(R.id.up_next_time);
+
+            mAction.setOnClickListener(this);
+            mGoal.setOnClickListener(this);
+            mTime.setOnClickListener(this);
         }
 
         @Override
-        public void onClick(View v){
-            Toast.makeText(mContext, "No actions, card clicked", Toast.LENGTH_SHORT).show();
+        public void onClick(View view){
+            Action action = mUserData.getFeedData().getNextAction();
+            mSelectedItem = getAdapterPosition();
+            switch (view.getId()){
+                case R.id.up_next_action:
+                    mListener.onActionSelected(action);
+                    break;
+
+                case R.id.up_next_goal:
+                    mListener.onGoalSelected(action.getPrimaryGoal());
+                    break;
+
+                case R.id.up_next_time:
+                    mListener.onTriggerSelected(action);
+                    break;
+
+                default:
+                    Toast.makeText(mContext, "No actions, card clicked", Toast.LENGTH_SHORT).show();
+            }
+
         }
     }
 
-    private class ProgressHolder extends RecyclerView.ViewHolder{
+    private class FeedbackHolder extends RecyclerView.ViewHolder{
         private TextView mTitle;
         private TextView mSubtitle;
 
 
-        public ProgressHolder(View itemView){
+        public FeedbackHolder(View itemView){
             super(itemView);
 
             mTitle = (TextView)itemView.findViewById(R.id.card_feedback_title);
@@ -347,7 +396,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
     }
 
-    private class ActionHolder extends RecyclerView.ViewHolder{
+    private class ActionHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mAction;
         private TextView mGoal;
         private TextView mTime;
@@ -359,6 +408,30 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             mAction = (TextView)itemView.findViewById(R.id.action_title);
             mGoal = (TextView)itemView.findViewById(R.id.action_goal);
             mTime = (TextView)itemView.findViewById(R.id.action_time);
+
+            mAction.setOnClickListener(this);
+            mGoal.setOnClickListener(this);
+            mTime.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view){
+            mSelectedItem = getAdapterPosition();
+            int index = (getAdapterPosition()-getUpcomingHeaderPosition()-1)/2;
+            Action action = mUserData.getFeedData().getUpcomingActions().get(index);
+            switch (view.getId()){
+                case R.id.action_title:
+                    mListener.onActionSelected(action);
+                    break;
+
+                case R.id.action_goal:
+                    mListener.onGoalSelected(action.getPrimaryGoal());
+                    break;
+
+                case R.id.action_time:
+                    mListener.onTriggerSelected(action);
+                    break;
+            }
         }
     }
 
@@ -423,7 +496,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 outRect.bottom = 0;
                 outRect.right = mMargin;
             }
-            else if (mAdapter.getUpcomingLastItemPosition() == position || mAdapter.getMyGoalsLastItemPosition() == position){
+            else if (mAdapter.isUpcomingLastItemPosition(position) || mAdapter.getMyGoalsLastItemPosition() == position){
                 outRect.top = 0;
                 outRect.left = mMargin;
                 outRect.bottom = mMargin/2;
@@ -446,5 +519,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
     public interface MainFeedAdapterListener{
         void onGoalSelected(Goal goal);
+        void onActionSelected(Action action);
+        void onTriggerSelected(Action action);
     }
 }

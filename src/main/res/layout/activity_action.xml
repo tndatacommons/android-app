@@ -104,14 +104,13 @@
             android:layout_marginBottom="30dp" >
 
             <TextView
-                android:id="@+id/action_later"
+                android:id="@+id/action_time_option"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:textAllCaps="true"
                 android:gravity="right"
-                android:textColor="@color/grow_primary"
-                android:text="@string/action_later" />
+                android:textColor="@color/grow_primary" />
 
             <TextView
                 android:id="@+id/action_did_it"

@@ -198,6 +198,7 @@ public class SnoozeActivity
         reportSnooze();
 
         //Kill the activity
+        setResult(RESULT_OK);
         finish();
     }
 
@@ -222,6 +223,7 @@ public class SnoozeActivity
             //Report the snooze
             reportSnooze();
 
+            setResult(RESULT_OK);
             finish();
         }
     }

@@ -26,6 +26,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.MainFeedAdapter;
+import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.util.Constants;
@@ -42,10 +43,14 @@ public class NewMainActivity
                 DrawerAdapter.OnItemClickListener,
                 MainFeedAdapter.MainFeedAdapterListener{
 
+    private static final int ACTION_REQUEST_CODE = 4582;
+
+
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
     private RecyclerView mFeed;
+    private MainFeedAdapter mAdapter;
 
     private View mStopper;
     private FloatingActionMenu mMenu;
@@ -90,10 +95,12 @@ public class NewMainActivity
 
         View header = findViewById(R.id.main_illustration);
 
+        mAdapter = new MainFeedAdapter(this, this);
+
         mFeed = (RecyclerView)findViewById(R.id.main_feed);
-        mFeed.setAdapter(new MainFeedAdapter(this, this));
+        mFeed.setAdapter(mAdapter);
         mFeed.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mFeed.addItemDecoration(((MainFeedAdapter)mFeed.getAdapter()).getMainFeedPadding());
+        mFeed.addItemDecoration(mAdapter.getMainFeedPadding());
 
         OnScrollListenerHub hub = new OnScrollListenerHub();
         ParallaxEffect parallax = new ParallaxEffect(header, 0.5f);
@@ -346,6 +353,27 @@ public class NewMainActivity
     public void onGoalSelected(Goal goal){
         if (!((CompassApplication)getApplication()).getUserData().getGoals().isEmpty()){
             startActivity(new Intent(this, GoalActivity.class).putExtra(GoalActivity.GOAL_KEY, goal));
+        }
+    }
+
+    @Override
+    public void onActionSelected(Action action){
+        Intent actionIntent = new Intent(this, ActionActivity.class)
+                .putExtra(ActionActivity.ACTION_KEY, action);
+        startActivityForResult(actionIntent, ACTION_REQUEST_CODE);
+    }
+
+    @Override
+    public void onTriggerSelected(Action action){
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (resultCode == RESULT_OK){
+            if (requestCode == ACTION_REQUEST_CODE){
+                mAdapter.updateSelectedItem();
+            }
         }
     }
 }
