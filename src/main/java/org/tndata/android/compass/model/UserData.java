@@ -25,7 +25,11 @@ public class UserData{
     private static final String TAG = "UserData";
 
 
-    //User selected content
+    //User selected content. There are the master lists. References to all the objects in
+    //  the data structure are placed here. All other lists to be used within this class
+    //  should contain references to these same exact objects, not references to other
+    //  equivalent objects. This makes easier the access to and modification of the data
+    //  structure.
     private List<Category> mCategories = new ArrayList<>();
     private List<Goal> mGoals = new ArrayList<>();
     private List<Behavior> mBehaviors = new ArrayList<>();
