@@ -180,7 +180,9 @@ public class ActionActivity
      */
     private void snooze(){
         if (mAction != null && !mActionUpdated){
-            startActivityForResult(new Intent(this, SnoozeActivity.class), REQUEST_CODE);
+            Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
+                    .putExtra(SnoozeActivity.REMINDER_KEY, mReminder);
+            startActivityForResult(snoozeIntent, REQUEST_CODE);
         }
     }
 
