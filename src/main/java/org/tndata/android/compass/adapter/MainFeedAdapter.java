@@ -24,6 +24,8 @@ import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.util.CompassUtil;
 
+import java.util.Calendar;
+
 import at.grabner.circleprogress.CircleProgressView;
 import at.grabner.circleprogress.TextMode;
 
@@ -201,11 +203,13 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 holder.mGoal.setText("To help me " + goalTitle);
                 holder.mTime.setText(action.getTrigger().getFormattedTime().toLowerCase());
                 holder.mIndicator.setAutoTextSize(true);
-                //holder.mIndicator.setShowUnit(true);
                 holder.mIndicator.setValue(mUserData.getFeedData().getProgress());
                 holder.mIndicator.setTextMode(TextMode.TEXT);
-                holder.mIndicator.setText("Trial");
-                //holder.mIndicator.setValueAnimated(0, mUserData.getFeedData().getProgress(), 1500);
+                holder.mIndicator.setValueAnimated(0, mUserData.getFeedData().getProgress(), 1500);
+
+                Calendar calendar = Calendar.getInstance();
+                String month = CompassUtil.getMonthString(calendar.get(Calendar.MONTH)+1);
+                holder.mIndicator.setText(month + " " + calendar.get(Calendar.DAY_OF_MONTH));
             }
         }
         else if (isFeedbackPosition(position)){
