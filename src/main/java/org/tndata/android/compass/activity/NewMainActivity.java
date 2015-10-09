@@ -44,6 +44,7 @@ public class NewMainActivity
                 MainFeedAdapter.MainFeedAdapterListener{
 
     private static final int ACTION_REQUEST_CODE = 4582;
+    private static final int TRIGGER_REQUEST_CODE = 7631;
 
 
     private DrawerLayout mDrawerLayout;
@@ -365,13 +366,19 @@ public class NewMainActivity
 
     @Override
     public void onTriggerSelected(Action action){
-
+        Intent triggerIntent = new Intent(this, TriggerActivity.class)
+                .putExtra("action", action)
+                .putExtra("goal", action.getPrimaryGoal());
+        startActivityForResult(triggerIntent, TRIGGER_REQUEST_CODE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (resultCode == RESULT_OK){
             if (requestCode == ACTION_REQUEST_CODE){
+                mAdapter.updateSelectedItem();
+            }
+            else if (requestCode == TRIGGER_REQUEST_CODE){
                 mAdapter.updateSelectedItem();
             }
         }
