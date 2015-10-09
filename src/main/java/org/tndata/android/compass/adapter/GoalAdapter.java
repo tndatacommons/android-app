@@ -3,7 +3,6 @@ package org.tndata.android.compass.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +23,8 @@ import org.tndata.android.compass.ui.CompassPopupMenu;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
+import at.grabner.circleprogress.CircleProgressView;
 
 
 /**
@@ -103,6 +104,10 @@ public class GoalAdapter extends RecyclerView.Adapter{
             Behavior behavior = mGoal.getBehaviors().get(position/2);
             BehaviorHolder holder = (BehaviorHolder)rawHolder;
             holder.mTitle.setText(behavior.getTitle());
+            holder.mIndicator.setValue(0);
+            if (behavior.getProgress() != null){
+                holder.mIndicator.setValue(behavior.getProgress().getDailyActionsProgress());
+            }
             populate(holder, behavior);
         }
     }
@@ -246,6 +251,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
      * @version 1.0.0
      */
     private class BehaviorHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private CircleProgressView mIndicator;
         private TextView mTitle;
         private LinearLayout mActionContainer;
 
@@ -258,6 +264,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
         public BehaviorHolder(View itemView){
             super(itemView);
 
+            mIndicator = (CircleProgressView)itemView.findViewById(R.id.behavior_indicator);
             mTitle = (TextView)itemView.findViewById(R.id.behavior_title);
             mActionContainer = (LinearLayout)itemView.findViewById(R.id.behavior_actions);
 

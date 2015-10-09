@@ -217,6 +217,8 @@ public class Parser{
                     }
                     behavior.setUserCategories(categories);
 
+                    behavior.setProgress(gson.fromJson(behaviorJson.getString("behavior_progress"), Progress.class));
+
                     goalArrayName = "user_goals";
                 }
                 else{
