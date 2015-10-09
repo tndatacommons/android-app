@@ -147,8 +147,7 @@ public class GoalActivity
         //Since we are moving serializables around, the object that actually changes is not the
         //  one we are referencing. The Goal with the new list of behaviors needs to be pulled
         //  from the application's list
-        int index = mApplication.getGoals().indexOf(mGoal);
-        mGoal = mApplication.getGoals().get(index);
+        mGoal = mApplication.getUserData().getGoal(mGoal);
 
         //Set the adapter with the fresh goal
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)mTitle.getLayoutParams();

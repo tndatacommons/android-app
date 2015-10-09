@@ -3,6 +3,7 @@ package org.tndata.android.compass.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -328,7 +329,8 @@ public class GoalAdapter extends RecyclerView.Adapter{
 
         @Override
         public void onClick(View v){
-            mSelectedBehaviorPosition = mBehaviorPosition+1;
+            //Take separators into account
+            mSelectedBehaviorPosition = 2*mBehaviorPosition+1;
             Behavior behavior = mGoal.getBehaviors().get(mBehaviorPosition);
             mListener.onActionSelected(behavior, behavior.getActions().get(mActionPosition));
         }
