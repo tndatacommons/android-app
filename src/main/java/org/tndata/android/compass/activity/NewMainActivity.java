@@ -376,7 +376,12 @@ public class NewMainActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (resultCode == RESULT_OK){
             if (requestCode == ACTION_REQUEST_CODE){
-                mAdapter.updateSelectedItem();
+                if (data.getBooleanExtra(ActionActivity.DID_IT_KEY, false)){
+                    mAdapter.deleteSelectedItem();
+                }
+                else{
+                    mAdapter.updateSelectedItem();
+                }
             }
             else if (requestCode == TRIGGER_REQUEST_CODE){
                 mAdapter.updateSelectedItem();

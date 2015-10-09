@@ -46,7 +46,10 @@ public class ActionActivity
     public static final String ACTION_ID_KEY = "org.tndata.compass.ActionActivity.action_id";
     public static final String REMINDER_KEY = "org.tndata.compass.ActionActivity.reminder";
 
+    public static final String DID_IT_KEY = "org.tndata.compass.ActionActivity.did_it";
+
     private static final int REQUEST_CODE = 61428;
+
 
     //The action in question and the associated reminder
     private Action mAction;
@@ -61,7 +64,7 @@ public class ActionActivity
     private TextView mMoreInfo;
     private ViewSwitcher mTickSwitcher;
 
-    //Firewalls
+    //Firewall
     private boolean mActionUpdated;
 
 
@@ -231,6 +234,7 @@ public class ActionActivity
             new Handler().postDelayed(new Runnable(){
                 @Override
                 public void run(){
+                    setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, true));
                     finish();
                 }
             }, 1000);

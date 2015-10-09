@@ -59,7 +59,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     private boolean hasWelcomeCard(){
-        return true;//mUserData.getGoals().isEmpty();
+        return mUserData.getGoals().isEmpty();
     }
 
     private boolean hasUpNextAction(){
@@ -326,6 +326,22 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         if (mSelectedItem != -1){
             notifyItemChanged(mSelectedItem);
             mSelectedItem = -1;
+        }
+    }
+    public void deleteSelectedItem(){
+        if (isUpcomingInnerPosition(mSelectedItem)){
+            int index = (mSelectedItem-getUpcomingHeaderPosition()-1)/2;
+            mUserData.getFeedData().getUpcomingActions().remove(index);
+            if (!hasUpcoming()){
+                notifyItemRemoved(mSelectedItem-2);
+            }
+            notifyItemRemoved(mSelectedItem - 1);
+            notifyItemRemoved(mSelectedItem);
+            mSelectedItem = -1;
+            notifyItemChanged(getUpcomingLastItemPosition()+1);
+            notifyItemChanged(getUpcomingLastItemPosition());
+            notifyItemChanged(getUpcomingLastItemPosition()-1);
+            notifyItemChanged(getUpcomingLastItemPosition()-2);
         }
     }
 
