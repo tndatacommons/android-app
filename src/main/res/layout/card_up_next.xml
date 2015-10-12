@@ -52,19 +52,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
-            <at.grabner.circleprogress.CircleProgressView
-                xmlns:progress="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/up_next_indicator"
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="90dp"
-                android:layout_height="90dp"
-                progress:barColor="#00796B"
-                progress:barWidth="10dp"
-                progress:contourSize="0dp"
-                progress:maxValue="100"
-                progress:rimColor="#B2DFDB"
-                progress:rimWidth="10dp"
-                progress:unit="%"
-                progress:seekMode="false" />
+                android:layout_height="wrap_content">
+
+                <at.grabner.circleprogress.CircleProgressView
+                    xmlns:progress="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/up_next_indicator"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    progress:barColor="#00796B"
+                    progress:barWidth="10dp"
+                    progress:contourSize="0dp"
+                    progress:maxValue="100"
+                    progress:rimColor="#B2DFDB"
+                    progress:rimWidth="10dp"
+                    progress:unit="%"
+                    progress:seekMode="false" />
+
+                <org.tndata.android.compass.ui.FontFitTextView
+                    android:id="@+id/up_next_indicator_caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:orientation="vertical"
@@ -79,8 +94,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/dark_text_color"
-                    android:textSize="20sp"
-                    android:text="Whatever the action" />
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/up_next_goal"
@@ -88,8 +102,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/dark_text_color"
                     android:textSize="16sp"
-                    android:textStyle="italic"
-                    android:text="Whichever the goal" />
+                    android:textStyle="italic" />
 
                 <TextView
                     android:id="@+id/up_next_time"
@@ -97,8 +110,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="right"
                     android:textColor="@color/secondary_text_color"
-                    android:textSize="15sp"
-                    android:text="Next time" />
+                    android:textSize="15sp" />
 
             </LinearLayout>
         </LinearLayout>

@@ -143,7 +143,10 @@ public class TriggerActivity
             Goal goal = (Goal)getIntent().getSerializableExtra("goal");
             mAction = userData.getAction((Action)getIntent().getSerializableExtra("action"));
 
-            getSupportActionBar().setTitle(goal.getTitle());
+            //TODO this is another workaround
+            if (goal != null){
+                getSupportActionBar().setTitle(goal.getTitle());
+            }
             setAction();
         }
     }

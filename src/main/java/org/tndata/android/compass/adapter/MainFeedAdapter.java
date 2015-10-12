@@ -1,6 +1,5 @@
 package org.tndata.android.compass.adapter;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -9,7 +8,6 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +17,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.ui.FontFitTextView;
 import org.tndata.android.compass.util.CompassUtil;
 
 import java.util.Calendar;
@@ -182,7 +180,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
         ((CardView)rawHolder.itemView).setRadius(CompassUtil.getPixels(mContext, 2));
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
-            setPreLPadding((CardView)rawHolder.itemView);
+            setPreLParameters((CardView)rawHolder.itemView);
         }
 
         if (position == 0){
@@ -204,14 +202,18 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 holder.mContentContainer.setVisibility(View.VISIBLE);
                 holder.itemView.setOnClickListener(null);
                 holder.mAction.setText(action.getTitle());
-                String goalTitle = action.getPrimaryGoal().getTitle().substring(0, 1).toLowerCase();
-                goalTitle += action.getPrimaryGoal().getTitle().substring(1);
-                holder.mGoal.setText("To help me " + goalTitle);
+                //TODO this is a workaround
+                if (action.getPrimaryGoal() != null){
+                    String goalTitle = action.getPrimaryGoal().getTitle().substring(0, 1).toLowerCase();
+                    goalTitle += action.getPrimaryGoal().getTitle().substring(1);
+                    holder.mGoal.setText("To help me " + goalTitle);
+                }
                 holder.mTime.setText(action.getTrigger().getFormattedTime().toLowerCase());
                 holder.mIndicator.setAutoTextSize(true);
                 holder.mIndicator.setValue(mUserData.getFeedData().getProgress());
                 holder.mIndicator.setTextMode(TextMode.TEXT);
                 holder.mIndicator.setValueAnimated(0, mUserData.getFeedData().getProgress(), 1500);
+                holder.mIndicatorCaption.setText(mUserData.getFeedData().getProgressFraction() + " completed today");
 
                 Calendar calendar = Calendar.getInstance();
                 String month = CompassUtil.getMonthString(calendar.get(Calendar.MONTH)+1);
@@ -226,16 +228,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         else if (isUpcomingHeaderPosition(position)){
             HeaderHolder holder = (HeaderHolder)rawHolder;
             ((CardView)holder.itemView).setRadius(0);
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
-                setPreLPadding((CardView)rawHolder.itemView);
-            }
             holder.mTitle.setText("Today's activities");
         }
         else if (isUpcomingInnerPosition(position)){
             ((CardView)rawHolder.itemView).setRadius(0);
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
-                setPreLPadding((CardView)rawHolder.itemView);
-            }
             if (position%2 == getUpcomingHeaderPosition()%2){
                 ActionHolder holder = (ActionHolder)rawHolder;
                 int actionPosition = (position - getUpcomingHeaderPosition() - 2) / 2;
@@ -253,9 +249,6 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         else if (isMyGoalsHeaderPosition(position)){
             HeaderHolder holder = (HeaderHolder)rawHolder;
             ((CardView)holder.itemView).setRadius(0);
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
-                setPreLPadding((CardView)rawHolder.itemView);
-            }
             if (mUserData.getGoals().isEmpty()){
                 holder.mTitle.setText("Suggested goals");
             }
@@ -265,9 +258,6 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
         else if (isMyGoalsInnerPosition(position)){
             ((CardView)rawHolder.itemView).setRadius(0);
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
-                setPreLPadding((CardView)rawHolder.itemView);
-            }
             if (position%2 == getMyGoalsHeaderPosition()%2){
                 GoalHolder holder = (GoalHolder)rawHolder;
                 int goalPosition = (position - getMyGoalsHeaderPosition() - 2) / 2;
@@ -366,18 +356,16 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
     }
 
-    private void setPreLPadding(CardView view){
-        /*int padding = -(int)Math.ceil(view.getMaxCardElevation()*1.5 + (1-Math.cos(45))*view.getRadius());
-        padding = CompassUtil.getPixels(mContext, padding)-10;
-        Log.d("MainFeed", padding + "");
-        view.setContentPadding(padding, padding, padding, padding);*/
+    private void setPreLParameters(CardView view){
         view.setMaxCardElevation(0);
+        view.setCardBackgroundColor(mContext.getResources().getColor(R.color.card_pre_l_background));
     }
 
     private class UpNextHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private View mNoActionsContainer;
         private View mContentContainer;
         private CircleProgressView mIndicator;
+        private FontFitTextView mIndicatorCaption;
         private TextView mAction;
         private TextView mGoal;
         private TextView mTime;
@@ -389,6 +377,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             mNoActionsContainer = itemView.findViewById(R.id.up_next_no_actions);
             mContentContainer = itemView.findViewById(R.id.up_next_content);
             mIndicator = (CircleProgressView)itemView.findViewById(R.id.up_next_indicator);
+            mIndicatorCaption = (FontFitTextView)itemView.findViewById(R.id.up_next_indicator_caption);
             mAction = (TextView)itemView.findViewById(R.id.up_next_action);
             mGoal = (TextView)itemView.findViewById(R.id.up_next_goal);
             mTime = (TextView)itemView.findViewById(R.id.up_next_time);
@@ -408,7 +397,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                     break;
 
                 case R.id.up_next_goal:
-                    mListener.onGoalSelected(action.getPrimaryGoal());
+                    //TODO this is a workaround
+                    if (action.getPrimaryGoal() != null){
+                        mListener.onGoalSelected(action.getPrimaryGoal());
+                    }
                     break;
 
                 case R.id.up_next_time:
@@ -474,7 +466,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                     break;
 
                 case R.id.action_goal:
-                    mListener.onGoalSelected(action.getPrimaryGoal());
+                    //TODO this is another workaround
+                    if (action.getPrimaryGoal() != null){
+                        mListener.onGoalSelected(action.getPrimaryGoal());
+                    }
                     break;
 
                 case R.id.action_time:

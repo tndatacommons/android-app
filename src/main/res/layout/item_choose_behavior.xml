@@ -17,14 +17,30 @@
         android:padding="10dp" >
 
         <!-- NOTE: When the following view is displayed, it will be the only thing on the card -->
-        <TextView
-            android:id="@+id/choose_behavior_header"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/choose_behavior_header_wrapper"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:paddingLeft="2dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:visibility="gone" />
+            android:visibility="gone" >
+
+            <TextView
+                android:id="@+id/choose_behavior_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:paddingLeft="2dp"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <Button
+                android:id="@+id/choose_behavior_add_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:visibility="gone"
+                android:text="Add goal" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:orientation="vertical"

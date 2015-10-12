@@ -3,6 +3,7 @@ package org.tndata.android.compass.activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -64,6 +65,11 @@ public class NewMainActivity
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_main);
+
+        //If this is pre L a different color scheme is applied
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
+            findViewById(R.id.main_container).setBackgroundColor(getResources().getColor(R.color.feed_pre_l_background));
+        }
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.main_toolbar);
         toolbar.setTitle("");
@@ -354,6 +360,12 @@ public class NewMainActivity
     public void onGoalSelected(Goal goal){
         if (!((CompassApplication)getApplication()).getUserData().getGoals().isEmpty()){
             startActivity(new Intent(this, GoalActivity.class).putExtra(GoalActivity.GOAL_KEY, goal));
+        }
+        else{
+            Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
+                    .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal)
+                    .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, goal.getCategories().get(0));
+            startActivity(chooseBehaviors);
         }
     }
 

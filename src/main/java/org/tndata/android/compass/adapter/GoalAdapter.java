@@ -3,6 +3,7 @@ package org.tndata.android.compass.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -76,6 +77,8 @@ public class GoalAdapter extends RecyclerView.Adapter{
         mHolderPool = new Stack<>();
 
         mSelectedBehaviorPosition = -1;
+
+        Log.d(TAG, mGoal.getBehaviors().size()+"");
     }
 
     @Override

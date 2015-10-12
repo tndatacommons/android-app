@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -53,6 +54,9 @@ public class ChooseBehaviorsAdapter
     private List<Behavior> mBehaviors;
     private int mExpandedBehavior;
 
+    private boolean mIsGoalAdded;
+
+
     /**
      * Constructor,
      *
@@ -62,10 +66,11 @@ public class ChooseBehaviorsAdapter
      * @param recyclerView the view that will contain this adapter.
      * @param category the parent category of this goal.
      * @param goal the goal whose behaviors are to be listed.
+     * @param isGoalAdded whether the provided goal is in the user's list.
      */
     public ChooseBehaviorsAdapter(@NonNull Context context, @NonNull ChooseBehaviorsListener listener,
                                   @NonNull CompassApplication app, @NonNull RecyclerView recyclerView,
-                                  @NonNull Category category, @NonNull Goal goal){
+                                  @NonNull Category category, @NonNull Goal goal, boolean isGoalAdded){
         super(new ArrayList<Behavior>());
 
         //Assign the references
@@ -74,6 +79,7 @@ public class ChooseBehaviorsAdapter
         mListener = listener;
         mRecyclerView = recyclerView;
         mGoal = goal;
+        mIsGoalAdded = isGoalAdded;
         mFilter = null;
 
         //The tag handler is used in a couple of places, so previous instantiation and
@@ -157,6 +163,11 @@ public class ChooseBehaviorsAdapter
         if (mFilter != null){
             mFilter.filter(constraint);
         }
+    }
+
+    private void addGoalClicked(){
+        mIsGoalAdded = true;
+        mListener.addGoal();
     }
 
     /**
@@ -263,7 +274,11 @@ public class ChooseBehaviorsAdapter
                     holder.mHeader.setText(behavior.getDescription());
                 }
 
-                holder.mHeader.setVisibility(View.VISIBLE);
+                holder.mHeaderWrapper.setVisibility(View.VISIBLE);
+                Log.d("CBA", mIsGoalAdded+"");
+                if (!mIsGoalAdded){
+                    holder.mAddGoal.setVisibility(View.VISIBLE);
+                }
                 holder.mIcon.setVisibility(View.GONE);
                 holder.mDescription.setVisibility(View.GONE);
                 holder.mExternalResource.setVisibility(View.GONE);
@@ -272,6 +287,8 @@ public class ChooseBehaviorsAdapter
             }
             else{
                 //Handle all other cards
+                holder.mHeaderWrapper.setVisibility(View.GONE);
+
                 holder.mTitle.setText(behavior.getTitle());
                 if (!behavior.getHTMLDescription().isEmpty()){
                     holder.mDescription.setText(Html.fromHtml(behavior.getHTMLDescription(), null, mTagHandler));
@@ -344,7 +361,12 @@ public class ChooseBehaviorsAdapter
      * @version 1.0.0
      */
     private class BehaviorViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        //These are the views for the header-type card
+        private View mHeaderWrapper;
         private TextView mHeader;
+        private Button mAddGoal;
+
+        //These are the views for the behavior-type card
         private ImageView mIcon;
         private TextView mTitle;
         private TextView mDescription;
@@ -365,7 +387,10 @@ public class ChooseBehaviorsAdapter
         public BehaviorViewHolder(View rootView){
             super(rootView);
 
+            mHeaderWrapper = rootView.findViewById(R.id.choose_behavior_header_wrapper);
             mHeader = (TextView)rootView.findViewById(R.id.choose_behavior_header);
+            mAddGoal = (Button)rootView.findViewById(R.id.choose_behavior_add_goal);
+
             mIcon = (ImageView)rootView.findViewById(R.id.choose_behavior_icon);
             mTitle = (TextView)rootView.findViewById(R.id.choose_behavior_title);
             mDescription = (TextView)rootView.findViewById(R.id.choose_behavior_description);
@@ -377,6 +402,7 @@ public class ChooseBehaviorsAdapter
             mMoreInfo = (ImageView)rootView.findViewById(R.id.choose_behavior_more_info);
             mDoItNow = (TextView)rootView.findViewById(R.id.choose_behavior_do_it_now);
 
+            mAddGoal.setOnClickListener(this);
             mSelectBehavior.setOnClickListener(this);
             mSelectActions.setOnClickListener(this);
             mMoreInfo.setOnClickListener(this);
@@ -386,6 +412,11 @@ public class ChooseBehaviorsAdapter
         @Override
         public void onClick(View view){
             switch (view.getId()){
+                case R.id.choose_behavior_add_goal:
+                    mAddGoal.setVisibility(View.GONE);
+                    addGoalClicked();
+                    break;
+
                 case R.id.choose_behavior_select:
                     selectBehaviorClicked(this);
                     break;
@@ -409,9 +440,14 @@ public class ChooseBehaviorsAdapter
      * Listener interface for the adapter.
      *
      * @author Ismael Alonso
-     * @version 1.0.0
+     * @version 1.0.1
      */
     public interface ChooseBehaviorsListener{
+        /**
+         * Called when the add goal button is clicked.
+         */
+        void addGoal();
+
         /**
          * Called when the add behavior button is clicked.
          *

@@ -1,6 +1,7 @@
 package org.tndata.android.compass.activity;
 
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Progress;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.CompassUtil;
+import org.tndata.android.compass.util.ImageHelper;
 import org.tndata.android.compass.util.ImageLoader;
 import org.tndata.android.compass.util.OnScrollListenerHub;
 import org.tndata.android.compass.util.ParallaxEffect;
@@ -75,6 +77,10 @@ public class GoalActivity
         if (mGoal.getPrimaryCategory().getImageUrl() != null){
             ImageLoader.loadBitmap(hero, mGoal.getPrimaryCategory().getImageUrl(),
                     new ImageLoader.Options().setCropBottom(true));
+        }
+        else{
+            hero.setImageBitmap(ImageHelper.cropOutBottom(
+                    BitmapFactory.decodeResource(getResources(), R.drawable.compass_master_illustration)));
         }
 
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.goal_fab);

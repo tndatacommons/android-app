@@ -31,6 +31,7 @@ import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.task.AddBehaviorTask;
+import org.tndata.android.compass.task.AddGoalTask;
 import org.tndata.android.compass.task.BehaviorLoaderTask;
 import org.tndata.android.compass.task.BehaviorLoaderTask.BehaviorLoaderListener;
 import org.tndata.android.compass.task.DeleteBehaviorTask;
@@ -54,7 +55,8 @@ public class ChooseBehaviorsActivity
         implements
                 BehaviorLoaderListener,
                 AddBehaviorTask.AddBehaviorsTaskListener,
-        DeleteBehaviorTask.DeleteBehaviorCallback,
+                AddGoalTask.AddGoalsTaskListener,
+                DeleteBehaviorTask.DeleteBehaviorCallback,
                 ChooseBehaviorsAdapter.ChooseBehaviorsListener,
                 MenuItemCompat.OnActionExpandListener,
                 SearchView.OnQueryTextListener,
@@ -132,7 +134,10 @@ public class ChooseBehaviorsActivity
         recyclerView.setLayoutManager(manager);
         recyclerView.setHasFixedSize(true);
 
-        mAdapter = new ChooseBehaviorsAdapter(this, this, mApplication, recyclerView, mCategory, mGoal);
+        boolean isGoalSelected = mApplication.getUserData().getGoals().contains(mGoal);
+        Log.d(TAG, isGoalSelected+"");
+
+        mAdapter = new ChooseBehaviorsAdapter(this, this, mApplication, recyclerView, mCategory, mGoal, isGoalSelected);
         recyclerView.setAdapter(mAdapter);
         if (mCategory != null && !mCategory.getColor().isEmpty()) {
             mHeaderView.setBackgroundColor(Color.parseColor(mCategory.getColor()));
@@ -202,6 +207,14 @@ public class ChooseBehaviorsActivity
     private boolean isPhoneNumber(String resource) {
         return resource.matches("[(][0-9]{3}[)] [0-9]{3}[-][0-9]{4}") ||
                 resource.matches("[0-9]{3}[-][0-9]{3}[-][0-9]{4}");
+    }
+
+    @Override
+    public void addGoal(){
+        //TODO
+        ArrayList<String> ids = new ArrayList<>();
+        ids.add(mGoal.getId()+"");
+        new AddGoalTask(this, this, ids, mGoal).execute();
     }
 
     @Override
@@ -359,5 +372,10 @@ public class ChooseBehaviorsActivity
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void goalsAdded(ArrayList<Goal> goals, Goal goal){
+
     }
 }
