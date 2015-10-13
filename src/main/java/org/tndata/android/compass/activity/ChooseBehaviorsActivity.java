@@ -134,17 +134,18 @@ public class ChooseBehaviorsActivity
         recyclerView.setLayoutManager(manager);
         recyclerView.setHasFixedSize(true);
 
-        boolean isGoalSelected = mApplication.getUserData().getGoals().contains(mGoal);
-        Log.d(TAG, isGoalSelected+"");
-
-        mAdapter = new ChooseBehaviorsAdapter(this, this, mApplication, recyclerView, mCategory, mGoal, isGoalSelected);
+        mAdapter = new ChooseBehaviorsAdapter(this, this, mApplication, recyclerView, mCategory, mGoal, isGoalSelected());
         recyclerView.setAdapter(mAdapter);
-        if (mCategory != null && !mCategory.getColor().isEmpty()) {
+        if (mCategory != null && !mCategory.getColor().isEmpty()){
             mHeaderView.setBackgroundColor(Color.parseColor(mCategory.getColor()));
             mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }
 
         new BehaviorLoaderTask(this).execute(mApplication.getToken(), String.valueOf(mGoal.getId()));
+    }
+
+    private boolean isGoalSelected(){
+        return mApplication.getUserData().getGoals().contains(mGoal);
     }
 
     @Override
@@ -219,6 +220,13 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void addBehavior(Behavior behavior){
+        //If the goal isn't selected, select it
+        if (!isGoalSelected()){
+            addGoal();
+            mAdapter.disableAddGoalButton();
+        }
+
+        //Then select the behavior
         ArrayList<String> behaviors = new ArrayList<>();
         behaviors.add(String.valueOf(behavior.getId()));
         new AddBehaviorTask(this, this, behaviors).execute();
@@ -376,6 +384,6 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void goalsAdded(ArrayList<Goal> goals, Goal goal){
-
+        mApplication.addGoal(goal);
     }
 }

@@ -54,6 +54,7 @@ public class ChooseBehaviorsAdapter
     private List<Behavior> mBehaviors;
     private int mExpandedBehavior;
 
+    private Button mAddGoalCurrentButton;
     private boolean mIsGoalAdded;
 
 
@@ -244,6 +245,11 @@ public class ChooseBehaviorsAdapter
         }
     }
 
+    public void disableAddGoalButton(){
+        mIsGoalAdded = true;
+        mAddGoalCurrentButton.setVisibility(View.GONE);
+    }
+
     /**
      * Implementation of the RecyclerAdapterMethods interface.
      *
@@ -275,7 +281,7 @@ public class ChooseBehaviorsAdapter
                 }
 
                 holder.mHeaderWrapper.setVisibility(View.VISIBLE);
-                Log.d("CBA", mIsGoalAdded+"");
+                mAddGoalCurrentButton = holder.mAddGoal;
                 if (!mIsGoalAdded){
                     holder.mAddGoal.setVisibility(View.VISIBLE);
                 }
