@@ -154,6 +154,12 @@ public class NewMainActivity
         Log.d("MainFeed", ((CompassApplication)getApplication()).getUserData().getFeedData().getSuggestions().size()+"");
     }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+        mAdapter.notifyDataSetChanged();
+    }
+
     private void populateMenu(){
         CompassApplication app = (CompassApplication)getApplication();
         mMenu.removeAllMenuButtons();

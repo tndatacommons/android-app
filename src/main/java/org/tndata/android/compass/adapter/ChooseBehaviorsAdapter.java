@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -54,7 +53,7 @@ public class ChooseBehaviorsAdapter
     private List<Behavior> mBehaviors;
     private int mExpandedBehavior;
 
-    private Button mAddGoalCurrentButton;
+    private TextView mAddGoalCurrentButton;
     private boolean mIsGoalAdded;
 
 
@@ -370,7 +369,7 @@ public class ChooseBehaviorsAdapter
         //These are the views for the header-type card
         private View mHeaderWrapper;
         private TextView mHeader;
-        private Button mAddGoal;
+        private TextView mAddGoal;
 
         //These are the views for the behavior-type card
         private ImageView mIcon;
@@ -395,7 +394,7 @@ public class ChooseBehaviorsAdapter
 
             mHeaderWrapper = rootView.findViewById(R.id.choose_behavior_header_wrapper);
             mHeader = (TextView)rootView.findViewById(R.id.choose_behavior_header);
-            mAddGoal = (Button)rootView.findViewById(R.id.choose_behavior_add_goal);
+            mAddGoal = (TextView)rootView.findViewById(R.id.choose_behavior_add_goal);
 
             mIcon = (ImageView)rootView.findViewById(R.id.choose_behavior_icon);
             mTitle = (TextView)rootView.findViewById(R.id.choose_behavior_title);

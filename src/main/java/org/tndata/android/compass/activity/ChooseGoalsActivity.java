@@ -215,6 +215,8 @@ public class ChooseGoalsActivity
 
     @Override
     public void onGoalAddClicked(Goal goal){
+        mApplication.getUserData().addGoal(goal);
+
         // Save the user's selected goal via the API, and add it to the mApplication's collection.
         ArrayList<String> goalsToAdd = new ArrayList<>();
         goalsToAdd.add(String.valueOf(goal.getId()));

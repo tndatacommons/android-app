@@ -76,10 +76,10 @@ public class ChooseBehaviorsActivity
     private MenuItem mSearchItem;
     private SearchView mSearchView;
 
+    private Category mCategory;
     private Goal mGoal;
     private ChooseBehaviorsAdapter mAdapter;
     private View mHeaderView;
-    private Category mCategory = null;
 
 
     @Override
@@ -142,6 +142,15 @@ public class ChooseBehaviorsActivity
         }
 
         new BehaviorLoaderTask(this).execute(mApplication.getToken(), String.valueOf(mGoal.getId()));
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if (isGoalSelected()){
+            mAdapter.disableAddGoalButton();
+        }
+        mAdapter.notifyDataSetChanged();
     }
 
     private boolean isGoalSelected(){
@@ -213,6 +222,8 @@ public class ChooseBehaviorsActivity
     @Override
     public void addGoal(){
         //TODO
+        mGoal.setPrimaryCategory(mCategory);
+        mApplication.getUserData().addGoal(mGoal);
         ArrayList<String> ids = new ArrayList<>();
         ids.add(mGoal.getId()+"");
         new AddGoalTask(this, this, ids, mGoal).execute();
@@ -384,6 +395,6 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void goalsAdded(ArrayList<Goal> goals, Goal goal){
-        mApplication.addGoal(goal);
+        mApplication.getUserData().getGoal(goal).setMappingId(goal.getMappingId());
     }
 }

@@ -33,12 +33,15 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.task.ActionLoaderTask;
 import org.tndata.android.compass.task.AddActionTask;
+import org.tndata.android.compass.task.AddBehaviorTask;
+import org.tndata.android.compass.task.AddGoalTask;
 import org.tndata.android.compass.task.DeleteActionTask;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -49,6 +52,8 @@ public class ChooseActionsActivity
         extends AppCompatActivity
         implements
                 ActionLoaderTask.ActionLoaderListener,
+                AddGoalTask.AddGoalsTaskListener,
+                AddBehaviorTask.AddBehaviorsTaskListener,
                 AddActionTask.AddActionTaskListener,
                 DeleteActionTask.DeleteActionTaskListener,
                 ChooseActionsAdapter.ChooseActionsListener,
@@ -62,7 +67,9 @@ public class ChooseActionsActivity
     private MenuItem mSearchItem;
     private SearchView mSearchView;
 
+    private Category mCategory;
     private Goal mGoal;
+    private Behavior mBehavior;
     private ChooseActionsAdapter mAdapter;
     private View mHeaderView;
     private CompassApplication mApplication;
@@ -74,18 +81,18 @@ public class ChooseActionsActivity
         setContentView(R.layout.activity_choose_actions);
 
         mApplication = (CompassApplication)getApplication();
-        Behavior behavior = (Behavior)getIntent().getSerializableExtra("behavior");
+        mBehavior = (Behavior)getIntent().getSerializableExtra("behavior");
         mGoal = (Goal)getIntent().getSerializableExtra("goal");
-        Category category = (Category)getIntent().getSerializableExtra("category");
+        mCategory = (Category)getIntent().getSerializableExtra("category");
 
         List<Behavior> behaviors = mApplication.getUserData().getBehaviors();
-        int index = behaviors.indexOf(behavior);
+        int index = behaviors.indexOf(mBehavior);
         if (index != -1){
-            behavior = behaviors.get(index);
+            mBehavior = behaviors.get(index);
         }
 
         mToolbar = (Toolbar)findViewById(R.id.choose_actions_toolbar);
-        mToolbar.setTitle(behavior.getTitle());
+        mToolbar.setTitle(mBehavior.getTitle());
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null){
@@ -101,15 +108,15 @@ public class ChooseActionsActivity
         recyclerView.setLayoutManager(manager);
         recyclerView.setHasFixedSize(true);
 
-        mAdapter = new ChooseActionsAdapter(this, this, mApplication, recyclerView, behavior);
+        mAdapter = new ChooseActionsAdapter(this, this, mApplication, recyclerView, mBehavior);
 
         recyclerView.setAdapter(mAdapter);
-        if (category != null && !category.getColor().isEmpty()) {
-            mHeaderView.setBackgroundColor(Color.parseColor(category.getColor()));
-            mToolbar.setBackgroundColor(Color.parseColor(category.getColor()));
+        if (mCategory != null && !mCategory.getColor().isEmpty()) {
+            mHeaderView.setBackgroundColor(Color.parseColor(mCategory.getColor()));
+            mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }
 
-        new ActionLoaderTask(this).execute(mApplication.getToken(), String.valueOf(behavior.getId()));
+        new ActionLoaderTask(this).execute(mApplication.getToken(), String.valueOf(mBehavior.getId()));
     }
 
     @Override
@@ -160,6 +167,14 @@ public class ChooseActionsActivity
         return false;
     }
 
+    private boolean isGoalSelected(){
+        return mApplication.getUserData().getGoals().contains(mGoal);
+    }
+
+    private boolean isBehaviorSelected(){
+        return mApplication.getUserData().getBehaviors().contains(mBehavior);
+    }
+
     /**
      * Checks whether the provided string has one of the following formats, X being a number:
      * <p/>
@@ -206,6 +221,19 @@ public class ChooseActionsActivity
 
     @Override
     public void addAction(Action action){
+        if (!isGoalSelected()){
+            mGoal.setPrimaryCategory(mCategory);
+            mApplication.addGoal(mGoal);
+            ArrayList<String> ids = new ArrayList<>();
+            ids.add(mGoal.getId()+"");
+            new AddGoalTask(this, this, ids, mGoal).execute();
+        }
+        if (!isBehaviorSelected()){
+            mApplication.addBehavior(mBehavior);
+            ArrayList<String> behaviors = new ArrayList<>();
+            behaviors.add(String.valueOf(mBehavior.getId()));
+            new AddBehaviorTask(this, this, behaviors).execute();
+        }
         Toast.makeText(getApplicationContext(), getText(R.string.action_saving), Toast.LENGTH_SHORT).show();
         new AddActionTask(this, this, mGoal, action).execute();
     }
@@ -329,5 +357,18 @@ public class ChooseActionsActivity
             mToolbar.setBackground(color);
         }
         mHeaderView.setTranslationY(-offset*0.5f);
+    }
+
+    @Override
+    public void goalsAdded(ArrayList<Goal> goals, Goal goal){
+        mApplication.getUserData().getGoal(goal).setMappingId(goal.getMappingId());
+    }
+
+    @Override
+    public void behaviorsAdded(ArrayList<Behavior> behaviors){
+        if (behaviors.size() > 0){
+            Behavior behavior = behaviors.get(0);
+            mApplication.getUserData().getBehavior(behavior).setMappingId(behavior.getMappingId());
+        }
     }
 }

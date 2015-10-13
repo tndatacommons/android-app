@@ -32,13 +32,16 @@
                 android:paddingLeft="2dp"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
-            <Button
+            <TextView
                 android:id="@+id/choose_behavior_add_goal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
+                android:layout_margin="5dp"
                 android:visibility="gone"
-                android:text="Add goal" />
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/grow_primary"
+                android:text="I WANT THIS" />
 
         </LinearLayout>
 
