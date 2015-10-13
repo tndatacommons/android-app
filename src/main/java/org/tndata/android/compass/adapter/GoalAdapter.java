@@ -110,9 +110,8 @@ public class GoalAdapter extends RecyclerView.Adapter{
             holder.mIndicator.setValue(0);
             holder.mIndicator.setAutoTextSize(true);
             holder.mIndicator.setShowUnit(true);
-            holder.mIndicator.setValue(0);
             if (behavior.getProgress() != null){
-                holder.mIndicator.setValue(behavior.getProgress().getDailyActionsProgress());
+                holder.mIndicator.setValue(behavior.getProgress().getDailyActionsProgressPercent());
             }
             populate(holder, behavior);
         }

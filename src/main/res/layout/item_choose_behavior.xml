@@ -38,6 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:layout_margin="5dp"
+                android:paddingBottom="10dp"
                 android:visibility="gone"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/grow_primary"

@@ -102,7 +102,7 @@ public class GoalActivity
         indicator.setShowUnit(true);
         if (progress != null){
             Log.d("GoalActivity", "Progress ain't null, setting...");
-            indicator.setValueAnimated(0, progress.getActionsProgress(), 1500);
+            indicator.setValueAnimated(0, progress.getActionsProgressPercent(), 1500);
         }
 
         mTitle = (TextView)findViewById(R.id.goal_title);

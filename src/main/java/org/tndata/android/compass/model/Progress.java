@@ -22,14 +22,17 @@ public class Progress implements Serializable{
     private int daily_actions_total = 0;
     private int daily_actions_completed = 0;
     private float daily_action_progress = 0;
+    private int daily_action_progress_percent = 0;
 
     private int weekly_actions_total = 0;
     private int weekly_actions_completed = 0;
     private float weekly_action_progress = 0;
+    private int weekly_action_progress_percent = 0;
 
     private int actions_total = 0;
     private int actions_completed = 0;
     private float action_progress = 0;
+    private int action_progress_percent = 0;
 
     private String reported_on = "";
 
@@ -62,6 +65,10 @@ public class Progress implements Serializable{
         return weekly_action_progress;
     }
 
+    public int getWeeklyActionsProgressPercent(){
+        return weekly_action_progress_percent;
+    }
+
     public int getWeeklyActionsTotal(){
         return weekly_actions_total;
     }
@@ -74,6 +81,10 @@ public class Progress implements Serializable{
         return action_progress;
     }
 
+    public int getActionsProgressPercent(){
+        return action_progress_percent;
+    }
+
     public int getActionsTotal(){
         return actions_total;
     }
@@ -84,6 +95,10 @@ public class Progress implements Serializable{
 
     public float getDailyActionsProgress(){
         return daily_action_progress;
+    }
+
+    public int getDailyActionsProgressPercent(){
+        return daily_action_progress_percent;
     }
 
     public String getReportedOn(){
