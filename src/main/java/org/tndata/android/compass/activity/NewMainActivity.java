@@ -158,6 +158,7 @@ public class NewMainActivity
     protected void onResume(){
         super.onResume();
         mAdapter.notifyDataSetChanged();
+        mMenu.showMenuButton(false);
     }
 
     private void populateMenu(){
