@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/popup_action_did_it"
+        android:title="I did it"/>
+
+    <item
+        android:id="@+id/popup_action_later"
+        android:title="Later"/>
+
+    <item
+        android:id="@+id/popup_action_not_today"
+        android:title="Not today"/>
+
+    <item
+        android:id="@+id/popup_action_reschedule"
+        android:title="Reschedule"/>
+
+    <item
+        android:id="@+id/popup_action_remove"
+        android:title="Remove from my profile"/>
+
+</menu>

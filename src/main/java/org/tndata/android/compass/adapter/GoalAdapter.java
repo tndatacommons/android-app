@@ -216,7 +216,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
      */
     private void showPopup(View anchor, final int position){
         CompassPopupMenu popup = CompassPopupMenu.newInstance(mContext, anchor);
-        popup.getMenuInflater().inflate(R.menu.behavior_popup, popup.getMenu());
+        popup.getMenuInflater().inflate(R.menu.popup_behavior, popup.getMenu());
         popup.setOnMenuItemClickListener(new CompassPopupMenu.OnMenuItemClickListener(){
             public boolean onMenuItemClick(MenuItem item){
                 switch (item.getItemId()){

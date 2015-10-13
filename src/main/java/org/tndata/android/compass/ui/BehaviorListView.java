@@ -84,7 +84,7 @@ public class BehaviorListView extends LinearLayout {
         //Creating the instance of PopupMenu
         CompassPopupMenu popup = CompassPopupMenu.newInstance(mContext, mAddImageView);
         popup.getMenuInflater()
-                .inflate(R.menu.behavior_popup, popup.getMenu());
+                .inflate(R.menu.popup_behavior, popup.getMenu());
         popup.setOnMenuItemClickListener(new CompassPopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {

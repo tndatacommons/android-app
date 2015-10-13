@@ -12,107 +12,129 @@
         android:layout_height="wrap_content"
         android:padding="10dp" >
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:textColor="@color/dark_text_color"
-            android:textSize="16sp"
-            android:text="Up Next" />
-
         <LinearLayout
-            android:id="@+id/up_next_no_actions"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:visibility="gone" >
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="You have no activities selected for today." />
-
-            <TextView
-                android:id="@+id/up_next_select_actions"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/dark_text_color"
-                android:text="Select an activity to help you reach one of your goals." />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/up_next_content"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="90dp"
-                android:layout_height="wrap_content">
-
-                <at.grabner.circleprogress.CircleProgressView
-                    xmlns:progress="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/up_next_indicator"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
-                    progress:barColor="#00796B"
-                    progress:barWidth="10dp"
-                    progress:contourSize="0dp"
-                    progress:maxValue="100"
-                    progress:rimColor="#B2DFDB"
-                    progress:rimWidth="10dp"
-                    progress:unit="%"
-                    progress:seekMode="false" />
-
-                <org.tndata.android.compass.ui.FontFitTextView
-                    android:id="@+id/up_next_indicator_caption"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="vertical"
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp" >
+                android:layout_marginRight="5dp"
+                android:textColor="@color/dark_text_color"
+                android:textSize="16sp"
+                android:text="Up Next" />
+
+            <ImageView
+                android:id="@+id/up_next_overflow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:src="@drawable/ic_more_vert_black_18dp" />
+
+        </LinearLayout>
+
+        <!-- This relative prevents the card from expanding more than required due to Views
+                being placed inside a LinearLayout -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <LinearLayout
+                android:id="@+id/up_next_no_actions"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:visibility="gone" >
 
                 <TextView
-                    android:id="@+id/up_next_action"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="You have no activities selected for today." />
+
+                <TextView
+                    android:id="@+id/up_next_select_actions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/dark_text_color"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/up_next_goal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/dark_text_color"
-                    android:textSize="16sp"
-                    android:textStyle="italic" />
-
-                <TextView
-                    android:id="@+id/up_next_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:textColor="@color/secondary_text_color"
-                    android:textSize="15sp" />
+                    android:text="Select an activity to help you reach one of your goals." />
 
             </LinearLayout>
-        </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/up_next_content"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content">
+
+                    <at.grabner.circleprogress.CircleProgressView
+                        xmlns:progress="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/up_next_indicator"
+                        android:layout_width="90dp"
+                        android:layout_height="90dp"
+                        progress:barColor="#00796B"
+                        progress:barWidth="10dp"
+                        progress:contourSize="0dp"
+                        progress:maxValue="100"
+                        progress:rimColor="#B2DFDB"
+                        progress:rimWidth="10dp"
+                        progress:unit="%"
+                        progress:seekMode="false" />
+
+                    <org.tndata.android.compass.ui.FontFitTextView
+                        android:id="@+id/up_next_indicator_caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp" >
+
+                    <TextView
+                        android:id="@+id/up_next_action"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/dark_text_color"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/up_next_goal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/dark_text_color"
+                        android:textSize="16sp"
+                        android:textStyle="italic" />
+
+                    <TextView
+                        android:id="@+id/up_next_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:textColor="@color/secondary_text_color"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>

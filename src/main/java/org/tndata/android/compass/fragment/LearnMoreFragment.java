@@ -294,7 +294,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
             popup.getMenuInflater()
                     .inflate(R.menu.menu_action_popup_chooser, popup.getMenu());
         } else {
-            popup.getMenuInflater().inflate(R.menu.behavior_popup, popup.getMenu());
+            popup.getMenuInflater().inflate(R.menu.popup_behavior, popup.getMenu());
         }
 
         popup.setOnMenuItemClickListener(new CompassPopupMenu.OnMenuItemClickListener() {

@@ -1,6 +1,7 @@
 package org.tndata.android.compass.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
@@ -9,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -20,12 +22,19 @@ import android.widget.Toast;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.service.CompleteActionService;
+import org.tndata.android.compass.task.DeleteActionTask;
+import org.tndata.android.compass.task.DeleteBehaviorTask;
+import org.tndata.android.compass.ui.CompassPopupMenu;
 import org.tndata.android.compass.ui.FontFitTextView;
 import org.tndata.android.compass.util.CompassUtil;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import at.grabner.circleprogress.CircleProgressView;
 import at.grabner.circleprogress.TextMode;
@@ -192,12 +201,14 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         else if (isUpNextPosition(position)){
             UpNextHolder holder = (UpNextHolder)rawHolder;
             if (!hasUpNextAction()){
+                holder.mOverflow.setVisibility(View.GONE);
                 holder.mNoActionsContainer.setVisibility(View.VISIBLE);
                 holder.mContentContainer.setVisibility(View.GONE);
                 holder.itemView.setOnClickListener(holder);
             }
             else{
                 Action action = mUserData.getFeedData().getNextAction();
+                holder.mOverflow.setVisibility(View.VISIBLE);
                 holder.mNoActionsContainer.setVisibility(View.GONE);
                 holder.mContentContainer.setVisibility(View.VISIBLE);
                 holder.itemView.setOnClickListener(null);
@@ -361,9 +372,119 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         view.setCardBackgroundColor(mContext.getResources().getColor(R.color.card_pre_l_background));
     }
 
+    /**
+     * Display the popup menu for a specific goal.
+     *
+     * @param anchor the view it should be anchored to.
+     * @param position the position of the view.
+     */
+    private void showActionPopup(View anchor, final int position){
+        final CompassPopupMenu popup = CompassPopupMenu.newInstance(mContext, anchor);
+        popup.getMenuInflater().inflate(R.menu.popup_action, popup.getMenu());
+        popup.setOnMenuItemClickListener(new CompassPopupMenu.OnMenuItemClickListener(){
+            public boolean onMenuItemClick(MenuItem item){
+                switch (item.getItemId()){
+                    case R.id.popup_action_did_it:
+                        if (position == getUpNextPosition()){
+                            didIt(mUserData.getFeedData().getNextAction());
+                            replaceUpNext();
+                        }
+                        else{
+                            int actionPosition = getActionPosition(position);
+                            didIt(mUserData.getFeedData().getUpcomingActions().remove(actionPosition));
+                            removeActionFromFeed(actionPosition);
+                        }
+                        break;
+
+                    case R.id.popup_action_later:
+                    case R.id.popup_action_not_today:
+                    case R.id.popup_action_reschedule:
+                        break;
+
+                    case R.id.popup_action_remove:
+                        if (position == getUpNextPosition()){
+                            removeAction(mUserData.getFeedData().getNextAction());
+                            replaceUpNext();
+                        }
+                        else{
+                            int actionPosition = getActionPosition(position);
+                            removeAction(mUserData.getFeedData().getUpcomingActions().remove(actionPosition));
+                            removeActionFromFeed(actionPosition);
+                        }
+                        break;
+                }
+                return true;
+            }
+        });
+        popup.show();
+    }
+
+    private void didIt(Action action){
+        Intent completeAction = new Intent(mContext, CompleteActionService.class)
+                .putExtra(CompleteActionService.ACTION_MAPPING_ID_KEY, action.getMappingId());
+        mContext.startService(completeAction);
+    }
+
+    private int getActionPosition(int adapterPosition){
+        return (adapterPosition-(getUpcomingHeaderPosition()+2))/2;
+    }
+
+    private void removeAction(Action action){
+        mUserData.removeAction(action);
+        new DeleteActionTask(mContext, null, action.getMappingId()+"").execute();
+    }
+
+    private void removeActionFromFeed(int position){
+        //Update the relevant action cards
+        if (mUserData.getFeedData().getUpcomingActions().isEmpty()){
+            int headerPosition = getUpcomingHeaderPosition();
+            notifyItemRemoved(headerPosition);
+            notifyItemRemoved(headerPosition+1);
+            notifyItemRemoved(headerPosition+2);
+        }
+        else{
+            if (position == mUserData.getFeedData().getUpcomingActions().size()){
+                notifyItemRemoved(position-1);
+                notifyItemRemoved(position);
+            }
+            else{
+                notifyItemRemoved(position);
+                notifyItemRemoved(position+1);
+            }
+        }
+    }
+
+    private void replaceUpNext(){
+        if (mUserData.getFeedData().getUpcomingActions().isEmpty()){
+            //If there are no upcoming actions, net the up next action to null
+            mUserData.getFeedData().setNextAction(null);
+        }
+        else{
+            //Otherwise, remove the next from the queue and set it as next
+            Action action = mUserData.getFeedData().getUpcomingActions().remove(0);
+            mUserData.getFeedData().setNextAction(action);
+
+            //Update the relevant action cards
+            int headerPosition = getUpcomingHeaderPosition();
+            if (mUserData.getFeedData().getUpcomingActions().isEmpty()){
+                notifyItemRemoved(headerPosition);
+                notifyItemRemoved(headerPosition+1);
+                notifyItemRemoved(headerPosition+2);
+            }
+            else{
+                notifyItemRemoved(headerPosition+2);
+                notifyItemRemoved(headerPosition+3);
+            }
+        }
+
+        //Update the up next card
+        notifyItemChanged(getUpNextPosition());
+    }
+
     private class UpNextHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private View mNoActionsContainer;
         private View mContentContainer;
+        private ImageView mOverflow;
         private CircleProgressView mIndicator;
         private FontFitTextView mIndicatorCaption;
         private TextView mAction;
@@ -376,12 +497,14 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
             mNoActionsContainer = itemView.findViewById(R.id.up_next_no_actions);
             mContentContainer = itemView.findViewById(R.id.up_next_content);
+            mOverflow = (ImageView)itemView.findViewById(R.id.up_next_overflow);
             mIndicator = (CircleProgressView)itemView.findViewById(R.id.up_next_indicator);
             mIndicatorCaption = (FontFitTextView)itemView.findViewById(R.id.up_next_indicator_caption);
             mAction = (TextView)itemView.findViewById(R.id.up_next_action);
             mGoal = (TextView)itemView.findViewById(R.id.up_next_goal);
             mTime = (TextView)itemView.findViewById(R.id.up_next_time);
 
+            mOverflow.setOnClickListener(this);
             mAction.setOnClickListener(this);
             mGoal.setOnClickListener(this);
             mTime.setOnClickListener(this);
@@ -392,6 +515,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             Action action = mUserData.getFeedData().getNextAction();
             mSelectedItem = getAdapterPosition();
             switch (view.getId()){
+                case R.id.up_next_overflow:
+                    showActionPopup(view, getAdapterPosition());
+                    break;
+
                 case R.id.up_next_action:
                     mListener.onActionSelected(action);
                     break;

@@ -217,7 +217,7 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
 
         //Inflating the Popup using xml file
         popup.getMenuInflater()
-                .inflate(R.menu.behavior_popup, popup.getMenu());
+                .inflate(R.menu.popup_behavior, popup.getMenu());
 
         //registering popup with OnMenuItemClickListener
         popup.setOnMenuItemClickListener(new CompassPopupMenu.OnMenuItemClickListener() {
