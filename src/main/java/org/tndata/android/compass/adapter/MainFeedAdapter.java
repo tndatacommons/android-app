@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.activity.TriggerActivity;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Goal;
@@ -39,6 +40,9 @@ import java.util.List;
 import at.grabner.circleprogress.CircleProgressView;
 import at.grabner.circleprogress.TextMode;
 
+
+//TODO this class is getting way too big to be comfortable. Try to extract generic
+//TODO  functions to utility.
 
 /**
  * Created by isma on 9/22/15.
@@ -398,7 +402,18 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
                     case R.id.popup_action_later:
                     case R.id.popup_action_not_today:
+
+                        break;
+
                     case R.id.popup_action_reschedule:
+                        Action action;
+                        if (position == getUpNextPosition()){
+                            action = mUserData.getFeedData().getNextAction();
+                        }
+                        else{
+                            action = mUserData.getFeedData().getUpcomingActions().get(getActionPosition(position));
+                        }
+                        mListener.onTriggerSelected(action);
                         break;
 
                     case R.id.popup_action_remove:
@@ -413,7 +428,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                         }
                         break;
                 }
-                return true;
+                        return true;
             }
         });
         popup.show();
