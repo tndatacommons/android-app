@@ -3,22 +3,18 @@
 
     <item
         android:id="@+id/popup_action_did_it"
-        android:title="I did it"/>
-
-    <item
-        android:id="@+id/popup_action_later"
-        android:title="Later"/>
-
-    <item
-        android:id="@+id/popup_action_not_today"
-        android:title="Not today"/>
+        android:title="I did it" />
 
     <item
         android:id="@+id/popup_action_reschedule"
-        android:title="Reschedule"/>
+        android:title="Reschedule" />
 
     <item
         android:id="@+id/popup_action_remove"
-        android:title="Remove from my profile"/>
+        android:title="Remove from my profile" />
+
+    <item
+        android:id="@+id/popup_action_view_goal"
+        android:title="View goal" />
 
 </menu>

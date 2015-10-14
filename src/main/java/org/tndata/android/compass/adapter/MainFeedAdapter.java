@@ -129,7 +129,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 position > getUpcomingHeaderPosition() && position <= getUpcomingLastItemPosition();
     }
 
-    private int getMyGoalsHeaderPosition(){
+    public int getMyGoalsHeaderPosition(){
         //If there are upcoming actions then my goals are right after
         if (hasUpcoming()){
             return getUpcomingLastItemPosition() + 1;
@@ -160,7 +160,14 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
         else if (viewType == TYPE_WELCOME){
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            return new RecyclerView.ViewHolder(inflater.inflate(R.layout.card_welcome, parent, false)){};
+            View view = inflater.inflate(R.layout.card_welcome, parent, false);
+            view.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v){
+                    mListener.onInstructionsSelected();
+                }
+            });
+            return new RecyclerView.ViewHolder(view){};
         }
         else if (viewType == TYPE_UP_NEXT){
             LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -220,7 +227,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 if (action.getPrimaryGoal() != null){
                     String goalTitle = action.getPrimaryGoal().getTitle().substring(0, 1).toLowerCase();
                     goalTitle += action.getPrimaryGoal().getTitle().substring(1);
-                    holder.mGoal.setText("To help me " + goalTitle);
+                    holder.mGoal.setText("To " + goalTitle);
                 }
                 else{
                     holder.mGoal.setText("");
@@ -258,7 +265,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             if (action.getPrimaryGoal() != null){
                 String goalTitle = action.getPrimaryGoal().getTitle().substring(0, 1).toLowerCase();
                 goalTitle += action.getPrimaryGoal().getTitle().substring(1);
-                holder.mGoal.setText("To help me " + goalTitle);
+                holder.mGoal.setText("To " + goalTitle);
             }
             else{
                 holder.mGoal.setText("");
@@ -269,7 +276,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             HeaderHolder holder = (HeaderHolder)rawHolder;
             ((CardView)holder.itemView).setRadius(0);
             if (mUserData.getGoals().isEmpty()){
-                holder.mTitle.setText("Suggested goals");
+                holder.mTitle.setText("Recommended for you");
             }
             else{
                 holder.mTitle.setText("My goals");
@@ -399,11 +406,6 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                         }
                         break;
 
-                    case R.id.popup_action_later:
-                    case R.id.popup_action_not_today:
-
-                        break;
-
                     case R.id.popup_action_reschedule:
                         Action action;
                         if (position == getUpNextPosition()){
@@ -426,8 +428,22 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                             removeActionFromFeed(actionPosition);
                         }
                         break;
+
+                    case R.id.popup_action_view_goal:
+                        Action selectedAction;
+                        if (position == getUpNextPosition()){
+                            selectedAction = mUserData.getFeedData().getNextAction();
+                        }
+                        else{
+                            selectedAction = mUserData.getFeedData().getUpcomingActions().get(getActionPosition(position));
+                        }
+                        //TODO this is another workaround
+                        if (selectedAction.getPrimaryGoal() != null){
+                            mListener.onGoalSelected(selectedAction.getPrimaryGoal());
+                        }
+                        break;
                 }
-                        return true;
+                return true;
             }
         });
         popup.show();
@@ -514,38 +530,25 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             mGoal = (TextView)itemView.findViewById(R.id.up_next_goal);
             mTime = (TextView)itemView.findViewById(R.id.up_next_time);
 
+            itemView.setOnClickListener(this);
             mOverflow.setOnClickListener(this);
-            mAction.setOnClickListener(this);
-            mGoal.setOnClickListener(this);
-            mTime.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view){
-            Action action = mUserData.getFeedData().getNextAction();
             mSelectedItem = getAdapterPosition();
             switch (view.getId()){
                 case R.id.up_next_overflow:
                     showActionPopup(view, getAdapterPosition());
                     break;
 
-                case R.id.up_next_action:
-                    mListener.onActionSelected(action);
-                    break;
-
-                case R.id.up_next_goal:
-                    //TODO this is a workaround
-                    if (action.getPrimaryGoal() != null){
-                        mListener.onGoalSelected(action.getPrimaryGoal());
-                    }
-                    break;
-
-                case R.id.up_next_time:
-                    mListener.onTriggerSelected(action);
-                    break;
-
                 default:
-                    Toast.makeText(mContext, "No actions, card clicked", Toast.LENGTH_SHORT).show();
+                    if (hasUpNextAction()){
+                        mListener.onActionSelected(mUserData.getFeedData().getNextAction());
+                    }
+                    else{
+                        //mListener.onInstructionsSelected();
+                    }
             }
         }
     }
@@ -588,10 +591,8 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             mGoal = (TextView)itemView.findViewById(R.id.action_goal);
             mTime = (TextView)itemView.findViewById(R.id.action_time);
 
+            itemView.setOnClickListener(this);
             mOverflow.setOnClickListener(this);
-            mAction.setOnClickListener(this);
-            mGoal.setOnClickListener(this);
-            mTime.setOnClickListener(this);
         }
 
         @Override
@@ -604,20 +605,8 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                     showActionPopup(view, getAdapterPosition());
                     break;
 
-                case R.id.action_title:
+                default:
                     mListener.onActionSelected(action);
-                    break;
-
-                case R.id.action_goal:
-                    //TODO this is another workaround
-                    if (action.getPrimaryGoal() != null){
-                        mListener.onGoalSelected(action.getPrimaryGoal());
-                    }
-                    break;
-
-                case R.id.action_time:
-                    mListener.onTriggerSelected(action);
-                    break;
             }
         }
     }
@@ -679,28 +668,24 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             int position = parent.getChildLayoutPosition(view);
 
             if (mAdapter.isUpcomingHeaderPosition(position) || mAdapter.isMyGoalsHeaderPosition(position)){
-                Log.d("MainFeedSpacing", "position: " + position + ", header");
                 outRect.top = mMargin / 2;
                 outRect.left = mMargin;
                 outRect.bottom = 0;
                 outRect.right = mMargin;
             }
             else if (mAdapter.isUpcomingLastItemPosition(position) || mAdapter.getMyGoalsLastItemPosition() == position){
-                Log.d("MainFeedSpacing", "position: " + position + ", last");
                 outRect.top = 0;
                 outRect.left = mMargin;
                 outRect.bottom = mMargin/2;
                 outRect.right = mMargin;
             }
             else if (mAdapter.isUpcomingInnerPosition(position) || mAdapter.isMyGoalsInnerPosition(position)){
-                Log.d("MainFeedSpacing", "position: " + position + ", inner");
                 outRect.top = 0;
                 outRect.left = mMargin;
                 outRect.bottom = 0;
                 outRect.right = mMargin;
             }
             else{
-                Log.d("MainFeedSpacing", "position: " + position + ", other");
                 outRect.top = mMargin / 2;
                 outRect.left = mMargin;
                 outRect.bottom = mMargin / 2;
@@ -710,6 +695,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     public interface MainFeedAdapterListener{
+        void onInstructionsSelected();
         void onGoalSelected(Goal goal);
         void onActionSelected(Action action);
         void onTriggerSelected(Action action);

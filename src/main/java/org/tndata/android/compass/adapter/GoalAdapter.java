@@ -56,6 +56,8 @@ public class GoalAdapter extends RecyclerView.Adapter{
 
     private int mSelectedBehaviorPosition;
 
+    private boolean mIsContentPackaged;
+
 
     /**
      * Constructor.
@@ -77,6 +79,11 @@ public class GoalAdapter extends RecyclerView.Adapter{
         mHolderPool = new Stack<>();
 
         mSelectedBehaviorPosition = -1;
+
+        mIsContentPackaged = false;
+        if (mGoal.getPrimaryCategory() != null){
+            mIsContentPackaged = mGoal.getPrimaryCategory().isPackagedContent();
+        }
 
         Log.d(TAG, mGoal.getBehaviors().size()+"");
     }
@@ -273,7 +280,12 @@ public class GoalAdapter extends RecyclerView.Adapter{
             mTitle = (TextView)itemView.findViewById(R.id.behavior_title);
             mActionContainer = (LinearLayout)itemView.findViewById(R.id.behavior_actions);
 
-            itemView.findViewById(R.id.behavior_overflow).setOnClickListener(this);
+            if (mIsContentPackaged){
+                itemView.findViewById(R.id.behavior_overflow).setVisibility(View.INVISIBLE);
+            }
+            else{
+                itemView.findViewById(R.id.behavior_overflow).setOnClickListener(this);
+            }
             mTitle.setOnClickListener(this);
         }
 

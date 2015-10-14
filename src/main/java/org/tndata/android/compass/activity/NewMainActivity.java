@@ -385,6 +385,11 @@ public class NewMainActivity
     }
 
     @Override
+    public void onInstructionsSelected(){
+        ((LinearLayoutManager)mFeed.getLayoutManager()).scrollToPositionWithOffset(mAdapter.getMyGoalsHeaderPosition(), 10);
+    }
+
+    @Override
     public void onGoalSelected(Goal goal){
         if (!((CompassApplication)getApplication()).getUserData().getGoals().isEmpty()){
             startActivity(new Intent(this, GoalActivity.class).putExtra(GoalActivity.GOAL_KEY, goal));
