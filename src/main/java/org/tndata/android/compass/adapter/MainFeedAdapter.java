@@ -9,6 +9,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,6 +63,8 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     private MainFeedAdapterListener mListener;
     private UserData mUserData;
 
+    private MainFeedPadding mMainFeedPadding;
+
     private int mSelectedItem;
 
 
@@ -69,6 +72,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         mContext = context;
         mListener = listener;
         mUserData = ((CompassApplication)mContext.getApplicationContext()).getUserData();
+        mMainFeedPadding = null;
     }
 
     private boolean hasWelcomeCard(){
@@ -218,6 +222,9 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                     goalTitle += action.getPrimaryGoal().getTitle().substring(1);
                     holder.mGoal.setText("To help me " + goalTitle);
                 }
+                else{
+                    holder.mGoal.setText("");
+                }
                 holder.mTime.setText(action.getTrigger().getFormattedTime().toLowerCase());
                 holder.mIndicator.setAutoTextSize(true);
                 holder.mIndicator.setValue(mUserData.getFeedData().getProgress());
@@ -252,6 +259,9 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 String goalTitle = action.getPrimaryGoal().getTitle().substring(0, 1).toLowerCase();
                 goalTitle += action.getPrimaryGoal().getTitle().substring(1);
                 holder.mGoal.setText("To help me " + goalTitle);
+            }
+            else{
+                holder.mGoal.setText("");
             }
             holder.mTime.setText(action.getTrigger().getFormattedTime().toLowerCase());
         }
@@ -328,7 +338,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     public MainFeedPadding getMainFeedPadding(){
-        return new MainFeedPadding(mContext, this);
+        if (mMainFeedPadding == null){
+            mMainFeedPadding = new MainFeedPadding(mContext, this);
+        }
+        return mMainFeedPadding;
     }
 
     public void updateSelectedItem(){
@@ -445,6 +458,11 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         else{
             notifyItemRemoved(position);
         }
+
+        notifyItemChanged(getUpcomingLastItemPosition()-1);
+        notifyItemChanged(getUpcomingLastItemPosition());
+        notifyItemChanged(getUpcomingLastItemPosition()+1);
+        notifyItemChanged(getMyGoalsLastItemPosition());
     }
 
     private void replaceUpNext(){
@@ -462,7 +480,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             if (mUserData.getFeedData().getUpcomingActions().isEmpty()){
                 notifyItemRemoved(headerPosition);
             }
-            notifyItemRemoved(headerPosition+1);
+            notifyItemRemoved(headerPosition + 1);
 
             notifyItemChanged(getUpcomingLastItemPosition()+1);
             notifyItemChanged(getUpcomingLastItemPosition());
@@ -529,7 +547,6 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 default:
                     Toast.makeText(mContext, "No actions, card clicked", Toast.LENGTH_SHORT).show();
             }
-
         }
     }
 
@@ -557,6 +574,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     private class ActionHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private ImageView mOverflow;
         private TextView mAction;
         private TextView mGoal;
         private TextView mTime;
@@ -565,10 +583,12 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         public ActionHolder(View itemView){
             super(itemView);
 
+            mOverflow = (ImageView)itemView.findViewById(R.id.action_overflow);
             mAction = (TextView)itemView.findViewById(R.id.action_title);
             mGoal = (TextView)itemView.findViewById(R.id.action_goal);
             mTime = (TextView)itemView.findViewById(R.id.action_time);
 
+            mOverflow.setOnClickListener(this);
             mAction.setOnClickListener(this);
             mGoal.setOnClickListener(this);
             mTime.setOnClickListener(this);
@@ -577,9 +597,13 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         @Override
         public void onClick(View view){
             mSelectedItem = getAdapterPosition();
-            int index = (getAdapterPosition()-getUpcomingHeaderPosition()-1)/2;
+            int index = getAdapterPosition()-(getUpcomingHeaderPosition()+1);
             Action action = mUserData.getFeedData().getUpcomingActions().get(index);
             switch (view.getId()){
+                case R.id.action_overflow:
+                    showActionPopup(view, getAdapterPosition());
+                    break;
+
                 case R.id.action_title:
                     mListener.onActionSelected(action);
                     break;
@@ -617,11 +641,12 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         @Override
         public void onClick(View view){
             Goal goal;
+            int position = getAdapterPosition()-(getMyGoalsHeaderPosition()+1);
             if (mUserData.getGoals().isEmpty()){
-                goal = mUserData.getFeedData().getSuggestions().get((getAdapterPosition()-getMyGoalsHeaderPosition()-1)/2);
+                goal = mUserData.getFeedData().getSuggestions().get(position);
             }
             else{
-                goal = mUserData.getGoals().get((getAdapterPosition()-getMyGoalsHeaderPosition()-1)/2);
+                goal = mUserData.getGoals().get(position);
             }
             mListener.onGoalSelected(goal);
         }
@@ -654,24 +679,28 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             int position = parent.getChildLayoutPosition(view);
 
             if (mAdapter.isUpcomingHeaderPosition(position) || mAdapter.isMyGoalsHeaderPosition(position)){
+                Log.d("MainFeedSpacing", "position: " + position + ", header");
                 outRect.top = mMargin / 2;
                 outRect.left = mMargin;
                 outRect.bottom = 0;
                 outRect.right = mMargin;
             }
             else if (mAdapter.isUpcomingLastItemPosition(position) || mAdapter.getMyGoalsLastItemPosition() == position){
+                Log.d("MainFeedSpacing", "position: " + position + ", last");
                 outRect.top = 0;
                 outRect.left = mMargin;
                 outRect.bottom = mMargin/2;
                 outRect.right = mMargin;
             }
             else if (mAdapter.isUpcomingInnerPosition(position) || mAdapter.isMyGoalsInnerPosition(position)){
+                Log.d("MainFeedSpacing", "position: " + position + ", inner");
                 outRect.top = 0;
                 outRect.left = mMargin;
                 outRect.bottom = 0;
                 outRect.right = mMargin;
             }
             else{
+                Log.d("MainFeedSpacing", "position: " + position + ", other");
                 outRect.top = mMargin / 2;
                 outRect.left = mMargin;
                 outRect.bottom = mMargin / 2;

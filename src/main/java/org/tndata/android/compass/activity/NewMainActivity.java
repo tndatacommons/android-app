@@ -443,11 +443,17 @@ public class NewMainActivity
 
     @Override
     public void userDataLoaded(@Nullable UserData userData){
-         if (userData != null){
-             mApplication.setUserData(userData);
-             mAdapter = new MainFeedAdapter(this, this);
-             mFeed.setAdapter(mAdapter);
-         }
+        if (userData != null){
+            mApplication.setUserData(userData);
+
+            //Remove the previous item decoration before recreating the adapter
+            mFeed.removeItemDecoration(mAdapter.getMainFeedPadding());
+
+            //Recrete the adapter and set the new decoration
+            mAdapter = new MainFeedAdapter(this, this);
+            mFeed.setAdapter(mAdapter);
+            mFeed.addItemDecoration(mAdapter.getMainFeedPadding());
+        }
         if (mRefresh.isRefreshing()){
             mRefresh.setRefreshing(false);
         }
