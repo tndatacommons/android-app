@@ -53,10 +53,9 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     private static final int TYPE_UP_NEXT = 2;
     private static final int TYPE_FEEDBACK = 3;
     private static final int TYPE_HEADER = 4;
-    private static final int TYPE_SEPARATOR = 5;
-    private static final int TYPE_ACTION = 6;
-    private static final int TYPE_GOAL = 7;
-    private static final int TYPE_OTHER = 8;
+    private static final int TYPE_ACTION = 5;
+    private static final int TYPE_GOAL = 6;
+    private static final int TYPE_OTHER = 7;
 
 
     private Context mContext;
@@ -114,7 +113,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     private int getUpcomingLastItemPosition(){
-        return getUpcomingHeaderPosition()+2*mUserData.getFeedData().getUpcomingActions().size();
+        return getUpcomingHeaderPosition()+mUserData.getFeedData().getUpcomingActions().size();
     }
 
     private boolean isUpcomingLastItemPosition(int position){
@@ -141,9 +140,9 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
     private int getMyGoalsLastItemPosition(){
         if (mUserData.getGoals().isEmpty()){
-            return getMyGoalsHeaderPosition()+2*mUserData.getFeedData().getSuggestions().size();
+            return getMyGoalsHeaderPosition()+mUserData.getFeedData().getSuggestions().size();
         }
-        return getMyGoalsHeaderPosition()+2*mUserData.getGoals().size();
+        return getMyGoalsHeaderPosition()+mUserData.getGoals().size();
     }
 
     private boolean isMyGoalsInnerPosition(int position){
@@ -170,10 +169,6 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         else if (viewType == TYPE_HEADER){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             return new HeaderHolder(inflater.inflate(R.layout.card_header, parent, false));
-        }
-        else if (viewType == TYPE_SEPARATOR){
-            LayoutInflater inflater = LayoutInflater.from(mContext);
-            return new RecyclerView.ViewHolder(inflater.inflate(R.layout.card_separator, parent, false)){};
         }
         else if (viewType == TYPE_ACTION){
             LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -247,19 +242,18 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
         else if (isUpcomingInnerPosition(position)){
             ((CardView)rawHolder.itemView).setRadius(0);
-            if (position%2 == getUpcomingHeaderPosition()%2){
-                ActionHolder holder = (ActionHolder)rawHolder;
-                int actionPosition = (position - getUpcomingHeaderPosition() - 2) / 2;
-                Action action = mUserData.getFeedData().getUpcomingActions().get(actionPosition);
-                holder.mAction.setText(action.getTitle());
-                //TODO this shouldn't be happening
-                if (action.getPrimaryGoal() != null){
-                    String goalTitle = action.getPrimaryGoal().getTitle().substring(0, 1).toLowerCase();
-                    goalTitle += action.getPrimaryGoal().getTitle().substring(1);
-                    holder.mGoal.setText("To help me " + goalTitle);
-                }
-                holder.mTime.setText(action.getTrigger().getFormattedTime().toLowerCase());
+
+            ActionHolder holder = (ActionHolder)rawHolder;
+            int actionPosition = position - getUpcomingHeaderPosition() - 1;
+            Action action = mUserData.getFeedData().getUpcomingActions().get(actionPosition);
+            holder.mAction.setText(action.getTitle());
+            //TODO this shouldn't be happening
+            if (action.getPrimaryGoal() != null){
+                String goalTitle = action.getPrimaryGoal().getTitle().substring(0, 1).toLowerCase();
+                goalTitle += action.getPrimaryGoal().getTitle().substring(1);
+                holder.mGoal.setText("To help me " + goalTitle);
             }
+            holder.mTime.setText(action.getTrigger().getFormattedTime().toLowerCase());
         }
         else if (isMyGoalsHeaderPosition(position)){
             HeaderHolder holder = (HeaderHolder)rawHolder;
@@ -273,29 +267,28 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
         else if (isMyGoalsInnerPosition(position)){
             ((CardView)rawHolder.itemView).setRadius(0);
-            if (position%2 == getMyGoalsHeaderPosition()%2){
-                GoalHolder holder = (GoalHolder)rawHolder;
-                int goalPosition = (position - getMyGoalsHeaderPosition() - 2) / 2;
-                Goal goal;
-                if (mUserData.getGoals().isEmpty()){
-                    goal = mUserData.getFeedData().getSuggestions().get(goalPosition);
+
+            GoalHolder holder = (GoalHolder)rawHolder;
+            int goalPosition = position - getMyGoalsHeaderPosition() - 1;
+            Goal goal;
+            if (mUserData.getGoals().isEmpty()){
+                goal = mUserData.getFeedData().getSuggestions().get(goalPosition);
+            }
+            else{
+                goal = mUserData.getGoals().get(goalPosition);
+
+                GradientDrawable gradientDrawable = (GradientDrawable)holder.mIconContainer.getBackground();
+                gradientDrawable.setColor(Color.parseColor(goal.getPrimaryCategory().getColor()));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+                    holder.mIconContainer.setBackground(gradientDrawable);
                 }
                 else{
-                    goal = mUserData.getGoals().get(goalPosition);
-
-                    GradientDrawable gradientDrawable = (GradientDrawable)holder.mIconContainer.getBackground();
-                    gradientDrawable.setColor(Color.parseColor(goal.getPrimaryCategory().getColor()));
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-                        holder.mIconContainer.setBackground(gradientDrawable);
-                    }
-                    else{
-                        holder.mIconContainer.setBackgroundDrawable(gradientDrawable);
-                    }
+                    holder.mIconContainer.setBackgroundDrawable(gradientDrawable);
                 }
-
-                goal.loadIconIntoView(mContext, holder.mIcon);
-                holder.mTitle.setText(goal.getTitle());
             }
+
+            goal.loadIconIntoView(mContext, holder.mIcon);
+            holder.mTitle.setText(goal.getTitle());
         }
     }
 
@@ -325,20 +318,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             return TYPE_HEADER;
         }
         if (isUpcomingInnerPosition(position)){
-            if (position%2 == getUpcomingHeaderPosition()%2){
-                return TYPE_ACTION;
-            }
-            else{
-                return TYPE_SEPARATOR;
-            }
+            return TYPE_ACTION;
         }
         if (isMyGoalsInnerPosition(position)){
-            if (position%2 == getMyGoalsHeaderPosition()%2){
-                return TYPE_GOAL;
-            }
-            else{
-                return TYPE_SEPARATOR;
-            }
+            return TYPE_GOAL;
         }
 
         return TYPE_OTHER;
@@ -356,18 +339,21 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
     public void deleteSelectedItem(){
         if (isUpcomingInnerPosition(mSelectedItem)){
-            int index = (mSelectedItem-getUpcomingHeaderPosition()-1)/2;
+            //Update the data set
+            int index = mSelectedItem - (getUpcomingHeaderPosition()+1);
             mUserData.getFeedData().getUpcomingActions().remove(index);
+
+            //Animate the removal
             if (!hasUpcoming()){
-                notifyItemRemoved(mSelectedItem-2);
+                notifyItemRemoved(mSelectedItem-1);
             }
-            notifyItemRemoved(mSelectedItem - 1);
             notifyItemRemoved(mSelectedItem);
             mSelectedItem = -1;
+
+            //Update the items at the end of the list (fixes card splitting problem)
             notifyItemChanged(getUpcomingLastItemPosition()+1);
             notifyItemChanged(getUpcomingLastItemPosition());
             notifyItemChanged(getUpcomingLastItemPosition()-1);
-            notifyItemChanged(getUpcomingLastItemPosition()-2);
         }
     }
 
@@ -441,7 +427,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     private int getActionPosition(int adapterPosition){
-        return (adapterPosition-(getUpcomingHeaderPosition()+2))/2;
+        return adapterPosition-(getUpcomingHeaderPosition()+1);
     }
 
     private void removeAction(Action action){
@@ -455,17 +441,9 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             int headerPosition = getUpcomingHeaderPosition();
             notifyItemRemoved(headerPosition);
             notifyItemRemoved(headerPosition+1);
-            notifyItemRemoved(headerPosition+2);
         }
         else{
-            if (position == mUserData.getFeedData().getUpcomingActions().size()){
-                notifyItemRemoved(position-1);
-                notifyItemRemoved(position);
-            }
-            else{
-                notifyItemRemoved(position);
-                notifyItemRemoved(position+1);
-            }
+            notifyItemRemoved(position);
         }
     }
 
@@ -483,17 +461,12 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             int headerPosition = getUpcomingHeaderPosition();
             if (mUserData.getFeedData().getUpcomingActions().isEmpty()){
                 notifyItemRemoved(headerPosition);
-                notifyItemRemoved(headerPosition+1);
-                notifyItemRemoved(headerPosition+2);
             }
-            else{
-                notifyItemRemoved(headerPosition+2);
-                notifyItemRemoved(headerPosition+3);
-            }
+            notifyItemRemoved(headerPosition+1);
+
             notifyItemChanged(getUpcomingLastItemPosition()+1);
             notifyItemChanged(getUpcomingLastItemPosition());
             notifyItemChanged(getUpcomingLastItemPosition()-1);
-            notifyItemChanged(getUpcomingLastItemPosition()-2);
         }
 
         //Update the up next card

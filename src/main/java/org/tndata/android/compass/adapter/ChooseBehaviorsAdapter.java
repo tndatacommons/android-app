@@ -246,7 +246,9 @@ public class ChooseBehaviorsAdapter
 
     public void disableAddGoalButton(){
         mIsGoalAdded = true;
-        mAddGoalCurrentButton.setVisibility(View.GONE);
+        if (mAddGoalCurrentButton != null){
+            mAddGoalCurrentButton.setVisibility(View.GONE);
+        }
     }
 
     /**
