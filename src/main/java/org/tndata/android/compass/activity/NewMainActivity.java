@@ -5,8 +5,10 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,6 +32,8 @@ import org.tndata.android.compass.adapter.MainFeedAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.task.GetUserDataTask;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.OnScrollListenerHub;
 import org.tndata.android.compass.util.ParallaxEffect;
@@ -41,6 +45,8 @@ import org.tndata.android.compass.util.ParallaxEffect;
 public class NewMainActivity
         extends AppCompatActivity
         implements
+                SwipeRefreshLayout.OnRefreshListener,
+                GetUserDataTask.GetUserDataCallback,
                 DrawerAdapter.OnItemClickListener,
                 MainFeedAdapter.MainFeedAdapterListener{
 
@@ -49,9 +55,12 @@ public class NewMainActivity
     private static final int TRIGGER_REQUEST_CODE = 7631;
 
 
+    CompassApplication mApplication;
+
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
+    private SwipeRefreshLayout mRefresh;
     private RecyclerView mFeed;
     private MainFeedAdapter mAdapter;
 
@@ -65,6 +74,8 @@ public class NewMainActivity
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_main);
+
+        mApplication = (CompassApplication)getApplication();
 
         //If this is pre L a different color scheme is applied
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
@@ -101,6 +112,10 @@ public class NewMainActivity
         drawerList.setAdapter(new DrawerAdapter(this, this));
         drawerList.addItemDecoration(DrawerAdapter.getItemPadding(this));
 
+        mRefresh = (SwipeRefreshLayout)findViewById(R.id.main_refresh);
+        mRefresh.setColorSchemeColors(0xFFFF0000, 0xFFFFE900, 0xFF572364);
+        mRefresh.setOnRefreshListener(this);
+
         View header = findViewById(R.id.main_illustration);
 
         mAdapter = new MainFeedAdapter(this, this);
@@ -122,6 +137,12 @@ public class NewMainActivity
                 }
                 else if (dy < 0){
                     mMenu.showMenuButton(true);
+                }
+                if (recyclerView.canScrollVertically(-1)){
+                    mRefresh.setEnabled(false);
+                }
+                else{
+                    mRefresh.setEnabled(true);
                 }
             }
         });
@@ -409,6 +430,23 @@ public class NewMainActivity
                 populateMenu();
                 mAdapter.notifyDataSetChanged();
             }
+        }
+    }
+
+    @Override
+    public void onRefresh(){
+        new GetUserDataTask(this, this).execute(mApplication.getToken());
+    }
+
+    @Override
+    public void userDataLoaded(@Nullable UserData userData){
+         if (userData != null){
+             mApplication.setUserData(userData);
+             mAdapter = new MainFeedAdapter(this, this);
+             mFeed.setAdapter(mAdapter);
+         }
+        if (mRefresh.isRefreshing()){
+            mRefresh.setRefreshing(false);
         }
     }
 }

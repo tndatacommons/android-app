@@ -7,27 +7,38 @@
     android:background="@color/app_background" >
 
     <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/main_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <ImageView
-            android:id="@+id/main_illustration"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/main_refresh"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-            android:src="@drawable/compass_master_illustration" />
+            android:layout_height="match_parent" >
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/main_feed"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
 
-        <include
-            android:id="@+id/main_toolbar"
-            layout="@layout/transparent_tool_bar" />
+                <ImageView
+                    android:id="@+id/main_illustration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/compass_master_illustration" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/main_feed"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <include
+                    android:id="@+id/main_toolbar"
+                    layout="@layout/transparent_tool_bar" />
+
+            </RelativeLayout>
+        </android.support.v4.widget.SwipeRefreshLayout>
 
         <View
             android:id="@+id/main_stopper"

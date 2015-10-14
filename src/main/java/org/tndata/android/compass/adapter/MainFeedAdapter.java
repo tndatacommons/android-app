@@ -490,6 +490,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 notifyItemRemoved(headerPosition+2);
                 notifyItemRemoved(headerPosition+3);
             }
+            notifyItemChanged(getUpcomingLastItemPosition()+1);
+            notifyItemChanged(getUpcomingLastItemPosition());
+            notifyItemChanged(getUpcomingLastItemPosition()-1);
+            notifyItemChanged(getUpcomingLastItemPosition()-2);
         }
 
         //Update the up next card
