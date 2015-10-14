@@ -25,6 +25,10 @@ public class ActionReportService
     public static final String ACTION_MAPPING_ID_KEY = "org.tndata.compass.CompleteAction.MappingId";
     public static final String STATE_KEY = "org.tndata.compass.CompleteAction.State";
 
+    public static final String STATE_COMPLETED = "completed";
+    public static final String STATE_SNOOZED = "snoozed";
+    public static final String STATE_DISMISSED = "dismissed";
+
     private LinkedList<Integer> mActions;
     private LinkedList<String> mStates;
     private int requestCount;

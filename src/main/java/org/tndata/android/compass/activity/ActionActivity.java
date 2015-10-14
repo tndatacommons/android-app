@@ -224,9 +224,9 @@ public class ActionActivity
         if (mAction!= null && !mActionUpdated){
             mActionUpdated = true;
 
-            Intent completeAction = new Intent(this, ActionReportService.class);
-            completeAction.putExtra(ActionReportService.ACTION_MAPPING_ID_KEY, mAction.getMappingId());
-            completeAction.putExtra(ActionReportService.STATE_KEY, "completed");
+            Intent completeAction = new Intent(this, ActionReportService.class)
+                    .putExtra(ActionReportService.ACTION_MAPPING_ID_KEY, mAction.getMappingId())
+                    .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED);
             startService(completeAction);
 
             //Display the check mark and finish the activity after one second

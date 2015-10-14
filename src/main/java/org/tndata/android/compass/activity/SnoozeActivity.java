@@ -242,10 +242,9 @@ public class SnoozeActivity
     }
 
     private void reportSnooze(){
-        Log.d("Report", "Report Called");
         Intent report = new Intent(this, ActionReportService.class)
                 .putExtra(ActionReportService.ACTION_MAPPING_ID_KEY, mReminder.getUserMappingId())
-                .putExtra(ActionReportService.STATE_KEY, "snoozed");
+                .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_SNOOZED);
         startService(report);
     }
 }

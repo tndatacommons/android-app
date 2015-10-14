@@ -110,11 +110,11 @@ public final class NotificationUtil{
 
         Intent dismissIntent = new Intent(context, ActionReportService.class)
                 .putExtra(ActionReportService.ACTION_MAPPING_ID_KEY, userMappingId)
-                .putExtra(ActionReportService.STATE_KEY, "dismissed");
+                .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_DISMISSED);
 
         PendingIntent dismissedPendingIntent = PendingIntent.getService(context,
                 (int)System.currentTimeMillis(), dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        
+
         Intent snoozeIntent = new Intent(context, SnoozeActivity.class)
                 .putExtra(SnoozeActivity.REMINDER_KEY, reminder)
                 .putExtra(SnoozeActivity.PUSH_NOTIFICATION_ID_KEY, actionId)
@@ -128,7 +128,7 @@ public final class NotificationUtil{
         Intent didItIntent = new Intent(context, ActionReportService.class)
                 .putExtra(ActionReportService.PUSH_NOTIFICATION_ID_KEY, actionId)
                 .putExtra(ActionReportService.ACTION_MAPPING_ID_KEY, userMappingId)
-                .putExtra(ActionReportService.STATE_KEY, "completed");
+                .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED);
 
         PendingIntent didItPendingIntent = PendingIntent.getService(context,
                 (int)System.currentTimeMillis(), didItIntent, PendingIntent.FLAG_UPDATE_CURRENT);

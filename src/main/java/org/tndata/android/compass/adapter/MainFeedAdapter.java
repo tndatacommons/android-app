@@ -9,7 +9,6 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,25 +17,19 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.activity.TriggerActivity;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UserData;
-import org.tndata.android.compass.service.CompleteActionService;
+import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.task.DeleteActionTask;
-import org.tndata.android.compass.task.DeleteBehaviorTask;
 import org.tndata.android.compass.ui.CompassPopupMenu;
 import org.tndata.android.compass.ui.FontFitTextView;
 import org.tndata.android.compass.util.CompassUtil;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import at.grabner.circleprogress.CircleProgressView;
 import at.grabner.circleprogress.TextMode;
@@ -450,8 +443,9 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     private void didIt(Action action){
-        Intent completeAction = new Intent(mContext, CompleteActionService.class)
-                .putExtra(CompleteActionService.ACTION_MAPPING_ID_KEY, action.getMappingId());
+        Intent completeAction = new Intent(mContext, ActionReportService.class)
+                .putExtra(ActionReportService.ACTION_MAPPING_ID_KEY, action.getMappingId())
+                .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED);
         mContext.startService(completeAction);
     }
 
