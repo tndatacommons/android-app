@@ -56,6 +56,14 @@ public class FeedData{
         mPercentage = percentage;
     }
 
+    public int getCompletedActions(){
+        return mCompletedActions;
+    }
+
+    public int getTotalActions(){
+        return mTotalActions;
+    }
+
     public int getProgress(){
         return mPercentage;
     }

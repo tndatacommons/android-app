@@ -21,6 +21,7 @@ import android.widget.TextView;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.service.ActionReportService;
@@ -447,6 +448,12 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 .putExtra(ActionReportService.ACTION_MAPPING_ID_KEY, action.getMappingId())
                 .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED);
         mContext.startService(completeAction);
+
+        FeedData feedData = mUserData.getFeedData();
+        feedData.setCompletedActions(feedData.getCompletedActions()+1);
+        feedData.setProgressPercentage(feedData.getCompletedActions()*100/feedData.getTotalActions());
+        
+        notifyItemChanged(getUpNextPosition());
     }
 
     private int getActionPosition(int adapterPosition){
