@@ -18,6 +18,9 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
     private Trigger custom_trigger;
     private Trigger default_trigger;
 
+    private String next_reminder_date;
+
+
     public Action() {
     }
 
@@ -155,6 +158,34 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
 
     public void setDefaultTrigger(Trigger trigger) {
         this.default_trigger = trigger;
+    }
+
+    public void setNextReminderDate(String next_reminder_date){
+        this.next_reminder_date = next_reminder_date;
+    }
+
+    public String getNextReminderDate(){
+        if (next_reminder_date == null){
+            return "";
+        }
+
+        String time = next_reminder_date.substring(next_reminder_date.indexOf('T')+1);
+        String hourStr = time.substring(0, time.indexOf(':'));
+        time = time.substring(time.indexOf(':')+1);
+        try{
+            boolean am = true;
+            int hour = Integer.valueOf(hourStr);
+            if (hour > 12){
+                hour -= 12;
+                am = false;
+            }
+
+            return hour + ":" + time.substring(0, time.indexOf(":")) + (am ? " am" : " pm");
+        }
+        catch (NumberFormatException nfx){
+            nfx.printStackTrace();
+            return "";
+        }
     }
 
     @Override

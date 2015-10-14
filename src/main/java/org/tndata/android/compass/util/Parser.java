@@ -303,6 +303,7 @@ public class Parser{
                 }
 
                 action.setPrimaryGoal(gson.fromJson(actionObject.getString("primary_goal"), Goal.class));
+                action.setNextReminderDate(actionObject.getString("next_reminder"));
             }
 
             Log.d("ActionParser", action.toString());

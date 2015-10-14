@@ -226,7 +226,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 else{
                     holder.mGoal.setText("");
                 }
-                holder.mTime.setText(action.getTrigger().getFormattedTime().toLowerCase());
+                holder.mTime.setText(action.getNextReminderDate());
                 holder.mIndicator.setAutoTextSize(true);
                 holder.mIndicator.setValue(mUserData.getFeedData().getProgress());
                 holder.mIndicator.setTextMode(TextMode.TEXT);
@@ -264,7 +264,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             else{
                 holder.mGoal.setText("");
             }
-            holder.mTime.setText(action.getTrigger().getFormattedTime().toLowerCase());
+            holder.mTime.setText(action.getNextReminderDate());
         }
         else if (isMyGoalsHeaderPosition(position)){
             HeaderHolder holder = (HeaderHolder)rawHolder;
@@ -451,7 +451,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
         FeedData feedData = mUserData.getFeedData();
         feedData.setCompletedActions(feedData.getCompletedActions()+1);
-        feedData.setProgressPercentage(feedData.getCompletedActions()*100/feedData.getTotalActions());
+        feedData.setProgressPercentage(feedData.getCompletedActions() * 100 / feedData.getTotalActions());
         notifyItemChanged(getUpNextPosition());
     }
 
