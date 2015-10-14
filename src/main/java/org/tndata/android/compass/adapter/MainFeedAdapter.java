@@ -452,7 +452,6 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         FeedData feedData = mUserData.getFeedData();
         feedData.setCompletedActions(feedData.getCompletedActions()+1);
         feedData.setProgressPercentage(feedData.getCompletedActions()*100/feedData.getTotalActions());
-        
         notifyItemChanged(getUpNextPosition());
     }
 

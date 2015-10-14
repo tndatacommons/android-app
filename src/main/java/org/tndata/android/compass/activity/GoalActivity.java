@@ -8,7 +8,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -22,12 +25,15 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Progress;
+import org.tndata.android.compass.task.DeleteGoalTask;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ImageHelper;
 import org.tndata.android.compass.util.ImageLoader;
 import org.tndata.android.compass.util.OnScrollListenerHub;
 import org.tndata.android.compass.util.ParallaxEffect;
+
+import java.util.ArrayList;
 
 import at.grabner.circleprogress.CircleProgressView;
 
@@ -67,6 +73,10 @@ public class GoalActivity
 
         mGoal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
         mGoal = mApplication.getUserData().getGoal(mGoal);
+
+        Toolbar toolbar = (Toolbar)findViewById(R.id.goal_toolbar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
 
         ImageView hero = (ImageView)findViewById(R.id.goal_hero);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)hero.getLayoutParams();
@@ -174,6 +184,27 @@ public class GoalActivity
         else{
             mTitle.getViewTreeObserver().removeOnGlobalLayoutListener(this);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        if (mGoal.getPrimaryCategory() == null || !mGoal.getPrimaryCategory().isPackagedContent()){
+            getMenuInflater().inflate(R.menu.goal, menu);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        if (item.getItemId() == R.id.goal_remove){
+            ArrayList<String> ids = new ArrayList<>();
+            ids.add(mGoal.getMappingId()+"");
+            new DeleteGoalTask(this, null, ids, mGoal).execute();
+            mApplication.getUserData().removeGoal(mGoal);
+            finish();
+            return true;
+        }
+        return false;
     }
 
     @Override

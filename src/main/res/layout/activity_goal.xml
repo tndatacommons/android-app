@@ -18,12 +18,6 @@
         android:layout_height="wrap_content"
         android:adjustViewBounds="true" />
 
-    <!--<ImageView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#999"
-        android:layout_below="@id/goal_hero" />-->
-
     <!-- The title on top of the hero, serving as the background for the title bar -->
     <TextView
         android:id="@+id/goal_title"
@@ -35,12 +29,6 @@
         android:textColor="@color/white"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Goal title goes here" />
-
-    <!--<ImageView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#999"
-        android:layout_below="@id/goal_title" />-->
 
     <!-- The progress indicator, right on top of the title bar -->
     <at.grabner.circleprogress.CircleProgressView
@@ -67,5 +55,9 @@
         android:layout_marginRight="28dp"
         android:layout_alignParentRight="true"
         android:src="@drawable/ic_add_white_24dp" />
+
+    <include
+        layout="@layout/transparent_tool_bar"
+        android:id="@+id/goal_toolbar" />
 
 </RelativeLayout>

@@ -51,6 +51,7 @@ public class NewMainActivity
                 MainFeedAdapter.MainFeedAdapterListener{
 
     private static final int CATEGORIES_REQUEST_CODE = 4821;
+    private static final int GOAL_REQUEST_CODE = 3486;
     private static final int ACTION_REQUEST_CODE = 4582;
     private static final int TRIGGER_REQUEST_CODE = 7631;
 
@@ -392,7 +393,8 @@ public class NewMainActivity
     @Override
     public void onGoalSelected(Goal goal){
         if (!((CompassApplication)getApplication()).getUserData().getGoals().isEmpty()){
-            startActivity(new Intent(this, GoalActivity.class).putExtra(GoalActivity.GOAL_KEY, goal));
+            startActivityForResult(new Intent(this, GoalActivity.class).putExtra(GoalActivity.GOAL_KEY, goal),
+                    GOAL_REQUEST_CODE);
         }
         else{
             Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
@@ -420,7 +422,14 @@ public class NewMainActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (resultCode == RESULT_OK){
-            if (requestCode == ACTION_REQUEST_CODE){
+            if (requestCode == CATEGORIES_REQUEST_CODE){
+                populateMenu();
+                mAdapter.notifyDataSetChanged();
+            }
+            else if (requestCode == GOAL_REQUEST_CODE){
+                mAdapter.notifyDataSetChanged();
+            }
+            else if (requestCode == ACTION_REQUEST_CODE){
                 if (data.getBooleanExtra(ActionActivity.DID_IT_KEY, false)){
                     mAdapter.deleteSelectedItem();
                 }
@@ -430,10 +439,6 @@ public class NewMainActivity
             }
             else if (requestCode == TRIGGER_REQUEST_CODE){
                 mAdapter.updateSelectedItem();
-            }
-            else if (requestCode == CATEGORIES_REQUEST_CODE){
-                populateMenu();
-                mAdapter.notifyDataSetChanged();
             }
         }
         else if (resultCode == Constants.LOGGED_OUT_RESULT_CODE){
@@ -454,7 +459,7 @@ public class NewMainActivity
             //Remove the previous item decoration before recreating the adapter
             mFeed.removeItemDecoration(mAdapter.getMainFeedPadding());
 
-            //Recrete the adapter and set the new decoration
+            //Recreate the adapter and set the new decoration
             mAdapter = new MainFeedAdapter(this, this);
             mFeed.setAdapter(mAdapter);
             mFeed.addItemDecoration(mAdapter.getMainFeedPadding());
