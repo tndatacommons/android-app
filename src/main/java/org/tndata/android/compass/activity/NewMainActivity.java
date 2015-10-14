@@ -431,6 +431,9 @@ public class NewMainActivity
                 mAdapter.notifyDataSetChanged();
             }
         }
+        else if (resultCode == Constants.LOGGED_OUT_RESULT_CODE){
+            finish();
+        }
     }
 
     @Override

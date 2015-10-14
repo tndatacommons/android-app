@@ -5,6 +5,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.SettingsFragment;
 import org.tndata.android.compass.fragment.SettingsFragment.OnSettingsClickListener;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.service.LogOutService;
 import org.tndata.android.compass.util.Constants;
 
 import android.app.Fragment;
@@ -42,17 +43,7 @@ public class SettingsActivity extends AppCompatActivity implements OnSettingsCli
 
     @Override
     public void logOut(){
-        SharedPreferences settings = PreferenceManager
-                .getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString("auth_token", "");
-        editor.putString("first_name", "");
-        editor.putString("last_name", "");
-        editor.putString("email", "");
-        editor.putString("username", "");
-        editor.putString("password", "");
-        editor.putInt("id", -1);
-        editor.apply();
+        startService(new Intent(this, LogOutService.class));
 
         ((CompassApplication)getApplication()).setUserData(new UserData());
         setResult(Constants.LOGGED_OUT_RESULT_CODE);
