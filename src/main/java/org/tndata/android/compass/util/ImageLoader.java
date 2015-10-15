@@ -156,8 +156,8 @@ public final class ImageLoader{
             queueLoadRequest(new LoadRequest(view, url, options));
             if (workerTask == null){
                 File dir = new File(mContext.getCacheDir().getPath() + File.separator + DISK_CACHE_SUB_DIR);
-                workerTask = new CacheWorkerTask();
-                workerTask.execute(dir);
+                workerTask = new CacheWorkerTask(dir);
+                workerTask.start();
             }
         }
     }
@@ -489,34 +489,38 @@ public final class ImageLoader{
      * download new assets.
      *
      * @author Ismael Alonso
+     * @version 2.0.0
      */
     private static class CacheWorkerTask
-            extends AsyncTask<File, LoadRequest, Void>
+            extends Thread
+            //extends AsyncTask<File, LoadRequest, Void>
             implements BitmapWorkerTask.OnDownloadCompleteCallback{
 
-        private int pendingRequests;
+        private File mCacheDir;
+        private int mPendingRequests;
 
 
         /**
          * Constructor.
          */
-        private CacheWorkerTask(){
-            pendingRequests = 0;
+        private CacheWorkerTask(File cacheDir){
+            mCacheDir = cacheDir;
+            mPendingRequests = 0;
         }
 
         /**
          * Adds a request to the pending count. Thread safe.
          */
         private synchronized void addRequest(){
-            pendingRequests++;
+            mPendingRequests++;
         }
 
         /**
          * Removes a request from the pending count. Thread safe.
          */
         private synchronized void closeRequest(){
-            if (pendingRequests > 0){
-                pendingRequests--;
+            if (mPendingRequests > 0){
+                mPendingRequests--;
             }
         }
 
@@ -526,7 +530,7 @@ public final class ImageLoader{
          * @return true if there are pending requests, false otherwise.
          */
         private synchronized boolean arePendingRequests(){
-            return pendingRequests != 0;
+            return mPendingRequests != 0;
         }
 
         /**
@@ -540,11 +544,10 @@ public final class ImageLoader{
         }
 
         @Override
-        protected Void doInBackground(File... params){
+        public void run(){
             //First of all, the cache handler is created.
-            File cacheDir = params[0];
             try{
-                mDiskCache = DiskLruCache.open(cacheDir, 1, 1, DISK_CACHE_SIZE);
+                mDiskCache = DiskLruCache.open(mCacheDir, 1, 1, DISK_CACHE_SIZE);
             }
             catch (IOException iox){
                 //Locally, this ain't ever happening
@@ -556,7 +559,7 @@ public final class ImageLoader{
                 Log.d("CacheWorker", "Iteration");
                 //However, it there are only downloads in progress, the thread can be put to sleep
                 if (!areOpenRequests()){
-                    Log.d("CacheWorker", "Sleeping: " + pendingRequests + " pending requests.");
+                    Log.d("CacheWorker", "Sleeping: " + mPendingRequests + " pending requests.");
                     try{
                         Thread.sleep(500);
                     }
@@ -566,7 +569,7 @@ public final class ImageLoader{
                 }
                 //First the load queue is checked
                 if (!isLoadQueueEmpty()){
-                    LoadRequest request = dequeueLoadRequest();
+                    final LoadRequest request = dequeueLoadRequest();
                     //If the bitmap was found in the disk cache it is loaded, otherwise downloaded.
                     if (isBitmapInDiskCache(request.mUrl)){
                         request.setResult(readBitmapFromDiskCache(request.mUrl));
@@ -576,7 +579,12 @@ public final class ImageLoader{
                     }
                     //A pending request is added and the request is published as processed
                     addRequest();
-                    publishProgress(request);
+                    request.mImageView.post(new Runnable(){
+                        @Override
+                        public void run(){
+                            onProgressUpdate(request);
+                        }
+                    });
                 }
                 else if (!isWriteQueueEmpty()){
                     writeBitmapToDiskCache(dequeueWriteRequest());
@@ -585,53 +593,49 @@ public final class ImageLoader{
 
             Log.d("CacheWorker", "Closing cache");
             closeCache();
-            return null;
+            closeThread();
         }
 
-        @Override
-        protected void onProgressUpdate(LoadRequest... values){
-            //For each published request
-            for (LoadRequest request:values){
-                //The bitmap needs to be downloaded
-                if (request.mResult == null){
-                    //If the download is NOT to be performed
-                    if (request.mOptions.mFlinging){
-                        //The placeholder is set to the view and the request is closed.
-                        request.mImageView.setImageBitmap(mPlaceHolderBitmap);
-                        closeRequest();
-                    }
-                    //If the download is to be performed
-                    else if (cancelPotentialWork(request.mUrl, request.mImageView)){
-                        BitmapWorkerTask task = getBitmapWorkerTask(request.mImageView);
-                        //If the reference was missed and picked by the GC, the task will
-                        //  get killed and will never call onDownloadComplete(), so the
-                        //  request needs to get closed here.
-                        if (task != null){
-                            closeRequest();
-                        }
-
-                        //The task is created
-                        task = new BitmapWorkerTask(request, this);
-                        //An AsyncDrawable is created with the selected configuration and set
-                        //  as the drawable of the ImageView
-                        final AsyncDrawable asyncDrawable;
-                        if (request.mOptions.mUsePlaceholder){
-                            asyncDrawable = new AsyncDrawable(mContext.getResources(),
-                                    mPlaceHolderBitmap, task);
-                        }
-                        else{
-                            asyncDrawable = new AsyncDrawable(mContext.getResources(), task);
-                        }
-                        request.mImageView.setImageDrawable(asyncDrawable);
-
-                        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request.mUrl);
-                    }
-                }
-                else{
-                    MemoryCache.instance().addBitmapToMemoryCache(request.mUrl, request.mResult);
-                    request.mImageView.setImageBitmap(request.mResult);
+        private void onProgressUpdate(LoadRequest request){
+            //The bitmap needs to be downloaded
+            if (request.mResult == null){
+                //If the download is NOT to be performed
+                if (request.mOptions.mFlinging){
+                    //The placeholder is set to the view and the request is closed.
+                    request.mImageView.setImageBitmap(mPlaceHolderBitmap);
                     closeRequest();
                 }
+                //If the download is to be performed
+                else if (cancelPotentialWork(request.mUrl, request.mImageView)){
+                    BitmapWorkerTask task = getBitmapWorkerTask(request.mImageView);
+                    //If the reference was missed and picked by the GC, the task will
+                    //  get killed and will never call onDownloadComplete(), so the
+                    //  request needs to get closed here.
+                    if (task != null){
+                        closeRequest();
+                    }
+
+                    //The task is created
+                    task = new BitmapWorkerTask(request, this);
+                    //An AsyncDrawable is created with the selected configuration and set
+                    //  as the drawable of the ImageView
+                    final AsyncDrawable asyncDrawable;
+                    if (request.mOptions.mUsePlaceholder){
+                        asyncDrawable = new AsyncDrawable(mContext.getResources(),
+                                mPlaceHolderBitmap, task);
+                    }
+                    else{
+                        asyncDrawable = new AsyncDrawable(mContext.getResources(), task);
+                    }
+                    request.mImageView.setImageDrawable(asyncDrawable);
+
+                    task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request.mUrl);
+                }
+            }
+            else{
+                MemoryCache.instance().addBitmapToMemoryCache(request.mUrl, request.mResult);
+                request.mImageView.setImageBitmap(request.mResult);
+                closeRequest();
             }
         }
 
@@ -649,15 +653,13 @@ public final class ImageLoader{
             closeRequest();
         }
 
-        @Override
-        protected void onPostExecute(Void result){
+        private void closeThread(){
             //If after terminating there are still requests in the load queue, the task needs
             //  to be restarted to serve them. This will barely happen, but it is plausible.
             if (isReopenNeeded()){
                 Log.d("CacheWorker", "Reopening");
-                File dir = new File(mContext.getCacheDir().getPath() + File.separator + DISK_CACHE_SUB_DIR);
-                workerTask = new CacheWorkerTask();
-                workerTask.execute(dir);
+                workerTask = new CacheWorkerTask(mCacheDir);
+                workerTask.start();
             }
             else{
                 workerTask = null;
