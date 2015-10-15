@@ -654,7 +654,8 @@ public final class ImageLoader{
             }
             else{
                 MemoryCache.instance().addBitmapToMemoryCache(request.mUrl, request.mResult);
-                request.mImageView.setImageBitmap(request.mResult);
+                completeLoadRequest(request);
+                //request.mImageView.setImageBitmap(request.mResult);
                 closeRequest();
             }
         }
