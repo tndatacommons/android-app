@@ -289,7 +289,13 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 goal = mUserData.getGoals().get(goalPosition);
 
                 GradientDrawable gradientDrawable = (GradientDrawable)holder.mIconContainer.getBackground();
-                gradientDrawable.setColor(Color.parseColor(goal.getPrimaryCategory().getColor()));
+                if (goal.getPrimaryCategory() != null){
+                    gradientDrawable.setColor(Color.parseColor(goal.getPrimaryCategory().getColor()));
+                }
+                else{
+                    //TODO another workaround
+                    gradientDrawable.setColor(mContext.getResources().getColor(R.color.grow_primary));
+                }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
                     holder.mIconContainer.setBackground(gradientDrawable);
                 }
@@ -510,7 +516,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     private class UpNextHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private View mNoActionsContainer;
         private View mContentContainer;
-        private ImageView mOverflow;
+        private View mOverflow;
         private CircleProgressView mIndicator;
         private FontFitTextView mIndicatorCaption;
         private TextView mAction;
@@ -523,7 +529,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
             mNoActionsContainer = itemView.findViewById(R.id.up_next_no_actions);
             mContentContainer = itemView.findViewById(R.id.up_next_content);
-            mOverflow = (ImageView)itemView.findViewById(R.id.up_next_overflow);
+            mOverflow = itemView.findViewById(R.id.up_next_overflow_box);
             mIndicator = (CircleProgressView)itemView.findViewById(R.id.up_next_indicator);
             mIndicatorCaption = (FontFitTextView)itemView.findViewById(R.id.up_next_indicator_caption);
             mAction = (TextView)itemView.findViewById(R.id.up_next_action);
@@ -538,7 +544,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         public void onClick(View view){
             mSelectedItem = getAdapterPosition();
             switch (view.getId()){
-                case R.id.up_next_overflow:
+                case R.id.up_next_overflow_box:
                     showActionPopup(view, getAdapterPosition());
                     break;
 
@@ -577,7 +583,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     private class ActionHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        private ImageView mOverflow;
+        private View mOverflow;
         private TextView mAction;
         private TextView mGoal;
         private TextView mTime;
@@ -586,7 +592,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         public ActionHolder(View itemView){
             super(itemView);
 
-            mOverflow = (ImageView)itemView.findViewById(R.id.action_overflow);
+            mOverflow = itemView.findViewById(R.id.action_overflow_box);
             mAction = (TextView)itemView.findViewById(R.id.action_title);
             mGoal = (TextView)itemView.findViewById(R.id.action_goal);
             mTime = (TextView)itemView.findViewById(R.id.action_time);
@@ -601,7 +607,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             int index = getAdapterPosition()-(getUpcomingHeaderPosition()+1);
             Action action = mUserData.getFeedData().getUpcomingActions().get(index);
             switch (view.getId()){
-                case R.id.action_overflow:
+                case R.id.action_overflow_box:
                     showActionPopup(view, getAdapterPosition());
                     break;
 
