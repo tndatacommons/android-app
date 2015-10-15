@@ -208,14 +208,26 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 holder.mOverflow.setVisibility(View.GONE);
                 holder.mNoActionsContainer.setVisibility(View.VISIBLE);
                 holder.mContentContainer.setVisibility(View.GONE);
-                holder.itemView.setOnClickListener(holder);
+
+                if (mUserData.getFeedData().getTotalActions() != 0){
+                    holder.mHeader.setText("All done");
+                    holder.mNoActionsTitle.setText("No activities remaining today.");
+                    holder.mNoActionsSubtitle.setText("See you tomorrow!");
+                }
+                else{
+                    holder.mHeader.setText("Up next");
+                    holder.mNoActionsTitle.setText("No activities selected for today.");
+                    holder.mNoActionsSubtitle.setText("Select an activity to help you reach one of your goals.");
+                }
+                holder.mTime.setText("");
             }
             else{
                 Action action = mUserData.getFeedData().getNextAction();
                 holder.mOverflow.setVisibility(View.VISIBLE);
                 holder.mNoActionsContainer.setVisibility(View.GONE);
                 holder.mContentContainer.setVisibility(View.VISIBLE);
-                holder.itemView.setOnClickListener(null);
+
+                holder.mHeader.setText("Up next");
                 holder.mAction.setText(action.getTitle());
                 //TODO this is a workaround
                 if (action.getPrimaryGoal() != null){
@@ -227,16 +239,17 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                     holder.mGoal.setText("");
                 }
                 holder.mTime.setText(action.getNextReminderDate());
-                holder.mIndicator.setAutoTextSize(true);
-                holder.mIndicator.setValue(mUserData.getFeedData().getProgress());
-                holder.mIndicator.setTextMode(TextMode.TEXT);
-                holder.mIndicator.setValueAnimated(0, mUserData.getFeedData().getProgress(), 1500);
-                holder.mIndicatorCaption.setText(mUserData.getFeedData().getProgressFraction() + " completed today");
-
-                Calendar calendar = Calendar.getInstance();
-                String month = CompassUtil.getMonthString(calendar.get(Calendar.MONTH)+1);
-                holder.mIndicator.setText(month + " " + calendar.get(Calendar.DAY_OF_MONTH));
             }
+
+            holder.mIndicator.setAutoTextSize(true);
+            holder.mIndicator.setValue(mUserData.getFeedData().getProgress());
+            holder.mIndicator.setTextMode(TextMode.TEXT);
+            holder.mIndicator.setValueAnimated(0, mUserData.getFeedData().getProgress(), 1500);
+            holder.mIndicatorCaption.setText(mUserData.getFeedData().getProgressFraction() + " completed");
+
+            Calendar calendar = Calendar.getInstance();
+            String month = CompassUtil.getMonthString(calendar.get(Calendar.MONTH)+1);
+            holder.mIndicator.setText(month + " " + calendar.get(Calendar.DAY_OF_MONTH));
         }
         else if (isFeedbackPosition(position)){
             FeedbackHolder holder = (FeedbackHolder)rawHolder;
@@ -514,26 +527,45 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     private class UpNextHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        private View mNoActionsContainer;
-        private View mContentContainer;
+        //Header
+        private TextView mHeader;
         private View mOverflow;
+
+        //Indicator
         private CircleProgressView mIndicator;
-        private FontFitTextView mIndicatorCaption;
+
+        //No actions content
+        private View mNoActionsContainer;
+        private TextView mNoActionsTitle;
+        private TextView mNoActionsSubtitle;
+
+        //Action content
+        private View mContentContainer;
         private TextView mAction;
         private TextView mGoal;
+
+        //Footer
+        private TextView mIndicatorCaption;
         private TextView mTime;
 
 
         public UpNextHolder(View itemView){
             super(itemView);
 
-            mNoActionsContainer = itemView.findViewById(R.id.up_next_no_actions);
-            mContentContainer = itemView.findViewById(R.id.up_next_content);
+            mHeader = (TextView)itemView.findViewById(R.id.up_next_header);
             mOverflow = itemView.findViewById(R.id.up_next_overflow_box);
+
             mIndicator = (CircleProgressView)itemView.findViewById(R.id.up_next_indicator);
-            mIndicatorCaption = (FontFitTextView)itemView.findViewById(R.id.up_next_indicator_caption);
+
+            mNoActionsContainer = itemView.findViewById(R.id.up_next_no_actions);
+            mNoActionsTitle = (TextView)itemView.findViewById(R.id.up_next_no_actions_title);
+            mNoActionsSubtitle = (TextView)itemView.findViewById(R.id.up_next_no_actions_subtitle);
+
+            mContentContainer = itemView.findViewById(R.id.up_next_content);
             mAction = (TextView)itemView.findViewById(R.id.up_next_action);
             mGoal = (TextView)itemView.findViewById(R.id.up_next_goal);
+
+            mIndicatorCaption = (TextView)itemView.findViewById(R.id.up_next_indicator_caption);
             mTime = (TextView)itemView.findViewById(R.id.up_next_time);
 
             itemView.setOnClickListener(this);
@@ -551,9 +583,6 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 default:
                     if (hasUpNextAction()){
                         mListener.onActionSelected(mUserData.getFeedData().getNextAction());
-                    }
-                    else{
-                        //mListener.onInstructionsSelected();
                     }
             }
         }
