@@ -9,6 +9,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UserData;
@@ -215,7 +217,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 holder.mContentContainer.setVisibility(View.GONE);
 
                 if (mUserData.getFeedData().getTotalActions() != 0){
-                    holder.mHeader.setText("All done");
+                    holder.mHeader.setText("All done!");
                     holder.mNoActionsTitle.setText("No activities remaining today.");
                     holder.mNoActionsSubtitle.setText("See you tomorrow!");
                 }
@@ -408,7 +410,38 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      */
     private void showActionPopup(View anchor, final int position){
         final CompassPopupMenu popup = CompassPopupMenu.newInstance(mContext, anchor);
-        popup.getMenuInflater().inflate(R.menu.popup_action, popup.getMenu());
+        Category category = null;
+        if (position == getUpNextPosition()){
+            if (mUserData.getFeedData().getNextAction().getPrimaryGoal() != null){
+                category = mUserData.getFeedData().getNextAction()
+                        .getPrimaryGoal().getPrimaryCategory();
+                if (category == null){
+                    Goal goal = mUserData.getGoal(mUserData.getFeedData().getNextAction().getPrimaryGoal());
+                    if (goal.getCategories().size() > 0){
+                        category = goal.getCategories().get(0);
+                    }
+                }
+            }
+        }
+        else{
+            int actionPosition = getActionPosition(position);
+            Action action = mUserData.getFeedData().getUpcomingActions().get(actionPosition);
+            if (action.getPrimaryGoal() != null){
+                category = action.getPrimaryGoal().getPrimaryCategory();
+                if (category == null){
+                    Goal goal = mUserData.getGoal(action.getPrimaryGoal());
+                    if (goal.getCategories().size() > 0){
+                        category = goal.getCategories().get(0);
+                    }
+                }
+            }
+        }
+        if (category == null || category.isPackagedContent()){
+            popup.getMenuInflater().inflate(R.menu.popup_action_packaged, popup.getMenu());
+        }
+        else{
+            popup.getMenuInflater().inflate(R.menu.popup_action, popup.getMenu());
+        }
         popup.setOnMenuItemClickListener(new CompassPopupMenu.OnMenuItemClickListener(){
             public boolean onMenuItemClick(MenuItem item){
                 switch (item.getItemId()){
