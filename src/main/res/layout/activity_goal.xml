@@ -23,9 +23,9 @@
         android:id="@+id/goal_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="29dp"
         android:paddingLeft="15dp"
-        android:paddingBottom="29dp"
+        android:paddingRight="15dp"
+        android:gravity="center_vertical"
         android:textColor="@color/white"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Goal title goes here" />

@@ -28,7 +28,6 @@ import org.tndata.android.compass.model.Progress;
 import org.tndata.android.compass.task.DeleteGoalTask;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.ImageHelper;
 import org.tndata.android.compass.util.ImageLoader;
 import org.tndata.android.compass.util.OnScrollListenerHub;
 import org.tndata.android.compass.util.ParallaxEffect;
@@ -63,6 +62,8 @@ public class GoalActivity
     private RecyclerView mList;
     private GoalAdapter mAdapter;
 
+    private int mTitleHeight;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -80,17 +81,16 @@ public class GoalActivity
 
         ImageView hero = (ImageView)findViewById(R.id.goal_hero);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)hero.getLayoutParams();
-        int heroHeight = CompassUtil.getScreenWidth(this)/2;
+        int heroHeight = CompassUtil.getScreenWidth(this)*2/3;
         params.height = heroHeight;
         hero.setLayoutParams(params);
         //Packaged content ain't got no hero
         if (mGoal.getPrimaryCategory().getImageUrl() != null){
             ImageLoader.loadBitmap(hero, mGoal.getPrimaryCategory().getImageUrl(),
-                    new ImageLoader.Options().setCropBottom(true));
+                    new ImageLoader.Options().setCropBottom(false));
         }
         else{
-            hero.setImageBitmap(ImageHelper.cropOutBottom(
-                    BitmapFactory.decodeResource(getResources(), R.drawable.compass_master_illustration)));
+            hero.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.compass_master_illustration));
         }
 
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.goal_fab);
@@ -116,6 +116,10 @@ public class GoalActivity
         }
 
         mTitle = (TextView)findViewById(R.id.goal_title);
+        params = (RelativeLayout.LayoutParams)mTitle.getLayoutParams();
+        mTitleHeight = heroHeight/2;
+        params.height = mTitleHeight;
+        mTitle.setLayoutParams(params);
         mTitle.setBackgroundColor(Color.parseColor(mGoal.getPrimaryCategory().getColor()));
         params = (RelativeLayout.LayoutParams)mTitle.getLayoutParams();
         params.topMargin += heroHeight;
@@ -129,11 +133,17 @@ public class GoalActivity
         OnScrollListenerHub hub = new OnScrollListenerHub();
         hub.addOnScrollListener(new ParallaxEffect(hero, 1));
 
+        final int indicatorHeight = CompassUtil.getPixels(this, 90);
         ParallaxEffect indicatorEffect = new ParallaxEffect(indicator, 1);
         indicatorEffect.setParallaxCondition(new ParallaxEffect.ParallaxCondition(){
             @Override
             protected boolean doParallax(){
-                return getParallaxViewOffset() > 0;
+                return getParallaxViewOffset() > mTitleHeight/2-indicatorHeight/2;
+            }
+
+            @Override
+            protected int getFixedState(){
+                return mTitleHeight/2-indicatorHeight/2;
             }
         });
         hub.addOnScrollListener(indicatorEffect);
