@@ -126,10 +126,9 @@ public class GoalAdapter extends RecyclerView.Adapter{
             holder.mIndicator.setText(month);
             holder.mIndicator.setTextMode(TextMode.TEXT);
 
-            holder.mIndicatorCaption.setText(behavior.getProgress().getDailyActionsProgressPercent() + "%");
-
             if (behavior.getProgress() != null){
                 holder.mIndicator.setValue(behavior.getProgress().getDailyActionsProgressPercent());
+                holder.mIndicatorCaption.setText(behavior.getProgress().getDailyActionsProgressPercent() + "%");
             }
             populate(holder, behavior);
         }
