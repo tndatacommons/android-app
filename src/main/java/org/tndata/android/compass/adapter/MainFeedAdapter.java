@@ -485,6 +485,12 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
     private void removeAction(Action action){
         mUserData.removeAction(action);
+
+        FeedData feedData = mUserData.getFeedData();
+        feedData.setTotalActions(feedData.getTotalActions() - 1);
+        feedData.setProgressPercentage(feedData.getCompletedActions() * 100 / feedData.getTotalActions());
+        notifyItemChanged(getUpNextPosition());
+
         new DeleteActionTask(mContext, null, action.getMappingId()+"").execute();
     }
 
