@@ -104,6 +104,10 @@ public class ChooseBehaviorsActivity
             mCategory = (Category)getIntent().getSerializableExtra("category");
             if (mCategory == null){
                 mCategory = mGoal.getPrimaryCategory();
+                if (mCategory == null){
+                    Goal goal = mApplication.getUserData().getGoal(mGoal);
+                    mCategory = goal.getCategories().get(0);
+                }
             }
         }
 

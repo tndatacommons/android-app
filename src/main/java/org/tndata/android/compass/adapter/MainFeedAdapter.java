@@ -589,7 +589,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
     }
 
-    private class FeedbackHolder extends RecyclerView.ViewHolder{
+    private class FeedbackHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mTitle;
         private TextView mSubtitle;
 
@@ -599,6 +599,13 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
             mTitle = (TextView)itemView.findViewById(R.id.card_feedback_title);
             mSubtitle = (TextView)itemView.findViewById(R.id.card_feedback_subtitle);
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v){
+            mListener.onFeedbackSelected();
         }
     }
 
@@ -733,6 +740,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     public interface MainFeedAdapterListener{
         void onInstructionsSelected();
         void onGoalSelected(Goal goal);
+        void onFeedbackSelected();
         void onActionSelected(Action action);
         void onTriggerSelected(Action action);
     }
