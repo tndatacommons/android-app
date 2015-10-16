@@ -34,7 +34,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textColor="@color/dark_text_color"
-                    android:textSize="20sp" />
+                    android:textSize="19sp" />
 
                 <RelativeLayout
                     android:id="@+id/action_overflow_box"

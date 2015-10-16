@@ -515,11 +515,12 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             if (mUserData.getFeedData().getUpcomingActions().isEmpty()){
                 notifyItemRemoved(headerPosition);
             }
-            notifyItemRemoved(headerPosition + 1);
+            notifyItemRemoved(headerPosition+1);
 
-            notifyItemChanged(getUpcomingLastItemPosition()+1);
+            notifyItemRangeChanged(headerPosition+2, getMyGoalsHeaderPosition());
+            /*notifyItemChanged(getUpcomingLastItemPosition()+1);
             notifyItemChanged(getUpcomingLastItemPosition());
-            notifyItemChanged(getUpcomingLastItemPosition()-1);
+            notifyItemChanged(getUpcomingLastItemPosition()-1);*/
         }
 
         //Update the up next card

@@ -25,8 +25,8 @@
                 android:layout_weight="1"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
-                android:textColor="@color/dark_text_color"
-                android:textSize="16sp" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/dark_text_color" />
 
             <RelativeLayout
                 android:id="@+id/up_next_overflow_box"
