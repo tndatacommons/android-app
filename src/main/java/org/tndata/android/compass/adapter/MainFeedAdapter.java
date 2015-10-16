@@ -70,8 +70,14 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         mContext = context;
         mListener = listener;
         mUserData = ((CompassApplication)mContext.getApplicationContext()).getUserData();
-        if (mUserData.getFeedData().getNextAction() != null){
-            mFeedbackGoal = mUserData.getFeedData().getNextAction().getPrimaryGoal();
+
+        if (mUserData.getFeedData() == null){
+            mListener.onNullData();
+        }
+        else{
+            if (mUserData.getFeedData().getNextAction() != null){
+                mFeedbackGoal = mUserData.getFeedData().getNextAction().getPrimaryGoal();
+            }
         }
         mMainFeedPadding = null;
     }
@@ -198,6 +204,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
+        if (mUserData.getFeedData() == null){
+            return;
+        }
+
         ((CardView)rawHolder.itemView).setRadius(CompassUtil.getPixels(mContext, 2));
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
             setPreLParameters((CardView)rawHolder.itemView);
@@ -782,6 +792,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     public interface MainFeedAdapterListener{
+        void onNullData();
         void onInstructionsSelected();
         void onGoalSelected(Goal goal);
         void onFeedbackSelected(Goal goal);

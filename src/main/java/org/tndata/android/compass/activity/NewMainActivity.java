@@ -386,6 +386,12 @@ public class NewMainActivity
     }
 
     @Override
+    public void onNullData(){
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
+    }
+
+    @Override
     public void onInstructionsSelected(){
         ((LinearLayoutManager)mFeed.getLayoutManager()).scrollToPositionWithOffset(mAdapter.getMyGoalsHeaderPosition(), 10);
     }
