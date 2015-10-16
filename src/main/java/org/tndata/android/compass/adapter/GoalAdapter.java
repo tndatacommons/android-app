@@ -20,12 +20,15 @@ import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.task.DeleteBehaviorTask;
 import org.tndata.android.compass.ui.CompassPopupMenu;
+import org.tndata.android.compass.util.CompassUtil;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Stack;
 
 import at.grabner.circleprogress.CircleProgressView;
+import at.grabner.circleprogress.TextMode;
 
 
 /**
@@ -111,12 +114,20 @@ public class GoalAdapter extends RecyclerView.Adapter{
             rawHolder.itemView.setVisibility(View.INVISIBLE);
         }
         else if (getItemViewType(position) == TYPE_BEHAVIOR){
+            Calendar calendar = Calendar.getInstance();
+            String month = CompassUtil.getMonthString(calendar.get(Calendar.MONTH) + 1);
+
             Behavior behavior = mGoal.getBehaviors().get(position/2);
             BehaviorHolder holder = (BehaviorHolder)rawHolder;
             holder.mTitle.setText(behavior.getTitle());
             holder.mIndicator.setValue(0);
             holder.mIndicator.setAutoTextSize(true);
-            holder.mIndicator.setShowUnit(true);
+            holder.mIndicator.setShowUnit(false);
+            holder.mIndicator.setText(month);
+            holder.mIndicator.setTextMode(TextMode.TEXT);
+
+            holder.mIndicatorCaption.setText(behavior.getProgress().getDailyActionsProgressPercent() + "%");
+
             if (behavior.getProgress() != null){
                 holder.mIndicator.setValue(behavior.getProgress().getDailyActionsProgressPercent());
             }
@@ -264,6 +275,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
      */
     private class BehaviorHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private CircleProgressView mIndicator;
+        private TextView mIndicatorCaption;
         private TextView mTitle;
         private LinearLayout mActionContainer;
 
@@ -277,6 +289,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
             super(itemView);
 
             mIndicator = (CircleProgressView)itemView.findViewById(R.id.behavior_indicator);
+            mIndicatorCaption = (TextView)itemView.findViewById(R.id.behavior_indicator_caption);
             mTitle = (TextView)itemView.findViewById(R.id.behavior_title);
             mActionContainer = (LinearLayout)itemView.findViewById(R.id.behavior_actions);
 

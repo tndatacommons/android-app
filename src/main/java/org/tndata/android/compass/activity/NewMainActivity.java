@@ -405,11 +405,10 @@ public class NewMainActivity
     }
 
     @Override
-    public void onFeedbackSelected(){
-        Action action = mApplication.getUserData().getFeedData().getNextAction();
-        if (action.getPrimaryGoal() != null){
+    public void onFeedbackSelected(Goal goal){
+        if (goal != null){
             Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
-                    .putExtra(ChooseBehaviorsActivity.GOAL_KEY, action.getPrimaryGoal());
+                    .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal);
             startActivity(chooseBehaviors);
         }
     }

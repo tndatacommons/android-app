@@ -59,6 +59,8 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
     private MainFeedPadding mMainFeedPadding;
 
+    private Goal mFeedbackGoal;
+
     private int mSelectedItem;
 
 
@@ -66,6 +68,9 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         mContext = context;
         mListener = listener;
         mUserData = ((CompassApplication)mContext.getApplicationContext()).getUserData();
+        if (mUserData.getFeedData().getNextAction() != null){
+            mFeedbackGoal = mUserData.getFeedData().getNextAction().getPrimaryGoal();
+        }
         mMainFeedPadding = null;
     }
 
@@ -605,7 +610,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
         @Override
         public void onClick(View v){
-            mListener.onFeedbackSelected();
+            mListener.onFeedbackSelected(mFeedbackGoal);
         }
     }
 
@@ -740,7 +745,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     public interface MainFeedAdapterListener{
         void onInstructionsSelected();
         void onGoalSelected(Goal goal);
-        void onFeedbackSelected();
+        void onFeedbackSelected(Goal goal);
         void onActionSelected(Action action);
         void onTriggerSelected(Action action);
     }
