@@ -4,6 +4,9 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    android:paddingRight="10dp"
     android:baselineAligned="false" >
 
     <!-- The purpose of this linear is to center its child, whose padding cannot be set -->
