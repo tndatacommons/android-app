@@ -69,6 +69,9 @@ public class SnoozeActivity
         mReminder = (Reminder)getIntent().getSerializableExtra(REMINDER_KEY);
         notificationId = getIntent().getIntExtra(NOTIFICATION_ID_KEY, -1);
         pushNotificationId = getIntent().getIntExtra(PUSH_NOTIFICATION_ID_KEY, -1);
+        if (notificationId == -1){
+            notificationId = mReminder.getNotificationId();
+        }
 
         ListView list = (ListView)findViewById(R.id.snooze_list);
         list.setAdapter(new SnoozeAdapter(this));
