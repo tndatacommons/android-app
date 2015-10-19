@@ -83,6 +83,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="org.tndata.android.compass.activity.SettingsActivity"
             android:parentActivityName=".activity.MainActivity"
@@ -115,6 +116,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity" />
         </activity>
+
         <activity
             android:name="org.tndata.android.compass.activity.ChooseGoalsActivity"
             android:parentActivityName=".activity.MainActivity"
@@ -128,6 +130,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity" />
         </activity>
+
         <activity
             android:name="org.tndata.android.compass.activity.ChooseCategoriesActivity"
             android:parentActivityName=".activity.MainActivity"
@@ -141,6 +144,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity" />
         </activity>
+
         <activity
             android:name=".activity.ChooseBehaviorsActivity"
             android:parentActivityName=".activity.MainActivity"
@@ -154,6 +158,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity" />
         </activity>
+
         <activity
             android:name="org.tndata.android.compass.activity.ChooseActionsActivity"
             android:parentActivityName=".activity.MainActivity"
@@ -167,6 +172,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity" />
         </activity>
+
         <activity
             android:name="org.tndata.android.compass.activity.BehaviorActivity"
             android:parentActivityName=".activity.ChooseBehaviorsActivity"
@@ -180,6 +186,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.ChooseBehaviorsActivity" />
         </activity>
+
         <activity
             android:name="org.tndata.android.compass.activity.BehaviorProgressActivity"
             android:parentActivityName=".activity.MainActivity"
@@ -192,6 +199,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity"/>
         </activity>
+
         <activity
             android:name=".activity.MyPrioritiesActivity"
             android:parentActivityName=".activity.MainActivity"
@@ -221,6 +229,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity"/>
         </activity>
+
         <activity
             android:name="org.tndata.android.compass.activity.TriggerActivity"
             android:parentActivityName=".activity.MainActivity"
@@ -233,6 +242,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity"/>
         </activity>
+
         <activity
             android:name="org.tndata.android.compass.activity.TourActivity"
             android:screenOrientation="portrait" />

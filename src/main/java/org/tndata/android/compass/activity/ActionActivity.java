@@ -74,8 +74,9 @@ public class ActionActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_action);
 
-        //Set the action to null, this indicates that it has not been fetched
+        //Retrieve the action and mark the reminder as nonexistent
         mAction = (Action)getIntent().getSerializableExtra(ACTION_KEY);
+        mReminder = null;
 
         //Fetch UI components
         mHeroContainer = (FrameLayout)findViewById(R.id.action_hero_container);
@@ -123,6 +124,7 @@ public class ActionActivity
 
         mActionUpdated = false;
 
+        //If the action wasn't provided via the intent it needs to be fetched
         if (mAction == null){
             timeOption.setText(R.string.action_snooze);
             mReminder = (Reminder)getIntent().getSerializableExtra(REMINDER_KEY);
@@ -179,7 +181,7 @@ public class ActionActivity
     }
 
     /**
-     * Snooze clicked.
+     * Snooze clicked. This opens the snooze menu.
      */
     private void snooze(){
         if (mAction != null && !mActionUpdated){
@@ -189,6 +191,9 @@ public class ActionActivity
         }
     }
 
+    /**
+     * Reschedule clicked. This opens the trigger picker.
+     */
     private void reschedule(){
         if (mAction != null && !mActionUpdated){
             Intent reschedule = new Intent(this, TriggerActivity.class)
@@ -248,6 +253,7 @@ public class ActionActivity
             populateUI();
         }
         else{
+            //If the request did not return any actions, kill the activity
             finish();
         }
     }
