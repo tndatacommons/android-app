@@ -34,7 +34,9 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.task.GetUserDataTask;
+import org.tndata.android.compass.task.UpdateProfileTask;
 import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.OnScrollListenerHub;
 import org.tndata.android.compass.util.ParallaxEffect;
 
@@ -77,6 +79,10 @@ public class NewMainActivity
         setContentView(R.layout.activity_new_main);
 
         mApplication = (CompassApplication)getApplication();
+
+        //Update the timezone and register with GCM
+        new UpdateProfileTask(null).execute(mApplication.getUser());
+        new GcmRegistration(this);
 
         //If this is pre L a different color scheme is applied
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
