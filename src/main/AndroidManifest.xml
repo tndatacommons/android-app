@@ -64,15 +64,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activity.OldMainActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
 
         <activity
             android:name=".activity.MainActivity"
@@ -94,7 +85,7 @@
         </activity>
         <activity
             android:name="org.tndata.android.compass.activity.SettingsActivity"
-            android:parentActivityName=".activity.OldMainActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
@@ -103,7 +94,7 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.OldMainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
 
         <activity
@@ -113,7 +104,7 @@
 
         <activity
             android:name="org.tndata.android.compass.activity.UserProfileActivity"
-            android:parentActivityName=".activity.OldMainActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
@@ -122,11 +113,11 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.OldMainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
         <activity
             android:name="org.tndata.android.compass.activity.ChooseGoalsActivity"
-            android:parentActivityName=".activity.OldMainActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
@@ -135,11 +126,11 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.OldMainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
         <activity
             android:name="org.tndata.android.compass.activity.ChooseCategoriesActivity"
-            android:parentActivityName=".activity.OldMainActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
@@ -148,11 +139,11 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.OldMainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
         <activity
             android:name=".activity.ChooseBehaviorsActivity"
-            android:parentActivityName=".activity.OldMainActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
@@ -161,11 +152,11 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.OldMainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
         <activity
             android:name="org.tndata.android.compass.activity.ChooseActionsActivity"
-            android:parentActivityName=".activity.OldMainActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
@@ -174,7 +165,7 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.OldMainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
         <activity
             android:name="org.tndata.android.compass.activity.BehaviorActivity"
@@ -191,7 +182,7 @@
         </activity>
         <activity
             android:name="org.tndata.android.compass.activity.BehaviorProgressActivity"
-            android:parentActivityName=".activity.OldMainActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT"/>
@@ -199,11 +190,11 @@
             </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.OldMainActivity"/>
+                android:value=".activity.MainActivity"/>
         </activity>
         <activity
             android:name=".activity.MyPrioritiesActivity"
-            android:parentActivityName=".activity.OldMainActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT"/>
@@ -211,7 +202,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.OldMainActivity"/>
+                android:value=".activity.MainActivity"/>
         </activity>
 
         <activity
@@ -220,7 +211,7 @@
 
         <activity
             android:name="org.tndata.android.compass.activity.GoalDetailsActivity"
-            android:parentActivityName=".activity.OldMainActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT"/>
@@ -228,11 +219,11 @@
             </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.OldMainActivity"/>
+                android:value=".activity.MainActivity"/>
         </activity>
         <activity
             android:name="org.tndata.android.compass.activity.TriggerActivity"
-            android:parentActivityName=".activity.OldMainActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT"/>
@@ -240,7 +231,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.OldMainActivity"/>
+                android:value=".activity.MainActivity"/>
         </activity>
         <activity
             android:name="org.tndata.android.compass.activity.TourActivity"
@@ -311,8 +302,6 @@
         <service android:enabled="true" android:name=".service.SnoozeService" />
 
         <service android:name="org.tndata.android.compass.service.LogOutService" />
-
-        <service android:name="service.GeofenceTransitionService"/>
 
         <service android:name=".service.LocationNotificationService" />
 
