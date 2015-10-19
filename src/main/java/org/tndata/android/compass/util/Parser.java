@@ -1,5 +1,6 @@
 package org.tndata.android.compass.util;
 
+import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -10,12 +11,16 @@ import com.google.gson.GsonBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Place;
+import org.tndata.android.compass.model.Progress;
 import org.tndata.android.compass.model.Trigger;
+import org.tndata.android.compass.model.UserData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,6 +141,12 @@ public class Parser{
                     }
                     goal.setBehaviors(behaviors);
 
+                    //Set the primary category
+                    goal.setPrimaryCategory(gson.fromJson(goalJson.getString("primary_category"), Category.class));
+
+                    //Set the progress
+                    goal.setProgress(gson.fromJson(goalJson.getString("goal_progress"), Progress.class));
+
                     categoryArrayName = "user_categories";
                 }
                 else{
@@ -206,6 +217,8 @@ public class Parser{
                     }
                     behavior.setUserCategories(categories);
 
+                    behavior.setProgress(gson.fromJson(behaviorJson.getString("behavior_progress"), Progress.class));
+
                     goalArrayName = "user_goals";
                 }
                 else{
@@ -239,6 +252,8 @@ public class Parser{
      * @return A list of actions.
      */
     public List<Action> parseActions(JSONArray actionArray, boolean userActions){
+
+        Log.d("ActionPArser", actionArray.length()+"");
         List<Action> actions = new ArrayList<>();
 
         try{
@@ -286,6 +301,9 @@ public class Parser{
                     String triggerString = actionObject.getString("custom_trigger");
                     action.setCustomTrigger(gson.fromJson(triggerString, Trigger.class));
                 }
+
+                action.setPrimaryGoal(gson.fromJson(actionObject.getString("primary_goal"), Goal.class));
+                action.setNextReminderDate(actionObject.getString("next_reminder"));
             }
 
             Log.d("ActionParser", action.toString());
@@ -321,5 +339,79 @@ public class Parser{
         }
 
         return places;
+    }
+
+    /**
+     * Parses the user data string provided by the api.
+     *
+     * @param context the context.
+     * @param src the source string.
+     * @return the data bundle containing the user data.
+     */
+    public UserData parseUserData(Context context, String src){
+        try{
+            UserData userData = new UserData();
+
+            JSONObject userJson = new JSONObject(src).getJSONArray("results").getJSONObject(0);
+
+            //Parse the user-selected content, store in userData; wait till all data is set
+            //  before syncing parent/child relationships
+            userData.setCategories(parseCategories(userJson.getJSONArray("categories"), true), false);
+            userData.setGoals(parseGoals(userJson.getJSONArray("goals"), true), false);
+            userData.setBehaviors(parseBehaviors(userJson.getJSONArray("behaviors"), true), false);
+            userData.setActions(parseActions(userJson.getJSONArray("actions"), true), false);
+            userData.sync();
+
+            //Parse the places and save write them into the database
+            userData.setPlaces(parsePlaces(userJson.getJSONArray("places")));
+            CompassDbHelper dbHelper = new CompassDbHelper(context);
+            dbHelper.emptyPlacesTable();
+            dbHelper.savePlaces(userData.getPlaces());
+            dbHelper.close();
+
+            //Feed data
+            FeedData feedData = new FeedData();
+
+            JSONObject nextAction = userJson.getJSONObject("next_action");
+            //If there is a next_action
+            if (nextAction.has("id")){
+                //Parse it out and retrieve the reference to the original copy
+                feedData.setNextAction(userData.getAction(parseAction(nextAction, true)));
+            }
+
+            if (!userJson.isNull("action_feedback")){
+                Log.d("Parser", "has feedback");
+                JSONObject feedback = userJson.getJSONObject("action_feedback");
+                feedData.setFeedbackTitle(feedback.getString("title"));
+                feedData.setFeedbackSubtitle(feedback.getString("subtitle"));
+            }
+
+            JSONObject progress = userJson.getJSONObject("progress");
+            feedData.setProgressPercentage(progress.getInt("progress"));
+            feedData.setCompletedActions(progress.getInt("completed"));
+            feedData.setTotalActions(progress.getInt("total"));
+
+            List<Action> actions = parseActions(userJson.getJSONArray("upcoming_actions"), true);
+            if (actions.size() > 1){
+                List<Action> actionReferences = new ArrayList<>();
+                for (Action action:actions.subList(1, actions.size())){
+                    actionReferences.add(userData.getAction(action));
+                }
+                feedData.setUpcomingActions(actionReferences);
+            }
+            else{
+                feedData.setUpcomingActions(new ArrayList<Action>());
+            }
+            feedData.setSuggestions(parseGoals(userJson.getJSONArray("suggestions"), false));
+
+            userData.setFeedData(feedData);
+            userData.logData();
+
+            return userData;
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return null;
     }
 }

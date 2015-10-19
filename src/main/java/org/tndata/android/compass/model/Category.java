@@ -23,6 +23,8 @@ public class Category extends TDCBase implements Serializable,
     private String secondary_color = "";
     private int goals_count = 0;
     private double progress_value = 0.0; // Only used for UserCategories
+    private boolean packaged_content = false;
+
 
     public Category() {
     }
@@ -125,6 +127,10 @@ public class Category extends TDCBase implements Serializable,
 
     public double getProgressValue() {
         return this.progress_value;
+    }
+
+    public boolean isPackagedContent(){
+        return packaged_content;
     }
 
     public int getProgressIcon() {

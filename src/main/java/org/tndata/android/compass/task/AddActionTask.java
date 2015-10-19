@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
+import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
 
@@ -22,7 +23,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +30,7 @@ import java.util.Map;
 public class AddActionTask extends AsyncTask<Void, Void, Action> {
     private Context mContext;
     private Action mAction;
+    private Goal mGoal;
     private AddActionTaskListener mCallback;
     private static Gson gson = new GsonBuilder().setFieldNamingPolicy(
             FieldNamingPolicy.IDENTITY).create();
@@ -41,6 +42,14 @@ public class AddActionTask extends AsyncTask<Void, Void, Action> {
     public AddActionTask(Context context, AddActionTaskListener callback, Action action) {
         mContext = context;
         mCallback = callback;
+        mGoal = null;
+        mAction = action;
+    }
+
+    public AddActionTask(Context context, AddActionTaskListener callback, Goal goal, Action action) {
+        mContext = context;
+        mCallback = callback;
+        mGoal = goal;
         mAction = action;
     }
 
@@ -62,6 +71,9 @@ public class AddActionTask extends AsyncTask<Void, Void, Action> {
         JSONObject body = new JSONObject();
         try {
             body.put("action", mAction.getId());
+            if(mGoal != null) {
+                body.put("primary_goal", mGoal.getId());
+            }
         } catch (JSONException e1) {
             e1.printStackTrace();
             return null;

@@ -3,12 +3,9 @@ package org.tndata.android.compass.task;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
@@ -32,10 +29,10 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
     private static final String TAG = "GetUserDataTask";
 
     private Context mContext;
-    private GetUserDataListener mCallback;
+    private GetUserDataCallback mCallback;
 
 
-    public GetUserDataTask(@NonNull Context context, @NonNull GetUserDataListener callback){
+    public GetUserDataTask(@NonNull Context context, @NonNull GetUserDataCallback callback){
         mContext = context;
         mCallback = callback;
     }
@@ -43,7 +40,6 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
     @Override
     protected UserData doInBackground(String... params){
         String url = Constants.BASE_URL + "users/";
-        UserData userData = new UserData();
 
         Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
@@ -63,33 +59,10 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
             }
             bReader.close();
 
-            JSONArray jArray = new JSONObject(result).getJSONArray("results");
-            JSONObject userJson = jArray.getJSONObject(0); // 1 user, so 1 result
-
-            Parser parser = new Parser();
-
-            // Parse the user-selected content, store in userData; wait till all data is set
-            // before syncing parent/child relationships.
-            userData.setCategories(parser.parseCategories(userJson.getJSONArray("categories"), true), false);
-            userData.setGoals(parser.parseGoals(userJson.getJSONArray("goals"), true), false);
-            userData.setBehaviors(parser.parseBehaviors(userJson.getJSONArray("behaviors"), true), false);
-            userData.setActions(parser.parseActions(userJson.getJSONArray("actions"), true), false);
-            userData.sync();
-
-            userData.setPlaces(parser.parsePlaces(userJson.getJSONArray("places")));
-            CompassDbHelper dbHelper = new CompassDbHelper(mContext);
-            dbHelper.emptyPlacesTable();
-            dbHelper.savePlaces(userData.getPlaces());
-            dbHelper.close();
-
-            Log.d(TAG, "... finishing up GetUserDataTask.");
-            userData.logData();
-            
-            return userData;
-
+            return new Parser().parseUserData(mContext, result);
         }
-        catch (IOException|JSONException x){
-            x.printStackTrace();
+        catch (IOException iox){
+            iox.printStackTrace();
         }
 
         return null;
@@ -103,7 +76,7 @@ public class GetUserDataTask extends AsyncTask<String, Void, UserData>{
     }
 
 
-    public interface GetUserDataListener{
-        void userDataLoaded(UserData userData);
+    public interface GetUserDataCallback{
+        void userDataLoaded(@Nullable UserData userData);
     }
 }

@@ -27,7 +27,6 @@ import org.tndata.android.compass.ui.CompassPopupMenu;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.ImageHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -137,7 +136,7 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
                     if (!actions.contains(mAction)) {
                         mProgressBar.setVisibility(View.VISIBLE);
                         mAddImageView.setEnabled(false);
-                        new AddActionTask(getActivity(), LearnMoreFragment.this, mAction)
+                        new AddActionTask(getActivity(), LearnMoreFragment.this, mGoal, mAction)
                                 .executeOnExecutor(AsyncTask
                                         .THREAD_POOL_EXECUTOR);
                     } else {
@@ -295,14 +294,14 @@ public class LearnMoreFragment extends Fragment implements AddActionTask
             popup.getMenuInflater()
                     .inflate(R.menu.menu_action_popup_chooser, popup.getMenu());
         } else {
-            popup.getMenuInflater().inflate(R.menu.menu_behavior_popup_chooser, popup.getMenu());
+            popup.getMenuInflater().inflate(R.menu.popup_behavior, popup.getMenu());
         }
 
         popup.setOnMenuItemClickListener(new CompassPopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_popup_remove_item:
-                    case R.id.menu_behavior_popup_remove_item:
+                    case R.id.behavior_popup_remove:
                         if (mAction != null) {
                             new DeleteActionTask(getActivity(), LearnMoreFragment.this, String
                                     .valueOf(mAction.getMappingId()))

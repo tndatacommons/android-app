@@ -24,6 +24,8 @@ public class Behavior extends TDCBase implements Serializable,
     private List<Category> userCategories = new ArrayList<>();
     private List<Goal> goals = new ArrayList<>();
     private List<Action> actions = new ArrayList<>();
+    private Progress progress;
+
 
     public Behavior() {
     }
@@ -148,6 +150,14 @@ public class Behavior extends TDCBase implements Serializable,
         if(this.actions.contains(action)) {
             this.actions.remove(action);
         }
+    }
+
+    public void setProgress(Progress progress){
+        this.progress = progress;
+    }
+
+    public Progress getProgress(){
+        return progress;
     }
 
     @Override

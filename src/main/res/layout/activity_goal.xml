@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <!-- The recycler view goes in the back -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/goal_item_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- The hero on top of it -->
+    <ImageView
+        android:id="@+id/goal_hero"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true" />
+
+    <!-- The title on top of the hero, serving as the background for the title bar -->
+    <TextView
+        android:id="@+id/goal_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/white"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Goal title goes here" />
+
+    <!-- The progress indicator, right on top of the title bar -->
+    <at.grabner.circleprogress.CircleProgressView
+        xmlns:progress="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/goal_indicator"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        progress:barColor="#00796B"
+        progress:barWidth="15dp"
+        progress:contourSize="0dp"
+        progress:maxValue="100"
+        progress:rimColor="#B2DFDB"
+        progress:rimWidth="15dp"
+        progress:seekMode="false"
+        progress:textColor="#00796B"
+        progress:unit="%"
+        progress:unitColor="#009688" />
+
+    <!-- On top of everything, the FAB -->
+    <org.tndata.android.compass.ui.button.FloatingActionButton
+        android:id="@+id/goal_fab"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginRight="28dp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_add_white_24dp" />
+
+    <include
+        layout="@layout/transparent_tool_bar"
+        android:id="@+id/goal_toolbar" />
+
+</RelativeLayout>

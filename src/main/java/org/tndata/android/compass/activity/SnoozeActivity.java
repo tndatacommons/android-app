@@ -69,6 +69,9 @@ public class SnoozeActivity
         mReminder = (Reminder)getIntent().getSerializableExtra(REMINDER_KEY);
         notificationId = getIntent().getIntExtra(NOTIFICATION_ID_KEY, -1);
         pushNotificationId = getIntent().getIntExtra(PUSH_NOTIFICATION_ID_KEY, -1);
+        if (notificationId == -1){
+            notificationId = mReminder.getNotificationId();
+        }
 
         ListView list = (ListView)findViewById(R.id.snooze_list);
         list.setAdapter(new SnoozeAdapter(this));
@@ -198,6 +201,7 @@ public class SnoozeActivity
         reportSnooze();
 
         //Kill the activity
+        setResult(RESULT_OK);
         finish();
     }
 
@@ -222,6 +226,7 @@ public class SnoozeActivity
             //Report the snooze
             reportSnooze();
 
+            setResult(RESULT_OK);
             finish();
         }
     }
@@ -240,10 +245,9 @@ public class SnoozeActivity
     }
 
     private void reportSnooze(){
-        Log.d("Report", "Report Called");
         Intent report = new Intent(this, ActionReportService.class)
                 .putExtra(ActionReportService.ACTION_MAPPING_ID_KEY, mReminder.getUserMappingId())
-                .putExtra(ActionReportService.STATE_KEY, "snoozed");
+                .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_SNOOZED);
         startService(report);
     }
 }

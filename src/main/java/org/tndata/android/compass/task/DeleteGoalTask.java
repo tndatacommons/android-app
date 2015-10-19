@@ -76,7 +76,8 @@ public class DeleteGoalTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected void onPostExecute(Void result) {
-        mCallback.goalsDeleted(mGoal);
+        if (mCallback != null){
+            mCallback.goalsDeleted(mGoal);
+        }
     }
-
 }

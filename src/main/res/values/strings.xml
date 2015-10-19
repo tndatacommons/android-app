@@ -174,7 +174,8 @@
     <string name="action_icon_cd">Action icon</string>
     <string name="action_external_resource_header">Try this resource</string>
     <string name="action_more_info_header">More info</string>
-    <string name="action_later">Later</string>
+    <string name="action_snooze">Later</string>
+    <string name="action_reschedule">Reschedule</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_did_it">I did it</string>
     <string name="action_tick_cd">Action complete tick</string>
@@ -246,5 +247,29 @@
     <string name="package_consent">Consent</string>
     <string name="package_load_error">The package information could not be loaded</string>
     <string name="package_consent_error">There was a problem consenting the package</string>
+
+    <!-- Feed -->
+    <!-- Welcome card -->
+    <string name="card_welcome_title">Welcome to Compass</string>
+    <string name="card_welcome_subtitle">You want good things for yourself. Compass helps you know your goals, do things to achieve them, and track your progress over time.</string>
+    <string name="card_welcome_instructions"><i>Instructions</i>: Select a goal that Compass has recommended for you, or touch the button at the bottom of the screen to discover your own goal.</string>
+    <!-- Up next card -->
+    <string name="card_up_next_header_completed">All done!</string>
+    <string name="card_up_next_header">Up next</string>
+    <string name="card_up_next_title_completed">No activities remaining today.</string>
+    <string name="card_up_next_title_empty">No activities selected for today.</string>
+    <string name="card_up_next_subtitle_completed">See you tomorrow!</string>
+    <string name="card_up_next_subtitle_empty">Select an activity to help you reach one of your goals.</string>
+    <string name="card_up_next_goal_title">To %1$s</string>
+    <string name="card_up_next_indicator_caption">%1$s completed</string>
+    <!-- Upcoming cards -->
+    <string name="card_upcoming_header">Today\'s activities</string>
+    <string name="card_upcoming_goal_title">To %1$s</string>
+    <!-- My goals cards -->
+    <string name="card_my_goals_header">My goals</string>
+    <string name="card_suggestions_header">Recommended for you</string>
+
+    <!-- Goal Activity -->
+    <string name="goal_indicator_caption">%1$s\%</string>
 
 </resources>

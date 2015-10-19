@@ -29,7 +29,6 @@ import org.tndata.android.compass.ui.CompassPopupMenu;
 import org.tndata.android.compass.util.ImageHelper;
 import org.tndata.android.compass.util.ImageLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -218,13 +217,13 @@ public class BehaviorFragment extends Fragment implements ActionLoaderListener, 
 
         //Inflating the Popup using xml file
         popup.getMenuInflater()
-                .inflate(R.menu.menu_behavior_popup_chooser, popup.getMenu());
+                .inflate(R.menu.popup_behavior, popup.getMenu());
 
         //registering popup with OnMenuItemClickListener
         popup.setOnMenuItemClickListener(new CompassPopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.menu_behavior_popup_remove_item:
+                    case R.id.behavior_popup_remove:
                         mCallback.deleteBehavior(mBehavior);
                         break;
                 }

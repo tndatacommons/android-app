@@ -1,63 +1,74 @@
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/app_background">
+    android:background="@color/app_background" >
 
     <RelativeLayout
+        android:id="@+id/main_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent" >
 
-        <ImageView
-            android:id="@+id/main_material_imageview"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/main_refresh"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/material_header_size"
-            android:background="@color/grow_primary"
-            android:scaleType="centerCrop"
-            android:src="@drawable/compass_master_illustration" />
+            android:layout_height="match_parent" >
 
-        <include
-            android:id="@+id/transparent_tool_bar"
-            layout="@layout/transparent_tool_bar" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
 
-        <com.astuetz.PagerSlidingTabStrip xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/main_pager_tabstrip"
+                <ImageView
+                    android:id="@+id/main_illustration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/compass_master_illustration" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/main_feed"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <include
+                    android:id="@+id/main_toolbar"
+                    layout="@layout/transparent_tool_bar" />
+
+            </RelativeLayout>
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <View
+            android:id="@+id/main_stopper"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="@dimen/material_header_padding"
-            android:background="@android:color/transparent"
-            android:paddingBottom="5dp"
-            android:textColor="@color/light_gray_text_color"
-            app:pstsIndicatorColor="@color/white"
-            app:pstsPaddingMiddle="true"
-            app:pstsTextColorSelected="@color/white"
-            app:pstsUnderlineColor="@android:color/transparent" />
+            android:layout_height="match_parent"
+            android:background="@drawable/feed_menu_background"
+            android:visibility="gone" />
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/main_viewpager"
+        <com.github.clans.fab.FloatingActionMenu
+            xmlns:fab="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/main_fab_menu"
             android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:layout_below="@id/main_pager_tabstrip"></android.support.v4.view.ViewPager>
-
-        <org.tndata.android.compass.ui.button.FloatingActionButton
-            android:id="@+id/category_fab_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_action_new_large"
-            fab:fab_colorNormal="@color/button_paper_fab_color"
-            fab:fab_colorPressed="@color/button_paper_fab_selected_color"
-            fab:fab_colorRipple="@color/white" />
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            fab:menu_fab_size="normal"
+            fab:menu_showShadow="true"
+            fab:menu_shadowColor="#66000000"
+            fab:menu_colorNormal="@color/button_paper_fab_color"
+            fab:menu_colorPressed="@color/button_paper_fab_selected_color"
+            fab:menu_colorRipple="@color/white"
+            fab:menu_animationDelayPerItem="50"
+            fab:menu_labels_style="@style/MenuLabelStyle" />
 
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/main_left_drawer"
+        android:id="@+id/main_drawer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"

@@ -99,20 +99,21 @@ public final class NotificationUtil{
     public static void generateActionNotification(Context context, int notificationId, String title,
                                                   String message, int actionId, int userMappingId){
 
+        Reminder reminder = new Reminder(notificationId, -1, title, message, actionId, userMappingId);
+
         Intent intent = new Intent(context, ActionActivity.class)
-                .putExtra(ActionActivity.ACTION_ID_KEY, actionId);
+                .putExtra(ActionActivity.ACTION_ID_KEY, actionId)
+                .putExtra(ActionActivity.REMINDER_KEY, reminder);
 
         PendingIntent contentIntent = PendingIntent.getActivity(context,
                 (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent dismissIntent = new Intent(context, ActionReportService.class)
                 .putExtra(ActionReportService.ACTION_MAPPING_ID_KEY, userMappingId)
-                .putExtra(ActionReportService.STATE_KEY, "dismissed");
+                .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_DISMISSED);
 
         PendingIntent dismissedPendingIntent = PendingIntent.getService(context,
                 (int)System.currentTimeMillis(), dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Reminder reminder = new Reminder(notificationId, -1, title, message, actionId, userMappingId);
 
         Intent snoozeIntent = new Intent(context, SnoozeActivity.class)
                 .putExtra(SnoozeActivity.REMINDER_KEY, reminder)
@@ -127,7 +128,7 @@ public final class NotificationUtil{
         Intent didItIntent = new Intent(context, ActionReportService.class)
                 .putExtra(ActionReportService.PUSH_NOTIFICATION_ID_KEY, actionId)
                 .putExtra(ActionReportService.ACTION_MAPPING_ID_KEY, userMappingId)
-                .putExtra(ActionReportService.STATE_KEY, "completed");
+                .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED);
 
         PendingIntent didItPendingIntent = PendingIntent.getService(context,
                 (int)System.currentTimeMillis(), didItIntent, PendingIntent.FLAG_UPDATE_CURRENT);

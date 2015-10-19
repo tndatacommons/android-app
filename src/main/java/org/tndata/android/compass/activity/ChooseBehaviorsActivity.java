@@ -31,6 +31,7 @@ import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.task.AddBehaviorTask;
+import org.tndata.android.compass.task.AddGoalTask;
 import org.tndata.android.compass.task.BehaviorLoaderTask;
 import org.tndata.android.compass.task.BehaviorLoaderTask.BehaviorLoaderListener;
 import org.tndata.android.compass.task.DeleteBehaviorTask;
@@ -54,13 +55,20 @@ public class ChooseBehaviorsActivity
         implements
                 BehaviorLoaderListener,
                 AddBehaviorTask.AddBehaviorsTaskListener,
-                DeleteBehaviorTask.DeleteBehaviorTaskListener,
+                AddGoalTask.AddGoalsTaskListener,
+                DeleteBehaviorTask.DeleteBehaviorCallback,
                 ChooseBehaviorsAdapter.ChooseBehaviorsListener,
                 MenuItemCompat.OnActionExpandListener,
                 SearchView.OnQueryTextListener,
                 SearchView.OnCloseListener{
 
+    //Bundle keys
+    public static final String CATEGORY_KEY = "org.tndata.compass.ChooseBehaviors.Category";
+    public static final String GOAL_KEY = "org.tndata.compass.ChooseBehaviors.Goal";
+
+    //Activity tag
     private static final String TAG = "ChooseBehaviorsActivity";
+
 
     public CompassApplication mApplication;
 
@@ -68,10 +76,10 @@ public class ChooseBehaviorsActivity
     private MenuItem mSearchItem;
     private SearchView mSearchView;
 
+    private Category mCategory;
     private Goal mGoal;
     private ChooseBehaviorsAdapter mAdapter;
     private View mHeaderView;
-    private Category mCategory = null;
 
 
     @Override
@@ -81,9 +89,27 @@ public class ChooseBehaviorsActivity
 
         mApplication = (CompassApplication)getApplication();
 
-        mGoal = (Goal)getIntent().getSerializableExtra("goal");
-        Log.d("mGoal?", "id:" + mGoal.getId() + " title:" + mGoal.getTitle());
-        mCategory = (Category)getIntent().getSerializableExtra("category");
+        //TODO remove the use of old keys in favor of the new ones from the app
+        //Pull the goal, try with the new key first, if that fails, try the old one, then log
+        mGoal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
+        if (mGoal == null){
+            mGoal = (Goal)getIntent().getSerializableExtra("goal");
+        }
+        Log.d(TAG, mGoal.toString());
+
+        //Pull the category, try with the new key first, if that fails try the old, of that
+        //  fails as well, pull it from the goal
+        mCategory = (Category)getIntent().getSerializableExtra(CATEGORY_KEY);
+        if (mCategory == null){
+            mCategory = (Category)getIntent().getSerializableExtra("category");
+            if (mCategory == null){
+                mCategory = mGoal.getPrimaryCategory();
+                if (mCategory == null){
+                    Goal goal = mApplication.getUserData().getGoal(mGoal);
+                    mCategory = goal.getCategories().get(0);
+                }
+            }
+        }
 
         //Retrieve the user goal if it exists, since it is the one that contains
         //  the information regarding the custom trigger allowance.
@@ -112,14 +138,27 @@ public class ChooseBehaviorsActivity
         recyclerView.setLayoutManager(manager);
         recyclerView.setHasFixedSize(true);
 
-        mAdapter = new ChooseBehaviorsAdapter(this, this, mApplication, recyclerView, mCategory, mGoal);
+        mAdapter = new ChooseBehaviorsAdapter(this, this, mApplication, recyclerView, mCategory, mGoal, isGoalSelected());
         recyclerView.setAdapter(mAdapter);
-        if (mCategory != null && !mCategory.getColor().isEmpty()) {
+        if (mCategory != null && !mCategory.getColor().isEmpty()){
             mHeaderView.setBackgroundColor(Color.parseColor(mCategory.getColor()));
             mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }
 
         new BehaviorLoaderTask(this).execute(mApplication.getToken(), String.valueOf(mGoal.getId()));
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if (isGoalSelected()){
+            mAdapter.disableAddGoalButton();
+        }
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private boolean isGoalSelected(){
+        return mApplication.getUserData().getGoals().contains(mGoal);
     }
 
     @Override
@@ -185,7 +224,24 @@ public class ChooseBehaviorsActivity
     }
 
     @Override
+    public void addGoal(){
+        //TODO
+        mGoal.setPrimaryCategory(mCategory);
+        mApplication.getUserData().addGoal(mGoal);
+        ArrayList<String> ids = new ArrayList<>();
+        ids.add(mGoal.getId()+"");
+        new AddGoalTask(this, this, ids, mGoal).execute();
+    }
+
+    @Override
     public void addBehavior(Behavior behavior){
+        //If the goal isn't selected, select it
+        if (!isGoalSelected()){
+            addGoal();
+            mAdapter.disableAddGoalButton();
+        }
+
+        //Then select the behavior
         ArrayList<String> behaviors = new ArrayList<>();
         behaviors.add(String.valueOf(behavior.getId()));
         new AddBehaviorTask(this, this, behaviors).execute();
@@ -212,7 +268,7 @@ public class ChooseBehaviorsActivity
 
         ArrayList<String> behaviorsToDelete = new ArrayList<>();
         behaviorsToDelete.add(String.valueOf(behavior.getMappingId()));
-        new DeleteBehaviorTask(this, this, behaviorsToDelete).execute();
+        new DeleteBehaviorTask(mApplication.getToken(), this, behaviorsToDelete).execute();
 
         mApplication.removeBehavior(behavior);
         Toast.makeText(this, getText(R.string.choose_behaviors_behavior_removed), Toast.LENGTH_SHORT).show();
@@ -339,5 +395,10 @@ public class ChooseBehaviorsActivity
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void goalsAdded(ArrayList<Goal> goals, Goal goal){
+        mApplication.getUserData().getGoal(goal).setMappingId(goal.getMappingId());
     }
 }

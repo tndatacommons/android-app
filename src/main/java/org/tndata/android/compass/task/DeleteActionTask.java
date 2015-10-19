@@ -52,8 +52,9 @@ public class DeleteActionTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected void onPostExecute(Void result) {
-        mCallback.actionDeleted();
+    protected void onPostExecute(Void result){
+        if (mCallback != null){
+            mCallback.actionDeleted();
+        }
     }
-
 }

@@ -209,7 +209,7 @@ public class CompassTasksTest {
         singUpUserTask();
 
 
-        GetUserDataTask.GetUserDataListener getUserDataListener = new GetUserDataTask.GetUserDataListener() {
+        GetUserDataTask.GetUserDataCallback getUserDataListener = new GetUserDataTask.GetUserDataCallback() {
             @Override
             public void userDataLoaded(UserData data) {
                 userData = data;

@@ -136,6 +136,16 @@ public final class ImageLoader{
      *
      * @param view the view to where the bitmap shall be set.
      * @param url the urk of the bitmap. This acts as a key for the cache.
+     */
+    public static void loadBitmap(ImageView view, String url){
+        loadBitmap(view, url, new Options());
+    }
+
+    /**
+     * Loads the bitmap at the provided url, but checks the cache first.
+     *
+     * @param view the view to where the bitmap shall be set.
+     * @param url the urk of the bitmap. This acts as a key for the cache.
      * @param options the option bundle.
      */
     public static void loadBitmap(ImageView view, String url, Options options){
@@ -144,8 +154,12 @@ public final class ImageLoader{
         //2.- On hit, load, on miss, check disk cache
         if (bitmap != null){
             Log.d("MemoryCache", "Hit: " + url);
+            //TODO extract this code into a function.
             if (options.mCropToCircle){
                 bitmap = ImageHelper.getCircleBitmap(bitmap, bitmap.getWidth());
+            }
+            else if (options.mCropBottom){
+                bitmap = ImageHelper.cropOutBottom(bitmap);
             }
             view.setImageBitmap(bitmap);
         }
@@ -631,10 +645,17 @@ public final class ImageLoader{
 
                     task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request.mUrl);
                 }
+                else{
+                    MemoryCache.instance().addBitmapToMemoryCache(request.mUrl, request.mResult);
+                    completeLoadRequest(request);
+                    //request.mImageView.setImageBitmap(request.mResult);
+                    closeRequest();
+                }
             }
             else{
                 MemoryCache.instance().addBitmapToMemoryCache(request.mUrl, request.mResult);
-                request.mImageView.setImageBitmap(request.mResult);
+                completeLoadRequest(request);
+                //request.mImageView.setImageBitmap(request.mResult);
                 closeRequest();
             }
         }
@@ -673,6 +694,9 @@ public final class ImageLoader{
             if (request.mOptions.mCropToCircle){
                 result = ImageHelper.getCircleBitmap(result, result.getWidth());
             }
+            else if (request.mOptions.mCropBottom){
+                result = ImageHelper.cropOutBottom(result);
+            }
             request.mImageView.setImageBitmap(result);
         }
     }
@@ -687,6 +711,7 @@ public final class ImageLoader{
         private boolean mFlinging;
         private boolean mUsePlaceholder;
         private boolean mCropToCircle;
+        private boolean mCropBottom;
 
         /**
          * Constructor. Defaults all options to false except for the use of a placeholder,
@@ -696,6 +721,7 @@ public final class ImageLoader{
             mFlinging = false;
             mUsePlaceholder = true;
             mCropToCircle = false;
+            mCropBottom = false;
         }
 
         /**
@@ -721,13 +747,25 @@ public final class ImageLoader{
         }
 
         /**
-         * Sets the flag to crop the loaded image to a circle before setting it ti the target.
+         * Sets the flag to crop the loaded image to a circle before setting it to the target.
          *
          * @param cropToCircle true if the image should be cropped to a circle, false otherwise.
          * @return this bundle.
          */
         public Options setCropToCircle(boolean cropToCircle){
             mCropToCircle = cropToCircle;
+            return this;
+        }
+
+        /**
+         * Sets the flag to crop out the bottom part of the loaded image before setting it to
+         * the target,
+         *
+         * @param cropBottom true if the image should be cropped, false otherwise.
+         * @return this bundle.
+         */
+        public Options setCropBottom(boolean cropBottom){
+            mCropBottom = cropBottom;
             return this;
         }
     }
