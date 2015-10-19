@@ -116,6 +116,7 @@ public class ImageHelper{
 
     /**
      * Crops out the bottom section of a bitmap to turn it a 2:1 ratio bitmap.
+     *
      * @param bmp the source bitmap.
      * @return the processed bitmap.
      */
