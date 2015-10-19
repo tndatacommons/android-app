@@ -150,7 +150,7 @@ public class LoginActivity
     }
 
     private void transitionToMain(){
-        startActivity(new Intent(getApplicationContext(), NewMainActivity.class));
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
         finish();
     }
 

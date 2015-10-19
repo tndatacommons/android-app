@@ -106,7 +106,7 @@ public class OnBoardingActivity extends AppCompatActivity implements
             User user = ((CompassApplication)getApplication()).getUser();
             user.onBoardingComplete(true);
             new UpdateProfileTask(null).execute(user);
-            Intent intent = new Intent(getApplicationContext(), NewMainActivity.class);
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();
         }
