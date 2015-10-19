@@ -341,6 +341,13 @@ public class Parser{
         return places;
     }
 
+    /**
+     * Parses the user data string provided by the api.
+     *
+     * @param context the context.
+     * @param src the source string.
+     * @return the data bundle containing the user data.
+     */
     public UserData parseUserData(Context context, String src){
         try{
             UserData userData = new UserData();
@@ -371,8 +378,6 @@ public class Parser{
                 //Parse it out and retrieve the reference to the original copy
                 feedData.setNextAction(userData.getAction(parseAction(nextAction, true)));
             }
-
-            Log.d("FeedParser", userJson.getString("action_feedback"));
 
             if (!userJson.isNull("action_feedback")){
                 Log.d("Parser", "has feedback");
@@ -408,27 +413,5 @@ public class Parser{
             jsonx.printStackTrace();
         }
         return null;
-    }
-
-    public FeedData parseFeedData(JSONObject feedData){
-        FeedData data = new FeedData();
-
-        try{
-            JSONObject action = feedData.getJSONObject("next_action");
-            data.setNextAction(parseAction(action, true));
-            data.getNextAction().setPrimaryGoal(gson.fromJson(action.getString("primary_goal"), Goal.class));
-
-            JSONObject progress = feedData.getJSONObject("progress");
-            data.setProgressPercentage(progress.getInt("progress"));
-            data.setCompletedActions(progress.getInt("completed"));
-            data.setTotalActions(progress.getInt("total"));
-
-            data.setUpcomingActions(parseActions(feedData.getJSONArray("upcoming"), true));
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-        }
-
-        return data;
     }
 }
