@@ -18,28 +18,38 @@ import android.widget.ImageView;
 import org.tndata.android.compass.R;
 
 
-public class ImageHelper {
+/**
+ * Image utility class.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
+ */
+public class ImageHelper{
     public final static int SELECTED = 1;
     public final static int ADD = 2;
     public final static int CHOOSE = 3;
 
-    public static int calculateInSampleSize(BitmapFactory.Options options,
-                                            int reqWidth, int reqHeight) {
+    /**
+     * Calculates the sample size given a bitmap's parameters and requested width and height.
+     *
+     * @param options the bitmap's parameters.
+     * @param reqWidth the minimum width.
+     * @param reqHeight the minimum height.
+     * @return the appropriate inSampleSize value.
+     */
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight){
         // Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;
 
-        if (height > reqHeight || width > reqWidth) {
+        if (height > reqHeight || width > reqWidth){
+            final int halfHeight = height/2;
+            final int halfWidth = width/2;
 
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and
-            // keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
+            //Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            //   height and width larger than the requested height and width.
+            while ((halfHeight/inSampleSize) > reqHeight && (halfWidth/inSampleSize) > reqWidth){
                 inSampleSize *= 2;
             }
         }
@@ -47,8 +57,8 @@ public class ImageHelper {
         return inSampleSize;
     }
 
-    public static void setupImageViewButton(final Resources resources, ImageView imageView,
-                                            int style) {
+    @SuppressWarnings("deprecation")
+    public static void setupImageViewButton(final Resources resources, ImageView imageView, int style){
         GradientDrawable buttonDrawable = (GradientDrawable) imageView.getBackground();
         int color = -1;
         switch (style) {
@@ -75,6 +85,13 @@ public class ImageHelper {
         }
     }
 
+    /**
+     * Creates a circle bitmap from the provided bitmap.
+     *
+     * @param bmp the source bitmap.
+     * @param size the size of the result.
+     * @return the processed bitmap.
+     */
     public static Bitmap getCircleBitmap(Bitmap bmp, int size){
         Bitmap thumbnail = ThumbnailUtils.extractThumbnail(bmp, size, size);
         Bitmap output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
@@ -97,6 +114,11 @@ public class ImageHelper {
         return output;
     }
 
+    /**
+     * Crops out the bottom section of a bitmap to turn it a 2:1 ratio bitmap.
+     * @param bmp the source bitmap.
+     * @return the processed bitmap.
+     */
     public static Bitmap cropOutBottom(Bitmap bmp){
         int width = bmp.getWidth();
         int height = width/2;
