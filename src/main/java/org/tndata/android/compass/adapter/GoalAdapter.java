@@ -38,27 +38,32 @@ import at.grabner.circleprogress.TextMode;
  * @version 1.0.0
  */
 public class GoalAdapter extends RecyclerView.Adapter{
+    //Class tag
     public static final String TAG = "GoalAdapter";
 
+    //Item view types
     private static final int TYPE_SPACER = 0;
     private static final int TYPE_BEHAVIOR = 1;
     private static final int TYPE_SEPARATOR = 2;
 
+
+    private CompassApplication mApplication;
 
     private Context mContext;
     private GoalAdapterListener mListener;
     private Goal mGoal;
     private int mSpacingRowHeight;
 
-    private CompassApplication mApplication;
-
     //This is a pool of ActionHolders to be reused. Any unused ActionHolders should be
     //  placed here. Before creating new ones, the list should be checked to see if
     //  there are any of them available.
     private Stack<ActionHolder> mHolderPool;
 
+    //The position of the last selected behavior. This needs to be recorded to ensure the
+    //  list is updated after calling a library activity and editing the selected content
     private int mSelectedBehaviorPosition;
 
+    //Flag marking whether the goal belongs to a packaged category
     private boolean mIsContentPackaged;
 
 
@@ -128,7 +133,8 @@ public class GoalAdapter extends RecyclerView.Adapter{
 
             if (behavior.getProgress() != null){
                 holder.mIndicator.setValue(behavior.getProgress().getDailyActionsProgressPercent());
-                holder.mIndicatorCaption.setText(behavior.getProgress().getDailyActionsProgressPercent() + "%");
+                holder.mIndicatorCaption.setText(mContext.getString(R.string.goal_indicator_caption,
+                        behavior.getProgress().getDailyActionsProgressPercent()));
             }
             populate(holder, behavior);
         }
@@ -177,6 +183,8 @@ public class GoalAdapter extends RecyclerView.Adapter{
             else{
                 actionHolder = getActionHolder(holder.mActionContainer);
             }
+
+            //Populate the ui contained by the holder
             actionHolder.mTitle.setText(actions.get(i).getTitle());
             actionHolder.setBehaviorPosition(mGoal.getBehaviors().indexOf(behavior));
             actionHolder.setActionPosition(i);
@@ -258,6 +266,9 @@ public class GoalAdapter extends RecyclerView.Adapter{
         popup.show();
     }
 
+    /**
+     * Updates the content of the behavior marked as selected.
+     */
     public void updateSelectedBehavior(){
         if (mSelectedBehaviorPosition != -1){
             notifyItemChanged(mSelectedBehaviorPosition);

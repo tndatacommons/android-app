@@ -38,7 +38,10 @@ import at.grabner.circleprogress.CircleProgressView;
 
 
 /**
- * Created by isma on 9/24/15.
+ * Displays the content hierarchy of a user goal with all the behaviors and actions.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class GoalActivity
         extends AppCompatActivity
@@ -47,21 +50,27 @@ public class GoalActivity
                 ViewTreeObserver.OnGlobalLayoutListener,
                 View.OnClickListener{
 
+    //Parameter keys
     public static final String GOAL_KEY = "org.tndata.compass.GoalActivity.Goal";
 
+    //Request codes
     private static final int CHOOSE_BEHAVIORS_REQUEST_CODE = 57943;
     private static final int CHOOSE_ACTIONS_REQUEST_CODE = 45875;
     private static final int TRIGGER_REQUEST_CODE = 15426;
 
 
+    //A reference to the application class
     private CompassApplication mApplication;
 
+    //The goal to be displayed
     private Goal mGoal;
 
+    //UI components
     private TextView mTitle;
     private RecyclerView mList;
     private GoalAdapter mAdapter;
 
+    //The height of the title bar
     private int mTitleHeight;
 
 
@@ -72,13 +81,16 @@ public class GoalActivity
 
         mApplication = (CompassApplication)getApplication();
 
+        //Retrieve the goal
         mGoal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
         mGoal = mApplication.getUserData().getGoal(mGoal);
 
+        //Set up the toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.goal_toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
+        //Set up the hero image
         ImageView hero = (ImageView)findViewById(R.id.goal_hero);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)hero.getLayoutParams();
         int heroHeight = CompassUtil.getScreenWidth(this)*2/3;
@@ -93,6 +105,7 @@ public class GoalActivity
             hero.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.compass_master_illustration));
         }
 
+        //Set up the FAB
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.goal_fab);
         params = (RelativeLayout.LayoutParams)fab.getLayoutParams();
         params.topMargin = heroHeight-params.height/2;
@@ -101,8 +114,8 @@ public class GoalActivity
         fab.setColorNormal(Color.parseColor(mGoal.getPrimaryCategory().getSecondaryColor()));
         fab.setColorPressed(Color.parseColor(mGoal.getPrimaryCategory().getSecondaryColor()));
 
+        //Set up the general progress indicator
         Progress progress = mGoal.getProgress();
-
         CircleProgressView indicator = (CircleProgressView)findViewById(R.id.goal_indicator);
         params = (RelativeLayout.LayoutParams)indicator.getLayoutParams();
         params.topMargin = heroHeight-params.height-2*params.topMargin;
@@ -115,6 +128,7 @@ public class GoalActivity
             indicator.setValueAnimated(0, progress.getActionsProgressPercent(), 1500);
         }
 
+        //Set up the title bar
         mTitle = (TextView)findViewById(R.id.goal_title);
         params = (RelativeLayout.LayoutParams)mTitle.getLayoutParams();
         mTitleHeight = heroHeight/2;
@@ -127,9 +141,11 @@ public class GoalActivity
         mTitle.setText(mGoal.getTitle());
         mTitle.getViewTreeObserver().addOnGlobalLayoutListener(this);
 
+        //Behavior list
         mList = (RecyclerView)findViewById(R.id.goal_item_list);
         mList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
+        //Set up the Elements that scroll along with the list
         OnScrollListenerHub hub = new OnScrollListenerHub();
         hub.addOnScrollListener(new ParallaxEffect(hero, 1));
 
@@ -169,6 +185,9 @@ public class GoalActivity
         mList.setOnScrollListener(hub);
     }
 
+    /**
+     * Sets up the behavior list adapter.
+     */
     private void setAdapter(){
         //Since we are moving serializables around, the object that actually changes is not the
         //  one we are referencing. The Goal with the new list of behaviors needs to be pulled

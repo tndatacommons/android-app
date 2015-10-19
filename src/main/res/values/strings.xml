@@ -254,4 +254,7 @@
     <string name="card_welcome_subtitle">You want good things for yourself. Compass helps you know your goals, do things to achieve them, and track your progress over time.</string>
     <string name="card_welcome_instructions"><i>Instructions</i>: Select a goal that Compass has recommended for you, or touch the button at the bottom of the screen to discover your own goal.</string>
 
+    <!-- Goal Activity -->
+    <string name="goal_indicator_caption">%1$s\%</string>
+
 </resources>
