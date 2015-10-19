@@ -55,6 +55,13 @@ public final class CompassUtil{
                 context.getResources().getDisplayMetrics()));
     }
 
+    /**
+     * Calculates the arch distance in meters between two points in Earth's surface.
+     *
+     * @param point1 point A.
+     * @param point2 point B.
+     * @return the arch distance between point A and point B.
+     */
     public static double getDistance(LatLng point1, LatLng point2){
         //Coordinates
         double lat1 = point1.latitude;
@@ -74,6 +81,12 @@ public final class CompassUtil{
         return c*6371*1000;
     }
 
+    /**
+     * Returns the abbreviation of a month in English.
+     *
+     * @param month the month to be abbreviated. 1=January, 12=December.
+     * @return the month abbreviation.
+     */
     public static String getMonthString(int month){
         if (month == 1){
             return "JAN";
