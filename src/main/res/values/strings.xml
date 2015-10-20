@@ -56,10 +56,8 @@
     <string name="signup_confirm_password_label">re-enter password</string>
     <string name="signup_auth_error">An error occurred when signing up</string>
     <string name="signup_privacy_link">Privacy Policy</string>
-    <string name="signup_connect_email">Sign up with email</string>
     <string name="signup_header_label">CREATE YOUR ACCOUNT</string>
-    <string name="signup_header_info_label">FIND YOUR WAY</string>
-    <string name="signup_info_label">Knowing who you are and where you\'re going affects what you can achieve</string>
+    <string name="signup_accept_terms">Creating an account indicates that you agree to our terms of service</string>
 
 
     <!-- OnBoardingActivity -->

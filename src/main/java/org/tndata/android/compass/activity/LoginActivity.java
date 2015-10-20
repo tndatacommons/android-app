@@ -74,13 +74,12 @@ public class LoginActivity
         getSupportActionBar().hide();
 
         SharedPreferences settings = getSharedPreferences(Constants.PREFERENCES_NAME, 0);
-
         swapFragments(DEFAULT, true);
         if (settings.getBoolean(Constants.PREFERENCES_NEW_USER, true)){
             swapFragments(TOUR, true);
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean(Constants.PREFERENCES_NEW_USER, false);
-            editor.commit();
+            editor.apply();
         }
 
         SharedPreferences loginInfo = PreferenceManager
@@ -113,13 +112,6 @@ public class LoginActivity
 
     private void handleBackStack() {
         if (!mFragmentStack.isEmpty()) {
-            Fragment fragment = mFragmentStack.get(mFragmentStack.size() - 1);
-            if (fragment instanceof SignUpFragment) {
-                if (((SignUpFragment) fragment).isEmailViewShown()) {
-                    ((SignUpFragment) fragment).hideEmailView();
-                    return;
-                }
-            }
             mFragmentStack.remove(mFragmentStack.size() - 1);
         }
 
@@ -198,6 +190,7 @@ public class LoginActivity
             case TERMS:
                 if (mWebFragment == null) {
                     mWebFragment = new WebFragment();
+
                 }
                 fragment = mWebFragment;
                 getSupportActionBar().show();
