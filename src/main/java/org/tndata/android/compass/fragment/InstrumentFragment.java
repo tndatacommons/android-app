@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -143,6 +144,9 @@ public class InstrumentFragment extends Fragment implements InstrumentLoaderTask
             mSurveys.addAll(instruments.get(0).getQuestions());
             mStatusProgressBar.setMax(mSurveys.size());
             showNextSurvey();
+        }
+        else{
+            Log.d("InstrumentFragment", "no instruments loaded");
         }
     }
 

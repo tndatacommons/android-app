@@ -253,7 +253,7 @@ public class LoginActivity
         editor.putString("password", user.getPassword());
         editor.putInt("id", user.getId());
         editor.commit();
-        
+
         ((CompassApplication) getApplication()).setToken(user.getToken());
         ((CompassApplication) getApplication()).setUser(user);
         if (user.needsOnBoarding()){

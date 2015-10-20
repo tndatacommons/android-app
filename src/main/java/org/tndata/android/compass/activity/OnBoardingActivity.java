@@ -26,16 +26,19 @@ import org.tndata.android.compass.util.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OnBoardingActivity extends AppCompatActivity implements
-        CheckProgressFragment.CheckProgressFragmentListener,
-        AddCategoryTaskListener,
-        InstrumentFragment.InstrumentFragmentListener,
-        ChooseCategoryAdapter.OnCategoriesSelectedListener,
-        GetUserDataTask.GetUserDataCallback{
-    private static final int CHOOSE_CATEGORIES = 0;
-    private static final int QOL = 1;
-    private static final int BIO = 2;
-    private static final int CHECK_PROGRESS = 3;
+public class OnBoardingActivity
+        extends AppCompatActivity
+        implements
+                CheckProgressFragment.CheckProgressFragmentListener,
+                AddCategoryTaskListener,
+                InstrumentFragment.InstrumentFragmentListener,
+                ChooseCategoryAdapter.OnCategoriesSelectedListener,
+                GetUserDataTask.GetUserDataCallback{
+
+    private static final int STAGE_PROFILE = 0;
+    private static final int STAGE_CHOOSE_CATEGORIES = 1;
+    private static final int STAGE_CHECK_PROGRESS = 2;
+
     private boolean mCategoriesSaved = false;
     private Toolbar mToolbar;
     private ArrayList<Category> mCategories;
@@ -51,7 +54,7 @@ public class OnBoardingActivity extends AppCompatActivity implements
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().hide();
-        swapFragments(BIO); // Start with Bio questions.
+        swapFragments(STAGE_PROFILE); // Start with Bio questions.
     }
 
     @Override
@@ -61,29 +64,27 @@ public class OnBoardingActivity extends AppCompatActivity implements
         instrumentFinished(-1);
     }
 
-    private void swapFragments(int index) {
-        switch (index) {
-            case CHOOSE_CATEGORIES:
+    private void swapFragments(int index){
+        switch (index){
+            case STAGE_PROFILE:
+                mFragment = InstrumentFragment.newInstance(Constants.INITIAL_PROFILE_INSTRUMENT_ID);
+                break;
+
+            case STAGE_CHOOSE_CATEGORIES:
                 Bundle args = new Bundle();
                 args.putBoolean(ChooseCategoriesFragment.RESTRICTIONS_KEY, true);
                 mFragment = new ChooseCategoriesFragment();
                 mFragment.setArguments(args);
                 break;
-            case QOL:
-                if (!mCategories.isEmpty()) {
-                    mFragment = InstrumentFragment.newInstance(Constants.QOL_INSTRUMENT_ID);
-                }
-                break;
-            case BIO:
-                mFragment = InstrumentFragment.newInstance(Constants.BIO_INSTRUMENT_ID);
-                break;
-            case CHECK_PROGRESS:
+
+            case STAGE_CHECK_PROGRESS:
                 mFragment = new CheckProgressFragment();
                 break;
+
         }
+
         if (mFragment != null) {
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.base_content, mFragment).commit();
+            getFragmentManager().beginTransaction().replace(R.id.base_content, mFragment).commit();
         }
     }
 
@@ -99,8 +100,8 @@ public class OnBoardingActivity extends AppCompatActivity implements
 
     @Override
     public void instrumentFinished(int instrumentId){
-        if (instrumentId == Constants.BIO_INSTRUMENT_ID){
-            swapFragments(CHOOSE_CATEGORIES);
+        if (instrumentId == Constants.INITIAL_PROFILE_INSTRUMENT_ID){
+            swapFragments(STAGE_CHOOSE_CATEGORIES);
         }
         else{
             User user = ((CompassApplication)getApplication()).getUser();
@@ -132,6 +133,6 @@ public class OnBoardingActivity extends AppCompatActivity implements
         if (userData != null){
             ((CompassApplication)getApplication()).setUserData(userData);
         }
-        swapFragments(CHECK_PROGRESS);
+        swapFragments(STAGE_CHECK_PROGRESS);
     }
 }

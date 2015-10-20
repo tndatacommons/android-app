@@ -16,6 +16,7 @@ public class Constants{
 
     public final static int QOL_INSTRUMENT_ID = 1;
     public final static int BIO_INSTRUMENT_ID = 4;
+    public final static int INITIAL_PROFILE_INSTRUMENT_ID = 6;
 
     public final static String SURVEY_LIKERT = "likertquestion";
     public final static String SURVEY_MULTICHOICE = "multiplechoicequestion";
