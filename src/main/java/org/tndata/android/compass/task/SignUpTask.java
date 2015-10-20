@@ -12,82 +12,119 @@ import org.json.JSONObject;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkHelper;
+import org.tndata.android.compass.util.Parser;
 
 import android.os.AsyncTask;
-import android.text.Html;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
-public class SignUpTask extends AsyncTask<User, Void, User> {
-    private SignUpTaskListener mCallback;
 
-    public interface SignUpTaskListener {
-        public void signUpResult(User result);
-    }
+/**
+ * Task to perform sign up operations.
+ *
+ * @author Edited by Ismael Alonso.
+ * @version 1.0.0
+ */
+public class SignUpTask extends AsyncTask<Void, Void, User>{
+    private static final String TAG = "SignUpTask";
 
-    public SignUpTask(SignUpTaskListener callback) {
+
+    private SignUpTaskCallback mCallback;
+    private String mEmail;
+    private String mPassword;
+    private String mFirstName;
+    private String mLastName;
+
+
+    /**
+     * Constructor.
+     *
+     * @param callback the callback object.
+     * @param email the email.
+     * @param pass the password.
+     * @param firstName the first name.
+     * @param lastName the last name.
+     */
+    public SignUpTask(@NonNull SignUpTaskCallback callback, @NonNull String email, @NonNull String pass,
+                      @NonNull String firstName, @NonNull String lastName){
         mCallback = callback;
+        mEmail = email;
+        mPassword = pass;
+        mFirstName = firstName;
+        mLastName = lastName;
     }
 
     @Override
-    protected User doInBackground(User... params) {
-        User user = params[0];
-        Map<String, String> headers = new HashMap<String, String>();
+    protected User doInBackground(Void... params){
+        String url = Constants.BASE_URL + "users/";
+
+        Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
         headers.put("Content-type", "application/json");
-        String url = Constants.BASE_URL + "users/";
+
         JSONObject holder = new JSONObject();
-        try {
-            holder.put("password", user.getPassword());
-            holder.put("email", user.getEmail());
-            holder.put("first_name", user.getFirstName());
-            holder.put("last_name", user.getLastName());
-        } catch (JSONException e1) {
-            e1.printStackTrace();
+        try{
+            holder.put("email", mEmail);
+            holder.put("password", mPassword);
+            holder.put("first_name", mFirstName);
+            holder.put("last_name", mLastName);
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
             return null;
         }
-        InputStream stream = NetworkHelper.httpPostStream(url, headers,
-                holder.toString());
-        if (stream == null) {
+
+        //Create the stream and check errors
+        InputStream stream = NetworkHelper.httpPostStream(url, headers, holder.toString());
+        if (stream == null){
+            Log.d(TAG, "Bad stream");
             return null;
         }
-        String result = "";
-        String createResponse = "";
-        try {
 
-            BufferedReader bReader = new BufferedReader(new InputStreamReader(
-                    stream, "UTF-8"));
-
-            String line = null;
-            while ((line = bReader.readLine()) != null) {
+        try{
+            //Read the stream
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+            String line, result = "";
+            while ((line = reader.readLine()) != null){
                 result += line;
             }
-            bReader.close();
+            reader.close();
 
-            createResponse = Html.fromHtml(result).toString();
-
-            JSONObject jObject = new JSONObject(createResponse);
-            Log.d("user response", jObject.toString(2));
-            user.setToken(jObject.optString("token"));
-            user.setFullName(jObject.optString("full_name"));
-            user.setLastName(jObject.optString("last_name", user.getLastName()));
-            user.setFirstName(jObject.optString("first_name",
-                    user.getFirstName()));
-            user.setEmail(jObject.optString("email", user.getEmail()));
-            user.setId(jObject.optInt("id", -1));
-            user.setUserprofileId(jObject.optInt("userprofile_id", -1));
-            user.setDateJoined(jObject.optString("date_joined"));
-            return user;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+            //Parse the user
+            return new Parser().parseUser(result);
+        }
+        catch (IOException iox){
+            iox.printStackTrace();
         }
         return null;
     }
 
     @Override
-    protected void onPostExecute(User result) {
+    protected void onPostExecute(User result){
+        if (result == null){
+            Log.e(TAG, "Couldn't sign up");
+        }
+        else{
+            Log.d(TAG, result.toString());
+            result.setPassword(mPassword);
+        }
         mCallback.signUpResult(result);
     }
 
+
+    /**
+     * Sign up event callback interface.
+     *
+     * @author Edited by Ismael Alonso
+     * @version 1.0.0
+     */
+    public interface SignUpTaskCallback{
+        /**
+         * Called when an event associated with sign up is triggered.
+         *
+         * @param user the user if the sign up operation succeeded or null if it failed.
+         */
+        void signUpResult(@Nullable User user);
+    }
 }

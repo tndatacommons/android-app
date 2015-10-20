@@ -3,7 +3,7 @@ package org.tndata.android.compass.fragment;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.task.SignUpTask;
-import org.tndata.android.compass.task.SignUpTask.SignUpTaskListener;
+import org.tndata.android.compass.task.SignUpTask.SignUpTaskCallback;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -27,7 +27,7 @@ import android.widget.TextView;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class SignUpFragment extends Fragment implements SignUpTaskListener, OnClickListener{
+public class SignUpFragment extends Fragment implements SignUpTaskCallback, OnClickListener{
     //Listener interface
     private SignUpFragmentListener mListener;
 
@@ -119,15 +119,8 @@ public class SignUpFragment extends Fragment implements SignUpTaskListener, OnCl
             mErrorString = "";
             mError.setText(mErrorString);
 
-            //Create the user object
-            User user = new User();
-            user.setEmail(emailAddress);
-            user.setPassword(password);
-            user.setFirstName(firstName);
-            user.setLastName(lastName);
-
             //Sign up
-            new SignUpTask(this).execute(user);
+            new SignUpTask(this, emailAddress, password, firstName,lastName).execute();
         }
         else{
             mError.setText(mErrorString);

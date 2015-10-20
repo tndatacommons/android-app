@@ -49,7 +49,7 @@ public class CompassTasksTest {
     }
 
     private void singUpUserTask() {
-        SignUpTask.SignUpTaskListener signUpTaskListener = new SignUpTask.SignUpTaskListener() {
+        SignUpTask.SignUpTaskCallback signUpTaskListener = new SignUpTask.SignUpTaskCallback() {
             @Override
             public void signUpResult(User result) {
                 userRestult = result;
@@ -81,7 +81,7 @@ public class CompassTasksTest {
     @Test
     public void loginTaskTest_returnsTrue() throws InterruptedException {
 
-        SignUpTask.SignUpTaskListener signUpTaskListener = new SignUpTask.SignUpTaskListener() {
+        SignUpTask.SignUpTaskCallback signUpTaskListener = new SignUpTask.SignUpTaskCallback() {
             @Override
             public void signUpResult(User result) {
                 userRestult = result;

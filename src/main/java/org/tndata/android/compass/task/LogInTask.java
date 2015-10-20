@@ -106,17 +106,17 @@ public class LogInTask extends AsyncTask<Void, Void, User>{
 
 
     /**
-     * Login event callback interface.
+     * Log in event callback interface.
      *
      * @author Edited by Ismael Alonso
      * @version 1.0.0
      */
     public interface LogInTaskCallback{
         /**
-         * Called when an event associated with login is triggered.
+         * Called when an event associated with log in is triggered.
          *
-         * @param result the user if the login operation succeeded or null if it failed.
+         * @param user the user if the log in operation succeeded or null if it failed.
          */
-        void logInResult(@Nullable User result);
+        void logInResult(@Nullable User user);
     }
 }
