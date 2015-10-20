@@ -353,6 +353,7 @@ public class Parser{
         try{
             JSONObject userObject = new JSONObject(src);
             Log.d("UserParser", userObject.toString(2));
+            user.setError("");
             JSONArray errorArray = userObject.optJSONArray("non_field_errors");
             if (errorArray != null){
                 user.setError(errorArray.optString(0));

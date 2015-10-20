@@ -108,7 +108,7 @@ public class LoginFragment extends Fragment implements LogInTaskCallback, OnClic
     }
 
     @Override
-    public void loginResult(User result){
+    public void logInResult(User result){
         if (result != null){
             if (result.getError().isEmpty()){
                 mListener.loginSuccess(result);

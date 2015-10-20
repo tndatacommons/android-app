@@ -41,7 +41,7 @@ public class LoginActivity
                 LauncherFragmentListener,
                 SignUpFragmentListener,
                 LoginFragmentListener,
-        LogInTaskCallback,
+                LogInTaskCallback,
                 TourFragmentListener,
                 GetUserDataCallback{
 
@@ -260,7 +260,7 @@ public class LoginActivity
     }
 
     @Override
-    public void loginResult(User result){
+    public void logInResult(User result){
         if (result != null && result.getError().isEmpty()){
             saveUserInfo(result);
         }

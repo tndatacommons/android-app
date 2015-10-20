@@ -101,7 +101,7 @@ public class LogInTask extends AsyncTask<Void, Void, User>{
             Log.d(TAG, result.toString());
             result.setPassword(mPassword);
         }
-        mCallback.loginResult(result);
+        mCallback.logInResult(result);
     }
 
 
@@ -117,6 +117,6 @@ public class LogInTask extends AsyncTask<Void, Void, User>{
          *
          * @param result the user if the login operation succeeded or null if it failed.
          */
-        void loginResult(@Nullable User result);
+        void logInResult(@Nullable User result);
     }
 }

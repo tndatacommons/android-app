@@ -110,7 +110,7 @@ public class User implements Serializable{
 
     @Override
     public String toString(){
-        return full_name + " (u: " + user_id + ", p: " + userprofile_id + "), "
+        return full_name + " (uid: " + user_id + ", pid: " + userprofile_id + "), "
                 + email + ", needs onboarding: " + needs_onboarding;
     }
 }
