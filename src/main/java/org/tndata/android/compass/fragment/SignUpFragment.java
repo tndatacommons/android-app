@@ -102,14 +102,14 @@ public class SignUpFragment extends Fragment implements SignUpTaskCallback, OnCl
      */
     private void doSignUp(){
         //Retrieve the values
-        String emailAddress = mEmail.getText().toString();
-        String password = mPassword.getText().toString();
-        String confirmPassword = mConfirmPassword.getText().toString();
-        String firstName = mFirstName.getText().toString();
-        String lastName = mLastName.getText().toString();
+        String emailAddress = mEmail.getText().toString().trim();
+        String password = mPassword.getText().toString().trim();
+        String confirmPassword = mConfirmPassword.getText().toString().trim();
+        String firstName = mFirstName.getText().toString().trim();
+        String lastName = mLastName.getText().toString().trim();
 
         //If the values check, proceed to signup
-        if (isValidEmail(emailAddress) && confirmPasswords(password, confirmPassword)){
+        if (checkFields(emailAddress, password, confirmPassword, firstName, lastName)){
             //Change visibility and disable components
             mError.setVisibility(View.INVISIBLE);
             mProgress.setVisibility(View.VISIBLE);
@@ -130,6 +130,35 @@ public class SignUpFragment extends Fragment implements SignUpTaskCallback, OnCl
     }
 
     /**
+     * Checks the input fields, tells whether they are valid, and sets the error string
+     * accordingly.
+     *
+     * @param email the email address.
+     * @param pass the password.
+     * @param pass2 the password confirmation.
+     * @param first the first name.
+     * @param last the last name.
+     * @return true if everything checks, false otherwise.
+     */
+    private boolean checkFields(String email, String pass, String pass2, String first, String last){
+        if (!isValidEmail(email)){
+            return false;
+        }
+        if (!confirmPasswords(pass, pass2)){
+            return false;
+        }
+        if (first.equals("")){
+            mErrorString = getResources().getString(R.string.login_first_name_error);
+            return false;
+        }
+        if (last.equals("")){
+            mErrorString = getResources().getString(R.string.login_last_name_error);
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Checks if the email address provided by the user has a valid format.
      *
      * @param email the address to be checked.
@@ -140,7 +169,7 @@ public class SignUpFragment extends Fragment implements SignUpTaskCallback, OnCl
             return false;
         }
         else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-            mErrorString = getActivity().getResources().getString(R.string.login_email_error);
+            mErrorString = getResources().getString(R.string.login_email_error);
             return false;
         }
         else{

@@ -17,8 +17,8 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.LauncherFragment;
 import org.tndata.android.compass.fragment.LauncherFragment.LauncherFragmentListener;
-import org.tndata.android.compass.fragment.LoginFragment;
-import org.tndata.android.compass.fragment.LoginFragment.LoginFragmentListener;
+import org.tndata.android.compass.fragment.LogInFragment;
+import org.tndata.android.compass.fragment.LogInFragment.LogInFragmentListener;
 import org.tndata.android.compass.fragment.SignUpFragment;
 import org.tndata.android.compass.fragment.SignUpFragment.SignUpFragmentListener;
 import org.tndata.android.compass.fragment.TourFragment;
@@ -40,7 +40,7 @@ public class LoginActivity
         implements
                 LauncherFragmentListener,
                 SignUpFragmentListener,
-                LoginFragmentListener,
+        LogInFragmentListener,
                 LogInTaskCallback,
                 TourFragmentListener,
                 GetUserDataCallback{
@@ -57,7 +57,7 @@ public class LoginActivity
 
     private WebFragment mWebFragment = null;
     private LauncherFragment mLauncherFragment = null;
-    private LoginFragment mLoginFragment = null;
+    private LogInFragment mLoginFragment = null;
     private SignUpFragment mSignUpFragment = null;
     private TourFragment mTourFragment = null;
 
@@ -126,7 +126,7 @@ public class LoginActivity
             if (fragment instanceof LauncherFragment){
                 ((LauncherFragment)fragment).showProgress(false);
             }
-            else if (fragment instanceof LoginFragment){
+            else if (fragment instanceof LogInFragment){
                 index = LOGIN;
             }
             else if (fragment instanceof SignUpFragment){
@@ -177,7 +177,7 @@ public class LoginActivity
                 break;
             case LOGIN:
                 if (mLoginFragment == null) {
-                    mLoginFragment = new LoginFragment();
+                    mLoginFragment = new LogInFragment();
                 }
                 fragment = mLoginFragment;
                 getSupportActionBar().hide();

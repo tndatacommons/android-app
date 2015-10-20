@@ -20,9 +20,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
-public class LoginFragment extends Fragment implements LogInTaskCallback, OnClickListener{
+public class LogInFragment extends Fragment implements LogInTaskCallback, OnClickListener{
     //Listener interface.
-    private LoginFragmentListener mListener;
+    private LogInFragmentListener mListener;
 
     //UI components
     private EditText mEmail;
@@ -41,7 +41,7 @@ public class LoginFragment extends Fragment implements LogInTaskCallback, OnClic
         //This makes sure that the host activity has implemented the callback interface.
         //  If not, it throws an exception
         try{
-            mListener = (LoginFragmentListener)activity;
+            mListener = (LogInFragmentListener)activity;
         }
         catch (ClassCastException ccx){
             throw new ClassCastException(activity.toString()
@@ -72,6 +72,9 @@ public class LoginFragment extends Fragment implements LogInTaskCallback, OnClic
         }
     }
 
+    /**
+     * Checks the fields and starts the log in process if everything checks.
+     */
     private void doLogin(){
         String emailAddress = mEmail.getText().toString();
         String password = mPassword.getText().toString();
@@ -137,7 +140,7 @@ public class LoginFragment extends Fragment implements LogInTaskCallback, OnClic
     }
 
 
-    public interface LoginFragmentListener{
+    public interface LogInFragmentListener{
         void loginSuccess(User user);
     }
 }

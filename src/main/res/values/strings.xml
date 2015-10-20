@@ -45,6 +45,8 @@
     <string name="login_email_label">email address</string>
     <string name="login_password_label">password</string>
     <string name="login_email_error">Please enter a valid email</string>
+    <string name="login_first_name_error">Please enter your first name</string>
+    <string name="login_last_name_error">Please enter your last name</string>
     <string name="login_auth_error">An error occurred when logging in</string>
     <string name="login_header_label">LOG IN</string>
     <string name="signup_password_mismatch_error">Passwords must match</string>
