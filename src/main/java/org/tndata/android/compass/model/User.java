@@ -7,7 +7,7 @@ public class User implements Serializable{
     private static final long serialVersionUID = 4582633283983173348L;
 
     private String token = "";
-    private int user_id = -1;
+    private int id = -1;
     private int userprofile_id = -1;
     private String email = "";
     private String password = "";
@@ -21,11 +21,11 @@ public class User implements Serializable{
 
 
     public int getId() {
-        return user_id;
+        return id;
     }
 
-    public void setId(int user_id) {
-        this.user_id = user_id;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -110,7 +110,7 @@ public class User implements Serializable{
 
     @Override
     public String toString(){
-        return full_name + " (uid: " + user_id + ", pid: " + userprofile_id + "), "
+        return full_name + " (uid: " + id + ", pid: " + userprofile_id + "), "
                 + email + ", needs onboarding: " + needs_onboarding;
     }
 }
