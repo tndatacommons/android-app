@@ -53,4 +53,6 @@
     <color name="feed_pre_l_background">#E4E4E4</color>
     <color name="card_pre_l_background">@color/white</color>
 
+    <color name="signup_hint_color">#61000000</color>
+
 </resources>
