@@ -2,8 +2,8 @@ package org.tndata.android.compass.fragment;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.User;
-import org.tndata.android.compass.task.LoginTask;
-import org.tndata.android.compass.task.LoginTask.LoginTaskListener;
+import org.tndata.android.compass.task.LogInTask;
+import org.tndata.android.compass.task.LogInTask.LogInTaskCallback;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -20,7 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
-public class LoginFragment extends Fragment implements LoginTaskListener, OnClickListener{
+public class LoginFragment extends Fragment implements LogInTaskCallback, OnClickListener{
     //Listener interface.
     private LoginFragmentListener mListener;
 
@@ -85,7 +85,7 @@ public class LoginFragment extends Fragment implements LoginTaskListener, OnClic
             User user = new User();
             user.setEmail(emailAddress);
             user.setPassword(password);
-            new LoginTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, user);
+            new LogInTask(this, emailAddress, password).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
         else{
             mError.setText(mErrorString);

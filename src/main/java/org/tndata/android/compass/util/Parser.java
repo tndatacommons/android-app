@@ -20,6 +20,7 @@ import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Progress;
 import org.tndata.android.compass.model.Trigger;
+import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserData;
 
 import java.util.ArrayList;
@@ -339,6 +340,28 @@ public class Parser{
         }
 
         return places;
+    }
+
+    /**
+     * Parses a user from a JSON string.
+     *
+     * @param src the source string.
+     * @return the parsed User.
+     */
+    public User parseUser(String src){
+        User user = gson.fromJson(src, User.class);
+        try{
+            JSONObject userObject = new JSONObject(src);
+            Log.d("UserParser", userObject.toString(2));
+            JSONArray errorArray = userObject.optJSONArray("non_field_errors");
+            if (errorArray != null){
+                user.setError(errorArray.optString(0));
+            }
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return user;
     }
 
     /**

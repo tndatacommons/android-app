@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -27,8 +28,8 @@ import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.task.GetUserDataTask;
 import org.tndata.android.compass.task.GetUserDataTask.GetUserDataCallback;
-import org.tndata.android.compass.task.LoginTask;
-import org.tndata.android.compass.task.LoginTask.LoginTaskListener;
+import org.tndata.android.compass.task.LogInTask;
+import org.tndata.android.compass.task.LogInTask.LogInTaskCallback;
 import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
@@ -40,9 +41,10 @@ public class LoginActivity
                 LauncherFragmentListener,
                 SignUpFragmentListener,
                 LoginFragmentListener,
-                LoginTaskListener,
+        LogInTaskCallback,
                 TourFragmentListener,
                 GetUserDataCallback{
+
 
     private static final int DEFAULT = 0;
     private static final int LOGIN = 1;
@@ -154,13 +156,13 @@ public class LoginActivity
     private void logUserIn(String emailAddress, String password){
         User user = new User();
         user.setEmail(emailAddress);
-        user.setPassword(password);
+        //user.setPassword(password);
         for (Fragment fragment : mFragmentStack){
             if (fragment instanceof LauncherFragment){
                 ((LauncherFragment) fragment).showProgress(true);
             }
         }
-        new LoginTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, user);
+        new LogInTask(this, emailAddress, password).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private void swapFragments(int index, boolean addToStack) {
@@ -232,10 +234,10 @@ public class LoginActivity
 
     @Override
     public void loginSuccess(User user) {
-        saveUserInfo(user, false);
+        saveUserInfo(user);
     }
 
-    private void saveUserInfo(User user, boolean newUser) {
+    private void saveUserInfo(User user){
         SharedPreferences settings = PreferenceManager
                 .getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = settings.edit();
@@ -249,7 +251,7 @@ public class LoginActivity
         editor.commit();
         ((CompassApplication) getApplication()).setToken(user.getToken());
         ((CompassApplication) getApplication()).setUser(user);
-        if (newUser || user.needsOnBoarding()){
+        if (user.needsOnBoarding()){
             transitionToOnBoarding();
         }
         else{
@@ -260,7 +262,7 @@ public class LoginActivity
     @Override
     public void loginResult(User result){
         if (result != null && result.getError().isEmpty()){
-            saveUserInfo(result, false);
+            saveUserInfo(result);
         }
         else{
             swapFragments(LOGIN, true);
@@ -268,8 +270,8 @@ public class LoginActivity
     }
 
     @Override
-    public void signUpSuccess(User user) {
-        saveUserInfo(user, true);
+    public void signUpSuccess(@NonNull User user){
+        saveUserInfo(user);
     }
 
     @Override

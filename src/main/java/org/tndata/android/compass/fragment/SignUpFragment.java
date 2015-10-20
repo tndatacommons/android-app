@@ -8,6 +8,7 @@ import org.tndata.android.compass.task.SignUpTask.SignUpTaskListener;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -124,7 +125,6 @@ public class SignUpFragment extends Fragment implements SignUpTaskListener, OnCl
             user.setPassword(password);
             user.setFirstName(firstName);
             user.setLastName(lastName);
-            user.onBoardingComplete(false);
 
             //Sign up
             new SignUpTask(this).execute(user);
@@ -229,7 +229,7 @@ public class SignUpFragment extends Fragment implements SignUpTaskListener, OnCl
          *
          * @param user the newly created user.
          */
-        void signUpSuccess(User user);
+        void signUpSuccess(@NonNull User user);
 
         /**
          * Called when the info button is clicked.
