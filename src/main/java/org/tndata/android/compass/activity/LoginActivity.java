@@ -3,7 +3,6 @@ package org.tndata.android.compass.activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -40,12 +39,13 @@ public class LoginActivity
         implements
                 LauncherFragmentListener,
                 SignUpFragmentListener,
-        LogInFragmentListener,
+                LogInFragmentListener,
                 LogInTaskCallback,
                 TourFragmentListener,
                 GetUserDataCallback{
 
 
+    //Fragment ids
     private static final int DEFAULT = 0;
     private static final int LOGIN = 1;
     private static final int SIGN_UP = 2;
@@ -72,8 +72,10 @@ public class LoginActivity
         mToolbar = (Toolbar) findViewById(R.id.tool_bar);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().hide();
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().hide();
+        }
 
         SharedPreferences settings = getSharedPreferences(Constants.PREFERENCES_NAME, 0);
         swapFragments(DEFAULT, true);
@@ -153,16 +155,19 @@ public class LoginActivity
         finish();
     }
 
+    /**
+     * Fires up the log in task with the provided parameters.
+     *
+     * @param emailAddress the email address.
+     * @param password the password.
+     */
     private void logUserIn(String emailAddress, String password){
-        User user = new User();
-        user.setEmail(emailAddress);
-        //user.setPassword(password);
-        for (Fragment fragment : mFragmentStack){
+        for (Fragment fragment:mFragmentStack){
             if (fragment instanceof LauncherFragment){
-                ((LauncherFragment) fragment).showProgress(true);
+                ((LauncherFragment)fragment).showProgress(true);
             }
         }
-        new LogInTask(this, emailAddress, password).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new LogInTask(this, emailAddress, password).execute();
     }
 
     private void swapFragments(int index, boolean addToStack) {
@@ -247,8 +252,8 @@ public class LoginActivity
         editor.putString("email", user.getEmail());
         editor.putString("password", user.getPassword());
         editor.putInt("id", user.getId());
-
         editor.commit();
+        
         ((CompassApplication) getApplication()).setToken(user.getToken());
         ((CompassApplication) getApplication()).setUser(user);
         if (user.needsOnBoarding()){

@@ -76,8 +76,8 @@ public class LogInFragment extends Fragment implements LogInTaskCallback, OnClic
      * Checks the fields and starts the log in process if everything checks.
      */
     private void doLogin(){
-        String emailAddress = mEmail.getText().toString();
-        String password = mPassword.getText().toString();
+        String emailAddress = mEmail.getText().toString().trim();
+        String password = mPassword.getText().toString().trim();
         if (isValidEmail(emailAddress) && !password.isEmpty()){
             mError.setVisibility(View.INVISIBLE);
             mErrorString = "";
@@ -96,11 +96,17 @@ public class LogInFragment extends Fragment implements LogInTaskCallback, OnClic
         }
     }
 
-    private boolean isValidEmail(CharSequence target){
-        if (target == null){
+    /**
+     * Checks if the email address provided by the user has a valid format.
+     *
+     * @param email the address to be checked.
+     * @return true if the address provided has valid email format, false otherwise.
+     */
+    private boolean isValidEmail(String email){
+        if (email == null){
             return false;
         }
-        else if (!Patterns.EMAIL_ADDRESS.matcher(target).matches()){
+        else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             mErrorString = getActivity().getResources().getString(R.string.login_email_error);
             return false;
         }
