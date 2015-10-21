@@ -46,7 +46,7 @@ public class UserProfileActivity extends AppCompatActivity implements UserProfil
                     mProgressBar.setVisibility(View.VISIBLE);
                     mSelectedSurvey = mProfileSurveyItems.get(position);
                     String surveyUrlExtra = mSelectedSurvey.getQuestionType() + "-" + String.valueOf
-                            (mSelectedSurvey.getId());
+                            (mSelectedSurvey.getId() + "/");
                     new SurveyFinderTask(UserProfileActivity.this).executeOnExecutor(AsyncTask
                                     .THREAD_POOL_EXECUTOR, ((CompassApplication)getApplication())
                                     .getToken(),

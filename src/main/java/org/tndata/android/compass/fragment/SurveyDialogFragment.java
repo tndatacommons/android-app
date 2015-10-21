@@ -34,6 +34,7 @@ public class SurveyDialogFragment extends DialogFragment {
     private Survey mSurvey;
     private boolean mShouldShowPositiveButton = true;
     private boolean mShouldShowNegativeButton = true;
+    private boolean mForceDatePicker = false;
     private Button mNegativeButton;
     private Button mPositiveButton;
     private SurveyDialogListener mCallback = null;
@@ -65,12 +66,26 @@ public class SurveyDialogFragment extends DialogFragment {
         return newInstance(survey, true, true);
     }
 
+    public static SurveyDialogFragment newInstanceFD(Survey survey){
+        SurveyDialogFragment f = new SurveyDialogFragment();
+
+        Bundle args = new Bundle();
+        args.putSerializable("survey", survey);
+        args.putBoolean("showNegativeButton", false);
+        args.putBoolean("showPositiveButton", false);
+        args.putBoolean("forceDatePicker", true);
+        f.setArguments(args);
+
+        return f;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSurvey = (Survey) getArguments().getSerializable("survey");
         mShouldShowNegativeButton = getArguments().getBoolean("showNegativeButton");
         mShouldShowPositiveButton = getArguments().getBoolean("showPositiveButton");
+        mForceDatePicker = getArguments().getBoolean("forceDatePicker", false);
     }
 
     /*
@@ -272,7 +287,7 @@ public class SurveyDialogFragment extends DialogFragment {
                     .view_survey_openended_title_textview);
             title.setText(mSurvey.getText());
 
-            if (mSurvey.getInputType().equalsIgnoreCase(Constants.SURVEY_OPENENDED_DATE_TYPE)) {
+            if (mForceDatePicker || mSurvey.getInputType().equalsIgnoreCase(Constants.SURVEY_OPENENDED_DATE_TYPE)) {
                 final DatePicker datePicker = (DatePicker) v.findViewById(R.id
                         .view_survey_openended_datepicker);
                 final Calendar c = Calendar.getInstance();

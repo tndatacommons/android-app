@@ -9,6 +9,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.util.Constants;
@@ -59,8 +60,12 @@ public class SurveyResponseTask extends AsyncTask<Survey, Void, Survey> {
             return null;
         }
 
-        InputStream stream = NetworkHelper.httpPostStream(survey.getResponseUrl(), headers,
-                body.toString());
+        String url = survey.getResponseUrl();
+        if (BuildConfig.DEBUG && url.startsWith("https")){
+            url = "http" + url.substring(5);
+        }
+
+        InputStream stream = NetworkHelper.httpPostStream(url, headers, body.toString());
         if (stream == null) {
             return null;
         }

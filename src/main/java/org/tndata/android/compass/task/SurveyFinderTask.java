@@ -2,6 +2,7 @@ package org.tndata.android.compass.task;
 
 import android.os.AsyncTask;
 import android.text.Html;
+import android.util.Log;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -43,6 +44,7 @@ public class SurveyFinderTask extends AsyncTask<String, Void, Survey> {
         headers.put("Accept", "application/json");
         headers.put("Content-type", "application/json");
         headers.put("Authorization", "Token " + token);
+        Log.d("SurveyFinder", url);
         InputStream stream = NetworkHelper.httpGetStream(url, headers);
         if (stream == null) {
             return null;

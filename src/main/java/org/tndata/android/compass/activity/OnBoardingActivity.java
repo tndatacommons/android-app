@@ -31,7 +31,7 @@ public class OnBoardingActivity
         implements
                 CheckProgressFragment.CheckProgressFragmentListener,
                 AddCategoryTaskListener,
-                InstrumentFragment.InstrumentFragmentListener,
+        InstrumentFragment.InstrumentFragmentCallback,
                 ChooseCategoryAdapter.OnCategoriesSelectedListener,
                 GetUserDataTask.GetUserDataCallback{
 
@@ -67,7 +67,7 @@ public class OnBoardingActivity
     private void swapFragments(int index){
         switch (index){
             case STAGE_PROFILE:
-                mFragment = InstrumentFragment.newInstance(Constants.INITIAL_PROFILE_INSTRUMENT_ID);
+                mFragment = InstrumentFragment.newInstance(Constants.INITIAL_PROFILE_INSTRUMENT_ID, 3);
                 break;
 
             case STAGE_CHOOSE_CATEGORIES:
