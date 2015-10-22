@@ -21,6 +21,8 @@ import org.tndata.android.compass.task.SurveyFinderTask;
 import org.tndata.android.compass.task.SurveyResponseTask;
 
 import java.util.ArrayList;
+import java.util.List;
+
 
 public class UserProfileActivity extends AppCompatActivity implements UserProfileTaskInterface,
         SurveyFinderTask.SurveyFinderInterface, SurveyDialogFragment.SurveyDialogListener,
@@ -134,13 +136,15 @@ public class UserProfileActivity extends AppCompatActivity implements UserProfil
     }
 
     @Override
-    public void surveyResponseRecorded(Survey survey) {
-        for (int i = 0; i < mProfileSurveyItems.size(); i++) {
-            Survey s = mProfileSurveyItems.get(i);
-            if (s.getId() == survey.getId() && s.getQuestionType().equalsIgnoreCase(survey
-                    .getQuestionType())) {
-                mProfileSurveyItems.set(i, survey);
-                break;
+    public void onSurveyResponseRecorded(List<Survey> surveys){
+        for (Survey survey:surveys){
+            for (int i = 0; i < mProfileSurveyItems.size(); i++){
+                Survey s = mProfileSurveyItems.get(i);
+                if (s.getId() == survey.getId() && s.getQuestionType().equalsIgnoreCase(survey
+                        .getQuestionType())){
+                    mProfileSurveyItems.set(i, survey);
+                    break;
+                }
             }
         }
         mAdapter.notifyDataSetChanged();

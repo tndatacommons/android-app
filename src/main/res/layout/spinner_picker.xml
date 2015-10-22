@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DatePicker
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/view_survey_openended_datepicker"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:padding="2dp"
+    android:layout_gravity="center_horizontal"
+    android:datePickerMode="spinner"
+    android:calendarViewShown="false" />

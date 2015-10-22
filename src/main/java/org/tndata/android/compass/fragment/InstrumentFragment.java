@@ -23,6 +23,7 @@ import org.tndata.android.compass.task.SurveyResponseTask;
 import org.tndata.android.compass.ui.SurveyView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class InstrumentFragment
@@ -33,6 +34,7 @@ public class InstrumentFragment
                 SurveyDialogFragment.SurveyDialogListener,
                 SurveyView.SurveyViewListener{
 
+    private static final String TAG = "InstrumentFragment";
 
     public static final String INSTRUMENT_ID_KEY = "org.tndata.compass.Instrument.Id";
     public static final String PAGE_QUESTIONS_KEY = "org.tndata.compass.Instrument.PageQuestions";
@@ -53,6 +55,7 @@ public class InstrumentFragment
 
     //Ready array
     private boolean mQuestionReady[];
+    private Survey mCurrentSurveys[];
 
     //Callback interface
     private InstrumentFragmentCallback mCallback;
@@ -75,6 +78,7 @@ public class InstrumentFragment
         mCurrentSurvey = 0;
 
         mQuestionReady = new boolean[mPageQuestions];
+        mCurrentSurveys = new Survey[mPageQuestions];
     }
 
     @Override
@@ -129,16 +133,18 @@ public class InstrumentFragment
     private void loadSurveys(){
         mLoading.setVisibility(View.VISIBLE);
         new InstrumentLoaderTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                ((CompassApplication) getActivity().getApplication()).getToken(),
+                ((CompassApplication)getActivity().getApplication()).getToken(),
                 String.valueOf(mInstrumentId));
     }
 
     private void saveCurrentSurvey(){
-        Survey survey = mSurveys.get(mCurrentSurvey);
+        for (int i = 0; i < mSurveyContainer.getChildCount(); i++){
+            ((SurveyView)mSurveyContainer.getChildAt(i)).disable();
+        }
         mNext.setEnabled(false);
         new SurveyResponseTask(getActivity(), this).executeOnExecutor(AsyncTask
-                .THREAD_POOL_EXECUTOR, survey);
-        showNextSurveySet();
+                .THREAD_POOL_EXECUTOR, mCurrentSurveys);
+        //showNextSurveySet();
     }
 
     private void showNextSurveySet(){
@@ -147,20 +153,20 @@ public class InstrumentFragment
         while (mCurrentSurvey < mSurveys.size() && mCurrentSurvey < lastSurvey){
             mProgress.setProgress(mCurrentSurvey);
             Survey survey = mSurveys.get(mCurrentSurvey);
+            Log.d(TAG, survey.toString());
 
-            mSurveyContainer.addView(new SurveyView(getActivity(), survey, this));
-            mQuestionReady[mCurrentSurvey%mPageQuestions] = false;
-            mCurrentSurvey++;
-            /*SurveyDialogFragment fragment;
+            SurveyView surveyView;
             if (mInstrumentId == 6 && survey.getId() == 3){
-                fragment = SurveyDialogFragment.newInstanceFD(survey);
+                surveyView = new SurveyView(getActivity(), survey, this, true);
             }
             else{
-                fragment = SurveyDialogFragment.newInstance(survey, false, false);
+                surveyView = new SurveyView(getActivity(), survey, this);
             }
-            fragment.setListener(this);
-            getFragmentManager().beginTransaction().add(mSurveyContainer.getId(), fragment,
-                    "survey").commit();*/
+
+            mSurveyContainer.addView(surveyView);
+            mQuestionReady[mCurrentSurvey%mPageQuestions] = false;
+            mCurrentSurveys[mCurrentSurvey%mPageQuestions] = survey;
+            mCurrentSurvey++;
         }
     }
 
@@ -181,13 +187,12 @@ public class InstrumentFragment
     }
 
     @Override
-    public void surveyResponseRecorded(Survey survey) {
-        if (mCurrentSurvey >= mSurveys.size()) {
-            try {
-                mCallback.instrumentFinished(mInstrumentId);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    public void onSurveyResponseRecorded(List<Survey> survey){
+        if (mCurrentSurvey >= mSurveys.size()){
+            mCallback.instrumentFinished(mInstrumentId);
+        }
+        else{
+            showNextSurveySet();
         }
     }
 
@@ -208,7 +213,7 @@ public class InstrumentFragment
 
 
     @Override
-    public void setNextButtonEnabled(boolean enabled) {
+    public void setNextButtonEnabled(boolean enabled){
         mNext.setEnabled(enabled);
     }
 

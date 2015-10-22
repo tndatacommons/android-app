@@ -1,5 +1,7 @@
 package org.tndata.android.compass.model;
 
+import org.tndata.android.compass.util.Constants;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -139,4 +141,27 @@ public class Survey implements Serializable, Comparable<Survey> {
             return 1;
     }
 
+    @Override
+    public String toString(){
+        String result = id + " (";
+
+        switch (question_type){
+            case Constants.SURVEY_BINARY:
+                result += "binary";
+                break;
+            case Constants.SURVEY_MULTICHOICE:
+                result += "multiple choice";
+                break;
+            case Constants.SURVEY_LIKERT:
+                result += "likert";
+                break;
+            case Constants.SURVEY_OPENENDED:
+                result += "open ended";
+                break;
+            default:
+                result += question_type;
+        }
+
+        return result + "): " + text;
+    }
 }

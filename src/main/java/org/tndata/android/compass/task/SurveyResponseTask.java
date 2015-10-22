@@ -1,10 +1,10 @@
 package org.tndata.android.compass.task;
 
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.text.Html;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -19,84 +19,114 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class SurveyResponseTask extends AsyncTask<Survey, Void, Survey> {
+
+/**
+ * Task used to save a survey response.
+ *
+ * @author Edited by Ismael Alonso
+ * @version 2.0.0
+ */
+public class SurveyResponseTask extends AsyncTask<Survey, Void, List<Survey>>{
+    private static final String TAG = "SurveyResponseTask";
+
+
     private Context mContext;
     private SurveyResponseListener mCallback;
 
-    public interface SurveyResponseListener {
-        public void surveyResponseRecorded(Survey survey);
-    }
 
-    public SurveyResponseTask(Context context, SurveyResponseListener callback) {
+    /**
+     * Constructor.
+     *
+     * @param context the context.
+     * @param callback the callback object.
+     */
+    public SurveyResponseTask(@NonNull Context context, @Nullable SurveyResponseListener callback){
         mContext = context;
         mCallback = callback;
     }
 
     @Override
-    protected Survey doInBackground(Survey... params) {
-        String token = ((CompassApplication) ((Activity) mContext)
-                .getApplication()).getToken();
+    protected List<Survey> doInBackground(Survey... params){
+        //Retrieve the token. it may be used multiple times
+        String token = ((CompassApplication)((Activity)mContext).getApplication()).getToken();
 
-        Survey survey = params[0];
-        Map<String, String> headers = new HashMap<String, String>();
-        headers.put("Accept", "application/json");
-        headers.put("Content-type", "application/json");
-        headers.put("Authorization", "Token " + token);
-        JSONObject body = new JSONObject();
-        try {
-            body.put("question", survey.getId());
-            if (survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_OPENENDED)) {
-                body.put("response", survey.getResponse());
-            } else {
-                body.put("selected_option", survey.getSelectedOption().getId());
+        List<Survey> savedSurveys = new ArrayList<>();
+        for (Survey survey:params){
+            Log.d(TAG, "Saving survey...");
+
+            //The url is generated. Java can't handle self signed certs cleanly, so
+            //  disable SSL in staging
+            String url = survey.getResponseUrl();
+            if (BuildConfig.DEBUG && url.startsWith("https")){
+                url = "http" + url.substring(5);
             }
-            Log.d("Survey submission", body.toString(2));
-            Log.d("Survey url", survey.getResponseUrl());
-        } catch (JSONException e1) {
-            e1.printStackTrace();
-            return null;
-        }
+            Log.d(TAG, "url: " + url);
 
-        String url = survey.getResponseUrl();
-        if (BuildConfig.DEBUG && url.startsWith("https")){
-            url = "http" + url.substring(5);
-        }
+            //Headers
+            Map<String, String> headers = new HashMap<>();
+            headers.put("Accept", "application/json");
+            headers.put("Content-type", "application/json");
+            headers.put("Authorization", "Token " + token);
 
-        InputStream stream = NetworkHelper.httpPostStream(url, headers, body.toString());
-        if (stream == null) {
-            return null;
-        }
-        String result = "";
-        String createResponse = "";
-        try {
+            try{
+                //Create the body
+                JSONObject body = new JSONObject();
+                body.put("question", survey.getId());
+                if (survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_OPENENDED)){
+                    body.put("response", survey.getResponse());
+                }
+                else{
+                    body.put("selected_option", survey.getSelectedOption().getId());
+                }
+                Log.d(TAG, "Submission:");
+                Log.d(TAG, body.toString(2));
 
-            BufferedReader bReader = new BufferedReader(new InputStreamReader(
-                    stream, "UTF-8"));
+                //Create a stream
+                InputStream stream = NetworkHelper.httpPostStream(url, headers, body.toString());
+                if (stream == null){
+                    //In this case, we have more surveys to save, so the whole process
+                    //  cannot fail if one survey is bad
+                    continue;
+                }
 
-            String line = null;
-            while ((line = bReader.readLine()) != null) {
-                result += line;
+                String line, result = "";
+                BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+                while ((line = reader.readLine()) != null){
+                    result += line;
+                }
+                reader.close();
+
+                Log.d(TAG, "Response:");
+                Log.d(TAG, new JSONObject(result).toString(2));
+
+                savedSurveys.add(survey);
             }
-            bReader.close();
-
-            createResponse = Html.fromHtml(result).toString();
-
-            JSONObject jObject = new JSONObject(createResponse);
-            Log.d("user survey response", jObject.toString(2));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+            catch (JSONException|IOException x){
+                x.printStackTrace();
+            }
         }
-        return survey;
+        return savedSurveys;
     }
 
     @Override
-    protected void onPostExecute(Survey survey) {
-        mCallback.surveyResponseRecorded(survey);
+    protected void onPostExecute(List<Survey> result){
+        if (mCallback != null){
+            mCallback.onSurveyResponseRecorded(result);
+        }
+    }
+
+    /**
+     * Callback interface for the SurveyResponseTask class.
+     *
+     * @author Edited by Ismael Alonso
+     * @version 2.0.0
+     */
+    public interface SurveyResponseListener{
+        void onSurveyResponseRecorded(List<Survey> surveys);
     }
 }
