@@ -10,7 +10,7 @@ import android.util.Log;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
+import org.tndata.android.compass.adapter.ChooseCategoriesAdapter;
 import org.tndata.android.compass.fragment.ChooseCategoriesFragment;
 import org.tndata.android.compass.fragment.CheckProgressFragment;
 import org.tndata.android.compass.fragment.InstrumentFragment;
@@ -32,7 +32,7 @@ public class OnBoardingActivity
                 CheckProgressFragment.CheckProgressFragmentListener,
                 AddCategoryTaskListener,
         InstrumentFragment.InstrumentFragmentCallback,
-                ChooseCategoryAdapter.OnCategoriesSelectedListener,
+                ChooseCategoriesAdapter.OnCategoriesSelectedListener,
                 GetUserDataTask.GetUserDataCallback{
 
     private static final int STAGE_PROFILE = 0;

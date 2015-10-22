@@ -32,7 +32,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class ChooseCategoryAdapter
+public class ChooseCategoriesAdapter
         extends RecyclerView.Adapter
         implements Animation.AnimationListener{
 
@@ -61,8 +61,8 @@ public class ChooseCategoryAdapter
      * @param callback          the callback interface.
      * @param applyRestrictions whether the 3 to 5 vtegory restriction should be applied.
      */
-    public ChooseCategoryAdapter(Context context, OnCategoriesSelectedListener callback,
-                                 boolean applyRestrictions){
+    public ChooseCategoriesAdapter(Context context, OnCategoriesSelectedListener callback,
+                                   boolean applyRestrictions){
         mContext = context;
         mCallback = callback;
         mApplyRestrictions = applyRestrictions;
