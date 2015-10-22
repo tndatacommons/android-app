@@ -187,6 +187,9 @@ public class InstrumentFragment
             mCallback.onInstrumentFinished(mInstrumentId);
         }
         else{
+            for (int i = 0; i < mPageQuestions; i++){
+                mCurrentSurveys[i] = null;
+            }
             showNextSurveySet();
         }
     }
@@ -201,15 +204,7 @@ public class InstrumentFragment
             Survey survey = mSurveys.get(mCurrentSurvey);
             Log.d(TAG, survey.toString());
 
-            SurveyView surveyView;
-            if (mInstrumentId == 6 && survey.getId() == 3){
-                surveyView = new SurveyView(getActivity(), survey, this, true);
-            }
-            else{
-                surveyView = new SurveyView(getActivity(), survey, this);
-            }
-
-            mSurveyContainer.addView(surveyView);
+            mSurveyContainer.addView(new SurveyView(getActivity(), survey, this));
             mQuestionReady[mCurrentSurvey%mPageQuestions] = false;
             mCurrentSurveys[mCurrentSurvey%mPageQuestions] = survey;
             mCurrentSurvey++;

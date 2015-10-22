@@ -57,6 +57,11 @@ public class SaveSurveyResponseTask extends AsyncTask<Survey, Void, List<Survey>
 
         List<Survey> savedSurveys = new ArrayList<>();
         for (Survey survey:params){
+            //If the survey is null, do not try to save it
+            if (survey == null){
+                continue;
+            }
+
             Log.d(TAG, "Saving survey...");
 
             //The url is generated. Java can't handle self signed certs cleanly, so
