@@ -18,7 +18,7 @@ import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.task.GetUserProfileTask;
 import org.tndata.android.compass.task.GetUserProfileTask.UserProfileTaskInterface;
 import org.tndata.android.compass.task.SurveyFinderTask;
-import org.tndata.android.compass.task.SurveyResponseTask;
+import org.tndata.android.compass.task.SaveSurveyResponseTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ import java.util.List;
 
 public class UserProfileActivity extends AppCompatActivity implements UserProfileTaskInterface,
         SurveyFinderTask.SurveyFinderInterface, SurveyDialogFragment.SurveyDialogListener,
-        SurveyResponseTask.SurveyResponseListener {
+        SaveSurveyResponseTask.SaveSurveyResponseListener{
     private Toolbar mToolbar;
     private ListView mListView;
     private ProgressBar mProgressBar;
@@ -118,7 +118,7 @@ public class UserProfileActivity extends AppCompatActivity implements UserProfil
 
     @Override
     public void onDialogPositiveClick(Survey survey) {
-        new SurveyResponseTask(UserProfileActivity.this, this).executeOnExecutor(AsyncTask
+        new SaveSurveyResponseTask(UserProfileActivity.this, this).executeOnExecutor(AsyncTask
                 .THREAD_POOL_EXECUTOR, survey);
         mSurveyDialog.dismiss();
         mSurveyShown = false;
@@ -136,7 +136,7 @@ public class UserProfileActivity extends AppCompatActivity implements UserProfil
     }
 
     @Override
-    public void onSurveyResponseRecorded(List<Survey> surveys){
+    public void onSurveySetResponseRecorded(List<Survey> surveys){
         for (Survey survey:surveys){
             for (int i = 0; i < mProfileSurveyItems.size(); i++){
                 Survey s = mProfileSurveyItems.get(i);

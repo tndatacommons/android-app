@@ -61,7 +61,7 @@ public class OnBoardingActivity
     public void progressCompleted() {
         // At the very end of the onboarding process, we display the CheckProgressFragment,
         // and tapping the progress icons should end the onboarding.
-        instrumentFinished(-1);
+        onInstrumentFinished(-1);
     }
 
     private void swapFragments(int index){
@@ -99,7 +99,7 @@ public class OnBoardingActivity
     }
 
     @Override
-    public void instrumentFinished(int instrumentId){
+    public void onInstrumentFinished(int instrumentId){
         if (instrumentId == Constants.INITIAL_PROFILE_INSTRUMENT_ID){
             swapFragments(STAGE_CHOOSE_CATEGORIES);
         }

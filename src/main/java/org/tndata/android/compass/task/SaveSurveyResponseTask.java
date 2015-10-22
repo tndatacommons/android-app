@@ -31,12 +31,12 @@ import java.util.Map;
  * @author Edited by Ismael Alonso
  * @version 2.0.0
  */
-public class SurveyResponseTask extends AsyncTask<Survey, Void, List<Survey>>{
+public class SaveSurveyResponseTask extends AsyncTask<Survey, Void, List<Survey>>{
     private static final String TAG = "SurveyResponseTask";
 
 
     private Context mContext;
-    private SurveyResponseListener mCallback;
+    private SaveSurveyResponseListener mCallback;
 
 
     /**
@@ -45,7 +45,7 @@ public class SurveyResponseTask extends AsyncTask<Survey, Void, List<Survey>>{
      * @param context the context.
      * @param callback the callback object.
      */
-    public SurveyResponseTask(@NonNull Context context, @Nullable SurveyResponseListener callback){
+    public SaveSurveyResponseTask(@NonNull Context context, @Nullable SaveSurveyResponseListener callback){
         mContext = context;
         mCallback = callback;
     }
@@ -116,17 +116,18 @@ public class SurveyResponseTask extends AsyncTask<Survey, Void, List<Survey>>{
     @Override
     protected void onPostExecute(List<Survey> result){
         if (mCallback != null){
-            mCallback.onSurveyResponseRecorded(result);
+            mCallback.onSurveySetResponseRecorded(result);
         }
     }
 
+
     /**
-     * Callback interface for the SurveyResponseTask class.
+     * Callback interface for the SaveSurveyResponseTask class.
      *
      * @author Edited by Ismael Alonso
      * @version 2.0.0
      */
-    public interface SurveyResponseListener{
-        void onSurveyResponseRecorded(List<Survey> surveys);
+    public interface SaveSurveyResponseListener{
+        void onSurveySetResponseRecorded(List<Survey> surveys);
     }
 }

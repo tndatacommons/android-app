@@ -168,7 +168,6 @@ public class SurveyView
 
             case Constants.SURVEY_LIKERT:
                 Log.d(TAG, "Likert survey");
-
                 break;
 
             case Constants.SURVEY_OPENENDED:
@@ -214,7 +213,6 @@ public class SurveyView
 
                     addView(mOpenEnded);
                 }
-
                 break;
         }
     }
@@ -242,7 +240,6 @@ public class SurveyView
                 else{
                     mOpenEnded.setEnabled(false);
                 }
-
                 break;
         }
     }
