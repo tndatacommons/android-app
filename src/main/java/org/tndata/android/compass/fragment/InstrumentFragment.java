@@ -218,7 +218,7 @@ public class InstrumentFragment
 
     @Override
     public void onInputReady(Survey survey){
-        mQuestionReady[(survey.getOrder()-1)%mPageQuestions] = true;
+        mQuestionReady[mSurveys.indexOf(survey)%mPageQuestions] = true;
         mNext.setEnabled(true);
         for (boolean ready:mQuestionReady){
             if (!ready){
@@ -231,7 +231,7 @@ public class InstrumentFragment
     @Override
     public void onInputCleared(Survey survey){
         mNext.setEnabled(false);
-        mQuestionReady[(survey.getOrder()-1)%mPageQuestions] = false;
+        mQuestionReady[mSurveys.indexOf(survey)%mPageQuestions] = false;
     }
 
 

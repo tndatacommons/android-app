@@ -44,10 +44,12 @@ public class SurveyView
         implements
                 View.OnClickListener,
                 AdapterView.OnItemSelectedListener,
+                SeekBar.OnSeekBarChangeListener,
                 DatePicker.OnDateChangedListener,
                 TextWatcher{
 
     private static final String TAG = "SurveyView";
+
 
     private Survey mSurvey;
     private SurveyViewListener mListener;
@@ -58,15 +60,34 @@ public class SurveyView
     private Spinner mMultipleChoice;
 
     private SeekBar mLikert;
+    private TextView mLikertMin;
+    private TextView mLikertChoice;
+    private TextView mLikertMax;
 
     private EditText mOpenEnded;
     private DatePicker mOpenEndedDate;
     private boolean mForceDate;
 
+
+    /**
+     * Constructor.
+     *
+     * @param context the context.
+     * @param survey the survey to be displayed.
+     * @param listener the listener object.
+     */
     public SurveyView(Context context, Survey survey, SurveyViewListener listener){
         this(context, survey, listener, false);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param context the context.
+     * @param survey the survey to be displayed.
+     * @param listener the listener object.
+     * @param forceDate true if a date picker should be shown instead of the text input.
+     */
     public SurveyView(Context context, Survey survey, SurveyViewListener listener, boolean forceDate){
         super(context);
         mSurvey = survey;
@@ -76,7 +97,10 @@ public class SurveyView
         init();
     }
 
-    void init(){
+    /**
+     * Creates the view, initializes all the components.
+     */
+    private void init(){
         //Needed in the future if reuse functionality is to be implemented
         removeAllViews();
 
@@ -168,6 +192,35 @@ public class SurveyView
 
             case Constants.SURVEY_LIKERT:
                 Log.d(TAG, "Likert survey");
+
+                LayoutInflater lInflater = LayoutInflater.from(getContext());
+                View rootView = lInflater.inflate(R.layout.survey_likert, this, false);
+
+                mLikert = (SeekBar)rootView.findViewById(R.id.survey_likert_seek_bar);
+                mLikertMin = (TextView)rootView.findViewById(R.id.survey_likert_min);
+                mLikertChoice = (TextView)rootView.findViewById(R.id.survey_likert_choice);
+                mLikertMax = (TextView)rootView.findViewById(R.id.survey_likert_max);
+
+                mLikert.setMax(mSurvey.getOptions().size() - 1);
+                mLikertMin.setText(mSurvey.getOptions().get(0).getText());
+                mLikertMax.setText(mSurvey.getOptions().get(mSurvey.getOptions().size() - 1).getText());
+
+                if (mSurvey.getSelectedOption() != null){
+                    mLikert.setProgress(mSurvey.getSelectedOption().getId());
+                    mLikertChoice.setText(mSurvey.getSelectedOption().getText());
+                    if (mListener != null){
+                        mListener.onInputReady(mSurvey);
+                    }
+                }
+                else{
+                    mLikert.setProgress(0);
+                    mLikertChoice.setText("");
+                    mSurvey.setSelectedOption(mSurvey.getOptions().get(0));
+                }
+
+                mLikert.setOnSeekBarChangeListener(this);
+
+                addView(rootView);
                 break;
 
             case Constants.SURVEY_OPENENDED:
@@ -177,8 +230,8 @@ public class SurveyView
                 date |= mSurvey.getInputType().equalsIgnoreCase(Constants.SURVEY_OPENENDED_DATE_TYPE);
                 if (date){
                     Log.d(TAG, "Date");
-                    LayoutInflater inflater = LayoutInflater.from(getContext());
-                    mOpenEndedDate = (DatePicker)inflater.inflate(R.layout.spinner_picker, this, false);
+                    LayoutInflater dInflater = LayoutInflater.from(getContext());
+                    mOpenEndedDate = (DatePicker)dInflater.inflate(R.layout.survey_spinner_picker, this, false);
 
                     Calendar c = Calendar.getInstance();
                     int year = c.get(Calendar.YEAR);
@@ -217,6 +270,9 @@ public class SurveyView
         }
     }
 
+    /**
+     * Disables this survey question.
+     */
     public void disable(){
         switch (mSurvey.getQuestionType()){
             case Constants.SURVEY_BINARY:
@@ -229,6 +285,7 @@ public class SurveyView
                 break;
 
             case Constants.SURVEY_LIKERT:
+                mLikert.setEnabled(false);
                 break;
 
             case Constants.SURVEY_OPENENDED:
@@ -255,6 +312,34 @@ public class SurveyView
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
+        if (mSurvey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_LIKERT)){
+            mLikertMin.setVisibility(View.GONE);
+            mLikertMax.setVisibility(View.GONE);
+            for (SurveyOptions option:mSurvey.getOptions()){
+                if ((option.getId()-1) == progress){
+                    mSurvey.setSelectedOption(option);
+                    mLikertChoice.setText(option.getText());
+                    break;
+                }
+            }
+            if (mListener != null){
+                mListener.onInputReady(mSurvey);
+            }
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar){
+        //Unused
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar){
+        //Unused
     }
 
     @Override
@@ -322,8 +407,26 @@ public class SurveyView
         }
     }
 
+
+    /**
+     * The listener interface for the SurveyView.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface SurveyViewListener{
+        /**
+         * Called once the input to the question is ready to be processed.
+         *
+         * @param survey the survey represented by the view.
+         */
         void onInputReady(Survey survey);
+
+        /**
+         * Called when the input to the question is cleared or invalidated.
+         *
+         * @param survey the survey represented by the view.
+         */
         void onInputCleared(Survey survey);
     }
 }
