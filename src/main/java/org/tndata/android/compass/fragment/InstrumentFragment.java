@@ -1,10 +1,10 @@
 package org.tndata.android.compass.fragment;
 
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,164 +18,230 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Instrument;
 import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.task.InstrumentLoaderTask;
-import org.tndata.android.compass.task.SurveyResponseTask;
+import org.tndata.android.compass.task.SaveSurveyResponseTask;
+import org.tndata.android.compass.ui.SurveyView;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class InstrumentFragment extends Fragment implements InstrumentLoaderTask
-        .InstrumentLoaderListener,
-        SurveyResponseTask.SurveyResponseListener, SurveyDialogFragment.SurveyDialogListener {
-    private Button mNextButton;
-    private ProgressBar mStatusProgressBar;
-    private ProgressBar mLoadProgressBar;
-    private TextView mInstructionsTextView;
+
+/**
+ * Fragment that displays an entire instrument arranged in pages.
+ *
+ * @author Edited by Ismael Alonso
+ * @version 2.0.0
+ */
+public class InstrumentFragment
+        extends Fragment
+        implements
+                View.OnClickListener,
+                InstrumentLoaderTask.InstrumentLoaderListener,
+                SaveSurveyResponseTask.SaveSurveyResponseListener,
+                SurveyView.SurveyViewListener{
+
+    private static final String TAG = "InstrumentFragment";
+
+    public static final String INSTRUMENT_ID_KEY = "org.tndata.compass.Instrument.Id";
+    public static final String PAGE_QUESTIONS_KEY = "org.tndata.compass.Instrument.PageQuestions";
+
+
+    //UI components
+    private TextView mInstructions;
+    private ProgressBar mProgress;
+    private ProgressBar mLoading;
     private LinearLayout mSurveyContainer;
-    private ArrayList<Survey> mSurveys;
-    private int mCurrentSurvey = -1;
-    private int mInstrumentId = -1;
-    private InstrumentFragmentListener mCallback;
+    private Button mNext;
 
-    public interface InstrumentFragmentListener {
-        public void instrumentFinished(int instrumentId);
-    }
+    //Survey related attributes
+    private int mInstrumentId;
+    private int mPageQuestions;
+    private List<Survey> mSurveys;
+    private int mCurrentSurvey;
 
-    public static InstrumentFragment newInstance(int instrumentId) {
+    //Ready array
+    private boolean mQuestionReady[];
+    private Survey mCurrentSurveys[];
+
+    //Callback interface
+    private InstrumentFragmentCallback mCallback;
+
+
+    /**
+     * Creates a new instance of the fragment with the specified parameters.
+     *
+     * @param instrumentId the id of the instrument to be loaded.
+     * @param pageQuestions the number of questions to be displayed per page.
+     * @return an InstrumentFragment.
+     */
+    public static InstrumentFragment newInstance(int instrumentId, int pageQuestions){
         InstrumentFragment fragment = new InstrumentFragment();
         Bundle args = new Bundle();
-        args.putInt("instrumentId", instrumentId);
+        args.putInt(INSTRUMENT_ID_KEY, instrumentId);
+        args.putInt(PAGE_QUESTIONS_KEY, pageQuestions);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        mInstrumentId = getArguments() != null ? getArguments().getInt("instrumentId", -1) : -1;
+        mInstrumentId = getArguments() != null ? getArguments().getInt(INSTRUMENT_ID_KEY, -1) : -1;
+        mPageQuestions = getArguments() != null ? getArguments().getInt(PAGE_QUESTIONS_KEY, 1) : 1;
+        mCurrentSurvey = 0;
+
+        mQuestionReady = new boolean[mPageQuestions];
+        mCurrentSurveys = new Survey[mPageQuestions];
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v = getActivity().getLayoutInflater().inflate(
-                R.layout.fragment_instrument, container, false);
-        mStatusProgressBar = (ProgressBar) v
-                .findViewById(R.id.instrument_fragment_status_progress);
-        mLoadProgressBar = (ProgressBar) v
-                .findViewById(R.id.instrument_fragment_load_progress);
-        mSurveyContainer = (LinearLayout) v.findViewById(R.id.instrument_fragment_survey_container);
-        mInstructionsTextView = (TextView) v.findViewById(R.id
-                .instrument_fragment_info_label_textview);
-        mNextButton = (Button) v
-                .findViewById(R.id.instrument_next_button);
-        mNextButton.setEnabled(false);
-        mNextButton.setOnClickListener(new View.OnClickListener() {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        View rootView = inflater.inflate(R.layout.fragment_instrument, container, false);
 
-            @Override
-            public void onClick(View v) {
-                saveCurrentSurvey();
-            }
-        });
-        return v;
+        mInstructions = (TextView)rootView.findViewById(R.id.instrument_info);
+        mProgress = (ProgressBar)rootView.findViewById(R.id.instrument_progress);
+        mLoading = (ProgressBar)rootView.findViewById(R.id.instrument_loading);
+        mSurveyContainer = (LinearLayout)rootView.findViewById(R.id.instrument_survey_container);
+        mNext = (Button)rootView.findViewById(R.id.instrument_next);
+
+        mNext.setEnabled(false);
+        mNext.setOnClickListener(this);
+
+        return rootView;
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-        mSurveys = new ArrayList<Survey>();
         loadSurveys();
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity); // This makes sure that the container activity
-        // has implemented the callback interface. If not, it throws an
-        // exception
-        try {
-            mCallback = (InstrumentFragmentListener) activity;
-        } catch (ClassCastException e) {
+    public void onAttach(Activity activity){
+        super.onAttach(activity);
+        // This makes sure that the container activity has implemented the callback
+        // interface. If not, it throws an exception
+        try{
+            mCallback = (InstrumentFragmentCallback)activity;
+        }
+        catch (ClassCastException ccx){
             throw new ClassCastException(activity.toString()
                     + " must implement InstrumentFragmentListener");
         }
     }
 
     @Override
-    public void onDetach() {
+    public void onDetach(){
         super.onDetach();
         mCallback = null;
     }
 
-    private void loadSurveys() {
-        mLoadProgressBar.setVisibility(View.VISIBLE);
+    @Override
+    public void onClick(View view){
+        if (view.getId() == R.id.instrument_next){
+            mProgress.setProgress(mCurrentSurvey);
+            saveCurrentSurveySet();
+        }
+    }
+
+    /**
+     * Loads the survey list in the requested instrument.
+     */
+    private void loadSurveys(){
+        mLoading.setVisibility(View.VISIBLE);
         new InstrumentLoaderTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                ((CompassApplication) getActivity().getApplication()).getToken(),
+                ((CompassApplication)getActivity().getApplication()).getToken(),
                 String.valueOf(mInstrumentId));
     }
 
-    private void saveCurrentSurvey() {
-        Survey survey = mSurveys.get(mCurrentSurvey);
-        mNextButton.setEnabled(false);
-        new SurveyResponseTask(getActivity(), this).executeOnExecutor(AsyncTask
-                .THREAD_POOL_EXECUTOR, survey);
-        showNextSurvey();
-    }
-
-    private void showNextSurvey() {
-        mCurrentSurvey++;
-        if (mCurrentSurvey < mSurveys.size()) {
-            mStatusProgressBar.setProgress(mCurrentSurvey);
-            Survey survey = mSurveys.get(mCurrentSurvey);
-            mSurveyContainer.removeAllViews();
-
-            SurveyDialogFragment fragment = SurveyDialogFragment.newInstance(survey, false, false);
-            fragment.setListener(this);
-            getFragmentManager().beginTransaction().add(mSurveyContainer.getId(), fragment,
-                    "survey").commit();
-        }
-    }
-
     @Override
-    public void instrumentsLoaded(ArrayList<Instrument> instruments) {
-        mLoadProgressBar.setVisibility(View.GONE);
-        if (instruments != null && !instruments.isEmpty()) {
-            if (!instruments.get(0).getInstructions().isEmpty()) {
-                mInstructionsTextView.setText(instruments.get(0).getInstructions());
+    public void instrumentsLoaded(ArrayList<Instrument> instruments){
+        mLoading.setVisibility(View.GONE);
+        if (instruments != null && !instruments.isEmpty()){
+            if (!instruments.get(0).getInstructions().isEmpty()){
+                mInstructions.setText(instruments.get(0).getInstructions());
             }
+            mSurveys = new ArrayList<>();
             mSurveys.addAll(instruments.get(0).getQuestions());
-            mStatusProgressBar.setMax(mSurveys.size());
-            showNextSurvey();
+            mProgress.setMax(mSurveys.size());
+            showNextSurveySet();
+        }
+        else{
+            Log.d(TAG, "No instrument loaded");
+        }
+    }
+
+    /**
+     * Saves the responses to the current survey set being displayed.
+     */
+    private void saveCurrentSurveySet(){
+        mNext.setEnabled(false);
+        for (int i = 0; i < mSurveyContainer.getChildCount(); i++){
+            ((SurveyView)mSurveyContainer.getChildAt(i)).disable();
+        }
+        new SaveSurveyResponseTask(getActivity(), this).execute(mCurrentSurveys);
+    }
+
+    @Override
+    public void onSurveySetResponseRecorded(List<Survey> survey){
+        if (mCurrentSurvey >= mSurveys.size()){
+            mCallback.onInstrumentFinished(mInstrumentId);
+        }
+        else{
+            for (int i = 0; i < mPageQuestions; i++){
+                mCurrentSurveys[i] = null;
+            }
+            showNextSurveySet();
+        }
+    }
+
+    /**
+     * Displays the next set of surveys.
+     */
+    private void showNextSurveySet(){
+        mSurveyContainer.removeAllViews();
+        int lastSurvey = mCurrentSurvey + mPageQuestions;
+        while (mCurrentSurvey < mSurveys.size() && mCurrentSurvey < lastSurvey){
+            Survey survey = mSurveys.get(mCurrentSurvey);
+            Log.d(TAG, survey.toString());
+
+            mSurveyContainer.addView(new SurveyView(getActivity(), survey, this));
+            mQuestionReady[mCurrentSurvey%mPageQuestions] = false;
+            mCurrentSurveys[mCurrentSurvey%mPageQuestions] = survey;
+            mCurrentSurvey++;
         }
     }
 
     @Override
-    public void surveyResponseRecorded(Survey survey) {
-        if (mCurrentSurvey >= mSurveys.size()) {
-            try {
-                mCallback.instrumentFinished(mInstrumentId);
-            } catch (Exception e) {
-                e.printStackTrace();
+    public void onInputReady(Survey survey){
+        mQuestionReady[mSurveys.indexOf(survey)%mPageQuestions] = true;
+        mNext.setEnabled(true);
+        for (boolean ready:mQuestionReady){
+            if (!ready){
+                mNext.setEnabled(false);
+                break;
             }
         }
     }
 
     @Override
-    public void onDialogPositiveClick(Survey survey) {
-        //not needed in this fragment
-    }
-
-    @Override
-    public void onDialogNegativeClick(Survey survey) {
-        //not needed in this fragment
-    }
-
-    @Override
-    public void onDialogCanceled() {
-        //not needed in this fragment
+    public void onInputCleared(Survey survey){
+        mNext.setEnabled(false);
+        mQuestionReady[mSurveys.indexOf(survey)%mPageQuestions] = false;
     }
 
 
-    @Override
-    public void setNextButtonEnabled(boolean enabled) {
-        mNextButton.setEnabled(enabled);
+    /**
+     * Callback interface for the InstrumentFragment.
+     *
+     * @author Edited by Ismael Alonso
+     * @version 1.0.0
+     */
+    public interface InstrumentFragmentCallback{
+        /**
+         * Called when the fragment is done displaying surveys.
+         *
+         * @param instrumentId the id of the instrument delivered by the fragment.
+         */
+        void onInstrumentFinished(int instrumentId);
     }
-
 }

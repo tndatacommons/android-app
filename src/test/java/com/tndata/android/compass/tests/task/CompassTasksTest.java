@@ -25,7 +25,7 @@ import org.tndata.android.compass.task.GetUserCategoriesTask;
 import org.tndata.android.compass.task.GetUserDataTask;
 import org.tndata.android.compass.task.GetUserGoalsTask;
 import org.tndata.android.compass.task.GetUserProfileTask;
-import org.tndata.android.compass.task.LoginTask;
+import org.tndata.android.compass.task.LogInTask;
 import org.tndata.android.compass.task.SignUpTask;
 import org.tndata.android.compass.task.UpdateProfileTask;
 
@@ -49,7 +49,7 @@ public class CompassTasksTest {
     }
 
     private void singUpUserTask() {
-        SignUpTask.SignUpTaskListener signUpTaskListener = new SignUpTask.SignUpTaskListener() {
+        SignUpTask.SignUpTaskCallback signUpTaskListener = new SignUpTask.SignUpTaskCallback() {
             @Override
             public void signUpResult(User result) {
                 userRestult = result;
@@ -62,7 +62,7 @@ public class CompassTasksTest {
         user.setPassword("password");
         user.setFirstName("first_name");
         user.setLastName("last_name");
-        user.onBoardingComplete(false);
+        user.setOnBoardingComplete(false);
 
         signUpTask.execute(user);
 
@@ -81,7 +81,7 @@ public class CompassTasksTest {
     @Test
     public void loginTaskTest_returnsTrue() throws InterruptedException {
 
-        SignUpTask.SignUpTaskListener signUpTaskListener = new SignUpTask.SignUpTaskListener() {
+        SignUpTask.SignUpTaskCallback signUpTaskListener = new SignUpTask.SignUpTaskCallback() {
             @Override
             public void signUpResult(User result) {
                 userRestult = result;
@@ -94,7 +94,7 @@ public class CompassTasksTest {
         user.setPassword("password");
         user.setFirstName("first_name");
         user.setLastName("last_name");
-        user.onBoardingComplete(false);
+        user.setOnBoardingComplete(false);
 
         signUpTask.execute(user);
 
@@ -103,17 +103,17 @@ public class CompassTasksTest {
         assertNotNull(userRestult);
 
 
-        LoginTask.LoginTaskListener loginTaskListener = new LoginTask.LoginTaskListener() {
+        LogInTask.LogInTaskCallback loginTaskListener = new LogInTask.LogInTaskCallback() {
             @Override
             public void loginResult(User result) {
                 userRestult = result;
             }
         };
-        LoginTask loginTask = new LoginTask(loginTaskListener);
+        LogInTask loginTask = new LogInTask(loginTaskListener);
 
         user.setEmail(userEmail);
         user.setPassword("password");
-        user.onBoardingComplete(false);
+        user.setOnBoardingComplete(false);
 
         loginTask.execute(user);
 

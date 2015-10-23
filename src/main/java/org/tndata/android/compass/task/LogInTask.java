@@ -21,20 +21,18 @@ import android.util.Log;
 
 
 /**
- * Task to perform sign up operations.
+ * Task to perform login operations.
  *
- * @author Edited by Ismael Alonso.
+ * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class SignUpTask extends AsyncTask<Void, Void, User>{
-    private static final String TAG = "SignUpTask";
+public class LogInTask extends AsyncTask<Void, Void, User>{
+    private static final String TAG = "LogInTask";
 
 
-    private SignUpTaskCallback mCallback;
+    private LogInTaskCallback mCallback;
     private String mEmail;
     private String mPassword;
-    private String mFirstName;
-    private String mLastName;
 
 
     /**
@@ -43,21 +41,16 @@ public class SignUpTask extends AsyncTask<Void, Void, User>{
      * @param callback the callback object.
      * @param email the email.
      * @param pass the password.
-     * @param firstName the first name.
-     * @param lastName the last name.
      */
-    public SignUpTask(@NonNull SignUpTaskCallback callback, @NonNull String email, @NonNull String pass,
-                      @NonNull String firstName, @NonNull String lastName){
+    public LogInTask(@NonNull LogInTaskCallback callback, @NonNull String email, @NonNull String pass){
         mCallback = callback;
         mEmail = email;
         mPassword = pass;
-        mFirstName = firstName;
-        mLastName = lastName;
     }
 
     @Override
     protected User doInBackground(Void... params){
-        String url = Constants.BASE_URL + "users/";
+        String url = Constants.BASE_URL + "auth/token/";
 
         Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
@@ -67,15 +60,13 @@ public class SignUpTask extends AsyncTask<Void, Void, User>{
         try{
             holder.put("email", mEmail);
             holder.put("password", mPassword);
-            holder.put("first_name", mFirstName);
-            holder.put("last_name", mLastName);
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
             return null;
         }
 
-        //Create the stream and check errors
+        //Create the stream and check for failure
         InputStream stream = NetworkHelper.httpPostStream(url, headers, holder.toString());
         if (stream == null){
             Log.d(TAG, "Bad stream");
@@ -91,40 +82,41 @@ public class SignUpTask extends AsyncTask<Void, Void, User>{
             }
             reader.close();
 
-            //Parse the user
+            //Parse out the new user
             return new Parser().parseUser(result);
         }
         catch (IOException iox){
             iox.printStackTrace();
         }
+
         return null;
     }
 
     @Override
     protected void onPostExecute(User result){
         if (result == null){
-            Log.e(TAG, "Couldn't sign up");
+            Log.e(TAG, "Couldn't log in");
         }
         else{
             Log.d(TAG, result.toString());
             result.setPassword(mPassword);
         }
-        mCallback.signUpResult(result);
+        mCallback.logInResult(result);
     }
 
 
     /**
-     * Sign up event callback interface.
+     * Log in event callback interface.
      *
      * @author Edited by Ismael Alonso
      * @version 1.0.0
      */
-    public interface SignUpTaskCallback{
+    public interface LogInTaskCallback{
         /**
-         * Called when an event associated with sign up is triggered.
+         * Called when an event associated with log in is triggered.
          *
-         * @param user the user if the sign up operation succeeded or null if it failed.
+         * @param user the user if the log in operation succeeded or null if it failed.
          */
-        void signUpResult(@Nullable User user);
+        void logInResult(@Nullable User user);
     }
 }

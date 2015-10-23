@@ -18,12 +18,11 @@ import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
+import org.tndata.android.compass.adapter.ChooseCategoriesAdapter;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.task.CategoryLoaderTask;
 import org.tndata.android.compass.task.CategoryLoaderTask.CategoryLoaderListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -37,7 +36,7 @@ public class ChooseCategoriesFragment
         extends Fragment
         implements
                 CategoryLoaderListener,
-                ChooseCategoryAdapter.OnCategoriesSelectedListener{
+                ChooseCategoriesAdapter.OnCategoriesSelectedListener{
 
     public static final String RESTRICTIONS_KEY = "restrictions";
 
@@ -45,12 +44,12 @@ public class ChooseCategoriesFragment
     private static final int FETCH_TIMEOUT = 10*1000;
 
     private View mMaterialHeader;
-    private ChooseCategoryAdapter mAdapter;
+    private ChooseCategoriesAdapter mAdapter;
     private boolean mApplyRestrictions;
 
     private AlertDialog mDialog;
 
-    private ChooseCategoryAdapter.OnCategoriesSelectedListener mCallback;
+    private ChooseCategoriesAdapter.OnCategoriesSelectedListener mCallback;
     private CompassApplication application;
 
     private boolean mFetchingCategories;
@@ -63,7 +62,7 @@ public class ChooseCategoriesFragment
         //  interface. If not, it throws an exception
 
         try{
-            mCallback = (ChooseCategoryAdapter.OnCategoriesSelectedListener)activity;
+            mCallback = (ChooseCategoriesAdapter.OnCategoriesSelectedListener)activity;
         }
         catch (ClassCastException e){
             throw new ClassCastException(activity.toString()
@@ -87,7 +86,7 @@ public class ChooseCategoriesFragment
         RecyclerView grid = (RecyclerView)root.findViewById(R.id.choose_categories_grid);
         grid.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
-        mAdapter = new ChooseCategoryAdapter(getActivity(), this, mApplyRestrictions);
+        mAdapter = new ChooseCategoriesAdapter(getActivity(), this, mApplyRestrictions);
         grid.setAdapter(mAdapter);
         grid.addItemDecoration(new ItemPadding());
         grid.setOnScrollListener(new ParallaxEffect());

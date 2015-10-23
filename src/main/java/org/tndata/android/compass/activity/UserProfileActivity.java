@@ -18,13 +18,15 @@ import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.task.GetUserProfileTask;
 import org.tndata.android.compass.task.GetUserProfileTask.UserProfileTaskInterface;
 import org.tndata.android.compass.task.SurveyFinderTask;
-import org.tndata.android.compass.task.SurveyResponseTask;
+import org.tndata.android.compass.task.SaveSurveyResponseTask;
 
 import java.util.ArrayList;
+import java.util.List;
+
 
 public class UserProfileActivity extends AppCompatActivity implements UserProfileTaskInterface,
         SurveyFinderTask.SurveyFinderInterface, SurveyDialogFragment.SurveyDialogListener,
-        SurveyResponseTask.SurveyResponseListener {
+        SaveSurveyResponseTask.SaveSurveyResponseListener{
     private Toolbar mToolbar;
     private ListView mListView;
     private ProgressBar mProgressBar;
@@ -46,7 +48,7 @@ public class UserProfileActivity extends AppCompatActivity implements UserProfil
                     mProgressBar.setVisibility(View.VISIBLE);
                     mSelectedSurvey = mProfileSurveyItems.get(position);
                     String surveyUrlExtra = mSelectedSurvey.getQuestionType() + "-" + String.valueOf
-                            (mSelectedSurvey.getId());
+                            (mSelectedSurvey.getId() + "/");
                     new SurveyFinderTask(UserProfileActivity.this).executeOnExecutor(AsyncTask
                                     .THREAD_POOL_EXECUTOR, ((CompassApplication)getApplication())
                                     .getToken(),
@@ -116,7 +118,7 @@ public class UserProfileActivity extends AppCompatActivity implements UserProfil
 
     @Override
     public void onDialogPositiveClick(Survey survey) {
-        new SurveyResponseTask(UserProfileActivity.this, this).executeOnExecutor(AsyncTask
+        new SaveSurveyResponseTask(UserProfileActivity.this, this).executeOnExecutor(AsyncTask
                 .THREAD_POOL_EXECUTOR, survey);
         mSurveyDialog.dismiss();
         mSurveyShown = false;
@@ -134,13 +136,15 @@ public class UserProfileActivity extends AppCompatActivity implements UserProfil
     }
 
     @Override
-    public void surveyResponseRecorded(Survey survey) {
-        for (int i = 0; i < mProfileSurveyItems.size(); i++) {
-            Survey s = mProfileSurveyItems.get(i);
-            if (s.getId() == survey.getId() && s.getQuestionType().equalsIgnoreCase(survey
-                    .getQuestionType())) {
-                mProfileSurveyItems.set(i, survey);
-                break;
+    public void onSurveySetResponseRecorded(List<Survey> surveys){
+        for (Survey survey:surveys){
+            for (int i = 0; i < mProfileSurveyItems.size(); i++){
+                Survey s = mProfileSurveyItems.get(i);
+                if (s.getId() == survey.getId() && s.getQuestionType().equalsIgnoreCase(survey
+                        .getQuestionType())){
+                    mProfileSurveyItems.set(i, survey);
+                    break;
+                }
             }
         }
         mAdapter.notifyDataSetChanged();

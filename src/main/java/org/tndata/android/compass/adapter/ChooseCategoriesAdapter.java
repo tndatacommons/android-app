@@ -32,7 +32,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class ChooseCategoryAdapter
+public class ChooseCategoriesAdapter
         extends RecyclerView.Adapter
         implements Animation.AnimationListener{
 
@@ -57,12 +57,12 @@ public class ChooseCategoryAdapter
     /**
      * Constructor.
      *
-     * @param context           a reference to the context.
-     * @param callback          the callback interface.
-     * @param applyRestrictions whether the 3 to 5 vtegory restriction should be applied.
+     * @param context a reference to the context.
+     * @param callback the callback interface.
+     * @param applyRestrictions whether the 3 to 5 category restriction should be applied.
      */
-    public ChooseCategoryAdapter(Context context, OnCategoriesSelectedListener callback,
-                                 boolean applyRestrictions){
+    public ChooseCategoriesAdapter(Context context, OnCategoriesSelectedListener callback,
+                                   boolean applyRestrictions){
         mContext = context;
         mCallback = callback;
         mApplyRestrictions = applyRestrictions;
@@ -158,47 +158,29 @@ public class ChooseCategoryAdapter
                 holder.mOverlay.setVisibility(View.GONE);
             }
 
-            if (category.getTitle().equalsIgnoreCase("Happiness")){
-                holder.mBackground.setImageResource(R.drawable.tile_happiness);
+            if (category.getTitle().equalsIgnoreCase("Happiness & fun")){
+                holder.mBackground.setImageResource(R.drawable.tile_fun);
             }
-            else if (category.getTitle().equalsIgnoreCase("Community")){
-                holder.mBackground.setImageResource(R.drawable.tile_community);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Family")){
-                holder.mBackground.setImageResource(R.drawable.tile_family);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Home")){
-                holder.mBackground.setImageResource(R.drawable.tile_home);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Romance")){
-                holder.mBackground.setImageResource(R.drawable.tile_romance);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Health")){
-                holder.mBackground.setImageResource(R.drawable.tile_health);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Wellness")){
-                holder.mBackground.setImageResource(R.drawable.tile_wellness);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Safety")){
-                holder.mBackground.setImageResource(R.drawable.tile_safety);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Parenting")){
+            else if (category.getTitle().equalsIgnoreCase("Family & parenting")){
                 holder.mBackground.setImageResource(R.drawable.tile_parenting);
             }
-            else if (category.getTitle().equalsIgnoreCase("Education")){
-                holder.mBackground.setImageResource(R.drawable.tile_education);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Skills")){
-                holder.mBackground.setImageResource(R.drawable.tile_skills);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Work")){
-                holder.mBackground.setImageResource(R.drawable.tile_work);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Prosperity")){
+            else if (category.getTitle().equalsIgnoreCase("Work & prosperity")){
                 holder.mBackground.setImageResource(R.drawable.tile_prosperity);
             }
-            else if (category.getTitle().equalsIgnoreCase("Fun")){
-                holder.mBackground.setImageResource(R.drawable.tile_fun);
+            else if (category.getTitle().equalsIgnoreCase("Home & safety")){
+                holder.mBackground.setImageResource(R.drawable.tile_home);
+            }
+            else if (category.getTitle().equalsIgnoreCase("Education & skills")){
+                holder.mBackground.setImageResource(R.drawable.tile_skills);
+            }
+            else if (category.getTitle().equalsIgnoreCase("Health & wellness")){
+                holder.mBackground.setImageResource(R.drawable.tile_health);
+            }
+            else if (category.getTitle().equalsIgnoreCase("Community & friendship")){
+                holder.mBackground.setImageResource(R.drawable.tile_community);
+            }
+            else if (category.getTitle().equalsIgnoreCase("Romance & relationships")){
+                holder.mBackground.setImageResource(R.drawable.tile_romance);
             }
             else{
                 holder.mBackground.setImageResource(0);

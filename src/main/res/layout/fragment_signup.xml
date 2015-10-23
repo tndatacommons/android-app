@@ -1,81 +1,17 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true" >
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/login_header_size"
-        android:layout_height="fill_parent"
-        android:adjustViewBounds="true"
-        android:layout_alignParentBottom="true"
-        android:scaleType="centerCrop"
-        android:contentDescription="@string/app_name"
-        android:src="@drawable/path_main_image" />
+    android:fillViewport="true" >
 
     <LinearLayout
-        android:id="@+id/signup_header_container"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/login_header_size"
         android:animateLayoutChanges="true"
         android:background="@color/login_background"
         android:padding="20dp" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="5dp"
-            android:text="@string/signup_header_info_label"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/white" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_marginLeft="5dp"
-            android:text="@string/signup_info_label"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/white" />
-
-        <ImageView
-            android:id="@+id/signup_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:contentDescription="@string/signup_privacy_link"
-            android:src="@drawable/ic_action_info_white" />
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/signup_with_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/signup_header_container"
-        android:layout_margin="15dp"
-        android:background="@drawable/card_block_selector"
-        android:drawableLeft="@drawable/ic_at_sign"
-        android:gravity="center_vertical"
-        android:minHeight="@dimen/paper_flat_button_min_height"
-        android:minWidth="@dimen/paper_flat_login_button_min_width"
-        android:padding="10dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/signup_connect_email"
-        android:textColor="@color/dark_text_color" />
-
-    <LinearLayout
-        android:id="@+id/signup_container"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:animateLayoutChanges="true"
-        android:background="@color/login_background"
-        android:padding="20dp"
-        android:visibility="gone" >
 
         <TextView
             android:layout_width="wrap_content"
@@ -90,8 +26,10 @@
             android:id="@+id/signup_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/login_email_hint"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:textColor="@color/white"
+            android:textColorHint="@color/signup_hint_color"
+            android:hint="@string/login_email_hint" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -105,8 +43,10 @@
             android:id="@+id/signup_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/login_password_hint"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:textColor="@color/white"
+            android:textColorHint="@color/signup_hint_color"
+            android:hint="@string/login_password_hint" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -120,8 +60,10 @@
             android:id="@+id/signup_confirm_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/login_password_hint"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:textColor="@color/white"
+            android:textColorHint="@color/signup_hint_color"
+            android:hint="@string/login_password_hint" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -135,8 +77,10 @@
             android:id="@+id/signup_first_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/signup_first_name_hint"
-            android:inputType="textCapWords|textPersonName"/>
+            android:inputType="textCapWords|textPersonName"
+            android:textColor="@color/white"
+            android:textColorHint="@color/signup_hint_color"
+            android:hint="@string/signup_first_name_hint" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -150,8 +94,10 @@
             android:id="@+id/signup_last_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/signup_last_name_hint"
-            android:inputType="textCapWords|textPersonName" />
+            android:inputType="textCapWords|textPersonName"
+            android:textColor="@color/white"
+            android:textColorHint="@color/signup_hint_color"
+            android:hint="@string/signup_last_name_hint" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -159,6 +105,14 @@
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="5dp"
             android:text="@string/signup_last_name_label"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="5dp"
+            android:text="@string/signup_accept_terms"
             android:textColor="@color/white" />
 
         <LinearLayout
@@ -196,6 +150,13 @@
                 android:text="@string/launcher_sign_up"
                 android:textColor="@color/button_positive_text_color" />
 
+            <ImageView
+                android:id="@+id/signup_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/signup_privacy_link"
+                android:src="@drawable/ic_action_info_white" />
+
         </LinearLayout>
     </LinearLayout>
-</RelativeLayout>
+</ScrollView>

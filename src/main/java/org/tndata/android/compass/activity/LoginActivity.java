@@ -3,9 +3,9 @@ package org.tndata.android.compass.activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,8 +16,8 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.LauncherFragment;
 import org.tndata.android.compass.fragment.LauncherFragment.LauncherFragmentListener;
-import org.tndata.android.compass.fragment.LoginFragment;
-import org.tndata.android.compass.fragment.LoginFragment.LoginFragmentListener;
+import org.tndata.android.compass.fragment.LogInFragment;
+import org.tndata.android.compass.fragment.LogInFragment.LogInFragmentListener;
 import org.tndata.android.compass.fragment.SignUpFragment;
 import org.tndata.android.compass.fragment.SignUpFragment.SignUpFragmentListener;
 import org.tndata.android.compass.fragment.TourFragment;
@@ -27,8 +27,8 @@ import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.task.GetUserDataTask;
 import org.tndata.android.compass.task.GetUserDataTask.GetUserDataCallback;
-import org.tndata.android.compass.task.LoginTask;
-import org.tndata.android.compass.task.LoginTask.LoginTaskListener;
+import org.tndata.android.compass.task.LogInTask;
+import org.tndata.android.compass.task.LogInTask.LogInTaskCallback;
 import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
@@ -39,11 +39,13 @@ public class LoginActivity
         implements
                 LauncherFragmentListener,
                 SignUpFragmentListener,
-                LoginFragmentListener,
-                LoginTaskListener,
+                LogInFragmentListener,
+                LogInTaskCallback,
                 TourFragmentListener,
                 GetUserDataCallback{
 
+
+    //Fragment ids
     private static final int DEFAULT = 0;
     private static final int LOGIN = 1;
     private static final int SIGN_UP = 2;
@@ -55,7 +57,7 @@ public class LoginActivity
 
     private WebFragment mWebFragment = null;
     private LauncherFragment mLauncherFragment = null;
-    private LoginFragment mLoginFragment = null;
+    private LogInFragment mLoginFragment = null;
     private SignUpFragment mSignUpFragment = null;
     private TourFragment mTourFragment = null;
 
@@ -70,17 +72,18 @@ public class LoginActivity
         mToolbar = (Toolbar) findViewById(R.id.tool_bar);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().hide();
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().hide();
+        }
 
         SharedPreferences settings = getSharedPreferences(Constants.PREFERENCES_NAME, 0);
-
         swapFragments(DEFAULT, true);
         if (settings.getBoolean(Constants.PREFERENCES_NEW_USER, true)){
             swapFragments(TOUR, true);
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean(Constants.PREFERENCES_NEW_USER, false);
-            editor.commit();
+            editor.apply();
         }
 
         SharedPreferences loginInfo = PreferenceManager
@@ -113,13 +116,6 @@ public class LoginActivity
 
     private void handleBackStack() {
         if (!mFragmentStack.isEmpty()) {
-            Fragment fragment = mFragmentStack.get(mFragmentStack.size() - 1);
-            if (fragment instanceof SignUpFragment) {
-                if (((SignUpFragment) fragment).isEmailViewShown()) {
-                    ((SignUpFragment) fragment).hideEmailView();
-                    return;
-                }
-            }
             mFragmentStack.remove(mFragmentStack.size() - 1);
         }
 
@@ -132,7 +128,7 @@ public class LoginActivity
             if (fragment instanceof LauncherFragment){
                 ((LauncherFragment)fragment).showProgress(false);
             }
-            else if (fragment instanceof LoginFragment){
+            else if (fragment instanceof LogInFragment){
                 index = LOGIN;
             }
             else if (fragment instanceof SignUpFragment){
@@ -159,16 +155,19 @@ public class LoginActivity
         finish();
     }
 
+    /**
+     * Fires up the log in task with the provided parameters.
+     *
+     * @param emailAddress the email address.
+     * @param password the password.
+     */
     private void logUserIn(String emailAddress, String password){
-        User user = new User();
-        user.setEmail(emailAddress);
-        user.setPassword(password);
-        for (Fragment fragment : mFragmentStack){
+        for (Fragment fragment:mFragmentStack){
             if (fragment instanceof LauncherFragment){
-                ((LauncherFragment) fragment).showProgress(true);
+                ((LauncherFragment)fragment).showProgress(true);
             }
         }
-        new LoginTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, user);
+        new LogInTask(this, emailAddress, password).execute();
     }
 
     private void swapFragments(int index, boolean addToStack) {
@@ -183,7 +182,7 @@ public class LoginActivity
                 break;
             case LOGIN:
                 if (mLoginFragment == null) {
-                    mLoginFragment = new LoginFragment();
+                    mLoginFragment = new LogInFragment();
                 }
                 fragment = mLoginFragment;
                 getSupportActionBar().hide();
@@ -198,6 +197,7 @@ public class LoginActivity
             case TERMS:
                 if (mWebFragment == null) {
                     mWebFragment = new WebFragment();
+
                 }
                 fragment = mWebFragment;
                 getSupportActionBar().show();
@@ -239,10 +239,10 @@ public class LoginActivity
 
     @Override
     public void loginSuccess(User user) {
-        saveUserInfo(user, false);
+        saveUserInfo(user);
     }
 
-    private void saveUserInfo(User user, boolean newUser) {
+    private void saveUserInfo(User user){
         SharedPreferences settings = PreferenceManager
                 .getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = settings.edit();
@@ -252,11 +252,11 @@ public class LoginActivity
         editor.putString("email", user.getEmail());
         editor.putString("password", user.getPassword());
         editor.putInt("id", user.getId());
-
         editor.commit();
+
         ((CompassApplication) getApplication()).setToken(user.getToken());
         ((CompassApplication) getApplication()).setUser(user);
-        if (newUser || user.needsOnBoarding()){
+        if (user.needsOnBoarding()){
             transitionToOnBoarding();
         }
         else{
@@ -265,9 +265,9 @@ public class LoginActivity
     }
 
     @Override
-    public void loginResult(User result){
+    public void logInResult(User result){
         if (result != null && result.getError().isEmpty()){
-            saveUserInfo(result, false);
+            saveUserInfo(result);
         }
         else{
             swapFragments(LOGIN, true);
@@ -275,8 +275,8 @@ public class LoginActivity
     }
 
     @Override
-    public void signUpSuccess(User user) {
-        saveUserInfo(user, true);
+    public void signUpSuccess(@NonNull User user){
+        saveUserInfo(user);
     }
 
     @Override

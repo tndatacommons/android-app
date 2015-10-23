@@ -2,8 +2,8 @@ package org.tndata.android.compass.fragment;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.User;
-import org.tndata.android.compass.task.LoginTask;
-import org.tndata.android.compass.task.LoginTask.LoginTaskListener;
+import org.tndata.android.compass.task.LogInTask;
+import org.tndata.android.compass.task.LogInTask.LogInTaskCallback;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -20,9 +20,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
-public class LoginFragment extends Fragment implements LoginTaskListener, OnClickListener{
+public class LogInFragment extends Fragment implements LogInTaskCallback, OnClickListener{
     //Listener interface.
-    private LoginFragmentListener mListener;
+    private LogInFragmentListener mListener;
 
     //UI components
     private EditText mEmail;
@@ -41,7 +41,7 @@ public class LoginFragment extends Fragment implements LoginTaskListener, OnClic
         //This makes sure that the host activity has implemented the callback interface.
         //  If not, it throws an exception
         try{
-            mListener = (LoginFragmentListener)activity;
+            mListener = (LogInFragmentListener)activity;
         }
         catch (ClassCastException ccx){
             throw new ClassCastException(activity.toString()
@@ -72,9 +72,12 @@ public class LoginFragment extends Fragment implements LoginTaskListener, OnClic
         }
     }
 
+    /**
+     * Checks the fields and starts the log in process if everything checks.
+     */
     private void doLogin(){
-        String emailAddress = mEmail.getText().toString();
-        String password = mPassword.getText().toString();
+        String emailAddress = mEmail.getText().toString().trim();
+        String password = mPassword.getText().toString().trim();
         if (isValidEmail(emailAddress) && !password.isEmpty()){
             mError.setVisibility(View.INVISIBLE);
             mErrorString = "";
@@ -85,7 +88,7 @@ public class LoginFragment extends Fragment implements LoginTaskListener, OnClic
             User user = new User();
             user.setEmail(emailAddress);
             user.setPassword(password);
-            new LoginTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, user);
+            new LogInTask(this, emailAddress, password).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
         else{
             mError.setText(mErrorString);
@@ -93,11 +96,17 @@ public class LoginFragment extends Fragment implements LoginTaskListener, OnClic
         }
     }
 
-    private boolean isValidEmail(CharSequence target){
-        if (target == null){
+    /**
+     * Checks if the email address provided by the user has a valid format.
+     *
+     * @param email the address to be checked.
+     * @return true if the address provided has valid email format, false otherwise.
+     */
+    private boolean isValidEmail(String email){
+        if (email == null){
             return false;
         }
-        else if (!Patterns.EMAIL_ADDRESS.matcher(target).matches()){
+        else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             mErrorString = getActivity().getResources().getString(R.string.login_email_error);
             return false;
         }
@@ -108,7 +117,7 @@ public class LoginFragment extends Fragment implements LoginTaskListener, OnClic
     }
 
     @Override
-    public void loginResult(User result){
+    public void logInResult(User result){
         if (result != null){
             if (result.getError().isEmpty()){
                 mListener.loginSuccess(result);
@@ -137,7 +146,7 @@ public class LoginFragment extends Fragment implements LoginTaskListener, OnClic
     }
 
 
-    public interface LoginFragmentListener{
+    public interface LogInFragmentListener{
         void loginSuccess(User user);
     }
 }

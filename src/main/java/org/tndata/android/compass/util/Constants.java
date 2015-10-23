@@ -16,6 +16,7 @@ public class Constants{
 
     public final static int QOL_INSTRUMENT_ID = 1;
     public final static int BIO_INSTRUMENT_ID = 4;
+    public final static int INITIAL_PROFILE_INSTRUMENT_ID = 6;
 
     public final static String SURVEY_LIKERT = "likertquestion";
     public final static String SURVEY_MULTICHOICE = "multiplechoicequestion";
@@ -25,7 +26,7 @@ public class Constants{
 
     public final static String GOAL_UPDATED_BROADCAST_ACTION = "org.tndata.android.compass.GOAL_UPDATED_BROADCAST_ACTION";
 
-    public final static String TERMS_AND_CONDITIONS_URL = "http://tndata.org";
+    public final static String TERMS_AND_CONDITIONS_URL = "https://app.tndata.org/terms/";
     public static final String PRIVACY_URL = "https://app.tndata.org/privacy/";
     public static final String TNDATA_BASE_URL = "https://app.tndata.org/api/";
     public static final String TNDATA_STAGING_URL = "http://staging.tndata.org/api/";

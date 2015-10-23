@@ -7,7 +7,7 @@ import android.support.v7.widget.Toolbar;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
+import org.tndata.android.compass.adapter.ChooseCategoriesAdapter;
 import org.tndata.android.compass.fragment.ChooseCategoriesFragment;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.UserData;
@@ -22,7 +22,7 @@ public class ChooseCategoriesActivity
         extends AppCompatActivity
         implements
                 AddCategoryTask.AddCategoryTaskListener,
-                ChooseCategoryAdapter.OnCategoriesSelectedListener,
+                ChooseCategoriesAdapter.OnCategoriesSelectedListener,
                 GetUserDataTask.GetUserDataCallback{
 
     private CompassApplication application;

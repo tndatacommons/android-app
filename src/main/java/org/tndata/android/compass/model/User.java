@@ -2,24 +2,23 @@ package org.tndata.android.compass.model;
 
 import java.io.Serializable;
 
-public class User implements Serializable {
 
+public class User implements Serializable{
     private static final long serialVersionUID = 4582633283983173348L;
+
+    private String token = "";
     private int id = -1;
+    private int userprofile_id = -1;
+    private String email = "";
+    private String password = "";
     private String first_name = "";
     private String last_name = "";
     private String full_name = "";
-    private String email = "";
-    private int userprofile_id = -1;
     private String date_joined = "";
-    private String token = "";
-    private String password = "";
+    private boolean needs_onboarding = true;
+
     private String error = "";
-    private boolean needs_onboarding = false;
 
-    public User() {
-
-    }
 
     public int getId() {
         return id;
@@ -61,6 +60,14 @@ public class User implements Serializable {
         this.email = email;
     }
 
+    public String getPassword(){
+        return password;
+    }
+
+    public void setPassword(String password){
+        this.password = password;
+    }
+
     public int getUserprofileId() {
         return userprofile_id;
     }
@@ -85,14 +92,6 @@ public class User implements Serializable {
         this.token = token;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getError() {
         return error;
     }
@@ -101,11 +100,17 @@ public class User implements Serializable {
         this.error = error;
     }
 
-    public void onBoardingComplete(boolean complete){
-        needs_onboarding = !complete;
+    public void setOnBoardingComplete(){
+        needs_onboarding = false;
     }
 
     public boolean needsOnBoarding(){
         return needs_onboarding;
+    }
+
+    @Override
+    public String toString(){
+        return full_name + " (uid: " + id + ", pid: " + userprofile_id + "), "
+                + email + ", needs onboarding: " + needs_onboarding;
     }
 }
