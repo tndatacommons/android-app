@@ -96,8 +96,9 @@ public class GoalActivity
         int heroHeight = CompassUtil.getScreenWidth(this)*2/3;
         params.height = heroHeight;
         hero.setLayoutParams(params);
+        //TODO the first part of the if is a workaround
         //Packaged content ain't got no hero
-        if (mGoal.getPrimaryCategory().getImageUrl() != null){
+        if (mGoal.getPrimaryCategory() != null && mGoal.getPrimaryCategory().getImageUrl() != null){
             ImageLoader.loadBitmap(hero, mGoal.getPrimaryCategory().getImageUrl(),
                     new ImageLoader.Options().setCropBottom(false));
         }
@@ -111,8 +112,15 @@ public class GoalActivity
         params.topMargin = heroHeight-params.height/2;
         fab.setLayoutParams(params);
         fab.setOnClickListener(this);
-        fab.setColorNormal(Color.parseColor(mGoal.getPrimaryCategory().getSecondaryColor()));
-        fab.setColorPressed(Color.parseColor(mGoal.getPrimaryCategory().getSecondaryColor()));
+        //TODO this is a workaround
+        if (mGoal.getPrimaryCategory() != null){
+            fab.setColorNormal(Color.parseColor(mGoal.getPrimaryCategory().getSecondaryColor()));
+            fab.setColorPressed(Color.parseColor(mGoal.getPrimaryCategory().getSecondaryColor()));
+        }
+        else{
+            fab.setColorNormal(getResources().getColor(R.color.grow_accent));
+            fab.setColorPressed(getResources().getColor(R.color.grow_accent));
+        }
 
         //Set up the general progress indicator
         Progress progress = mGoal.getProgress();
@@ -134,7 +142,13 @@ public class GoalActivity
         mTitleHeight = heroHeight/2;
         params.height = mTitleHeight;
         mTitle.setLayoutParams(params);
-        mTitle.setBackgroundColor(Color.parseColor(mGoal.getPrimaryCategory().getColor()));
+        //TODO this is a workaround
+        if (mGoal.getPrimaryCategory() != null){
+            mTitle.setBackgroundColor(Color.parseColor(mGoal.getPrimaryCategory().getColor()));
+        }
+        else{
+            mTitle.setBackgroundColor(getResources().getColor(R.color.grow_primary));
+        }
         params = (RelativeLayout.LayoutParams)mTitle.getLayoutParams();
         params.topMargin += heroHeight;
         mTitle.setLayoutParams(params);

@@ -105,7 +105,9 @@ public class ChooseBehaviorsActivity
                 mCategory = mGoal.getPrimaryCategory();
                 if (mCategory == null){
                     Goal goal = mApplication.getUserData().getGoal(mGoal);
-                    mCategory = goal.getCategories().get(0);
+                    if (goal.getCategories() != null && !goal.getCategories().isEmpty()){
+                        mCategory = goal.getCategories().get(0);
+                    }
                 }
             }
         }
