@@ -117,8 +117,11 @@ public class ChooseBehaviorsAdapter
 
         RelativeLayout circleView = (RelativeLayout)header.findViewById(R.id.header_choose_behaviors_circle_view);
         GradientDrawable gradientDrawable = (GradientDrawable) circleView.getBackground();
-        if (!category.getSecondaryColor().isEmpty()){
+        if (category != null && !category.getSecondaryColor().isEmpty()){
             gradientDrawable.setColor(Color.parseColor(category.getSecondaryColor()));
+        }
+        else{
+            gradientDrawable.setColor(mContext.getResources().getColor(R.color.grow_accent));
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
             circleView.setBackground(gradientDrawable);
