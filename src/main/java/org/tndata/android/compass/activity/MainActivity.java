@@ -257,47 +257,29 @@ public class MainActivity
      */
     @DrawableRes
     private int getIconResourceId(Category category){
-        if (category.getTitle().equalsIgnoreCase("Happiness")){
+        if (category.getTitle().equalsIgnoreCase("Happiness & fun")){
             return R.drawable.ic_category1;
         }
-        else if (category.getTitle().equalsIgnoreCase("Community")){
+        else if (category.getTitle().equalsIgnoreCase("Family & parenting")){
             return R.drawable.ic_category2;
         }
-        else if (category.getTitle().equalsIgnoreCase("Family")){
+        else if (category.getTitle().equalsIgnoreCase("Work & prosperity")){
             return R.drawable.ic_category3;
         }
-        else if (category.getTitle().equalsIgnoreCase("Home")){
+        else if (category.getTitle().equalsIgnoreCase("Home & safety")){
             return R.drawable.ic_category4;
         }
-        else if (category.getTitle().equalsIgnoreCase("Romance")){
+        else if (category.getTitle().equalsIgnoreCase("Education & skills")){
             return R.drawable.ic_category5;
         }
-        else if (category.getTitle().equalsIgnoreCase("Health")){
+        else if (category.getTitle().equalsIgnoreCase("Health & wellness")){
             return R.drawable.ic_category6;
         }
-        else if (category.getTitle().equalsIgnoreCase("Wellness")){
+        else if (category.getTitle().equalsIgnoreCase("Community & friendship")){
             return R.drawable.ic_category7;
         }
-        else if (category.getTitle().equalsIgnoreCase("Safety")){
+        else if (category.getTitle().equalsIgnoreCase("Romance & relationships")){
             return R.drawable.ic_category8;
-        }
-        else if (category.getTitle().equalsIgnoreCase("Parenting")){
-            return R.drawable.ic_category9;
-        }
-        else if (category.getTitle().equalsIgnoreCase("Education")){
-            return R.drawable.ic_category10;
-        }
-        else if (category.getTitle().equalsIgnoreCase("Skills")){
-            return R.drawable.ic_category11;
-        }
-        else if (category.getTitle().equalsIgnoreCase("Work")){
-            return R.drawable.ic_category12;
-        }
-        else if (category.getTitle().equalsIgnoreCase("Prosperity")){
-            return R.drawable.ic_category13;
-        }
-        else if (category.getTitle().equalsIgnoreCase("Fun")){
-            return R.drawable.ic_category14;
         }
         else{
             return R.drawable.ic_add_white_24dp;
