@@ -46,7 +46,7 @@ public class UpdateProfileTask extends AsyncTask<User, Void, Boolean>{
 
         User user = params[0];
         //If the user has no profile to be updated
-        if (user.getUserprofileId() == -1){
+        if (user == null || user.getUserprofileId() == -1){
             //Failure
             return false;
         }
