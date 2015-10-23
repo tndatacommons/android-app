@@ -98,29 +98,39 @@
 
         <LinearLayout
             android:orientation="horizontal"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:layout_marginBottom="30dp" >
+            android:layout_marginBottom="30dp"
+            android:layout_gravity="right" >
 
             <TextView
                 android:id="@+id/action_time_option"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_marginRight="20dp"
                 android:textAllCaps="true"
-                android:gravity="right"
                 android:textColor="@color/grow_primary" />
 
             <TextView
                 android:id="@+id/action_did_it"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_marginRight="20dp"
                 android:textAllCaps="true"
-                android:gravity="center"
                 android:textColor="@color/grow_primary"
                 android:text="@string/action_did_it" />
+
+            <TextView
+                android:id="@+id/action_do_it_now"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:layout_gravity="center"
+                android:textAllCaps="true"
+                android:textColor="@color/grow_primary"
+                android:text="@string/action_do_it_now"
+                android:visibility="gone" />
 
         </LinearLayout>
 
