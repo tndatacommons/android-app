@@ -24,6 +24,7 @@ import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.task.GetUserActionsTask;
 import org.tndata.android.compass.util.CompassTagHandler;
+import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.List;
@@ -62,6 +63,7 @@ public class ActionActivity
     private TextView mActionDescription;
     private TextView mMoreInfoHeader;
     private TextView mMoreInfo;
+    private TextView mDoItNow;
     private ViewSwitcher mTickSwitcher;
 
     //Firewall
@@ -86,6 +88,7 @@ public class ActionActivity
         mActionDescription = (TextView)findViewById(R.id.action_description);
         mMoreInfoHeader = (TextView)findViewById(R.id.action_more_info_header);
         mMoreInfo = (TextView)findViewById(R.id.action_more_info);
+        mDoItNow = (TextView)findViewById(R.id.action_do_it_now);
         TextView timeOption = (TextView)findViewById(R.id.action_time_option);
         mTickSwitcher = (ViewSwitcher)findViewById(R.id.action_tick_switcher);
 
@@ -176,6 +179,10 @@ public class ActionActivity
 
             case R.id.action_did_it:
                 didIt();
+                break;
+
+            case R.id.action_do_it_now:
+                CompassUtil.doItNow(this, mAction.getExternalResource());
                 break;
         }
     }
@@ -281,6 +288,11 @@ public class ActionActivity
             else{
                 mMoreInfo.setText(mAction.getMoreInfo());
             }
+        }
+
+        if (!mAction.getExternalResource().isEmpty()){
+            mDoItNow.setVisibility(View.VISIBLE);
+            mDoItNow.setOnClickListener(this);
         }
     }
 }

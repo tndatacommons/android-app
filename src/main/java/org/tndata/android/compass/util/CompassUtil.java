@@ -1,7 +1,11 @@
 package org.tndata.android.compass.util;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.WindowManager;
@@ -10,6 +14,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.tndata.android.compass.model.Action;
 
 
 /**
@@ -125,5 +131,54 @@ public final class CompassUtil{
             return "DEC";
         }
         return "";
+    }
+
+    /**
+     * Checks whether the provided string has one of the following formats, X being a number:
+     * <p/>
+     * (XXX) XXX-XXX
+     * XXX-XXX-XXXX
+     *
+     * @param resource the resource to be checked.
+     * @return true if the resource is a phone number, false otherwise.
+     */
+    public static boolean isPhoneNumber(String resource){
+        return resource.matches("[(][0-9]{3}[)] [0-9]{3}[-][0-9]{4}") ||
+                resource.matches("[0-9]{3}[-][0-9]{3}[-][0-9]{4}");
+    }
+
+    public static void doItNow(@NonNull Context context, @NonNull String resource){
+        //If a link
+        if (resource.startsWith("http")){
+            //If an app
+            if (resource.startsWith("http://play.google.com/store/apps/") ||
+                    resource.startsWith("https://play.google.com/store/apps/")){
+                String id = resource.substring(resource.indexOf('/', 32));
+                //Try, if the user does not have the store installed, launch as web link
+                try{
+                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://" + id)));
+                }
+                catch (ActivityNotFoundException anfx){
+                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(resource)));
+                }
+            }
+            //Otherwise opened with the browser
+            else{
+                Uri uri = Uri.parse(resource);
+                context.startActivity(new Intent(Intent.ACTION_VIEW, uri));
+            }
+        }
+        //If a phone number
+        else if (CompassUtil.isPhoneNumber(resource)){
+            //First of all, the number needs to be extracted from the resource
+            String number = "";
+            for (int i = 0; i < resource.length(); i++){
+                char digit = resource.charAt(i);
+                if (digit >= '0' && digit <= '9'){
+                    number += digit;
+                }
+            }
+            context.startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + number)));
+        }
     }
 }

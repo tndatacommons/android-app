@@ -1,13 +1,11 @@
 package org.tndata.android.compass.activity;
 
 import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
@@ -39,6 +37,7 @@ import org.tndata.android.compass.task.DeleteActionTask;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.util.CompassTagHandler;
+import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
@@ -175,20 +174,6 @@ public class ChooseActionsActivity
         return mApplication.getUserData().getBehaviors().contains(mBehavior);
     }
 
-    /**
-     * Checks whether the provided string has one of the following formats, X being a number:
-     * <p/>
-     * (XXX) XXX-XXX
-     * XXX-XXX-XXXX
-     *
-     * @param resource the resource to be checked.
-     * @return true if the resource is a phone number, false otherwise.
-     */
-    private boolean isPhoneNumber(String resource) {
-        return resource.matches("[(][0-9]{3}[)] [0-9]{3}[-][0-9]{4}") ||
-                resource.matches("[0-9]{3}[-][0-9]{3}[-][0-9]{4}");
-    }
-
     @Override
     public void moreInfo(Action action){
         AlertDialog.Builder builder = new AlertDialog.Builder(ChooseActionsActivity.this);
@@ -265,39 +250,7 @@ public class ChooseActionsActivity
 
     @Override
     public void doItNow(Action action){
-        String resource = action.getExternalResource();
-        //If a link
-        if (resource.startsWith("http")){
-            //If an app
-            if (resource.startsWith("http://play.google.com/store/apps/") ||
-                    resource.startsWith("https://play.google.com/store/apps/")){
-                String id = resource.substring(resource.indexOf('/', 32));
-                //Try, if the user does not have the store installed, launch as web link
-                try{
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://" + id)));
-                }
-                catch (ActivityNotFoundException anfx){
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(resource)));
-                }
-            }
-            //Otherwise opened with the browser
-            else{
-                Uri uri = Uri.parse(resource);
-                startActivity(new Intent(Intent.ACTION_VIEW, uri));
-            }
-        }
-        //If a phone number
-        else if (isPhoneNumber(resource)){
-            //First of all, the number needs to be extracted from the resource
-            String number = "";
-            for (int i = 0; i < resource.length(); i++){
-                char digit = resource.charAt(i);
-                if (digit >= '0' && digit <= '9'){
-                    number += digit;
-                }
-            }
-            startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + number)));
-        }
+        CompassUtil.doItNow(this, action.getExternalResource());
     }
 
     @Override
