@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Compass</string>
-    <string name="version_num">2.0.0</string>
+    <string name="version_num">2.1.0</string>
     <string name="ok">OK</string>
 
     <!-- MainActivity -->
@@ -230,7 +230,7 @@
     </string-array>
     <string name="places_save_error">The place couldn\'t be saved</string>
     <string name="places_picker_hint">Search a place or address</string>
-    
+
     <!-- Package consent -->
     <string name="package_enrollment_consent_title">Package Enrollment Consent</string>
     <string name="package_accept_explanation">
