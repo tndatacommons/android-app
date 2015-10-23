@@ -10,12 +10,7 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
-
-import org.tndata.android.compass.model.Action;
 
 
 /**

@@ -88,9 +88,9 @@ public class ActionActivity
         mActionDescription = (TextView)findViewById(R.id.action_description);
         mMoreInfoHeader = (TextView)findViewById(R.id.action_more_info_header);
         mMoreInfo = (TextView)findViewById(R.id.action_more_info);
-        mDoItNow = (TextView)findViewById(R.id.action_do_it_now);
         TextView timeOption = (TextView)findViewById(R.id.action_time_option);
         mTickSwitcher = (ViewSwitcher)findViewById(R.id.action_tick_switcher);
+        mDoItNow = (TextView)findViewById(R.id.action_do_it_now);
 
         mHeroContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
             @Override
