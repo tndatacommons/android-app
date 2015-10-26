@@ -330,7 +330,7 @@ public class CompassTasksTest {
         singUpUserTask();
 
 
-        GetUserActionsTask.GetUserActionsListener getUserActionsListener = new GetUserActionsTask.GetUserActionsListener() {
+        GetUserActionsTask.GetUserActionsCallback getUserActionsListener = new GetUserActionsTask.GetUserActionsCallback() {
             @Override
             public void actionsLoaded(ArrayList<Action> actions) {
                 actionsList = actions;

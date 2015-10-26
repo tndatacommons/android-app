@@ -21,7 +21,6 @@ import org.tndata.android.compass.task.GetUserBehaviorsTask;
 import org.tndata.android.compass.ui.ActionCellView;
 import org.tndata.android.compass.ui.BehaviorListView;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
-import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GoalDetailsFragment extends Fragment implements
-        GetUserActionsTask.GetUserActionsListener,
+        GetUserActionsTask.GetUserActionsCallback,
         GetUserBehaviorsTask.GetUserBehaviorsListener,
         ActionCellView.ActionViewListener,
         BehaviorListView.BehaviorListViewListener {
@@ -159,7 +158,7 @@ public class GoalDetailsFragment extends Fragment implements
     }
 
     @Override
-    public void actionsLoaded(List<Action> actions) {
+    public void onActionsLoaded(List<Action> actions) {
 
         for (Behavior behavior : mBehaviorActionMap.keySet()) {
             for (Action action : actions) {

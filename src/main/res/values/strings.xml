@@ -273,4 +273,9 @@
     <!-- Goal Activity -->
     <string name="goal_indicator_caption">%1$s\%</string>
 
+    <!-- Check in review -->
+    <string name="check_in_review_title">Because I want to %1$s</string>
+    <string name="check_in_action_header">Today I will:</string>
+    <string name="check_in_action_behavior">To %1$s</string>
+
 </resources>
