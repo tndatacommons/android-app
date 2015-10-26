@@ -16,7 +16,10 @@ import java.util.List;
 
 
 /**
- * Created by isma on 10/26/15.
+ * Adapter for the RecyclerView in CheckInReviewFragment.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class CheckInReviewAdapter extends RecyclerView.Adapter<CheckInReviewAdapter.ActionHolder>{
     private Context mContext;
@@ -25,6 +28,12 @@ public class CheckInReviewAdapter extends RecyclerView.Adapter<CheckInReviewAdap
     private CompassApplication mApplication;
 
 
+    /**
+     * Constructor.
+     *
+     * @param context the context.
+     * @param actions the list of actions to be displayed.
+     */
     public CheckInReviewAdapter(Context context, List<Action> actions){
         mContext = context;
         mActions = actions;
@@ -41,6 +50,7 @@ public class CheckInReviewAdapter extends RecyclerView.Adapter<CheckInReviewAdap
 
     @Override
     public void onBindViewHolder(ActionHolder holder, int position){
+        //The header shold be shown only if this is the first element
         if (position == 0){
             holder.mHeader.setVisibility(View.VISIBLE);
         }
@@ -48,9 +58,12 @@ public class CheckInReviewAdapter extends RecyclerView.Adapter<CheckInReviewAdap
             holder.mHeader.setVisibility(View.GONE);
         }
 
+        //Retrieve the data holders
         Action action = mActions.get(position);
-        holder.mAction.setText(action.getTitle());
         Behavior behavior = mApplication.getUserData().getAction(action).getBehavior();
+
+        //Populate the UI
+        holder.mAction.setText(action.getTitle());
         String behaviorTitle = behavior.getTitle().substring(0, 1).toLowerCase();
         behaviorTitle += behavior.getTitle().substring(1);
         holder.mBehavior.setText(mContext.getString(R.string.check_in_action_behavior, behaviorTitle));
@@ -63,12 +76,24 @@ public class CheckInReviewAdapter extends RecyclerView.Adapter<CheckInReviewAdap
     }
 
 
+    /**
+     * View holder for an action.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     class ActionHolder extends RecyclerView.ViewHolder{
         private TextView mHeader;
         private TextView mAction;
         private TextView mBehavior;
         private TextView mTime;
 
+
+        /**
+         * Constructor.
+         *
+         * @param rootView the root view of the item.
+         */
         public ActionHolder(View rootView){
             super(rootView);
 

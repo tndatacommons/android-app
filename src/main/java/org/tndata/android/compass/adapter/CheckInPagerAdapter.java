@@ -14,7 +14,10 @@ import java.util.Map;
 
 
 /**
- * Created by isma on 10/26/15.
+ * Adapter used for CheckInActivity's ViewPager.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class CheckInPagerAdapter extends FragmentPagerAdapter{
     private List<Goal> mGoals;
@@ -23,9 +26,16 @@ public class CheckInPagerAdapter extends FragmentPagerAdapter{
     private List<Fragment> mFragments;
 
 
+    /**
+     * Constructor.
+     *
+     * @param fm the fragment manager.
+     * @param dataSet the data to be displayed by the adapter.
+     */
     public CheckInPagerAdapter(FragmentManager fm, Map<Goal, List<Action>> dataSet){
         super(fm);
 
+        //Populate the lists with the data in the set
         mGoals = new ArrayList<>();
         mActionLists = new ArrayList<>();
         for (Map.Entry<Goal, List<Action>> entry:dataSet.entrySet()){
@@ -38,6 +48,7 @@ public class CheckInPagerAdapter extends FragmentPagerAdapter{
 
     @Override
     public Fragment getItem(int position){
+        //If the fragment has not been created yet, create it
         if (position == mFragments.size()){
             mFragments.add(CheckInReviewFragment.newInstance(mGoals.get(position), mActionLists.get(position)));
         }

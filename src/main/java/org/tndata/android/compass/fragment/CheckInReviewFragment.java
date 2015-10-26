@@ -18,7 +18,6 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.CheckInReviewAdapter;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.util.CompassUtil;
 
@@ -27,7 +26,10 @@ import java.util.List;
 
 
 /**
- * Created by isma on 10/26/15.
+ * Fragment used to display all actions belonging to a goal in the review screen.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class CheckInReviewFragment extends Fragment{
     private static final String GOAL_KEY = "org.tndata.compass.CheckInReview.Goal";
@@ -85,6 +87,13 @@ public class CheckInReviewFragment extends Fragment{
     }
 
 
+    /**
+     * Creates an instance of the fragment and delivers the provided data.
+     *
+     * @param goal the goal to be displayed by the fragment.
+     * @param actions the actions associated to that goal.
+     * @return an instance of the fragment.
+     */
     public static CheckInReviewFragment newInstance(@NonNull Goal goal, @NonNull List<Action> actions){
         //Create the argument bundle
         Bundle args = new Bundle();

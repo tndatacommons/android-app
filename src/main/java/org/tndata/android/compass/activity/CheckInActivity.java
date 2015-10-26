@@ -20,7 +20,10 @@ import java.util.Map;
 
 
 /**
- * Created by isma on 10/26/15.
+ * Activity to display review and feedback check-in screens.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class CheckInActivity extends AppCompatActivity implements GetUserActionsTask.GetUserActionsCallback{
     public static final String TYPE_KEY = "org.tndata.compass.CheckIn.Type";
