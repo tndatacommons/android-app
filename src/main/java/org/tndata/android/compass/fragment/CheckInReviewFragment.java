@@ -73,7 +73,6 @@ public class CheckInReviewFragment extends Fragment{
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)header.getLayoutParams();
         params.height = CompassUtil.getScreenWidth(getActivity())*2/3;
         header.setLayoutParams(params);
-        //Goal goal = ((CompassApplication)getActivity().getApplication()).getUserData().getGoal(mGoal);
         if (mGoal.getPrimaryCategory() != null){
             header.setBackgroundColor(Color.parseColor(mGoal.getPrimaryCategory().getColor()));
         }

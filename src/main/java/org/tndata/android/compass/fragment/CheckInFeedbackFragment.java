@@ -1,0 +1,84 @@
+package org.tndata.android.compass.fragment;
+
+import android.graphics.Color;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
+
+import org.tndata.android.compass.R;
+import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.util.CompassUtil;
+
+
+/**
+ * Created by isma on 10/27/15.
+ */
+public class CheckInFeedbackFragment extends Fragment{
+    private static final String GOAL_KEY = "org.tndata.compass.CheckInFeedback.Goal";
+
+
+    //Model components
+    private Goal mGoal;
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+
+        //Retrieve the arguments
+        Bundle arguments = getArguments();
+        mGoal = (Goal)arguments.getSerializable(GOAL_KEY);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        return inflater.inflate(R.layout.fragment_check_in_feedback, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View rootView, Bundle savedInstanceState){
+        //Fetch the UI components
+        RelativeLayout header = (RelativeLayout)rootView.findViewById(R.id.check_in_feedback_header);
+        TextView goalTitle = (TextView)rootView.findViewById(R.id.check_in_feedback_goal);
+        SeekBar bar = (SeekBar)rootView.findViewById(R.id.check_in_feedback_bar);
+
+        //3 by 2 ratio and color for the header
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)header.getLayoutParams();
+        params.height = CompassUtil.getScreenWidth(getActivity())*2/3;
+        header.setLayoutParams(params);
+        if (mGoal.getPrimaryCategory() != null){
+            header.setBackgroundColor(Color.parseColor(mGoal.getPrimaryCategory().getColor()));
+        }
+
+        //Header title
+        String title = mGoal.getTitle().substring(0, 1).toLowerCase() + mGoal.getTitle().substring(1);
+        goalTitle.setText(getResources().getString(R.string.check_in_feedback_goal, title));
+    }
+
+
+    /**
+     * Creates an instance of the fragment and delivers the provided data.
+     *
+     * @param goal the goal to be displayed by the fragment.
+     * @return an instance of the fragment.
+     */
+    public static CheckInFeedbackFragment newInstance(@NonNull Goal goal){
+        //Create the argument bundle
+        Bundle args = new Bundle();
+        args.putSerializable(GOAL_KEY, goal);
+
+        //Create the fragment and deliver the arguments
+        CheckInFeedbackFragment fragment = new CheckInFeedbackFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+}

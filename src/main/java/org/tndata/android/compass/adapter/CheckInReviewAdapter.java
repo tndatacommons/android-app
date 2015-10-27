@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
@@ -25,8 +24,6 @@ public class CheckInReviewAdapter extends RecyclerView.Adapter<CheckInReviewAdap
     private Context mContext;
     private List<Action> mActions;
 
-    private CompassApplication mApplication;
-
 
     /**
      * Constructor.
@@ -37,8 +34,6 @@ public class CheckInReviewAdapter extends RecyclerView.Adapter<CheckInReviewAdap
     public CheckInReviewAdapter(Context context, List<Action> actions){
         mContext = context;
         mActions = actions;
-
-        mApplication = (CompassApplication)mContext.getApplicationContext();
     }
 
     @Override
