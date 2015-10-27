@@ -33,7 +33,7 @@ import java.util.List;
  */
 public class CheckInReviewFragment extends Fragment{
     private static final String GOAL_KEY = "org.tndata.compass.CheckInReview.Goal";
-    private static final String ACTION_NUMBER_KEY = "org.tndata.compass.CheckInReview.ActionNum";
+    private static final String ACTION_NUMBER_KEY = "org.tndata.compass.CheckInReview.ActionNumber";
     private static final String ACTION_KEY = "org.tndata.compass.CheckInReview.Action";
 
 
@@ -73,9 +73,9 @@ public class CheckInReviewFragment extends Fragment{
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)header.getLayoutParams();
         params.height = CompassUtil.getScreenWidth(getActivity())*2/3;
         header.setLayoutParams(params);
-        Goal goal = ((CompassApplication)getActivity().getApplication()).getUserData().getGoal(mGoal);
-        if (goal.getPrimaryCategory() != null){
-            header.setBackgroundColor(Color.parseColor(goal.getPrimaryCategory().getColor()));
+        //Goal goal = ((CompassApplication)getActivity().getApplication()).getUserData().getGoal(mGoal);
+        if (mGoal.getPrimaryCategory() != null){
+            header.setBackgroundColor(Color.parseColor(mGoal.getPrimaryCategory().getColor()));
         }
 
         //Header title

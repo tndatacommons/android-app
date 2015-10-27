@@ -254,7 +254,7 @@ public class Parser{
      */
     public List<Action> parseActions(JSONArray actionArray, boolean userActions){
 
-        Log.d("ActionPArser", actionArray.length()+"");
+        Log.d("ActionParser", actionArray.length()+"");
         List<Action> actions = new ArrayList<>();
 
         try{
@@ -278,7 +278,7 @@ public class Parser{
      * @return the parsed action.
      */
     @Nullable
-    private Action parseAction(JSONObject actionObject, boolean userAction){
+    public Action parseAction(JSONObject actionObject, boolean userAction){
         //The string to be parsed by GSON is extracted from the array
         try{
             String actionString;
@@ -437,5 +437,9 @@ public class Parser{
             jsonx.printStackTrace();
         }
         return null;
+    }
+
+    public Gson getGson(){
+        return gson;
     }
 }

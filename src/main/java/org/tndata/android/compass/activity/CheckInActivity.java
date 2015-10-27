@@ -11,6 +11,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.CheckInPagerAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.task.GetTodaysActionsTask;
 import org.tndata.android.compass.task.GetUserActionsTask;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import java.util.Map;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class CheckInActivity extends AppCompatActivity implements GetUserActionsTask.GetUserActionsCallback{
+public class CheckInActivity extends AppCompatActivity implements GetTodaysActionsTask.GetTodaysActionsCallback{
     public static final String TYPE_KEY = "org.tndata.compass.CheckIn.Type";
 
     public static final int TYPE_REVIEW = 0;
@@ -48,7 +49,7 @@ public class CheckInActivity extends AppCompatActivity implements GetUserActions
         mPager = (ViewPager)findViewById(R.id.check_in_pager);
         mLoading = (ProgressBar)findViewById(R.id.check_in_loading);
 
-        new GetUserActionsTask(this).execute(((CompassApplication)getApplication()).getToken(), "today");
+        new GetTodaysActionsTask(this, ((CompassApplication)getApplication()).getToken()).execute();
     }
 
     @Override

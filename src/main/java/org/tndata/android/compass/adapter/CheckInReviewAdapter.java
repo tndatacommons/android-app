@@ -60,7 +60,7 @@ public class CheckInReviewAdapter extends RecyclerView.Adapter<CheckInReviewAdap
 
         //Retrieve the data holders
         Action action = mActions.get(position);
-        Behavior behavior = mApplication.getUserData().getAction(action).getBehavior();
+        Behavior behavior = action.getBehavior();
 
         //Populate the UI
         holder.mAction.setText(action.getTitle());
