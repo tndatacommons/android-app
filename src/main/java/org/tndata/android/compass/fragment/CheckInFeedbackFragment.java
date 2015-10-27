@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,21 +13,27 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.util.AutoSave;
 import org.tndata.android.compass.util.CompassUtil;
 
 
 /**
  * Created by isma on 10/27/15.
  */
-public class CheckInFeedbackFragment extends Fragment{
+public class CheckInFeedbackFragment extends Fragment implements AutoSave.AutoSaveInterface, SeekBar.OnSeekBarChangeListener{
     private static final String GOAL_KEY = "org.tndata.compass.CheckInFeedback.Goal";
 
 
     //Model components
     private Goal mGoal;
+
+    //Auto save
+    private AutoSave mAutoSave;
+    private long mLastUpdate;
 
 
     @Override
@@ -36,6 +43,8 @@ public class CheckInFeedbackFragment extends Fragment{
         //Retrieve the arguments
         Bundle arguments = getArguments();
         mGoal = (Goal)arguments.getSerializable(GOAL_KEY);
+
+        mLastUpdate = -1;
     }
 
     @Nullable
@@ -62,8 +71,21 @@ public class CheckInFeedbackFragment extends Fragment{
         //Header title
         String title = mGoal.getTitle().substring(0, 1).toLowerCase() + mGoal.getTitle().substring(1);
         goalTitle.setText(getResources().getString(R.string.check_in_feedback_goal, title));
+
+        bar.setOnSeekBarChangeListener(this);
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        mAutoSave = AutoSave.start(this, 1000);
+    }
+
+    @Override
+    public void onPause(){
+        mAutoSave.stop();
+        super.onPause();
+    }
 
     /**
      * Creates an instance of the fragment and delivers the provided data.
@@ -80,5 +102,38 @@ public class CheckInFeedbackFragment extends Fragment{
         CheckInFeedbackFragment fragment = new CheckInFeedbackFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public long getLastUpdateTime(){
+        return mLastUpdate;
+    }
+
+    @Override
+    public void save(){
+        mLastUpdate = -1;
+        getActivity().runOnUiThread(new Runnable(){
+            @Override
+            public void run(){
+                Toast.makeText(getActivity(), "Saved", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
+        //Unused
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar){
+        Log.d("CheckInFeedbackFragment", "start tracking");
+        mLastUpdate = -1;
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar){
+        Log.d("CheckInFeedbackFragment", "stop tracking");
+        mLastUpdate = System.currentTimeMillis();
     }
 }
