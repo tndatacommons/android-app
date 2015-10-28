@@ -4,14 +4,17 @@
         android:key="notification_pref_key_notification_settings"
         android:title="Notifications" >
 
-        <Preference
-            android:key="pref_key_sources"
-            android:title="A" />
+        <CheckBoxPreference
+            android:key="pref_key_sound"
+            android:title="Sound" />
 
-        <Preference
-            android:key="pref_key_version"
-            android:summary="@string/version_num"
-            android:title="B" />
+        <CheckBoxPreference
+            android:key="pref_key_vibration"
+            android:title="Vibration" />
+
+        <CheckBoxPreference
+            android:key="pref_key_light"
+            android:title="Light" />
 
     </PreferenceCategory>
 </PreferenceScreen>

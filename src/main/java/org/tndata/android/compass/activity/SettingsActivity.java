@@ -42,9 +42,7 @@ public class SettingsActivity extends AppCompatActivity implements OnSettingsCli
         }
 
         Fragment fragment = new SettingsFragment();
-        getFragmentManager().beginTransaction()
-                .add(R.id.base_content, fragment)
-                .addToBackStack(null).commit();
+        getFragmentManager().beginTransaction().add(R.id.base_content, fragment).commit();
 
         sub = false;
     }
