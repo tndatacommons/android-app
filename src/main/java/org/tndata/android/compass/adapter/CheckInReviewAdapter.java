@@ -61,7 +61,7 @@ public class CheckInReviewAdapter extends RecyclerView.Adapter<CheckInReviewAdap
         holder.mAction.setText(action.getTitle());
         String behaviorTitle = behavior.getTitle().substring(0, 1).toLowerCase();
         behaviorTitle += behavior.getTitle().substring(1);
-        holder.mBehavior.setText(mContext.getString(R.string.check_in_action_behavior, behaviorTitle));
+        holder.mBehavior.setText(mContext.getString(R.string.check_in_review_action_behavior, behaviorTitle));
         holder.mTime.setText(action.getTrigger().getFormattedTime());
     }
 

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/check_in_action_header" />
+        android:text="@string/check_in_review_action_header" />
 
     <TextView
         android:id="@+id/check_in_action_action"

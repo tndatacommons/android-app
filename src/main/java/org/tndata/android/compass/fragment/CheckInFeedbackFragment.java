@@ -24,7 +24,12 @@ import org.tndata.android.compass.util.CompassUtil;
 /**
  * Created by isma on 10/27/15.
  */
-public class CheckInFeedbackFragment extends Fragment implements AutoSave.AutoSaveInterface, SeekBar.OnSeekBarChangeListener{
+public class CheckInFeedbackFragment
+        extends Fragment
+        implements
+                AutoSave.AutoSaveInterface,
+                SeekBar.OnSeekBarChangeListener{
+
     private static final String GOAL_KEY = "org.tndata.compass.CheckInFeedback.Goal";
 
 

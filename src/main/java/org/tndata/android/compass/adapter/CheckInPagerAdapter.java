@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import org.tndata.android.compass.fragment.CheckInFeedbackFragment;
+import org.tndata.android.compass.fragment.CheckInReviewEmptyFragment;
 import org.tndata.android.compass.fragment.CheckInReviewFragment;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
@@ -42,7 +43,7 @@ public class CheckInPagerAdapter extends FragmentPagerAdapter{
         mGoals = new ArrayList<>();
         mActionLists = new ArrayList<>();
         for (Map.Entry<Goal, List<Action>> entry:dataSet.entrySet()){
-            mGoals.add(entry.getKey());
+            //mGoals.add(entry.getKey());
             mActionLists.add(entry.getValue());
         }
         mReview = review;
@@ -55,8 +56,13 @@ public class CheckInPagerAdapter extends FragmentPagerAdapter{
         //If the fragment has not been created yet, create it
         if (position == mFragments.size()){
             if (mReview){
-                mFragments.add(CheckInReviewFragment.newInstance(mGoals.get(position),
-                        mActionLists.get(position)));
+                if (mGoals.isEmpty()){
+                    mFragments.add(new CheckInReviewEmptyFragment());
+                }
+                else{
+                    mFragments.add(CheckInReviewFragment.newInstance(mGoals.get(position),
+                            mActionLists.get(position)));
+                }
             }
             else{
                 mFragments.add(CheckInFeedbackFragment.newInstance(mGoals.get(position)));
@@ -67,6 +73,6 @@ public class CheckInPagerAdapter extends FragmentPagerAdapter{
 
     @Override
     public int getCount(){
-        return mGoals.size();
+        return mGoals.isEmpty() ? 1 : mGoals.size();
     }
 }
