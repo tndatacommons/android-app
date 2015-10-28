@@ -27,10 +27,10 @@ android {
 
     // GC's not letting you build a signed apk?
     // http://stackoverflow.com/a/25013822/182778
-    dexOptions {
-        incremental true
-        javaMaxHeapSize "4g"
-    }
+    //dexOptions {
+    //    incremental true
+    //    javaMaxHeapSize "4g"
+    //}
 
     buildTypes{
         debug{

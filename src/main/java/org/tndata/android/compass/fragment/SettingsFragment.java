@@ -18,6 +18,7 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
     private OnSettingsClickListener mListener;
 
     //A list of clickable preferences
+    private Preference mNotifications;
     private Preference mLogOut;
     private Preference mSources;
 
@@ -41,6 +42,9 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+
+        mNotifications = findPreference("pref_key_notifications");
+        mNotifications.setOnPreferenceClickListener(this);
 
         mLogOut = findPreference("pref_key_logout");
         mLogOut.setOnPreferenceClickListener(this);
@@ -66,6 +70,9 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
         else if (preference == mSources){
             mListener.sources();
         }
+        else if (preference == mNotifications){
+            mListener.notifications();
+        }
         else{
             return false;
         }
@@ -77,6 +84,11 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
      * Listener interface to handle preference click events int the host activity.
      */
     public interface OnSettingsClickListener{
+        /**
+         * Called when the notifications preference is clicked.
+         */
+        void notifications();
+
         /**
          * Called when the log out preference is clicked.
          */
