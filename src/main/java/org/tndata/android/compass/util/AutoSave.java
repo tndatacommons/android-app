@@ -60,6 +60,9 @@ public class AutoSave implements Runnable{
 
 
     public static AutoSave start(@NonNull AutoSaveInterface autoSaveInterface, int interval){
+        if (interval < 0){
+            throw new IllegalArgumentException("The time interval cannot be negative");
+        }
         AutoSave autoSave = new AutoSave(autoSaveInterface, interval);
         new Thread(autoSave).start();
         return autoSave;
