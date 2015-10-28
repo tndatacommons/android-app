@@ -1,5 +1,8 @@
 package org.tndata.android.compass.util;
 
+import android.app.Activity;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -8,13 +11,15 @@ import android.util.Log;
  * Created by isma on 10/27/15.
  */
 public class AutoSave implements Runnable{
+    private Activity mActivity;
     private AutoSaveInterface mInterface;
     private int mInterval;
 
     private boolean running;
 
 
-    private AutoSave(@NonNull AutoSaveInterface autoSaveInterface, int interval){
+    private AutoSave(@NonNull Activity activity, @NonNull AutoSaveInterface autoSaveInterface, int interval){
+        mActivity = activity;
         mInterface = autoSaveInterface;
         mInterval = interval;
         running = true;
@@ -35,7 +40,12 @@ public class AutoSave implements Runnable{
             else{
                 if (currentTime - lastUpdateTime >= mInterval){
                     Log.d("AutoSave", "saving");
-                    mInterface.save();
+                    new Handler(Looper.getMainLooper()).post(new Runnable(){
+                        @Override
+                        public void run(){
+                            mInterface.save();
+                        }
+                    });
                     sleepTime = mInterval;
                 }
                 else{
@@ -59,11 +69,11 @@ public class AutoSave implements Runnable{
     }
 
 
-    public static AutoSave start(@NonNull AutoSaveInterface autoSaveInterface, int interval){
+    public static AutoSave start(@NonNull Activity activity, @NonNull AutoSaveInterface autoSaveInterface, int interval){
         if (interval < 0){
             throw new IllegalArgumentException("The time interval cannot be negative");
         }
-        AutoSave autoSave = new AutoSave(autoSaveInterface, interval);
+        AutoSave autoSave = new AutoSave(activity, autoSaveInterface, interval);
         new Thread(autoSave).start();
         return autoSave;
     }

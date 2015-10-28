@@ -78,7 +78,7 @@ public class CheckInFeedbackFragment extends Fragment implements AutoSave.AutoSa
     @Override
     public void onResume(){
         super.onResume();
-        mAutoSave = AutoSave.start(this, 1000);
+        mAutoSave = AutoSave.start(getActivity(), this, 1000);
     }
 
     @Override
@@ -112,12 +112,7 @@ public class CheckInFeedbackFragment extends Fragment implements AutoSave.AutoSa
     @Override
     public void save(){
         mLastUpdate = -1;
-        getActivity().runOnUiThread(new Runnable(){
-            @Override
-            public void run(){
-                Toast.makeText(getActivity(), "Saved", Toast.LENGTH_SHORT).show();
-            }
-        });
+        Toast.makeText(getActivity(), "Saved", Toast.LENGTH_SHORT).show();
     }
 
     @Override
