@@ -14,6 +14,7 @@ import android.support.v4.app.NotificationCompat;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ActionActivity;
 import org.tndata.android.compass.activity.BehaviorProgressActivity;
+import org.tndata.android.compass.activity.CheckInActivity;
 import org.tndata.android.compass.activity.PackageEnrollmentActivity;
 import org.tndata.android.compass.activity.SnoozeActivity;
 import org.tndata.android.compass.model.Reminder;
@@ -30,10 +31,14 @@ public final class NotificationUtil{
     public static final String NOTIFICATION_TYPE_ACTION_TAG = "org.tndata.compass.ActionNotification";
     public static final String NOTIFICATION_TYPE_BEHAVIOR_TAG = "org.tndata.compass.BehaviorNotification";
     public static final String NOTIFICATION_TYPE_ENROLLMENT_TAG = "org.tndata.compass.EnrollmentNotification";
+    public static final String NOTIFICATION_TYPE_CHECK_IN_TAG = "org.tndata.compass.CheckInNotification";
 
     //A behavior notification will always replace a previous one, that's why the (Tag, Id) tuple
     //  needs to be fixed
     public static final int NOTIFICATION_TYPE_BEHAVIOR_ID = 1;
+
+    public static final int NOTIFICATION_TYPE_CHECK_IN_REVIEW_ID = 1;
+    public static final int NOTIFICATION_TYPE_CHECK_IN_FEEDBACK_ID = 2;
 
 
     /**
@@ -170,5 +175,38 @@ public final class NotificationUtil{
         notification.flags |= Notification.FLAG_ONGOING_EVENT;
         ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
                 .notify(NOTIFICATION_TYPE_ENROLLMENT_TAG, packageId, notification);
+    }
+
+    /**
+     * Creates a check in notification.
+     *
+     * @param context an instance of the context.
+     * @param review true if this is a review notification, false if this is a
+     *               feedback notification.
+     * @param title the title of the notification.
+     * @param message the message of the notification.
+     */
+    public static void generateCheckInNotification(Context context, boolean review, String title,
+                                                   String message){
+        Intent intent = new Intent(context, CheckInActivity.class);
+        int notificationId;
+        if (review){
+            intent.putExtra(CheckInActivity.TYPE_KEY, CheckInActivity.TYPE_REVIEW);
+            notificationId = NOTIFICATION_TYPE_CHECK_IN_REVIEW_ID;
+        }
+        else{
+            intent.putExtra(CheckInActivity.TYPE_KEY, CheckInActivity.TYPE_FEEDBACK);
+            notificationId = NOTIFICATION_TYPE_CHECK_IN_FEEDBACK_ID;
+        }
+        PendingIntent contentIntent = PendingIntent.getActivity(context,
+                (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification notification = getBuilder(context, title, message)
+                .setContentIntent(contentIntent)
+                .setAutoCancel(true)
+                .build();
+
+        ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
+                .notify(NOTIFICATION_TYPE_CHECK_IN_TAG, notificationId, notification);
     }
 }
