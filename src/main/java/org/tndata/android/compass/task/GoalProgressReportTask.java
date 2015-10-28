@@ -68,6 +68,7 @@ public class GoalProgressReportTask extends AsyncTask<GoalProgressReportTask.Goa
             catch (JSONException jx){
                 jx.printStackTrace();
                 mSuccess[i] = false;
+                continue;
             }
 
             InputStream stream = NetworkHelper.httpPostStream(url, headers, body.toString());
