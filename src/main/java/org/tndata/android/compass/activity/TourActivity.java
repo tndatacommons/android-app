@@ -7,8 +7,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.TourFragment;
 
 
-public class TourActivity
-        extends Activity implements TourFragment.TourFragmentListener {
+public class TourActivity extends Activity implements TourFragment.TourFragmentListener{
 
 
     @Override

@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import me.relex.circleindicator.CircleIndicator;
+
 
 /**
  * Activity to display review and feedback check-in screens.
@@ -34,8 +36,10 @@ public class CheckInActivity extends AppCompatActivity implements GetTodaysActio
 
     private int mType;
 
-    private ViewPager mPager;
     private ProgressBar mLoading;
+    private View mContent;
+    private ViewPager mPager;
+    private CircleIndicator mIndicator;
 
 
     @Override
@@ -45,8 +49,10 @@ public class CheckInActivity extends AppCompatActivity implements GetTodaysActio
 
         mType = getIntent().getIntExtra(TYPE_KEY, TYPE_REVIEW);
 
-        mPager = (ViewPager)findViewById(R.id.check_in_pager);
         mLoading = (ProgressBar)findViewById(R.id.check_in_loading);
+        mContent = findViewById(R.id.check_in_content);
+        mPager = (ViewPager)findViewById(R.id.check_in_pager);
+        mIndicator = (CircleIndicator)findViewById(R.id.check_in_indicator);
 
         new GetTodaysActionsTask(this, ((CompassApplication)getApplication()).getToken()).execute();
     }
@@ -73,7 +79,8 @@ public class CheckInActivity extends AppCompatActivity implements GetTodaysActio
             }
         }
         mPager.setAdapter(new CheckInPagerAdapter(getSupportFragmentManager(), dataSet, mType == TYPE_REVIEW));
+        mIndicator.setViewPager(mPager);
         mLoading.setVisibility(View.GONE);
-        mPager.setVisibility(View.VISIBLE);
+        mContent.setVisibility(View.VISIBLE);
     }
 }
