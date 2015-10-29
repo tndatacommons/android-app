@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Mark the hours Compass shouldn't ring" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="AM" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" >
+
+            <ToggleButton
+                android:id="@+id/quiet_0am"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="0"
+                android:textOff="0" />
+
+            <ToggleButton
+                android:id="@+id/quiet_1am"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="1"
+                android:textOff="1" />
+
+            <ToggleButton
+                android:id="@+id/quiet_2am"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="2"
+                android:textOff="2" />
+
+            <ToggleButton
+                android:id="@+id/quiet_3am"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="3"
+                android:textOff="3" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" >
+
+            <ToggleButton
+                android:id="@+id/quiet_4am"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="4"
+                android:textOff="4" />
+
+            <ToggleButton
+                android:id="@+id/quiet_5am"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="5"
+                android:textOff="5" />
+
+            <ToggleButton
+                android:id="@+id/quiet_6am"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="6"
+                android:textOff="6" />
+
+            <ToggleButton
+                android:id="@+id/quiet_7am"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="7"
+                android:textOff="7" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" >
+
+            <ToggleButton
+                android:id="@+id/quiet_8am"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="8"
+                android:textOff="8" />
+
+            <ToggleButton
+                android:id="@+id/quiet_9am"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="9"
+                android:textOff="9" />
+
+            <ToggleButton
+                android:id="@+id/quiet_10am"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="10"
+                android:textOff="10" />
+
+            <ToggleButton
+                android:id="@+id/quiet_11am"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="11"
+                android:textOff="11" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="PM" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" >
+
+            <ToggleButton
+                android:id="@+id/quiet_12pm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="12"
+                android:textOff="12" />
+
+            <ToggleButton
+                android:id="@+id/quiet_1pm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="1"
+                android:textOff="1" />
+
+            <ToggleButton
+                android:id="@+id/quiet_2pm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="2"
+                android:textOff="2" />
+
+            <ToggleButton
+                android:id="@+id/quiet_3pm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="3"
+                android:textOff="3" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" >
+
+            <ToggleButton
+                android:id="@+id/quiet_4pm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="4"
+                android:textOff="4" />
+
+            <ToggleButton
+                android:id="@+id/quiet_5pm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="5"
+                android:textOff="5" />
+
+            <ToggleButton
+                android:id="@+id/quiet_6pm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="6"
+                android:textOff="6" />
+
+            <ToggleButton
+                android:id="@+id/quiet_7pm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="7"
+                android:textOff="7" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" >
+
+            <ToggleButton
+                android:id="@+id/quiet_8pm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="8"
+                android:textOff="8" />
+
+            <ToggleButton
+                android:id="@+id/quiet_9pm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="9"
+                android:textOff="9" />
+
+            <ToggleButton
+                android:id="@+id/quiet_10pm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="10"
+                android:textOff="10" />
+
+            <ToggleButton
+                android:id="@+id/quiet_11pm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="42dp"
+                android:minHeight="0dp"
+                android:textOn="11"
+                android:textOff="11" />
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

@@ -6,15 +6,22 @@
 
         <CheckBoxPreference
             android:key="pref_key_sound"
+            android:defaultValue="true"
             android:title="Sound" />
 
         <CheckBoxPreference
             android:key="pref_key_vibration"
+            android:defaultValue="true"
             android:title="Vibration" />
 
         <CheckBoxPreference
             android:key="pref_key_light"
+            android:defaultValue="true"
             android:title="Light" />
+
+        <org.tndata.android.compass.ui.QuietHoursPreference
+            android:key="pref_key_quiet_hours"
+            android:title="Quiet hours" />
 
     </PreferenceCategory>
 </PreferenceScreen>
