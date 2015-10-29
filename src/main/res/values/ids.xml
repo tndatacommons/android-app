@@ -2,4 +2,6 @@
 <resources>
     <item name="view_holder_tag" type="id" />
     <item name="view_item_position_tag" type="id" />
+
+    <item name="quiet_toggle_tag" type="id" />
 </resources>
