@@ -2,8 +2,10 @@ package org.tndata.android.compass.ui;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.DialogPreference;
+import android.preference.PreferenceManager;
 import android.support.annotation.IdRes;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -178,5 +180,35 @@ public class QuietHoursPreference extends DialogPreference implements View.OnCli
             }
             persistString(result.substring(0, result.length()-1));
         }
+    }
+
+    public static boolean[][] parsePreference(Context context){
+        boolean result[][] = new boolean[2][12];
+        for (int i = 0; i < 12; i++){
+            result[0][i] = false;
+            result[1][i] = false;
+        }
+
+        //Load the preference
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        String quietPreference = preferences.getString("pref_key_quiet_hours", "");
+        Log.d(TAG, quietPreference);
+
+        //If the preference ain't empty split it and parse the parts
+        if (!quietPreference.isEmpty()){
+            String quiet[] = quietPreference.split(",");
+            for (String time:quiet){
+                int hour = Integer.valueOf(time.substring(0, time.length() - 1));
+                if (time.endsWith("a")){
+                    result[0][hour] = true;
+                }
+                else{
+                    result[1][hour] = true;
+                }
+            }
+        }
+
+        return result;
     }
 }
