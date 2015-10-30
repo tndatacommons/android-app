@@ -5,10 +5,12 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 
 import org.tndata.android.compass.R;
@@ -18,6 +20,9 @@ import org.tndata.android.compass.activity.PackageEnrollmentActivity;
 import org.tndata.android.compass.activity.SnoozeActivity;
 import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.service.ActionReportService;
+import org.tndata.android.compass.ui.QuietHoursPreference;
+
+import java.util.Calendar;
 
 
 /**
@@ -52,18 +57,39 @@ public final class NotificationUtil{
      * @return the builder.
      */
     private static NotificationCompat.Builder getBuilder(Context context, String title, String message){
-        Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Uri ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Bitmap icon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
 
-        return new NotificationCompat.Builder(context)
+        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean quiet[] = QuietHoursPreference.parsePreference(context)[hour<12 ? 0 : 1];
+        boolean sound = preferences.getBoolean("pref_key_sound", true);
+        boolean vibration = preferences.getBoolean("pref_key_vibration", true);
+        boolean light = preferences.getBoolean("pref_key_light", true);
+
+        NotificationCompat.Builder builder =  new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_action_compass_white)
                 .setLargeIcon(icon)
                 .setContentTitle(title)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .setContentText(message)
-                .setSound(sound)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true);
+
+        if (!quiet[hour%12]){
+            if (sound){
+                builder.setSound(ringtone);
+            }
+            if (vibration){
+                builder.setVibrate(new long[]{0, 300, 200, 300});
+            }
+            if (light){
+                builder.setLights(0xFFFFFFFF, 500, 500);
+            }
+        }
+
+        return builder;
     }
 
     /**

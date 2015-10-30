@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="notification_pref_key_notification_settings"
+        android:title="Notifications" >
+
+        <CheckBoxPreference
+            android:key="pref_key_sound"
+            android:defaultValue="true"
+            android:title="Sound" />
+
+        <CheckBoxPreference
+            android:key="pref_key_vibration"
+            android:defaultValue="true"
+            android:title="Vibration" />
+
+        <CheckBoxPreference
+            android:key="pref_key_light"
+            android:defaultValue="true"
+            android:title="Light" />
+
+        <org.tndata.android.compass.ui.QuietHoursPreference
+            android:key="pref_key_quiet_hours"
+            android:title="Quiet hours" />
+
+    </PreferenceCategory>
+</PreferenceScreen>
