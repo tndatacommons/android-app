@@ -182,7 +182,7 @@ public class QuietHoursPreference extends DialogPreference implements View.OnCli
         }
     }
 
-    public static boolean[][] parsePreference(Context context){
+    public static boolean[][] parsePreference(String key, Context context){
         boolean result[][] = new boolean[2][12];
         for (int i = 0; i < 12; i++){
             result[0][i] = false;
@@ -192,7 +192,7 @@ public class QuietHoursPreference extends DialogPreference implements View.OnCli
         //Load the preference
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-        String quietPreference = preferences.getString("pref_key_quiet_hours", "");
+        String quietPreference = preferences.getString(key, "");
         Log.d(TAG, quietPreference);
 
         //If the preference ain't empty split it and parse the parts

@@ -144,13 +144,17 @@
     <string name="action_saving">Saving action</string>
 
     <!-- SettingsActivity -->
-    <string name="pref_general">General</string>
-    <string name="pref_about">About</string>
+    <string name="settings_general_title">General</string>
+    <string name="settings_about_title">About</string>
     <string name="settings_notifications_title">Notifications</string>
     <string name="settings_logout_summary">Signed in as %1$s</string>
     <string name="settings_logout_title">Sign out</string>
     <string name="settings_sources_title">Sources</string>
     <string name="settings_version_title">Version</string>
+    <string name="settings_notifications_sound_title">Sound</string>
+    <string name="settings_notifications_vibration_title">Vibration</string>
+    <string name="settings_notifications_light_title">Light</string>
+    <string name="settings_notifications_quiet_hours_title">Quiet hours</string>
 
     <!-- Surveys -->
     <string name="survey_title">GETTING TO KNOW ME</string>

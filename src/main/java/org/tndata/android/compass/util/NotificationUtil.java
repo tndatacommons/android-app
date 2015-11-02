@@ -18,6 +18,7 @@ import org.tndata.android.compass.activity.ActionActivity;
 import org.tndata.android.compass.activity.BehaviorProgressActivity;
 import org.tndata.android.compass.activity.PackageEnrollmentActivity;
 import org.tndata.android.compass.activity.SnoozeActivity;
+import org.tndata.android.compass.fragment.NotificationSettingsFragment;
 import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.ui.QuietHoursPreference;
@@ -62,11 +63,12 @@ public final class NotificationUtil{
 
         int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
 
+        String quietKey = NotificationSettingsFragment.QUIET_HOURS_KEY;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean quiet[] = QuietHoursPreference.parsePreference(context)[hour<12 ? 0 : 1];
-        boolean sound = preferences.getBoolean("pref_key_sound", true);
-        boolean vibration = preferences.getBoolean("pref_key_vibration", true);
-        boolean light = preferences.getBoolean("pref_key_light", true);
+        boolean quiet[] = QuietHoursPreference.parsePreference(quietKey, context)[hour<12 ? 0 : 1];
+        boolean sound = preferences.getBoolean(NotificationSettingsFragment.SOUND_KEY, true);
+        boolean vibration = preferences.getBoolean(NotificationSettingsFragment.VIBRATION_KEY, true);
+        boolean light = preferences.getBoolean(NotificationSettingsFragment.LIGHT_KEY, true);
 
         NotificationCompat.Builder builder =  new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_action_compass_white)
