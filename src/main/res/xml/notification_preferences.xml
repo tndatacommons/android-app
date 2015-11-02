@@ -5,23 +5,23 @@
         android:title="Notifications" >
 
         <CheckBoxPreference
-            android:key="pref_key_sound"
+            android:key="settings_notifications_sound"
             android:defaultValue="true"
-            android:title="Sound" />
+            android:title="@string/settings_notifications_sound_title" />
 
         <CheckBoxPreference
-            android:key="pref_key_vibration"
+            android:key="settings_notifications_vibration"
             android:defaultValue="true"
-            android:title="Vibration" />
+            android:title="@string/settings_notifications_vibration_title" />
 
         <CheckBoxPreference
-            android:key="pref_key_light"
+            android:key="settings_notifications_light"
             android:defaultValue="true"
-            android:title="Light" />
+            android:title="@string/settings_notifications_light_title" />
 
         <org.tndata.android.compass.ui.QuietHoursPreference
-            android:key="pref_key_quiet_hours"
-            android:title="Quiet hours" />
+            android:key="settings_notifications_quiet_hours"
+            android:title="@string/settings_notifications_quiet_hours_title" />
 
     </PreferenceCategory>
 </PreferenceScreen>

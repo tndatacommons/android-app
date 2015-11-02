@@ -71,29 +71,9 @@ public class QuietHoursPreference extends DialogPreference implements View.OnCli
      * Populates the data holders for the preference.
      */
     private void populateArrays(){
-        //Reset the array
-        for (int i = 0; i < mAM.length; i++){
-            mPM[i] = false;
-            mAM[i] = false;
-        }
-
-        //Load the preference
-        String quietPreference = getPersistedString("");
-        Log.d(TAG, quietPreference);
-
-        //If the preference ain't empty split it and parse the parts
-        if (!quietPreference.isEmpty()){
-            String quiet[] = quietPreference.split(",");
-            for (String time:quiet){
-                int hour = Integer.valueOf(time.substring(0, time.length() - 1));
-                if (time.endsWith("a")){
-                    mAM[hour] = true;
-                }
-                else{
-                    mPM[hour] = true;
-                }
-            }
-        }
+        boolean values[][] = parsePreference(getKey(), getContext());
+        mAM = values[0];
+        mPM = values[1];
     }
 
     @Override
@@ -182,7 +162,7 @@ public class QuietHoursPreference extends DialogPreference implements View.OnCli
         }
     }
 
-    public static boolean[][] parsePreference(Context context){
+    public static boolean[][] parsePreference(String key, Context context){
         boolean result[][] = new boolean[2][12];
         for (int i = 0; i < 12; i++){
             result[0][i] = false;
@@ -192,7 +172,7 @@ public class QuietHoursPreference extends DialogPreference implements View.OnCli
         //Load the preference
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-        String quietPreference = preferences.getString("pref_key_quiet_hours", "");
+        String quietPreference = preferences.getString(key, "");
         Log.d(TAG, quietPreference);
 
         //If the preference ain't empty split it and parse the parts

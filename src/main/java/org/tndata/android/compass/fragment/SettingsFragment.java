@@ -14,14 +14,36 @@ import android.preference.PreferenceFragment;
  * Fragment that contains the UI for settings. Triggers settings events.
  */
 public class SettingsFragment extends PreferenceFragment implements OnPreferenceClickListener{
+    private static final String NOTIFICATIONS_KEY = "settings_notifications";
+    private static final String LOGOUT_KEY = "settings_logout";
+    private static final String SOURCES_KEY = "settings_sources";
+
+
     //The listener interface
     private OnSettingsClickListener mListener;
 
-    //A list of clickable preferences
-    private Preference mNotifications;
-    private Preference mLogOut;
-    private Preference mSources;
 
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        addPreferencesFromResource(R.xml.preferences);
+
+        Preference logOut = findPreference(LOGOUT_KEY);
+        logOut.setOnPreferenceClickListener(this);
+        String displayName = "";
+        try{
+            displayName = ((CompassApplication)getActivity().getApplication()).getUser().getFullName();
+        }
+        catch (Exception x){
+            x.printStackTrace();
+        }
+        logOut.setSummary(getActivity().getResources().getString(
+                R.string.settings_logout_summary, displayName));
+
+
+        findPreference(NOTIFICATIONS_KEY).setOnPreferenceClickListener(this);
+        findPreference(SOURCES_KEY).setOnPreferenceClickListener(this);
+    }
 
     @Override
     public void onAttach(Activity activity){
@@ -39,44 +61,21 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences);
-
-        mNotifications = findPreference("pref_key_notifications");
-        mNotifications.setOnPreferenceClickListener(this);
-
-        mLogOut = findPreference("pref_key_logout");
-        mLogOut.setOnPreferenceClickListener(this);
-        String displayName = "";
-        try{
-            displayName = ((CompassApplication)getActivity().getApplication()).getUser().getFullName();
-        }
-        catch (Exception x){
-            mLogOut.setSummary("");
-        }
-        mLogOut.setSummary(getActivity().getResources().getString(
-                R.string.settings_logout_summary, displayName));
-
-        mSources = findPreference("pref_key_sources");
-        mSources.setOnPreferenceClickListener(this);
-    }
-
-    @Override
     public boolean onPreferenceClick(Preference preference){
-        if (preference == mLogOut){
-            mListener.logOut();
+        switch (preference.getKey()){
+            case NOTIFICATIONS_KEY:
+                mListener.notifications();
+                return true;
+
+            case LOGOUT_KEY:
+                mListener.logOut();
+                return true;
+
+            case SOURCES_KEY:
+                mListener.sources();
+                return true;
         }
-        else if (preference == mSources){
-            mListener.sources();
-        }
-        else if (preference == mNotifications){
-            mListener.notifications();
-        }
-        else{
-            return false;
-        }
-        return true;
+        return false;
     }
 
 

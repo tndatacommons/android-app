@@ -1,30 +1,30 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <PreferenceCategory
-        android:key="pref_key_general_settings"
-        android:title="@string/pref_general" >
+        android:key="settings_category_general"
+        android:title="@string/settings_general_title" >
 
         <Preference
-            android:key="pref_key_notifications"
+            android:key="settings_notifications"
             android:title="@string/settings_notifications_title" />
 
         <Preference
-            android:key="pref_key_logout"
+            android:key="settings_logout"
             android:summary="@string/settings_logout_summary"
             android:title="@string/settings_logout_title" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:key="pref_key_about_settings"
-        android:title="@string/pref_about" >
+        android:key="settings_category_about"
+        android:title="@string/settings_about_title" >
 
         <Preference
-            android:key="pref_key_sources"
+            android:key="settings_sources"
             android:title="@string/settings_sources_title" />
 
         <Preference
-            android:key="pref_key_version"
+            android:key="settings_version"
             android:summary="@string/version_num"
             android:title="@string/settings_version_title" />
 
