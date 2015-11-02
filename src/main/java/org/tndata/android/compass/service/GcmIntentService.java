@@ -10,6 +10,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
+import org.tndata.android.compass.activity.CheckInActivity;
 import org.tndata.android.compass.util.NotificationUtil;
 
 
@@ -42,6 +43,7 @@ public class GcmIntentService extends IntentService{
     private static final String MESSAGE_TYPE_ACTION = "action";
     private static final String MESSAGE_TYPE_BEHAVIOR = "behavior";
     private static final String MESSAGE_TYPE_ENROLLMENT = "package enrollment";
+    private static final String MESSAGE_TYPE_CHECK_IN = "checkin";
 
 
     public GcmIntentService(){
@@ -98,6 +100,7 @@ public class GcmIntentService extends IntentService{
     private void sendNotification(String id, String msg, String title, String objectType,
                                   String objectId, String mappingId){
 
+        Log.d(TAG, "object_type = " + objectType);
         Log.d(TAG, "object_id = " + objectId);
 
         switch (objectType.toLowerCase()){
@@ -118,6 +121,17 @@ public class GcmIntentService extends IntentService{
             case MESSAGE_TYPE_ENROLLMENT:
                 try{
                     NotificationUtil.generateEnrollmentNotification(this, Integer.valueOf(objectId),
+                            title, msg);
+                }
+                catch (NumberFormatException nfx){
+                    nfx.printStackTrace();
+                }
+                break;
+
+            case MESSAGE_TYPE_CHECK_IN:
+                try{
+                    NotificationUtil.generateCheckInNotification(this,
+                            Integer.valueOf(objectId) == CheckInActivity.TYPE_REVIEW,
                             title, msg);
                 }
                 catch (NumberFormatException nfx){

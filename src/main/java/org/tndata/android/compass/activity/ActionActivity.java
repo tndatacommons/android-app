@@ -41,7 +41,7 @@ public class ActionActivity
         extends AppCompatActivity
         implements
                 View.OnClickListener,
-                GetUserActionsTask.GetUserActionsListener{
+        GetUserActionsTask.GetUserActionsCallback{
 
     public static final String ACTION_KEY = "org.tndata.compass.ActionActivity.action";
     public static final String ACTION_ID_KEY = "org.tndata.compass.ActionActivity.action_id";
@@ -254,7 +254,7 @@ public class ActionActivity
     }
 
     @Override
-    public void actionsLoaded(List<Action> actions){
+    public void onActionsLoaded(List<Action> actions){
         if (actions.size() > 0){
             mAction = actions.get(0);
             populateUI();

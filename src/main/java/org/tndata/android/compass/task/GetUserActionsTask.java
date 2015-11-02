@@ -20,33 +20,31 @@ import java.util.Map;
 
 
 public class GetUserActionsTask extends AsyncTask<String, Void, List<Action>>{
-    private GetUserActionsListener mCallback;
+    private static final String TAG = "GetUserActionsTask";
 
 
-    public GetUserActionsTask(GetUserActionsListener callback){
+    private GetUserActionsCallback mCallback;
+
+
+    public GetUserActionsTask(GetUserActionsCallback callback){
         mCallback = callback;
     }
 
     @Override
     protected List<Action> doInBackground(String... params){
         String token = params[0];
-        String goalFilter = null;
-        String actionFilter = null;
 
+        String url = Constants.BASE_URL + "users/actions/";
         if(params.length == 2){
             if (params[1].contains("action:")){
-                actionFilter = params[1].substring(params[1].indexOf(":")+1);
+                url += "?action=" + params[1].substring(params[1].indexOf(":")+1);
+            }
+            else if (params[1].contains("today")){
+                url += "?today=1";
             }
             else{
-                goalFilter = params[1];
+                url = url + "?goal=" + params[1];
             }
-        }
-        String url = Constants.BASE_URL + "users/actions/";
-        if(goalFilter != null){
-            url = url + "?goal=" + goalFilter;
-        }
-        else if (actionFilter != null){
-            url = url + "?action=" + actionFilter;
         }
 
         Map<String, String> headers = new HashMap<>();
@@ -76,18 +74,18 @@ public class GetUserActionsTask extends AsyncTask<String, Void, List<Action>>{
     }
 
     @Override
-    protected void onPostExecute(List<Action> actions) {
+    protected void onPostExecute(List<Action> actions){
         Log.e("GetUserActionsTask", "Finished");
         if (actions != null){
-            for (Action a:actions){
-                Log.d("GetUserActionsTask", "- (" + a.getId() + ") " + a.getTitle());
+            for (Action action:actions){
+                Log.d(TAG, action.toString());
             }
         }
-        mCallback.actionsLoaded(actions);
+        mCallback.onActionsLoaded(actions);
     }
 
 
-    public interface GetUserActionsListener{
-        void actionsLoaded(List<Action> actions);
+    public interface GetUserActionsCallback{
+        void onActionsLoaded(List<Action> actions);
     }
 }

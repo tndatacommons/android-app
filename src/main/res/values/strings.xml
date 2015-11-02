@@ -278,4 +278,13 @@
     <!-- Goal Activity -->
     <string name="goal_indicator_caption">%1$s\%</string>
 
+    <!-- Check in -->
+    <string name="check_in_review_title">Because I want to %1$s</string>
+    <string name="check_in_review_action_header">Today I will:</string>
+    <string name="check_in_review_action_behavior">To %1$s</string>
+    <string name="check_in_empty_review_title">Because I want to improve my life…</string>
+    <string name="check_in_empty_review_action">Review the Compass app to find new activities to reach my goals.</string>
+    <string name="check_in_feedback_goal">To %1$s, I am doing…</string>
+    <string name="check_in_reward_great_job">Great job!</string>
+
 </resources>

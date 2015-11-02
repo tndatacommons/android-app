@@ -60,7 +60,7 @@ public class TriggerActivity
                 CalendarDatePickerDialog.OnDateSetListener,
                 AddActionTriggerTask.AddActionTriggerTaskListener,
                 TriggerFragment.TriggerFragmentListener,
-                GetUserActionsTask.GetUserActionsListener{
+        GetUserActionsTask.GetUserActionsCallback{
 
     public static final String NEEDS_FETCHING_KEY = "org.tndata.compass.Trigger.NeedsFetching";
     public static final String NOTIFICATION_ID_KEY = "org.tndata.compass.Trigger.NotificationId";
@@ -167,7 +167,7 @@ public class TriggerActivity
     }
 
     @Override
-    public void actionsLoaded(List<Action> actions){
+    public void onActionsLoaded(List<Action> actions){
         if (actions.size() > 0){
             mAction = mApplication.getUserData().getAction(actions.get(0));
             setAction();

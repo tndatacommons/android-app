@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white" >
+
+    <TextView
+        android:id="@+id/check_in_reward_header"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/material_header_size"
+        android:gravity="center_vertical"
+        android:padding="20dp"
+        android:background="@color/grow_primary"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/white"
+        android:text="@string/check_in_reward_great_job" />
+
+    <TextView
+        android:id="@+id/check_in_reward_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:paddingTop="60dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/dark_text_color" />
+
+</LinearLayout>
