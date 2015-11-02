@@ -1,5 +1,6 @@
 package org.tndata.android.compass.adapter;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -7,8 +8,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 import org.tndata.android.compass.fragment.CheckInFeedbackFragment;
 import org.tndata.android.compass.fragment.CheckInReviewEmptyFragment;
 import org.tndata.android.compass.fragment.CheckInReviewFragment;
+import org.tndata.android.compass.fragment.CheckInRewardFragment;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.Reward;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +27,7 @@ import java.util.Map;
 public class CheckInPagerAdapter extends FragmentPagerAdapter{
     private List<Goal> mGoals;
     private List<List<Action>> mActionLists;
+    private Reward mReward;
     private boolean mReview;
 
     private List<Fragment> mFragments;
@@ -36,16 +40,17 @@ public class CheckInPagerAdapter extends FragmentPagerAdapter{
      * @param dataSet the data to be displayed by the adapter.
      * @param review true to display review, false to display feedback.
      */
-    public CheckInPagerAdapter(FragmentManager fm, Map<Goal, List<Action>> dataSet, boolean review){
+    public CheckInPagerAdapter(FragmentManager fm, Map<Goal, List<Action>> dataSet, Reward reward, boolean review){
         super(fm);
 
         //Populate the lists with the data in the set
         mGoals = new ArrayList<>();
         mActionLists = new ArrayList<>();
         for (Map.Entry<Goal, List<Action>> entry:dataSet.entrySet()){
-            //mGoals.add(entry.getKey());
+            mGoals.add(entry.getKey());
             mActionLists.add(entry.getValue());
         }
+        mReward = reward;
         mReview = review;
 
         mFragments = new ArrayList<>();
@@ -55,17 +60,26 @@ public class CheckInPagerAdapter extends FragmentPagerAdapter{
     public Fragment getItem(int position){
         //If the fragment has not been created yet, create it
         if (position == mFragments.size()){
-            if (mReview){
-                if (mGoals.isEmpty()){
-                    mFragments.add(new CheckInReviewEmptyFragment());
-                }
-                else{
-                    mFragments.add(CheckInReviewFragment.newInstance(mGoals.get(position),
-                            mActionLists.get(position)));
-                }
+            if (position == getCount()-1){
+                Bundle args = new Bundle();
+                args.putSerializable(CheckInRewardFragment.REWARD_KEY, mReward);
+                CheckInRewardFragment fragment = new CheckInRewardFragment();
+                fragment.setArguments(args);
+                mFragments.add(fragment);
             }
             else{
-                mFragments.add(CheckInFeedbackFragment.newInstance(mGoals.get(position)));
+                if (mReview){
+                    if (mGoals.isEmpty()){
+                        mFragments.add(new CheckInReviewEmptyFragment());
+                    }
+                    else{
+                        mFragments.add(CheckInReviewFragment.newInstance(mGoals.get(position),
+                                mActionLists.get(position)));
+                    }
+                }
+                else{
+                    mFragments.add(CheckInFeedbackFragment.newInstance(mGoals.get(position)));
+                }
             }
         }
         return mFragments.get(position);
@@ -73,6 +87,7 @@ public class CheckInPagerAdapter extends FragmentPagerAdapter{
 
     @Override
     public int getCount(){
-        return mGoals.isEmpty() ? 1 : mGoals.size();
+        //Account for the reward
+        return mGoals.size()+1;
     }
 }

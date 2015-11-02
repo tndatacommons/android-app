@@ -88,6 +88,9 @@ public class GoalProgressReportTask extends AsyncTask<GoalProgressReportTask.Goa
 
     @Override
     protected void onPostExecute(Void result){
+        for (Boolean b:mSuccess){
+            System.out.println(b);
+        }
         if (mCallback != null){
             mCallback.onGoalReported(mSuccess);
         }
@@ -100,7 +103,7 @@ public class GoalProgressReportTask extends AsyncTask<GoalProgressReportTask.Goa
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    public class GoalProgress{
+    public static class GoalProgress{
         private final int mId;
         private final int mProgress;
 

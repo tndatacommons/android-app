@@ -2,6 +2,7 @@ package org.tndata.android.compass.task;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +29,9 @@ import java.util.Map;
  * Created by isma on 10/27/15.
  */
 public class GetTodaysActionsTask extends AsyncTask<Void, Void, List<Action>>{
+    private static final String TAG = "GetTodaysActionsTask";
+
+
     private GetTodaysActionsCallback mCallback;
     private String mToken;
 

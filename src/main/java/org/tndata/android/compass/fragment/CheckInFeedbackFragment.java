@@ -15,8 +15,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.task.GoalProgressReportTask;
 import org.tndata.android.compass.util.AutoSave;
 import org.tndata.android.compass.util.CompassUtil;
 
@@ -32,6 +34,9 @@ public class CheckInFeedbackFragment
 
     private static final String GOAL_KEY = "org.tndata.compass.CheckInFeedback.Goal";
 
+
+    //UI components
+    private SeekBar mBar;
 
     //Model components
     private Goal mGoal;
@@ -63,7 +68,7 @@ public class CheckInFeedbackFragment
         //Fetch the UI components
         RelativeLayout header = (RelativeLayout)rootView.findViewById(R.id.check_in_feedback_header);
         TextView goalTitle = (TextView)rootView.findViewById(R.id.check_in_feedback_goal);
-        SeekBar bar = (SeekBar)rootView.findViewById(R.id.check_in_feedback_bar);
+        mBar = (SeekBar)rootView.findViewById(R.id.check_in_feedback_bar);
 
         //3 by 2 ratio and color for the header
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)header.getLayoutParams();
@@ -77,7 +82,7 @@ public class CheckInFeedbackFragment
         String title = mGoal.getTitle().substring(0, 1).toLowerCase() + mGoal.getTitle().substring(1);
         goalTitle.setText(getResources().getString(R.string.check_in_feedback_goal, title));
 
-        bar.setOnSeekBarChangeListener(this);
+        mBar.setOnSeekBarChangeListener(this);
     }
 
     @Override
@@ -116,8 +121,10 @@ public class CheckInFeedbackFragment
 
     @Override
     public void save(){
+        new GoalProgressReportTask(((CompassApplication)getActivity().getApplication()).getToken())
+                .execute(new GoalProgressReportTask.GoalProgress(mGoal.getId(), mBar.getProgress()));
         mLastUpdate = -1;
-        Toast.makeText(getActivity(), "Saved", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getActivity(), "Saved", Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -19,6 +19,7 @@ import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Progress;
+import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserData;
@@ -437,6 +438,26 @@ public class Parser{
             jsonx.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Parses a list of rewards from a JSON string.
+     *
+     * @param src the source string in JSON format.
+     * @return a list of categories.
+     */
+    public List<Reward> parseRewards(String src){
+        List<Reward> rewards = new ArrayList<>();
+        try{
+            JSONArray rewardArray = new JSONObject(src).getJSONArray("results");
+            for (int i = 0; i < rewardArray.length(); i++){
+                rewards.add(gson.fromJson(rewardArray.getString(i), Reward.class));
+            }
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return rewards;
     }
 
     public Gson getGson(){
