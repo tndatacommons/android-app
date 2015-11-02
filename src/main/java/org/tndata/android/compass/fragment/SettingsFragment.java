@@ -28,16 +28,16 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
 
-        Preference mLogOut = findPreference(LOGOUT_KEY);
-        mLogOut.setOnPreferenceClickListener(this);
+        Preference logOut = findPreference(LOGOUT_KEY);
+        logOut.setOnPreferenceClickListener(this);
         String displayName = "";
         try{
             displayName = ((CompassApplication)getActivity().getApplication()).getUser().getFullName();
         }
         catch (Exception x){
-            mLogOut.setSummary("");
+            x.printStackTrace();
         }
-        mLogOut.setSummary(getActivity().getResources().getString(
+        logOut.setSummary(getActivity().getResources().getString(
                 R.string.settings_logout_summary, displayName));
 
 

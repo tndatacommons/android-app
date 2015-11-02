@@ -20,7 +20,7 @@ public class NotificationSettingsFragment extends PreferenceFragment{
     public static final String LIGHT_KEY = "settings_notifications_light";
     public static final String QUIET_HOURS_KEY = "settings_notifications_quiet_hours";
 
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
