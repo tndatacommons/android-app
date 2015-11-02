@@ -13,7 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -24,7 +23,10 @@ import org.tndata.android.compass.util.CompassUtil;
 
 
 /**
- * Created by isma on 10/27/15.
+ * Fragment featuring a seek bar to let the user report their progress in a goal.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class CheckInFeedbackFragment
         extends Fragment
@@ -124,7 +126,7 @@ public class CheckInFeedbackFragment
         new GoalProgressReportTask(((CompassApplication)getActivity().getApplication()).getToken())
                 .execute(new GoalProgressReportTask.GoalProgress(mGoal.getId(), mBar.getProgress()));
         mLastUpdate = -1;
-        //Toast.makeText(getActivity(), "Saved", Toast.LENGTH_SHORT).show();
+        Log.d("Feedback", "Saving");
     }
 
     @Override
