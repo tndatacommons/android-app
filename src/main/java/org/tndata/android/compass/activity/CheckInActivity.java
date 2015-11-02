@@ -39,8 +39,8 @@ public class CheckInActivity
 
     public static final String TYPE_KEY = "org.tndata.compass.CheckIn.Type";
 
-    public static final int TYPE_REVIEW = 0;
-    public static final int TYPE_FEEDBACK = 1;
+    public static final int TYPE_REVIEW = 1;
+    public static final int TYPE_FEEDBACK = 2;
 
     public static final int REWARD_REQUEST_CODE = 2;
 
