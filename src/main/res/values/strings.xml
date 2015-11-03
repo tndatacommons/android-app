@@ -164,13 +164,6 @@
     <string name="button_negative">CANCEL</string>
     <string name="survey_default_option">Click to choose</string>
 
-    <!-- BehaviorProgressActivity -->
-    <string name="behavior_progress_title">I\'m the kind of person who cares about&#8230;</string>
-    <string name="behavior_progress_behavior_label">My %1$s. That\'s why I want to:</string>
-    <string name="behavior_progress_on_track">On track</string>
-    <string name="behavior_progress_seeking">Seeking</string>
-    <string name="behavior_progress_off_course">Off course</string>
-
     <!-- MyPrioritiesActivity -->
     <string name="my_priorities_title">My Activities</string>
     <string name="my_priorities_edit_activities">Edit my activities</string>
