@@ -379,10 +379,6 @@ public class MainActivity
     @Override
     public void onItemClick(int position){
         switch (position){
-            case DrawerAdapter.IMPORTANT_TO_ME:
-                startActivity(new Intent(this, BehaviorProgressActivity.class));
-                break;
-
             case DrawerAdapter.MY_PRIORITIES:
                 startActivity(new Intent(this, MyPrioritiesActivity.class));
                 break;
