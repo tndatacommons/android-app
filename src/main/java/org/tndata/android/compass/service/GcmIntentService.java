@@ -41,7 +41,6 @@ public class GcmIntentService extends IntentService{
     private static final String TAG = "GcmIntentService";
 
     private static final String MESSAGE_TYPE_ACTION = "action";
-    private static final String MESSAGE_TYPE_BEHAVIOR = "behavior";
     private static final String MESSAGE_TYPE_ENROLLMENT = "package enrollment";
     private static final String MESSAGE_TYPE_CHECK_IN = "checkin";
 
@@ -112,10 +111,6 @@ public class GcmIntentService extends IntentService{
                 catch (NumberFormatException nfx){
                     nfx.printStackTrace();
                 }
-                break;
-
-            case MESSAGE_TYPE_BEHAVIOR:
-                NotificationUtil.generateBehaviorNotification(this, title, msg);
                 break;
 
             case MESSAGE_TYPE_ENROLLMENT:

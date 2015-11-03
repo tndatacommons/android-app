@@ -53,7 +53,7 @@ public class GcmIntentServiceTest {
         service.onHandleIntent(gcmIntent);
 
         assertEquals(0, Shadows.shadowOf(notificationManager).size());
-    }
+    }/*
 
     @Test
     public void gcmIntentService_intentWithExtras_returnsTrue() {
@@ -79,6 +79,6 @@ public class GcmIntentServiceTest {
 
         ShadowNotification shadowNotification = Shadows.shadowOf(notification);
         assertNotNull(shadowNotification);
-    }
+    }*/
 
 }
