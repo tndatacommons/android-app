@@ -41,7 +41,7 @@ public class ActionActivity
         extends AppCompatActivity
         implements
                 View.OnClickListener,
-        GetUserActionsTask.GetUserActionsCallback{
+                GetUserActionsTask.GetUserActionsCallback{
 
     public static final String ACTION_KEY = "org.tndata.compass.ActionActivity.action";
     public static final String ACTION_ID_KEY = "org.tndata.compass.ActionActivity.action_id";
@@ -221,7 +221,7 @@ public class ActionActivity
                 new Handler().postDelayed(new Runnable(){
                     @Override
                     public void run(){
-                        setResult(RESULT_OK);
+                        setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, false));
                         finish();
                     }
                 }, 1000);

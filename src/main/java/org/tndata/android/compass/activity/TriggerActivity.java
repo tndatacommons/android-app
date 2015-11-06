@@ -60,7 +60,7 @@ public class TriggerActivity
                 CalendarDatePickerDialog.OnDateSetListener,
                 AddActionTriggerTask.AddActionTriggerTaskListener,
                 TriggerFragment.TriggerFragmentListener,
-        GetUserActionsTask.GetUserActionsCallback{
+                GetUserActionsTask.GetUserActionsCallback{
 
     public static final String NEEDS_FETCHING_KEY = "org.tndata.compass.Trigger.NeedsFetching";
     public static final String NOTIFICATION_ID_KEY = "org.tndata.compass.Trigger.NotificationId";
@@ -121,9 +121,11 @@ public class TriggerActivity
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
         toolbar.getBackground().setAlpha(255);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
 
-        //If we are comming from a notification
+        //If we are coming from a notification
         if (getIntent().getBooleanExtra(NEEDS_FETCHING_KEY, false)){
             getSupportActionBar().setTitle("Reschedule reminder");
 
@@ -511,6 +513,7 @@ public class TriggerActivity
             Log.d(TAG, "Updated Trigger: " + action.getTrigger());
 
             mAction.setCustomTrigger(action.getTrigger());
+            mAction.setNextReminderDate(action.getRawNextReminderDate());
 
             // We'll return the updated Action to the parent activity (GoalDetailsActivity)
             // but we also want to tell the Application about the updated version of the Action.

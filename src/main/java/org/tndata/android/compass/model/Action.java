@@ -164,6 +164,10 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
         this.next_reminder_date = next_reminder_date;
     }
 
+    public String getRawNextReminderDate(){
+        return next_reminder_date;
+    }
+
     public String getNextReminderDate(){
         if (next_reminder_date == null){
             return "";

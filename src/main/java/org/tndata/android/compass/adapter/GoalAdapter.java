@@ -142,6 +142,9 @@ public class GoalAdapter extends RecyclerView.Adapter{
 
     @Override
     public int getItemCount(){
+        if (mGoal.getBehaviors().isEmpty()){
+            return 1;
+        }
         return 2*mGoal.getBehaviors().size();
     }
 
@@ -246,18 +249,30 @@ public class GoalAdapter extends RecyclerView.Adapter{
             public boolean onMenuItemClick(MenuItem item){
                 switch (item.getItemId()){
                     case R.id.behavior_popup_remove:
-                        Behavior behavior = mGoal.getBehaviors().get(position-1);
+                        Behavior behavior = mGoal.getBehaviors().get(position/2);
                         mApplication.removeBehavior(behavior);
                         List<String> behaviorId = new ArrayList<>();
                         behaviorId.add(behavior.getMappingId() + "");
                         new DeleteBehaviorTask(mApplication.getToken(), null, behaviorId).execute();
+                        Log.d("GoalAdapter", "Position: " + position);
                         if (position == 1){
-                            notifyItemRemoved(2);
+                            Log.d("GoalAdapter", "Size: " + mGoal.getBehaviors().size());
+                            if (mGoal.getBehaviors().size() > 0){
+                                notifyItemRemoved(2);
+                            }
                         }
                         else{
                             notifyItemRemoved(position-1);
                         }
-                        notifyItemRemoved(position);
+                        if (mGoal.getBehaviors().size() > 0){
+                            Log.d("GoalAdapter", "behaviors left");
+                            notifyItemRemoved(position);
+                        }
+                        else{
+                            Log.d("GoalAdapter", "no behaviors left");
+                            notifyDataSetChanged();
+                        }
+                        //notifyDataSetChanged();
                         break;
                 }
                 return true;
