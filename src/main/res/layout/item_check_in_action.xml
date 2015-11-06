@@ -14,6 +14,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/check_in_review_action_header" />
 
+    <!-- the text size of ?android:attr/textAppearanceMedium is 18sp -->
     <TextView
         android:id="@+id/check_in_action_action"
         android:layout_width="match_parent"

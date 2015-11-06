@@ -49,6 +49,8 @@ public class SurveyView
                 TextWatcher{
 
     private static final String TAG = "SurveyView";
+    private static final int WRAP_CONTENT = ViewGroup.LayoutParams.WRAP_CONTENT;
+    private static final int MARGIN = 5;
 
 
     private Survey mSurvey;
@@ -138,6 +140,9 @@ public class SurveyView
                 //Create the group and the buttons
                 RadioGroup group = new RadioGroup(getContext());
                 group.setOrientation(HORIZONTAL);
+                params = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+                params.setMargins(CompassUtil.getPixels(getContext(), MARGIN), 0, 0, 0);
+                group.setLayoutParams(params);
 
                 mBinary1 = new RadioButton(getContext());
                 mBinary1.setText(mSurvey.getOptions().get(0).getText());
@@ -158,6 +163,9 @@ public class SurveyView
 
                 //Create the spinner
                 mMultipleChoice = new Spinner(getContext());
+                params = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+                params.setMargins(CompassUtil.getPixels(getContext(), MARGIN), 0, 0, 0);
+                mMultipleChoice.setLayoutParams(params);
 
                 //Add a default option to the list
                 SurveyOptions defaultOption = new SurveyOptions();
