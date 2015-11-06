@@ -267,6 +267,8 @@
     <!-- My goals cards -->
     <string name="card_my_goals_header">My goals</string>
     <string name="card_suggestions_header">Recommended for you</string>
+    <!-- Footer cards -->
+    <string name="card_footer_see_more">SEE MORE</string>
 
     <!-- Goal Activity -->
     <string name="goal_indicator_caption">%1$s\%</string>

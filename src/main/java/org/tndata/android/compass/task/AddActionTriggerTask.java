@@ -94,7 +94,7 @@ public class AddActionTriggerTask extends AsyncTask<Void, Void, Action> {
             }
             bReader.close();
 
-            Log.d(TAG, "JSON result: " + result);
+            Log.d(TAG, new JSONObject(result).toString(2));
 
             // create an Action object from the result.
             JSONObject response = new JSONObject(result);
@@ -104,6 +104,7 @@ public class AddActionTriggerTask extends AsyncTask<Void, Void, Action> {
                 action.setCustomTrigger(
                         gson.fromJson(response.getString("custom_trigger"), Trigger.class));
             }
+            action.setNextReminderDate(response.getString("next_reminder"));
             return action;
 
         } catch (IOException e) {

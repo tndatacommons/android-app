@@ -28,7 +28,8 @@ import com.github.clans.fab.FloatingActionMenu;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
-import org.tndata.android.compass.adapter.MainFeedAdapter;
+import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
+import org.tndata.android.compass.adapter.feed.MainFeedAdapterListener;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
@@ -56,7 +57,7 @@ public class MainActivity
                 SwipeRefreshLayout.OnRefreshListener,
                 GetUserDataTask.GetUserDataCallback,
                 DrawerAdapter.OnItemClickListener,
-                MainFeedAdapter.MainFeedAdapterListener{
+                MainFeedAdapterListener{
 
     //Request codes
     private static final int CATEGORIES_REQUEST_CODE = 4821;
