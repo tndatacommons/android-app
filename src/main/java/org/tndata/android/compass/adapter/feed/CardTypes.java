@@ -209,6 +209,10 @@ final class CardTypes{
         return position > getMyGoalsHeaderPosition() && position < getMyGoalsFooterPosition();
     }
 
+    static int getItemCount(){
+        return getMyGoalsFooterPosition() + (hasMyGoalsFooter() ? 1 : 0);
+    }
+
 
     /*-------------------------------------------*
      * METHODS TO DISTINGUISH HIGHER LEVEL TYPES *

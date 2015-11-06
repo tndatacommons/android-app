@@ -439,7 +439,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
     @Override
     public int getItemCount(){
-        return CardTypes.getMyGoalsFooterPosition()+1;
+        return CardTypes.getItemCount();
     }
 
     @Override
