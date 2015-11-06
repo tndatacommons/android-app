@@ -246,7 +246,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
             public boolean onMenuItemClick(MenuItem item){
                 switch (item.getItemId()){
                     case R.id.behavior_popup_remove:
-                        Behavior behavior = mGoal.getBehaviors().get(position-1);
+                        Behavior behavior = mGoal.getBehaviors().get(position/2);
                         mApplication.removeBehavior(behavior);
                         List<String> behaviorId = new ArrayList<>();
                         behaviorId.add(behavior.getMappingId() + "");

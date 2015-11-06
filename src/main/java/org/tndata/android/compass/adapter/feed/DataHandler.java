@@ -63,7 +63,6 @@ class DataHandler{
         mFeedData.setProgressPercentage(percentage);
 
         mUserData.removeAction(action);
-        mDisplayedUpcoming.remove(action);
     }
 
     boolean hasGoals(){
@@ -81,6 +80,8 @@ class DataHandler{
         else{
             mFeedData.setNextAction(mDisplayedUpcoming.remove(0));
             mFeedData.getUpcomingActions().remove(0);
+
+            checkActions();
         }
     }
 
@@ -94,7 +95,11 @@ class DataHandler{
 
     Action removeUpcoming(int position){
         mDisplayedUpcoming.remove(position);
-        return mFeedData.getUpcomingActions().remove(position);
+        Action removed = mFeedData.getUpcomingActions().remove(position);
+
+        checkActions();
+
+        return removed;
     }
 
     Category getActionCategory(Action action){
@@ -148,5 +153,11 @@ class DataHandler{
             src = mFeedData.getSuggestions();
         }
         return src;
+    }
+
+    private void checkActions(){
+        if (mDisplayedUpcoming.size() < 3 && mFeedData.getUpcomingActions().size() > mDisplayedUpcoming.size()){
+            mDisplayedUpcoming.add(mFeedData.getUpcomingActions().get(mDisplayedUpcoming.size()));
+        }
     }
 }

@@ -476,7 +476,7 @@ public class MainActivity
             }
             else if (requestCode == ACTION_REQUEST_CODE){
                 if (data.getBooleanExtra(ActionActivity.DID_IT_KEY, false)){
-                    mAdapter.deleteSelectedItem();
+                    mAdapter.didIt();
                 }
                 else{
                     mAdapter.updateSelectedItem();

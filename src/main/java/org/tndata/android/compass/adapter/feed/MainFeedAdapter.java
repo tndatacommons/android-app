@@ -7,7 +7,6 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -113,11 +112,11 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     void replaceUpNext(){
         if (mDataHandler.getUpNext() != null){
             int headerPosition = CardTypes.getUpcomingHeaderPosition();
-            if (mUserData.getFeedData().getUpcomingActions().isEmpty()){
+            if (!CardTypes.hasUpcoming()){
                 notifyItemRemoved(headerPosition);
             }
-            notifyItemRemoved(headerPosition+1);
-            notifyItemRangeChanged(headerPosition + 2, CardTypes.getMyGoalsHeaderPosition());
+            notifyItemRemoved(headerPosition + 1);
+            notifyItemRangeChanged(headerPosition + 2, getItemCount() - (headerPosition + 2));
         }
 
         //Update the up next card
@@ -131,23 +130,21 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      */
     void removeActionFromFeed(int position){
         //Update the relevant action cards
-        if (mUserData.getFeedData().getUpcomingActions().isEmpty()){
-            int headerPosition = CardTypes.getUpcomingHeaderPosition();
-            notifyItemRemoved(headerPosition);
-            notifyItemRemoved(headerPosition+1);
+        if (!CardTypes.hasUpcoming()){
+            notifyItemRemoved(position-1);
         }
-        else{
-            notifyItemRemoved(position);
-        }
-
-        notifyItemChanged(CardTypes.getUpcomingFooterPosition()-1);
-        notifyItemChanged(CardTypes.getUpcomingFooterPosition());
-        notifyItemChanged(CardTypes.getUpcomingFooterPosition()+1);
-        notifyItemChanged(CardTypes.getMyGoalsFooterPosition());
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position-1, getItemCount()-(position-1));
     }
 
 
 
+    public void didIt(){
+        if (mSelectedItem != -1){
+            didIt(mSelectedItem);
+            mSelectedItem = -1;
+        }
+    }
 
     //Did it
     void didIt(int position){
@@ -189,11 +186,13 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         if (CardTypes.isUpNext(position)){
             action = mDataHandler.getUpNext();
             mDataHandler.remove(action);
+            mDataHandler.replaceUpNext();
             replaceUpNext();
         }
         else{
             action = mDataHandler.getUpcoming().get(getActionPosition(position));
             mDataHandler.remove(action);
+            mDataHandler.removeUpcoming(getActionPosition(position));
             removeActionFromFeed(position);
         }
         new DeleteActionTask(mContext, null, action.getMappingId()+"").execute();
@@ -223,7 +222,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 notifyItemRemoved(footer);
             }
             notifyItemRangeInserted(footer, count);
-            notifyItemRangeChanged(footer+count, getItemCount());
+            notifyItemRangeChanged(footer + count, getItemCount());
         }
         else if (CardTypes.isMyGoalsFooter(position)){
             int footer = CardTypes.getMyGoalsFooterPosition();
@@ -353,7 +352,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                     mUserData.getFeedData().getProgressFraction()));
 
             Calendar calendar = Calendar.getInstance();
-            String month = CompassUtil.getMonthString(calendar.get(Calendar.MONTH)+1);
+            String month = CompassUtil.getMonthString(calendar.get(Calendar.MONTH) + 1);
             holder.mIndicator.setText(month + " " + calendar.get(Calendar.DAY_OF_MONTH));
         }
         //Feedback
@@ -492,10 +491,6 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * Updates the item marked as selected.
      */
     public void updateSelectedItem(){
-        Log.d("FeedAdapter", "Update called: " + mSelectedItem);
-        if (CardTypes.isUpcomingAction(mSelectedItem)){
-            Log.d("FeedAdapter", mDataHandler.getUpcoming().get(getActionPosition(mSelectedItem)).getTrigger().getFormattedTime());
-        }
         if (mSelectedItem != -1){
             notifyItemChanged(mSelectedItem);
             mSelectedItem = -1;
@@ -506,23 +501,15 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * Deletes the item marked as selected.
      */
     public void deleteSelectedItem(){
-        if (CardTypes.isUpcomingAction(mSelectedItem)){
-            //Update the data set
-            int index = mSelectedItem - (CardTypes.getUpcomingHeaderPosition()+1);
-            mUserData.getFeedData().getUpcomingActions().remove(index);
-
-            //Animate the removal
-            if (!CardTypes.hasUpcoming()){
-                notifyItemRemoved(mSelectedItem-1);
-            }
-            notifyItemRemoved(mSelectedItem);
-            mSelectedItem = -1;
-
-            //Update the items at the end of the list (fixes card splitting problem)
-            notifyItemChanged(CardTypes.getUpcomingFooterPosition()+1);
-            notifyItemChanged(CardTypes.getUpcomingFooterPosition());
-            notifyItemChanged(CardTypes.getUpcomingFooterPosition()-1);
+        if (CardTypes.isUpNext(mSelectedItem)){
+            mDataHandler.replaceUpNext();
+            replaceUpNext();
         }
+        else if (CardTypes.isUpcomingAction(mSelectedItem)){
+            mDataHandler.removeUpcoming(getActionPosition(mSelectedItem));
+            removeActionFromFeed(mSelectedItem);
+        }
+        mSelectedItem = -1;
     }
 
     /**
