@@ -1,5 +1,6 @@
 package org.tndata.android.compass.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.widget.ProgressBar;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.CheckInPagerAdapter;
+import org.tndata.android.compass.fragment.CheckInRewardFragment;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Reward;
@@ -35,7 +37,8 @@ public class CheckInActivity
         extends AppCompatActivity
         implements
                 GetTodaysActionsTask.GetTodaysActionsCallback,
-                GetContentTask.GetContentListener{
+                GetContentTask.GetContentListener,
+                CheckInRewardFragment.CheckInRewardListener{
 
     public static final String TYPE_KEY = "org.tndata.compass.CheckIn.Type";
 
@@ -125,5 +128,16 @@ public class CheckInActivity
         mIndicator.setViewPager(mPager);
         mLoading.setVisibility(View.GONE);
         mContent.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onReviewClick(){
+        if (((CompassApplication)getApplication()).getUserData() != null){
+            startActivity(new Intent(this, MainActivity.class));
+        }
+        else{
+            startActivity(new Intent(this, LoginActivity.class));
+        }
+        finish();
     }
 }

@@ -28,6 +28,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/login_email_hint"
+            android:textColorHint="@color/light_hint"
+            android:textColor="@color/white"
             android:inputType="textEmailAddress" />
 
         <TextView
@@ -43,6 +45,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/login_password_hint"
+            android:textColorHint="@color/light_hint"
+            android:textColor="@color/white"
             android:inputType="textPassword" />
 
         <TextView

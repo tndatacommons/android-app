@@ -16,9 +16,10 @@
             android:id="@+id/check_in_review_goal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_margin="30dp"
             android:layout_centerInParent="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="24sp"
             android:textColor="@color/white" />
 
     </RelativeLayout>

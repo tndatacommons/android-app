@@ -4,14 +4,19 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="20dp" >
+    android:layout_marginTop="0dp"
+    android:layout_marginLeft="30dp"
+    android:layout_marginBottom="20dp"
+    android:layout_marginRight="20dp" >
 
     <TextView
         android:id="@+id/check_in_action_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="20dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="24sp"
         android:text="@string/check_in_review_action_header" />
 
     <!-- the text size of ?android:attr/textAppearanceMedium is 18sp -->
@@ -19,21 +24,26 @@
         android:id="@+id/check_in_action_action"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:id="@+id/check_in_action_behavior"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/grow_primary"
+        android:layout_marginLeft="5dp"
+        android:textColor="@color/light_text_color"
         android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="15sp"
         android:textStyle="italic" />
 
     <TextView
         android:id="@+id/check_in_action_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:textAppearance="?android:attr/textAppearanceSmall"/>
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="13sp" />
 
 </LinearLayout>

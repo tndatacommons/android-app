@@ -30,8 +30,11 @@
     <color name="dark_text_color_inverse">#E0E0E0</color>
     <color name="secondary_text_color">#757575</color>
     <color name="white">#FFFFFF</color>
+    <color name="light_hint">#CCCCCC</color>
     <color name="light_gray_text_color">#D3D3D3</color>
     <color name="disabled_text_color">#E3E3E3</color>
+
+    <color name="light_text_color">#999</color>
 
     <!-- Buttons -->
     <color name="button_paper_flat_text_color">#FFFFFF</color>
