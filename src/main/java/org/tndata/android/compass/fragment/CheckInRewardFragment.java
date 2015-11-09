@@ -9,21 +9,41 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Reward;
+import org.tndata.android.compass.task.GetContentTask;
 import org.tndata.android.compass.util.CompassUtil;
+import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.util.Parser;
 
 
 /**
- * Created by isma on 11/2/15.
+ * Fragment used to display rewards.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
-public class CheckInRewardFragment extends Fragment implements View.OnClickListener{
+public class CheckInRewardFragment
+        extends Fragment
+        implements
+                View.OnClickListener,
+                GetContentTask.GetContentListener{
+
+
     public static final String REWARD_KEY = "org.tndata.compass.Reward.Reward";
 
 
     private CheckInRewardListener mListener;
     private Reward mReward;
+
+    private TextView mPreface;
+    private TextView mContent;
+    private TextView mAuthor;
+    private ViewSwitcher mMoreSwitcher;
 
 
     @Override
@@ -57,26 +77,45 @@ public class CheckInRewardFragment extends Fragment implements View.OnClickListe
         params.height = CompassUtil.getScreenWidth(getActivity())*2/3;
         header.setLayoutParams(params);
 
-        TextView preface = (TextView)rootView.findViewById(R.id.check_in_reward_preface);
-        TextView reward = (TextView)rootView.findViewById(R.id.check_in_reward_content);
-        TextView author = (TextView)rootView.findViewById(R.id.check_in_reward_author);
+        mPreface = (TextView)rootView.findViewById(R.id.check_in_reward_preface);
+        mContent = (TextView)rootView.findViewById(R.id.check_in_reward_content);
+        mAuthor = (TextView)rootView.findViewById(R.id.check_in_reward_author);
+        mMoreSwitcher = (ViewSwitcher)rootView.findViewById(R.id.check_in_reward_switcher);
+        rootView.findViewById(R.id.check_in_reward_more).setOnClickListener(this);
         rootView.findViewById(R.id.check_in_reward_review).setOnClickListener(this);
 
-        reward.setText(mReward.getMessage());
+        populateUI();
+    }
+
+    /**
+     * Populates the UI with the available reward.
+     */
+    private void populateUI(){
+        mContent.setText(mReward.getMessage());
         if (mReward.isQuote()){
-            preface.setVisibility(View.GONE);
-            author.setText(getResources().getString(R.string.check_in_reward_author, mReward.getAuthor()));
-            reward.setPadding(reward.getPaddingLeft(), CompassUtil.getPixels(getActivity(), 30),
-                    reward.getPaddingRight(), reward.getPaddingBottom());
+            mAuthor.setVisibility(View.VISIBLE);
+            mPreface.setVisibility(View.GONE);
+            mContent.setPadding(mContent.getPaddingLeft(), CompassUtil.getPixels(getActivity(), 30),
+                    mContent.getPaddingRight(), 0);
+
+            mAuthor.setText(getResources().getString(R.string.check_in_reward_author,
+                    mReward.getAuthor()));
         }
-        else if (mReward.isFortune()){
-            preface.setText(R.string.check_in_reward_cookie);
-        }
-        else if (mReward.isFunFact()){
-            preface.setText(R.string.check_in_reward_fun_fact);
-        }
-        else if (mReward.isJoke()){
-            preface.setText(R.string.check_in_reward_joke);
+        else{
+            mAuthor.setVisibility(View.GONE);
+            mPreface.setVisibility(View.VISIBLE);
+            mContent.setPadding(mContent.getPaddingLeft(), CompassUtil.getPixels(getActivity(), 15),
+                    mContent.getPaddingRight(), CompassUtil.getPixels(getActivity(), 15));
+
+            if (mReward.isFortune()){
+                mPreface.setText(R.string.check_in_reward_cookie);
+            }
+            else if (mReward.isFunFact()){
+                mPreface.setText(R.string.check_in_reward_fun_fact);
+            }
+            else if (mReward.isJoke()){
+                mPreface.setText(R.string.check_in_reward_joke);
+            }
         }
     }
 
@@ -86,7 +125,37 @@ public class CheckInRewardFragment extends Fragment implements View.OnClickListe
             case R.id.check_in_reward_review:
                 mListener.onReviewClick();
                 break;
+
+            case R.id.check_in_reward_more:
+                mMoreSwitcher.showNext();
+                fetchReward();
+                break;
         }
+    }
+
+    /**
+     * Fires the request to get a new reward.
+     */
+    private void fetchReward(){
+        String token = ((CompassApplication)getActivity().getApplication()).getToken();
+        new GetContentTask(this, 0).execute(Constants.BASE_URL+"rewards/?random=1", token);
+    }
+
+    @Override
+    public void onContentRetrieved(int requestCode, String content){
+        mReward = new Parser().parseRewards(content).get(0);
+    }
+
+    @Override
+    public void onRequestComplete(int requestCode){
+        populateUI();
+        mMoreSwitcher.showPrevious();
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode){
+        Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
+        mMoreSwitcher.showPrevious();
     }
 
 

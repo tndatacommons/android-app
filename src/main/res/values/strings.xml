@@ -283,6 +283,7 @@
     <string name="check_in_reward_fun_fact">Fun fact:</string>
     <string name="check_in_reward_joke">Here\'s a little joke for you.</string>
     <string name="check_in_reward_author">—%1$s</string>
-    <string name="check_in_reward_review">Review your goals</string>
+    <string name="check_in_reward_more">One more</string>
+    <string name="check_in_reward_review">My goals</string>
 
 </resources>
