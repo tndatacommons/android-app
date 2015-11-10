@@ -54,7 +54,7 @@ public class GoalDetailsActivity extends TriggerActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);
+        setContentView(R.layout.activity_base_toolbar);
 
         mCategory = (Category) getIntent().getSerializableExtra("category");
         mGoal = (Goal) getIntent().getSerializableExtra("goal");

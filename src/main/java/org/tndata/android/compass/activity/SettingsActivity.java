@@ -31,7 +31,7 @@ public class SettingsActivity extends AppCompatActivity implements OnSettingsCli
     protected void onCreate(Bundle savedInstanceState){
         getWindow().requestFeature(Window.FEATURE_PROGRESS);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);
+        setContentView(R.layout.activity_base_toolbar);
 
         mToolbar = (Toolbar)findViewById(R.id.tool_bar);
         mToolbar.setTitle(R.string.action_settings);

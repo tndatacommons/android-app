@@ -50,7 +50,7 @@ public class OnBoardingActivity
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);
+        setContentView(R.layout.activity_base_toolbar);
 
         mApplication = (CompassApplication)getApplication();
 
@@ -78,7 +78,7 @@ public class OnBoardingActivity
 
             case STAGE_CHOOSE_CATEGORIES:
                 Bundle args = new Bundle();
-                args.putBoolean(ChooseCategoriesFragment.RESTRICTIONS_KEY, true);
+                args.putBoolean(ChooseCategoriesFragment.ON_BOARDING_KEY, true);
                 mFragment = new ChooseCategoriesFragment();
                 mFragment.setArguments(args);
                 break;

@@ -115,7 +115,7 @@ public class TriggerActivity
         mApiDateFormat = new SimpleDateFormat("yyyy-MM-d", Locale.getDefault());
         mApiDateTimeFormat = new SimpleDateFormat("y-MM-d HH:mm", Locale.getDefault());
 
-        setContentView(R.layout.activity_base);
+        setContentView(R.layout.activity_base_toolbar);
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.tool_bar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);

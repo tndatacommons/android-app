@@ -27,8 +27,13 @@
     </style>
 
     <!-- Text styles -->
-    <style name="MaterialHeaderText">
+    <style name="MaterialHeaderTitleText">
         <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="MaterialHeaderSubtitleText">
+        <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/white</item>
     </style>
 

@@ -22,6 +22,7 @@ import org.tndata.android.compass.adapter.ChooseCategoriesAdapter;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.task.CategoryLoaderTask;
 import org.tndata.android.compass.task.CategoryLoaderTask.CategoryLoaderListener;
+import org.tndata.android.compass.util.CompassUtil;
 
 import java.util.List;
 
@@ -38,14 +39,14 @@ public class ChooseCategoriesFragment
                 CategoryLoaderListener,
                 ChooseCategoriesAdapter.OnCategoriesSelectedListener{
 
-    public static final String RESTRICTIONS_KEY = "restrictions";
+    public static final String ON_BOARDING_KEY = "org.tndata.compass.ChooseCategories.OnBoarding";
 
     //10 seconds worth in milliseconds
     private static final int FETCH_TIMEOUT = 10*1000;
 
     private View mMaterialHeader;
     private ChooseCategoriesAdapter mAdapter;
-    private boolean mApplyRestrictions;
+    private boolean mOnBoarding;
 
     private AlertDialog mDialog;
 
@@ -54,6 +55,13 @@ public class ChooseCategoriesFragment
 
     private boolean mFetchingCategories;
 
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+
+        mOnBoarding = getArguments() == null || getArguments().getBoolean(ON_BOARDING_KEY, true);
+    }
 
     @Override
     public void onAttach(Activity activity){
@@ -71,22 +79,18 @@ public class ChooseCategoriesFragment
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-
-        mApplyRestrictions = getArguments() == null || getArguments().getBoolean(RESTRICTIONS_KEY, true);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View root = inflater.inflate(R.layout.fragment_choose_categories, container, false);
 
         mMaterialHeader = root.findViewById(R.id.choose_categories_material_header);
+        ViewGroup.LayoutParams params = mMaterialHeader.getLayoutParams();
+        params.height = CompassUtil.getScreenWidth(getActivity())*2/3;
+        mMaterialHeader.setLayoutParams(params);
 
         RecyclerView grid = (RecyclerView)root.findViewById(R.id.choose_categories_grid);
         grid.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
-        mAdapter = new ChooseCategoriesAdapter(getActivity(), this, mApplyRestrictions);
+        mAdapter = new ChooseCategoriesAdapter(getActivity(), this, mOnBoarding);
         grid.setAdapter(mAdapter);
         grid.addItemDecoration(new ItemPadding());
         grid.setOnScrollListener(new ParallaxEffect());
