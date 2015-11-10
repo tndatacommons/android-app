@@ -3,7 +3,7 @@
 
     <color name="grow_primary">#2196F3</color>
     <color name="grow_primary_dark">#1976D2</color>
-    <color name="grow_accent">#E91E63</color>
+    <color name="grow_accent">#4A9E94</color>
     <color name="grow_accent_login">#FFFFFF</color>
     <color name="grow_primary_accent">#BBDEFB</color>
     <color name="actionbar_main_color">#BD98ED</color>
@@ -35,6 +35,7 @@
     <color name="disabled_text_color">#E3E3E3</color>
 
     <color name="light_text_color">#999</color>
+    <color name="ltd_text_color">#505050</color>
 
     <!-- Buttons -->
     <color name="button_paper_flat_text_color">#FFFFFF</color>

@@ -15,7 +15,6 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.task.GetContentTask;
-import org.tndata.android.compass.task.GetTodaysActionsTask;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.Parser;
 
@@ -36,7 +35,6 @@ import me.relex.circleindicator.CircleIndicator;
 public class CheckInActivity
         extends AppCompatActivity
         implements
-                GetTodaysActionsTask.GetTodaysActionsCallback,
                 GetContentTask.GetContentListener,
                 CheckInRewardFragment.CheckInRewardListener{
 
@@ -45,6 +43,7 @@ public class CheckInActivity
     public static final int TYPE_REVIEW = 1;
     public static final int TYPE_FEEDBACK = 2;
 
+    public static final int TODAYS_ACTIONS_REQUEST_CODE = 1;
     public static final int REWARD_REQUEST_CODE = 2;
 
     public int mRequestCount;
@@ -75,40 +74,40 @@ public class CheckInActivity
         mIndicator = (CircleIndicator)findViewById(R.id.check_in_indicator);
 
         String token = ((CompassApplication)getApplication()).getToken();
+        String url = Constants.BASE_URL + "users/actions/?today=1";
+        new GetContentTask(this, TODAYS_ACTIONS_REQUEST_CODE).execute(url, token);
 
-        new GetTodaysActionsTask(this, token).execute();
-        new GetContentTask(this, REWARD_REQUEST_CODE).execute(Constants.BASE_URL+"rewards/?random=1", token);
-    }
-
-    @Override
-    public void onActionsLoaded(List<Action> actions){
-        mDataSet = new HashMap<>();
-        //For each action
-        for (Action action:actions){
-            //If there is a primary goal
-            if (action.getPrimaryGoal() != null){
-                //If the primary goal is already in the data set
-                if (mDataSet.containsKey(action.getPrimaryGoal())){
-                    //Add the action to the associated list
-                    mDataSet.get(action.getPrimaryGoal()).add(action);
-                }
-                //Otherwise
-                else{
-                    //Create the list and add the goal to the data set
-                    List<Action> actionList = new ArrayList<>();
-                    actionList.add(action);
-                    mDataSet.put(action.getPrimaryGoal(), actionList);
-                }
-            }
-        }
-        if (++mRequestCount == 2){
-            setAdapter();
-        }
+        url = Constants.BASE_URL+"rewards/?random=1";
+        new GetContentTask(this, REWARD_REQUEST_CODE).execute(url, token);
     }
 
     @Override
     public void onContentRetrieved(int requestCode, String content){
-        mReward = new Parser().parseRewards(content).get(0);
+        if (requestCode == TODAYS_ACTIONS_REQUEST_CODE){
+            List<Action> actions = new Parser().parseTodaysActions(content);
+            mDataSet = new HashMap<>();
+            //For each action
+            for (Action action:actions){
+                //If there is a primary goal
+                if (action.getPrimaryGoal() != null){
+                    //If the primary goal is already in the data set
+                    if (mDataSet.containsKey(action.getPrimaryGoal())){
+                        //Add the action to the associated list
+                        mDataSet.get(action.getPrimaryGoal()).add(action);
+                    }
+                    //Otherwise
+                    else{
+                        //Create the list and add the goal to the data set
+                        List<Action> actionList = new ArrayList<>();
+                        actionList.add(action);
+                        mDataSet.put(action.getPrimaryGoal(), actionList);
+                    }
+                }
+            }
+        }
+        else if (requestCode == REWARD_REQUEST_CODE){
+            mReward = new Parser().parseRewards(content).get(0);
+        }
     }
 
     @Override
@@ -124,7 +123,8 @@ public class CheckInActivity
     }
 
     private void setAdapter(){
-        mPager.setAdapter(new CheckInPagerAdapter(getSupportFragmentManager(), mDataSet, mReward, mType == TYPE_REVIEW));
+        mPager.setAdapter(new CheckInPagerAdapter(getSupportFragmentManager(),
+                mDataSet, mReward, mType == TYPE_REVIEW));
         mIndicator.setViewPager(mPager);
         mLoading.setVisibility(View.GONE);
         mContent.setVisibility(View.VISIBLE);
