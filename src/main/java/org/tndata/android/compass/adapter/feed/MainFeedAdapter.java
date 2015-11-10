@@ -358,6 +358,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         //Feedback
         else if (CardTypes.isFeedback(position)){
             FeedbackHolder holder = (FeedbackHolder)rawHolder;
+            holder.mIcon.setImageResource(mUserData.getFeedData().getFeedbackIcon());
             holder.mTitle.setText(mUserData.getFeedData().getFeedbackTitle());
             holder.mSubtitle.setText(mUserData.getFeedData().getFeedbackSubtitle());
         }

@@ -1,5 +1,9 @@
 package org.tndata.android.compass.model;
 
+import android.support.annotation.DrawableRes;
+
+import org.tndata.android.compass.R;
+
 import java.util.List;
 
 
@@ -14,6 +18,7 @@ public class FeedData{
 
     private String mFeedbackTitle;
     private String mFeedbackSubtitle;
+    private int mFeedbackIconId;
 
     private int mTotalActions;
     private int mCompletedActions;
@@ -75,6 +80,36 @@ public class FeedData{
      */
     public String getFeedbackSubtitle(){
         return mFeedbackSubtitle;
+    }
+
+    /**
+     * Sets the feedback icon id.
+     *
+     * @param feedbackIconId the feedback icon id.
+     */
+    public void setFeedbackIconId(int feedbackIconId){
+        mFeedbackIconId = feedbackIconId;
+    }
+
+    /**
+     * Gets the feedback icon resource id.
+     *
+     * @return the feedback icon resource id.
+     */
+    @DrawableRes
+    public int getFeedbackIcon(){
+        switch (mFeedbackIconId){
+            case 1:
+                return R.drawable.feedback1;
+            case 2:
+                return R.drawable.feedback2;
+            case 3:
+                return R.drawable.feedback3;
+            case 4:
+                return R.drawable.feedback4;
+            default:
+                return 0;
+        }
     }
 
     /**

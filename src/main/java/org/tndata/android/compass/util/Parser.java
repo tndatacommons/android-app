@@ -409,6 +409,7 @@ public class Parser{
                 JSONObject feedback = userJson.getJSONObject("action_feedback");
                 feedData.setFeedbackTitle(feedback.getString("title"));
                 feedData.setFeedbackSubtitle(feedback.getString("subtitle"));
+                feedData.setFeedbackIconId(feedback.getInt("icon"));
             }
 
             JSONObject progress = userJson.getJSONObject("progress");

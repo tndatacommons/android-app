@@ -13,11 +13,11 @@
         android:padding="10dp" >
 
         <ImageView
+            android:id="@+id/card_feedback_icon"
             android:layout_width="90dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:padding="15dp"
-            android:src="@drawable/ic_feedback"/>
+            android:padding="15dp" />
 
         <LinearLayout
             android:orientation="vertical"
