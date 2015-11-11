@@ -92,7 +92,7 @@ public class CheckInActivity
         url = Constants.BASE_URL + "rewards/?random=1";
         new GetContentTask(this, REWARD_REQUEST_CODE).execute(url, token);
 
-        url = Constants.BASE_URL + "users/goals/progress/average/?current=5";
+        url = Constants.BASE_URL + "users/goals/progress/average/";
         new GetContentTask(this, PROGRESS_REQUEST_CODE).execute(url, token);
     }
 
