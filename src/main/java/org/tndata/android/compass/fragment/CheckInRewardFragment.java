@@ -35,21 +35,45 @@ public class CheckInRewardFragment
 
 
     public static final String REWARD_KEY = "org.tndata.compass.Reward.Reward";
+    public static final String FEEDBACK_KEY = "org.tndata.compass.Reward.Feedback";
 
 
     private CheckInRewardListener mListener;
     private Reward mReward;
+    private boolean mFeedback;
+    private boolean mBetter;
 
+    private TextView mHeader;
     private TextView mPreface;
     private TextView mContent;
     private TextView mAuthor;
     private ViewSwitcher mMoreSwitcher;
 
 
+    /**
+     * Creates an instance of the fragment.
+     *
+     * @param reward the initial reward to be displayed.
+     * @param feedback true if this fragment is to be inserted after feedback fragments.
+     * @return an instance of the fragment.
+     */
+    public static CheckInRewardFragment newInstance(Reward reward, boolean feedback){
+        Bundle args = new Bundle();
+        args.putSerializable(REWARD_KEY, reward);
+        args.putBoolean(FEEDBACK_KEY, feedback);
+
+        CheckInRewardFragment fragment = new CheckInRewardFragment();
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         mReward = (Reward)getArguments().getSerializable(REWARD_KEY);
+        mFeedback = getArguments().getBoolean(FEEDBACK_KEY);
+        mBetter = false;
     }
 
     @Override
@@ -72,10 +96,10 @@ public class CheckInRewardFragment
 
     @Override
     public void onViewCreated(View rootView, @Nullable Bundle savedInstanceState){
-        TextView header = (TextView)rootView.findViewById(R.id.check_in_reward_header);
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)header.getLayoutParams();
+        mHeader = (TextView)rootView.findViewById(R.id.check_in_reward_header);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)mHeader.getLayoutParams();
         params.height = CompassUtil.getScreenWidth(getActivity())*2/3;
-        header.setLayoutParams(params);
+        mHeader.setLayoutParams(params);
 
         mPreface = (TextView)rootView.findViewById(R.id.check_in_reward_preface);
         mContent = (TextView)rootView.findViewById(R.id.check_in_reward_content);
@@ -91,6 +115,14 @@ public class CheckInRewardFragment
      * Populates the UI with the available reward.
      */
     private void populateUI(){
+        if (mFeedback){
+            if (mBetter){
+                mHeader.setText(R.string.check_in_reward_better);
+            }
+            else{
+                mHeader.setText(R.string.check_in_reward_worse);
+            }
+        }
         mContent.setText(mReward.getMessage());
         if (mReward.isQuote()){
             mAuthor.setVisibility(View.VISIBLE);
@@ -115,6 +147,23 @@ public class CheckInRewardFragment
             }
             else if (mReward.isJoke()){
                 mPreface.setText(R.string.check_in_reward_joke);
+            }
+        }
+    }
+
+    /**
+     * Updates the header string.
+     *
+     * @param better true if the user is doing better than last week, false otherwise.
+     */
+    public void update(boolean better){
+        mBetter = better;
+        if (mHeader != null){
+            if (better){
+                mHeader.setText(R.string.check_in_reward_better);
+            }
+            else{
+                mHeader.setText(R.string.check_in_reward_worse);
             }
         }
     }

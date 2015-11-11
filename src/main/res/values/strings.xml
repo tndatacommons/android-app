@@ -274,10 +274,10 @@
     <string name="goal_indicator_caption">%1$s\%</string>
 
     <!-- Check in -->
-    <string name="check_in_review_title">I want to %1$s…</string>
+    <string name="check_in_review_title">I want to %1$s.</string>
     <string name="check_in_review_action_header">Today I will:</string>
     <string name="check_in_review_action_behavior">To %1$s</string>
-    <string name="check_in_empty_review_title">Because I want to improve my life…</string>
+    <string name="check_in_empty_review_title">I want to improve my life.</string>
     <string name="check_in_empty_review_action">Review the Compass app to find new activities to reach my goals.</string>
     <string name="check_in_feedback_title">How am I doing?</string>
     <string name="check_in_feedback_goal">I want to %1$s.</string>
@@ -287,6 +287,8 @@
     <string name="check_in_feedback_very_good">Very good</string>
     <string name="check_in_feedback_excellent">Excellent</string>
     <string name="check_in_reward_great_job">Great job!</string>
+    <string name="check_in_reward_better">Great job! You\'re doing well!</string>
+    <string name="check_in_reward_worse">Keep it up! You can reach your goals if you try.</string>
     <string name="check_in_reward_cookie">Fortune cookie says…</string>
     <string name="check_in_reward_fun_fact">Fun fact:</string>
     <string name="check_in_reward_joke">Here\'s a little joke for you.</string>

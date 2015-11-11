@@ -1,5 +1,6 @@
 package org.tndata.android.compass.fragment;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -34,6 +35,7 @@ public class CheckInFeedbackFragment
                 AutoSave.AutoSaveInterface,
                 SeekBar.OnSeekBarChangeListener{
 
+    private static final String INDEX_KEY = "org.tndata.compass.CheckInFeedback.Index";
     private static final String GOAL_KEY = "org.tndata.compass.CheckInFeedback.Goal";
 
 
@@ -48,6 +50,29 @@ public class CheckInFeedbackFragment
     private AutoSave mAutoSave;
     private long mLastUpdate;
 
+    //Listener
+    private int mIndex;
+    private CheckInFeedbackListener mListener;
+
+
+    /**
+     * Creates an instance of the fragment and delivers the provided data.
+     *
+     * @param index the index on this fragment within the containing adapter.
+     * @param goal the goal to be displayed by the fragment.
+     * @return an instance of the fragment.
+     */
+    public static CheckInFeedbackFragment newInstance(int index, @NonNull Goal goal){
+        //Create the argument bundle
+        Bundle args = new Bundle();
+        args.putInt(INDEX_KEY, index);
+        args.putSerializable(GOAL_KEY, goal);
+
+        //Create the fragment and deliver the arguments
+        CheckInFeedbackFragment fragment = new CheckInFeedbackFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -55,9 +80,22 @@ public class CheckInFeedbackFragment
 
         //Retrieve the arguments
         Bundle arguments = getArguments();
+        mIndex = arguments.getInt(INDEX_KEY);
         mGoal = (Goal)arguments.getSerializable(GOAL_KEY);
 
         mLastUpdate = -1;
+    }
+
+    @Override
+    public void onAttach(Activity activity){
+        super.onAttach(activity);
+        try{
+            mListener = (CheckInFeedbackListener)activity;
+        }
+        catch (ClassCastException ccx){
+            throw new ClassCastException(activity.toString()
+                    + " must implement " + CheckInFeedbackListener.class);
+        }
     }
 
     @Nullable
@@ -99,23 +137,6 @@ public class CheckInFeedbackFragment
     public void onPause(){
         mAutoSave.stop();
         super.onPause();
-    }
-
-    /**
-     * Creates an instance of the fragment and delivers the provided data.
-     *
-     * @param goal the goal to be displayed by the fragment.
-     * @return an instance of the fragment.
-     */
-    public static CheckInFeedbackFragment newInstance(@NonNull Goal goal){
-        //Create the argument bundle
-        Bundle args = new Bundle();
-        args.putSerializable(GOAL_KEY, goal);
-
-        //Create the fragment and deliver the arguments
-        CheckInFeedbackFragment fragment = new CheckInFeedbackFragment();
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -166,5 +187,23 @@ public class CheckInFeedbackFragment
     public void onStopTrackingTouch(SeekBar seekBar){
         Log.d("CheckInFeedbackFragment", "stop tracking");
         mLastUpdate = System.currentTimeMillis();
+        mListener.onProgressChanged(mIndex, mBar.getProgress()+1);
+    }
+
+
+    /**
+     * Listener for events triggered by the CheckInFeedbackFragment.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    public interface CheckInFeedbackListener{
+        /**
+         * Called when the user sets his progress.
+         *
+         * @param index the index of the fragment.
+         * @param progress the progress as reported by the user.
+         */
+        void onProgressChanged(int index, int progress);
     }
 }

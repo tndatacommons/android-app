@@ -7,9 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.CheckInPagerAdapter;
+import org.tndata.android.compass.fragment.CheckInFeedbackFragment;
 import org.tndata.android.compass.fragment.CheckInRewardFragment;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
@@ -36,28 +39,37 @@ public class CheckInActivity
         extends AppCompatActivity
         implements
                 GetContentTask.GetContentListener,
-                CheckInRewardFragment.CheckInRewardListener{
+                CheckInRewardFragment.CheckInRewardListener,
+                CheckInFeedbackFragment.CheckInFeedbackListener{
 
     public static final String TYPE_KEY = "org.tndata.compass.CheckIn.Type";
 
     public static final int TYPE_REVIEW = 1;
     public static final int TYPE_FEEDBACK = 2;
 
-    public static final int TODAYS_ACTIONS_REQUEST_CODE = 1;
-    public static final int REWARD_REQUEST_CODE = 2;
+    public static final int TODAYS_ACTIONS_REQUEST_CODE = 0;
+    public static final int REWARD_REQUEST_CODE = TODAYS_ACTIONS_REQUEST_CODE+1;
+    public static final int PROGRESS_REQUEST_CODE = REWARD_REQUEST_CODE+1;
+    public static final int REQUEST_COUNT = PROGRESS_REQUEST_CODE+1;
 
-    public int mRequestCount;
+    public int mCompletedRequests;
 
 
     private int mType;
 
+    //UI components
     private ProgressBar mLoading;
     private View mContent;
     private ViewPager mPager;
     private CircleIndicator mIndicator;
 
+    private CheckInPagerAdapter mAdapter;
+
+    //Data
     private Map<Goal, List<Action>> mDataSet;
     private Reward mReward;
+    private float mProgress;
+    private int mCurrentProgress[];
 
 
     @Override
@@ -65,7 +77,7 @@ public class CheckInActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_in);
 
-        mRequestCount = 0;
+        mCompletedRequests = 0;
         mType = getIntent().getIntExtra(TYPE_KEY, TYPE_REVIEW);
 
         mLoading = (ProgressBar)findViewById(R.id.check_in_loading);
@@ -77,8 +89,11 @@ public class CheckInActivity
         String url = Constants.BASE_URL + "users/actions/?today=1";
         new GetContentTask(this, TODAYS_ACTIONS_REQUEST_CODE).execute(url, token);
 
-        url = Constants.BASE_URL+"rewards/?random=1";
+        url = Constants.BASE_URL + "rewards/?random=1";
         new GetContentTask(this, REWARD_REQUEST_CODE).execute(url, token);
+
+        url = Constants.BASE_URL + "users/goals/progress/average/?current=5";
+        new GetContentTask(this, PROGRESS_REQUEST_CODE).execute(url, token);
     }
 
     @Override
@@ -104,15 +119,25 @@ public class CheckInActivity
                     }
                 }
             }
+            mCurrentProgress = new int[mDataSet.size()];
         }
         else if (requestCode == REWARD_REQUEST_CODE){
             mReward = new Parser().parseRewards(content).get(0);
+        }
+        else if (requestCode == PROGRESS_REQUEST_CODE){
+            try{
+                mProgress = (float)new JSONObject(content).getDouble("weekly_checkin_avg");
+            }
+            catch (JSONException jsonx){
+                mProgress = 0;
+                jsonx.printStackTrace();
+            }
         }
     }
 
     @Override
     public void onRequestComplete(int requestCode){
-        if (++mRequestCount == 2){
+        if (++mCompletedRequests == REQUEST_COUNT){
             setAdapter();
         }
     }
@@ -123,8 +148,9 @@ public class CheckInActivity
     }
 
     private void setAdapter(){
-        mPager.setAdapter(new CheckInPagerAdapter(getSupportFragmentManager(),
-                mDataSet, mReward, mType == TYPE_REVIEW));
+        mAdapter = new CheckInPagerAdapter(getSupportFragmentManager(),
+                mDataSet, mReward, mType == TYPE_REVIEW);
+        mPager.setAdapter(mAdapter);
         mIndicator.setViewPager(mPager);
         mLoading.setVisibility(View.GONE);
         mContent.setVisibility(View.VISIBLE);
@@ -139,5 +165,16 @@ public class CheckInActivity
             startActivity(new Intent(this, LoginActivity.class));
         }
         finish();
+    }
+
+    @Override
+    public void onProgressChanged(int index, int progress){
+        mCurrentProgress[index] = progress;
+        float currentProgressAverage = 0;
+        for (int currentProgress:mCurrentProgress){
+            currentProgressAverage += currentProgress;
+        }
+        currentProgressAverage /= mCurrentProgress.length;
+        mAdapter.updateRewardFragment(currentProgressAverage >= mProgress);
     }
 }
