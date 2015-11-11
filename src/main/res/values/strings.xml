@@ -81,9 +81,7 @@
     <string name="choose_goals_list_item_select_button">I WANT THIS</string>
     <string name="choose_goals_list_item_selected_button">I\'LL DO IT</string>
     <string name="goal_image_description">Goal</string>
-    <string name="qol_header_label">KNOW YOURSELF</string>
-    <string name="qol_header_info_label">Tell Compass a bit about yourself</string>
-    <string name="qol_next_button">NEXT</string>
+    <string name="instrument_next">NEXT</string>
     <string name="survey_open_ended_hint">answer</string>
 
     <!-- MyGoalsFragment -->
@@ -189,7 +187,9 @@
     <!-- Category chooser -->
     <string name="choose_categories_error">Uh Oh! There seems to have been an issue finding choices.</string>
     <string name="choose_categories_header">KNOW YOUR PATH.</string>
-    <string name="choose_categories_info">Tell Compass some things you care about. You can add or change choices later.</string>
+    <string name="choose_categories_header_title">Pick the things you care about most.</string>
+    <string name="choose_categories_header_onboarding_title">Tell Compass the three to five things you care about most.</string>
+    <string name="choose_categories_header_subtitle">You can add or change your choices later.</string>
     <string name="choose_categories_at_least_three">Pick a minimum of three things you care about most.</string>
     <string name="choose_categories_at_most_five">Just pick the five things you care about most. You can choose more later.</string>
     <string name="choose_categories_syncing_title">Synchronizing</string>
@@ -251,7 +251,7 @@
     <!-- Welcome card -->
     <string name="card_welcome_title">Welcome to Compass</string>
     <string name="card_welcome_subtitle">You want good things for yourself. Compass helps you know your goals, do things to achieve them, and track your progress over time.</string>
-    <string name="card_welcome_instructions"><i>Instructions</i>: Select a goal that Compass has recommended for you, or touch the button at the bottom of the screen to discover your own goal.</string>
+    <string name="card_welcome_instructions"><i>Instructions</i>: Select a goal that Compass has recommended for you, or touch the big round button at the bottom right of the screen to discover your own goal.</string>
     <!-- Up next card -->
     <string name="card_up_next_header_completed">All done!</string>
     <string name="card_up_next_header">Up next</string>
@@ -274,12 +274,26 @@
     <string name="goal_indicator_caption">%1$s\%</string>
 
     <!-- Check in -->
-    <string name="check_in_review_title">Because I want to %1$s</string>
+    <string name="check_in_review_title">I want to %1$s.</string>
     <string name="check_in_review_action_header">Today I will:</string>
     <string name="check_in_review_action_behavior">To %1$s</string>
-    <string name="check_in_empty_review_title">Because I want to improve my life…</string>
+    <string name="check_in_empty_review_title">I want to improve my life.</string>
     <string name="check_in_empty_review_action">Review the Compass app to find new activities to reach my goals.</string>
-    <string name="check_in_feedback_goal">To %1$s, I am doing…</string>
+    <string name="check_in_feedback_title">How am I doing?</string>
+    <string name="check_in_feedback_goal">I want to %1$s.</string>
+    <string name="check_in_feedback_poor">Poor</string>
+    <string name="check_in_feedback_fair">Fair</string>
+    <string name="check_in_feedback_good">Good</string>
+    <string name="check_in_feedback_very_good">Very good</string>
+    <string name="check_in_feedback_excellent">Excellent</string>
     <string name="check_in_reward_great_job">Great job!</string>
+    <string name="check_in_reward_better">Great job! You\'re doing well!</string>
+    <string name="check_in_reward_worse">Keep it up! You can reach your goals if you try.</string>
+    <string name="check_in_reward_cookie">Fortune cookie says…</string>
+    <string name="check_in_reward_fun_fact">Fun fact:</string>
+    <string name="check_in_reward_joke">Here\'s a little joke for you.</string>
+    <string name="check_in_reward_author">—%1$s</string>
+    <string name="check_in_reward_more">One more</string>
+    <string name="check_in_reward_review">My goals</string>
 
 </resources>

@@ -67,7 +67,7 @@ public class LoginActivity
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);
+        setContentView(R.layout.activity_base_toolbar);
 
         mToolbar = (Toolbar) findViewById(R.id.tool_bar);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);

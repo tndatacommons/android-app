@@ -15,47 +15,66 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_margin="30dp"
             android:layout_centerInParent="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/white"
-            android:text="How am I doing?"/>
+            style="@style/MaterialHeaderTitleText"
+            android:text="@string/check_in_feedback_title" />
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/check_in_feedback_goal"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="60dp"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:layout_height="0dp"
+        android:layout_weight="1" >
 
-    <SeekBar
-        android:id="@+id/check_in_feedback_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:max="5" />
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp" >
-
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Bad" />
+            android:layout_marginLeft="30dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginEnd="30dp" >
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:text="Good" />
+            <TextView
+                android:id="@+id/check_in_feedback_goal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                style="@style/ItemTitleText" />
 
-    </LinearLayout>
+            <SeekBar
+                android:id="@+id/check_in_feedback_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:max="4" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_thumb_down" />
+
+                <TextView
+                    android:id="@+id/check_in_feedback_display"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:paddingTop="1dp"
+                    android:text="@string/check_in_feedback_poor" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_thumb_up" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

@@ -409,6 +409,7 @@ public class Parser{
                 JSONObject feedback = userJson.getJSONObject("action_feedback");
                 feedData.setFeedbackTitle(feedback.getString("title"));
                 feedData.setFeedbackSubtitle(feedback.getString("subtitle"));
+                feedData.setFeedbackIconId(feedback.getInt("icon"));
             }
 
             JSONObject progress = userJson.getJSONObject("progress");
@@ -458,6 +459,28 @@ public class Parser{
             jsonx.printStackTrace();
         }
         return rewards;
+    }
+
+    public List<Action> parseTodaysActions(String src){
+        List<Action> actions = new ArrayList<>();
+        try{
+            JSONArray actionArray = new JSONObject(src).getJSONArray("results");
+            for (int i = 0; i < actionArray.length(); i++){
+                JSONObject actionObject = actionArray.getJSONObject(i);
+                Action action = parseAction(actionObject, true);
+                Goal goal = gson.fromJson(actionObject.getString("primary_goal"), Goal.class);
+                goal.setPrimaryCategory(gson.fromJson(actionObject.getString("primary_category"), Category.class));
+                if (action != null){
+                    action.setPrimaryGoal(goal);
+                    action.setBehavior(gson.fromJson(actionObject.getString("behavior"), Behavior.class));
+                    actions.add(action);
+                }
+            }
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return actions;
     }
 
     public Gson getGson(){

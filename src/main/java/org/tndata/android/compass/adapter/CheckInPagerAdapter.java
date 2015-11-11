@@ -1,6 +1,5 @@
 package org.tndata.android.compass.adapter;
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -27,9 +26,9 @@ import java.util.Map;
 public class CheckInPagerAdapter extends FragmentPagerAdapter{
     private List<Goal> mGoals;
     private List<List<Action>> mActionLists;
-    private Reward mReward;
     private boolean mReview;
 
+    private CheckInRewardFragment mRewardFragment;
     private List<Fragment> mFragments;
 
 
@@ -50,9 +49,9 @@ public class CheckInPagerAdapter extends FragmentPagerAdapter{
             mGoals.add(entry.getKey());
             mActionLists.add(entry.getValue());
         }
-        mReward = reward;
         mReview = review;
 
+        mRewardFragment = CheckInRewardFragment.newInstance(reward, !review);
         mFragments = new ArrayList<>();
     }
 
@@ -61,11 +60,7 @@ public class CheckInPagerAdapter extends FragmentPagerAdapter{
         //If the fragment has not been created yet, create it
         if (position == mFragments.size()){
             if (position == getCount()-1){
-                Bundle args = new Bundle();
-                args.putSerializable(CheckInRewardFragment.REWARD_KEY, mReward);
-                CheckInRewardFragment fragment = new CheckInRewardFragment();
-                fragment.setArguments(args);
-                mFragments.add(fragment);
+                mFragments.add(mRewardFragment);
             }
             else{
                 if (mReview){
@@ -78,7 +73,7 @@ public class CheckInPagerAdapter extends FragmentPagerAdapter{
                     }
                 }
                 else{
-                    mFragments.add(CheckInFeedbackFragment.newInstance(mGoals.get(position)));
+                    mFragments.add(CheckInFeedbackFragment.newInstance(position, mGoals.get(position)));
                 }
             }
         }
@@ -89,5 +84,14 @@ public class CheckInPagerAdapter extends FragmentPagerAdapter{
     public int getCount(){
         //Account for the reward
         return mGoals.size()+1;
+    }
+
+    /**
+     * Updates the reward fragment header string.
+     *
+     * @param better true if the user is doing better than last week, false otherwise.
+     */
+    public void updateRewardFragment(boolean better){
+        mRewardFragment.update(better);
     }
 }

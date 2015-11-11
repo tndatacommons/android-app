@@ -1,6 +1,7 @@
 package org.tndata.android.compass.adapter.feed;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
@@ -13,6 +14,7 @@ import org.tndata.android.compass.R;
  * @version 1.0.0
  */
 class FeedbackHolder extends MainFeedViewHolder implements View.OnClickListener{
+    ImageView mIcon;
     TextView mTitle;
     TextView mSubtitle;
 
@@ -26,6 +28,7 @@ class FeedbackHolder extends MainFeedViewHolder implements View.OnClickListener{
     FeedbackHolder(MainFeedAdapter adapter, View rootView){
         super(adapter, rootView);
 
+        mIcon = (ImageView)rootView.findViewById(R.id.card_feedback_icon);
         mTitle = (TextView)rootView.findViewById(R.id.card_feedback_title);
         mSubtitle = (TextView)rootView.findViewById(R.id.card_feedback_subtitle);
 

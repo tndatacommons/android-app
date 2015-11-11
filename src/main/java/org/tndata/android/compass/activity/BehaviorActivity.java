@@ -45,7 +45,7 @@ public class BehaviorActivity extends TriggerActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);
+        setContentView(R.layout.activity_base_toolbar);
 
         mBehavior = (Behavior) getIntent().getSerializableExtra("behavior");
         mGoal = (Goal) getIntent().getSerializableExtra("goal");

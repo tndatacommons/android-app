@@ -37,12 +37,6 @@ public class Constants{
     public final static String PREFERENCES_NAME = "compass_pref";
     public final static String PREFERENCES_NEW_USER = "new_user_pref";
 
-    // Behavior, Self-reporting.
-    // NOTE: These values correspond to values exposed/expected by the API
-    public final static int BEHAVIOR_OFF_COURSE = 1;
-    public final static int BEHAVIOR_SEEKING = 2;
-    public final static int BEHAVIOR_ON_COURSE = 3;
-
 
     public final static boolean ENABLE_SURVEYS = false;
 }

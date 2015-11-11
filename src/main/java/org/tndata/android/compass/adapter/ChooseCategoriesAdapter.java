@@ -21,6 +21,7 @@ import android.widget.Toast;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.util.CompassTagHandler;
+import org.tndata.android.compass.util.CompassUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ public class ChooseCategoriesAdapter
 
     private final Context mContext;
     private final OnCategoriesSelectedListener mCallback;
-    private final boolean mApplyRestrictions;
+    private final boolean mOnBoarding;
 
     private List<Category> mCategories;
     private List<Category> mSelectedCategories;
@@ -59,13 +60,13 @@ public class ChooseCategoriesAdapter
      *
      * @param context a reference to the context.
      * @param callback the callback interface.
-     * @param applyRestrictions whether the 3 to 5 category restriction should be applied.
+     * @param onBoarding whether the containing fragment is part of on boarding or not.
      */
     public ChooseCategoriesAdapter(Context context, OnCategoriesSelectedListener callback,
-                                   boolean applyRestrictions){
+                                   boolean onBoarding){
         mContext = context;
         mCallback = callback;
-        mApplyRestrictions = applyRestrictions;
+        mOnBoarding = onBoarding;
 
         mCategories = null;
 
@@ -261,6 +262,7 @@ public class ChooseCategoriesAdapter
     class HeaderViewHolder extends RecyclerView.ViewHolder{
         private ProgressBar progressBar;
 
+
         /**
          * Constructor.
          *
@@ -269,7 +271,17 @@ public class ChooseCategoriesAdapter
         public HeaderViewHolder(View itemView){
             super(itemView);
 
+            ViewGroup.LayoutParams params = itemView.getLayoutParams();
+            params.height = (int)((9f/10f)*2f*CompassUtil.getScreenWidth(mContext)/3f);
+            itemView.setLayoutParams(params);
+
+            TextView title = (TextView)itemView.findViewById(R.id.choose_categories_header_title);
             progressBar = (ProgressBar)itemView.findViewById(R.id.choose_categories_header_progress_bar);
+
+            if (mOnBoarding){
+                title.setText(R.string.choose_categories_header_onboarding_title);
+                itemView.findViewById(R.id.choose_categories_header_subtitle).setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -392,7 +404,7 @@ public class ChooseCategoriesAdapter
 
         @Override
         public void onClick(View v){
-            if (mApplyRestrictions){
+            if (mOnBoarding){
                 if (mSelectedCategories.size() < 3){
                     Toast.makeText(mContext, R.string.choose_categories_at_least_three,
                             Toast.LENGTH_SHORT).show();

@@ -20,33 +20,24 @@
             android:paddingBottom="0dp" >
 
             <TextView
-                android:id="@+id/instrument_header"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
-                android:text="@string/qol_header_label"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/white" />
-
-            <TextView
                 android:id="@+id/instrument_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/instrument_header"
                 android:layout_marginLeft="5dp"
-                android:text="@string/qol_header_info_label"
+                android:layout_centerVertical="true"
                 android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="24sp"
                 android:textColor="@color/white" />
 
         </RelativeLayout>
 
         <ProgressBar
             android:id="@+id/instrument_progress"
-            style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_marginTop="-7dp"
+            android:minHeight="0dp" />
 
         <ProgressBar
             android:id="@+id/instrument_loading"
@@ -77,14 +68,11 @@
             android:id="@+id/instrument_next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
+            android:layout_margin="25dp"
             android:layout_gravity="right"
             android:gravity="center"
-            android:minHeight="@dimen/paper_flat_button_min_height"
-            android:text="@string/qol_next_button"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@drawable/button_paper_flat_text_selector"
-            android:background="@drawable/button_positive_rounded" />
+            android:text="@string/instrument_next"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
     </LinearLayout>
 </ScrollView>

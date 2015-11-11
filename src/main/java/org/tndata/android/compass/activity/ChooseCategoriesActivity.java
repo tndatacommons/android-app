@@ -3,7 +3,6 @@ package org.tndata.android.compass.activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -25,7 +24,7 @@ public class ChooseCategoriesActivity
                 ChooseCategoriesAdapter.OnCategoriesSelectedListener,
                 GetUserDataTask.GetUserDataCallback{
 
-    private CompassApplication application;
+    private CompassApplication mApplication;
 
     private List<Category> mSelection;
 
@@ -35,18 +34,10 @@ public class ChooseCategoriesActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
 
-        application = (CompassApplication) getApplication();
-
-        Toolbar toolbar = (Toolbar)findViewById(R.id.tool_bar);
-        toolbar.getBackground().setAlpha(255);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null){
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
+        mApplication = (CompassApplication) getApplication();
 
         Bundle args = new Bundle();
-        args.putBoolean(ChooseCategoriesFragment.RESTRICTIONS_KEY, false);
+        args.putBoolean(ChooseCategoriesFragment.ON_BOARDING_KEY, false);
 
         ChooseCategoriesFragment fragment = new ChooseCategoriesFragment();
         fragment.setArguments(args);
@@ -59,7 +50,7 @@ public class ChooseCategoriesActivity
 
         List<Category> categoriesToAdd = new ArrayList<>();
         for (Category cat:selection){
-            if (!application.getCategories().contains(cat)){
+            if (!mApplication.getCategories().contains(cat)){
                 categoriesToAdd.add(cat);
             }
         }
@@ -81,7 +72,7 @@ public class ChooseCategoriesActivity
     public void categoriesAdded(ArrayList<Category> categories){
         if (categories != null){
             for (Category category:categories){
-                application.addCategory(category);
+                mApplication.addCategory(category);
             }
             deleteCategories();
         }
@@ -90,7 +81,7 @@ public class ChooseCategoriesActivity
     private void deleteCategories(){
         ArrayList<String> deleteCats = new ArrayList<>();
         final List<Category> toDelete = new ArrayList<>();
-        for (Category cat:application.getCategories()){
+        for (Category cat: mApplication.getCategories()){
             if (!mSelection.contains(cat)){
                 deleteCats.add(String.valueOf(cat.getMappingId()));
                 toDelete.add(cat);
@@ -102,7 +93,7 @@ public class ChooseCategoriesActivity
                 @Override
                 public void categoriesDeleted(){
                     for (Category category:toDelete){
-                        application.getUserData().removeCategory(category);
+                        mApplication.getUserData().removeCategory(category);
                     }
                     getUserData();
                 }
@@ -114,12 +105,12 @@ public class ChooseCategoriesActivity
     }
 
     private void getUserData(){
-        new GetUserDataTask(this, this).execute(application.getToken());
+        new GetUserDataTask(this, this).execute(mApplication.getToken());
     }
 
     @Override
     public void userDataLoaded(UserData userData){
-        application.setUserData(userData);
+        mApplication.setUserData(userData);
         setResult(RESULT_OK);
         finish();
     }

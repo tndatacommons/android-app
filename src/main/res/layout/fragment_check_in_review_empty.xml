@@ -15,10 +15,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:layout_centerInParent="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/white"
+            android:layout_margin="30dp"
+            android:layout_centerVertical="true"
+            style="@style/MaterialHeaderTitleText"
             android:text="@string/check_in_empty_review_title" />
 
     </RelativeLayout>
@@ -26,19 +25,21 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:paddingTop="30dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/dark_text_color"
+        android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="30dp"
+        style="@style/TitleText"
         android:text="@string/check_in_review_action_header" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:layout_marginTop="40dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/dark_text_color"
+        android:layout_marginLeft="35dp"
+        android:layout_marginStart="35dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginEnd="20dp"
+        style="@style/ItemTitleText"
         android:text="@string/check_in_empty_review_action" />
 
 </LinearLayout>

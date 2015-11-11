@@ -57,16 +57,18 @@ public class ActionActivity
     private Reminder mReminder;
 
     //UI components
-    private FrameLayout mHeroContainer;
     private ImageView mActionImage;
     private TextView mActionTitle;
     private TextView mActionDescription;
     private TextView mMoreInfoHeader;
     private TextView mMoreInfo;
+    private View mButtonWrapper;
+    private TextView mDidIt;
     private TextView mDoItNow;
     private ViewSwitcher mTickSwitcher;
 
     //Firewall
+    private boolean mActionFetched;
     private boolean mActionUpdated;
 
 
@@ -81,7 +83,7 @@ public class ActionActivity
         mReminder = null;
 
         //Fetch UI components
-        mHeroContainer = (FrameLayout)findViewById(R.id.action_hero_container);
+        FrameLayout heroContainer = (FrameLayout)findViewById(R.id.action_hero_container);
         RelativeLayout circleView = (RelativeLayout)findViewById(R.id.action_circle_view);
         mActionImage = (ImageView)findViewById(R.id.action_image);
         mActionTitle = (TextView)findViewById(R.id.action_title);
@@ -90,22 +92,11 @@ public class ActionActivity
         mMoreInfo = (TextView)findViewById(R.id.action_more_info);
         TextView timeOption = (TextView)findViewById(R.id.action_time_option);
         mTickSwitcher = (ViewSwitcher)findViewById(R.id.action_tick_switcher);
+        mButtonWrapper = findViewById(R.id.action_button_wrapper);
+        mDidIt = (TextView)findViewById(R.id.action_did_it);
         mDoItNow = (TextView)findViewById(R.id.action_do_it_now);
 
-        mHeroContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
-            @Override
-            @SuppressWarnings("deprecation")
-            public void onGlobalLayout(){
-                int width = mHeroContainer.getWidth();
-                mHeroContainer.getLayoutParams().height = (width * 2) / 3;
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
-                    mHeroContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                }
-                else{
-                    mHeroContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                }
-            }
-        });
+        heroContainer.getLayoutParams().height = CompassUtil.getScreenWidth(this)*2/3;
 
         //Animate the switcher.
         mTickSwitcher.setInAnimation(this, R.anim.action_switcher_fade_in);
@@ -113,7 +104,7 @@ public class ActionActivity
 
         //Listeners
         timeOption.setOnClickListener(this);
-        findViewById(R.id.action_did_it).setOnClickListener(this);
+        mDidIt.setOnClickListener(this);
 
         //Circle view
         GradientDrawable gradientDrawable = (GradientDrawable)circleView.getBackground();
@@ -129,11 +120,13 @@ public class ActionActivity
 
         //If the action wasn't provided via the intent it needs to be fetched
         if (mAction == null){
+            mActionFetched = true;
             timeOption.setText(R.string.action_snooze);
             mReminder = (Reminder)getIntent().getSerializableExtra(REMINDER_KEY);
             fetchAction(getIntent().getIntExtra(ACTION_ID_KEY, -1));
         }
         else{
+            mActionFetched = false;
             timeOption.setText(R.string.action_reschedule);
             populateUI();
         }
@@ -290,9 +283,30 @@ public class ActionActivity
             }
         }
 
+        mButtonWrapper.setVisibility(View.VISIBLE);
         if (!mAction.getExternalResource().isEmpty()){
-            mDoItNow.setVisibility(View.VISIBLE);
             mDoItNow.setOnClickListener(this);
+            mDoItNow.setText(R.string.action_do_it_now);
+        }
+        else{
+            if (mActionFetched){
+                mDoItNow.getLayoutParams().width = mDidIt.getMeasuredWidth();
+            }
+            else{
+                mDidIt.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
+                    @Override
+                    @SuppressWarnings("deprecation")
+                    public void onGlobalLayout(){
+                        mDoItNow.getLayoutParams().width = mDidIt.getMeasuredWidth();
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
+                            mDidIt.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                        }
+                        else{
+                            mDidIt.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        }
+                    }
+                });
+            }
         }
     }
 }
