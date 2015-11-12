@@ -33,18 +33,24 @@ import com.github.clans.fab.FloatingActionMenu;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
+import org.tndata.android.compass.adapter.SearchAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapterListener;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.task.GetContentTask;
 import org.tndata.android.compass.task.GetUserDataTask;
 import org.tndata.android.compass.task.UpdateProfileTask;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.OnScrollListenerHub;
 import org.tndata.android.compass.util.ParallaxEffect;
+import org.tndata.android.compass.util.Parser;
+
+import java.util.List;
 
 
 /**
@@ -65,13 +71,17 @@ public class MainActivity
                 MainFeedAdapterListener,
                 MenuItemCompat.OnActionExpandListener,
                 SearchView.OnQueryTextListener,
-                SearchView.OnCloseListener{
+                SearchView.OnCloseListener,
+                GetContentTask.GetContentListener{
 
-    //Request codes
+    //Activity request codes
     private static final int CATEGORIES_REQUEST_CODE = 4821;
     private static final int GOAL_REQUEST_CODE = 3486;
     private static final int ACTION_REQUEST_CODE = 4582;
     private static final int TRIGGER_REQUEST_CODE = 7631;
+
+    //Task request codes
+    private static final int SEARCH_REQUEST_CODE = 1;
 
 
     //A reference to the application class
@@ -82,6 +92,9 @@ public class MainActivity
     private SearchView mSearchView;
     private View mSearchWrapper;
     private RecyclerView mSearchList;
+    private SearchAdapter mSearchAdapter;
+    private int mLastSearchRequestCode;
+    private List<SearchResult> mSearchResults;
 
     //Drawer components
     private DrawerLayout mDrawerLayout;
@@ -114,6 +127,9 @@ public class MainActivity
         mSearchWrapper = findViewById(R.id.main_search_wrapper);
         mSearchList = (RecyclerView)findViewById(R.id.main_search_list);
         mSearchList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mSearchAdapter = new SearchAdapter(this);
+        mSearchList.setAdapter(mSearchAdapter);
+        mLastSearchRequestCode = SEARCH_REQUEST_CODE;
 
         //If this is pre L a different color scheme is applied
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
@@ -263,8 +279,29 @@ public class MainActivity
 
     @Override
     public boolean onQueryTextChange(String newText){
-
+        newText = newText.replace(" ", "%20");
+        String mUrl = Constants.BASE_URL + "search/?q=" + newText;
+        new GetContentTask(this, ++mLastSearchRequestCode).execute(mUrl, mApplication.getToken());
         return false;
+    }
+
+    @Override
+    public void onContentRetrieved(int requestCode, String content){
+        if (requestCode == mLastSearchRequestCode){
+            mSearchResults = new Parser().parseSearchResults(content);
+        }
+    }
+
+    @Override
+    public void onRequestComplete(int requestCode){
+        if (requestCode == mLastSearchRequestCode){
+            mSearchAdapter.updateDataSet(mSearchResults);
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode){
+
     }
 
     @Override
