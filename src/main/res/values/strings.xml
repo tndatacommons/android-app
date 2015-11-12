@@ -200,6 +200,7 @@
     <string name="activity_my_privacy">My Privacy</string>
 
     <!-- Search -->
+    <string name="search">Search</string>
     <string name="search_filter">Filter</string>
 
     <!-- Snooze stuff -->

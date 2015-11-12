@@ -1,5 +1,6 @@
 package org.tndata.android.compass.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,11 +18,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.ContextThemeWrapper;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.SearchView;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -57,7 +62,10 @@ public class MainActivity
                 SwipeRefreshLayout.OnRefreshListener,
                 GetUserDataTask.GetUserDataCallback,
                 DrawerAdapter.OnItemClickListener,
-                MainFeedAdapterListener{
+                MainFeedAdapterListener,
+                MenuItemCompat.OnActionExpandListener,
+                SearchView.OnQueryTextListener,
+                SearchView.OnCloseListener{
 
     //Request codes
     private static final int CATEGORIES_REQUEST_CODE = 4821;
@@ -68,6 +76,12 @@ public class MainActivity
 
     //A reference to the application class
     private CompassApplication mApplication;
+
+    //Search components
+    private MenuItem mSearchItem;
+    private SearchView mSearchView;
+    private View mSearchWrapper;
+    private RecyclerView mSearchList;
 
     //Drawer components
     private DrawerLayout mDrawerLayout;
@@ -96,6 +110,10 @@ public class MainActivity
         //Update the timezone and register with GCM
         new UpdateProfileTask(null).execute(mApplication.getUser());
         new GcmRegistration(this);
+
+        mSearchWrapper = findViewById(R.id.main_search_wrapper);
+        mSearchList = (RecyclerView)findViewById(R.id.main_search_list);
+        mSearchList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         //If this is pre L a different color scheme is applied
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
@@ -197,6 +215,56 @@ public class MainActivity
 
         //Set up the FAB menu
         populateMenu();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        mSearchItem = menu.findItem(R.id.search);
+        MenuItemCompat.setOnActionExpandListener(mSearchItem, this);
+
+        mSearchView = (SearchView)mSearchItem.getActionView();
+        mSearchView.setIconified(false);
+        mSearchView.setOnCloseListener(this);
+        mSearchView.setOnQueryTextListener(this);
+        mSearchView.clearFocus();
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onMenuItemActionExpand(MenuItem item){
+        mSearchView.requestFocus();
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        mSearchWrapper.setVisibility(View.VISIBLE);
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionCollapse(MenuItem item){
+        mSearchView.setQuery("", false);
+        mSearchView.clearFocus();
+        mSearchWrapper.setVisibility(View.GONE);
+        return true;
+    }
+
+    @Override
+    public boolean onClose(){
+        mSearchItem.collapseActionView();
+        mSearchWrapper.setVisibility(View.GONE);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query){
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText){
+
+        return false;
     }
 
     @Override
