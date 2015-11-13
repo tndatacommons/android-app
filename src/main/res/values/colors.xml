@@ -59,4 +59,7 @@
 
     <color name="signup_hint_color">#61000000</color>
 
+    <color name="main_toolbar_background_inactive">@android:color/transparent</color>
+    <color name="main_toolbar_background_focused">@color/white</color>
+
 </resources>

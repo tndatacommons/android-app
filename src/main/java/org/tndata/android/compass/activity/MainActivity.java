@@ -17,9 +17,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -30,6 +32,8 @@ import android.widget.SearchView;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
@@ -44,6 +48,7 @@ import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.task.GetContentTask;
 import org.tndata.android.compass.task.GetUserDataTask;
 import org.tndata.android.compass.task.UpdateProfileTask;
+import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.OnScrollListenerHub;
@@ -72,7 +77,9 @@ public class MainActivity
                 MenuItemCompat.OnActionExpandListener,
                 SearchView.OnQueryTextListener,
                 SearchView.OnCloseListener,
-                GetContentTask.GetContentListener{
+                GetContentTask.GetContentListener,
+                RecyclerView.OnItemTouchListener,
+                SearchAdapter.SearchAdapterListener{
 
     //Activity request codes
     private static final int CATEGORIES_REQUEST_CODE = 4821;
@@ -86,6 +93,8 @@ public class MainActivity
 
     //A reference to the application class
     private CompassApplication mApplication;
+
+    private Toolbar mToolbar;
 
     //Search components
     private MenuItem mSearchItem;
@@ -127,7 +136,7 @@ public class MainActivity
         mSearchWrapper = findViewById(R.id.main_search_wrapper);
         mSearchList = (RecyclerView)findViewById(R.id.main_search_list);
         mSearchList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mSearchAdapter = new SearchAdapter(this);
+        mSearchAdapter = new SearchAdapter(this, this);
         mSearchList.setAdapter(mSearchAdapter);
         mLastSearchRequestCode = SEARCH_REQUEST_CODE;
 
@@ -138,9 +147,9 @@ public class MainActivity
         }
 
         //Set up the toolbar
-        Toolbar toolbar = (Toolbar)findViewById(R.id.main_toolbar);
-        toolbar.setTitle("");
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar)findViewById(R.id.main_toolbar);
+        mToolbar.setTitle("");
+        setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -161,6 +170,7 @@ public class MainActivity
                 invalidateOptionsMenu();
             }
         };
+        //mDrawerToggle
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         RecyclerView drawerList = (RecyclerView)findViewById(R.id.main_drawer);
@@ -185,9 +195,33 @@ public class MainActivity
 
         //Create the hub and add to it all the items that need to be parallaxed
         OnScrollListenerHub hub = new OnScrollListenerHub();
+
         ParallaxEffect parallax = new ParallaxEffect(header, 0.5f);
         parallax.setItemDecoration(((MainFeedAdapter)mFeed.getAdapter()).getMainFeedPadding());
         hub.addOnScrollListener(parallax);
+
+        ParallaxEffect toolbarEffect = new ParallaxEffect(mToolbar, 1);
+        toolbarEffect.setItemDecoration(mAdapter.getMainFeedPadding());
+        toolbarEffect.setParallaxCondition(new ParallaxEffect.ParallaxCondition(){
+            @Override
+            protected boolean doParallax(){
+                int height = (int)((CompassUtil.getScreenWidth(MainActivity.this)*2/3)*0.6);
+                return -getRecyclerViewOffset() > height;
+            }
+
+            @Override
+            protected int getFixedState(){
+                return CompassUtil.getPixels(MainActivity.this, 10);
+            }
+
+            @Override
+            protected int getParallaxViewOffset(){
+                int height = (int)((CompassUtil.getScreenWidth(MainActivity.this)*2/3)*0.6);
+                return  height + getFixedState() + getRecyclerViewOffset();
+            }
+        });
+        hub.addOnScrollListener(toolbarEffect);
+
         hub.addOnScrollListener(new RecyclerView.OnScrollListener(){
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy){
@@ -253,7 +287,11 @@ public class MainActivity
         mSearchView.requestFocus();
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        mFeed.addOnItemTouchListener(this);
+        mRefresh.setEnabled(false);
         mSearchWrapper.setVisibility(View.VISIBLE);
+        mToolbar.setBackgroundColor(getResources().getColor(R.color.main_toolbar_background_focused));
         return true;
     }
 
@@ -261,14 +299,32 @@ public class MainActivity
     public boolean onMenuItemActionCollapse(MenuItem item){
         mSearchView.setQuery("", false);
         mSearchView.clearFocus();
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        mFeed.removeOnItemTouchListener(this);
+        if (mFeed.canScrollVertically(-1)){
+            mRefresh.setEnabled(false);
+        }
+        else{
+            mRefresh.setEnabled(true);
+        }
         mSearchWrapper.setVisibility(View.GONE);
+        mToolbar.setBackgroundColor(getResources().getColor(R.color.main_toolbar_background_inactive));
         return true;
     }
 
     @Override
     public boolean onClose(){
         mSearchItem.collapseActionView();
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        mFeed.removeOnItemTouchListener(this);
+        if (mFeed.canScrollVertically(-1)){
+            mRefresh.setEnabled(false);
+        }
+        else{
+            mRefresh.setEnabled(true);
+        }
         mSearchWrapper.setVisibility(View.GONE);
+        mToolbar.setBackgroundColor(getResources().getColor(R.color.main_toolbar_background_inactive));
         return true;
     }
 
@@ -279,14 +335,25 @@ public class MainActivity
 
     @Override
     public boolean onQueryTextChange(String newText){
-        newText = newText.replace(" ", "%20");
-        String mUrl = Constants.BASE_URL + "search/?q=" + newText;
-        new GetContentTask(this, ++mLastSearchRequestCode).execute(mUrl, mApplication.getToken());
+        if (newText.equals("")){
+            mLastSearchRequestCode++;
+        }
+        else{
+            newText = newText.replace(" ", "%20");
+            String mUrl = Constants.BASE_URL + "search/?q=" + newText;
+            new GetContentTask(this, ++mLastSearchRequestCode).execute(mUrl, mApplication.getToken());
+        }
         return false;
     }
 
     @Override
     public void onContentRetrieved(int requestCode, String content){
+        try{
+            Log.d("Serch", new JSONObject(content).toString(2));
+        }
+        catch (JSONException jsonx){
+
+        }
         if (requestCode == mLastSearchRequestCode){
             mSearchResults = new Parser().parseSearchResults(content);
         }
@@ -616,6 +683,32 @@ public class MainActivity
         }
         if (mRefresh.isRefreshing()){
             mRefresh.setRefreshing(false);
+        }
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e){
+        return true;
+    }
+
+    @Override
+    public void onTouchEvent(RecyclerView rv, MotionEvent e){
+
+    }
+
+    @Override
+    public void onSearchResultSelected(SearchResult result){
+        if (result.isCategory()){
+
+        }
+        else if (result.isGoal()){
+
+        }
+        else if (result.isBehavior()){
+
+        }
+        else if (result.isAction()){
+
         }
     }
 }

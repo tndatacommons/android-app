@@ -29,6 +29,7 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.task.AddGoalTask;
 import org.tndata.android.compass.task.DeleteGoalTask;
+import org.tndata.android.compass.task.GetContentTask;
 import org.tndata.android.compass.task.GoalLoaderTask;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
@@ -51,7 +52,11 @@ public class ChooseGoalsActivity
                 ChooseGoalsAdapter.ChooseGoalsListener,
                 MenuItemCompat.OnActionExpandListener,
                 SearchView.OnQueryTextListener,
-                SearchView.OnCloseListener{
+                SearchView.OnCloseListener,
+                GetContentTask.GetContentListener{
+
+    public static final String CATEGORY_ID_KEY = "org.tndata.compass.ChooseGoals.CategoryId";
+
 
     private CompassApplication mApplication;
 
@@ -75,10 +80,11 @@ public class ChooseGoalsActivity
         mApplication = (CompassApplication)getApplication();
 
         mCategory = (Category)getIntent().getSerializableExtra("category");
-        List<Category> categories = mApplication.getUserData().getCategories();
-        int index = categories.indexOf(mCategory);
-        if (index != -1){
-            mCategory = categories.get(index);
+        if (mCategory != null){
+            mCategory = mApplication.getUserData().getCategory(mCategory);
+        }
+        else{
+            fetchCategory(getIntent().getIntExtra(CATEGORY_ID_KEY, -1));
         }
 
         mToolbar = (Toolbar)findViewById(R.id.choose_goals_toolbar);
@@ -110,6 +116,10 @@ public class ChooseGoalsActivity
         }
 
         loadGoals();
+    }
+
+    private void fetchCategory(int categoryId){
+
     }
 
     @Override
@@ -276,5 +286,20 @@ public class ChooseGoalsActivity
             mToolbar.setBackground(drawable);
         }
         mHeaderView.setTranslationY(-offset*0.5f);
+    }
+
+    @Override
+    public void onContentRetrieved(int requestCode, String content){
+
+    }
+
+    @Override
+    public void onRequestComplete(int requestCode){
+
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode){
+
     }
 }

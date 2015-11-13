@@ -137,6 +137,7 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
         else{
             params.topMargin = getParallaxViewOffset();
             if (mParallaxCondition != null){
+                params.topMargin = mParallaxCondition.getParallaxViewOffset();
                 mParallaxCondition.onStateChanged(params.topMargin);
             }
         }
@@ -150,7 +151,7 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
     public static abstract class ParallaxCondition{
         private ParallaxEffect mParallaxEffect;
 
-        protected final int getParallaxViewOffset(){
+        protected int getParallaxViewOffset(){
             return mParallaxEffect.getParallaxViewOffset();
         }
 

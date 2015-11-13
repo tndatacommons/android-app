@@ -16,4 +16,9 @@
         <item name="colorAccent">@color/grow_accent_login</item>
     </style>
 
+    <style name="MainTheme" parent="CustomActionBarTheme">
+        <item name="android:actionMenuTextColor">@color/actionbar_text</item>
+        <item name="drawerArrowStyle">@style/MainDrawerArrowStyle</item>
+    </style>
+
 </resources>

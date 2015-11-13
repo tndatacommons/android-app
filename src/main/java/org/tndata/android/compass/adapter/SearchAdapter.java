@@ -20,11 +20,13 @@ import java.util.List;
  */
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>{
     private Context mContext;
+    private SearchAdapterListener mListener;
     private List<SearchResult> mDataSet;
 
 
-    public SearchAdapter(@NonNull Context context){
+    public SearchAdapter(@NonNull Context context, @NonNull SearchAdapterListener listener){
         mContext = context;
+        mListener = listener;
         mDataSet = new ArrayList<>();
     }
 
@@ -49,13 +51,23 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         return mDataSet.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mTitle;
 
 
         public ViewHolder(View rootView){
             super(rootView);
             mTitle = (TextView)rootView.findViewById(R.id.search_result_title);
+            rootView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v){
+            mListener.onSearchResultSelected(mDataSet.get(getAdapterPosition()));
+        }
+    }
+
+    public interface SearchAdapterListener{
+        void onSearchResultSelected(SearchResult result);
     }
 }
