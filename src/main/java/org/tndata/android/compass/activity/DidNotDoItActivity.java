@@ -12,7 +12,10 @@ import org.tndata.android.compass.util.NotificationUtil;
 
 
 /**
- * Created by isma on 11/16/15.
+ * Dialog activity to confirm did not do it events.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class DidNotDoItActivity extends AppCompatActivity implements View.OnClickListener{
     private static final int SNOOZE_REQUEST_CODE = 1874;
@@ -48,6 +51,8 @@ public class DidNotDoItActivity extends AppCompatActivity implements View.OnClic
             case R.id.did_not_do_it_later:
                 Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
                         .putExtra(NotificationUtil.REMINDER_KEY, mReminder);
+                //The activity terminates only if the snooze was carried out, so it needs
+                //  to wait to the response to make that call
                 startActivityForResult(snoozeIntent, SNOOZE_REQUEST_CODE);
                 break;
 
