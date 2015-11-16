@@ -16,6 +16,7 @@ import android.support.v4.app.NotificationCompat;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ActionActivity;
 import org.tndata.android.compass.activity.CheckInActivity;
+import org.tndata.android.compass.activity.DidNotDoItActivity;
 import org.tndata.android.compass.activity.PackageEnrollmentActivity;
 import org.tndata.android.compass.activity.SnoozeActivity;
 import org.tndata.android.compass.fragment.NotificationSettingsFragment;
@@ -33,10 +34,15 @@ import java.util.Calendar;
  * @version 1.0.0
  */
 public final class NotificationUtil{
+    //Data keys generally common to notifications
+    public static final String REMINDER_KEY = "org.tndata.compass.Notification.Reminder";
+
+    //Notification tags
     public static final String NOTIFICATION_TYPE_ACTION_TAG = "org.tndata.compass.ActionNotification";
     public static final String NOTIFICATION_TYPE_ENROLLMENT_TAG = "org.tndata.compass.EnrollmentNotification";
     public static final String NOTIFICATION_TYPE_CHECK_IN_TAG = "org.tndata.compass.CheckInNotification";
 
+    //Notification ids for notification tags with more than one type
     public static final int NOTIFICATION_TYPE_CHECK_IN_REVIEW_ID = 1;
     public static final int NOTIFICATION_TYPE_CHECK_IN_FEEDBACK_ID = 2;
 
@@ -108,6 +114,7 @@ public final class NotificationUtil{
 
         Reminder reminder = new Reminder(notificationId, -1, title, message, actionId, userMappingId);
 
+        //Action intent; what happens when the user taps the notification
         Intent intent = new Intent(context, ActionActivity.class)
                 .putExtra(ActionActivity.ACTION_ID_KEY, actionId)
                 .putExtra(ActionActivity.REMINDER_KEY, reminder);
@@ -115,38 +122,50 @@ public final class NotificationUtil{
         PendingIntent contentIntent = PendingIntent.getActivity(context,
                 (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        //Dismiss intent; what happens when the user dismisses the notification
         Intent dismissIntent = new Intent(context, ActionReportService.class)
-                .putExtra(ActionReportService.ACTION_MAPPING_ID_KEY, userMappingId)
+                .putExtra(REMINDER_KEY, reminder)
                 .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_DISMISSED);
 
         PendingIntent dismissedPendingIntent = PendingIntent.getService(context,
                 (int)System.currentTimeMillis(), dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Intent snoozeIntent = new Intent(context, SnoozeActivity.class)
-                .putExtra(SnoozeActivity.REMINDER_KEY, reminder)
-                .putExtra(SnoozeActivity.PUSH_NOTIFICATION_ID_KEY, actionId)
-                .putExtra(SnoozeActivity.NOTIFICATION_ID_KEY, notificationId);
-
-        PendingIntent snoozePendingIntent = PendingIntent.getActivity(context,
-                (int)System.currentTimeMillis(), snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        String later = context.getString(R.string.later_title);
-
+        //Did it intent; what happens when the user taps the "yes" action
         Intent didItIntent = new Intent(context, ActionReportService.class)
-                .putExtra(ActionReportService.PUSH_NOTIFICATION_ID_KEY, actionId)
-                .putExtra(ActionReportService.ACTION_MAPPING_ID_KEY, userMappingId)
+                .putExtra(REMINDER_KEY, reminder)
                 .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED);
 
         PendingIntent didItPendingIntent = PendingIntent.getService(context,
                 (int)System.currentTimeMillis(), didItIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        String didIt = context.getString(R.string.did_it_title);
+        String didIt = context.getString(R.string.action_notification_yes);
 
+        //Didn't do it intent; what happens when the user taps the "no" action
+        Intent didNotDoItIntent = new Intent(context, DidNotDoItActivity.class)
+                .putExtra(REMINDER_KEY, reminder);
+
+        PendingIntent didNotDoItPendingIntent = PendingIntent.getActivity(context,
+                (int)System.currentTimeMillis(), didNotDoItIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        String didNotDoIt = context.getString(R.string.action_notification_no);
+
+        //Snooze intent; what happens when the user taps the "later" action
+        Intent snoozeIntent = new Intent(context, SnoozeActivity.class)
+                .putExtra(REMINDER_KEY, reminder);
+
+        PendingIntent snoozePendingIntent = PendingIntent.getActivity(context,
+                (int)System.currentTimeMillis(), snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        String later = context.getString(R.string.action_notification_later);
+
+        //Generate the notification and push it
         Notification notification = getBuilder(context, title, message)
+                .addAction(R.drawable.ic_thumb_up_white, didIt, didItPendingIntent)
+                .addAction(R.drawable.ic_thumb_down_white, didNotDoIt, didNotDoItPendingIntent)
                 .addAction(R.drawable.ic_snooze, later, snoozePendingIntent)
-                .addAction(R.drawable.ic_check, didIt, didItPendingIntent)
                 .setContentIntent(contentIntent)
                 .setDeleteIntent(dismissedPendingIntent)
+                .setAutoCancel(false)
                 .build();
 
         ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))

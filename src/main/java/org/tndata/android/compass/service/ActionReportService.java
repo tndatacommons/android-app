@@ -1,112 +1,89 @@
 package org.tndata.android.compass.service;
 
+import android.app.IntentService;
 import android.app.NotificationManager;
-import android.app.Service;
 import android.content.Intent;
-import android.os.IBinder;
+import android.util.Log;
 
-import org.tndata.android.compass.task.ActionReportTask;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.tndata.android.compass.CompassApplication;
+import org.tndata.android.compass.model.Reminder;
+import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.util.NetworkHelper;
 import org.tndata.android.compass.util.NotificationUtil;
 
-import java.util.LinkedList;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
  * Service that marks actions as complete in the backend.
  *
  * @author Ismael Alonso
- * @version 1.0.0
+ * @version 2.0.0
  */
-public class ActionReportService
-        extends Service
-        implements ActionReportTask.CompleteActionInterface{
+public class ActionReportService extends IntentService{
+    private static final String TAG = "ActionReportService";
 
-    public static final String PUSH_NOTIFICATION_ID_KEY = "org.tndata.compass.CompleteAction.NotificationId";
-    public static final String ACTION_MAPPING_ID_KEY = "org.tndata.compass.CompleteAction.MappingId";
+    public static final String ACTION_ID_KEY = "org.tndata.compass.CompleteAction.ActionId";
+    public static final String MAPPING_ID_KEY = "org.tndata.compass.CompleteAction.MappingId";
     public static final String STATE_KEY = "org.tndata.compass.CompleteAction.State";
 
     public static final String STATE_COMPLETED = "completed";
+    public static final String STATE_UNCOMPLETED = "uncompleted";
     public static final String STATE_SNOOZED = "snoozed";
     public static final String STATE_DISMISSED = "dismissed";
 
-    private LinkedList<Integer> mActions;
-    private LinkedList<String> mStates;
-    private int requestCount;
-
-
-    @Override
-    public void onCreate(){
-        super.onCreate();
-        mActions = new LinkedList<>();
-        mStates = new LinkedList<>();
-        requestCount = 0;
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId){
-        int notificationId = intent.getIntExtra(PUSH_NOTIFICATION_ID_KEY, -1);
-        if (notificationId != -1){
-            NotificationManager manager = ((NotificationManager)getSystemService(NOTIFICATION_SERVICE));
-            manager.cancel(NotificationUtil.NOTIFICATION_TYPE_ACTION_TAG, notificationId);
-        }
-
-        int actionMappingId = intent.getIntExtra(ACTION_MAPPING_ID_KEY, -1);
-        String state = intent.getStringExtra(STATE_KEY);
-        if (actionMappingId != -1 && state != null){
-            if (isQueueEmpty()){
-                queueAction(actionMappingId, state);
-                new ActionReportTask(this, this).execute();
-            }
-            else{
-                queueAction(actionMappingId, state);
-            }
-        }
-
-        if (isQueueEmpty()){
-            stopSelf();
-        }
-
-        return START_NOT_STICKY;
-    }
 
     /**
-     * Queues an action to be marked as complete.
-     *
-     * @param actionId the action to be marked as complete.
+     * Creates an IntentService. Invoked by your subclass's constructor.
      */
-    public synchronized void queueAction(int actionId, String state){
-        mActions.addLast(actionId);
-        mStates.addLast(state);
+    public ActionReportService(){
+        super(TAG);
     }
 
     @Override
-    public synchronized boolean isQueueEmpty(){
-        return mActions.isEmpty();
-    }
+    protected void onHandleIntent(Intent intent){
+        int mappingId = intent.getIntExtra(MAPPING_ID_KEY, -1);
+        int actionId = intent.getIntExtra(ACTION_ID_KEY, -1);
+        Reminder reminder = (Reminder)intent.getSerializableExtra(NotificationUtil.REMINDER_KEY);
 
-    @Override
-    public synchronized int dequeueAction(){
-        return mActions.removeFirst();
-    }
-
-    @Override
-    public synchronized String dequeueState(){
-        return mStates.removeFirst();
-    }
-
-    @Override
-    public synchronized void onTaskComplete(){
-        if (!isQueueEmpty()){
-            new ActionReportTask(this, this).execute();
+        if (reminder != null){
+            mappingId = reminder.getUserMappingId();
+            actionId = reminder.getObjectId();
         }
-        else if (requestCount == 0){
-            stopSelf();
-        }
-    }
 
-    @Override
-    public IBinder onBind(Intent intent){
-        //Unused, this is not a bound service.
-        return null;
+        NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        manager.cancel(NotificationUtil.NOTIFICATION_TYPE_ACTION_TAG, actionId);
+
+        String url = Constants.BASE_URL + "users/actions/" + mappingId + "/complete/";
+
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Accept", "application/json");
+        headers.put("Content-type", "application/json");
+        headers.put("Authorization", "Token " + ((CompassApplication)getApplication()).getToken());
+
+        JSONObject body = new JSONObject();
+        try{
+            body.put("state", intent.getStringExtra(STATE_KEY));
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        Log.d(TAG, body.toString());
+
+        //Post to the URL with the given headers and an empty body object
+        InputStream stream = NetworkHelper.httpPostStream(url, headers, body.toString());
+        if (stream != null){
+            try{
+                stream.close();
+            }
+            catch (IOException iox){
+                iox.printStackTrace();
+            }
+        }
     }
 }

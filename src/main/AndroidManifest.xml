@@ -249,6 +249,11 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".activity.DidNotDoItActivity"
+            android:theme="@style/Theme.AppCompat.Light.Dialog"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".activity.PlacesActivity"
             android:label="Places"
             android:screenOrientation="portrait" >
@@ -297,8 +302,7 @@
             android:name="org.tndata.android.compass.service.GcmIntentService"
             android:exported="false" />
 
-        <service
-            android:name=".service.ActionReportService" />
+        <service android:name=".service.ActionReportService" />
 
         <service android:enabled="true" android:name=".service.SnoozeService" />
 

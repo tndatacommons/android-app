@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -26,6 +27,7 @@ import org.tndata.android.compass.task.GetUserActionsTask;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ImageLoader;
+import org.tndata.android.compass.util.NotificationUtil;
 
 import java.util.List;
 
@@ -186,7 +188,7 @@ public class ActionActivity
     private void snooze(){
         if (mAction != null && !mActionUpdated){
             Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
-                    .putExtra(SnoozeActivity.REMINDER_KEY, mReminder);
+                    .putExtra(NotificationUtil.REMINDER_KEY, mReminder);
             startActivityForResult(snoozeIntent, REQUEST_CODE);
         }
     }
@@ -230,7 +232,8 @@ public class ActionActivity
             mActionUpdated = true;
 
             Intent completeAction = new Intent(this, ActionReportService.class)
-                    .putExtra(ActionReportService.ACTION_MAPPING_ID_KEY, mAction.getMappingId())
+                    .putExtra(ActionReportService.ACTION_ID_KEY, mAction.getId())
+                    .putExtra(ActionReportService.MAPPING_ID_KEY, mAction.getMappingId())
                     .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED);
             startService(completeAction);
 
@@ -290,14 +293,18 @@ public class ActionActivity
         }
         else{
             if (mActionFetched){
-                mDoItNow.getLayoutParams().width = mDidIt.getMeasuredWidth();
+                ViewGroup.LayoutParams params = mDoItNow.getLayoutParams();
+                params.width = mDidIt.getWidth();
+                mDoItNow.setLayoutParams(params);
             }
             else{
                 mDidIt.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
                     @Override
                     @SuppressWarnings("deprecation")
                     public void onGlobalLayout(){
-                        mDoItNow.getLayoutParams().width = mDidIt.getMeasuredWidth();
+                        ViewGroup.LayoutParams params = mDoItNow.getLayoutParams();
+                        params.width = mDidIt.getWidth();
+                        mDoItNow.setLayoutParams(params);
                         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
                             mDidIt.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                         }
