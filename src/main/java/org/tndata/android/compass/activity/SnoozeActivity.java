@@ -43,18 +43,12 @@ public class SnoozeActivity
                 RadialTimePickerDialog.OnTimeSetListener,
                 DialogInterface.OnClickListener{
 
-    public static final String REMINDER_KEY = "org.tndata.compass.Snooze.Reminder";
-    public static final String NOTIFICATION_ID_KEY = "org.tndata.compass.Snooze.NotificationId";
-    public static final String PUSH_NOTIFICATION_ID_KEY = "org.tndata.compass.Snooze.PushNotificationId";
-
     private static final String TAG = "SnoozeActivity";
 
     private static final int PLACES_REQUEST_CODE = 600;
 
 
     private Reminder mReminder;
-    private int notificationId;
-    private int pushNotificationId;
     private int mYear, mMonth, mDay;
 
     private List<Place> mPlaces;
@@ -66,12 +60,7 @@ public class SnoozeActivity
         setContentView(R.layout.activity_snooze);
         setTitle(R.string.later_title);
 
-        mReminder = (Reminder)getIntent().getSerializableExtra(REMINDER_KEY);
-        notificationId = getIntent().getIntExtra(NOTIFICATION_ID_KEY, -1);
-        pushNotificationId = getIntent().getIntExtra(PUSH_NOTIFICATION_ID_KEY, -1);
-        if (notificationId == -1){
-            notificationId = mReminder.getNotificationId();
-        }
+        mReminder = (Reminder)getIntent().getSerializableExtra(NotificationUtil.REMINDER_KEY);
 
         ListView list = (ListView)findViewById(R.id.snooze_list);
         list.setAdapter(new SnoozeAdapter(this));
@@ -191,8 +180,8 @@ public class SnoozeActivity
 
         //Fire up the service with the appropriate parameters
         Intent snooze = new Intent(this, SnoozeService.class);
-        snooze.putExtra(SnoozeService.NOTIFICATION_ID_KEY, notificationId);
-        snooze.putExtra(SnoozeService.PUSH_NOTIFICATION_ID_KEY, pushNotificationId);
+        snooze.putExtra(SnoozeService.NOTIFICATION_ID_KEY, mReminder.getNotificationId());
+        snooze.putExtra(SnoozeService.PUSH_NOTIFICATION_ID_KEY, mReminder.getObjectId());
         snooze.putExtra(SnoozeService.DATE_KEY, date);
         snooze.putExtra(SnoozeService.TIME_KEY, time);
         startService(snooze);
@@ -219,7 +208,7 @@ public class SnoozeActivity
             dbHelper.close();
 
             NotificationManager manager = ((NotificationManager)getSystemService(NOTIFICATION_SERVICE));
-            manager.cancel(NotificationUtil.NOTIFICATION_TYPE_ACTION_TAG, pushNotificationId);
+            manager.cancel(NotificationUtil.NOTIFICATION_TYPE_ACTION_TAG, mReminder.getObjectId());
 
             startService(new Intent(this, LocationNotificationService.class));
 
@@ -246,7 +235,7 @@ public class SnoozeActivity
 
     private void reportSnooze(){
         Intent report = new Intent(this, ActionReportService.class)
-                .putExtra(ActionReportService.ACTION_MAPPING_ID_KEY, mReminder.getUserMappingId())
+                .putExtra(NotificationUtil.REMINDER_KEY, mReminder)
                 .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_SNOOZED);
         startService(report);
     }

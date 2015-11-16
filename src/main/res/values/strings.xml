@@ -202,6 +202,18 @@
     <!-- Search -->
     <string name="search_filter">Filter</string>
 
+    <!-- Action notification -->
+    <string name="action_notification_yes">Yes</string>
+    <string name="action_notification_no">No</string>
+    <string name="action_notification_later">Later</string>
+
+    <!-- Didn't do it -->
+    <string name="did_not_do_it_title">Are you sure?</string>
+    <string name="did_not_do_it_header">Try to keep going.</string>
+    <string name="did_not_do_it_ok">OK, I did it.</string>
+    <string name="did_not_do_it_later">Later.</string>
+    <string name="did_not_do_it_no">Not this time.</string>
+
     <!-- Snooze stuff -->
     <string name="later_title">Later</string>
     <string name="later_in_an_hour">In an hour</string>

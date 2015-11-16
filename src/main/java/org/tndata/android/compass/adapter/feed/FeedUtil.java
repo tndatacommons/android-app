@@ -94,7 +94,7 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
      */
     void didIt(@NonNull Context context, @NonNull Action action){
         Intent completeAction = new Intent(context, ActionReportService.class)
-                .putExtra(ActionReportService.ACTION_MAPPING_ID_KEY, action.getMappingId())
+                .putExtra(ActionReportService.MAPPING_ID_KEY, action.getMappingId())
                 .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED);
         context.startService(completeAction);
     }
