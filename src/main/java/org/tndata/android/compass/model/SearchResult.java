@@ -17,6 +17,7 @@ public class SearchResult{
     private int id;
     private String title;
     private String description;
+    private String highlighted;
     private String text;
     private String updated_on;
 
@@ -43,5 +44,9 @@ public class SearchResult{
 
     public String getTitle(){
         return title;
+    }
+
+    public String getHighlighted(){
+        return highlighted;
     }
 }

@@ -702,7 +702,9 @@ public class MainActivity
 
         }
         else if (result.isGoal()){
-
+            Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
+                    .putExtra(ChooseBehaviorsActivity.GOAL_ID_KEY, result.getId());
+            startActivity(chooseBehaviors);
         }
         else if (result.isBehavior()){
 

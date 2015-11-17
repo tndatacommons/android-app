@@ -498,6 +498,22 @@ public class Parser{
         return results;
     }
 
+    public Goal parseGoal(String src){
+        Goal goal = gson.fromJson(src, Goal.class);
+        try{
+            List<Category> categories = new ArrayList<>();
+            goal.setCategories(categories);
+            JSONArray categoriesArray = new JSONObject(src).getJSONArray("categories");
+            for (int i = 0; i < categoriesArray.length(); i++){
+                categories.add(gson.fromJson(categoriesArray.getString(i), Category.class));
+            }
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return goal;
+    }
+
     public Gson getGson(){
         return gson;
     }

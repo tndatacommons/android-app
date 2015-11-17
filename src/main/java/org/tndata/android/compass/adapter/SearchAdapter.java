@@ -3,6 +3,7 @@ package org.tndata.android.compass.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position){
         holder.mTitle.setText(mDataSet.get(position).getTitle());
+        holder.mSummary.setText(Html.fromHtml(mDataSet.get(position).getHighlighted().replace("\n", "<br>")));
     }
 
     @Override
@@ -53,11 +55,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mTitle;
+        private TextView mSummary;
 
 
         public ViewHolder(View rootView){
             super(rootView);
             mTitle = (TextView)rootView.findViewById(R.id.search_result_title);
+            mSummary = (TextView)rootView.findViewById(R.id.search_result_summary);
             rootView.setOnClickListener(this);
         }
 
