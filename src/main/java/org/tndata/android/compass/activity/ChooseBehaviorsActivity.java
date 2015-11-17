@@ -142,6 +142,11 @@ public class ChooseBehaviorsActivity
         }
     }
 
+    /**
+     * Retrieves a gal from the database.
+     *
+     * @param goalId the id of the goal to be fetched.
+     */
     private void fetchGoal(int goalId){
         Log.d(TAG, "Fetching goal: " + goalId);
         String url = Constants.BASE_URL + "goals/" + goalId + "/";
@@ -175,6 +180,9 @@ public class ChooseBehaviorsActivity
 
     }
 
+    /**
+     * Sets the category and the user goal properly.
+     */
     public void setCategoryAndUserGoal(){
         Goal userGoal = mApplication.getUserData().getGoal(mGoal);
         if (userGoal != null){
@@ -197,6 +205,9 @@ public class ChooseBehaviorsActivity
         }
     }
 
+    /**
+     * Sets the adapter once everything else is in place.
+     */
     private void setAdapter(){
         mAdapter = new ChooseBehaviorsAdapter(this, this, mApplication, mBehaviorList, mCategory, mGoal, isGoalSelected());
         mBehaviorList.setAdapter(mAdapter);

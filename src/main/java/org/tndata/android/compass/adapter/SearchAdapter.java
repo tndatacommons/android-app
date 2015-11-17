@@ -17,7 +17,10 @@ import java.util.List;
 
 
 /**
- * Created by isma on 11/12/15.
+ * Adapter for the search interface.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>{
     private Context mContext;
@@ -25,6 +28,12 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     private List<SearchResult> mDataSet;
 
 
+    /**
+     * Constructor.
+     *
+     * @param context a reference to the context.
+     * @param listener the listener object.
+     */
     public SearchAdapter(@NonNull Context context, @NonNull SearchAdapterListener listener){
         mContext = context;
         mListener = listener;
@@ -56,11 +65,23 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         return mDataSet.size();
     }
 
+
+    /**
+     * Holder for a search result interface.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mTitle;
         private TextView mSummary;
 
 
+        /**
+         * Constructor.
+         *
+         * @param rootView the root view.
+         */
         public ViewHolder(View rootView){
             super(rootView);
             mTitle = (TextView)rootView.findViewById(R.id.search_result_title);
@@ -74,7 +95,19 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         }
     }
 
+
+    /**
+     * Listener interface for the search adapter.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface SearchAdapterListener{
+        /**
+         * Called when an item is tapped.
+         *
+         * @param result the result tapped.
+         */
         void onSearchResultSelected(SearchResult result);
     }
 }
