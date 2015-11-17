@@ -33,11 +33,13 @@ import org.tndata.android.compass.task.AddGoalTask;
 import org.tndata.android.compass.task.BehaviorLoaderTask;
 import org.tndata.android.compass.task.BehaviorLoaderTask.BehaviorLoaderListener;
 import org.tndata.android.compass.task.DeleteBehaviorTask;
+import org.tndata.android.compass.task.GetContentTask;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.util.Parser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +54,7 @@ import java.util.List;
 public class ChooseBehaviorsActivity
         extends AppCompatActivity
         implements
+                GetContentTask.GetContentListener,
                 BehaviorLoaderListener,
                 AddBehaviorTask.AddBehaviorsTaskListener,
                 AddGoalTask.AddGoalsTaskListener,
@@ -64,6 +67,10 @@ public class ChooseBehaviorsActivity
     //Bundle keys
     public static final String CATEGORY_KEY = "org.tndata.compass.ChooseBehaviors.Category";
     public static final String GOAL_KEY = "org.tndata.compass.ChooseBehaviors.Goal";
+    public static final String GOAL_ID_KEY = "org.tndata.compass.ChooseBehaviors.GoalId";
+
+    //Request codes
+    private static final int GET_GOAL_REQUEST_CODE = 1;
 
     //Activity tag
     private static final String TAG = "ChooseBehaviorsActivity";
@@ -79,50 +86,17 @@ public class ChooseBehaviorsActivity
     private Goal mGoal;
     private ChooseBehaviorsAdapter mAdapter;
     private View mHeaderView;
+    private RecyclerView mBehaviorList;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_behaviors);
-
         mApplication = (CompassApplication)getApplication();
-
-        //TODO remove the use of old keys in favor of the new ones from the app
-        //Pull the goal, try with the new key first, if that fails, try the old one, then log
-        mGoal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
-        if (mGoal == null){
-            mGoal = (Goal)getIntent().getSerializableExtra("goal");
-        }
-        Log.d(TAG, mGoal.toString());
-
-        //Pull the category, try with the new key first, if that fails try the old, of that
-        //  fails as well, pull it from the goal
-        mCategory = (Category)getIntent().getSerializableExtra(CATEGORY_KEY);
-        if (mCategory == null){
-            mCategory = (Category)getIntent().getSerializableExtra("category");
-            if (mCategory == null){
-                mCategory = mGoal.getPrimaryCategory();
-                if (mCategory == null){
-                    Goal goal = mApplication.getUserData().getGoal(mGoal);
-                    if (goal.getCategories() != null && !goal.getCategories().isEmpty()){
-                        mCategory = goal.getCategories().get(0);
-                    }
-                }
-            }
-        }
-
-        //Retrieve the user goal if it exists, since it is the one that contains
-        //  the information regarding the custom trigger allowance.
-        List<Goal> goals = mApplication.getUserData().getGoals();
-        int index = goals.indexOf(mGoal);
-        if (index != -1){
-            mGoal = goals.get(index);
-        }
 
         //Get and set the toolbar
         mToolbar = (Toolbar)findViewById(R.id.choose_behaviors_toolbar);
-        mToolbar.setTitle(mGoal.getTitle());
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null){
@@ -132,30 +106,119 @@ public class ChooseBehaviorsActivity
         mHeaderView = findViewById(R.id.choose_behaviors_material_view);
 
         //Set the recycler view
-        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.choose_behaviors_list);
+        mBehaviorList = (RecyclerView)findViewById(R.id.choose_behaviors_list);
         HeaderLayoutManagerFixed manager = new HeaderLayoutManagerFixed(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.addItemDecoration(new SpacingItemDecoration(this, 10));
-        recyclerView.setLayoutManager(manager);
-        recyclerView.setHasFixedSize(true);
+        mBehaviorList.addItemDecoration(new SpacingItemDecoration(this, 10));
+        mBehaviorList.setLayoutManager(manager);
+        mBehaviorList.setHasFixedSize(true);
 
-        mAdapter = new ChooseBehaviorsAdapter(this, this, mApplication, recyclerView, mCategory, mGoal, isGoalSelected());
-        recyclerView.setAdapter(mAdapter);
-        if (mCategory != null && !mCategory.getColor().isEmpty()){
-            mHeaderView.setBackgroundColor(Color.parseColor(mCategory.getColor()));
-            mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
+        //TODO remove the use of old keys in favor of the new ones from the app
+        //Pull the goal, try with the new key first, if that fails, try the old one, then log
+        mGoal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
+        if (mGoal == null){
+            mGoal = (Goal)getIntent().getSerializableExtra("goal");
         }
 
-        new BehaviorLoaderTask(this).execute(mApplication.getToken(), String.valueOf(mGoal.getId()));
+        if (mGoal == null){
+            fetchGoal(getIntent().getIntExtra(GOAL_ID_KEY, -1));
+        }
+        else{
+            mToolbar.setTitle(mGoal.getTitle());
+            setCategoryAndUserGoal();
+            setAdapter();
+            fetchBehaviors();
+        }
     }
 
     @Override
     protected void onResume(){
         super.onResume();
-        if (isGoalSelected()){
-            mAdapter.disableAddGoalButton();
+        if (mAdapter != null){
+            if (isGoalSelected()){
+                mAdapter.disableAddGoalButton();
+            }
+            mAdapter.notifyDataSetChanged();
         }
-        mAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * Retrieves a gal from the database.
+     *
+     * @param goalId the id of the goal to be fetched.
+     */
+    private void fetchGoal(int goalId){
+        Log.d(TAG, "Fetching goal: " + goalId);
+        String url = Constants.BASE_URL + "goals/" + goalId + "/";
+        new GetContentTask(this, GET_GOAL_REQUEST_CODE).execute(url, mApplication.getToken());
+    }
+
+    @Override
+    public void onContentRetrieved(int requestCode, String content){
+        mGoal = new Parser().parseGoal(content);
+        for (Category category:mGoal.getCategories()){
+            if (mApplication.getUserData().getCategories().contains(category)){
+                mGoal.setPrimaryCategory(category);
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onRequestComplete(int requestCode){
+        if (requestCode == GET_GOAL_REQUEST_CODE){
+            mToolbar.setTitle(mGoal.getTitle());
+            setCategoryAndUserGoal();
+            setAdapter();
+            fetchBehaviors();
+            mSearchItem.setVisible(true);
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode){
+
+    }
+
+    /**
+     * Sets the category and the user goal properly.
+     */
+    public void setCategoryAndUserGoal(){
+        Goal userGoal = mApplication.getUserData().getGoal(mGoal);
+        if (userGoal != null){
+            mGoal = userGoal;
+        }
+
+        //Pull the category, try with the new key first, if that fails try the old, of that
+        //  fails as well, pull it from the goal
+        mCategory = (Category)getIntent().getSerializableExtra(CATEGORY_KEY);
+        if (mCategory == null){
+            mCategory = (Category)getIntent().getSerializableExtra("category");
+            if (mCategory == null){
+                mCategory = mGoal.getPrimaryCategory();
+                if (mCategory == null){
+                    if (mGoal.getCategories() != null && !mGoal.getCategories().isEmpty()){
+                        mCategory = mGoal.getCategories().get(0);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets the adapter once everything else is in place.
+     */
+    private void setAdapter(){
+        mAdapter = new ChooseBehaviorsAdapter(this, this, mApplication, mBehaviorList, mCategory, mGoal, isGoalSelected());
+        mBehaviorList.setAdapter(mAdapter);
+        if (mCategory != null && !mCategory.getColor().isEmpty()){
+            mHeaderView.setBackgroundColor(Color.parseColor(mCategory.getColor()));
+            mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
+        }
+    }
+
+    private void fetchBehaviors(){
+        new BehaviorLoaderTask(this).execute(mApplication.getToken(), String.valueOf(mGoal.getId()));
     }
 
     private boolean isGoalSelected(){
@@ -166,6 +229,7 @@ public class ChooseBehaviorsActivity
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_filter, menu);
         mSearchItem = menu.findItem(R.id.filter);
+        mSearchItem.setVisible(false);
         MenuItemCompat.setOnActionExpandListener(mSearchItem, this);
 
         mSearchView = (SearchView)mSearchItem.getActionView();
@@ -216,7 +280,7 @@ public class ChooseBehaviorsActivity
         mGoal.setPrimaryCategory(mCategory);
         mApplication.getUserData().addGoal(mGoal);
         ArrayList<String> ids = new ArrayList<>();
-        ids.add(mGoal.getId()+"");
+        ids.add(mGoal.getId() + "");
         new AddGoalTask(this, this, ids, mGoal).execute();
     }
 

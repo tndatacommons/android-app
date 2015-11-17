@@ -54,10 +54,11 @@ public class AddGoalTask extends AsyncTask<Void, Void, ArrayList<Goal>> {
                 .getApplication()).getToken();
 
         String url = Constants.BASE_URL + "users/goals/";
-        Map<String, String> headers = new HashMap<String, String>();
+        Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
         headers.put("Content-type", "application/json");
         headers.put("Authorization", "Token " + token);
+
         JSONArray postArray = new JSONArray();
         for (int i = 0; i < mGoalIds.size(); i++) {
             JSONObject postId = new JSONObject();
@@ -69,8 +70,7 @@ public class AddGoalTask extends AsyncTask<Void, Void, ArrayList<Goal>> {
                 return null;
             }
         }
-        InputStream stream = NetworkHelper.httpPostStream(url, headers,
-                postArray.toString());
+        InputStream stream = NetworkHelper.httpPostStream(url, headers, postArray.toString());
         if (stream == null) {
             return null;
         }

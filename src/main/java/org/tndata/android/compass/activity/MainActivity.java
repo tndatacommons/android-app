@@ -1,5 +1,6 @@
 package org.tndata.android.compass.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,31 +17,48 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
+import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
+import org.tndata.android.compass.adapter.SearchAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapterListener;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.task.GetContentTask;
 import org.tndata.android.compass.task.GetUserDataTask;
 import org.tndata.android.compass.task.UpdateProfileTask;
+import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.OnScrollListenerHub;
 import org.tndata.android.compass.util.ParallaxEffect;
+import org.tndata.android.compass.util.Parser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -57,17 +76,39 @@ public class MainActivity
                 SwipeRefreshLayout.OnRefreshListener,
                 GetUserDataTask.GetUserDataCallback,
                 DrawerAdapter.OnItemClickListener,
-                MainFeedAdapterListener{
+                MainFeedAdapterListener,
+                MenuItemCompat.OnActionExpandListener,
+                SearchView.OnQueryTextListener,
+                SearchView.OnCloseListener,
+                GetContentTask.GetContentListener,
+                RecyclerView.OnItemTouchListener,
+                SearchAdapter.SearchAdapterListener{
 
-    //Request codes
+    //Activity request codes
     private static final int CATEGORIES_REQUEST_CODE = 4821;
     private static final int GOAL_REQUEST_CODE = 3486;
     private static final int ACTION_REQUEST_CODE = 4582;
     private static final int TRIGGER_REQUEST_CODE = 7631;
 
+    //Task request codes
+    private static final int SEARCH_REQUEST_CODE = 1;
+
 
     //A reference to the application class
     private CompassApplication mApplication;
+
+    private Toolbar mToolbar;
+
+    //Search components
+    private MenuItem mSearchItem;
+    private SearchView mSearchView;
+    private View mSearchDim;
+    private View mSearchWrapper;
+    private TextView mSearchHeader;
+    private RecyclerView mSearchList;
+    private SearchAdapter mSearchAdapter;
+    private int mLastSearchRequestCode;
+    private List<SearchResult> mSearchResults;
 
     //Drawer components
     private DrawerLayout mDrawerLayout;
@@ -97,6 +138,15 @@ public class MainActivity
         new UpdateProfileTask(null).execute(mApplication.getUser());
         new GcmRegistration(this);
 
+        mSearchDim = findViewById(R.id.main_search_dim);
+        mSearchWrapper = findViewById(R.id.main_search_wrapper);
+        mSearchHeader = (TextView)findViewById(R.id.main_search_header);
+        mSearchList = (RecyclerView)findViewById(R.id.main_search_list);
+        mSearchList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mSearchAdapter = new SearchAdapter(this, this);
+        mSearchList.setAdapter(mSearchAdapter);
+        mLastSearchRequestCode = SEARCH_REQUEST_CODE;
+
         //If this is pre L a different color scheme is applied
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
             int preLColor = getResources().getColor(R.color.feed_pre_l_background);
@@ -104,9 +154,9 @@ public class MainActivity
         }
 
         //Set up the toolbar
-        Toolbar toolbar = (Toolbar)findViewById(R.id.main_toolbar);
-        toolbar.setTitle("");
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar)findViewById(R.id.main_toolbar);
+        mToolbar.setTitle("");
+        setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -127,6 +177,7 @@ public class MainActivity
                 invalidateOptionsMenu();
             }
         };
+        //mDrawerToggle
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         RecyclerView drawerList = (RecyclerView)findViewById(R.id.main_drawer);
@@ -151,9 +202,33 @@ public class MainActivity
 
         //Create the hub and add to it all the items that need to be parallaxed
         OnScrollListenerHub hub = new OnScrollListenerHub();
+
         ParallaxEffect parallax = new ParallaxEffect(header, 0.5f);
         parallax.setItemDecoration(((MainFeedAdapter)mFeed.getAdapter()).getMainFeedPadding());
         hub.addOnScrollListener(parallax);
+
+        ParallaxEffect toolbarEffect = new ParallaxEffect(mToolbar, 1);
+        toolbarEffect.setItemDecoration(mAdapter.getMainFeedPadding());
+        toolbarEffect.setParallaxCondition(new ParallaxEffect.ParallaxCondition(){
+            @Override
+            protected boolean doParallax(){
+                int height = (int)((CompassUtil.getScreenWidth(MainActivity.this)*2/3)*0.6);
+                return -getRecyclerViewOffset() > height;
+            }
+
+            @Override
+            protected int getFixedState(){
+                return CompassUtil.getPixels(MainActivity.this, 10);
+            }
+
+            @Override
+            protected int getParallaxViewOffset(){
+                int height = (int)((CompassUtil.getScreenWidth(MainActivity.this)*2/3)*0.6);
+                return  height + getFixedState() + getRecyclerViewOffset();
+            }
+        });
+        hub.addOnScrollListener(toolbarEffect);
+
         hub.addOnScrollListener(new RecyclerView.OnScrollListener(){
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy){
@@ -197,6 +272,121 @@ public class MainActivity
 
         //Set up the FAB menu
         populateMenu();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        mSearchItem = menu.findItem(R.id.search);
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+            mSearchItem.setVisible(false);
+        }
+        MenuItemCompat.setOnActionExpandListener(mSearchItem, this);
+
+        mSearchView = (SearchView)mSearchItem.getActionView();
+        mSearchView.setIconified(false);
+        mSearchView.setOnCloseListener(this);
+        mSearchView.setOnQueryTextListener(this);
+        mSearchView.clearFocus();
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onMenuItemActionExpand(MenuItem item){
+        mSearchView.requestFocus();
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        mFeed.addOnItemTouchListener(this);
+        mRefresh.setEnabled(false);
+        mSearchAdapter.updateDataSet(new ArrayList<SearchResult>());
+        mSearchHeader.setVisibility(View.INVISIBLE);
+        mSearchDim.setVisibility(View.VISIBLE);
+        mSearchWrapper.setVisibility(View.VISIBLE);
+        mToolbar.setBackgroundColor(getResources().getColor(R.color.main_toolbar_background_focused));
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionCollapse(MenuItem item){
+        mSearchView.setQuery("", false);
+        mSearchView.clearFocus();
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        mFeed.removeOnItemTouchListener(this);
+        if (mFeed.canScrollVertically(-1)){
+            mRefresh.setEnabled(false);
+        }
+        else{
+            mRefresh.setEnabled(true);
+        }
+        mSearchDim.setVisibility(View.GONE);
+        mSearchWrapper.setVisibility(View.GONE);
+        mToolbar.setBackgroundColor(getResources().getColor(R.color.main_toolbar_background_inactive));
+        return true;
+    }
+
+    @Override
+    public boolean onClose(){
+        mSearchItem.collapseActionView();
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        mFeed.removeOnItemTouchListener(this);
+        if (mFeed.canScrollVertically(-1)){
+            mRefresh.setEnabled(false);
+        }
+        else{
+            mRefresh.setEnabled(true);
+        }
+        mSearchDim.setVisibility(View.GONE);
+        mSearchWrapper.setVisibility(View.GONE);
+        mToolbar.setBackgroundColor(getResources().getColor(R.color.main_toolbar_background_inactive));
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query){
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText){
+        if (newText.equals("")){
+            mSearchHeader.setVisibility(View.INVISIBLE);
+            mSearchAdapter.updateDataSet(new ArrayList<SearchResult>());
+            mLastSearchRequestCode++;
+        }
+        else{
+            newText = newText.replace(" ", "%20");
+            String mUrl = Constants.BASE_URL + "search/?q=" + newText;
+            new GetContentTask(this, ++mLastSearchRequestCode).execute(mUrl, mApplication.getToken());
+        }
+        return false;
+    }
+
+    @Override
+    public void onContentRetrieved(int requestCode, String content){
+        try{
+            Log.d("Serch", new JSONObject(content).toString(2));
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        if (requestCode == mLastSearchRequestCode){
+            mSearchResults = new Parser().parseSearchResults(content);
+        }
+    }
+
+    @Override
+    public void onRequestComplete(int requestCode){
+        if (requestCode == mLastSearchRequestCode){
+            mSearchHeader.setVisibility(View.VISIBLE);
+            mSearchAdapter.updateDataSet(mSearchResults);
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode){
+
     }
 
     @Override
@@ -511,6 +701,25 @@ public class MainActivity
         }
         if (mRefresh.isRefreshing()){
             mRefresh.setRefreshing(false);
+        }
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e){
+        return true;
+    }
+
+    @Override
+    public void onTouchEvent(RecyclerView rv, MotionEvent e){
+
+    }
+
+    @Override
+    public void onSearchResultSelected(SearchResult result){
+        if (result.isGoal()){
+            Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
+                    .putExtra(ChooseBehaviorsActivity.GOAL_ID_KEY, result.getId());
+            startActivity(chooseBehaviors);
         }
     }
 }
