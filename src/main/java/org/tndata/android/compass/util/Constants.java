@@ -31,7 +31,7 @@ public class Constants{
     public static final String TNDATA_BASE_URL = "https://app.tndata.org/api/";
     public static final String TNDATA_STAGING_URL = "http://staging.tndata.org/api/";
     public static final String NGROK_TUNNEL_URL = "https://tndata.ngrok.io/api/";
-    public static final String BASE_URL = BuildConfig.DEBUG ? TNDATA_STAGING_URL : TNDATA_BASE_URL;
+    public static final String BuildConfig.DEBUG ? TNDATA_STAGING_URL : TNDATA_BASE_URL;
 
     //Preferences
     public final static String PREFERENCES_NAME = "compass_pref";

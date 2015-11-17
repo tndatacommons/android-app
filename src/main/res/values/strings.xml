@@ -201,6 +201,7 @@
 
     <!-- Search -->
     <string name="search">Search</string>
+    <string name="search_header">These goals are relevant to your search:</string>
     <string name="search_filter">Filter</string>
 
     <!-- Snooze stuff -->

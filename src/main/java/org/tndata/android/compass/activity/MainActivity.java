@@ -19,6 +19,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -28,6 +29,7 @@ import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -55,6 +57,7 @@ import org.tndata.android.compass.util.OnScrollListenerHub;
 import org.tndata.android.compass.util.ParallaxEffect;
 import org.tndata.android.compass.util.Parser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -99,7 +102,9 @@ public class MainActivity
     //Search components
     private MenuItem mSearchItem;
     private SearchView mSearchView;
+    private View mSearchDim;
     private View mSearchWrapper;
+    private TextView mSearchHeader;
     private RecyclerView mSearchList;
     private SearchAdapter mSearchAdapter;
     private int mLastSearchRequestCode;
@@ -133,7 +138,9 @@ public class MainActivity
         new UpdateProfileTask(null).execute(mApplication.getUser());
         new GcmRegistration(this);
 
+        mSearchDim = findViewById(R.id.main_search_dim);
         mSearchWrapper = findViewById(R.id.main_search_wrapper);
+        mSearchHeader = (TextView)findViewById(R.id.main_search_header);
         mSearchList = (RecyclerView)findViewById(R.id.main_search_list);
         mSearchList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mSearchAdapter = new SearchAdapter(this, this);
@@ -271,6 +278,9 @@ public class MainActivity
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_search, menu);
         mSearchItem = menu.findItem(R.id.search);
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+            mSearchItem.setVisible(false);
+        }
         MenuItemCompat.setOnActionExpandListener(mSearchItem, this);
 
         mSearchView = (SearchView)mSearchItem.getActionView();
@@ -290,6 +300,9 @@ public class MainActivity
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         mFeed.addOnItemTouchListener(this);
         mRefresh.setEnabled(false);
+        mSearchAdapter.updateDataSet(new ArrayList<SearchResult>());
+        mSearchHeader.setVisibility(View.INVISIBLE);
+        mSearchDim.setVisibility(View.VISIBLE);
         mSearchWrapper.setVisibility(View.VISIBLE);
         mToolbar.setBackgroundColor(getResources().getColor(R.color.main_toolbar_background_focused));
         return true;
@@ -307,6 +320,7 @@ public class MainActivity
         else{
             mRefresh.setEnabled(true);
         }
+        mSearchDim.setVisibility(View.GONE);
         mSearchWrapper.setVisibility(View.GONE);
         mToolbar.setBackgroundColor(getResources().getColor(R.color.main_toolbar_background_inactive));
         return true;
@@ -323,6 +337,7 @@ public class MainActivity
         else{
             mRefresh.setEnabled(true);
         }
+        mSearchDim.setVisibility(View.GONE);
         mSearchWrapper.setVisibility(View.GONE);
         mToolbar.setBackgroundColor(getResources().getColor(R.color.main_toolbar_background_inactive));
         return true;
@@ -336,6 +351,8 @@ public class MainActivity
     @Override
     public boolean onQueryTextChange(String newText){
         if (newText.equals("")){
+            mSearchHeader.setVisibility(View.INVISIBLE);
+            mSearchAdapter.updateDataSet(new ArrayList<SearchResult>());
             mLastSearchRequestCode++;
         }
         else{
@@ -352,7 +369,7 @@ public class MainActivity
             Log.d("Serch", new JSONObject(content).toString(2));
         }
         catch (JSONException jsonx){
-
+            jsonx.printStackTrace();
         }
         if (requestCode == mLastSearchRequestCode){
             mSearchResults = new Parser().parseSearchResults(content);
@@ -362,6 +379,7 @@ public class MainActivity
     @Override
     public void onRequestComplete(int requestCode){
         if (requestCode == mLastSearchRequestCode){
+            mSearchHeader.setVisibility(View.VISIBLE);
             mSearchAdapter.updateDataSet(mSearchResults);
         }
     }
@@ -698,19 +716,10 @@ public class MainActivity
 
     @Override
     public void onSearchResultSelected(SearchResult result){
-        if (result.isCategory()){
-
-        }
-        else if (result.isGoal()){
+        if (result.isGoal()){
             Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
                     .putExtra(ChooseBehaviorsActivity.GOAL_ID_KEY, result.getId());
             startActivity(chooseBehaviors);
-        }
-        else if (result.isBehavior()){
-
-        }
-        else if (result.isAction()){
-
         }
     }
 }

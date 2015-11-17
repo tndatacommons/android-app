@@ -45,7 +45,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position){
         holder.mTitle.setText(mDataSet.get(position).getTitle());
-        holder.mSummary.setText(Html.fromHtml(mDataSet.get(position).getHighlighted().replace("\n", "<br>")));
+        String highlight = mDataSet.get(position).getHighlighted().replace("\n", "<br>");
+        //highlight = highlight.replace("<em>", "<u><span style=\"background-color: yellow\">");
+        //highlight = highlight.replace("</em>", "</span></u>");
+        holder.mSummary.setText(Html.fromHtml(highlight));
     }
 
     @Override

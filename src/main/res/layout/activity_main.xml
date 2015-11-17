@@ -78,6 +78,13 @@
 
     </android.support.v4.widget.DrawerLayout>
 
+    <View
+        android:id="@+id/main_search_dim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="#AA000000" />
+
     <android.support.v7.widget.Toolbar
         xmlns:toolbar="http://schemas.android.com/apk/res-auto"
         android:id="@+id/main_toolbar"
@@ -91,8 +98,9 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         toolbar:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/main_search_wrapper"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/main_toolbar"
@@ -102,10 +110,23 @@
         android:background="@color/white"
         android:visibility="gone" >
 
+        <TextView
+            android:id="@+id/main_search_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginRight="10dp"
+            android:textSize="16sp"
+            android:textColor="@color/dark_text_color"
+            android:text="@string/search_header" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/main_search_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </RelativeLayout>
+    </LinearLayout>
 </RelativeLayout>
