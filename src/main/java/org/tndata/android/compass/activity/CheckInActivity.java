@@ -168,6 +168,34 @@ public class CheckInActivity
     }
 
     @Override
+    public void onShareClick(Reward reward){
+        //Build the content string
+        String content = "";
+        if (reward.isJoke()){
+            content = "Joke: ";
+        }
+        if (reward.isFunFact()){
+            content = "Fun fact: ";
+        }
+        if (reward.isFortune()){
+            content = "Fortune cookie: ";
+        }
+        if (reward.isQuote()){
+            content = reward.getAuthor() + ": \"";
+        }
+        content += reward.getMessage();
+        if (reward.isQuote()){
+            content += "\"";
+        }
+
+        //Send the intent
+        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, content);
+        startActivity(Intent.createChooser(shareIntent, "Share via"));
+    }
+
+    @Override
     public void onProgressChanged(int index, int progress){
         mCurrentProgress[index] = progress;
         float currentProgressAverage = 0;
