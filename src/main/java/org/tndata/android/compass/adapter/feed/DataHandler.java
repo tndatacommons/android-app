@@ -160,4 +160,16 @@ class DataHandler{
             mDisplayedUpcoming.add(mFeedData.getUpcomingActions().get(mDisplayedUpcoming.size()));
         }
     }
+
+    int getTotalActions(){
+        return mFeedData.getTotalActions();
+    }
+
+    int getProgress(){
+        return mFeedData.getProgress();
+    }
+
+    String getProgressFraction(){
+        return mFeedData.getProgressFraction();
+    }
 }

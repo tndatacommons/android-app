@@ -1,40 +1,46 @@
 package org.tndata.android.compass.adapter.feed;
 
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.util.CompassUtil;
+
+import java.util.Calendar;
 
 import at.grabner.circleprogress.CircleProgressView;
+import at.grabner.circleprogress.TextMode;
 
 
 /**
  * View holder for the up next card.
  *
  * @author Ismael Alonso
- * @version 1.0.0
+ * @version 1.1.0
  */
 final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListener{
     //Header
-    TextView mHeader;
-    View mOverflow;
+    private TextView mHeader;
+    private View mOverflow;
 
     //Indicator
-    CircleProgressView mIndicator;
+    private CircleProgressView mIndicator;
 
     //No actions content
-    View mNoActionsContainer;
-    TextView mNoActionsTitle;
-    TextView mNoActionsSubtitle;
+    private View mNoActionsContainer;
+    private TextView mNoActionsTitle;
+    private TextView mNoActionsSubtitle;
 
     //Action content
-    View mContentContainer;
-    TextView mAction;
-    TextView mGoal;
+    private View mContentContainer;
+    private TextView mAction;
+    private TextView mGoal;
 
     //Footer
-    TextView mIndicatorCaption;
-    TextView mTime;
+    private TextView mIndicatorCaption;
+    private TextView mTime;
 
 
     /**
@@ -79,5 +85,59 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
                     mAdapter.mListener.onActionSelected(mAdapter.getDataHandler().getUpNext());
                 }
         }
+    }
+
+    /**
+     * Binds an action to the holder.
+     *
+     * @param action the action to be bound to the holder.
+     */
+    void bind(@Nullable Action action){
+        if (action == null){
+            mOverflow.setVisibility(View.GONE);
+            mNoActionsContainer.setVisibility(View.VISIBLE);
+            mContentContainer.setVisibility(View.GONE);
+
+            if (mAdapter.getDataHandler().getTotalActions() != 0){
+                mHeader.setText(R.string.card_up_next_header_completed);
+                mNoActionsTitle.setText(R.string.card_up_next_title_completed);
+                mNoActionsSubtitle.setText(R.string.card_up_next_subtitle_completed);
+            }
+            else{
+                mHeader.setText(R.string.card_up_next_header);
+                mNoActionsTitle.setText(R.string.card_up_next_title_empty);
+                mNoActionsSubtitle.setText(R.string.card_up_next_subtitle_empty);
+            }
+            mTime.setText("");
+        }
+        else{
+            mOverflow.setVisibility(View.VISIBLE);
+            mNoActionsContainer.setVisibility(View.GONE);
+            mContentContainer.setVisibility(View.VISIBLE);
+
+            mHeader.setText(R.string.card_up_next_header);
+            mAction.setText(action.getTitle());
+            //TODO this is a workaround
+            if (action.getPrimaryGoal() != null){
+                String goalTitle = action.getPrimaryGoal().getTitle().substring(0, 1).toLowerCase();
+                goalTitle += action.getPrimaryGoal().getTitle().substring(1);
+                mGoal.setText(mAdapter.mContext.getString(R.string.card_up_next_goal_title, goalTitle));
+            }
+            else{
+                mGoal.setText("");
+            }
+            mTime.setText(action.getNextReminderDate());
+        }
+
+        mIndicator.setAutoTextSize(true);
+        mIndicator.setValue(mAdapter.getDataHandler().getProgress());
+        mIndicator.setTextMode(TextMode.TEXT);
+        mIndicator.setValueAnimated(0, mAdapter.getDataHandler().getProgress(), 1500);
+        mIndicatorCaption.setText(mAdapter.mContext.getString(R.string.card_up_next_indicator_caption,
+                mAdapter.getDataHandler().getProgressFraction()));
+
+        Calendar calendar = Calendar.getInstance();
+        String month = CompassUtil.getMonthString(calendar.get(Calendar.MONTH) + 1);
+        mIndicator.setText(month + " " + calendar.get(Calendar.DAY_OF_MONTH));
     }
 }

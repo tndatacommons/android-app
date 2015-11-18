@@ -20,10 +20,6 @@ import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.task.DeleteActionTask;
 import org.tndata.android.compass.util.CompassUtil;
 
-import java.util.Calendar;
-
-import at.grabner.circleprogress.TextMode;
-
 
 /**
  * Adapter for the main feed.
@@ -41,7 +37,8 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     private static final int TYPE_ACTION = 5;
     private static final int TYPE_GOAL = 6;
     private static final int TYPE_FOOTER = 7;
-    private static final int TYPE_OTHER = 8;
+    private static final int TYPE_SUGGESTION = 8;
+    private static final int TYPE_OTHER = 9;
 
 
     final Context mContext;
@@ -306,54 +303,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
         //Up next
         else if (CardTypes.isUpNext(position)){
-            UpNextHolder holder = (UpNextHolder)rawHolder;
-            if (!CardTypes.hasUpNextAction()){
-                holder.mOverflow.setVisibility(View.GONE);
-                holder.mNoActionsContainer.setVisibility(View.VISIBLE);
-                holder.mContentContainer.setVisibility(View.GONE);
-
-                if (mUserData.getFeedData().getTotalActions() != 0){
-                    holder.mHeader.setText(R.string.card_up_next_header_completed);
-                    holder.mNoActionsTitle.setText(R.string.card_up_next_title_completed);
-                    holder.mNoActionsSubtitle.setText(R.string.card_up_next_title_completed);
-                }
-                else{
-                    holder.mHeader.setText(R.string.card_up_next_header);
-                    holder.mNoActionsTitle.setText(R.string.card_up_next_title_empty);
-                    holder.mNoActionsSubtitle.setText(R.string.card_up_next_subtitle_empty);
-                }
-                holder.mTime.setText("");
-            }
-            else{
-                Action action = mUserData.getFeedData().getNextAction();
-                holder.mOverflow.setVisibility(View.VISIBLE);
-                holder.mNoActionsContainer.setVisibility(View.GONE);
-                holder.mContentContainer.setVisibility(View.VISIBLE);
-
-                holder.mHeader.setText(R.string.card_up_next_header);
-                holder.mAction.setText(action.getTitle());
-                //TODO this is a workaround
-                if (action.getPrimaryGoal() != null){
-                    String goalTitle = action.getPrimaryGoal().getTitle().substring(0, 1).toLowerCase();
-                    goalTitle += action.getPrimaryGoal().getTitle().substring(1);
-                    holder.mGoal.setText(mContext.getString(R.string.card_up_next_goal_title, goalTitle));
-                }
-                else{
-                    holder.mGoal.setText("");
-                }
-                holder.mTime.setText(action.getNextReminderDate());
-            }
-
-            holder.mIndicator.setAutoTextSize(true);
-            holder.mIndicator.setValue(mUserData.getFeedData().getProgress());
-            holder.mIndicator.setTextMode(TextMode.TEXT);
-            holder.mIndicator.setValueAnimated(0, mUserData.getFeedData().getProgress(), 1500);
-            holder.mIndicatorCaption.setText(mContext.getString(R.string.card_up_next_indicator_caption,
-                    mUserData.getFeedData().getProgressFraction()));
-
-            Calendar calendar = Calendar.getInstance();
-            String month = CompassUtil.getMonthString(calendar.get(Calendar.MONTH) + 1);
-            holder.mIndicator.setText(month + " " + calendar.get(Calendar.DAY_OF_MONTH));
+            ((UpNextHolder)rawHolder).bind(mDataHandler.getUpNext());
         }
         //Feedback
         else if (CardTypes.isFeedback(position)){
