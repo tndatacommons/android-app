@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardCornerRadius="@dimen/cardview_corner_radius" >
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="20dp"
+            android:background="@color/grow_accent" >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textAllCaps="true"
+                android:text="@string/card_goal_suggestion_header" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <!--android:src="@drawable/ic_overflow_vertical_white" />-->
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/goal_suggestion_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:textSize="18sp"
+            android:text="Goal title" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:paddingLeft="20dp"
+            android:paddingBottom="20dp"
+            android:paddingRight="20dp" >
+
+            <TextView
+                android:id="@+id/goal_suggestion_later"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                android:paddingBottom="5dp"
+                android:paddingRight="20dp"
+                android:paddingTop="5dp"
+                android:textColor="@color/grow_primary"
+                android:textAllCaps="true"
+                android:text="@string/card_goal_suggestion_later" />
+
+            <TextView
+                android:id="@+id/goal_suggestion_show_me"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                android:paddingBottom="5dp"
+                android:paddingRight="20dp"
+                android:paddingTop="5dp"
+                android:background="@color/grow_primary"
+                android:textColor="@color/white"
+                android:textAllCaps="true"
+                android:text="@string/card_goal_suggestion_show_me" />
+
+        </LinearLayout>
+    </LinearLayout>
+</android.support.v7.widget.CardView>
