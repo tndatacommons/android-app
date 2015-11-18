@@ -147,4 +147,8 @@
         android:layout_above="@id/action_tick_switcher"
         android:background="@drawable/activity_action_gradient" />
 
+    <include
+        android:id="@+id/action_toolbar"
+        layout="@layout/transparent_tool_bar" />
+
 </RelativeLayout>
