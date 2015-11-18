@@ -175,6 +175,8 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_did_it">I did it</string>
     <string name="action_tick_cd">Action complete tick</string>
+    <string name="action_trigger">Change reminder</string>
+    <string name="action_trigger_condensed">Reminder</string>
 
     <!-- TourFragment -->
     <string name="tour_action_skip">SKIP</string>

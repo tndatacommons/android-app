@@ -1,5 +1,6 @@
 package org.tndata.android.compass.activity;
 
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -7,8 +8,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -51,7 +55,8 @@ public class ActionActivity
 
     public static final String DID_IT_KEY = "org.tndata.compass.ActionActivity.did_it";
 
-    private static final int REQUEST_CODE = 61428;
+    private static final int SNOOZE_REQUEST_CODE = 61428;
+    private static final int RESCHEDULE_REQUEST_CODE = 61429;
 
 
     //The action in question and the associated reminder
@@ -83,6 +88,11 @@ public class ActionActivity
         //Retrieve the action and mark the reminder as nonexistent
         mAction = (Action)getIntent().getSerializableExtra(ACTION_KEY);
         mReminder = null;
+
+        //Set up the toolbar
+        Toolbar toolbar = (Toolbar)findViewById(R.id.action_toolbar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
 
         //Fetch UI components
         FrameLayout heroContainer = (FrameLayout)findViewById(R.id.action_hero_container);
@@ -132,6 +142,23 @@ public class ActionActivity
             timeOption.setText(R.string.action_reschedule);
             populateUI();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        if (mActionFetched){
+            getMenuInflater().inflate(R.menu.menu_action, menu);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        if (item.getItemId() == R.id.action_trigger){
+            reschedule();
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -189,7 +216,7 @@ public class ActionActivity
         if (mAction != null && !mActionUpdated){
             Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
                     .putExtra(NotificationUtil.REMINDER_KEY, mReminder);
-            startActivityForResult(snoozeIntent, REQUEST_CODE);
+            startActivityForResult(snoozeIntent, SNOOZE_REQUEST_CODE);
         }
     }
 
@@ -201,25 +228,38 @@ public class ActionActivity
             Intent reschedule = new Intent(this, TriggerActivity.class)
                     .putExtra("action", mAction)
                     .putExtra("goal", mAction.getPrimaryGoal());
-            startActivityForResult(reschedule, REQUEST_CODE);
+            startActivityForResult(reschedule, RESCHEDULE_REQUEST_CODE);
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (resultCode == RESULT_OK){
-            if (requestCode == REQUEST_CODE){
-                mActionUpdated = true;
+            switch (requestCode){
+                case RESCHEDULE_REQUEST_CODE:
+                    //If the activity was was fired from an action notification and the
+                    //  associated action was rescheduled, the notification needs to be
+                    //  dismissed
+                    if (mActionFetched){
+                        ((NotificationManager)getSystemService(NOTIFICATION_SERVICE))
+                                .cancel(NotificationUtil.NOTIFICATION_TYPE_ACTION_TAG,
+                                        mReminder.getObjectId());
 
-                //Display the check mark and finish the activity after one second
-                mTickSwitcher.showNext();
-                new Handler().postDelayed(new Runnable(){
-                    @Override
-                    public void run(){
-                        setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, false));
-                        finish();
                     }
-                }, 1000);
+
+                //In either case, the activity should finish after a second
+                case SNOOZE_REQUEST_CODE:
+                    mActionUpdated = true;
+
+                    //Display the check mark and finish the activity after one second
+                    mTickSwitcher.showNext();
+                    new Handler().postDelayed(new Runnable(){
+                        @Override
+                        public void run(){
+                            setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, false));
+                            finish();
+                        }
+                    }, 1000);
             }
         }
     }
