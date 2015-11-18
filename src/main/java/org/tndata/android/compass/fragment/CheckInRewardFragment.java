@@ -5,9 +5,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
@@ -16,6 +18,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.task.GetContentTask;
+import org.tndata.android.compass.ui.CompassPopupMenu;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.Parser;
@@ -31,8 +34,8 @@ public class CheckInRewardFragment
         extends Fragment
         implements
                 View.OnClickListener,
-                GetContentTask.GetContentListener{
-
+                GetContentTask.GetContentListener,
+                PopupMenu.OnMenuItemClickListener{
 
     public static final String REWARD_KEY = "org.tndata.compass.Reward.Reward";
     public static final String FEEDBACK_KEY = "org.tndata.compass.Reward.Feedback";
@@ -106,7 +109,7 @@ public class CheckInRewardFragment
         mAuthor = (TextView)rootView.findViewById(R.id.check_in_reward_author);
         mMoreSwitcher = (ViewSwitcher)rootView.findViewById(R.id.check_in_reward_switcher);
         rootView.findViewById(R.id.check_in_reward_more).setOnClickListener(this);
-        rootView.findViewById(R.id.check_in_reward_review).setOnClickListener(this);
+        rootView.findViewById(R.id.check_in_reward_overflow).setOnClickListener(this);
 
         populateUI();
     }
@@ -171,8 +174,13 @@ public class CheckInRewardFragment
     @Override
     public void onClick(View view){
         switch (view.getId()){
-            case R.id.check_in_reward_review:
-                mListener.onReviewClick();
+            case R.id.check_in_reward_overflow:
+                //Create the popup and inflate the menu
+                CompassPopupMenu popup = CompassPopupMenu.newInstance(getActivity(), view);
+                popup.getMenuInflater().inflate(R.menu.popup_reward, popup.getMenu());
+                //Set the listener and show the menu
+                popup.setOnMenuItemClickListener(this);
+                popup.show();
                 break;
 
             case R.id.check_in_reward_more:
@@ -180,6 +188,21 @@ public class CheckInRewardFragment
                 fetchReward();
                 break;
         }
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.popup_reward_my_goals:
+                mListener.onReviewClick();
+                break;
+
+            case R.id.popup_reward_share:
+                mListener.onShareClick(mReward);
+                break;
+
+        }
+        return false;
     }
 
     /**
@@ -219,5 +242,12 @@ public class CheckInRewardFragment
          * Called when the review button is clicked.
          */
         void onReviewClick();
+
+        /**
+         * Called when the share button is clicked.
+         *
+         * @param reward the reward on which the share was clicked.
+         */
+        void onShareClick(Reward reward);
     }
 }

@@ -308,5 +308,6 @@
     <string name="check_in_reward_author">—%1$s</string>
     <string name="check_in_reward_more">One more</string>
     <string name="check_in_reward_review">My goals</string>
+    <string name="check_in_reward_share">Share</string>
 
 </resources>

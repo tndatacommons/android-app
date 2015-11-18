@@ -117,15 +117,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
-        <TextView
-            android:id="@+id/check_in_reward_review"
+        <ImageView
+            android:id="@+id/check_in_reward_overflow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAllCaps="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="15sp"
-            android:textColor="@color/grow_primary"
-            android:text="@string/check_in_reward_review" />
+            android:src="@drawable/ic_overflow_vertical_white"
+            android:tint="@color/grow_primary" />
 
     </LinearLayout>
 </LinearLayout>
