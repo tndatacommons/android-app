@@ -1,9 +1,8 @@
 package org.tndata.android.compass.adapter.feed;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -30,15 +29,15 @@ import org.tndata.android.compass.util.CompassUtil;
 public class MainFeedAdapter extends RecyclerView.Adapter{
     //Item view types
     private static final int TYPE_BLANK = 0;
-    private static final int TYPE_WELCOME = 1;
-    private static final int TYPE_UP_NEXT = 2;
-    private static final int TYPE_FEEDBACK = 3;
-    private static final int TYPE_HEADER = 4;
-    private static final int TYPE_ACTION = 5;
-    private static final int TYPE_GOAL = 6;
-    private static final int TYPE_FOOTER = 7;
-    private static final int TYPE_SUGGESTION = 8;
-    private static final int TYPE_OTHER = 9;
+    private static final int TYPE_WELCOME = TYPE_BLANK+1;
+    private static final int TYPE_UP_NEXT = TYPE_WELCOME+1;
+    private static final int TYPE_FEEDBACK = TYPE_UP_NEXT+1;
+    private static final int TYPE_SUGGESTION = TYPE_FEEDBACK+1;
+    private static final int TYPE_HEADER = TYPE_SUGGESTION+1;
+    private static final int TYPE_ACTION = TYPE_HEADER+1;
+    private static final int TYPE_GOAL = TYPE_ACTION+1;
+    private static final int TYPE_FOOTER = TYPE_GOAL+1;
+    private static final int TYPE_OTHER = TYPE_FOOTER+1;
 
 
     final Context mContext;
@@ -59,7 +58,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * @param context the context,
      * @param listener the listener.
      */
-    public MainFeedAdapter(@NonNull Context context, @NonNull MainFeedAdapterListener listener){
+    public MainFeedAdapter(@NonNull Context context, @NonNull MainFeedAdapterListener listener, boolean initialSuggestion){
         mContext = context;
         mListener = listener;
         mUserData = ((CompassApplication)mContext.getApplicationContext()).getUserData();
@@ -73,164 +72,61 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             mFeedUtil = new FeedUtil(this);
         }
         mMainFeedPadding = null;
-    }
 
-    DataHandler getDataHandler(){
-        return mDataHandler;
-    }
-
-    void setSelectedItem(int selectedItem){
-        mSelectedItem = selectedItem;
-    }
-
-    /**
-     * Display the popup menu for a specific goal.
-     *
-     * @param anchor the view it should be anchored to.
-     * @param position the position of the view.
-     */
-    void showActionPopup(View anchor, int position){
-        mFeedUtil.showActionPopup(anchor, position);
-    }
-
-    /**
-     * Calculates the position of an action given its position in the list,
-     *
-     * @param adapterPosition a position in the list.
-     * @return the position of the action in the backing array.
-     */
-    int getActionPosition(int adapterPosition){
-        return adapterPosition-(CardTypes.getUpcomingHeaderPosition()+1);
-    }
-
-    /**
-     * Animates the replacement of the up next card.
-     */
-    void replaceUpNext(){
-        if (mDataHandler.getUpNext() != null){
-            int headerPosition = CardTypes.getUpcomingHeaderPosition();
-            if (!CardTypes.hasUpcoming()){
-                notifyItemRemoved(headerPosition);
-            }
-            notifyItemRemoved(headerPosition + 1);
-            notifyItemRangeChanged(headerPosition + 2, getItemCount() - (headerPosition + 2));
-        }
-
-        //Update the up next card
-        notifyItemChanged(CardTypes.getUpNextPosition());
-    }
-
-    /**
-     * Removes an action from the feed.
-     *
-     * @param position the position if the item in the feed.
-     */
-    void removeActionFromFeed(int position){
-        //Update the relevant action cards
-        if (!CardTypes.hasUpcoming()){
-            notifyItemRemoved(position-1);
-        }
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position-1, getItemCount()-(position-1));
-    }
-
-
-
-    public void didIt(){
-        if (mSelectedItem != -1){
-            didIt(mSelectedItem);
-            mSelectedItem = -1;
-        }
-    }
-
-    //Did it
-    void didIt(int position){
-        //1.- Mark the action as complete in the model
-        //2.- Mark the action as complete in the webapp
-        //3.- Update the model
-        //4.- Update the adapter
-
-        mDataHandler.didIt();
-        if (CardTypes.isUpNext(position)){
-            mFeedUtil.didIt(mContext, mDataHandler.getUpNext());
-            mDataHandler.replaceUpNext();
-            replaceUpNext();
+        if (initialSuggestion){
+            CardTypes.displaySuggestion(true);
         }
         else{
-            mFeedUtil.didIt(mContext, mDataHandler.removeUpcoming(getActionPosition(position)));
-            removeActionFromFeed(position);
+            new Handler().postDelayed(new Runnable(){
+                @Override
+                public void run(){
+                    CardTypes.displaySuggestion(true);
+                    notifyItemInserted(CardTypes.getSuggestionPosition());
+                    notifyItemRangeChanged(CardTypes.getSuggestionPosition()+1, getItemCount()-1);
+                }
+            }, 2000);
         }
     }
 
-    //Reschedule
-    void reschedule(int position){
-        mSelectedItem = position;
+
+    /*------------------------------------*
+     * OVERRIDDEN ADAPTER RELATED METHODS *
+     *------------------------------------*/
+
+    @Override
+    public int getItemViewType(int position){
+        //The first card is always a blank card
+        if (position == 0){
+            return TYPE_BLANK;
+        }
+        //The second card may be a welcome card, but only if the user has no goals selected
+        if (CardTypes.hasWelcomeCard() && position == 1){
+            return TYPE_WELCOME;
+        }
+        //The rest of them have checker methods
         if (CardTypes.isUpNext(position)){
-            mListener.onTriggerSelected(getDataHandler().getUpNext());
+            return TYPE_UP_NEXT;
         }
-        else{
-            mListener.onTriggerSelected(getDataHandler().getUpcoming().get(getActionPosition(position)));
+        if (CardTypes.isFeedback(position)){
+            return TYPE_FEEDBACK;
         }
+        if (CardTypes.isSuggestion(position)){
+            return TYPE_SUGGESTION;
+        }
+        if (CardTypes.isUpcomingHeader(position) || CardTypes.isMyGoalsHeader(position)){
+            return TYPE_HEADER;
+        }
+        if (CardTypes.isUpcomingAction(position)){
+            return TYPE_ACTION;
+        }
+        if (CardTypes.isGoal(position)){
+            return TYPE_GOAL;
+        }
+        if (CardTypes.isUpcomingFooter(position) || CardTypes.isMyGoalsFooter(position)){
+            return TYPE_FOOTER;
+        }
+        return TYPE_OTHER;
     }
-
-    //Remove
-    void remove(int position){
-        //1.- Remove the action in the webapp
-        //2.- Update the model
-        //3.- Update the adapter
-
-        Action action;
-        if (CardTypes.isUpNext(position)){
-            action = mDataHandler.getUpNext();
-            mDataHandler.remove(action);
-            mDataHandler.replaceUpNext();
-            replaceUpNext();
-        }
-        else{
-            action = mDataHandler.getUpcoming().get(getActionPosition(position));
-            mDataHandler.remove(action);
-            mDataHandler.removeUpcoming(getActionPosition(position));
-            removeActionFromFeed(position);
-        }
-        new DeleteActionTask(mContext, null, action.getMappingId()+"").execute();
-    }
-
-    //View Goal
-    void viewGoal(int position){
-        Action action;
-        if (CardTypes.isUpNext(position)){
-            action = mUserData.getFeedData().getNextAction();
-        }
-        else{
-            action = mUserData.getFeedData().getUpcomingActions().get(getActionPosition(position));
-        }
-        //TODO this is another workaround
-        if (action.getPrimaryGoal() != null){
-            mListener.onGoalSelected(action.getPrimaryGoal());
-        }
-    }
-
-
-    void more(int position){
-        if (CardTypes.isUpcomingFooter(position)){
-            int footer = CardTypes.getUpcomingFooterPosition();
-            int count = mDataHandler.loadMoreUpcoming();
-            if (!CardTypes.hasUpcomingFooter()){
-                notifyItemRemoved(footer);
-            }
-            notifyItemRangeInserted(footer, count);
-            notifyItemRangeChanged(footer + count, getItemCount());
-        }
-        else if (CardTypes.isMyGoalsFooter(position)){
-            int footer = CardTypes.getMyGoalsFooterPosition();
-            int count = mDataHandler.loadMoreGoals();
-            notifyItemRangeInserted(footer, count);
-            if (!CardTypes.hasMyGoalsFooter()){
-                notifyItemRemoved(footer+count+1);
-            }
-        }
-    }
-
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
@@ -255,6 +151,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         else if (viewType == TYPE_FEEDBACK){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             return new FeedbackHolder(this, inflater.inflate(R.layout.card_feedback, parent, false));
+        }
+        else if (viewType == TYPE_SUGGESTION){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            return new GoalSuggestionHolder(this, inflater.inflate(R.layout.card_goal_suggestion, parent, false));
         }
         else if (viewType == TYPE_HEADER){
             LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -312,6 +212,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             holder.mTitle.setText(mUserData.getFeedData().getFeedbackTitle());
             holder.mSubtitle.setText(mUserData.getFeedData().getFeedbackSubtitle());
         }
+        else if (CardTypes.isSuggestion(position)){
+            GoalSuggestionHolder holder = (GoalSuggestionHolder)rawHolder;
+            holder.mTitle.setText(mUserData.getFeedData().getSuggestions().get(0).getTitle());
+        }
         //Today's activities / upcoming header
         else if (CardTypes.isUpcomingHeader(position)){
             HeaderHolder holder = (HeaderHolder)rawHolder;
@@ -321,21 +225,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         //Today's activities / upcoming
         else if (CardTypes.isUpcomingAction(position)){
             ((CardView)rawHolder.itemView).setRadius(0);
-
-            ActionHolder holder = (ActionHolder)rawHolder;
-            int actionPosition = position - CardTypes.getUpcomingHeaderPosition() - 1;
-            Action action = mDataHandler.getUpcoming().get(actionPosition);
-            holder.mAction.setText(action.getTitle());
-            //TODO this shouldn't be happening
-            if (action.getPrimaryGoal() != null){
-                String goalTitle = action.getPrimaryGoal().getTitle().substring(0, 1).toLowerCase();
-                goalTitle += action.getPrimaryGoal().getTitle().substring(1);
-                holder.mGoal.setText(mContext.getString(R.string.card_upcoming_goal_title, goalTitle));
-            }
-            else{
-                holder.mGoal.setText("");
-            }
-            holder.mTime.setText(action.getNextReminderDate());
+            ((ActionHolder)rawHolder).bind(mDataHandler.getUpcoming(getActionPosition(position)));
         }
         else if (CardTypes.isUpcomingFooter(position)){
             ((CardView)rawHolder.itemView).setRadius(0);
@@ -355,33 +245,15 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         else if (CardTypes.isGoal(position)){
             ((CardView)rawHolder.itemView).setRadius(0);
 
-            GoalHolder holder = (GoalHolder)rawHolder;
-            int goalPosition = position - CardTypes.getMyGoalsHeaderPosition() - 1;
+            int goalPosition = position - CardTypes.getMyGoalsHeaderPosition()-1;
             Goal goal;
             if (mUserData.getGoals().isEmpty()){
                 goal = mUserData.getFeedData().getSuggestions().get(goalPosition);
             }
             else{
                 goal = mUserData.getGoals().get(goalPosition);
-
-                GradientDrawable gradientDrawable = (GradientDrawable)holder.mIconContainer.getBackground();
-                if (goal.getPrimaryCategory() != null){
-                    gradientDrawable.setColor(Color.parseColor(goal.getPrimaryCategory().getColor()));
-                }
-                else{
-                    //TODO another workaround
-                    gradientDrawable.setColor(mContext.getResources().getColor(R.color.grow_primary));
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-                    holder.mIconContainer.setBackground(gradientDrawable);
-                }
-                else{
-                    holder.mIconContainer.setBackgroundDrawable(gradientDrawable);
-                }
             }
-
-            goal.loadIconIntoView(mContext, holder.mIcon);
-            holder.mTitle.setText(goal.getTitle());
+            ((GoalHolder)rawHolder).bind(goal, mUserData.getGoals().isEmpty());
         }
         else if (CardTypes.isMyGoalsFooter(position)){
             ((CardView)rawHolder.itemView).setRadius(0);
@@ -393,37 +265,31 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         return CardTypes.getItemCount();
     }
 
-    @Override
-    public int getItemViewType(int position){
-        //The first card is always a blank card
-        if (position == 0){
-            return TYPE_BLANK;
-        }
-        //The second card may be a welcome card, but only if the user has no goals selected
-        if (CardTypes.hasWelcomeCard() && position == 1){
-            return TYPE_WELCOME;
-        }
-        //The rest of them have checker methods
-        if (CardTypes.isUpNext(position)){
-            return TYPE_UP_NEXT;
-        }
-        if (CardTypes.isFeedback(position)){
-            return TYPE_FEEDBACK;
-        }
-        if (CardTypes.isUpcomingHeader(position) || CardTypes.isMyGoalsHeader(position)){
-            return TYPE_HEADER;
-        }
-        if (CardTypes.isUpcomingAction(position)){
-            return TYPE_ACTION;
-        }
-        if (CardTypes.isGoal(position)){
-            return TYPE_GOAL;
-        }
-        if (CardTypes.isUpcomingFooter(position) || CardTypes.isMyGoalsFooter(position)){
-            return TYPE_FOOTER;
-        }
 
-        return TYPE_OTHER;
+    /*----------------------*
+     * FEED ADAPTER METHODS *
+     *----------------------*/
+
+    /**
+     * Sets the card parameters for pre L devices.
+     *
+     * @param view the card view whose parameters shall be set.
+     */
+    private void setPreLParameters(CardView view){
+        view.setMaxCardElevation(0);
+        view.setCardBackgroundColor(mContext.getResources().getColor(R.color.card_pre_l_background));
+    }
+
+    DataHandler getDataHandler(){
+        return mDataHandler;
+    }
+
+    void setSelectedItem(int selectedItem){
+        mSelectedItem = selectedItem;
+    }
+
+    public int getMyGoalsHeaderPosition(){
+        return CardTypes.getMyGoalsHeaderPosition();
     }
 
     /**
@@ -437,6 +303,197 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
         return mMainFeedPadding;
     }
+
+
+    /*------------------------*
+     * ACTION RELATED METHODS *
+     *------------------------*/
+
+    /**
+     * Display the popup menu for a specific goal.
+     *
+     * @param anchor the view it should be anchored to.
+     * @param position the position of the view.
+     */
+    void showActionPopup(View anchor, int position){
+        mFeedUtil.showActionPopup(anchor, position);
+    }
+
+    /**
+     * Generic did it to be called when events are triggered outside the adapter. It
+     * uses the selected item set using the setSelectedItem(int) method. If no item
+     * was set as selected prior to the call, it is ignored. The selected item is
+     * reset when this method is called.
+     */
+    public void didIt(){
+        if (mSelectedItem != -1){
+            didIt(mSelectedItem);
+            mSelectedItem = -1;
+        }
+    }
+
+    /**
+     * Marks an action as done in every possible way. This is done in three steps:
+     * (1) mark the action as complete within the model and the webapp through an
+     * api request, (2) update the data set, and (3) update the adapter to reflect
+     * the changes in the data set.
+     *
+     * @param position the adapter position of the item to be marked as done.
+     */
+    void didIt(int position){
+        if (CardTypes.isUpNext(position)){
+            mDataHandler.didIt();
+            mFeedUtil.didIt(mContext, mDataHandler.getUpNext());
+            mDataHandler.replaceUpNext();
+            replaceUpNext();
+        }
+        else if (CardTypes.isUpcomingAction(position)){
+            mDataHandler.didIt();
+            mFeedUtil.didIt(mContext, mDataHandler.removeUpcoming(getActionPosition(position)));
+            removeActionFromFeed(position);
+        }
+    }
+
+    /**
+     * Marks the given item as selected and then lets the listener know that the
+     * trigger editor needs to be opened. If the trigger was modified when the
+     * activity is finished the updateSelectedItem() method should be called to
+     * make the change reflect in the UI.
+     *
+     * @param position the adapter position of the item to be rescheduled.
+     */
+    void reschedule(int position){
+        mSelectedItem = position;
+        if (CardTypes.isUpNext(position)){
+            mListener.onTriggerSelected(getDataHandler().getUpNext());
+        }
+        else if (CardTypes.isUpcomingAction(position)){
+            mListener.onTriggerSelected(getDataHandler().getUpcoming().get(getActionPosition(position)));
+        }
+        else{
+            mSelectedItem = -1;
+        }
+    }
+
+    /**
+     * Removes the selected action from the user data bundle. This is done in three steps:
+     * (1) the action is removed in the webapp through an api call, (2) the action is
+     * removed in the local model, and (3) the adapter is updated to reflect the changes.
+     *
+     * @param position the adapter position of the item to be removed.
+     */
+    void remove(int position){
+        Action action;
+        if (CardTypes.isUpNext(position)){
+            action = mDataHandler.getUpNext();
+            mDataHandler.remove(action);
+            mDataHandler.replaceUpNext();
+            replaceUpNext();
+        }
+        else{
+            action = mDataHandler.getUpcoming().get(getActionPosition(position));
+            mDataHandler.remove(action);
+            mDataHandler.removeUpcoming(getActionPosition(position));
+            removeActionFromFeed(position);
+        }
+        new DeleteActionTask(mContext, null, action.getMappingId()+"").execute();
+    }
+
+    /**
+     * Lets the listener know that GoalActivity should be opened for the primary goal of
+     * the selected action, if the action has one.
+     *
+     * @param position the adapter position of the action whose goal is to be viewed.
+     */
+    void viewGoal(int position){
+        Action action;
+        if (CardTypes.isUpNext(position)){
+            action = mUserData.getFeedData().getNextAction();
+        }
+        else{
+            action = mUserData.getFeedData().getUpcomingActions().get(getActionPosition(position));
+        }
+        //TODO this is another workaround
+        if (action.getPrimaryGoal() != null){
+            mListener.onGoalSelected(action.getPrimaryGoal());
+        }
+    }
+
+    /**
+     * Calculates the position of an action given its position in the list,
+     *
+     * @param adapterPosition a position in the list.
+     * @return the position of the action in the backing array.
+     */
+    int getActionPosition(int adapterPosition){
+        return adapterPosition-(CardTypes.getUpcomingHeaderPosition()+1);
+    }
+
+    /**
+     * Animates the replacement of the up next card.
+     */
+    void replaceUpNext(){
+        if (mDataHandler.getUpNext() != null){
+            int headerPosition = CardTypes.getUpcomingHeaderPosition();
+            if (!CardTypes.hasUpcoming()){
+                notifyItemRemoved(headerPosition);
+            }
+            notifyItemRemoved(headerPosition + 1);
+            notifyItemRangeChanged(headerPosition + 2, getItemCount() - (headerPosition + 2));
+        }
+
+        //Update the up next card
+        notifyItemChanged(CardTypes.getUpNextPosition());
+    }
+
+    /**
+     * Removes an action from the feed.
+     *
+     * @param position the position if the item in the feed.
+     */
+    void removeActionFromFeed(int position){
+        //Update the relevant action cards
+        if (!CardTypes.hasUpcoming()){
+            notifyItemRemoved(position - 1);
+        }
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position - 1, getItemCount() - (position - 1));
+    }
+
+
+    /*------------------------*
+     * FOOTER RELATED METHODS *
+     *------------------------*/
+
+    /**
+     * Makes the feed display more actions or goals, depending on which footer was tapped.
+     *
+     * @param position the adapter position of the tapped footer.
+     */
+    void more(int position){
+        if (CardTypes.isUpcomingFooter(position)){
+            int footer = CardTypes.getUpcomingFooterPosition();
+            int count = mDataHandler.loadMoreUpcoming();
+            if (!CardTypes.hasUpcomingFooter()){
+                notifyItemRemoved(footer);
+            }
+            notifyItemRangeInserted(footer, count);
+            notifyItemRangeChanged(footer + count, getItemCount());
+        }
+        else if (CardTypes.isMyGoalsFooter(position)){
+            int footer = CardTypes.getMyGoalsFooterPosition();
+            int count = mDataHandler.loadMoreGoals();
+            notifyItemRangeInserted(footer, count);
+            if (!CardTypes.hasMyGoalsFooter()){
+                notifyItemRemoved(footer+count+1);
+            }
+        }
+    }
+
+
+    /*--------------------------------------------------*
+     * ACTIONS TO BE CARRIED OUT UPON THE SELECTED ITEM *
+     *--------------------------------------------------*/
 
     /**
      * Updates the item marked as selected.
@@ -461,19 +518,5 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             removeActionFromFeed(mSelectedItem);
         }
         mSelectedItem = -1;
-    }
-
-    /**
-     * Sets the card parameters for pre L devices.
-     *
-     * @param view the card view whose parameters shall be set.
-     */
-    private void setPreLParameters(CardView view){
-        view.setMaxCardElevation(0);
-        view.setCardBackgroundColor(mContext.getResources().getColor(R.color.card_pre_l_background));
-    }
-
-    public int getMyGoalsHeaderPosition(){
-        return CardTypes.getMyGoalsHeaderPosition();
     }
 }

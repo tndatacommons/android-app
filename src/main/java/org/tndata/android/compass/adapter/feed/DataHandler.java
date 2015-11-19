@@ -1,7 +1,5 @@
 package org.tndata.android.compass.adapter.feed;
 
-import android.util.Log;
-
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.FeedData;
@@ -91,6 +89,10 @@ class DataHandler{
 
     List<Action> getUpcoming(){
         return mDisplayedUpcoming;
+    }
+
+    Action getUpcoming(int position){
+        return mDisplayedUpcoming.get(position);
     }
 
     Action removeUpcoming(int position){

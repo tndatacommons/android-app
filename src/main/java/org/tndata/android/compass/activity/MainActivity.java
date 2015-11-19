@@ -19,7 +19,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -193,7 +192,7 @@ public class MainActivity
         View header = findViewById(R.id.main_illustration);
 
         //Create the adapter and set the feed
-        mAdapter = new MainFeedAdapter(this, this);
+        mAdapter = new MainFeedAdapter(this, this, false);
 
         mFeed = (RecyclerView)findViewById(R.id.main_feed);
         mFeed.setAdapter(mAdapter);
@@ -695,7 +694,7 @@ public class MainActivity
             mFeed.removeItemDecoration(mAdapter.getMainFeedPadding());
 
             //Recreate the adapter and set the new decoration
-            mAdapter = new MainFeedAdapter(this, this);
+            mAdapter = new MainFeedAdapter(this, this, true);
             mFeed.setAdapter(mAdapter);
             mFeed.addItemDecoration(mAdapter.getMainFeedPadding());
         }

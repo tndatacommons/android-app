@@ -11,6 +11,7 @@ package org.tndata.android.compass.adapter.feed;
  */
 final class CardTypes{
     private static DataHandler mDataHandler;
+    private static boolean mDisplaySuggestion;
 
 
     /**
@@ -21,6 +22,16 @@ final class CardTypes{
      */
     static void setDataSource(DataHandler dataHandler){
         mDataHandler = dataHandler;
+        mDisplaySuggestion = false;
+    }
+
+    /**
+     * Changes the suggestion display flag.
+     *
+     * @param displaySuggestion true if a suggestion should be included in the dataset.
+     */
+    static void displaySuggestion(boolean displaySuggestion){
+        mDisplaySuggestion = displaySuggestion;
     }
 
     /**
@@ -66,6 +77,9 @@ final class CardTypes{
      * @return the position of the feedback card.
      */
     static int getFeedbackPosition(){
+        if (hasSuggestion()){
+            return getSuggestionPosition()+1;
+        }
         return getUpNextPosition()+1;
     }
 
@@ -77,6 +91,18 @@ final class CardTypes{
      */
     static boolean isFeedback(int position){
         return hasUpNextAction() && getFeedbackPosition() == position;
+    }
+
+    static boolean hasSuggestion(){
+        return mDisplaySuggestion && !mDataHandler.getGoals().isEmpty();
+    }
+
+    static int getSuggestionPosition(){
+        return getUpNextPosition()+1;
+    }
+
+    static boolean isSuggestion(int position){
+        return hasSuggestion() && position == getSuggestionPosition();
     }
 
     /**
@@ -97,6 +123,9 @@ final class CardTypes{
         //If there is up next, then there is feedback
         if (hasUpNextAction()){
             return getFeedbackPosition()+1;
+        }
+        if (hasSuggestion()){
+            return getSuggestionPosition()+1;
         }
         //If there ain't up next, then there is no feedback and up next displays something else
         return getUpNextPosition()+1;
