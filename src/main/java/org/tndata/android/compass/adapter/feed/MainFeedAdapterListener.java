@@ -21,6 +21,9 @@ public interface MainFeedAdapterListener{
      */
     void onInstructionsSelected();
 
+    void onSuggestionDismissed();
+    void onSuggestionOpened(Goal goal);
+
     /**
      * Called when a goal is selected from either the context menu in actions or
      * goals/recommendations.

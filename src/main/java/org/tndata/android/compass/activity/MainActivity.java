@@ -19,7 +19,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -87,6 +86,7 @@ public class MainActivity
     //Activity request codes
     private static final int CATEGORIES_REQUEST_CODE = 4821;
     private static final int GOAL_REQUEST_CODE = 3486;
+    private static final int GOAL_SUGGESTION_REQUEST_CODE = 8962;
     private static final int ACTION_REQUEST_CODE = 4582;
     private static final int TRIGGER_REQUEST_CODE = 7631;
 
@@ -125,6 +125,8 @@ public class MainActivity
 
     //The selected category from the FAB
     private Category mSelectedCategory;
+
+    private boolean mSuggestionDismissed;
 
 
     @Override
@@ -193,7 +195,7 @@ public class MainActivity
         View header = findViewById(R.id.main_illustration);
 
         //Create the adapter and set the feed
-        mAdapter = new MainFeedAdapter(this, this);
+        mAdapter = new MainFeedAdapter(this, this, false);
 
         mFeed = (RecyclerView)findViewById(R.id.main_feed);
         mFeed.setAdapter(mAdapter);
@@ -272,6 +274,8 @@ public class MainActivity
 
         //Set up the FAB menu
         populateMenu();
+
+        mSuggestionDismissed = false;
     }
 
     @Override
@@ -615,6 +619,19 @@ public class MainActivity
     }
 
     @Override
+    public void onSuggestionDismissed(){
+        mSuggestionDismissed = true;
+    }
+
+    @Override
+    public void onSuggestionOpened(Goal goal){
+        Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
+                .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal)
+                .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, goal.getCategories().get(0));
+        startActivityForResult(chooseBehaviors, GOAL_SUGGESTION_REQUEST_CODE);
+    }
+
+    @Override
     public void onGoalSelected(Goal goal){
         //User goal
         if (!mApplication.getUserData().getGoals().isEmpty()){
@@ -661,6 +678,9 @@ public class MainActivity
                 populateMenu();
                 mAdapter.notifyDataSetChanged();
             }
+            else if (requestCode == GOAL_SUGGESTION_REQUEST_CODE){
+                mAdapter.dismissSuggestion();
+            }
             else if (requestCode == GOAL_REQUEST_CODE){
                 mAdapter.notifyDataSetChanged();
             }
@@ -695,9 +715,11 @@ public class MainActivity
             mFeed.removeItemDecoration(mAdapter.getMainFeedPadding());
 
             //Recreate the adapter and set the new decoration
-            mAdapter = new MainFeedAdapter(this, this);
+            mAdapter = new MainFeedAdapter(this, this, !mSuggestionDismissed);
             mFeed.setAdapter(mAdapter);
             mFeed.addItemDecoration(mAdapter.getMainFeedPadding());
+
+            mSuggestionDismissed = false;
         }
         if (mRefresh.isRefreshing()){
             mRefresh.setRefreshing(false);

@@ -1,7 +1,5 @@
 package org.tndata.android.compass.adapter.feed;
 
-import android.util.Log;
-
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.FeedData;
@@ -93,6 +91,10 @@ class DataHandler{
         return mDisplayedUpcoming;
     }
 
+    Action getUpcoming(int position){
+        return mDisplayedUpcoming.get(position);
+    }
+
     Action removeUpcoming(int position){
         mDisplayedUpcoming.remove(position);
         Action removed = mFeedData.getUpcomingActions().remove(position);
@@ -159,5 +161,17 @@ class DataHandler{
         if (mDisplayedUpcoming.size() < 3 && mFeedData.getUpcomingActions().size() > mDisplayedUpcoming.size()){
             mDisplayedUpcoming.add(mFeedData.getUpcomingActions().get(mDisplayedUpcoming.size()));
         }
+    }
+
+    int getTotalActions(){
+        return mFeedData.getTotalActions();
+    }
+
+    int getProgress(){
+        return mFeedData.getProgress();
+    }
+
+    String getProgressFraction(){
+        return mFeedData.getProgressFraction();
     }
 }

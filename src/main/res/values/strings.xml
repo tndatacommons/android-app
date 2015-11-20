@@ -276,6 +276,10 @@
     <string name="card_up_next_subtitle_empty">Select an activity to help you reach one of your goals.</string>
     <string name="card_up_next_goal_title">To %1$s</string>
     <string name="card_up_next_indicator_caption">%1$s completed</string>
+    <!-- Goal suggestion card -->
+    <string name="card_goal_suggestion_header">Compass can help me&#8230;</string>
+    <string name="card_goal_suggestion_later">Maybe later</string>
+    <string name="card_goal_suggestion_show_me">Show me</string>
     <!-- Upcoming cards -->
     <string name="card_upcoming_header">Today\'s activities</string>
     <string name="card_upcoming_goal_title">To %1$s</string>

@@ -14,10 +14,9 @@ import org.tndata.android.compass.model.Action;
  * @version 1.0.0
  */
 class ActionHolder extends MainFeedViewHolder implements View.OnClickListener{
-    View mOverflow;
-    TextView mAction;
-    TextView mGoal;
-    TextView mTime;
+    private TextView mAction;
+    private TextView mGoal;
+    private TextView mTime;
 
 
     /**
@@ -29,13 +28,12 @@ class ActionHolder extends MainFeedViewHolder implements View.OnClickListener{
     ActionHolder(MainFeedAdapter adapter, View rootView){
         super(adapter, rootView);
 
-        mOverflow = rootView.findViewById(R.id.action_overflow_box);
         mAction = (TextView)rootView.findViewById(R.id.action_title);
         mGoal = (TextView)rootView.findViewById(R.id.action_goal);
         mTime = (TextView)rootView.findViewById(R.id.action_time);
 
         rootView.setOnClickListener(this);
-        mOverflow.setOnClickListener(this);
+        rootView.findViewById(R.id.action_overflow_box).setOnClickListener(this);
     }
 
     @Override
@@ -51,5 +49,19 @@ class ActionHolder extends MainFeedViewHolder implements View.OnClickListener{
             default:
                 mAdapter.mListener.onActionSelected(action);
         }
+    }
+
+    void bind(Action action){
+        mAction.setText(action.getTitle());
+        //TODO this shouldn't be happening
+        if (action.getPrimaryGoal() != null){
+            String goalTitle = action.getPrimaryGoal().getTitle().substring(0, 1).toLowerCase();
+            goalTitle += action.getPrimaryGoal().getTitle().substring(1);
+            mGoal.setText(mAdapter.mContext.getString(R.string.card_upcoming_goal_title, goalTitle));
+        }
+        else{
+            mGoal.setText("");
+        }
+        mTime.setText(action.getNextReminderDate());
     }
 }

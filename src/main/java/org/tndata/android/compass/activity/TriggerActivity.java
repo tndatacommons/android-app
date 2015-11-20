@@ -143,6 +143,7 @@ public class TriggerActivity
             UserData userData = mApplication.getUserData();
 
             Goal goal = (Goal)getIntent().getSerializableExtra("goal");
+            //TODO maybe the user does not have a notification, fetch from user data only if it is there
             mAction = userData.getAction((Action)getIntent().getSerializableExtra("action"));
 
             //TODO this is another workaround

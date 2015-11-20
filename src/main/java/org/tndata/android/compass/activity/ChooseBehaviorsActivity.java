@@ -282,6 +282,7 @@ public class ChooseBehaviorsActivity
         ArrayList<String> ids = new ArrayList<>();
         ids.add(mGoal.getId() + "");
         new AddGoalTask(this, this, ids, mGoal).execute();
+        setResult(RESULT_OK);
     }
 
     @Override
