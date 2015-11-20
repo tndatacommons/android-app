@@ -461,6 +461,22 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
 
+    /*----------------------*
+     * GOAL RELATED METHODS *
+     *----------------------*/
+
+    public void dismissSuggestion(){
+        CardTypes.displaySuggestion(false);
+        notifyItemRemoved(CardTypes.getSuggestionPosition());
+        notifyItemRangeChanged(CardTypes.getSuggestionPosition()+1, getItemCount()-1);
+        mListener.onSuggestionDismissed();
+    }
+
+    void viewSuggestion(){
+        mListener.onSuggestionOpened(mUserData.getFeedData().getSuggestions().get(0));
+    }
+
+
     /*------------------------*
      * FOOTER RELATED METHODS *
      *------------------------*/

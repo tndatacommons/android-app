@@ -25,11 +25,11 @@ public class GoalSuggestionHolder extends MainFeedViewHolder implements View.OnC
     public void onClick(View view){
         switch (view.getId()){
             case R.id.goal_suggestion_later:
-
+                mAdapter.dismissSuggestion();
                 break;
 
             case R.id.goal_suggestion_show_me:
-
+                mAdapter.viewSuggestion();
                 break;
         }
     }
