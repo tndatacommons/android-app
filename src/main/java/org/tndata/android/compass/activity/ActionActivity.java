@@ -356,7 +356,12 @@ public class ActionActivity
         mButtonWrapper.setVisibility(View.VISIBLE);
         if (!mAction.getExternalResource().isEmpty()){
             mDoItNow.setOnClickListener(this);
-            mDoItNow.setText(R.string.action_do_it_now);
+            if (mAction.getExternalResourceName().isEmpty() || mAction.getExternalResourceName().length() > 12){
+                mDoItNow.setText(R.string.action_do_it_now);
+            }
+            else{
+                mDoItNow.setText(mAction.getExternalResourceName());
+            }
         }
         else{
             if (mActionNeededFetching){

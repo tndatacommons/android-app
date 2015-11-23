@@ -13,6 +13,7 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
     private String more_info = "";
     private String html_more_info = "";
     private String external_resource = "";
+    private String external_resource_name = "";
     private String notification_text = "";
     private String icon_url = "";
     private String image_url = "";
@@ -106,6 +107,10 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
 
     public void setExternalResource(String external_resource) {
         this.external_resource = external_resource;
+    }
+
+    public String getExternalResourceName(){
+        return external_resource_name;
     }
 
     public String getNotificationText() {
