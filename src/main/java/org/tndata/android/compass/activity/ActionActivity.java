@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +28,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.model.Reminder;
+import org.tndata.android.compass.task.AddActionTriggerTask;
 import org.tndata.android.compass.task.GetUserActionsTask;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
@@ -47,7 +49,8 @@ public class ActionActivity
         extends AppCompatActivity
         implements
                 View.OnClickListener,
-                GetUserActionsTask.GetUserActionsCallback{
+                GetUserActionsTask.GetUserActionsCallback,
+                AddActionTriggerTask.AddActionTriggerTaskListener{
 
     public static final String ACTION_KEY = "org.tndata.compass.ActionActivity.action";
     public static final String ACTION_ID_KEY = "org.tndata.compass.ActionActivity.action_id";
@@ -75,7 +78,7 @@ public class ActionActivity
     private ViewSwitcher mTickSwitcher;
 
     //Firewall
-    private boolean mActionFetched;
+    private boolean mActionNeededFetching;
     private boolean mActionUpdated;
 
 
@@ -132,13 +135,13 @@ public class ActionActivity
 
         //If the action wasn't provided via the intent it needs to be fetched
         if (mAction == null){
-            mActionFetched = true;
+            mActionNeededFetching = true;
             timeOption.setText(R.string.action_snooze);
             mReminder = (Reminder)getIntent().getSerializableExtra(REMINDER_KEY);
             fetchAction(getIntent().getIntExtra(ACTION_ID_KEY, -1));
         }
         else{
-            mActionFetched = false;
+            mActionNeededFetching = false;
             timeOption.setText(R.string.action_reschedule);
             populateUI();
         }
@@ -146,19 +149,32 @@ public class ActionActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-        if (mActionFetched){
-            getMenuInflater().inflate(R.menu.menu_action, menu);
+        if (mActionNeededFetching && mAction != null && !mAction.getPrimaryCategory().isPackagedContent()){
+            if (!mAction.hasTrigger() || mAction.getTrigger().isDisabled()){
+                getMenuInflater().inflate(R.menu.menu_action_disabled, menu);
+            }
+            else{
+                getMenuInflater().inflate(R.menu.menu_action, menu);
+            }
         }
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
-        if (item.getItemId() == R.id.action_trigger){
-            reschedule();
-            return true;
+        switch (item.getItemId()){
+            case R.id.action_trigger:
+                reschedule();
+                break;
+
+            case R.id.action_disable_trigger:
+                disableTrigger();
+                break;
+
+            default:
+                return false;
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -232,6 +248,16 @@ public class ActionActivity
         }
     }
 
+    private void disableTrigger(){
+        new AddActionTriggerTask(this,
+                ((CompassApplication)getApplication()).getToken(),
+                "", "", "", String.valueOf(mAction.getMappingId()))
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        mAction.setCustomTrigger(null);
+        mAction.setDefaultTrigger(null);
+        invalidateOptionsMenu();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (resultCode == RESULT_OK){
@@ -240,7 +266,7 @@ public class ActionActivity
                     //If the activity was was fired from an action notification and the
                     //  associated action was rescheduled, the notification needs to be
                     //  dismissed
-                    if (mActionFetched){
+                    if (mActionNeededFetching){
                         ((NotificationManager)getSystemService(NOTIFICATION_SERVICE))
                                 .cancel(NotificationUtil.NOTIFICATION_TYPE_ACTION_TAG,
                                         mReminder.getObjectId());
@@ -294,6 +320,7 @@ public class ActionActivity
         if (actions.size() > 0){
             mAction = actions.get(0);
             populateUI();
+            invalidateOptionsMenu();
         }
         else{
             //If the request did not return any actions, kill the activity
@@ -332,7 +359,7 @@ public class ActionActivity
             mDoItNow.setText(R.string.action_do_it_now);
         }
         else{
-            if (mActionFetched){
+            if (mActionNeededFetching){
                 ViewGroup.LayoutParams params = mDoItNow.getLayoutParams();
                 params.width = mDidIt.getWidth();
                 mDoItNow.setLayoutParams(params);
@@ -355,5 +382,10 @@ public class ActionActivity
                 });
             }
         }
+    }
+
+    @Override
+    public boolean actionTriggerAdded(Action action){
+        return true;
     }
 }

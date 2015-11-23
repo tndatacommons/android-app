@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,8 +81,11 @@ public class GetUserActionsTask extends AsyncTask<String, Void, List<Action>>{
             for (Action action:actions){
                 Log.d(TAG, action.toString());
             }
+            mCallback.onActionsLoaded(actions);
         }
-        mCallback.onActionsLoaded(actions);
+        else{
+            mCallback.onActionsLoaded(new ArrayList<Action>());
+        }
     }
 
 

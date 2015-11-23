@@ -37,10 +37,6 @@ public class AddActionTriggerTask extends AsyncTask<Void, Void, Action> {
     private static Gson gson = new GsonBuilder().setFieldNamingPolicy(
             FieldNamingPolicy.IDENTITY).create();
 
-    public interface AddActionTriggerTaskListener {
-        public boolean actionTriggerAdded(Action action);
-    }
-
     public AddActionTriggerTask(AddActionTriggerTaskListener callback,
                                 String token,
                                 String rrule,
@@ -107,17 +103,24 @@ public class AddActionTriggerTask extends AsyncTask<Void, Void, Action> {
             action.setNextReminderDate(response.getString("next_reminder"));
             return action;
 
-        } catch (IOException e) {
+        }
+        catch (IOException e){
             e.printStackTrace();
-        } catch (Exception e) {
+        }
+        catch (Exception e){
             e.printStackTrace();
         }
         return null;
     }
 
     @Override
-    protected void onPostExecute(Action action) {
+    protected void onPostExecute(Action action){
         // Send an Action with the populated Trigger (or null)
         mCallback.actionTriggerAdded(action);
+    }
+
+
+    public interface AddActionTriggerTaskListener{
+        boolean actionTriggerAdded(Action action);
     }
 }

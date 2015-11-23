@@ -177,6 +177,7 @@
     <string name="action_tick_cd">Action complete tick</string>
     <string name="action_trigger">Change reminder</string>
     <string name="action_trigger_condensed">Reminder</string>
+    <string name="action_disable_trigger">Disable reminder</string>
 
     <!-- TourFragment -->
     <string name="tour_action_skip">SKIP</string>
