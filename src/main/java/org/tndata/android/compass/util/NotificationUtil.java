@@ -160,9 +160,9 @@ public final class NotificationUtil{
 
         //Generate the notification and push it
         Notification notification = getBuilder(context, title, message)
-                .addAction(R.drawable.ic_thumb_up_white, didIt, didItPendingIntent)
-                .addAction(R.drawable.ic_thumb_down_white, didNotDoIt, didNotDoItPendingIntent)
                 .addAction(R.drawable.ic_snooze, later, snoozePendingIntent)
+                .addAction(R.drawable.ic_thumb_down_white, didNotDoIt, didNotDoItPendingIntent)
+                .addAction(R.drawable.ic_thumb_up_white, didIt, didItPendingIntent)
                 .setContentIntent(contentIntent)
                 .setDeleteIntent(dismissedPendingIntent)
                 .setAutoCancel(false)
