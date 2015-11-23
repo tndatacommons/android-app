@@ -167,7 +167,8 @@ public final class NotificationUtil{
                 .setDeleteIntent(dismissedPendingIntent)
                 .setAutoCancel(false)
                 .build();
-
+        
+        notification.flags |= Notification.FLAG_ONGOING_EVENT;
         ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
                 .notify(NOTIFICATION_TYPE_ACTION_TAG, actionId, notification);
     }
