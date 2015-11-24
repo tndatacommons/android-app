@@ -30,9 +30,10 @@
                 android:text="@string/card_goal_suggestion_header" />
 
             <ImageView
+                android:id="@+id/goal_suggestion_overflow"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <!--android:src="@drawable/ic_overflow_vertical_white" />-->
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_overflow_vertical_white" />
 
         </LinearLayout>
 

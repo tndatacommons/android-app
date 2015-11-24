@@ -177,6 +177,7 @@
     <string name="action_tick_cd">Action complete tick</string>
     <string name="action_trigger">Change reminder</string>
     <string name="action_trigger_condensed">Reminder</string>
+    <string name="action_disable_trigger">Disable reminder</string>
 
     <!-- TourFragment -->
     <string name="tour_action_skip">SKIP</string>
@@ -280,6 +281,7 @@
     <string name="card_goal_suggestion_header">Compass can help me&#8230;</string>
     <string name="card_goal_suggestion_later">Maybe later</string>
     <string name="card_goal_suggestion_show_me">Show me</string>
+    <string name="card_goal_suggestion_popup_refresh">Refresh</string>
     <!-- Upcoming cards -->
     <string name="card_upcoming_header">Today\'s activities</string>
     <string name="card_upcoming_goal_title">To %1$s</string>

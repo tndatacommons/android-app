@@ -19,6 +19,8 @@ import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.task.DeleteActionTask;
 import org.tndata.android.compass.util.CompassUtil;
 
+import java.util.List;
+
 
 /**
  * Adapter for the main feed.
@@ -46,6 +48,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     private UserData mUserData;
     private DataHandler mDataHandler;
     private FeedUtil mFeedUtil;
+    private Goal mSuggestion;
 
     private MainFeedPadding mMainFeedPadding;
 
@@ -69,6 +72,8 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         else{
             mDataHandler = new DataHandler(mUserData);
             CardTypes.setDataSource(mDataHandler);
+            List<Goal> suggestions = mUserData.getFeedData().getSuggestions();
+            mSuggestion = suggestions.get((int)(Math.random()*suggestions.size()));
             mFeedUtil = new FeedUtil(this);
         }
         mMainFeedPadding = null;
@@ -212,9 +217,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             holder.mTitle.setText(mUserData.getFeedData().getFeedbackTitle());
             holder.mSubtitle.setText(mUserData.getFeedData().getFeedbackSubtitle());
         }
+        //Goal suggestion card
         else if (CardTypes.isSuggestion(position)){
             GoalSuggestionHolder holder = (GoalSuggestionHolder)rawHolder;
-            holder.mTitle.setText(mUserData.getFeedData().getSuggestions().get(0).getTitle());
+            holder.mTitle.setText(mSuggestion.getTitle());
         }
         //Today's activities / upcoming header
         else if (CardTypes.isUpcomingHeader(position)){
@@ -465,15 +471,25 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * GOAL RELATED METHODS *
      *----------------------*/
 
+    void showSuggestionPopup(View anchor){
+        mFeedUtil.showSuggestionPopup(anchor);
+    }
+
+    void refreshSuggestion(){
+        List<Goal> suggestions = mUserData.getFeedData().getSuggestions();
+        mSuggestion = suggestions.get((int)(Math.random()*suggestions.size()));
+        notifyItemChanged(CardTypes.getSuggestionPosition());
+    }
+
     public void dismissSuggestion(){
         CardTypes.displaySuggestion(false);
         notifyItemRemoved(CardTypes.getSuggestionPosition());
-        notifyItemRangeChanged(CardTypes.getSuggestionPosition()+1, getItemCount()-1);
+        notifyItemRangeChanged(CardTypes.getSuggestionPosition() + 1, getItemCount() - 1);
         mListener.onSuggestionDismissed();
     }
 
     void viewSuggestion(){
-        mListener.onSuggestionOpened(mUserData.getFeedData().getSuggestions().get(0));
+        mListener.onSuggestionOpened(mSuggestion);
     }
 
 

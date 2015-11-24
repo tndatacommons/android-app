@@ -9,9 +9,4 @@
         android:titleCondensed="@string/action_trigger_condensed"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/action_disable_trigger"
-        android:title="@string/action_disable_trigger"
-        app:showAsAction="never" />
-
 </menu>

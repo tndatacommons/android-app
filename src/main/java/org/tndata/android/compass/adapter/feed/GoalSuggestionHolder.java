@@ -17,6 +17,7 @@ public class GoalSuggestionHolder extends MainFeedViewHolder implements View.OnC
         super(adapter, rootView);
 
         mTitle = (TextView)rootView.findViewById(R.id.goal_suggestion_title);
+        rootView.findViewById(R.id.goal_suggestion_overflow).setOnClickListener(this);
         rootView.findViewById(R.id.goal_suggestion_later).setOnClickListener(this);
         rootView.findViewById(R.id.goal_suggestion_show_me).setOnClickListener(this);
     }
@@ -31,6 +32,9 @@ public class GoalSuggestionHolder extends MainFeedViewHolder implements View.OnC
             case R.id.goal_suggestion_show_me:
                 mAdapter.viewSuggestion();
                 break;
+
+            case R.id.goal_suggestion_overflow:
+                mAdapter.showSuggestionPopup(view);
         }
     }
 }

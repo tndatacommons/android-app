@@ -83,8 +83,9 @@
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="right"
         android:layout_marginLeft="30dp"
         android:layout_marginBottom="10dp"
         android:layout_marginRight="30dp"
@@ -93,29 +94,23 @@
         <ViewSwitcher
             android:id="@+id/check_in_reward_switcher"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp" >
 
-            <TextView
+            <ImageView
                 android:id="@+id/check_in_reward_more"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAllCaps="true"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="15sp"
-                android:textColor="@color/grow_primary"
-                android:text="@string/check_in_reward_more" />
+                android:src="@drawable/ic_refresh"
+                android:tint="@color/grow_primary" />
 
             <ProgressBar
-                android:layout_width="22dp"
-                android:layout_height="22dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_gravity="center" />
 
         </ViewSwitcher>
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
 
         <ImageView
             android:id="@+id/check_in_reward_overflow"

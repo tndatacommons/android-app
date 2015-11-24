@@ -55,11 +55,11 @@
                 android:layout_width="90dp"
                 android:layout_height="90dp"
                 progress:barColor="#00796B"
-                progress:barWidth="10dp"
+                progress:barWidth="8dp"
                 progress:contourSize="0dp"
                 progress:maxValue="100"
                 progress:rimColor="#B2DFDB"
-                progress:rimWidth="10dp"
+                progress:rimWidth="8dp"
                 progress:unit="%"
                 progress:seekMode="false" />
 

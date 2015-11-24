@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class Action extends TDCBase implements Serializable, Comparable<Action> {
 
     private static final long serialVersionUID = 2919447130236951923L;
+    private Category primary_category = null;
     private Goal primary_goal = null;
     private Behavior behavior = null;
     private int behavior_id = -1;
@@ -12,6 +13,7 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
     private String more_info = "";
     private String html_more_info = "";
     private String external_resource = "";
+    private String external_resource_name = "";
     private String notification_text = "";
     private String icon_url = "";
     private String image_url = "";
@@ -55,6 +57,14 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
         this.behavior_id = behaviorId;
     }
 
+    public void setPrimaryCategory(Category category){
+        primary_category = category;
+    }
+
+    public Category getPrimaryCategory(){
+        return primary_category;
+    }
+
     public Goal getPrimaryGoal(){
         return primary_goal;
     }
@@ -83,7 +93,7 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
         return more_info;
     }
 
-    public void setMoreInfo(String more_info    ) {
+    public void setMoreInfo(String more_info) {
         this.more_info = more_info;
     }
 
@@ -97,6 +107,10 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
 
     public void setExternalResource(String external_resource) {
         this.external_resource = external_resource;
+    }
+
+    public String getExternalResourceName(){
+        return external_resource_name;
     }
 
     public String getNotificationText() {
@@ -142,6 +156,10 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
         else{
             return new Trigger();
         }
+    }
+
+    public boolean hasTrigger(){
+        return custom_trigger != null && default_trigger != null;
     }
 
     public Trigger getCustomTrigger() {

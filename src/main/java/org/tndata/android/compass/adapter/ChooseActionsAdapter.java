@@ -274,6 +274,12 @@ public class ChooseActionsAdapter
                 }
                 else{
                     holder.mDoItNow.setVisibility(View.VISIBLE);
+                    if (action.getExternalResourceName().isEmpty() || action.getExternalResourceName().length() > 12){
+                        holder.mDoItNow.setText(R.string.action_do_it_now);
+                    }
+                    else{
+                        holder.mDoItNow.setText(action.getExternalResourceName());
+                    }
                 }
 
                 if (action.getIconUrl() != null && !action.getIconUrl().isEmpty()){
