@@ -27,7 +27,7 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
     }
 
     /**
-     * Display the popup menu for a specific goal.
+     * Display the popup menu for a specific action.
      *
      * @param anchor the view it should be anchored to.
      * @param position the position of the view.
@@ -64,6 +64,22 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
         popup.show();
     }
 
+    /**
+     * Display the popup menu for the suggestion.
+     *
+     * @param anchor the view it should be anchored to.
+     */
+    void showSuggestionPopup(View anchor){
+        CompassPopupMenu popup = CompassPopupMenu.newInstance(mAdapter.mContext, anchor);
+        popup.getMenuInflater().inflate(R.menu.popup_goal_suggestion, popup.getMenu());
+
+        //Set the listener
+        popup.setOnMenuItemClickListener(this);
+
+        //Show the menu.
+        popup.show();
+    }
+
     @Override
     public boolean onMenuItemClick(MenuItem item){
         switch (item.getItemId()){
@@ -81,6 +97,10 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
 
             case R.id.popup_action_view_goal:
                 mAdapter.viewGoal(mOpenPopup);
+                break;
+
+            case R.id.popup_goal_suggestion_refresh:
+                mAdapter.refreshSuggestion();
                 break;
         }
         return true;

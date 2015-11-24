@@ -471,6 +471,16 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * GOAL RELATED METHODS *
      *----------------------*/
 
+    void showSuggestionPopup(View anchor){
+        mFeedUtil.showSuggestionPopup(anchor);
+    }
+
+    void refreshSuggestion(){
+        List<Goal> suggestions = mUserData.getFeedData().getSuggestions();
+        mSuggestion = suggestions.get((int)(Math.random()*suggestions.size()));
+        notifyItemChanged(CardTypes.getSuggestionPosition());
+    }
+
     public void dismissSuggestion(){
         CardTypes.displaySuggestion(false);
         notifyItemRemoved(CardTypes.getSuggestionPosition());
