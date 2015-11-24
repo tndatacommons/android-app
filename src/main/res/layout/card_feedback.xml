@@ -15,9 +15,9 @@
         <ImageView
             android:id="@+id/card_feedback_icon"
             android:layout_width="90dp"
-            android:layout_height="wrap_content"
+            android:layout_height="90dp"
             android:layout_gravity="center_vertical"
-            android:padding="15dp" />
+            android:scaleType="fitCenter" />
 
         <LinearLayout
             android:orientation="vertical"
