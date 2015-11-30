@@ -242,8 +242,8 @@ public class ActionActivity
     private void reschedule(){
         if (mAction != null && !mActionUpdated){
             Intent reschedule = new Intent(this, TriggerActivity.class)
-                    .putExtra("action", mAction)
-                    .putExtra("goal", mAction.getPrimaryGoal());
+                    .putExtra(TriggerActivity.ACTION_KEY, mAction)
+                    .putExtra(TriggerActivity.GOAL_KEY, mAction.getPrimaryGoal());
             startActivityForResult(reschedule, RESCHEDULE_REQUEST_CODE);
         }
     }
