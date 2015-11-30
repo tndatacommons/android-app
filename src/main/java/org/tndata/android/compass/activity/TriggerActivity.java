@@ -65,6 +65,8 @@ public class TriggerActivity
     public static final String NEEDS_FETCHING_KEY = "org.tndata.compass.Trigger.NeedsFetching";
     public static final String NOTIFICATION_ID_KEY = "org.tndata.compass.Trigger.NotificationId";
     public static final String ACTION_ID_KEY = "org.tndata.compass.Trigger.ActionId";
+    public static final String ACTION_KEY = "org.tndata.compass.Trigger.Action";
+    public static final String GOAL_KEY = "org.tndata.compass.Trigger.Goal";
 
     private static final String TAG = "BaseTriggerActivity";
     private static final String FRAG_TAG_RECUR_PICKER = "recurrencePickerDialogFragment";
@@ -143,7 +145,13 @@ public class TriggerActivity
             UserData userData = mApplication.getUserData();
 
             Goal goal = (Goal)getIntent().getSerializableExtra("goal");
-            mAction = userData.getAction((Action)getIntent().getSerializableExtra("action"));
+            if (goal == null){
+                goal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
+            }
+            mAction = (Action)getIntent().getSerializableExtra("action");
+            if (mAction == null){
+                mAction = (Action)getIntent().getSerializableExtra(ACTION_KEY);
+            }
             Action userAction = userData.getAction(mAction);
             if (userAction != null){
                 mAction = userAction;
@@ -181,7 +189,7 @@ public class TriggerActivity
     }
 
     /**
-     * Calls the initialisation routine and brongs in the TriggerFragment.
+     * Calls the initialisation routine and brings in the TriggerFragment.
      */
     private void setAction(){
         initializeReminders(mAction.getTrigger());

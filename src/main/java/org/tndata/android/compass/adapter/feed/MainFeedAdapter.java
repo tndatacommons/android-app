@@ -73,23 +73,30 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             mDataHandler = new DataHandler(mUserData);
             CardTypes.setDataSource(mDataHandler);
             List<Goal> suggestions = mUserData.getFeedData().getSuggestions();
-            mSuggestion = suggestions.get((int)(Math.random()*suggestions.size()));
+            if (suggestions.isEmpty()){
+                mSuggestion = null;
+            }
+            else{
+                mSuggestion = suggestions.get((int)(Math.random()*suggestions.size()));
+            }
             mFeedUtil = new FeedUtil(this);
         }
         mMainFeedPadding = null;
 
-        if (initialSuggestion){
-            CardTypes.displaySuggestion(true);
-        }
-        else{
-            new Handler().postDelayed(new Runnable(){
-                @Override
-                public void run(){
-                    CardTypes.displaySuggestion(true);
-                    notifyItemInserted(CardTypes.getSuggestionPosition());
-                    notifyItemRangeChanged(CardTypes.getSuggestionPosition()+1, getItemCount()-1);
-                }
-            }, 2000);
+        if (mSuggestion != null){
+            if (initialSuggestion){
+                CardTypes.displaySuggestion(true);
+            }
+            else{
+                new Handler().postDelayed(new Runnable(){
+                    @Override
+                    public void run(){
+                        CardTypes.displaySuggestion(true);
+                        notifyItemInserted(CardTypes.getSuggestionPosition());
+                        notifyItemRangeChanged(CardTypes.getSuggestionPosition() + 1, getItemCount() - 1);
+                    }
+                }, 2000);
+            }
         }
     }
 
