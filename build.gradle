@@ -24,7 +24,7 @@ android {
     def STRING = "String"
     def GCM_SENDER_ID_VAR_NAME = "GCM_SENDER_ID"
     def GCM_SENDER_ID = '"' + GcmSenderId + '"' ?: '"Define a GCM sender id"'
-    def VERSION_NAME = "2.4.0"
+    def VERSION_NAME = "2.5.0"
 
     // GC's not letting you build a signed apk?
     // http://stackoverflow.com/a/25013822/182778
