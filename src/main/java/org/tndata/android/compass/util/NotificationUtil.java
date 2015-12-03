@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 
+import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ActionActivity;
 import org.tndata.android.compass.activity.CheckInActivity;
@@ -168,7 +169,9 @@ public final class NotificationUtil{
                 .setAutoCancel(false)
                 .build();
 
-        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+        if (!BuildConfig.DEBUG){
+            notification.flags |= Notification.FLAG_ONGOING_EVENT;
+        }
         ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
                 .notify(NOTIFICATION_TYPE_ACTION_TAG, actionId, notification);
     }
