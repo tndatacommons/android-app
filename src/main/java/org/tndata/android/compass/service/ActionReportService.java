@@ -23,7 +23,7 @@ import java.util.Map;
  * Service that marks actions as complete in the backend.
  *
  * @author Ismael Alonso
- * @version 2.0.0
+ * @version 2.0.1
  */
 public class ActionReportService extends IntentService{
     private static final String TAG = "ActionReportService";
@@ -31,11 +31,17 @@ public class ActionReportService extends IntentService{
     public static final String ACTION_ID_KEY = "org.tndata.compass.CompleteAction.ActionId";
     public static final String MAPPING_ID_KEY = "org.tndata.compass.CompleteAction.MappingId";
     public static final String STATE_KEY = "org.tndata.compass.CompleteAction.State";
+    public static final String LENGTH_KEY = "org.tndata.compass.CompleteAction.Length";
 
     public static final String STATE_COMPLETED = "completed";
     public static final String STATE_UNCOMPLETED = "uncompleted";
     public static final String STATE_SNOOZED = "snoozed";
     public static final String STATE_DISMISSED = "dismissed";
+
+    public static final String LENGTH_HOUR = "1h";
+    public static final String LENGTH_DAY = "1d";
+    public static final String LENGTH_CUSTOM = "custom";
+    public static final String LENGTH_LOCATION = "location";
 
 
     /**
@@ -68,7 +74,11 @@ public class ActionReportService extends IntentService{
 
         JSONObject body = new JSONObject();
         try{
-            body.put("state", intent.getStringExtra(STATE_KEY));
+            String state = intent.getStringExtra(STATE_KEY);
+            body.put("state", state);
+            if (state.equals(STATE_SNOOZED)){
+                body.put("length", intent.getStringExtra(LENGTH_KEY));
+            }
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();

@@ -76,16 +76,18 @@ public class SnoozeActivity
         if (position == 0){
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(calendar.getTimeInMillis()+3600*1000);
-            snooze(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1,
+            snooze(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1,
                     calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY),
                     calendar.get(Calendar.MINUTE));
+            reportSnooze(ActionReportService.LENGTH_HOUR);
         }
         else if (position == 1){
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(calendar.getTimeInMillis()+24*3600*1000);
-            snooze(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1,
+            snooze(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1,
                     calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY),
                     calendar.get(Calendar.MINUTE));
+            reportSnooze(ActionReportService.LENGTH_DAY);
         }
         else if (position == 2){
             //Start the date picker
@@ -139,6 +141,7 @@ public class SnoozeActivity
     public void onTimeSet(RadialTimePickerDialog radialTimePickerDialog, int hour, int minute){
         Log.d(TAG, hour + ":" + minute);
         snooze(mYear, mMonth, mDay, hour, minute);
+        reportSnooze(ActionReportService.LENGTH_CUSTOM);
     }
 
     /**
@@ -186,9 +189,6 @@ public class SnoozeActivity
         snooze.putExtra(SnoozeService.TIME_KEY, time);
         startService(snooze);
 
-        //Report the snooze
-        reportSnooze();
-
         //Kill the activity
         setResult(RESULT_OK);
         finish();
@@ -213,7 +213,7 @@ public class SnoozeActivity
             startService(new Intent(this, LocationNotificationService.class));
 
             //Report the snooze
-            reportSnooze();
+            reportSnooze(ActionReportService.LENGTH_LOCATION);
 
             setResult(RESULT_OK);
             finish();
@@ -233,10 +233,11 @@ public class SnoozeActivity
         }
     }
 
-    private void reportSnooze(){
+    private void reportSnooze(String length){
         Intent report = new Intent(this, ActionReportService.class)
                 .putExtra(NotificationUtil.REMINDER_KEY, mReminder)
-                .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_SNOOZED);
+                .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_SNOOZED)
+                .putExtra(ActionReportService.LENGTH_KEY, length);
         startService(report);
     }
 }
