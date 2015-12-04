@@ -231,7 +231,7 @@ public class GoalActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-        if (mGoal.getPrimaryCategory() == null || !mGoal.getPrimaryCategory().isPackagedContent()){
+        if (mGoal.isEditable()){
             getMenuInflater().inflate(R.menu.goal, menu);
         }
         return super.onCreateOptionsMenu(menu);

@@ -63,9 +63,6 @@ public class GoalAdapter extends RecyclerView.Adapter{
     //  list is updated after calling a library activity and editing the selected content
     private int mSelectedBehaviorPosition;
 
-    //Flag marking whether the goal belongs to a packaged category
-    private boolean mIsContentPackaged;
-
 
     /**
      * Constructor.
@@ -87,11 +84,6 @@ public class GoalAdapter extends RecyclerView.Adapter{
         mHolderPool = new Stack<>();
 
         mSelectedBehaviorPosition = -1;
-
-        mIsContentPackaged = false;
-        if (mGoal.getPrimaryCategory() != null){
-            mIsContentPackaged = mGoal.getPrimaryCategory().isPackagedContent();
-        }
 
         Log.d(TAG, mGoal.getBehaviors().size()+"");
     }
@@ -318,11 +310,12 @@ public class GoalAdapter extends RecyclerView.Adapter{
             mTitle = (TextView)itemView.findViewById(R.id.behavior_title);
             mActionContainer = (LinearLayout)itemView.findViewById(R.id.behavior_actions);
 
-            if (mIsContentPackaged){
-                itemView.findViewById(R.id.behavior_overflow).setVisibility(View.INVISIBLE);
+            //Granularity of editable content goes only down to a goal
+            if (mGoal.isEditable()){
+                itemView.findViewById(R.id.behavior_overflow).setOnClickListener(this);
             }
             else{
-                itemView.findViewById(R.id.behavior_overflow).setOnClickListener(this);
+                itemView.findViewById(R.id.behavior_overflow).setVisibility(View.INVISIBLE);
             }
             mTitle.setOnClickListener(this);
         }

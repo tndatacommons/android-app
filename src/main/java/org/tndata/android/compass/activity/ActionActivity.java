@@ -149,7 +149,10 @@ public class ActionActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-        if (mActionNeededFetching && mAction != null && !mAction.getPrimaryCategory().isPackagedContent()){
+        //We need to check for null action here because sometimes the action needs to
+        //  be fetched from the backend. If the action has not been fetched yet, the
+        //  overflow button doesn't make sense
+        if (mActionNeededFetching && mAction != null && mAction.isEditable()){
             if (!mAction.hasTrigger() || mAction.getTrigger().isDisabled()){
                 getMenuInflater().inflate(R.menu.menu_action_disabled, menu);
             }
