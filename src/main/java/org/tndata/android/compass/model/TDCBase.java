@@ -78,4 +78,8 @@ public class TDCBase implements Serializable{
     public boolean areCustomTriggersAllowed(){
         return custom_triggers_allowed;
     }
+
+    public boolean isEditable(){
+        return custom_triggers_allowed;
+    }
 }
