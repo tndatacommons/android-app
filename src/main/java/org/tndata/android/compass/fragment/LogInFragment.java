@@ -2,12 +2,12 @@ package org.tndata.android.compass.fragment;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.User;
-import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.Parser;
 
-import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Patterns;
@@ -20,13 +20,16 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.util.HashMap;
-import java.util.Map;
 
-
+/**
+ * Fragment that displays a log in screen.
+ *
+ * @author Edited and documented by Ismael Alonso
+ * @version 1.0.0
+ */
 public class LogInFragment extends Fragment implements NetworkRequest.RequestCallback, OnClickListener{
     //Listener interface.
-    private LogInFragmentListener mListener;
+    private LogInFragmentCallback mCallback;
 
     //UI components
     private EditText mEmail;
@@ -41,17 +44,24 @@ public class LogInFragment extends Fragment implements NetworkRequest.RequestCal
 
 
     @Override
-    public void onAttach(Activity context){
+    public void onAttach(Context context){
         super.onAttach(context);
         //This makes sure that the host activity has implemented the callback interface.
         //  If not, it throws an exception
         try{
-            mListener = (LogInFragmentListener)context;
+            mCallback = (LogInFragmentCallback)context;
         }
         catch (ClassCastException ccx){
             throw new ClassCastException(context.toString()
                     + " must implement LoginFragmentListener");
         }
+    }
+
+    @Override
+    public void onDetach(){
+        super.onDetach();
+        NetworkRequest.cancel(mLogInRequestCode);
+        mCallback = null;
     }
 
     @Override
@@ -81,16 +91,13 @@ public class LogInFragment extends Fragment implements NetworkRequest.RequestCal
      * Checks the fields and starts the log in process if everything checks.
      */
     private void doLogin(){
-        String emailAddress = mEmail.getText().toString().trim();
+        String email = mEmail.getText().toString().trim();
         String password = mPassword.getText().toString().trim();
-        if (isValidEmail(emailAddress) && isValidPassword(password)){
+        if (isValidEmail(email) && isValidPassword(password)){
             setFormEnabled(false);
 
-            Map<String, String> body = new HashMap<>();
-            body.put("email", emailAddress);
-            body.put("password", password);
-            mLogInRequestCode = NetworkRequest.post(getActivity(), this,
-                    Constants.BASE_URL + "auth/token/", "", body);
+            mLogInRequestCode = NetworkRequest.post(getActivity(), this, API.getLogInUrl(), "",
+                    API.getLogInBody(email, password));
         }
         else{
             setFormEnabled(true);
@@ -120,7 +127,7 @@ public class LogInFragment extends Fragment implements NetworkRequest.RequestCal
      */
     private boolean isValidPassword(@NonNull String password){
         if (password.isEmpty()){
-            mErrorString = "Please enter a password";
+            mErrorString = getActivity().getResources().getString(R.string.login_pass_error);
             return false;
         }
         mErrorString = "";
@@ -128,7 +135,7 @@ public class LogInFragment extends Fragment implements NetworkRequest.RequestCal
     }
 
     /**
-     * Sets the state of the form.
+     * Sets the state of the form and sets the error message if necessary.
      *
      * @param enabled true if the form should be enabled, false otherwise.
      */
@@ -148,18 +155,11 @@ public class LogInFragment extends Fragment implements NetworkRequest.RequestCal
     }
 
     @Override
-    public void onDetach(){
-        super.onDetach();
-        NetworkRequest.cancel(mLogInRequestCode);
-        mListener = null;
-    }
-
-    @Override
     public void onRequestComplete(int requestCode, String result){
         User user = new Parser().parseUser(result);
         if (user.getError().isEmpty()){
             user.setPassword(mPassword.getText().toString().trim());
-            mListener.loginSuccess(user);
+            mCallback.onLoginSuccess(user);
         }
         else{
             mErrorString = user.getError();
@@ -174,7 +174,18 @@ public class LogInFragment extends Fragment implements NetworkRequest.RequestCal
     }
 
 
-    public interface LogInFragmentListener{
-        void loginSuccess(User user);
+    /**
+     * Callback interface for the LogInFragment.
+     *
+     * @author Edited and documented by Ismael Alonso
+     * @version 1.0.0
+     */
+    public interface LogInFragmentCallback{
+        /**
+         * Called when the user logs in successfully.
+         *
+         * @param user a bundle of data containing the user information.
+         */
+        void onLoginSuccess(@NonNull User user);
     }
 }

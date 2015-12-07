@@ -2,12 +2,13 @@ package org.tndata.android.compass.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.TourFragment;
 
 
-public class TourActivity extends Activity implements TourFragment.TourFragmentListener{
+public class TourActivity extends AppCompatActivity implements TourFragment.TourFragmentListener{
 
 
     @Override
@@ -16,8 +17,8 @@ public class TourActivity extends Activity implements TourFragment.TourFragmentL
         setContentView(R.layout.activity_tour);
 
 
-        getFragmentManager().beginTransaction()
-                .setCustomAnimations(0, R.animator.fade_out_downwards)
+        getSupportFragmentManager().beginTransaction()
+                //.setCustomAnimations(0, R.animator.fade_out_downwards)
                 .replace(R.id.my_priorities_fragment_host, new TourFragment())
                 .commit();
     }

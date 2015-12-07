@@ -1,6 +1,6 @@
 package org.tndata.android.compass.activity;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 
 import org.tndata.android.compass.CompassApplication;
@@ -17,7 +16,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.LauncherFragment;
 import org.tndata.android.compass.fragment.LauncherFragment.LauncherFragmentListener;
 import org.tndata.android.compass.fragment.LogInFragment;
-import org.tndata.android.compass.fragment.LogInFragment.LogInFragmentListener;
+import org.tndata.android.compass.fragment.LogInFragment.LogInFragmentCallback;
 import org.tndata.android.compass.fragment.SignUpFragment;
 import org.tndata.android.compass.fragment.SignUpFragment.SignUpFragmentListener;
 import org.tndata.android.compass.fragment.TourFragment;
@@ -38,15 +37,15 @@ public class LoginActivity
         implements
                 LauncherFragmentListener,
                 SignUpFragmentListener,
-                LogInFragmentListener,
+                LogInFragmentCallback,
                 TourFragmentListener,
                 NetworkRequest.RequestCallback{
 
 
     //Fragment ids
     private static final int DEFAULT = 0;
-    private static final int LOGIN = 1;
-    private static final int SIGN_UP = 2;
+    private static final int SIGN_UP = 1;
+    private static final int LOGIN = 2;
     private static final int TERMS = 3;
     private static final int TOUR = 4;
 
@@ -95,92 +94,24 @@ public class LoginActivity
         SharedPreferences loginInfo = PreferenceManager.getDefaultSharedPreferences(this);
         String email = loginInfo.getString("email", "");
         String password = loginInfo.getString("password", "");
-        Log.d("LogIn Init", "Email: " + email);
-        Log.d("LogIn Init", "Pass: " + password);
         if (!email.isEmpty() && !password.isEmpty()){
             logUserIn(email, password);
         }
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_BACK)) { // Back key pressed
-            handleBackStack();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
+    public void onBackPressed(){
+        handleBackStack();
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
             case android.R.id.home:
                 handleBackStack();
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void handleBackStack() {
-        if (!mFragmentStack.isEmpty()) {
-            mFragmentStack.remove(mFragmentStack.size() - 1);
-        }
-
-        if (mFragmentStack.isEmpty()) {
-            finish();
-        } else {
-            Fragment fragment = mFragmentStack.get(mFragmentStack.size() - 1);
-
-            int index = DEFAULT;
-            if (fragment instanceof LauncherFragment){
-                ((LauncherFragment)fragment).showProgress(false);
-            }
-            else if (fragment instanceof LogInFragment){
-                index = LOGIN;
-            }
-            else if (fragment instanceof SignUpFragment){
-                index = SIGN_UP;
-            }
-            else if (fragment instanceof WebFragment){
-                index = TERMS;
-            }
-            else if (fragment instanceof TourFragment){
-                index = TOUR;
-            }
-
-            swapFragments(index, false);
-        }
-    }
-
-    private void transitionToMain(){
-        startActivity(new Intent(getApplicationContext(), MainActivity.class));
-        finish();
-    }
-
-    private void transitionToOnBoarding(){
-        startActivity(new Intent(getApplicationContext(), OnBoardingActivity.class));
-        finish();
-    }
-
-    /**
-     * Fires up the log in task with the provided parameters.
-     *
-     * @param emailAddress the email address.
-     * @param password the password.
-     */
-    private void logUserIn(String emailAddress, String password){
-        Log.d("LogIn", "Logging user in");
-        for (Fragment fragment:mFragmentStack){
-            if (fragment instanceof LauncherFragment){
-                ((LauncherFragment)fragment).showProgress(true);
-            }
-        }
-
-        Map<String, String> body = new HashMap<>();
-        body.put("email", emailAddress);
-        body.put("password", password);
-        mLogInRequestCode = NetworkRequest.post(this, this, Constants.BASE_URL + "auth/token/",
-                mApplication.getToken(), body);
     }
 
     private void swapFragments(int index, boolean addToStack){
@@ -231,8 +162,74 @@ public class LoginActivity
             if (addToStack){
                 mFragmentStack.add(fragment);
             }
-            getFragmentManager().beginTransaction().replace(R.id.base_content, fragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.base_content, fragment).commit();
         }
+    }
+
+    private void handleBackStack(){
+        if (!mFragmentStack.isEmpty()){
+            mFragmentStack.remove(mFragmentStack.size() - 1);
+        }
+
+        if (mFragmentStack.isEmpty()){
+            NetworkRequest.cancel(mLogInRequestCode);
+            NetworkRequest.cancel(mGetDataRequestCode);
+            finish();
+        }
+        else{
+            Fragment fragment = mFragmentStack.get(mFragmentStack.size() - 1);
+
+            int index = DEFAULT;
+            if (fragment instanceof LauncherFragment){
+                NetworkRequest.cancel(mGetDataRequestCode);
+                ((LauncherFragment)fragment).showProgress(false);
+            }
+            else if (fragment instanceof LogInFragment){
+                index = LOGIN;
+            }
+            else if (fragment instanceof SignUpFragment){
+                index = SIGN_UP;
+            }
+            else if (fragment instanceof WebFragment){
+                index = TERMS;
+            }
+            else if (fragment instanceof TourFragment){
+                index = TOUR;
+            }
+
+            swapFragments(index, false);
+        }
+    }
+
+    private void transitionToMain(){
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        finish();
+    }
+
+    private void transitionToOnBoarding(){
+        startActivity(new Intent(getApplicationContext(), OnBoardingActivity.class));
+        finish();
+    }
+
+    /**
+     * Fires up the log in task with the provided parameters.
+     *
+     * @param emailAddress the email address.
+     * @param password the password.
+     */
+    private void logUserIn(String emailAddress, String password){
+        Log.d("LogIn", "Logging user in");
+        for (Fragment fragment:mFragmentStack){
+            if (fragment instanceof LauncherFragment){
+                ((LauncherFragment)fragment).showProgress(true);
+            }
+        }
+
+        Map<String, String> body = new HashMap<>();
+        body.put("email", emailAddress);
+        body.put("password", password);
+        mLogInRequestCode = NetworkRequest.post(this, this, Constants.BASE_URL + "auth/token/",
+                mApplication.getToken(), body);
     }
 
     @Override
@@ -251,7 +248,17 @@ public class LoginActivity
     }
 
     @Override
-    public void loginSuccess(User user) {
+    public void onSignUpSuccess(@NonNull User user){
+        saveUserInfo(user);
+    }
+
+    @Override
+    public void showTermsAndConditions(){
+        swapFragments(TERMS, true);
+    }
+
+    @Override
+    public void onLoginSuccess(@NonNull User user){
         saveUserInfo(user);
     }
 
@@ -275,16 +282,6 @@ public class LoginActivity
             mGetDataRequestCode = NetworkRequest.get(this, this, Constants.BASE_URL + "users/",
                     mApplication.getToken(), 60*1000);
         }
-    }
-
-    @Override
-    public void signUpSuccess(@NonNull User user){
-        saveUserInfo(user);
-    }
-
-    @Override
-    public void showTermsAndConditions() {
-        swapFragments(TERMS, true);
     }
 
     @Override

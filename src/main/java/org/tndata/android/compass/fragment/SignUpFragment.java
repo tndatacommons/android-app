@@ -2,11 +2,12 @@ package org.tndata.android.compass.fragment;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.User;
-import org.tndata.android.compass.task.SignUpTask;
-import org.tndata.android.compass.task.SignUpTask.SignUpTaskCallback;
+import org.tndata.android.compass.util.API;
+import org.tndata.android.compass.util.NetworkRequest;
+import org.tndata.android.compass.util.Parser;
 
-import android.app.Activity;
-import android.app.Fragment;
+import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Patterns;
@@ -27,7 +28,7 @@ import android.widget.TextView;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class SignUpFragment extends Fragment implements SignUpTaskCallback, OnClickListener{
+public class SignUpFragment extends Fragment implements NetworkRequest.RequestCallback, OnClickListener{
     //Listener interface
     private SignUpFragmentListener mListener;
 
@@ -42,20 +43,21 @@ public class SignUpFragment extends Fragment implements SignUpTaskCallback, OnCl
     private Button mSignUp;
     private ImageView mInfo;
 
-    //Error string
+    //Attributes
     private String mErrorString;
+    private int mSignUpRequestCode;
 
 
     @Override
-    public void onAttach(Activity activity){
-        super.onAttach(activity);
+    public void onAttach(Context context){
+        super.onAttach(context);
         //This makes sure that the host activity has implemented the callback interface.
         //  If not, it throws an exception
         try{
-            mListener = (SignUpFragmentListener)activity;
+            mListener = (SignUpFragmentListener)context;
         }
         catch (ClassCastException ccx){
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement SignUpFragmentListener");
         }
     }
@@ -111,21 +113,14 @@ public class SignUpFragment extends Fragment implements SignUpTaskCallback, OnCl
         //If the values check, proceed to signup
         if (checkFields(emailAddress, password, confirmPassword, firstName, lastName)){
             //Change visibility and disable components
-            mError.setVisibility(View.INVISIBLE);
-            mProgress.setVisibility(View.VISIBLE);
+            mErrorString = "";
             setFormEnabled(false);
 
-            //Reset the error string
-            mErrorString = "";
-            mError.setText(mErrorString);
-
-            //Sign up
-            new SignUpTask(this, emailAddress, password, firstName,lastName).execute();
+            mSignUpRequestCode = NetworkRequest.post(getActivity(), this, API.getSignUpUrl(), "",
+                    API.getSignUpBody(emailAddress, password, firstName, lastName));
         }
         else{
-            mError.setText(mErrorString);
-            mError.setVisibility(View.VISIBLE);
-            mProgress.setVisibility(View.GONE);
+            setFormEnabled(true);
         }
     }
 
@@ -164,18 +159,13 @@ public class SignUpFragment extends Fragment implements SignUpTaskCallback, OnCl
      * @param email the address to be checked.
      * @return true if the address provided has valid email format, false otherwise.
      */
-    private boolean isValidEmail(String email){
-        if (email == null){
-            return false;
-        }
-        else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+    private boolean isValidEmail(@NonNull String email){
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             mErrorString = getResources().getString(R.string.login_email_error);
             return false;
         }
-        else{
-            mErrorString = "";
-            return true;
-        }
+        mErrorString = "";
+        return true;
     }
 
     /**
@@ -185,7 +175,7 @@ public class SignUpFragment extends Fragment implements SignUpTaskCallback, OnCl
      * @param passwordB password in the confirm password field.
      * @return true if the passwords are the correct length and match each other, false otherwise.
      */
-    private boolean confirmPasswords(String passwordA, String passwordB){
+    private boolean confirmPasswords(@NonNull String passwordA, @NonNull String passwordB){
         if (passwordA.length() >= 5){
             if (passwordA.equals(passwordB)){
                 mErrorString = "";
@@ -214,21 +204,14 @@ public class SignUpFragment extends Fragment implements SignUpTaskCallback, OnCl
         mLastName.setEnabled(enabled);
         mSignUp.setEnabled(enabled);
         mInfo.setEnabled(enabled);
-    }
-
-    @Override
-    public void signUpResult(User result){
-        //If a user was delivered, notify the listener
-        if (result != null){
-            mListener.signUpSuccess(result);
-        }
-        //Otherwise, reset the screen and display the error
-        else{
-            setFormEnabled(true);
-            mErrorString = getActivity().getResources().getString(R.string.signup_auth_error);
+        if (enabled){
             mError.setText(mErrorString);
             mError.setVisibility(View.VISIBLE);
             mProgress.setVisibility(View.GONE);
+        }
+        else{
+            mError.setVisibility(View.INVISIBLE);
+            mProgress.setVisibility(View.VISIBLE);
         }
     }
 
@@ -236,6 +219,20 @@ public class SignUpFragment extends Fragment implements SignUpTaskCallback, OnCl
     public void onDetach(){
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onRequestComplete(int requestCode, String result){
+        if (requestCode == mSignUpRequestCode){
+            User user = new Parser().parseUser(result);
+            mListener.onSignUpSuccess(user);
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode){
+        mErrorString = getActivity().getResources().getString(R.string.signup_auth_error);
+        setFormEnabled(true);
     }
 
 
@@ -251,7 +248,7 @@ public class SignUpFragment extends Fragment implements SignUpTaskCallback, OnCl
          *
          * @param user the newly created user.
          */
-        void signUpSuccess(@NonNull User user);
+        void onSignUpSuccess(@NonNull User user);
 
         /**
          * Called when the info button is clicked.
