@@ -737,6 +737,11 @@ public class MainActivity
     }
 
     @Override
+    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept){
+
+    }
+
+    @Override
     public void onSearchResultSelected(SearchResult result){
         if (result.isGoal()){
             Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)

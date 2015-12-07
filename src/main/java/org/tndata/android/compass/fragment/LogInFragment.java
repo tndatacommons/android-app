@@ -2,13 +2,14 @@ package org.tndata.android.compass.fragment;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.User;
-import org.tndata.android.compass.task.LogInTask;
-import org.tndata.android.compass.task.LogInTask.LogInTaskCallback;
+import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.util.NetworkRequest;
+import org.tndata.android.compass.util.Parser;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,8 +20,11 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.HashMap;
+import java.util.Map;
 
-public class LogInFragment extends Fragment implements LogInTaskCallback, OnClickListener{
+
+public class LogInFragment extends Fragment implements NetworkRequest.RequestCallback, OnClickListener{
     //Listener interface.
     private LogInFragmentListener mListener;
 
@@ -33,18 +37,19 @@ public class LogInFragment extends Fragment implements LogInTaskCallback, OnClic
 
     //Attributes
     private String mErrorString = "";
+    private int mLogInRequestCode;
 
 
     @Override
-    public void onAttach(Activity activity){
-        super.onAttach(activity);
+    public void onAttach(Activity context){
+        super.onAttach(context);
         //This makes sure that the host activity has implemented the callback interface.
         //  If not, it throws an exception
         try{
-            mListener = (LogInFragmentListener)activity;
+            mListener = (LogInFragmentListener)context;
         }
         catch (ClassCastException ccx){
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement LoginFragmentListener");
         }
     }
@@ -78,21 +83,17 @@ public class LogInFragment extends Fragment implements LogInTaskCallback, OnClic
     private void doLogin(){
         String emailAddress = mEmail.getText().toString().trim();
         String password = mPassword.getText().toString().trim();
-        if (isValidEmail(emailAddress) && !password.isEmpty()){
-            mError.setVisibility(View.INVISIBLE);
-            mErrorString = "";
-            mError.setText(mErrorString);
-            mProgress.setVisibility(View.VISIBLE);
-            mLogIn.setEnabled(false);
+        if (isValidEmail(emailAddress) && isValidPassword(password)){
+            setFormEnabled(false);
 
-            User user = new User();
-            user.setEmail(emailAddress);
-            user.setPassword(password);
-            new LogInTask(this, emailAddress, password).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            Map<String, String> body = new HashMap<>();
+            body.put("email", emailAddress);
+            body.put("password", password);
+            mLogInRequestCode = NetworkRequest.post(getActivity(), this,
+                    Constants.BASE_URL + "auth/token/", "", body);
         }
         else{
-            mError.setText(mErrorString);
-            mError.setVisibility(View.VISIBLE);
+            setFormEnabled(true);
         }
     }
 
@@ -102,47 +103,74 @@ public class LogInFragment extends Fragment implements LogInTaskCallback, OnClic
      * @param email the address to be checked.
      * @return true if the address provided has valid email format, false otherwise.
      */
-    private boolean isValidEmail(String email){
-        if (email == null){
-            return false;
-        }
-        else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+    private boolean isValidEmail(@NonNull String email){
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             mErrorString = getActivity().getResources().getString(R.string.login_email_error);
             return false;
         }
-        else{
-            mErrorString = "";
-            return true;
-        }
+        mErrorString = "";
+        return true;
     }
 
-    @Override
-    public void logInResult(User result){
-        if (result != null){
-            if (result.getError().isEmpty()){
-                mListener.loginSuccess(result);
-            }
-            else{
-                mErrorString = result.getError();
-                mError.setText(mErrorString);
-                mError.setVisibility(View.VISIBLE);
-                mProgress.setVisibility(View.GONE);
-                mLogIn.setEnabled(true);
-            }
+    /**
+     * Checks if the user introduced a password.
+     *
+     * @param password the password to be checked.
+     * @return true if the user introduced a password, false otherwise.
+     */
+    private boolean isValidPassword(@NonNull String password){
+        if (password.isEmpty()){
+            mErrorString = "Please enter a password";
+            return false;
+        }
+        mErrorString = "";
+        return true;
+    }
+
+    /**
+     * Sets the state of the form.
+     *
+     * @param enabled true if the form should be enabled, false otherwise.
+     */
+    private void setFormEnabled(boolean enabled){
+        mEmail.setEnabled(enabled);
+        mPassword.setEnabled(enabled);
+        mLogIn.setEnabled(enabled);
+        if (enabled){
+            mProgress.setVisibility(View.GONE);
+            mError.setVisibility(View.VISIBLE);
+            mError.setText(mErrorString);
         }
         else{
-            mErrorString = getActivity().getResources().getString(R.string.login_auth_error);
-            mError.setText(mErrorString);
-            mError.setVisibility(View.VISIBLE);
-            mProgress.setVisibility(View.GONE);
-            mLogIn.setEnabled(true);
+            mProgress.setVisibility(View.VISIBLE);
+            mError.setVisibility(View.INVISIBLE);
         }
     }
 
     @Override
     public void onDetach(){
         super.onDetach();
+        NetworkRequest.cancel(mLogInRequestCode);
         mListener = null;
+    }
+
+    @Override
+    public void onRequestComplete(int requestCode, String result){
+        User user = new Parser().parseUser(result);
+        if (user.getError().isEmpty()){
+            user.setPassword(mPassword.getText().toString().trim());
+            mListener.loginSuccess(user);
+        }
+        else{
+            mErrorString = user.getError();
+            setFormEnabled(true);
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode){
+        mErrorString = getActivity().getResources().getString(R.string.login_auth_error);
+        setFormEnabled(true);
     }
 
 

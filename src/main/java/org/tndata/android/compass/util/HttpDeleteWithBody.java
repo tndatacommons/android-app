@@ -1,11 +1,11 @@
 package org.tndata.android.compass.util;
 
 
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+//import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 
 import java.net.URI;
 
-class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
+class HttpDeleteWithBody{//} extends HttpEntityEnclosingRequestBase {
     public static final String METHOD_NAME = "DELETE";
 
     public String getMethod() {
@@ -13,13 +13,13 @@ class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
     }
 
     public HttpDeleteWithBody(final String uri) {
-        super();
-        setURI(URI.create(uri));
+        //super();
+        //setURI(URI.create(uri));
     }
 
     public HttpDeleteWithBody(final URI uri) {
-        super();
-        setURI(uri);
+        //super();
+        //setURI(uri);
     }
 
     public HttpDeleteWithBody() {

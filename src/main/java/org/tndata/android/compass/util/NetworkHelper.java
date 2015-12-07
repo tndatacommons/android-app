@@ -8,11 +8,11 @@ import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
+//import org.apache.http.client.methods.HttpGet;
+//import org.apache.http.client.methods.HttpPost;
+//import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+//import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
@@ -20,7 +20,7 @@ public class NetworkHelper {
 
     public static InputStream httpPostStream(String url,
                                              Map<String, String> headers, String body) {
-
+/*
         DefaultHttpClient client = new DefaultHttpClient();
         HttpResponse httpResponse = null;
         // url with the post data
@@ -56,14 +56,14 @@ public class NetworkHelper {
         } catch (IOException e) {
             httpPost.abort();
             e.printStackTrace();
-        }
+        }*/
         return null;
     }
 
     public static InputStream httpPutStream(String url,
                                             Map<String, String> headers, String body) {
 
-        DefaultHttpClient client = new DefaultHttpClient();
+        /*DefaultHttpClient client = new DefaultHttpClient();
         HttpResponse httpResponse = null;
         // url with the post data
         HttpPut httpPut = new HttpPut(url);
@@ -97,13 +97,13 @@ public class NetworkHelper {
         } catch (IOException e) {
             httpPut.abort();
             e.printStackTrace();
-        }
+        }*/
         return null;
     }
 
     public static InputStream httpGetStream(String url,
                                             Map<String, String> headers) {
-        DefaultHttpClient client = new DefaultHttpClient();
+        /*DefaultHttpClient client = new DefaultHttpClient();
         HttpGet httpGet = new HttpGet(url);
         if (headers != null) {
             // set all of our headers
@@ -124,13 +124,13 @@ public class NetworkHelper {
         } catch (IOException e) {
             httpGet.abort();
             e.printStackTrace();
-        }
+        }*/
         return null;
     }
 
     public static InputStream httpDeleteStream(String url,
                                                Map<String, String> headers, String body) {
-        DefaultHttpClient client = new DefaultHttpClient();
+        /*DefaultHttpClient client = new DefaultHttpClient();
         HttpDeleteWithBody httpDelete = new HttpDeleteWithBody(url);
         if (headers != null) {
             // set all of our headers
@@ -160,7 +160,7 @@ public class NetworkHelper {
         } catch (IOException e) {
             httpDelete.abort();
             e.printStackTrace();
-        }
+        }*/
         return null;
     }
 }
