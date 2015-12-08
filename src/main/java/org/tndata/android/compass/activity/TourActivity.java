@@ -1,6 +1,5 @@
 package org.tndata.android.compass.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -8,7 +7,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.TourFragment;
 
 
-public class TourActivity extends AppCompatActivity implements TourFragment.TourFragmentListener{
+public class TourActivity extends AppCompatActivity implements TourFragment.TourFragmentCallback{
 
 
     @Override
@@ -29,7 +28,7 @@ public class TourActivity extends AppCompatActivity implements TourFragment.Tour
     }
 
     @Override
-    public void tourFinish() {
+    public void onTourComplete() {
         finish();
         this.overridePendingTransition(R.anim.push_in, R.anim.push_out);
     }

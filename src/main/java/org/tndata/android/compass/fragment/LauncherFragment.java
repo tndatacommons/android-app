@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -59,7 +60,7 @@ public class LauncherFragment extends Fragment implements OnClickListener{
         mTourButton.setOnClickListener(this);
 
         //Set the color of the progress bar to the accent color
-        int color = getResources().getColor(R.color.grow_accent);
+        int color = ContextCompat.getColor(getActivity(), R.color.grow_accent);
         mProgressBar.getIndeterminateDrawable().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
 
         //Update the flags and show progress if necessary

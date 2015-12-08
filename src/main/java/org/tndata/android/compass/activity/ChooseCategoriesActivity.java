@@ -41,7 +41,7 @@ public class ChooseCategoriesActivity
 
         ChooseCategoriesFragment fragment = new ChooseCategoriesFragment();
         fragment.setArguments(args);
-        getFragmentManager().beginTransaction().replace(R.id.base_content, fragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.base_content, fragment).commit();
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.tndata.android.compass.util;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -79,7 +80,7 @@ public final class NetworkRequest{
         return requestWithoutBody(Request.Method.GET, context, callback, url, token, timeout);
     }
 
-    public static int post(@NonNull Context context, @NonNull RequestCallback callback,
+    public static int post(@NonNull Context context, @Nullable RequestCallback callback,
                            @NonNull String url, @NonNull String token,
                            @NonNull Map<String, String> body){
 
@@ -87,14 +88,14 @@ public final class NetworkRequest{
                 DEFAULT_REQUEST_TIMEOUT);
     }
 
-    public static int post(@NonNull Context context, @NonNull RequestCallback callback,
+    public static int post(@NonNull Context context, @Nullable RequestCallback callback,
                            @NonNull String url, @NonNull String token,
                            @NonNull Map<String, String> body, int timeout){
 
         return requestWithBody(Request.Method.POST, context, callback, url, token, body, timeout);
     }
 
-    public static int put(@NonNull Context context, @NonNull RequestCallback callback,
+    public static int put(@NonNull Context context, @Nullable RequestCallback callback,
                           @NonNull String url, @NonNull String token,
                           @NonNull Map<String, String> body){
 
@@ -102,14 +103,14 @@ public final class NetworkRequest{
                 DEFAULT_REQUEST_TIMEOUT);
     }
 
-    public static int put(@NonNull Context context, @NonNull RequestCallback callback,
+    public static int put(@NonNull Context context, @Nullable RequestCallback callback,
                           @NonNull String url, @NonNull String token,
                           @NonNull Map<String, String> body, int timeout){
 
         return requestWithBody(Request.Method.PUT, context, callback, url, token, body, timeout);
     }
 
-    public static int delete(@NonNull Context context, @NonNull RequestCallback callback,
+    public static int delete(@NonNull Context context, @Nullable RequestCallback callback,
                              @NonNull String url, @NonNull String token,
                              @NonNull Map<String, String> body){
 
@@ -117,7 +118,7 @@ public final class NetworkRequest{
                 DEFAULT_REQUEST_TIMEOUT);
     }
 
-    public static int delete(@NonNull Context context, @NonNull RequestCallback callback,
+    public static int delete(@NonNull Context context, @Nullable RequestCallback callback,
                              @NonNull String url, @NonNull String token,
                              @NonNull Map<String, String> body, int timeout){
 
@@ -160,7 +161,7 @@ public final class NetworkRequest{
      * @return the request code.
      */
     private static int requestWithoutBody(int method, @NonNull Context context,
-                                          @NonNull RequestCallback callback, @NonNull String url,
+                                          @Nullable RequestCallback callback, @NonNull String url,
                                           @NonNull String token, int timeout){
 
         //Init and generate the request code
@@ -181,7 +182,9 @@ public final class NetworkRequest{
                     @Override
                     public void onResponse(String response){
                         NetworkRequest request = sRequestMap.remove(requestCode);
-                        request.mCallback.onRequestComplete(requestCode, response);
+                        if (request.mCallback != null){
+                            request.mCallback.onRequestComplete(requestCode, response);
+                        }
                     }
                 },
 
@@ -191,7 +194,9 @@ public final class NetworkRequest{
                     public void onErrorResponse(VolleyError error){
                         Log.d("NetworkRequest", error.toString());
                         NetworkRequest request = sRequestMap.remove(requestCode);
-                        request.mCallback.onRequestFailed(requestCode);
+                        if (request.mCallback != null){
+                            request.mCallback.onRequestFailed(requestCode);
+                        }
                     }
                 }
         ){
@@ -237,7 +242,7 @@ public final class NetworkRequest{
      * @return the request code.
      */
     private static int requestWithBody(int method, @NonNull Context context,
-                                       @NonNull RequestCallback callback,
+                                       @Nullable RequestCallback callback,
                                        @NonNull String url, @NonNull String token,
                                        @NonNull Map<String, String> body, int timeout){
 
@@ -259,7 +264,9 @@ public final class NetworkRequest{
                     @Override
                     public void onResponse(String response){
                         NetworkRequest request = sRequestMap.remove(requestCode);
-                        request.mCallback.onRequestComplete(requestCode, response);
+                        if (request.mCallback != null){
+                            request.mCallback.onRequestComplete(requestCode, response);
+                        }
                     }
                 },
 
@@ -268,7 +275,9 @@ public final class NetworkRequest{
                     @Override
                     public void onErrorResponse(VolleyError error){
                         NetworkRequest request = sRequestMap.remove(requestCode);
-                        request.mCallback.onRequestFailed(requestCode);
+                        if (request.mCallback != null){
+                            request.mCallback.onRequestFailed(requestCode);
+                        }
                     }
                 }
         ){
@@ -324,7 +333,7 @@ public final class NetworkRequest{
      * @param callback the callback object for this request.
      * @param token the user authentication token.
      */
-    private NetworkRequest(@NonNull RequestCallback callback, @NonNull String token){
+    private NetworkRequest(@Nullable RequestCallback callback, @NonNull String token){
         this(callback, token, new HashMap<String, String>());
     }
 
@@ -335,7 +344,7 @@ public final class NetworkRequest{
      * @param token the user authentication token.
      * @param body the body of the request.
      */
-    private NetworkRequest(@NonNull RequestCallback callback, @NonNull String token,
+    private NetworkRequest(@Nullable RequestCallback callback, @NonNull String token,
                            @NonNull Map<String, String> body){
 
         mCallback = callback;

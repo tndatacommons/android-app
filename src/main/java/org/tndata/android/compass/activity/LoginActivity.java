@@ -20,16 +20,16 @@ import org.tndata.android.compass.fragment.LogInFragment.LogInFragmentCallback;
 import org.tndata.android.compass.fragment.SignUpFragment;
 import org.tndata.android.compass.fragment.SignUpFragment.SignUpFragmentListener;
 import org.tndata.android.compass.fragment.TourFragment;
-import org.tndata.android.compass.fragment.TourFragment.TourFragmentListener;
+import org.tndata.android.compass.fragment.TourFragment.TourFragmentCallback;
 import org.tndata.android.compass.fragment.WebFragment;
 import org.tndata.android.compass.model.User;
+import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.Parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 
 public class LoginActivity
@@ -38,16 +38,16 @@ public class LoginActivity
                 LauncherFragmentListener,
                 SignUpFragmentListener,
                 LogInFragmentCallback,
-                TourFragmentListener,
+                TourFragmentCallback,
                 NetworkRequest.RequestCallback{
 
 
     //Fragment ids
     private static final int DEFAULT = 0;
-    private static final int SIGN_UP = 1;
-    private static final int LOGIN = 2;
-    private static final int TERMS = 3;
-    private static final int TOUR = 4;
+    private static final int SIGN_UP = DEFAULT+1;
+    private static final int LOGIN = SIGN_UP+1;
+    private static final int TERMS = LOGIN+1;
+    private static final int TOUR = TERMS+1;
 
 
     private Toolbar mToolbar;
@@ -58,7 +58,7 @@ public class LoginActivity
     private SignUpFragment mSignUpFragment = null;
     private TourFragment mTourFragment = null;
 
-    private ArrayList<Fragment> mFragmentStack = new ArrayList<>();
+    private List<Fragment> mFragmentStack = new ArrayList<>();
 
     private CompassApplication mApplication;
 
@@ -214,10 +214,10 @@ public class LoginActivity
     /**
      * Fires up the log in task with the provided parameters.
      *
-     * @param emailAddress the email address.
+     * @param email the email address.
      * @param password the password.
      */
-    private void logUserIn(String emailAddress, String password){
+    private void logUserIn(String email, String password){
         Log.d("LogIn", "Logging user in");
         for (Fragment fragment:mFragmentStack){
             if (fragment instanceof LauncherFragment){
@@ -225,11 +225,8 @@ public class LoginActivity
             }
         }
 
-        Map<String, String> body = new HashMap<>();
-        body.put("email", emailAddress);
-        body.put("password", password);
-        mLogInRequestCode = NetworkRequest.post(this, this, Constants.BASE_URL + "auth/token/",
-                mApplication.getToken(), body);
+        mLogInRequestCode = NetworkRequest.post(this, this, API.getLogInUrl(), "",
+                API.getLogInBody(email, password));
     }
 
     @Override
@@ -279,13 +276,13 @@ public class LoginActivity
             transitionToOnBoarding();
         }
         else{
-            mGetDataRequestCode = NetworkRequest.get(this, this, Constants.BASE_URL + "users/",
+            mGetDataRequestCode = NetworkRequest.get(this, this, API.getUserDataUrl(),
                     mApplication.getToken(), 60*1000);
         }
     }
 
     @Override
-    public void tourFinish(){
+    public void onTourComplete(){
         handleBackStack();
     }
 

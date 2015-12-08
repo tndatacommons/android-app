@@ -63,6 +63,13 @@ public class SignUpFragment extends Fragment implements NetworkRequest.RequestCa
     }
 
     @Override
+    public void onDetach(){
+        super.onDetach();
+        NetworkRequest.cancel(mSignUpRequestCode);
+        mListener = null;
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View rootView = inflater.inflate(R.layout.fragment_signup, container, false);
 
@@ -213,12 +220,6 @@ public class SignUpFragment extends Fragment implements NetworkRequest.RequestCa
             mError.setVisibility(View.INVISIBLE);
             mProgress.setVisibility(View.VISIBLE);
         }
-    }
-
-    @Override
-    public void onDetach(){
-        super.onDetach();
-        mListener = null;
     }
 
     @Override

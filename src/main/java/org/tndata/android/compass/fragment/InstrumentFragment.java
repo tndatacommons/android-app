@@ -1,8 +1,7 @@
 package org.tndata.android.compass.fragment;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.os.AsyncTask;
+import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,9 +16,10 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Instrument;
 import org.tndata.android.compass.model.Survey;
-import org.tndata.android.compass.task.InstrumentLoaderTask;
-import org.tndata.android.compass.task.SaveSurveyResponseTask;
 import org.tndata.android.compass.ui.SurveyView;
+import org.tndata.android.compass.util.API;
+import org.tndata.android.compass.util.NetworkRequest;
+import org.tndata.android.compass.util.Parser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +35,8 @@ public class InstrumentFragment
         extends Fragment
         implements
                 View.OnClickListener,
-                InstrumentLoaderTask.InstrumentLoaderListener,
-                SaveSurveyResponseTask.SaveSurveyResponseListener,
-                SurveyView.SurveyViewListener{
+                SurveyView.SurveyViewListener,
+                NetworkRequest.RequestCallback{
 
     private static final String TAG = "InstrumentFragment";
 
@@ -61,6 +60,10 @@ public class InstrumentFragment
     //Ready array
     private boolean mQuestionReady[];
     private Survey mCurrentSurveys[];
+
+    //Request codes
+    private int mGetInstrumentRequestCode;
+    private int mPostSurveyRequestCode;
 
     //Callback interface
     private InstrumentFragmentCallback mCallback;
@@ -116,15 +119,15 @@ public class InstrumentFragment
     }
 
     @Override
-    public void onAttach(Activity activity){
-        super.onAttach(activity);
+    public void onAttach(Context context){
+        super.onAttach(context);
         // This makes sure that the container activity has implemented the callback
         // interface. If not, it throws an exception
         try{
-            mCallback = (InstrumentFragmentCallback)activity;
+            mCallback = (InstrumentFragmentCallback)context;
         }
         catch (ClassCastException ccx){
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement InstrumentFragmentListener");
         }
     }
@@ -148,26 +151,9 @@ public class InstrumentFragment
      */
     private void loadSurveys(){
         mLoading.setVisibility(View.VISIBLE);
-        new InstrumentLoaderTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                ((CompassApplication)getActivity().getApplication()).getToken(),
-                String.valueOf(mInstrumentId));
-    }
-
-    @Override
-    public void instrumentsLoaded(ArrayList<Instrument> instruments){
-        mLoading.setVisibility(View.GONE);
-        if (instruments != null && !instruments.isEmpty()){
-            if (!instruments.get(0).getInstructions().isEmpty()){
-                mInstructions.setText(instruments.get(0).getInstructions());
-            }
-            mSurveys = new ArrayList<>();
-            mSurveys.addAll(instruments.get(0).getQuestions());
-            mProgress.setMax(mSurveys.size());
-            showNextSurveySet();
-        }
-        else{
-            Log.d(TAG, "No instrument loaded");
-        }
+        String token = ((CompassApplication)getActivity().getApplication()).getToken();
+        mGetInstrumentRequestCode = NetworkRequest.get(getActivity(), this,
+                API.getInstrumentUrl(mInstrumentId), token);
     }
 
     /**
@@ -178,19 +164,20 @@ public class InstrumentFragment
         for (int i = 0; i < mSurveyContainer.getChildCount(); i++){
             ((SurveyView)mSurveyContainer.getChildAt(i)).disable();
         }
-        new SaveSurveyResponseTask(getActivity(), this).execute(mCurrentSurveys);
-    }
-
-    @Override
-    public void onSurveySetResponseRecorded(List<Survey> survey){
-        if (mCurrentSurvey >= mSurveys.size()){
-            mCallback.onInstrumentFinished(mInstrumentId);
-        }
-        else{
-            for (int i = 0; i < mPageQuestions; i++){
-                mCurrentSurveys[i] = null;
+        mPostSurveyRequestCode = -1;
+        String token = ((CompassApplication)getActivity().getApplication()).getToken();
+        for (int i = 0; i < mCurrentSurveys.length; i++){
+            Survey survey = mCurrentSurveys[i];
+            if (survey != null){
+                if (i == mCurrentSurveys.length - 1 || mCurrentSurveys[i+1] == null){
+                    mPostSurveyRequestCode = NetworkRequest.post(getActivity(), this,
+                            API.getPostSurveyUrl(survey), token, API.getPostSurveyBody(survey));
+                }
+                else{
+                    NetworkRequest.post(getActivity(), this, API.getPostSurveyUrl(survey),
+                            token, API.getPostSurveyBody(survey));
+                }
             }
-            showNextSurveySet();
         }
     }
 
@@ -227,6 +214,51 @@ public class InstrumentFragment
     public void onInputCleared(Survey survey){
         mNext.setEnabled(false);
         mQuestionReady[mSurveys.indexOf(survey)%mPageQuestions] = false;
+    }
+
+    @Override
+    public void onRequestComplete(int requestCode, String result){
+        if (requestCode == mGetInstrumentRequestCode){
+            mLoading.setVisibility(View.GONE);
+            Instrument instrument = new Parser().parseInstrument(result);
+            if (!instrument.getInstructions().isEmpty()){
+                mInstructions.setText(instrument.getInstructions());
+            }
+            mSurveys = new ArrayList<>();
+            mSurveys.addAll(instrument.getQuestions());
+            mProgress.setMax(mSurveys.size());
+            showNextSurveySet();
+        }
+        else if (requestCode == mPostSurveyRequestCode){
+            Log.d("InstrumentFrag", "Survey set saved");
+            if (mCurrentSurvey >= mSurveys.size()){
+                mCallback.onInstrumentFinished(mInstrumentId);
+            }
+            else{
+                for (int i = 0; i < mPageQuestions; i++){
+                    mCurrentSurveys[i] = null;
+                }
+                showNextSurveySet();
+            }
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode){
+        if (requestCode == mGetInstrumentRequestCode){
+            mLoading.setVisibility(View.GONE);
+        }
+        else if (requestCode == mPostSurveyRequestCode){
+            if (mCurrentSurvey >= mSurveys.size()){
+                mCallback.onInstrumentFinished(mInstrumentId);
+            }
+            else{
+                for (int i = 0; i < mPageQuestions; i++){
+                    mCurrentSurveys[i] = null;
+                }
+                showNextSurveySet();
+            }
+        }
     }
 
 

@@ -17,6 +17,7 @@ import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.Instrument;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Progress;
 import org.tndata.android.compass.model.Reward;
@@ -45,6 +46,15 @@ public class Parser{
      */
     public Parser(){
         gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).create();
+    }
+
+    public List<Category> parseCategories(String src){
+        try{
+            return parseCategories(new JSONObject(src).getJSONArray("results"), false);
+        }
+        catch (JSONException jsonx){
+            return null;
+        }
     }
 
     /**
@@ -514,6 +524,10 @@ public class Parser{
             jsonx.printStackTrace();
         }
         return goal;
+    }
+
+    public Instrument parseInstrument(String src){
+        return gson.fromJson(src, Instrument.class);
     }
 
     public Gson getGson(){

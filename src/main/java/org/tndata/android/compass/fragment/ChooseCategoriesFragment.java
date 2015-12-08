@@ -1,12 +1,11 @@
 package org.tndata.android.compass.fragment;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
+import android.content.Context;
+import android.support.annotation.StringRes;
+import android.support.v4.app.Fragment;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.TypedValue;
@@ -20,9 +19,10 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoriesAdapter;
 import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.task.CategoryLoaderTask;
-import org.tndata.android.compass.task.CategoryLoaderTask.CategoryLoaderListener;
+import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
+import org.tndata.android.compass.util.NetworkRequest;
+import org.tndata.android.compass.util.Parser;
 
 import java.util.List;
 
@@ -36,13 +36,11 @@ import java.util.List;
 public class ChooseCategoriesFragment
         extends Fragment
         implements
-                CategoryLoaderListener,
+                NetworkRequest.RequestCallback,
                 ChooseCategoriesAdapter.OnCategoriesSelectedListener{
 
     public static final String ON_BOARDING_KEY = "org.tndata.compass.ChooseCategories.OnBoarding";
 
-    //10 seconds worth in milliseconds
-    private static final int FETCH_TIMEOUT = 10*1000;
 
     private View mMaterialHeader;
     private ChooseCategoriesAdapter mAdapter;
@@ -51,9 +49,10 @@ public class ChooseCategoriesFragment
     private AlertDialog mDialog;
 
     private ChooseCategoriesAdapter.OnCategoriesSelectedListener mCallback;
-    private CompassApplication application;
+    private CompassApplication mApplication;
 
-    private boolean mFetchingCategories;
+    //Request codes
+    private int mGetCategoriesRequestCode;
 
 
     @Override
@@ -64,17 +63,25 @@ public class ChooseCategoriesFragment
     }
 
     @Override
-    public void onAttach(Activity activity){
-        super.onAttach(activity);
+    public void onAttach(Context context){
+        super.onAttach(context);
         //This makes sure that the container activity has implemented the callback
         //  interface. If not, it throws an exception
-
         try{
-            mCallback = (ChooseCategoriesAdapter.OnCategoriesSelectedListener)activity;
+            mCallback = (ChooseCategoriesAdapter.OnCategoriesSelectedListener)context;
         }
-        catch (ClassCastException e){
-            throw new ClassCastException(activity.toString()
+        catch (ClassCastException ccx){
+            throw new ClassCastException(context.toString()
                     + " must implement ChooseCategoriesFragmentListener");
+        }
+    }
+
+    @Override
+    public void onDetach(){
+        super.onDetach();
+        mCallback = null;
+        if (mDialog != null){
+            mDialog.dismiss();
         }
     }
 
@@ -95,16 +102,13 @@ public class ChooseCategoriesFragment
         grid.addItemDecoration(new ItemPadding());
         grid.setOnScrollListener(new ParallaxEffect());
 
-        mFetchingCategories = false;
-
         return root;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-        application = (CompassApplication) getActivity().getApplication();
-
+        mApplication = (CompassApplication) getActivity().getApplication();
         loadCategories();
     }
 
@@ -112,50 +116,8 @@ public class ChooseCategoriesFragment
      * Starts the category load process.
      */
     private void loadCategories(){
-        mFetchingCategories = true;
-        new Handler().postDelayed(new Runnable(){
-            @Override
-            public void run(){
-                if (mFetchingCategories){
-                    notifyError(R.string.choose_categories_error);
-                    mFetchingCategories = false;
-                }
-            }
-        }, FETCH_TIMEOUT);
-
-        new CategoryLoaderTask(this).execute(application.getToken());
-    }
-
-    @Override
-    public void onDetach(){
-        super.onDetach();
-        mCallback = null;
-        if (mDialog != null){
-            mDialog.dismiss();
-        }
-    }
-
-    @Override
-    public void categoryLoaderFinished(List<Category> categories){
-        if (mFetchingCategories){
-            if (categories == null){
-                notifyError(R.string.choose_categories_error);
-            }
-            else{
-                mAdapter.setCategories(categories, application.getCategories());
-            }
-            mFetchingCategories = false;
-        }
-    }
-
-    /**
-     * Toasts the string with the provided id and hides the progress bar in the header.
-     *
-     * @param resId the resource id of the error string.
-     */
-    private void notifyError(@StringRes int resId){
-        mAdapter.hideProgressBar();
-        Toast.makeText(getActivity(), resId, Toast.LENGTH_SHORT).show();
+        mGetCategoriesRequestCode = NetworkRequest.get(getActivity(), this, API.getCategoriesUrl(),
+                mApplication.getToken());
     }
 
     @Override
@@ -167,6 +129,30 @@ public class ChooseCategoriesFragment
                 .create();
         mDialog.show();
         mCallback.onCategoriesSelected(selection);
+    }
+
+    @Override
+    public void onRequestComplete(int requestCode, String result){
+        if (requestCode == mGetCategoriesRequestCode){
+            mAdapter.setCategories(new Parser().parseCategories(result), mApplication.getCategories());
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode){
+        if (requestCode == mGetCategoriesRequestCode){
+            notifyError(R.string.choose_categories_error);
+        }
+    }
+
+    /**
+     * Hides the progress bar and toasts an error.
+     *
+     * @param resId the resource id of the string.
+     */
+    private void notifyError(@StringRes int resId){
+        mAdapter.hideProgressBar();
+        Toast.makeText(getActivity(), resId, Toast.LENGTH_SHORT).show();
     }
 
 
