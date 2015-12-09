@@ -30,15 +30,14 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.task.AddBehaviorTask;
 import org.tndata.android.compass.task.AddGoalTask;
-import org.tndata.android.compass.task.BehaviorLoaderTask;
-import org.tndata.android.compass.task.BehaviorLoaderTask.BehaviorLoaderListener;
 import org.tndata.android.compass.task.DeleteBehaviorTask;
-import org.tndata.android.compass.task.GetContentTask;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
+import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.Parser;
 
 import java.util.ArrayList;
@@ -54,8 +53,7 @@ import java.util.List;
 public class ChooseBehaviorsActivity
         extends AppCompatActivity
         implements
-                GetContentTask.GetContentListener,
-                BehaviorLoaderListener,
+                NetworkRequest.RequestCallback,
                 AddBehaviorTask.AddBehaviorsTaskListener,
                 AddGoalTask.AddGoalsTaskListener,
                 DeleteBehaviorTask.DeleteBehaviorCallback,
@@ -68,9 +66,6 @@ public class ChooseBehaviorsActivity
     public static final String CATEGORY_KEY = "org.tndata.compass.ChooseBehaviors.Category";
     public static final String GOAL_KEY = "org.tndata.compass.ChooseBehaviors.Goal";
     public static final String GOAL_ID_KEY = "org.tndata.compass.ChooseBehaviors.GoalId";
-
-    //Request codes
-    private static final int GET_GOAL_REQUEST_CODE = 1;
 
     //Activity tag
     private static final String TAG = "ChooseBehaviorsActivity";
@@ -87,6 +82,10 @@ public class ChooseBehaviorsActivity
     private ChooseBehaviorsAdapter mAdapter;
     private View mHeaderView;
     private RecyclerView mBehaviorList;
+
+    //Request codes
+    private int mGetGoalRequestCode;
+    private int mGetBehaviorsRequestCode;
 
 
     @Override
@@ -143,35 +142,49 @@ public class ChooseBehaviorsActivity
     }
 
     /**
-     * Retrieves a gal from the database.
+     * Retrieves a goal from the database.
      *
      * @param goalId the id of the goal to be fetched.
      */
     private void fetchGoal(int goalId){
         Log.d(TAG, "Fetching goal: " + goalId);
-        String url = Constants.BASE_URL + "goals/" + goalId + "/";
-        new GetContentTask(this, GET_GOAL_REQUEST_CODE).execute(url, mApplication.getToken());
+        mGetGoalRequestCode = NetworkRequest.get(this, this, API.getGoalUrl(goalId), "");
+    }
+
+    /**
+     * Retrieves the behaviors of the current goal
+     */
+    private void fetchBehaviors(){
+        mGetBehaviorsRequestCode = NetworkRequest.get(this, this,
+                API.getBehaviorsUrl(mGoal.getId()), "");
     }
 
     @Override
-    public void onContentRetrieved(int requestCode, String content){
-        mGoal = new Parser().parseGoal(content);
-        for (Category category:mGoal.getCategories()){
-            if (mApplication.getUserData().getCategories().contains(category)){
-                mGoal.setPrimaryCategory(category);
-                break;
+    public void onRequestComplete(int requestCode, String result){
+        if (requestCode == mGetGoalRequestCode){
+            //Parse the goal
+            mGoal = new Parser().parseGoal(result);
+            //Look for a primary category
+            for (Category category:mGoal.getCategories()){
+                if (mApplication.getUserData().getCategories().contains(category)){
+                    mGoal.setPrimaryCategory(category);
+                    break;
+                }
             }
-        }
-    }
 
-    @Override
-    public void onRequestComplete(int requestCode){
-        if (requestCode == GET_GOAL_REQUEST_CODE){
+            //Set UI and fetch the behaviors
             mToolbar.setTitle(mGoal.getTitle());
             setCategoryAndUserGoal();
             setAdapter();
             fetchBehaviors();
             mSearchItem.setVisible(true);
+        }
+        else if (requestCode == mGetBehaviorsRequestCode){
+            List<Behavior> behaviors = new Parser().parseBehaviors(result);
+            if (behaviors != null){
+                mAdapter.setBehaviors(behaviors);
+            }
+            mAdapter.notifyDataSetChanged();
         }
     }
 
@@ -215,10 +228,6 @@ public class ChooseBehaviorsActivity
             mHeaderView.setBackgroundColor(Color.parseColor(mCategory.getColor()));
             mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }
-    }
-
-    private void fetchBehaviors(){
-        new BehaviorLoaderTask(this).execute(mApplication.getToken(), String.valueOf(mGoal.getId()));
     }
 
     private boolean isGoalSelected(){
@@ -279,6 +288,7 @@ public class ChooseBehaviorsActivity
         //TODO
         mGoal.setPrimaryCategory(mCategory);
         mApplication.getUserData().addGoal(mGoal);
+        
         ArrayList<String> ids = new ArrayList<>();
         ids.add(mGoal.getId() + "");
         new AddGoalTask(this, this, ids, mGoal).execute();
@@ -377,14 +387,6 @@ public class ChooseBehaviorsActivity
             setResult(resultCode);
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void behaviorsLoaded(List<Behavior> behaviors){
-        if (behaviors != null){
-            mAdapter.setBehaviors(behaviors);
-        }
-        mAdapter.notifyDataSetChanged();
     }
 
     @Override

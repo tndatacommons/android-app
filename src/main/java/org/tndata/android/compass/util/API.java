@@ -21,7 +21,7 @@ import java.util.TimeZone;
  */
 public abstract class API{
     //Api urls and app configuration
-    private static final boolean USE_NGROK_TUNNEL = true;
+    private static final boolean USE_NGROK_TUNNEL = false;
     private static final String TNDATA_BASE_URL = "https://app.tndata.org/api/";
     private static final String TNDATA_STAGING_URL = "http://staging.tndata.org/api/";
     private static final String NGROK_TUNNEL_URL = "https://tndata.ngrok.io/api/";
@@ -125,5 +125,62 @@ public abstract class API{
     public static String getSearchUrl(String query){
         query = query.replace(" ", "%20");
         return BASE_URL + "search/?q=" + query;
+    }
+
+    public static String getUserActionUrl(int actionId){
+        return BASE_URL + "users/actions/?action=" + actionId;
+    }
+
+    public static String getPutTriggerUrl(int actionMappingId){
+        return BASE_URL + "users/actions/" + actionMappingId + "/";
+    }
+
+    public static Map<String, String> getPutTriggerBody(String time, String rrule, String date){
+        Map<String, String> putTriggerBody = new HashMap<>();
+        putTriggerBody.put("custom_trigger_time", time);
+        putTriggerBody.put("custom_trigger_rrule", rrule);
+        putTriggerBody.put("custom_trigger_date", date);
+        return putTriggerBody;
+    }
+
+    public static String getTodaysActionsUrl(){
+        return BASE_URL + "users/actions/?today=1";
+    }
+
+    public static String getRandomRewardUrl(){
+        return BASE_URL + "rewards/?random=1";
+    }
+
+    public static String getUserGoalProgressUrl(){
+        return BASE_URL + "users/goals/progress/average/";
+    }
+
+    public static String getPostUserGoalProgressUrl(){
+        return BASE_URL + "users/goals/progress/";
+    }
+
+    public static Map<String, String> getPostUserGoalProgressBody(int goalId, int progress){
+        Map<String, String> postUserGoalProgressBody = new HashMap<>();
+        postUserGoalProgressBody.put("goal", String.valueOf(goalId));
+        postUserGoalProgressBody.put("daily_checkin", String.valueOf(progress));
+        return postUserGoalProgressBody;
+    }
+
+    public static String getGoalUrl(int goalId){
+        return BASE_URL + "goals/" + goalId + "/";
+    }
+
+    public static String getBehaviorsUrl(int goalId){
+        return BASE_URL + "behaviors/?goal=" + goalId;
+    }
+
+    public String getPostGoalUrl(){
+        return BASE_URL + "users/goals/";
+    }
+
+    public Map<String, String> getPostGoalBody(int goalId){
+        Map<String, String> postGoalBody = new HashMap<>();
+        postGoalBody.put("goal", String.valueOf(goalId));
+        return postGoalBody;
     }
 }

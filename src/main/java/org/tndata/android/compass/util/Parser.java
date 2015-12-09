@@ -35,7 +35,7 @@ import java.util.List;
  * includes category, goal, behavior, action, and place parsing.
  *
  * @author Ismael Alonso
- * @version 1.0.0
+ * @version 1.0.0 (WIP)
  */
 public class Parser{
     private Gson gson;
@@ -185,6 +185,16 @@ public class Parser{
         return goals;
     }
 
+    public List<Behavior> parseBehaviors(String src){
+        try{
+            return parseBehaviors(new JSONObject(src).getJSONArray("results"), false);
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * Parses out the goal list.
      *
@@ -255,6 +265,15 @@ public class Parser{
         }
 
         return behaviors;
+    }
+
+    public List<Action> parseActions(String src){
+        try{
+            return parseActions(new JSONObject(src).getJSONArray("results"), true);
+        }
+        catch (JSONException jsonx){
+            return null;
+        }
     }
 
     /**

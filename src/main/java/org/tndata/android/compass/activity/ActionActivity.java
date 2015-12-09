@@ -4,7 +4,6 @@ import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,12 +27,13 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.model.Reminder;
-import org.tndata.android.compass.task.AddActionTriggerTask;
-import org.tndata.android.compass.task.GetUserActionsTask;
+import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ImageLoader;
+import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.NotificationUtil;
+import org.tndata.android.compass.util.Parser;
 
 import java.util.List;
 
@@ -49,8 +49,7 @@ public class ActionActivity
         extends AppCompatActivity
         implements
                 View.OnClickListener,
-                GetUserActionsTask.GetUserActionsCallback,
-                AddActionTriggerTask.AddActionTriggerTaskListener{
+                NetworkRequest.RequestCallback{
 
     public static final String ACTION_KEY = "org.tndata.compass.ActionActivity.action";
     public static final String ACTION_ID_KEY = "org.tndata.compass.ActionActivity.action_id";
@@ -61,6 +60,8 @@ public class ActionActivity
     private static final int SNOOZE_REQUEST_CODE = 61428;
     private static final int RESCHEDULE_REQUEST_CODE = 61429;
 
+
+    private CompassApplication mApplication;
 
     //The action in question and the associated reminder
     private Action mAction;
@@ -87,6 +88,8 @@ public class ActionActivity
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_action);
+
+        mApplication = (CompassApplication)getApplication();
 
         //Retrieve the action and mark the reminder as nonexistent
         mAction = (Action)getIntent().getSerializableExtra(ACTION_KEY);
@@ -148,39 +151,6 @@ public class ActionActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        //We need to check for null action here because sometimes the action needs to
-        //  be fetched from the backend. If the action has not been fetched yet, the
-        //  overflow button doesn't make sense
-        if (mActionNeededFetching && mAction != null && mAction.isEditable()){
-            if (!mAction.hasTrigger() || mAction.getTrigger().isDisabled()){
-                getMenuInflater().inflate(R.menu.menu_action_disabled, menu);
-            }
-            else{
-                getMenuInflater().inflate(R.menu.menu_action, menu);
-            }
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
-            case R.id.action_trigger:
-                reschedule();
-                break;
-
-            case R.id.action_disable_trigger:
-                disableTrigger();
-                break;
-
-            default:
-                return false;
-        }
-        return true;
-    }
-
-    @Override
     protected void onNewIntent(Intent intent){
         super.onNewIntent(intent);
         Log.d("ActionActivity", "onNewIntent");
@@ -194,141 +164,7 @@ public class ActionActivity
      */
     private void fetchAction(int actionId){
         Log.d("ActionActivity", "fetching action: " + actionId);
-        String token = ((CompassApplication)getApplication()).getToken();
-
-        if (token != null && !token.isEmpty()){
-            new GetUserActionsTask(this).execute(token, "action:" + actionId);
-        }
-        else{
-            //Something is wrong and we don't have an auth token for the user, so fail.
-            Log.e("ActionActivity", "AUTH Token is null, giving up!");
-            finish();
-        }
-    }
-
-    @Override
-    public void onClick(View view){
-        switch (view.getId()){
-            case R.id.action_time_option:
-                if (mReminder != null){
-                    snooze();
-                }
-                else{
-                    reschedule();
-                }
-                break;
-
-            case R.id.action_did_it:
-                didIt();
-                break;
-
-            case R.id.action_do_it_now:
-                CompassUtil.doItNow(this, mAction.getExternalResource());
-                break;
-        }
-    }
-
-    /**
-     * Snooze clicked. This opens the snooze menu.
-     */
-    private void snooze(){
-        if (mAction != null && !mActionUpdated){
-            Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
-                    .putExtra(NotificationUtil.REMINDER_KEY, mReminder);
-            startActivityForResult(snoozeIntent, SNOOZE_REQUEST_CODE);
-        }
-    }
-
-    /**
-     * Reschedule clicked. This opens the trigger picker.
-     */
-    private void reschedule(){
-        if (mAction != null && !mActionUpdated){
-            Intent reschedule = new Intent(this, TriggerActivity.class)
-                    .putExtra(TriggerActivity.ACTION_KEY, mAction)
-                    .putExtra(TriggerActivity.GOAL_KEY, mAction.getPrimaryGoal());
-            startActivityForResult(reschedule, RESCHEDULE_REQUEST_CODE);
-        }
-    }
-
-    private void disableTrigger(){
-        new AddActionTriggerTask(this,
-                ((CompassApplication)getApplication()).getToken(),
-                "", "", "", String.valueOf(mAction.getMappingId()))
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        mAction.setCustomTrigger(null);
-        mAction.setDefaultTrigger(null);
-        invalidateOptionsMenu();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        if (resultCode == RESULT_OK){
-            switch (requestCode){
-                case RESCHEDULE_REQUEST_CODE:
-                    //If the activity was was fired from an action notification and the
-                    //  associated action was rescheduled, the notification needs to be
-                    //  dismissed
-                    if (mActionNeededFetching){
-                        ((NotificationManager)getSystemService(NOTIFICATION_SERVICE))
-                                .cancel(NotificationUtil.NOTIFICATION_TYPE_ACTION_TAG,
-                                        mReminder.getObjectId());
-
-                    }
-
-                //In either case, the activity should finish after a second
-                case SNOOZE_REQUEST_CODE:
-                    mActionUpdated = true;
-
-                    //Display the check mark and finish the activity after one second
-                    mTickSwitcher.showNext();
-                    new Handler().postDelayed(new Runnable(){
-                        @Override
-                        public void run(){
-                            setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, false));
-                            finish();
-                        }
-                    }, 1000);
-            }
-        }
-    }
-
-    /**
-     * I did it clicked.
-     */
-    private void didIt(){
-        if (mAction!= null && !mActionUpdated){
-            mActionUpdated = true;
-
-            Intent completeAction = new Intent(this, ActionReportService.class)
-                    .putExtra(ActionReportService.ACTION_ID_KEY, mAction.getId())
-                    .putExtra(ActionReportService.MAPPING_ID_KEY, mAction.getMappingId())
-                    .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED);
-            startService(completeAction);
-
-            //Display the check mark and finish the activity after one second
-            mTickSwitcher.showNext();
-            new Handler().postDelayed(new Runnable(){
-                @Override
-                public void run(){
-                    setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, true));
-                    finish();
-                }
-            }, 1000);
-        }
-    }
-
-    @Override
-    public void onActionsLoaded(List<Action> actions){
-        if (actions.size() > 0){
-            mAction = actions.get(0);
-            populateUI();
-            invalidateOptionsMenu();
-        }
-        else{
-            //If the request did not return any actions, kill the activity
-            finish();
-        }
+        NetworkRequest.get(this, this, API.getUserActionUrl(actionId), mApplication.getToken());
     }
 
     /**
@@ -393,7 +229,165 @@ public class ActionActivity
     }
 
     @Override
-    public boolean actionTriggerAdded(Action action){
+    public boolean onCreateOptionsMenu(Menu menu){
+        //We need to check for null action here because sometimes the action needs to
+        //  be fetched from the backend. If the action has not been fetched yet, the
+        //  overflow button doesn't make sense
+        if (mActionNeededFetching && mAction != null && mAction.isEditable()){
+            if (!mAction.hasTrigger() || mAction.getTrigger().isDisabled()){
+                getMenuInflater().inflate(R.menu.menu_action_disabled, menu);
+            }
+            else{
+                getMenuInflater().inflate(R.menu.menu_action, menu);
+            }
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.action_trigger:
+                reschedule();
+                break;
+
+            case R.id.action_disable_trigger:
+                disableTrigger();
+                break;
+
+            default:
+                return false;
+        }
         return true;
+    }
+
+    @Override
+    public void onClick(View view){
+        switch (view.getId()){
+            case R.id.action_time_option:
+                if (mReminder != null){
+                    snooze();
+                }
+                else{
+                    reschedule();
+                }
+                break;
+
+            case R.id.action_did_it:
+                didIt();
+                break;
+
+            case R.id.action_do_it_now:
+                CompassUtil.doItNow(this, mAction.getExternalResource());
+                break;
+        }
+    }
+
+    /**
+     * Snooze clicked. This opens the snooze menu.
+     */
+    private void snooze(){
+        if (mAction != null && !mActionUpdated){
+            Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
+                    .putExtra(NotificationUtil.REMINDER_KEY, mReminder);
+            startActivityForResult(snoozeIntent, SNOOZE_REQUEST_CODE);
+        }
+    }
+
+    /**
+     * Reschedule clicked. This opens the trigger picker.
+     */
+    private void reschedule(){
+        if (mAction != null && !mActionUpdated){
+            Intent reschedule = new Intent(this, TriggerActivity.class)
+                    .putExtra(TriggerActivity.ACTION_KEY, mAction)
+                    .putExtra(TriggerActivity.GOAL_KEY, mAction.getPrimaryGoal());
+            startActivityForResult(reschedule, RESCHEDULE_REQUEST_CODE);
+        }
+    }
+
+    private void disableTrigger(){
+        //TODO this yields a 500: INTERNAL SERVER ERROR
+        NetworkRequest.put(this, null, API.getPutTriggerUrl(mAction.getMappingId()),
+                mApplication.getToken(), API.getPutTriggerBody("", "", ""));
+        mAction.setCustomTrigger(null);
+        mAction.setDefaultTrigger(null);
+        invalidateOptionsMenu();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (resultCode == RESULT_OK){
+            switch (requestCode){
+                case RESCHEDULE_REQUEST_CODE:
+                    //If the activity was was fired from an action notification and the
+                    //  associated action was rescheduled, the notification needs to be
+                    //  dismissed
+                    if (mActionNeededFetching){
+                        ((NotificationManager)getSystemService(NOTIFICATION_SERVICE))
+                                .cancel(NotificationUtil.NOTIFICATION_TYPE_ACTION_TAG,
+                                        mReminder.getObjectId());
+
+                    }
+
+                //In either case, the activity should finish after a second
+                case SNOOZE_REQUEST_CODE:
+                    mActionUpdated = true;
+
+                    //Display the check mark and finish the activity after one second
+                    mTickSwitcher.showNext();
+                    new Handler().postDelayed(new Runnable(){
+                        @Override
+                        public void run(){
+                            setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, false));
+                            finish();
+                        }
+                    }, 1000);
+            }
+        }
+    }
+
+    /**
+     * I did it clicked.
+     */
+    private void didIt(){
+        if (mAction!= null && !mActionUpdated){
+            mActionUpdated = true;
+
+            Intent completeAction = new Intent(this, ActionReportService.class)
+                    .putExtra(ActionReportService.ACTION_ID_KEY, mAction.getId())
+                    .putExtra(ActionReportService.MAPPING_ID_KEY, mAction.getMappingId())
+                    .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED);
+            startService(completeAction);
+
+            //Display the check mark and finish the activity after one second
+            mTickSwitcher.showNext();
+            new Handler().postDelayed(new Runnable(){
+                @Override
+                public void run(){
+                    setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, true));
+                    finish();
+                }
+            }, 1000);
+        }
+    }
+
+    @Override
+    public void onRequestComplete(int requestCode, String result){
+        List<Action> actions = new Parser().parseActions(result);
+        //TODO this if statement won't be necessary when the Parser is fixed
+        if (actions != null && actions.size() == 1){
+            mAction = actions.get(0);
+            populateUI();
+            invalidateOptionsMenu();
+        }
+        else{
+            finish();
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode){
+        finish();
     }
 }
