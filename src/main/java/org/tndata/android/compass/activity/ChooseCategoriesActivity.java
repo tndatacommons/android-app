@@ -1,6 +1,5 @@
 package org.tndata.android.compass.activity;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -9,24 +8,36 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoriesAdapter;
 import org.tndata.android.compass.fragment.ChooseCategoriesFragment;
 import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.UserData;
-import org.tndata.android.compass.task.AddCategoryTask;
-import org.tndata.android.compass.task.DeleteCategoryTask;
-import org.tndata.android.compass.task.GetUserDataTask;
+import org.tndata.android.compass.util.API;
+import org.tndata.android.compass.util.NetworkRequest;
+import org.tndata.android.compass.util.Parser;
 
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Activity that wraps ChooseCategoriesFragment for standalone display.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
+ */
 public class ChooseCategoriesActivity
         extends AppCompatActivity
         implements
-                AddCategoryTask.AddCategoryTaskListener,
                 ChooseCategoriesAdapter.OnCategoriesSelectedListener,
-                GetUserDataTask.GetUserDataCallback{
+                NetworkRequest.RequestCallback{
 
     private CompassApplication mApplication;
 
     private List<Category> mSelection;
+
+    //Request codes
+    private int mInitialPostCategoryRequestCode;
+    private int mLastPostCategoryRequestCode;
+    private int mInitialDeleteCategoryRequestCode;
+    private int mLastDeleteCategoryRequestCode;
+    private int mGetDataRequestCode;
 
 
     @Override
@@ -48,70 +59,108 @@ public class ChooseCategoriesActivity
     public void onCategoriesSelected(List<Category> selection){
         mSelection = selection;
 
-        List<Category> categoriesToAdd = new ArrayList<>();
-        for (Category cat:selection){
-            if (!mApplication.getCategories().contains(cat)){
-                categoriesToAdd.add(cat);
+        List<Category> toAdd = new ArrayList<>();
+        for (Category category:selection){
+            if (!mApplication.getCategories().contains(category)){
+                toAdd.add(category);
             }
         }
 
-        ArrayList<String> cats = new ArrayList<>();
-        for (Category cat:categoriesToAdd){
-            cats.add(String.valueOf(cat.getId()));
-        }
-        if (cats.size() > 0){
-            new AddCategoryTask(this, this, cats)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        if (toAdd.size() > 0){
+            for (int i = 0; i < toAdd.size(); i++){
+                if (i == 0){
+                    mInitialPostCategoryRequestCode = NetworkRequest.post(this, this,
+                            API.getUserCategoriesUrl(), mApplication.getToken(),
+                            API.getPostUserCategoryBody(toAdd.get(i).getId()));
+                    mLastPostCategoryRequestCode = mInitialPostCategoryRequestCode+toAdd.size();
+                }
+                else{
+                    NetworkRequest.post(this, this, API.getUserCategoriesUrl(), mApplication.getToken(),
+                            API.getPostUserCategoryBody(toAdd.get(i).getId()));
+                }
+            }
         }
         else{
             deleteCategories();
         }
     }
 
-    @Override
-    public void categoriesAdded(ArrayList<Category> categories){
-        if (categories != null){
-            for (Category category:categories){
-                mApplication.addCategory(category);
-            }
-            deleteCategories();
-        }
-    }
-
+    /**
+     * Deletes the unselected categories.
+     */
     private void deleteCategories(){
-        ArrayList<String> deleteCats = new ArrayList<>();
-        final List<Category> toDelete = new ArrayList<>();
-        for (Category cat: mApplication.getCategories()){
-            if (!mSelection.contains(cat)){
-                deleteCats.add(String.valueOf(cat.getMappingId()));
-                toDelete.add(cat);
+        List<Category> toDelete = new ArrayList<>();
+        for (Category category:mApplication.getCategories()){
+            if (!mSelection.contains(category)){
+                toDelete.add(category);
             }
         }
 
         if (toDelete.size() > 0){
-            new DeleteCategoryTask(this, new DeleteCategoryTask.DeleteCategoryTaskListener(){
-                @Override
-                public void categoriesDeleted(){
-                    for (Category category:toDelete){
-                        mApplication.getUserData().removeCategory(category);
-                    }
-                    getUserData();
+            for (int i = 0; i < toDelete.size(); i++){
+                //TODO fix this
+                if (i == 0){
+                    mInitialDeleteCategoryRequestCode = NetworkRequest.delete(this, this,
+                            API.getUserCategoriesUrl(), mApplication.getToken(),
+                            API.getDeleteUserCategoryBody(toDelete.get(i).getMappingId()));
+                    mLastDeleteCategoryRequestCode = mInitialDeleteCategoryRequestCode+toDelete.size();
                 }
-            }, deleteCats).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                else{
+                    NetworkRequest.delete(this, this, API.getUserCategoriesUrl(), mApplication.getToken(),
+                            API.getDeleteUserCategoryBody(toDelete.get(i).getMappingId()));
+                }
+            }
         }
         else{
             getUserData();
         }
     }
 
+    /**
+     * Triggers data retrieval from the API.
+     */
     private void getUserData(){
-        new GetUserDataTask(this, this).execute(mApplication.getToken());
+        mGetDataRequestCode = NetworkRequest.get(this, this, API.getUserDataUrl(),
+                mApplication.getToken(), 60 * 1000);
     }
 
     @Override
-    public void userDataLoaded(UserData userData){
-        mApplication.setUserData(userData);
-        setResult(RESULT_OK);
-        finish();
+    public void onRequestComplete(int requestCode, String result){
+        if (requestCode < mLastPostCategoryRequestCode){
+            mInitialPostCategoryRequestCode++;
+            if (mInitialPostCategoryRequestCode == mLastPostCategoryRequestCode){
+                deleteCategories();
+            }
+        }
+        else if (requestCode < mLastDeleteCategoryRequestCode){
+            mInitialDeleteCategoryRequestCode++;
+            if (mInitialDeleteCategoryRequestCode == mLastDeleteCategoryRequestCode){
+                getUserData();
+            }
+        }
+        else if (requestCode == mGetDataRequestCode){
+            mApplication.setUserData(new Parser().parseUserData(this, result));
+            setResult(RESULT_OK);
+            finish();
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode){
+        if (requestCode < mLastPostCategoryRequestCode){
+            mInitialPostCategoryRequestCode++;
+            if (mInitialPostCategoryRequestCode == mLastPostCategoryRequestCode){
+                deleteCategories();
+            }
+        }
+        else if (requestCode < mLastDeleteCategoryRequestCode){
+            mInitialDeleteCategoryRequestCode++;
+            if (mInitialDeleteCategoryRequestCode == mLastDeleteCategoryRequestCode){
+                getUserData();
+            }
+        }
+        else if (requestCode == mGetDataRequestCode){
+            finish();
+        }
     }
 }

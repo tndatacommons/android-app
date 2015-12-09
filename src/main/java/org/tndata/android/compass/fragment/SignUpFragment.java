@@ -28,7 +28,12 @@ import android.widget.TextView;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class SignUpFragment extends Fragment implements NetworkRequest.RequestCallback, OnClickListener{
+public class SignUpFragment
+        extends Fragment
+        implements
+                OnClickListener,
+                NetworkRequest.RequestCallback{
+
     //Listener interface
     private SignUpFragmentListener mListener;
 
@@ -226,6 +231,7 @@ public class SignUpFragment extends Fragment implements NetworkRequest.RequestCa
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mSignUpRequestCode){
             User user = new Parser().parseUser(result);
+            user.setPassword(mPassword.getText().toString().trim());
             mListener.onSignUpSuccess(user);
         }
     }

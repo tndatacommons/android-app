@@ -12,6 +12,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpClientStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -360,6 +361,13 @@ public final class NetworkRequest{
     private void setRequest(@NonNull StringRequest request){
         mRequest = request;
     }
+
+
+    /*private static final class DeleteWithBodyHttpClientStack extends HttpClientStack{
+        public DeleteWithBodyHttpClientStack(HttpClient client){
+            super(client);
+        }
+    }*/
 
 
     /*------------*

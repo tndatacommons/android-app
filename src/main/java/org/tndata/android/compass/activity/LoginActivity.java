@@ -14,13 +14,9 @@ import android.view.MenuItem;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.LauncherFragment;
-import org.tndata.android.compass.fragment.LauncherFragment.LauncherFragmentListener;
 import org.tndata.android.compass.fragment.LogInFragment;
-import org.tndata.android.compass.fragment.LogInFragment.LogInFragmentCallback;
 import org.tndata.android.compass.fragment.SignUpFragment;
-import org.tndata.android.compass.fragment.SignUpFragment.SignUpFragmentListener;
 import org.tndata.android.compass.fragment.TourFragment;
-import org.tndata.android.compass.fragment.TourFragment.TourFragmentCallback;
 import org.tndata.android.compass.fragment.WebFragment;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.util.API;
@@ -35,10 +31,10 @@ import java.util.List;
 public class LoginActivity
         extends AppCompatActivity
         implements
-                LauncherFragmentListener,
-                SignUpFragmentListener,
-                LogInFragmentCallback,
-                TourFragmentCallback,
+                LauncherFragment.LauncherFragmentListener,
+                SignUpFragment.SignUpFragmentListener,
+                LogInFragment.LogInFragmentCallback,
+                TourFragment.TourFragmentCallback,
                 NetworkRequest.RequestCallback{
 
 

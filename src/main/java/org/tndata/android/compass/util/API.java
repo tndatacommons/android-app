@@ -1,6 +1,7 @@
 package org.tndata.android.compass.util;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.model.Survey;
@@ -12,11 +13,15 @@ import java.util.TimeZone;
 
 
 /**
- * Created by isma on 12/7/15.
+ * Class containing all the information about API endpoints and the bodies
+ * that should come with the requests.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public abstract class API{
     //Api urls and app configuration
-    private static final boolean USE_NGROK_TUNNEL = true;
+    private static final boolean USE_NGROK_TUNNEL = false;
     private static final String TNDATA_BASE_URL = "https://app.tndata.org/api/";
     private static final String TNDATA_STAGING_URL = "http://staging.tndata.org/api/";
     private static final String NGROK_TUNNEL_URL = "https://tndata.ngrok.io/api/";
@@ -71,7 +76,15 @@ public abstract class API{
     public static Map<String, String> getPostUserCategoryBody(int categoryId){
         Map<String, String> postCategoriesBody = new HashMap<>();
         postCategoriesBody.put("category", String.valueOf(categoryId));
+        Log.d("API", postCategoriesBody.toString());
         return postCategoriesBody;
+    }
+
+    public static Map<String, String> getDeleteUserCategoryBody(int userCategoryId){
+        Map<String, String> deleteCategoriesBody = new HashMap<>();
+        deleteCategoriesBody.put("usercategory", String.valueOf(userCategoryId));
+        Log.d("API", deleteCategoriesBody.toString());
+        return deleteCategoriesBody;
     }
 
     public static String getInstrumentUrl(int instrument){

@@ -115,7 +115,6 @@ public class OnBoardingActivity
                         API.getPostUserCategoryBody(selection.get(i).getId()));
             }
         }
-        //new AddCategoryTask(this, this, cats).execute();
     }
 
     @Override
