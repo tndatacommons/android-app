@@ -21,7 +21,7 @@ import java.util.TimeZone;
  */
 public abstract class API{
     //Api urls and app configuration
-    private static final boolean USE_NGROK_TUNNEL = false;
+    private static final boolean USE_NGROK_TUNNEL = true;
     private static final String TNDATA_BASE_URL = "https://app.tndata.org/api/";
     private static final String TNDATA_STAGING_URL = "http://staging.tndata.org/api/";
     private static final String NGROK_TUNNEL_URL = "https://tndata.ngrok.io/api/";
@@ -120,5 +120,10 @@ public abstract class API{
         putUserProfileBody.put("timezone", TimeZone.getDefault().getID());
         putUserProfileBody.put("needs_onboarding", String.valueOf(user.needsOnBoarding()));
         return putUserProfileBody;
+    }
+
+    public static String getSearchUrl(String query){
+        query = query.replace(" ", "%20");
+        return BASE_URL + "search/?q=" + query;
     }
 }

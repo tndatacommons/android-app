@@ -16,7 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,8 +32,6 @@ import android.widget.Toast;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
@@ -46,7 +43,6 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.UserData;
-import org.tndata.android.compass.task.GetContentTask;
 import org.tndata.android.compass.task.UpdateProfileTask;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
@@ -58,7 +54,6 @@ import org.tndata.android.compass.util.ParallaxEffect;
 import org.tndata.android.compass.util.Parser;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -80,7 +75,6 @@ public class MainActivity
                 MenuItemCompat.OnActionExpandListener,
                 SearchView.OnQueryTextListener,
                 SearchView.OnCloseListener,
-                GetContentTask.GetContentListener,
                 RecyclerView.OnItemTouchListener,
                 SearchAdapter.SearchAdapterListener{
 
@@ -109,7 +103,6 @@ public class MainActivity
     private RecyclerView mSearchList;
     private SearchAdapter mSearchAdapter;
     private int mLastSearchRequestCode;
-    private List<SearchResult> mSearchResults;
 
     //Drawer components
     private DrawerLayout mDrawerLayout;
@@ -363,32 +356,10 @@ public class MainActivity
             mLastSearchRequestCode++;
         }
         else{
-            newText = newText.replace(" ", "%20");
-            String mUrl = Constants.BASE_URL + "search/?q=" + newText;
-            new GetContentTask(this, ++mLastSearchRequestCode).execute(mUrl, mApplication.getToken());
+            mLastSearchRequestCode = NetworkRequest.get(this, this, API.getSearchUrl(newText),
+                    mApplication.getToken());
         }
         return false;
-    }
-
-    @Override
-    public void onContentRetrieved(int requestCode, String content){
-        try{
-            Log.d("Serch", new JSONObject(content).toString(2));
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-        }
-        if (requestCode == mLastSearchRequestCode){
-            mSearchResults = new Parser().parseSearchResults(content);
-        }
-    }
-
-    @Override
-    public void onRequestComplete(int requestCode){
-        if (requestCode == mLastSearchRequestCode){
-            mSearchHeader.setVisibility(View.VISIBLE);
-            mSearchAdapter.updateDataSet(mSearchResults);
-        }
     }
 
     @Override
@@ -412,7 +383,10 @@ public class MainActivity
                 mRefresh.setRefreshing(false);
             }
         }
-
+        else if (requestCode == mLastSearchRequestCode){
+            mSearchHeader.setVisibility(View.VISIBLE);
+            mSearchAdapter.updateDataSet(new Parser().parseSearchResults(result));
+        }
     }
 
     @Override
