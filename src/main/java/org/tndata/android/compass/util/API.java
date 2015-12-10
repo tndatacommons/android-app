@@ -1,5 +1,6 @@
 package org.tndata.android.compass.util;
 
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -327,5 +328,40 @@ public abstract class API{
 
     public static String getSurveyUrl(String survey){
         return BASE_URL + "survey/" + survey;
+    }
+
+    public static String getPutSnoozeUrl(int notificationId){
+        return BASE_URL + "notifications/" + notificationId + "/";
+    }
+
+    public static JSONObject getPutSnoozeBody(String date, String time){
+        JSONObject putSnoozeBody = new JSONObject();
+        try{
+            putSnoozeBody.put("date", date);
+            putSnoozeBody.put("time", time);
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return putSnoozeBody;
+    }
+
+    public static String getPostDeviceRegistrationUrl(){
+        return BASE_URL + "notifications/devices/";
+    }
+
+    public static JSONObject getPostDeviceRegistrationBody(String registrationId, String deviceId){
+        JSONObject postDeviceRegistrationBody = new JSONObject();
+        try{
+            postDeviceRegistrationBody.put("registration_id", registrationId);
+            postDeviceRegistrationBody.put("device_name", Build.MANUFACTURER + " " + Build.PRODUCT);
+            if (deviceId != null){
+                postDeviceRegistrationBody.put("device_id", deviceId);
+            }
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return postDeviceRegistrationBody;
     }
 }
