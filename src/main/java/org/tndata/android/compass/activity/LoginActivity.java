@@ -288,7 +288,15 @@ public class LoginActivity
             User user = new Parser().parseUser(result);
             Log.d("LogIn", user.getError());
             if (user.getError().isEmpty()){
-                saveUserInfo(user);
+                mApplication.setToken(user.getToken());
+                mApplication.setUser(user);
+                if (user.needsOnBoarding()){
+                    transitionToOnBoarding();
+                }
+                else{
+                    mGetDataRequestCode = NetworkRequest.get(this, this, API.getUserDataUrl(),
+                            mApplication.getToken(), 60*1000);
+                }
             }
             else{
                 swapFragments(LOGIN, true);

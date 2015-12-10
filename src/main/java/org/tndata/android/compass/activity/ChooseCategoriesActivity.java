@@ -99,7 +99,7 @@ public class ChooseCategoriesActivity
         if (toDelete.size() > 0){
             for (int i = 0; i < toDelete.size(); i++){
                 //TODO fix this
-                if (i == 0){
+                /*if (i == 0){
                     mInitialDeleteCategoryRequestCode = NetworkRequest.delete(this, this,
                             API.getUserCategoriesUrl(), mApplication.getToken(),
                             API.getDeleteUserCategoryBody(toDelete.get(i).getMappingId()));
@@ -108,7 +108,7 @@ public class ChooseCategoriesActivity
                 else{
                     NetworkRequest.delete(this, this, API.getUserCategoriesUrl(), mApplication.getToken(),
                             API.getDeleteUserCategoryBody(toDelete.get(i).getMappingId()));
-                }
+                }*/
             }
         }
         else{

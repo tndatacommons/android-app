@@ -327,7 +327,6 @@ public class ActionActivity
                         ((NotificationManager)getSystemService(NOTIFICATION_SERVICE))
                                 .cancel(NotificationUtil.NOTIFICATION_TYPE_ACTION_TAG,
                                         mReminder.getObjectId());
-
                     }
 
                 //In either case, the activity should finish after a second

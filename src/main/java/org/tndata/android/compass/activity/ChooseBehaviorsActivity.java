@@ -285,13 +285,10 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void addGoal(){
-        //TODO
         mGoal.setPrimaryCategory(mCategory);
         mApplication.getUserData().addGoal(mGoal);
-        
-        ArrayList<String> ids = new ArrayList<>();
-        ids.add(mGoal.getId() + "");
-        new AddGoalTask(this, this, ids, mGoal).execute();
+        NetworkRequest.post(this, null, API.getPostGoalUrl(), mApplication.getToken(),
+                API.getPostGoalBody(mGoal.getId()));
         setResult(RESULT_OK);
     }
 
@@ -304,9 +301,8 @@ public class ChooseBehaviorsActivity
         }
 
         //Then select the behavior
-        ArrayList<String> behaviors = new ArrayList<>();
-        behaviors.add(String.valueOf(behavior.getId()));
-        new AddBehaviorTask(this, this, behaviors).execute();
+        NetworkRequest.post(this, null, API.getPostBehaviorUrl(), mApplication.getToken(),
+                API.getPostBehaviorBody(behavior.getId()));
 
         if (behavior.getActionCount() > 0){
             selectActions(behavior);

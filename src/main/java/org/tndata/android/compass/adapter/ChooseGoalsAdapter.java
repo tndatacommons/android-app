@@ -210,6 +210,21 @@ public class ChooseGoalsAdapter
         //notifyItemChanged(index+1);
     }
 
+    /**
+     * Notifies the adapter that a selected goal wasn't added to the user's list.
+     *
+     * @param goal the goal that was not added.
+     */
+    public void goalNotDeleted(Goal goal){
+        int index = mGoals.indexOf(goal);
+        goalStates[index-1] = STATE_ADDED;
+        ChooseGoalsViewHolder holder = (ChooseGoalsViewHolder)mRecyclerView.findViewHolderForLayoutPosition(index+1);
+        if (holder != null){
+            holder.select.setActive(true);
+        }
+        //notifyItemChanged(index+1);
+    }
+
     @Override
     public void onClick(View v, int position){
         if (position > 0){

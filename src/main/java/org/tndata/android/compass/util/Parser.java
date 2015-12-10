@@ -12,19 +12,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.database.CompassDbHelper;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Behavior;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.FeedData;
-import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.model.Instrument;
-import org.tndata.android.compass.model.Place;
-import org.tndata.android.compass.model.Progress;
-import org.tndata.android.compass.model.Reward;
-import org.tndata.android.compass.model.SearchResult;
-import org.tndata.android.compass.model.Trigger;
-import org.tndata.android.compass.model.User;
-import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.model.*;
+import org.tndata.android.compass.model.Package;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,6 +101,36 @@ public class Parser{
         }
 
         return categories;
+    }
+
+    public List<Goal> parseGoals(String src){
+        try{
+            return parseGoals(new JSONObject(src).getJSONArray("results"), false);
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+            return null;
+        }
+    }
+
+    public Goal parseAddedGoal(String src){
+        try{
+            JSONObject userGoal = new JSONObject(src);
+            Goal goal = gson.fromJson(userGoal.getString("goal"), Goal.class);
+            goal.setMappingId(userGoal.getInt("id"));
+            JSONArray categoryArray = userGoal.getJSONArray("user_categories");
+            List<Category> categories = goal.getCategories();
+            for (int x = 0; x < categoryArray.length(); x++){
+                Category category = gson.fromJson(categoryArray.getString(x), Category.class);
+                categories.add(category);
+            }
+            goal.setCategories(categories);
+            return goal;
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -375,6 +394,25 @@ public class Parser{
         return places;
     }
 
+    public List<Place> parsePrimaryPlaces(String src){
+        List<Place> places = new ArrayList<>();
+        try{
+            JSONArray placeArray = new JSONObject(src).optJSONArray("results");
+            if (placeArray != null){
+                Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).create();
+                for (int i = 0; i < placeArray.length(); i++){
+                    Place place = gson.fromJson(placeArray.getString(i), Place.class);
+                    place.setId(-1);
+                    places.add(place);
+                }
+            }
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return places;
+    }
+
     /**
      * Parses a user from a JSON string.
      *
@@ -547,6 +585,18 @@ public class Parser{
 
     public Instrument parseInstrument(String src){
         return gson.fromJson(src, Instrument.class);
+    }
+
+    public Package parsePackage(String src){
+        try{
+            Package myPackage = gson.fromJson(new JSONObject(src).getString("category"), Package.class);
+            myPackage.setId(new JSONObject(src).getInt("id"));
+            return myPackage;
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+            return null;
+        }
     }
 
     public Gson getGson(){

@@ -12,9 +12,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpClientStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -82,8 +83,7 @@ public final class NetworkRequest{
     }
 
     public static int post(@NonNull Context context, @Nullable RequestCallback callback,
-                           @NonNull String url, @NonNull String token,
-                           @NonNull Map<String, String> body){
+                           @NonNull String url, @NonNull String token, @NonNull JSONObject body){
 
         return requestWithBody(Request.Method.POST, context, callback, url, token, body,
                 DEFAULT_REQUEST_TIMEOUT);
@@ -91,14 +91,13 @@ public final class NetworkRequest{
 
     public static int post(@NonNull Context context, @Nullable RequestCallback callback,
                            @NonNull String url, @NonNull String token,
-                           @NonNull Map<String, String> body, int timeout){
+                           @NonNull JSONObject body, int timeout){
 
         return requestWithBody(Request.Method.POST, context, callback, url, token, body, timeout);
     }
 
     public static int put(@NonNull Context context, @Nullable RequestCallback callback,
-                          @NonNull String url, @NonNull String token,
-                          @NonNull Map<String, String> body){
+                          @NonNull String url, @NonNull String token, @NonNull JSONObject body){
 
         return requestWithBody(Request.Method.PUT, context, callback, url, token, body,
                 DEFAULT_REQUEST_TIMEOUT);
@@ -106,14 +105,13 @@ public final class NetworkRequest{
 
     public static int put(@NonNull Context context, @Nullable RequestCallback callback,
                           @NonNull String url, @NonNull String token,
-                          @NonNull Map<String, String> body, int timeout){
+                          @NonNull JSONObject body, int timeout){
 
         return requestWithBody(Request.Method.PUT, context, callback, url, token, body, timeout);
     }
 
     public static int delete(@NonNull Context context, @Nullable RequestCallback callback,
-                             @NonNull String url, @NonNull String token,
-                             @NonNull Map<String, String> body){
+                             @NonNull String url, @NonNull String token, @NonNull JSONObject body){
 
         return requestWithBody(Request.Method.DELETE, context, callback, url, token, body,
                 DEFAULT_REQUEST_TIMEOUT);
@@ -121,7 +119,7 @@ public final class NetworkRequest{
 
     public static int delete(@NonNull Context context, @Nullable RequestCallback callback,
                              @NonNull String url, @NonNull String token,
-                             @NonNull Map<String, String> body, int timeout){
+                             @NonNull JSONObject body, int timeout){
 
         return requestWithBody(Request.Method.DELETE, context, callback, url, token, body, timeout);
     }
@@ -245,7 +243,7 @@ public final class NetworkRequest{
     private static int requestWithBody(int method, @NonNull Context context,
                                        @Nullable RequestCallback callback,
                                        @NonNull String url, @NonNull String token,
-                                       @NonNull Map<String, String> body, int timeout){
+                                       @NonNull JSONObject body, int timeout){
 
         //Init and generate the request code
         init(context);
@@ -286,6 +284,7 @@ public final class NetworkRequest{
             public Map<String, String> getHeaders() throws AuthFailureError{
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Accept", "application/json");
+                headers.put("Content-type", "application/json");
                 String token = sRequestMap.get(requestCode).mToken;
                 if (!token.isEmpty()){
                     headers.put("Authorization", "Token " + token);
@@ -294,8 +293,13 @@ public final class NetworkRequest{
             }
 
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError{
-                return sRequestMap.get(requestCode).mBody;
+            public String getBodyContentType(){
+                return "application/json";
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError{
+                return sRequestMap.get(requestCode).mBody.toString().getBytes();
             }
         };
 
@@ -323,7 +327,7 @@ public final class NetworkRequest{
 
     private RequestCallback mCallback;
     private String mToken;
-    private Map<String, String> mBody;
+    private JSONObject mBody;
 
     private StringRequest mRequest;
 
@@ -335,7 +339,7 @@ public final class NetworkRequest{
      * @param token the user authentication token.
      */
     private NetworkRequest(@Nullable RequestCallback callback, @NonNull String token){
-        this(callback, token, new HashMap<String, String>());
+        this(callback, token, new JSONObject());
     }
 
     /**
@@ -346,7 +350,7 @@ public final class NetworkRequest{
      * @param body the body of the request.
      */
     private NetworkRequest(@Nullable RequestCallback callback, @NonNull String token,
-                           @NonNull Map<String, String> body){
+                           @NonNull JSONObject body){
 
         mCallback = callback;
         mToken = token;

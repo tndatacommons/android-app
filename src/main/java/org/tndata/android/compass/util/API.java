@@ -3,7 +3,10 @@ package org.tndata.android.compass.util;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.tndata.android.compass.BuildConfig;
+import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.model.User;
 
@@ -21,7 +24,7 @@ import java.util.TimeZone;
  */
 public abstract class API{
     //Api urls and app configuration
-    private static final boolean USE_NGROK_TUNNEL = false;
+    private static final boolean USE_NGROK_TUNNEL = true;
     private static final String TNDATA_BASE_URL = "https://app.tndata.org/api/";
     private static final String TNDATA_STAGING_URL = "http://staging.tndata.org/api/";
     private static final String NGROK_TUNNEL_URL = "https://tndata.ngrok.io/api/";
@@ -39,10 +42,15 @@ public abstract class API{
         return BASE_URL + "auth/token/";
     }
 
-    public static Map<String, String> getLogInBody(@NonNull String email, @NonNull String password){
-        Map<String, String> logInBody = new HashMap<>();
-        logInBody.put("email", email);
-        logInBody.put("password", password);
+    public static JSONObject getLogInBody(@NonNull String email, @NonNull String password){
+        JSONObject logInBody = new JSONObject();
+        try{
+            logInBody.put("email", email);
+            logInBody.put("password", password);
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
         return logInBody;
     }
 
@@ -50,14 +58,19 @@ public abstract class API{
         return BASE_URL + "users/";
     }
 
-    public static Map<String, String> getSignUpBody(@NonNull String email, @NonNull String password,
+    public static JSONObject getSignUpBody(@NonNull String email, @NonNull String password,
                                                     @NonNull String firstName, @NonNull String lastName){
 
-        Map<String, String> signUpBody = new HashMap<>();
-        signUpBody.put("email", email);
-        signUpBody.put("password", password);
-        signUpBody.put("first_name", firstName);
-        signUpBody.put("last_name", lastName);
+        JSONObject signUpBody = new JSONObject();
+        try{
+            signUpBody.put("email", email);
+            signUpBody.put("password", password);
+            signUpBody.put("first_name", firstName);
+            signUpBody.put("last_name", lastName);
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
         return signUpBody;
     }
 
@@ -73,13 +86,18 @@ public abstract class API{
         return BASE_URL + "users/categories/";
     }
 
-    public static Map<String, String> getPostUserCategoryBody(int categoryId){
-        Map<String, String> postCategoriesBody = new HashMap<>();
-        postCategoriesBody.put("category", String.valueOf(categoryId));
-        Log.d("API", postCategoriesBody.toString());
+    public static JSONObject getPostUserCategoryBody(int categoryId){
+        JSONObject postCategoriesBody = new JSONObject();
+        try{
+            postCategoriesBody.put("category", categoryId);
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
         return postCategoriesBody;
     }
 
+    //TODO
     public static Map<String, String> getDeleteUserCategoryBody(int userCategoryId){
         Map<String, String> deleteCategoriesBody = new HashMap<>();
         deleteCategoriesBody.put("usercategory", String.valueOf(userCategoryId));
@@ -99,14 +117,19 @@ public abstract class API{
         return url;
     }
 
-    public static Map<String, String> getPostSurveyBody(Survey survey){
-        Map<String, String> postSurveyBody = new HashMap<>();
-        postSurveyBody.put("question", String.valueOf(survey.getId()));
-        if (survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_OPENENDED)){
-            postSurveyBody.put("response", survey.getResponse());
+    public static JSONObject getPostSurveyBody(Survey survey){
+        JSONObject postSurveyBody = new JSONObject();
+        try{
+            postSurveyBody.put("question", survey.getId());
+            if (survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_OPENENDED)){
+                postSurveyBody.put("response", survey.getResponse());
+            }
+            else{
+                postSurveyBody.put("selected_option", survey.getSelectedOption().getId());
+            }
         }
-        else{
-            postSurveyBody.put("selected_option", String.valueOf(survey.getSelectedOption().getId()));
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
         }
         return postSurveyBody;
     }
@@ -115,10 +138,15 @@ public abstract class API{
         return BASE_URL + "userprofiles/" + user.getUserprofileId() + "/";
     }
 
-    public static Map<String, String> getPutUserProfileBody(User user){
-        Map<String, String> putUserProfileBody = new HashMap<>();
-        putUserProfileBody.put("timezone", TimeZone.getDefault().getID());
-        putUserProfileBody.put("needs_onboarding", String.valueOf(user.needsOnBoarding()));
+    public static JSONObject getPutUserProfileBody(User user){
+        JSONObject putUserProfileBody = new JSONObject();
+        try{
+            putUserProfileBody.put("timezone", TimeZone.getDefault().getID());
+            putUserProfileBody.put("needs_onboarding", user.needsOnBoarding());
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
         return putUserProfileBody;
     }
 
@@ -135,11 +163,16 @@ public abstract class API{
         return BASE_URL + "users/actions/" + actionMappingId + "/";
     }
 
-    public static Map<String, String> getPutTriggerBody(String time, String rrule, String date){
-        Map<String, String> putTriggerBody = new HashMap<>();
-        putTriggerBody.put("custom_trigger_time", time);
-        putTriggerBody.put("custom_trigger_rrule", rrule);
-        putTriggerBody.put("custom_trigger_date", date);
+    public static JSONObject getPutTriggerBody(String time, String rrule, String date){
+        JSONObject putTriggerBody = new JSONObject();
+        try{
+            putTriggerBody.put("custom_trigger_time", time);
+            putTriggerBody.put("custom_trigger_rrule", rrule);
+            putTriggerBody.put("custom_trigger_date", date);
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
         return putTriggerBody;
     }
 
@@ -159,10 +192,15 @@ public abstract class API{
         return BASE_URL + "users/goals/progress/";
     }
 
-    public static Map<String, String> getPostUserGoalProgressBody(int goalId, int progress){
-        Map<String, String> postUserGoalProgressBody = new HashMap<>();
-        postUserGoalProgressBody.put("goal", String.valueOf(goalId));
-        postUserGoalProgressBody.put("daily_checkin", String.valueOf(progress));
+    public static JSONObject getPostUserGoalProgressBody(int goalId, int progress){
+        JSONObject postUserGoalProgressBody = new JSONObject();
+        try{
+            postUserGoalProgressBody.put("goal", goalId);
+            postUserGoalProgressBody.put("daily_checkin", progress);
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
         return postUserGoalProgressBody;
     }
 
@@ -174,13 +212,112 @@ public abstract class API{
         return BASE_URL + "behaviors/?goal=" + goalId;
     }
 
-    public String getPostGoalUrl(){
+    public static String getPostGoalUrl(){
         return BASE_URL + "users/goals/";
     }
 
-    public Map<String, String> getPostGoalBody(int goalId){
-        Map<String, String> postGoalBody = new HashMap<>();
-        postGoalBody.put("goal", String.valueOf(goalId));
+    public static JSONObject getPostGoalBody(int goalId){
+        JSONObject postGoalBody = new JSONObject();
+        try{
+            postGoalBody.put("goal", goalId);
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
         return postGoalBody;
+    }
+
+    public static String getPostBehaviorUrl(){
+        return BASE_URL + "users/behaviors/";
+    }
+
+    public static JSONObject getPostBehaviorBody(int behaviorId){
+        JSONObject postBehaviorBody = new JSONObject();
+        try{
+            postBehaviorBody.put("goal", behaviorId);
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return postBehaviorBody;
+    }
+
+    public static String getGoalsUrl(int categoryId){
+        return BASE_URL + "goals/?category=" + categoryId;
+    }
+
+    public static String getDeleteGoalUrl(int goalMappingId){
+        return BASE_URL + "users/goals/" + goalMappingId + "/";
+    }
+
+    public static String getPostActionReportUrl(int mappingId){
+        return BASE_URL + "users/actions/" + mappingId + "/complete/";
+    }
+
+    public static JSONObject getPostActionReportBody(String state){
+        JSONObject postActionReportBody = new JSONObject();
+        try{
+            postActionReportBody.put("state", state);
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return postActionReportBody;
+    }
+
+    public static JSONObject getPostActionReportBody(String state, String length){
+        JSONObject postActionReportBody = new JSONObject();
+        try{
+            postActionReportBody.put("state", state);
+            postActionReportBody.put("length", length);
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return postActionReportBody;
+    }
+
+    public static String getPackageUrl(int packageId){
+        return BASE_URL + "users/packages/" + packageId + "/";
+    }
+
+    public static String getPutConsentAcknowledgementUrl(int packageId){
+        return BASE_URL + "users/packages/" + packageId + "/";
+    }
+
+    public static JSONObject getPutConsentAcknowledgementBody(){
+        JSONObject putConsentAcknowledgementBody = new JSONObject();
+        try{
+            putConsentAcknowledgementBody.put("accepted", true);
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return putConsentAcknowledgementBody;
+    }
+
+    public static String getPrimaryPlacesUrl(){
+        return BASE_URL + "places/";
+    }
+
+    public static String getPostPutPlaceUrl(Place place){
+        String url =  BASE_URL + "users/places/";
+        if (place.getId() != -1){
+            url += place.getId() + "/";
+        }
+        return url;
+    }
+
+    public static JSONObject getPostPutPlaceBody(Place place){
+        JSONObject postPutPlaceBody = new JSONObject();
+        try{
+            postPutPlaceBody.put("place", place.getName());
+            postPutPlaceBody.put("latitude", place.getLatitude());
+            postPutPlaceBody.put("longitude", place.getLongitude());
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return postPutPlaceBody;
     }
 }
