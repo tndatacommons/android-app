@@ -147,16 +147,16 @@ public class Parser{
             //For each category in the array
             for (int i = 0; i < goalArray.length(); i++){
                 //The string to be parsed by GSON is extracted from the array
-                String categoryString;
+                String goalString;
                 if (userGoals){
                     //If it is a user goal, it will come as a nested object
-                    categoryString = goalArray.getJSONObject(i).getString("goal");
+                    goalString = goalArray.getJSONObject(i).getString("goal");
                 }
                 else{
                     //If it is not, it will come as the object itself
-                    categoryString = goalArray.getString(i);
+                    goalString = goalArray.getString(i);
                 }
-                Goal goal = gson.fromJson(categoryString, Goal.class);
+                Goal goal = gson.fromJson(goalString, Goal.class);
 
                 JSONObject goalJson = goalArray.getJSONObject(i);
                 String categoryArrayName;
@@ -597,6 +597,42 @@ public class Parser{
             jsonx.printStackTrace();
             return null;
         }
+    }
+
+    public List<Survey> parseProfileBio(String src){
+        List<Survey> surveys = new ArrayList<>();
+        try{
+            JSONObject object = new JSONObject(src);
+            JSONArray bio = object.getJSONArray("results").getJSONObject(0).getJSONArray("bio");
+            Log.d("User Profile", bio.toString(2));
+            for (int i = 0; i < bio.length(); i++){
+                JSONObject surveyObject = bio.getJSONObject(i);
+                Survey survey = new Survey();
+                survey.setId(surveyObject.getInt("question_id"));
+                survey.setQuestionType(surveyObject.getString("question_type"));
+                survey.setResponseUrl(surveyObject.getString("response_url"));
+                survey.setText(surveyObject.getString("question_text"));
+
+                if (survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_BINARY)
+                        || survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_LIKERT)
+                        || survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_MULTICHOICE)){
+
+                    SurveyOptions options = new SurveyOptions();
+                    options.setText(surveyObject.optString("selected_option_text"));
+                    options.setId(surveyObject.optInt("selected_option"));
+                    survey.setSelectedOption(options);
+                }
+                else{
+                    survey.setInputType(surveyObject.optString("question_input_type"));
+                    survey.setResponse(surveyObject.optString("response"));
+                }
+                surveys.add(survey);
+            }
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return surveys;
     }
 
     public Gson getGson(){

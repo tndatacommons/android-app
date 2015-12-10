@@ -43,7 +43,6 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.UserData;
-import org.tndata.android.compass.task.UpdateProfileTask;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
@@ -133,7 +132,8 @@ public class MainActivity
         mApplication = (CompassApplication)getApplication();
 
         //Update the timezone and register with GCM
-        new UpdateProfileTask(null).execute(mApplication.getUser());
+        NetworkRequest.put(this, null, API.getPutUserProfileUrl(mApplication.getUser()),
+                mApplication.getToken(), API.getPutUserProfileBody(mApplication.getUser()));
         new GcmRegistration(this);
 
         mSearchDim = findViewById(R.id.main_search_dim);

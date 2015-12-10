@@ -134,6 +134,10 @@ public abstract class API{
         return postSurveyBody;
     }
 
+    public static String getUserProfileUrl(){
+        return BASE_URL + "userprofiles/";
+    }
+
     public static String getPutUserProfileUrl(User user){
         return BASE_URL + "userprofiles/" + user.getUserprofileId() + "/";
     }
@@ -319,5 +323,9 @@ public abstract class API{
             jsonx.printStackTrace();
         }
         return postPutPlaceBody;
+    }
+
+    public static String getSurveyUrl(String survey){
+        return BASE_URL + "survey/" + survey;
     }
 }
