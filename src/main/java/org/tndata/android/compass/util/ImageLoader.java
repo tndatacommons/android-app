@@ -12,7 +12,6 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.task.BitmapWorkerTask;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -217,7 +217,6 @@ public class Parser{
     public Behavior parseAddedBehavior(String src){
         try{
             JSONObject userBehavior = new JSONObject(src);
-            ;
             Behavior behavior = gson.fromJson(userBehavior.getString("behavior"), Behavior.class);
             behavior.setMappingId(userBehavior.getInt("id"));
 

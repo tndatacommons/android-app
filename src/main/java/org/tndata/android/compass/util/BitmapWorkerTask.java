@@ -1,4 +1,4 @@
-package org.tndata.android.compass.task;
+package org.tndata.android.compass.util;
 
 import java.io.IOException;
 import java.io.InputStream;
