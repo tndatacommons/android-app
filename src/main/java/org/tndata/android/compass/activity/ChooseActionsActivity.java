@@ -22,6 +22,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseActionsAdapter;
@@ -29,18 +30,17 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.task.ActionLoaderTask;
-import org.tndata.android.compass.task.AddActionTask;
-import org.tndata.android.compass.task.AddBehaviorTask;
-import org.tndata.android.compass.task.AddGoalTask;
-import org.tndata.android.compass.task.DeleteActionTask;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
+import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.util.NetworkRequest;
+import org.tndata.android.compass.util.Parser;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -50,17 +50,15 @@ import java.util.List;
 public class ChooseActionsActivity
         extends AppCompatActivity
         implements
-                ActionLoaderTask.ActionLoaderListener,
-                AddGoalTask.AddGoalsTaskListener,
-                AddBehaviorTask.AddBehaviorsTaskListener,
-                AddActionTask.AddActionTaskListener,
-                DeleteActionTask.DeleteActionTaskListener,
+                NetworkRequest.RequestCallback,
                 ChooseActionsAdapter.ChooseActionsListener,
                 MenuItemCompat.OnActionExpandListener,
                 SearchView.OnQueryTextListener,
                 SearchView.OnCloseListener{
 
     private static final String TAG = "ChooseActionsActivity";
+
+    private CompassApplication mApplication;
 
     private Toolbar mToolbar;
     private MenuItem mSearchItem;
@@ -71,7 +69,12 @@ public class ChooseActionsActivity
     private Behavior mBehavior;
     private ChooseActionsAdapter mAdapter;
     private View mHeaderView;
-    private CompassApplication mApplication;
+
+    private int mGetActionsRequestCode;
+    private int mPostGoalRequestCode;
+    private int mPostBehaviorRequestCode;
+    private int mPostActionRequestCode;
+    private int mDeleteActionRequestCode;
 
 
     @Override
@@ -115,7 +118,8 @@ public class ChooseActionsActivity
             mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }
 
-        new ActionLoaderTask(this).execute(mApplication.getToken(), String.valueOf(mBehavior.getId()));
+        mGetActionsRequestCode = NetworkRequest.get(this, this, API.getActionsUrl(mBehavior.getId()),
+                mApplication.getToken());
     }
 
     @Override
@@ -209,18 +213,17 @@ public class ChooseActionsActivity
         if (!isGoalSelected()){
             mGoal.setPrimaryCategory(mCategory);
             mApplication.addGoal(mGoal);
-            ArrayList<String> ids = new ArrayList<>();
-            ids.add(mGoal.getId()+"");
-            new AddGoalTask(this, this, ids, mGoal).execute();
+            mPostGoalRequestCode = NetworkRequest.post(this, null, API.getPostGoalUrl(),
+                    mApplication.getToken(), API.getPostGoalBody(mGoal.getId()));
         }
         if (!isBehaviorSelected()){
             mApplication.addBehavior(mBehavior);
-            ArrayList<String> behaviors = new ArrayList<>();
-            behaviors.add(String.valueOf(mBehavior.getId()));
-            new AddBehaviorTask(this, this, behaviors).execute();
+            mPostBehaviorRequestCode = NetworkRequest.post(this, this, API.getPostBehaviorUrl(),
+                    mApplication.getToken(), API.getPostBehaviorBody(mBehavior.getId()));
         }
         Toast.makeText(getApplicationContext(), getText(R.string.action_saving), Toast.LENGTH_SHORT).show();
-        new AddActionTask(this, this, mGoal, action).execute();
+        mPostActionRequestCode = NetworkRequest.post(this, this, API.getPostActionUrl(),
+                mApplication.getToken(), API.getPostActionBody(mGoal.getId(), action.getId()));
     }
 
     @Override
@@ -239,8 +242,8 @@ public class ChooseActionsActivity
                 + action.getMappingId() + ", " + action.getTitle());
 
         if (action.getMappingId() > 0){
-            String actionMappingId = String.valueOf(action.getMappingId());
-            new DeleteActionTask(this, this, actionMappingId).execute();
+            NetworkRequest.delete(this, this, API.getDeleteActionUrl(action.getMappingId()),
+                    mApplication.getToken(), new JSONObject());
 
             // Remove from the application's collection
             mApplication.removeAction(action);
@@ -262,14 +265,6 @@ public class ChooseActionsActivity
     }
 
     @Override
-    public void actionsLoaded(List<Action> actions){
-        if (actions != null && !actions.isEmpty()){
-            mAdapter.setActions(actions);
-        }
-        mAdapter.notifyDataSetChanged();
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case android.R.id.home:
@@ -280,48 +275,62 @@ public class ChooseActionsActivity
     }
 
     @Override
-    public void actionAdded(Action action){
-        Toast.makeText(getApplicationContext(),
-                getString(R.string.action_added, action.getTitle()),
-                Toast.LENGTH_SHORT).show();
-
-        // Add to the application's collection
-        mApplication.addAction(action);
-        mAdapter.notifyDataSetChanged();
-
-        // launch trigger stuff
-        Intent intent = new Intent(getApplicationContext(), TriggerActivity.class);
-        intent.putExtra("goal", mGoal);
-        intent.putExtra("action", action);
-        startActivity(intent);
-    }
-
-    @Override
-    public void actionDeleted(){
-        Toast.makeText(getApplicationContext(), getString(R.string.action_deleted), Toast.LENGTH_SHORT).show();
-        mAdapter.notifyDataSetChanged();
-    }
-
-    @Override
     public void onScroll(float percentage, float offset){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
             Drawable color = mToolbar.getBackground();
             color.setAlpha(Math.round(percentage*255));
             mToolbar.setBackground(color);
         }
-        mHeaderView.setTranslationY(-offset*0.5f);
+        mHeaderView.setTranslationY(-offset * 0.5f);
     }
 
     @Override
-    public void goalsAdded(ArrayList<Goal> goals, Goal goal){
-        mApplication.getUserData().getGoal(goal).setMappingId(goal.getMappingId());
-    }
-
-    @Override
-    public void behaviorsAdded(ArrayList<Behavior> behaviors){
-        if (behaviors.size() > 0){
-            Behavior behavior = behaviors.get(0);
+    public void onRequestComplete(int requestCode, String result){
+        if (requestCode == mGetActionsRequestCode){
+            List<Action> actions = new Parser().parseActions(result);
+            if (actions != null && !actions.isEmpty()){
+                Collections.sort(actions, new Comparator<Action>(){
+                    @Override
+                    public int compare(Action act1, Action act2){
+                        return (act1.getSequenceOrder() < act2.getSequenceOrder()) ? 0 : 1;
+                    }
+                });
+                mAdapter.setActions(actions);
+            }
+            mAdapter.notifyDataSetChanged();
+        }
+        else if (requestCode == mPostGoalRequestCode){
+            Goal goal = new Parser().parseAddedGoal(result);
+            mApplication.getUserData().getGoal(goal).setMappingId(goal.getMappingId());
+        }
+        else if (requestCode == mPostBehaviorRequestCode){
+            Behavior behavior = new Parser().parseAddedBehavior(result);
             mApplication.getUserData().getBehavior(behavior).setMappingId(behavior.getMappingId());
         }
+        else if (requestCode == mPostActionRequestCode){
+            Action action = new Parser().parseAddedAction(result);
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.action_added, action.getTitle()),
+                    Toast.LENGTH_SHORT).show();
+
+            // Add to the application's collection
+            mApplication.addAction(action);
+            mAdapter.notifyDataSetChanged();
+
+            // launch trigger stuff
+            Intent intent = new Intent(getApplicationContext(), TriggerActivity.class);
+            intent.putExtra("goal", mGoal);
+            intent.putExtra("action", action);
+            startActivity(intent);
+        }
+        else if (requestCode == mDeleteActionRequestCode){
+            Toast.makeText(getApplicationContext(), getString(R.string.action_deleted), Toast.LENGTH_SHORT).show();
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode){
+
     }
 }

@@ -250,7 +250,7 @@ public class ChooseBehaviorsActivity
     public void addGoal(){
         mGoal.setPrimaryCategory(mCategory);
         mApplication.getUserData().addGoal(mGoal);
-        mPostGoalRequestCode = NetworkRequest.post(this, null, API.getPostGoalUrl(),
+        mPostGoalRequestCode = NetworkRequest.post(this, this, API.getPostGoalUrl(),
                 mApplication.getToken(), API.getPostGoalBody(mGoal.getId()));
         setResult(RESULT_OK);
     }

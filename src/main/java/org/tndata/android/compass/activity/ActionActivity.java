@@ -373,7 +373,7 @@ public class ActionActivity
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        List<Action> actions = new Parser().parseActions(result);
+        List<Action> actions = new Parser().parseUserActions(result);
         //TODO this if statement won't be necessary when the Parser is fixed
         if (actions != null && actions.size() == 1){
             mAction = actions.get(0);

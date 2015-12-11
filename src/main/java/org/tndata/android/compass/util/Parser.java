@@ -309,13 +309,38 @@ public class Parser{
         return behaviors;
     }
 
-    public List<Action> parseActions(String src){
+    public List<Action> parseUserActions(String src){
         try{
             return parseActions(new JSONObject(src).getJSONArray("results"), true);
         }
         catch (JSONException jsonx){
             return null;
         }
+    }
+
+    public List<Action> parseActions(String src){
+        try{
+            return parseActions(new JSONObject(src).getJSONArray("results"), false);
+        }
+        catch (JSONException jsonx){
+            return null;
+        }
+    }
+
+    public Action parseAddedAction(String src){
+        try{
+            JSONObject userAction = new JSONObject(src);
+            Action action = gson.fromJson(userAction.getString("action"), Action.class);
+
+            if (action != null){
+                action.setMappingId(userAction.getInt("id"));
+                return action;
+            }
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return null;
     }
 
     /**

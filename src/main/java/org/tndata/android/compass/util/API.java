@@ -368,4 +368,28 @@ public abstract class API{
     public static String getDeleteBehaviorURL(int mappingId){
         return BASE_URL + "users/behaviors/" + mappingId + "/";
     }
+
+    public static String getActionsUrl(int behaviorId){
+        return BASE_URL + "actions/" + "?behavior=" + behaviorId;
+    }
+
+    public static String getPostActionUrl(){
+        return BASE_URL + "users/actions/";
+    }
+
+    public static JSONObject getPostActionBody(int goalId, int actionId){
+        JSONObject postActionBody = new JSONObject();
+        try{
+            postActionBody.put("action", actionId);
+            postActionBody.put("primary_goal", goalId);
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return postActionBody;
+    }
+
+    public static String getDeleteActionUrl(int mappingId){
+        return BASE_URL + "users/actions/" + mappingId + "/";
+    }
 }
