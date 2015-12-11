@@ -343,6 +343,23 @@ public class Parser{
         return null;
     }
 
+    public Action parseActionWithTrigger(String src){
+        try{
+            JSONObject response = new JSONObject(src);
+            Action action = gson.fromJson(response.getString("action"), Action.class);
+            action.setMappingId(response.getInt("id"));
+            if (!response.isNull("custom_trigger")){
+                action.setCustomTrigger(gson.fromJson(response.getString("custom_trigger"), Trigger.class));
+            }
+            action.setNextReminderDate(response.getString("next_reminder"));
+            return action;
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * Parses out the action list.
      *

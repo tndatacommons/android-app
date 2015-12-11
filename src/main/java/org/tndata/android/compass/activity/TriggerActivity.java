@@ -2,7 +2,6 @@ package org.tndata.android.compass.activity;
 
 import android.app.NotificationManager;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -26,8 +25,9 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.model.UserData;
-import org.tndata.android.compass.task.AddActionTriggerTask;
-import org.tndata.android.compass.task.GetUserActionsTask;
+import org.tndata.android.compass.util.API;
+import org.tndata.android.compass.util.NetworkRequest;
+import org.tndata.android.compass.util.Parser;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -55,12 +55,11 @@ import java.util.Locale;
 public class TriggerActivity
         extends AppCompatActivity
         implements
+                NetworkRequest.RequestCallback,
                 RecurrencePickerDialog.OnRecurrenceSetListener,
                 RadialTimePickerDialog.OnTimeSetListener,
                 CalendarDatePickerDialog.OnDateSetListener,
-                AddActionTriggerTask.AddActionTriggerTaskListener,
-                TriggerFragment.TriggerFragmentListener,
-                GetUserActionsTask.GetUserActionsCallback{
+                TriggerFragment.TriggerFragmentListener{
 
     public static final String NEEDS_FETCHING_KEY = "org.tndata.compass.Trigger.NeedsFetching";
     public static final String NOTIFICATION_ID_KEY = "org.tndata.compass.Trigger.NotificationId";
@@ -99,6 +98,10 @@ public class TriggerActivity
     private DateFormat mApiTimeFormat;
     private DateFormat mApiDateFormat;
     private DateFormat mApiDateTimeFormat;
+
+    //Request codes
+    private int mGetActionRequestCode;
+    private int mPutTriggerRequestCode;
 
 
     @Override
@@ -173,18 +176,10 @@ public class TriggerActivity
     private void fetchAction(int actionId){
         String token = ((CompassApplication)getApplication()).getToken();
         if (!token.isEmpty()){
-            new GetUserActionsTask(this).execute(token, "action:" + actionId);
+            mGetActionRequestCode = NetworkRequest.get(this, this, API.getUserActionUrl(actionId), token);
         }
         else{
             finish();
-        }
-    }
-
-    @Override
-    public void onActionsLoaded(List<Action> actions){
-        if (actions.size() > 0){
-            mAction = mApplication.getUserData().getAction(actions.get(0));
-            setAction();
         }
     }
 
@@ -503,10 +498,10 @@ public class TriggerActivity
             // Time is required and one of date or rule is required
             if (action != null){
                 //TODO: Fails when time/date/rrule is empty or null
-                new AddActionTriggerTask(this,
+                mPutTriggerRequestCode = NetworkRequest.put(this, this,
+                        API.getPutTriggerUrl(action.getMappingId()),
                         ((CompassApplication)getApplication()).getToken(),
-                        rrule, time, date, String.valueOf(action.getMappingId()))
-                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        API.getPutTriggerBody(time, rrule, date));
             }
             //We want to know that we've attempted to save, even if saving fails.
             savingTrigger = true;
@@ -518,34 +513,48 @@ public class TriggerActivity
     }
 
     @Override
-    public boolean actionTriggerAdded(Action action){
-        // action is the updated Action, presumably with a Trigger attached.
-        if(action != null){
-            Log.d(TAG, "Updated Action: " + action.getTitle());
-            Log.d(TAG, "Updated Trigger: " + action.getTrigger());
-
-            mAction.setCustomTrigger(action.getTrigger());
-            mAction.setNextReminderDate(action.getRawNextReminderDate());
-
-            // We'll return the updated Action to the parent activity (GoalDetailsActivity)
-            // but we also want to tell the Application about the updated version of the Action.
-            //((CompassApplication) getApplication()).updateAction(action);
-
-            Toast.makeText(this, getText(R.string.trigger_saved_confirmation_toast), Toast.LENGTH_SHORT).show();
-            Intent returnIntent = new Intent();
-            returnIntent.putExtra("action", mAction);
-            setResult(RESULT_OK, returnIntent);
-            finish();
-
-            return true;
+    public void onRequestComplete(int requestCode, String result){
+        if (requestCode == mGetActionRequestCode){
+            List<Action> actions = new Parser().parseUserActions(result);
+            //TODO this if statement won't be necessary when the Parser is fixed
+            if (actions != null && actions.size() == 1){
+                mAction = mApplication.getUserData().getAction(actions.get(0));
+                setAction();
+            }
+            else{
+                finish();
+            }
         }
-        else{
+        else if (requestCode == mPutTriggerRequestCode){
+            Action action = new Parser().parseActionWithTrigger(result);
+            if(action != null){
+                Log.d(TAG, "Updated Action: " + action.getTitle());
+                Log.d(TAG, "Updated Trigger: " + action.getTrigger());
+
+                mAction.setCustomTrigger(action.getTrigger());
+                mAction.setNextReminderDate(action.getRawNextReminderDate());
+
+                // We'll return the updated Action to the parent activity (GoalDetailsActivity)
+                // but we also want to tell the Application about the updated version of the Action.
+                //((CompassApplication) getApplication()).updateAction(action);
+
+                Toast.makeText(this, getText(R.string.trigger_saved_confirmation_toast), Toast.LENGTH_SHORT).show();
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("action", mAction);
+                setResult(RESULT_OK, returnIntent);
+                finish();
+            }
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode){
+        if (requestCode == mPutTriggerRequestCode){
             Log.d(TAG, "actionTriggerAdded: received null Action");
             if (fragment != null){
                 fragment.reportError();
             }
             Toast.makeText(this, getText(R.string.reminder_failed), Toast.LENGTH_SHORT).show();
-            return false;
         }
     }
 }
