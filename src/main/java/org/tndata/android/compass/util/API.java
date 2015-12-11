@@ -2,7 +2,6 @@ package org.tndata.android.compass.util;
 
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,8 +10,6 @@ import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.model.User;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TimeZone;
 
 
@@ -25,7 +22,7 @@ import java.util.TimeZone;
  */
 public abstract class API{
     //Api urls and app configuration
-    private static final boolean USE_NGROK_TUNNEL = true;
+    private static final boolean USE_NGROK_TUNNEL = false;
     private static final String TNDATA_BASE_URL = "https://app.tndata.org/api/";
     private static final String TNDATA_STAGING_URL = "http://staging.tndata.org/api/";
     private static final String NGROK_TUNNEL_URL = "https://tndata.ngrok.io/api/";
@@ -38,6 +35,10 @@ public abstract class API{
                             :
                             TNDATA_BASE_URL;
 
+
+    /*----------------*
+     * AUTHENTICATION *
+     *----------------*/
 
     public static String getLogInUrl(){
         return BASE_URL + "auth/token/";
@@ -55,12 +56,27 @@ public abstract class API{
         return logInBody;
     }
 
+    public static String getLogOutUrl(){
+        return BASE_URL + "auth/logout/";
+    }
+
+    public static JSONObject getLogOutBody(String registrationId){
+        JSONObject logOutBody = new JSONObject();
+        try{
+            logOutBody.put("registration_id", registrationId);
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return logOutBody;
+    }
+
     public static String getSignUpUrl(){
         return BASE_URL + "users/";
     }
 
     public static JSONObject getSignUpBody(@NonNull String email, @NonNull String password,
-                                                    @NonNull String firstName, @NonNull String lastName){
+                                           @NonNull String firstName, @NonNull String lastName){
 
         JSONObject signUpBody = new JSONObject();
         try{
@@ -75,19 +91,57 @@ public abstract class API{
         return signUpBody;
     }
 
+    public static String getPostDeviceRegistrationUrl(){
+        return BASE_URL + "notifications/devices/";
+    }
+
+    public static JSONObject getPostDeviceRegistrationBody(String registrationId, String deviceId){
+        JSONObject postDeviceRegistrationBody = new JSONObject();
+        try{
+            postDeviceRegistrationBody.put("registration_id", registrationId);
+            postDeviceRegistrationBody.put("device_name", Build.MANUFACTURER + " " + Build.PRODUCT);
+            if (deviceId != null){
+                postDeviceRegistrationBody.put("device_id", deviceId);
+            }
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return postDeviceRegistrationBody;
+    }
+
+
+    /*------------------------------*
+     * APPLICATION DATA AND LIBRARY *
+     *------------------------------*/
+
+    //User data
     public static String getUserDataUrl(){
         return BASE_URL + "users/";
     }
 
+
+    //Search
+    public static String getSearchUrl(String query){
+        query = query.replace(" ", "%20");
+        return BASE_URL + "search/?q=" + query;
+    }
+
+
+    //Categories
     public static String getCategoriesUrl(){
         return BASE_URL + "categories/";
+    }
+
+    public static String getDeleteCategoryUrl(int mappingId){
+        return BASE_URL + "users/categories/" + mappingId + "/";
     }
 
     public static String getUserCategoriesUrl(){
         return BASE_URL + "users/categories/";
     }
 
-    public static JSONObject getPostUserCategoryBody(int categoryId){
+    public static JSONObject getPostCategoryBody(int categoryId){
         JSONObject postCategoriesBody = new JSONObject();
         try{
             postCategoriesBody.put("category", categoryId);
@@ -98,64 +152,96 @@ public abstract class API{
         return postCategoriesBody;
     }
 
-    public static String getInstrumentUrl(int instrument){
-        return BASE_URL + "survey/instruments/" + instrument + "/";
+
+    //Goals
+    public static String getGoalsUrl(int categoryId){
+        return BASE_URL + "goals/?category=" + categoryId;
     }
 
-    public static String getPostSurveyUrl(Survey survey){
-        String url = survey.getResponseUrl();
-        if (BuildConfig.DEBUG && url.startsWith("https")){
-            url = "http" + url.substring(5);
-        }
-        return url;
+    public static String getGoalUrl(int goalId){
+        return BASE_URL + "goals/" + goalId + "/";
     }
 
-    public static JSONObject getPostSurveyBody(Survey survey){
-        JSONObject postSurveyBody = new JSONObject();
+    public static String getPostGoalUrl(){
+        return BASE_URL + "users/goals/";
+    }
+
+    public static JSONObject getPostGoalBody(int goalId){
+        JSONObject postGoalBody = new JSONObject();
         try{
-            postSurveyBody.put("question", survey.getId());
-            if (survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_OPENENDED)){
-                postSurveyBody.put("response", survey.getResponse());
-            }
-            else{
-                postSurveyBody.put("selected_option", survey.getSelectedOption().getId());
-            }
+            postGoalBody.put("goal", goalId);
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
         }
-        return postSurveyBody;
+        return postGoalBody;
     }
 
-    public static String getUserProfileUrl(){
-        return BASE_URL + "userprofiles/";
+    public static String getDeleteGoalUrl(int goalMappingId){
+        return BASE_URL + "users/goals/" + goalMappingId + "/";
     }
 
-    public static String getPutUserProfileUrl(User user){
-        return BASE_URL + "userprofiles/" + user.getUserprofileId() + "/";
+
+    //Behaviors
+    public static String getBehaviorsUrl(int goalId){
+        return BASE_URL + "behaviors/?goal=" + goalId;
     }
 
-    public static JSONObject getPutUserProfileBody(User user){
-        JSONObject putUserProfileBody = new JSONObject();
+    public static String getPostBehaviorUrl(){
+        return BASE_URL + "users/behaviors/";
+    }
+
+    public static JSONObject getPostBehaviorBody(int behaviorId){
+        JSONObject postBehaviorBody = new JSONObject();
         try{
-            putUserProfileBody.put("timezone", TimeZone.getDefault().getID());
-            putUserProfileBody.put("needs_onboarding", user.needsOnBoarding());
+            postBehaviorBody.put("behavior", behaviorId);
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
         }
-        return putUserProfileBody;
+        return postBehaviorBody;
     }
 
-    public static String getSearchUrl(String query){
-        query = query.replace(" ", "%20");
-        return BASE_URL + "search/?q=" + query;
+    public static String getDeleteBehaviorURL(int mappingId){
+        return BASE_URL + "users/behaviors/" + mappingId + "/";
     }
 
-    public static String getUserActionUrl(int actionId){
+
+    //Actions
+    public static String getActionsUrl(int behaviorId){
+        return BASE_URL + "actions/?behavior=" + behaviorId;
+    }
+
+    public static String getTodaysActionsUrl(){
+        return BASE_URL + "users/actions/?today=1";
+    }
+
+    public static String getActionUrl(int actionId){
         return BASE_URL + "users/actions/?action=" + actionId;
     }
 
+    public static String getPostActionUrl(){
+        return BASE_URL + "users/actions/";
+    }
+
+    public static JSONObject getPostActionBody(int goalId, int actionId){
+        JSONObject postActionBody = new JSONObject();
+        try{
+            postActionBody.put("action", actionId);
+            postActionBody.put("primary_goal", goalId);
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return postActionBody;
+    }
+
+    public static String getDeleteActionUrl(int mappingId){
+        return BASE_URL + "users/actions/" + mappingId + "/";
+    }
+
+
+    //Triggers
     public static String getPutTriggerUrl(int actionMappingId){
         return BASE_URL + "users/actions/" + actionMappingId + "/";
     }
@@ -173,13 +259,10 @@ public abstract class API{
         return putTriggerBody;
     }
 
-    public static String getTodaysActionsUrl(){
-        return BASE_URL + "users/actions/?today=1";
-    }
 
-    public static String getRandomRewardUrl(){
-        return BASE_URL + "rewards/?random=1";
-    }
+    /*--------------------*
+     * PROGRESS REPORTING *
+     *--------------------*/
 
     public static String getUserGoalProgressUrl(){
         return BASE_URL + "users/goals/progress/average/";
@@ -201,50 +284,29 @@ public abstract class API{
         return postUserGoalProgressBody;
     }
 
-    public static String getGoalUrl(int goalId){
-        return BASE_URL + "goals/" + goalId + "/";
+    public static String getRandomRewardUrl(){
+        return BASE_URL + "rewards/?random=1";
     }
 
-    public static String getBehaviorsUrl(int goalId){
-        return BASE_URL + "behaviors/?goal=" + goalId;
+
+    /*--------------------*
+     * NOTIFICATION LAYER *
+     *--------------------*/
+
+    public static String getPutSnoozeUrl(int notificationId){
+        return BASE_URL + "notifications/" + notificationId + "/";
     }
 
-    public static String getPostGoalUrl(){
-        return BASE_URL + "users/goals/";
-    }
-
-    public static JSONObject getPostGoalBody(int goalId){
-        JSONObject postGoalBody = new JSONObject();
+    public static JSONObject getPutSnoozeBody(String date, String time){
+        JSONObject putSnoozeBody = new JSONObject();
         try{
-            postGoalBody.put("goal", goalId);
+            putSnoozeBody.put("date", date);
+            putSnoozeBody.put("time", time);
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
         }
-        return postGoalBody;
-    }
-
-    public static String getPostBehaviorUrl(){
-        return BASE_URL + "users/behaviors/";
-    }
-
-    public static JSONObject getPostBehaviorBody(int behaviorId){
-        JSONObject postBehaviorBody = new JSONObject();
-        try{
-            postBehaviorBody.put("behavior", behaviorId);
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-        }
-        return postBehaviorBody;
-    }
-
-    public static String getGoalsUrl(int categoryId){
-        return BASE_URL + "goals/?category=" + categoryId;
-    }
-
-    public static String getDeleteGoalUrl(int goalMappingId){
-        return BASE_URL + "users/goals/" + goalMappingId + "/";
+        return putSnoozeBody;
     }
 
     public static String getPostActionReportUrl(int mappingId){
@@ -274,24 +336,10 @@ public abstract class API{
         return postActionReportBody;
     }
 
-    public static String getPackageUrl(int packageId){
-        return BASE_URL + "users/packages/" + packageId + "/";
-    }
 
-    public static String getPutConsentAcknowledgementUrl(int packageId){
-        return BASE_URL + "users/packages/" + packageId + "/";
-    }
-
-    public static JSONObject getPutConsentAcknowledgementBody(){
-        JSONObject putConsentAcknowledgementBody = new JSONObject();
-        try{
-            putConsentAcknowledgementBody.put("accepted", true);
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-        }
-        return putConsentAcknowledgementBody;
-    }
+    /*------------*
+     * PLACES API *
+     *------------*/
 
     public static String getPrimaryPlacesUrl(){
         return BASE_URL + "places/";
@@ -318,89 +366,90 @@ public abstract class API{
         return postPutPlaceBody;
     }
 
+
+    /*------------*
+     * SURVEY API *
+     *------------*/
+
+    public static String getInstrumentUrl(int instrument){
+        return BASE_URL + "survey/instruments/" + instrument + "/";
+    }
+
     public static String getSurveyUrl(String survey){
         return BASE_URL + "survey/" + survey;
     }
 
-    public static String getPutSnoozeUrl(int notificationId){
-        return BASE_URL + "notifications/" + notificationId + "/";
-    }
-
-    public static JSONObject getPutSnoozeBody(String date, String time){
-        JSONObject putSnoozeBody = new JSONObject();
-        try{
-            putSnoozeBody.put("date", date);
-            putSnoozeBody.put("time", time);
+    public static String getPostSurveyUrl(Survey survey){
+        String url = survey.getResponseUrl();
+        if (BuildConfig.DEBUG && url.startsWith("https")){
+            url = "http" + url.substring(5);
         }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-        }
-        return putSnoozeBody;
+        return url;
     }
 
-    public static String getPostDeviceRegistrationUrl(){
-        return BASE_URL + "notifications/devices/";
-    }
-
-    public static JSONObject getPostDeviceRegistrationBody(String registrationId, String deviceId){
-        JSONObject postDeviceRegistrationBody = new JSONObject();
+    public static JSONObject getPostSurveyBody(Survey survey){
+        JSONObject postSurveyBody = new JSONObject();
         try{
-            postDeviceRegistrationBody.put("registration_id", registrationId);
-            postDeviceRegistrationBody.put("device_name", Build.MANUFACTURER + " " + Build.PRODUCT);
-            if (deviceId != null){
-                postDeviceRegistrationBody.put("device_id", deviceId);
+            postSurveyBody.put("question", survey.getId());
+            if (survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_OPENENDED)){
+                postSurveyBody.put("response", survey.getResponse());
+            }
+            else{
+                postSurveyBody.put("selected_option", survey.getSelectedOption().getId());
             }
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
         }
-        return postDeviceRegistrationBody;
+        return postSurveyBody;
     }
 
-    public static String getDeleteBehaviorURL(int mappingId){
-        return BASE_URL + "users/behaviors/" + mappingId + "/";
+
+    /*--------------*
+     * USER PROFILE *
+     *--------------*/
+
+    public static String getUserProfileUrl(){
+        return BASE_URL + "userprofiles/";
     }
 
-    public static String getActionsUrl(int behaviorId){
-        return BASE_URL + "actions/" + "?behavior=" + behaviorId;
+    public static String getPutUserProfileUrl(User user){
+        return BASE_URL + "userprofiles/" + user.getUserprofileId() + "/";
     }
 
-    public static String getPostActionUrl(){
-        return BASE_URL + "users/actions/";
-    }
-
-    public static JSONObject getPostActionBody(int goalId, int actionId){
-        JSONObject postActionBody = new JSONObject();
+    public static JSONObject getPutUserProfileBody(User user){
+        JSONObject putUserProfileBody = new JSONObject();
         try{
-            postActionBody.put("action", actionId);
-            postActionBody.put("primary_goal", goalId);
+            putUserProfileBody.put("timezone", TimeZone.getDefault().getID());
+            putUserProfileBody.put("needs_onboarding", user.needsOnBoarding());
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
         }
-        return postActionBody;
+        return putUserProfileBody;
     }
 
-    public static String getDeleteActionUrl(int mappingId){
-        return BASE_URL + "users/actions/" + mappingId + "/";
+
+    /*----------------------*
+     * PACKAGES AND CONSENT *
+     *----------------------*/
+
+    public static String getPackageUrl(int packageId){
+        return BASE_URL + "users/packages/" + packageId + "/";
     }
 
-    public static String getLogOutUrl(){
-        return BASE_URL + "auth/logout/";
+    public static String getPutConsentAcknowledgementUrl(int packageId){
+        return BASE_URL + "users/packages/" + packageId + "/";
     }
 
-    public static JSONObject getLogOutBody(String registrationId){
-        JSONObject logOutBody = new JSONObject();
+    public static JSONObject getPutConsentAcknowledgementBody(){
+        JSONObject putConsentAcknowledgementBody = new JSONObject();
         try{
-            logOutBody.put("registration_id", registrationId);
+            putConsentAcknowledgementBody.put("accepted", true);
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
         }
-        return logOutBody;
-    }
-
-    public static String getDeleteCategoryUrl(int mappingId){
-        return BASE_URL + "users/categories/" + mappingId + "/";
+        return putConsentAcknowledgementBody;
     }
 }

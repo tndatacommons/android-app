@@ -176,7 +176,7 @@ public class TriggerActivity
     private void fetchAction(int actionId){
         String token = ((CompassApplication)getApplication()).getToken();
         if (!token.isEmpty()){
-            mGetActionRequestCode = NetworkRequest.get(this, this, API.getUserActionUrl(actionId), token);
+            mGetActionRequestCode = NetworkRequest.get(this, this, API.getActionUrl(actionId), token);
         }
         else{
             finish();

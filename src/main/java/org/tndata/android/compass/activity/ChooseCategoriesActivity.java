@@ -72,12 +72,12 @@ public class ChooseCategoriesActivity
                 if (i == 0){
                     mInitialPostCategoryRequestCode = NetworkRequest.post(this, this,
                             API.getUserCategoriesUrl(), mApplication.getToken(),
-                            API.getPostUserCategoryBody(toAdd.get(i).getId()));
+                            API.getPostCategoryBody(toAdd.get(i).getId()));
                     mLastPostCategoryRequestCode = mInitialPostCategoryRequestCode+toAdd.size();
                 }
                 else{
                     NetworkRequest.post(this, this, API.getUserCategoriesUrl(), mApplication.getToken(),
-                            API.getPostUserCategoryBody(toAdd.get(i).getId()));
+                            API.getPostCategoryBody(toAdd.get(i).getId()));
                 }
             }
         }

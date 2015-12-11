@@ -164,7 +164,7 @@ public class ActionActivity
      */
     private void fetchAction(int actionId){
         Log.d("ActionActivity", "fetching action: " + actionId);
-        NetworkRequest.get(this, this, API.getUserActionUrl(actionId), mApplication.getToken());
+        NetworkRequest.get(this, this, API.getActionUrl(actionId), mApplication.getToken());
     }
 
     /**
