@@ -4,17 +4,10 @@ import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Intent;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
-import org.tndata.android.compass.util.Constants;
-import org.tndata.android.compass.util.NetworkHelper;
+import org.tndata.android.compass.util.API;
+import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.NotificationUtil;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -50,33 +43,11 @@ public class SnoozeService extends IntentService{
         NotificationManager manager = ((NotificationManager)getSystemService(NOTIFICATION_SERVICE));
         manager.cancel(NotificationUtil.NOTIFICATION_TYPE_ACTION_TAG, pushNotificationId);
 
-        //If the notification id is not -1, create the request.
+        //If the notification id is not -1, create the request
         if (notificationId != -1){
-            Map<String, String> headers = new HashMap<>();
-            headers.put("Accept", "application/json");
-            headers.put("Content-type", "application/json");
-            headers.put("Authorization", "Token " + ((CompassApplication)getApplication()).getToken());
-
-            String url = Constants.BASE_URL + "notifications/" + notificationId + "/";
-            JSONObject body = new JSONObject();
-            try{
-                body.put("date", date);
-                body.put("time", time);
-            }
-            catch (JSONException jx){
-                jx.printStackTrace();
-            }
-
-            //Send the request, and if that succeeds, close it up
-            InputStream stream = NetworkHelper.httpPutStream(url, headers, body.toString());
-            if (stream != null){
-                try{
-                    stream.close();
-                }
-                catch (IOException iox){
-                    iox.printStackTrace();
-                }
-            }
+            NetworkRequest.put(this, null, API.getPutSnoozeUrl(notificationId),
+                ((CompassApplication)getApplication()).getToken(),
+                API.getPutSnoozeBody(date, time));
         }
     }
 }

@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
-import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -17,7 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,12 +27,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
@@ -46,18 +43,16 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.UserData;
-import org.tndata.android.compass.task.GetContentTask;
-import org.tndata.android.compass.task.GetUserDataTask;
-import org.tndata.android.compass.task.UpdateProfileTask;
+import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.GcmRegistration;
+import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.OnScrollListenerHub;
 import org.tndata.android.compass.util.ParallaxEffect;
 import org.tndata.android.compass.util.Parser;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -73,13 +68,12 @@ public class MainActivity
         extends AppCompatActivity
         implements
                 SwipeRefreshLayout.OnRefreshListener,
-                GetUserDataTask.GetUserDataCallback,
+                NetworkRequest.RequestCallback,
                 DrawerAdapter.OnItemClickListener,
                 MainFeedAdapterListener,
                 MenuItemCompat.OnActionExpandListener,
                 SearchView.OnQueryTextListener,
                 SearchView.OnCloseListener,
-                GetContentTask.GetContentListener,
                 RecyclerView.OnItemTouchListener,
                 SearchAdapter.SearchAdapterListener{
 
@@ -108,7 +102,6 @@ public class MainActivity
     private RecyclerView mSearchList;
     private SearchAdapter mSearchAdapter;
     private int mLastSearchRequestCode;
-    private List<SearchResult> mSearchResults;
 
     //Drawer components
     private DrawerLayout mDrawerLayout;
@@ -128,6 +121,8 @@ public class MainActivity
 
     private boolean mSuggestionDismissed;
 
+    private int mGetUserDataRequestCode;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -137,7 +132,8 @@ public class MainActivity
         mApplication = (CompassApplication)getApplication();
 
         //Update the timezone and register with GCM
-        new UpdateProfileTask(null).execute(mApplication.getUser());
+        NetworkRequest.put(this, null, API.getPutUserProfileUrl(mApplication.getUser()),
+                mApplication.getToken(), API.getPutUserProfileBody(mApplication.getUser()));
         new GcmRegistration(this);
 
         mSearchDim = findViewById(R.id.main_search_dim);
@@ -360,37 +356,44 @@ public class MainActivity
             mLastSearchRequestCode++;
         }
         else{
-            newText = newText.replace(" ", "%20");
-            String mUrl = Constants.BASE_URL + "search/?q=" + newText;
-            new GetContentTask(this, ++mLastSearchRequestCode).execute(mUrl, mApplication.getToken());
+            mLastSearchRequestCode = NetworkRequest.get(this, this, API.getSearchUrl(newText),
+                    mApplication.getToken());
         }
         return false;
     }
 
     @Override
-    public void onContentRetrieved(int requestCode, String content){
-        try{
-            Log.d("Serch", new JSONObject(content).toString(2));
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-        }
-        if (requestCode == mLastSearchRequestCode){
-            mSearchResults = new Parser().parseSearchResults(content);
-        }
-    }
+    public void onRequestComplete(int requestCode, String result){
+        if (requestCode == mGetUserDataRequestCode){
+            UserData userData = new Parser().parseUserData(this, result);
+            if (userData != null){
+                mApplication.setUserData(userData);
 
-    @Override
-    public void onRequestComplete(int requestCode){
-        if (requestCode == mLastSearchRequestCode){
+                //Remove the previous item decoration before recreating the adapter
+                mFeed.removeItemDecoration(mAdapter.getMainFeedPadding());
+
+                //Recreate the adapter and set the new decoration
+                mAdapter = new MainFeedAdapter(this, this, !mSuggestionDismissed);
+                mFeed.setAdapter(mAdapter);
+                mFeed.addItemDecoration(mAdapter.getMainFeedPadding());
+
+                mSuggestionDismissed = false;
+            }
+            if (mRefresh.isRefreshing()){
+                mRefresh.setRefreshing(false);
+            }
+        }
+        else if (requestCode == mLastSearchRequestCode){
             mSearchHeader.setVisibility(View.VISIBLE);
-            mSearchAdapter.updateDataSet(mSearchResults);
+            mSearchAdapter.updateDataSet(new Parser().parseSearchResults(result));
         }
     }
 
     @Override
     public void onRequestFailed(int requestCode){
-
+        if (requestCode == mGetUserDataRequestCode){
+            Toast.makeText(this, "Couldn't reload", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -703,27 +706,8 @@ public class MainActivity
 
     @Override
     public void onRefresh(){
-        new GetUserDataTask(this, this).execute(mApplication.getToken());
-    }
-
-    @Override
-    public void userDataLoaded(@Nullable UserData userData){
-        if (userData != null){
-            mApplication.setUserData(userData);
-
-            //Remove the previous item decoration before recreating the adapter
-            mFeed.removeItemDecoration(mAdapter.getMainFeedPadding());
-
-            //Recreate the adapter and set the new decoration
-            mAdapter = new MainFeedAdapter(this, this, !mSuggestionDismissed);
-            mFeed.setAdapter(mAdapter);
-            mFeed.addItemDecoration(mAdapter.getMainFeedPadding());
-
-            mSuggestionDismissed = false;
-        }
-        if (mRefresh.isRefreshing()){
-            mRefresh.setRefreshing(false);
-        }
+        mGetUserDataRequestCode = NetworkRequest.get(this, this, API.getUserDataUrl(),
+                mApplication.getToken());
     }
 
     @Override
@@ -733,6 +717,11 @@ public class MainActivity
 
     @Override
     public void onTouchEvent(RecyclerView rv, MotionEvent e){
+
+    }
+
+    @Override
+    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept){
 
     }
 

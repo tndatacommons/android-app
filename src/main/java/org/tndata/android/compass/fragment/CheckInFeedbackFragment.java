@@ -1,6 +1,6 @@
 package org.tndata.android.compass.fragment;
 
-import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,9 +18,10 @@ import android.widget.TextView;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.task.GoalProgressReportTask;
+import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.AutoSave;
 import org.tndata.android.compass.util.CompassUtil;
+import org.tndata.android.compass.util.NetworkRequest;
 
 
 /**
@@ -87,15 +88,21 @@ public class CheckInFeedbackFragment
     }
 
     @Override
-    public void onAttach(Activity activity){
-        super.onAttach(activity);
+    public void onAttach(Context context){
+        super.onAttach(context);
         try{
-            mListener = (CheckInFeedbackListener)activity;
+            mListener = (CheckInFeedbackListener)context;
         }
         catch (ClassCastException ccx){
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement " + CheckInFeedbackListener.class);
         }
+    }
+
+    @Override
+    public void onDetach(){
+        super.onDetach();
+        mListener = null;
     }
 
     @Nullable
@@ -146,8 +153,9 @@ public class CheckInFeedbackFragment
 
     @Override
     public void save(){
-        new GoalProgressReportTask(((CompassApplication)getActivity().getApplication()).getToken())
-                .execute(new GoalProgressReportTask.GoalProgress(mGoal.getId(), mBar.getProgress()+1));
+        NetworkRequest.post(getActivity(), null, API.getPostUserGoalProgressUrl(),
+                ((CompassApplication)getActivity().getApplication()).getToken(),
+                API.getPostUserGoalProgressBody(mGoal.getId(), mBar.getProgress()+1));
         mLastUpdate = -1;
         Log.d("Feedback", "Saving");
     }

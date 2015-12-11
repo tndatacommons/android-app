@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
@@ -20,22 +19,23 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseGoalsAdapter;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.task.AddGoalTask;
-import org.tndata.android.compass.task.DeleteGoalTask;
-import org.tndata.android.compass.task.GetContentTask;
-import org.tndata.android.compass.task.GoalLoaderTask;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
+import org.tndata.android.compass.util.API;
+import org.tndata.android.compass.util.NetworkRequest;
+import org.tndata.android.compass.util.Parser;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 /**
  * The ChooseGoalsActivity is where a user selects Goals within a selected Category.
@@ -46,14 +46,11 @@ import java.util.List;
 public class ChooseGoalsActivity
         extends AppCompatActivity
         implements
-                AddGoalTask.AddGoalsTaskListener,
-                GoalLoaderTask.GoalLoaderListener,
-                DeleteGoalTask.DeleteGoalTaskListener,
+                NetworkRequest.RequestCallback,
                 ChooseGoalsAdapter.ChooseGoalsListener,
                 MenuItemCompat.OnActionExpandListener,
                 SearchView.OnQueryTextListener,
-                SearchView.OnCloseListener,
-                GetContentTask.GetContentListener{
+                SearchView.OnCloseListener{
 
     public static final String CATEGORY_ID_KEY = "org.tndata.compass.ChooseGoals.CategoryId";
 
@@ -71,6 +68,11 @@ public class ChooseGoalsActivity
     private View mHeaderView;
     private Category mCategory = null;
 
+    //Request codes
+    private int mGetGoalsRequestCode;
+    private Map<Integer, Goal> mAddGoalRequestCodeMap;
+    private Map<Integer, Goal> mDeleteGoalRequestCodeMap;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -82,9 +84,6 @@ public class ChooseGoalsActivity
         mCategory = (Category)getIntent().getSerializableExtra("category");
         if (mCategory != null){
             mCategory = mApplication.getUserData().getCategory(mCategory);
-        }
-        else{
-            fetchCategory(getIntent().getIntExtra(CATEGORY_ID_KEY, -1));
         }
 
         mToolbar = (Toolbar)findViewById(R.id.choose_goals_toolbar);
@@ -115,11 +114,10 @@ public class ChooseGoalsActivity
             mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }
 
+        mAddGoalRequestCodeMap = new HashMap<>();
+        mDeleteGoalRequestCodeMap = new HashMap<>();
+
         loadGoals();
-    }
-
-    private void fetchCategory(int categoryId){
-
     }
 
     @Override
@@ -181,56 +179,20 @@ public class ChooseGoalsActivity
     /**
      * Fires the goal loader task.
      */
-    private void loadGoals() {
-        if (mCategory == null) {
+    private void loadGoals(){
+        if (mCategory == null){
             return;
         }
-        new GoalLoaderTask(this).executeOnExecutor(
-                AsyncTask.THREAD_POOL_EXECUTOR,
-                mApplication.getToken(),
-                String.valueOf(mCategory.getId()));
-    }
-
-    @Override
-    public void goalLoaderFinished(List<Goal> goals){
-        if (goals != null && !goals.isEmpty()){
-            mAdapter.addGoals(goals);
-        }
-        else{
-            showError();
-        }
-    }
-
-    @Override
-    public void goalsAdded(ArrayList<Goal> goals, Goal goal) {
-        if (goals != null){
-            //We've already added the goal to the mApplication's collection.
-            Log.d("ChooseGoalsActivity", "Goal added via API");
-            for (Goal userGoal:goals){
-                mApplication.addGoal(userGoal); // should include the user's goal mapping id.
-            }
-            mAdapter.goalAdded(goal);
-        }
-        else{
-            Log.d("ChooseGoalsActivity", "Goal not added");
-            mAdapter.goalNotAdded(goal);
-        }
-    }
-
-    @Override
-    public void goalsDeleted(Goal goal){
-        Toast.makeText(this, getText(R.string.choose_goals_goal_removed), Toast.LENGTH_SHORT).show();
-        mAdapter.goalDeleted(goal);
+        mGetGoalsRequestCode = NetworkRequest.get(this, this, API.getGoalsUrl(mCategory.getId()), "");
     }
 
     @Override
     public void onGoalAddClicked(Goal goal){
         mApplication.getUserData().addGoal(goal);
 
-        // Save the user's selected goal via the API, and add it to the mApplication's collection.
-        ArrayList<String> goalsToAdd = new ArrayList<>();
-        goalsToAdd.add(String.valueOf(goal.getId()));
-        new AddGoalTask(this, this, goalsToAdd, goal).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        int code = NetworkRequest.post(this, this, API.getPostGoalUrl(), mApplication.getToken(),
+                API.getPostGoalBody(goal.getId()));
+        mAddGoalRequestCodeMap.put(code, goal);
 
         if (goal.getBehaviorCount() > 0){
             //Launch the GoalTryActivity (where users choose a behavior for the Goal)
@@ -255,16 +217,12 @@ public class ChooseGoalsActivity
             }
         }
 
-        ArrayList<String> goalsToDelete = new ArrayList<>();
-        goalsToDelete.add(String.valueOf(goal.getMappingId()));
-        Log.d("ChooseGoalsActivity", "About to delete goal: id = " + goal.getId() +
-                ", user_goal.id = " + goal.getMappingId() + "; " + goal.getTitle());
-
-        new DeleteGoalTask(this, this, goalsToDelete, goal).executeOnExecutor(
-                AsyncTask.THREAD_POOL_EXECUTOR);
+        //TODO temp body
+        int code = NetworkRequest.delete(this, this, API.getDeleteGoalUrl(goal.getMappingId()),
+                mApplication.getToken(), new JSONObject());
+        mDeleteGoalRequestCodeMap.put(code, goal);
 
         mApplication.removeGoal(goal);
-        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -289,17 +247,45 @@ public class ChooseGoalsActivity
     }
 
     @Override
-    public void onContentRetrieved(int requestCode, String content){
-
-    }
-
-    @Override
-    public void onRequestComplete(int requestCode){
-
+    public void onRequestComplete(int requestCode, String result){
+        if (requestCode == mGetGoalsRequestCode){
+            List<Goal> goals = new Parser().parseGoals(result);
+            if (goals != null && !goals.isEmpty()){
+                mAdapter.addGoals(goals);
+            }
+            else{
+                showError();
+            }
+        }
+        else if (mAddGoalRequestCodeMap.containsKey(requestCode)){
+            Goal addedGoal = new Parser().parseAddedGoal(result);
+            Goal goal = mAddGoalRequestCodeMap.remove(requestCode);
+            if (addedGoal != null){
+                //We've already added the goal to the mApplication's collection.
+                Log.d("ChooseGoalsActivity", "Goal added via API");
+                mApplication.addGoal(addedGoal); // should include the user's goal mapping id.
+                mAdapter.goalAdded(goal);
+            }
+            else{
+                Log.d("ChooseGoalsActivity", "Goal not added");
+                mAdapter.goalNotAdded(goal);
+            }
+        }
+        else if (mDeleteGoalRequestCodeMap.containsKey(requestCode)){
+            Goal goal = mDeleteGoalRequestCodeMap.remove(requestCode);
+            mAdapter.goalDeleted(goal);
+        }
     }
 
     @Override
     public void onRequestFailed(int requestCode){
-
+        if (mAddGoalRequestCodeMap.containsKey(requestCode)){
+            Goal goal = mAddGoalRequestCodeMap.remove(requestCode);
+            mAdapter.goalNotAdded(goal);
+        }
+        else if (mDeleteGoalRequestCodeMap.containsKey(requestCode)){
+            Goal goal = mDeleteGoalRequestCodeMap.remove(requestCode);
+            mAdapter.goalNotDeleted(goal);
+        }
     }
 }

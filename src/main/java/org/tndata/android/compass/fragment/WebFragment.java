@@ -3,7 +3,9 @@ package org.tndata.android.compass.fragment;
 import android.annotation.SuppressLint;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.webkit.WebViewFragment;
+
+import org.tndata.android.compass.util.WebViewFragment;
+
 
 @SuppressLint("SetJavaScriptEnabled")
 public class WebFragment extends WebViewFragment{

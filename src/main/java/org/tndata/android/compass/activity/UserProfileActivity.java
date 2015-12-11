@@ -1,7 +1,5 @@
 package org.tndata.android.compass.activity;
 
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,54 +13,45 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.UserProfileAdapter;
 import org.tndata.android.compass.fragment.SurveyDialogFragment;
 import org.tndata.android.compass.model.Survey;
-import org.tndata.android.compass.task.GetUserProfileTask;
-import org.tndata.android.compass.task.GetUserProfileTask.UserProfileTaskInterface;
-import org.tndata.android.compass.task.SurveyFinderTask;
-import org.tndata.android.compass.task.SaveSurveyResponseTask;
+import org.tndata.android.compass.util.API;
+import org.tndata.android.compass.util.NetworkRequest;
+import org.tndata.android.compass.util.Parser;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class UserProfileActivity extends AppCompatActivity implements UserProfileTaskInterface,
-        SurveyFinderTask.SurveyFinderInterface, SurveyDialogFragment.SurveyDialogListener,
-        SaveSurveyResponseTask.SaveSurveyResponseListener{
+//TODO this class needs code fixin'
+public class UserProfileActivity
+        extends AppCompatActivity
+        implements
+                AdapterView.OnItemClickListener,
+                NetworkRequest.RequestCallback,
+                SurveyDialogFragment.SurveyDialogListener{
+
+    CompassApplication mApp;
+
     private Toolbar mToolbar;
     private ListView mListView;
     private ProgressBar mProgressBar;
-    private ArrayList<Survey> mProfileSurveyItems = new ArrayList<Survey>();
+    private List<Survey> mProfileSurveyItems = new ArrayList<>();
     private UserProfileAdapter mAdapter;
     private boolean mSurveyShown, mSurveyLoading = false;
     private SurveyDialogFragment mSurveyDialog;
     private Survey mSelectedSurvey;
 
-    private AdapterView.OnItemClickListener mProfileItemClickListener = new AdapterView
-            .OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            if (position == mProfileSurveyItems.size()){
-                startActivity(new Intent(UserProfileActivity.this, PlacesActivity.class));
-            }
-            else{
-                if (!mSurveyLoading && !mSurveyShown){
-                    mProgressBar.setVisibility(View.VISIBLE);
-                    mSelectedSurvey = mProfileSurveyItems.get(position);
-                    String surveyUrlExtra = mSelectedSurvey.getQuestionType() + "-" + String.valueOf
-                            (mSelectedSurvey.getId() + "/");
-                    new SurveyFinderTask(UserProfileActivity.this).executeOnExecutor(AsyncTask
-                                    .THREAD_POOL_EXECUTOR, ((CompassApplication)getApplication())
-                                    .getToken(),
-                            surveyUrlExtra);
-                    mSurveyLoading = true;
-                }
-            }
-        }
-    };
+    //Request codes
+    private int mGetBioRequestCode;
+    private int mGetSurveyRequestCode;
+    private int mPostSurveyRequestCode;
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_myself);
+
+        mApp = (CompassApplication)getApplication();
 
         mToolbar = (Toolbar) findViewById(R.id.tool_bar);
         mToolbar.setTitle(R.string.action_my_information);
@@ -75,41 +64,17 @@ public class UserProfileActivity extends AppCompatActivity implements UserProfil
         mAdapter = new UserProfileAdapter(this, R.id.list_item_user_profile_question_textview,
                 mProfileSurveyItems);
         mListView.setAdapter(mAdapter);
-        mListView.setOnItemClickListener(mProfileItemClickListener);
+        mListView.setOnItemClickListener(this);
 
         loadUserProfile();
     }
 
-    private void loadUserProfile() {
+    private void loadUserProfile(){
         mProgressBar.setVisibility(View.VISIBLE);
-        new GetUserProfileTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                ((CompassApplication) getApplication()).getToken());
+        mGetBioRequestCode = NetworkRequest.get(this, this, API.getUserProfileUrl(), mApp.getToken());
     }
 
-    @Override
-    public void userProfileFound(ArrayList<Survey> surveys) {
-        mProgressBar.setVisibility(View.GONE);
-        if (surveys == null) {
-            return;
-        }
-        mProfileSurveyItems.clear();
-        mProfileSurveyItems.addAll(surveys);
-        mAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void surveyFound(Survey survey) {
-        mSurveyLoading = false;
-        mProgressBar.setVisibility(View.GONE);
-        if (survey.getId() == mSelectedSurvey.getId() && survey.getQuestionType()
-                .equalsIgnoreCase(mSelectedSurvey.getQuestionType())) {
-            survey.setSelectedOption(mSelectedSurvey.getSelectedOption());
-            survey.setResponse(mSelectedSurvey.getResponse());
-        }
-        showSurvey(survey);
-    }
-
-    private void showSurvey(Survey survey) {
+    private void showSurvey(Survey survey){
         mSurveyShown = true;
         mSurveyDialog = SurveyDialogFragment.newInstance(survey);
         mSurveyDialog.setListener(this);
@@ -117,42 +82,82 @@ public class UserProfileActivity extends AppCompatActivity implements UserProfil
     }
 
     @Override
-    public void onDialogPositiveClick(Survey survey) {
-        new SaveSurveyResponseTask(UserProfileActivity.this, this).executeOnExecutor(AsyncTask
-                .THREAD_POOL_EXECUTOR, survey);
-        mSurveyDialog.dismiss();
-        mSurveyShown = false;
-    }
-
-    @Override
-    public void onDialogNegativeClick(Survey survey) {
-        mSurveyDialog.dismiss();
-        mSurveyShown = false;
-    }
-
-    @Override
-    public void onDialogCanceled() {
-        mSurveyShown = false;
-    }
-
-    @Override
-    public void onSurveySetResponseRecorded(List<Survey> surveys){
-        for (Survey survey:surveys){
-            for (int i = 0; i < mProfileSurveyItems.size(); i++){
-                Survey s = mProfileSurveyItems.get(i);
-                if (s.getId() == survey.getId() && s.getQuestionType().equalsIgnoreCase(survey
-                        .getQuestionType())){
-                    mProfileSurveyItems.set(i, survey);
-                    break;
-                }
+    public void onDialogPositiveClick(Survey survey){
+        for (int i = 0; i < mProfileSurveyItems.size(); i++){
+            Survey s = mProfileSurveyItems.get(i);
+            if (s.getId() == survey.getId() && s.getQuestionType().equalsIgnoreCase(survey
+                    .getQuestionType())){
+                mProfileSurveyItems.set(i, survey);
+                break;
             }
         }
-        mAdapter.notifyDataSetChanged();
+        mPostSurveyRequestCode = NetworkRequest.post(this, this, API.getPostSurveyUrl(survey),
+                mApp.getToken(), API.getPostSurveyBody(survey));
+        mSurveyDialog.dismiss();
+        mSurveyShown = false;
     }
 
     @Override
-    public void setNextButtonEnabled(boolean enabled) {
+    public void onDialogNegativeClick(Survey survey){
+        mSurveyDialog.dismiss();
+        mSurveyShown = false;
+    }
+
+    @Override
+    public void onDialogCanceled(){
+        mSurveyShown = false;
+    }
+
+    @Override
+    public void setNextButtonEnabled(boolean enabled){
         //not needed in this activity
     }
 
+    @Override
+    public void onRequestComplete(int requestCode, String result){
+        if (requestCode == mGetBioRequestCode){
+            List<Survey> surveys = new Parser().parseProfileBio(result);
+            mProgressBar.setVisibility(View.GONE);
+            mProfileSurveyItems.clear();
+            mProfileSurveyItems.addAll(surveys);
+            mAdapter.notifyDataSetChanged();
+        }
+        else if (requestCode == mGetSurveyRequestCode){
+            Survey survey = new Parser().getGson().fromJson(result, Survey.class);
+            mSurveyLoading = false;
+            mProgressBar.setVisibility(View.GONE);
+            if (survey.getId() == mSelectedSurvey.getId()
+                    && survey.getQuestionType().equalsIgnoreCase(mSelectedSurvey.getQuestionType())){
+
+                survey.setSelectedOption(mSelectedSurvey.getSelectedOption());
+                survey.setResponse(mSelectedSurvey.getResponse());
+            }
+            showSurvey(survey);
+        }
+        else if (requestCode == mPostSurveyRequestCode){
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode){
+        if (requestCode == mGetBioRequestCode){
+            mProgressBar.setVisibility(View.GONE);
+        }
+        else if (requestCode == mGetSurveyRequestCode){
+            mProgressBar.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+        if (!mSurveyLoading && !mSurveyShown){
+            mProgressBar.setVisibility(View.VISIBLE);
+            mSelectedSurvey = mProfileSurveyItems.get(position);
+            String surveyUrl = mSelectedSurvey.getQuestionType() + "-" + mSelectedSurvey.getId() + "/";
+            mGetSurveyRequestCode = NetworkRequest.get(this, this, API.getSurveyUrl(surveyUrl),
+                    mApp.getToken());
+            mSurveyLoading = true;
+        }
+    }
 }

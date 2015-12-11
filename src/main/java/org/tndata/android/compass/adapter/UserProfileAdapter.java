@@ -13,19 +13,19 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.util.Constants;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public class UserProfileAdapter extends ArrayAdapter<Survey> {
-    private ArrayList<Survey> mItems;
+
+public class UserProfileAdapter extends ArrayAdapter<Survey>{
+    private List<Survey> mItems;
     private Context mContext = null;
 
-    static class UserProfileViewHolder {
+    static class UserProfileViewHolder{
         TextView questionTextView;
         TextView responseTextView;
     }
 
-    public UserProfileAdapter(Context context, int textViewResourceId,
-                              ArrayList<Survey> items) {
+    public UserProfileAdapter(Context context, int textViewResourceId, List<Survey> items){
         super(context, textViewResourceId, items);
         this.mItems = items;
         this.mContext = context;

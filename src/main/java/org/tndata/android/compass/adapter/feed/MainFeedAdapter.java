@@ -11,13 +11,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 
+import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UserData;
-import org.tndata.android.compass.task.DeleteActionTask;
+import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
+import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.List;
 
@@ -409,7 +411,8 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             mDataHandler.removeUpcoming(getActionPosition(position));
             removeActionFromFeed(position);
         }
-        new DeleteActionTask(mContext, null, action.getMappingId()+"").execute();
+        NetworkRequest.delete(mContext, null, API.getDeleteActionUrl(action.getMappingId()),
+                ((CompassApplication)mContext.getApplicationContext()).getToken(), new JSONObject());
     }
 
     /**

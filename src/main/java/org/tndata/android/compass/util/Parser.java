@@ -12,18 +12,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.database.CompassDbHelper;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Behavior;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.FeedData;
-import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.model.Place;
-import org.tndata.android.compass.model.Progress;
-import org.tndata.android.compass.model.Reward;
-import org.tndata.android.compass.model.SearchResult;
-import org.tndata.android.compass.model.Trigger;
-import org.tndata.android.compass.model.User;
-import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.model.*;
+import org.tndata.android.compass.model.Package;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +24,7 @@ import java.util.List;
  * includes category, goal, behavior, action, and place parsing.
  *
  * @author Ismael Alonso
- * @version 1.0.0
+ * @version 1.0.0 (WIP)
  */
 public class Parser{
     private Gson gson;
@@ -45,6 +35,15 @@ public class Parser{
      */
     public Parser(){
         gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).create();
+    }
+
+    public List<Category> parseCategories(String src){
+        try{
+            return parseCategories(new JSONObject(src).getJSONArray("results"), false);
+        }
+        catch (JSONException jsonx){
+            return null;
+        }
     }
 
     /**
@@ -104,6 +103,36 @@ public class Parser{
         return categories;
     }
 
+    public List<Goal> parseGoals(String src){
+        try{
+            return parseGoals(new JSONObject(src).getJSONArray("results"), false);
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+            return null;
+        }
+    }
+
+    public Goal parseAddedGoal(String src){
+        try{
+            JSONObject userGoal = new JSONObject(src);
+            Goal goal = gson.fromJson(userGoal.getString("goal"), Goal.class);
+            goal.setMappingId(userGoal.getInt("id"));
+            JSONArray categoryArray = userGoal.getJSONArray("user_categories");
+            List<Category> categories = goal.getCategories();
+            for (int x = 0; x < categoryArray.length(); x++){
+                Category category = gson.fromJson(categoryArray.getString(x), Category.class);
+                categories.add(category);
+            }
+            goal.setCategories(categories);
+            return goal;
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * Parses out the goal list.
      *
@@ -118,16 +147,16 @@ public class Parser{
             //For each category in the array
             for (int i = 0; i < goalArray.length(); i++){
                 //The string to be parsed by GSON is extracted from the array
-                String categoryString;
+                String goalString;
                 if (userGoals){
                     //If it is a user goal, it will come as a nested object
-                    categoryString = goalArray.getJSONObject(i).getString("goal");
+                    goalString = goalArray.getJSONObject(i).getString("goal");
                 }
                 else{
                     //If it is not, it will come as the object itself
-                    categoryString = goalArray.getString(i);
+                    goalString = goalArray.getString(i);
                 }
-                Goal goal = gson.fromJson(categoryString, Goal.class);
+                Goal goal = gson.fromJson(goalString, Goal.class);
 
                 JSONObject goalJson = goalArray.getJSONObject(i);
                 String categoryArrayName;
@@ -173,6 +202,38 @@ public class Parser{
         }
 
         return goals;
+    }
+
+    public List<Behavior> parseBehaviors(String src){
+        try{
+            return parseBehaviors(new JSONObject(src).getJSONArray("results"), false);
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+            return null;
+        }
+    }
+
+    public Behavior parseAddedBehavior(String src){
+        try{
+            JSONObject userBehavior = new JSONObject(src);
+            Behavior behavior = gson.fromJson(userBehavior.getString("behavior"), Behavior.class);
+            behavior.setMappingId(userBehavior.getInt("id"));
+
+            // Include the Behavior's Parent goals that have been selected by the user
+            JSONArray goalArray = userBehavior.getJSONArray("user_goals");
+            List<Goal> goals = behavior.getGoals();
+            for (int x = 0; x < goalArray.length(); x++){
+                Goal goal = gson.fromJson(goalArray.getString(x), Goal.class);
+                goals.add(goal);
+            }
+            behavior.setGoals(goals);
+            return behavior;
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -245,6 +306,57 @@ public class Parser{
         }
 
         return behaviors;
+    }
+
+    public List<Action> parseUserActions(String src){
+        try{
+            return parseActions(new JSONObject(src).getJSONArray("results"), true);
+        }
+        catch (JSONException jsonx){
+            return null;
+        }
+    }
+
+    public List<Action> parseActions(String src){
+        try{
+            return parseActions(new JSONObject(src).getJSONArray("results"), false);
+        }
+        catch (JSONException jsonx){
+            return null;
+        }
+    }
+
+    public Action parseAddedAction(String src){
+        try{
+            JSONObject userAction = new JSONObject(src);
+            Action action = gson.fromJson(userAction.getString("action"), Action.class);
+
+            if (action != null){
+                action.setMappingId(userAction.getInt("id"));
+                return action;
+            }
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return null;
+    }
+
+    public Action parseActionWithTrigger(String src){
+        try{
+            JSONObject response = new JSONObject(src);
+            Action action = gson.fromJson(response.getString("action"), Action.class);
+            action.setMappingId(response.getInt("id"));
+            if (!response.isNull("custom_trigger")){
+                action.setCustomTrigger(gson.fromJson(response.getString("custom_trigger"), Trigger.class));
+            }
+            action.setNextReminderDate(response.getString("next_reminder"));
+            return action;
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -343,6 +455,25 @@ public class Parser{
             jsonx.printStackTrace();
         }
 
+        return places;
+    }
+
+    public List<Place> parsePrimaryPlaces(String src){
+        List<Place> places = new ArrayList<>();
+        try{
+            JSONArray placeArray = new JSONObject(src).optJSONArray("results");
+            if (placeArray != null){
+                Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).create();
+                for (int i = 0; i < placeArray.length(); i++){
+                    Place place = gson.fromJson(placeArray.getString(i), Place.class);
+                    place.setId(-1);
+                    places.add(place);
+                }
+            }
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
         return places;
     }
 
@@ -514,6 +645,58 @@ public class Parser{
             jsonx.printStackTrace();
         }
         return goal;
+    }
+
+    public Instrument parseInstrument(String src){
+        return gson.fromJson(src, Instrument.class);
+    }
+
+    public Package parsePackage(String src){
+        try{
+            Package myPackage = gson.fromJson(new JSONObject(src).getString("category"), Package.class);
+            myPackage.setId(new JSONObject(src).getInt("id"));
+            return myPackage;
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<Survey> parseProfileBio(String src){
+        List<Survey> surveys = new ArrayList<>();
+        try{
+            JSONObject object = new JSONObject(src);
+            JSONArray bio = object.getJSONArray("results").getJSONObject(0).getJSONArray("bio");
+            Log.d("User Profile", bio.toString(2));
+            for (int i = 0; i < bio.length(); i++){
+                JSONObject surveyObject = bio.getJSONObject(i);
+                Survey survey = new Survey();
+                survey.setId(surveyObject.getInt("question_id"));
+                survey.setQuestionType(surveyObject.getString("question_type"));
+                survey.setResponseUrl(surveyObject.getString("response_url"));
+                survey.setText(surveyObject.getString("question_text"));
+
+                if (survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_BINARY)
+                        || survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_LIKERT)
+                        || survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_MULTICHOICE)){
+
+                    SurveyOptions options = new SurveyOptions();
+                    options.setText(surveyObject.optString("selected_option_text"));
+                    options.setId(surveyObject.optInt("selected_option"));
+                    survey.setSelectedOption(options);
+                }
+                else{
+                    survey.setInputType(surveyObject.optString("question_input_type"));
+                    survey.setResponse(surveyObject.optString("response"));
+                }
+                surveys.add(survey);
+            }
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return surveys;
     }
 
     public Gson getGson(){

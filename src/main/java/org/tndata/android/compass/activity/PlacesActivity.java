@@ -23,8 +23,9 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.PlacesAdapter;
 import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.model.Place;
-import org.tndata.android.compass.task.PrimaryPlaceLoaderTask;
-import org.tndata.android.compass.task.SavePlaceTask;
+import org.tndata.android.compass.util.API;
+import org.tndata.android.compass.util.NetworkRequest;
+import org.tndata.android.compass.util.Parser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ public class PlacesActivity
         extends AppCompatActivity
         implements
                 AdapterView.OnItemClickListener,
-                PrimaryPlaceLoaderTask.PrimaryPlaceLoaderCallback,
+                NetworkRequest.RequestCallback,
                 DialogInterface.OnClickListener,
                 DialogInterface.OnShowListener,
                 View.OnClickListener{
@@ -99,64 +100,67 @@ public class PlacesActivity
         mNameDialog.setOnShowListener(this);
 
         //Load the primary places
-        new PrimaryPlaceLoaderTask(this).execute();
+        NetworkRequest.get(this, this, API.getPrimaryPlacesUrl(), "");
     }
 
     @Override
-    public void onPlacesLoaded(List<Place> primaryPlaces){
+    public void onRequestComplete(int requestCode, String result){
+        //Parse the result
+        List<Place> primaryPlaces = new Parser().parsePrimaryPlaces(result);
+
         //In either case, the progress bar is hidden
         mProgress.setVisibility(View.GONE);
-        //If the data couldn't be retrieved the user is notified
-        if (primaryPlaces == null){
-            Toast.makeText(this, R.string.places_load_error, Toast.LENGTH_SHORT).show();
-        }
-        //Otherwise, the list is loaded
-        else{
-            //Two lists are used to sort the list
-            List<Place> places = new ArrayList<>();
-            List<Place> userPlaces = new ArrayList<>();
-            List<Place> currentPlaces = mApplication.getUserData().getPlaces();
 
-            //The user places are added to the list in the appropriate order
-            for (Place place:currentPlaces){
-                place.setSet(true);
+        //Two lists are used to sort the list
+        List<Place> places = new ArrayList<>();
+        List<Place> userPlaces = new ArrayList<>();
+        List<Place> currentPlaces = mApplication.getUserData().getPlaces();
 
-                int primaryIndex = -1;
-                for (int i = 0; i < primaryPlaces.size(); i++){
-                    if (primaryPlaces.get(i).getName().equals(place.getName())){
-                        primaryIndex = i;
-                        break;
-                    }
-                }
+        //The user places are added to the list in the appropriate order
+        for (Place place:currentPlaces){
+            place.setSet(true);
 
-                //If the place is primary it is added at the head, otherwise it is added at the tail
-                if (primaryIndex != -1){
-                    place.setPrimary(true);
-                    places.add(place);
-                    //The primary place is removed from the list to keep track of which ones have
-                    //  been added already
-                    primaryPlaces.remove(primaryIndex);
-                }
-                else{
-                    place.setPrimary(false);
-                    userPlaces.add(place);
+            int primaryIndex = -1;
+            for (int i = 0; i < primaryPlaces.size(); i++){
+                if (primaryPlaces.get(i).getName().equals(place.getName())){
+                    primaryIndex = i;
+                    break;
                 }
             }
-            //The reminder of primary places need to be added to the list as well
-            for (Place place:primaryPlaces){
-                place.setSet(false);
+
+            //If the place is primary it is added at the head, otherwise it is added at the tail
+            if (primaryIndex != -1){
+                place.setPrimary(true);
                 places.add(place);
+                //The primary place is removed from the list to keep track of which ones have
+                //  been added already
+                primaryPlaces.remove(primaryIndex);
             }
-            //The list of user places are added to the final list
-            places.addAll(userPlaces);
-
-            //Finally, set the adapter and enable the add button.
-            mAdapter = new PlacesAdapter(this, places);
-            mList.setAdapter(mAdapter);
-            mList.setOnItemClickListener(this);
-            mList.setVisibility(View.VISIBLE);
-            mAdd.setEnabled(true);
+            else{
+                place.setPrimary(false);
+                userPlaces.add(place);
+            }
         }
+        //The reminder of primary places need to be added to the list as well
+        for (Place place:primaryPlaces){
+            place.setSet(false);
+            places.add(place);
+        }
+        //The list of user places are added to the final list
+        places.addAll(userPlaces);
+
+        //Finally, set the adapter and enable the add button.
+        mAdapter = new PlacesAdapter(this, places);
+        mList.setAdapter(mAdapter);
+        mList.setOnItemClickListener(this);
+        mList.setVisibility(View.VISIBLE);
+        mAdd.setEnabled(true);
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode){
+        //If the data couldn't be retrieved the user is notified
+        Toast.makeText(this, R.string.places_load_error, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -214,7 +218,8 @@ public class PlacesActivity
                 if (mEdition){
                     mCurrentPlace.setName(mName.getText().toString().trim());
                     mAdapter.notifyDataSetChanged();
-                    new SavePlaceTask(null, mApplication.getToken()).execute(mCurrentPlace);
+                    NetworkRequest.put(this, null, API.getPostPutPlaceUrl(mCurrentPlace),
+                            mApplication.getToken(), API.getPostPutPlaceBody(mCurrentPlace));
 
                     //Update the place in the database
                     CompassDbHelper dbHelper = new CompassDbHelper(this);

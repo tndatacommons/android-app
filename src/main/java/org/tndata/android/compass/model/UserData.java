@@ -297,8 +297,12 @@ public class UserData{
      */
     public void addBehavior(Behavior behavior){
         if(!mBehaviors.contains(behavior)){
+            Log.d("AddBehavior", "Added: " + behavior.getId());
             mBehaviors.add(behavior);
             assignBehaviorsToGoals();
+        }
+        else{
+            Log.d("AddBehavior", "Not added: " + behavior.getId());
         }
     }
 

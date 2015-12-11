@@ -3,20 +3,13 @@ package org.tndata.android.compass.service;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Intent;
-import android.util.Log;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.model.Reminder;
-import org.tndata.android.compass.util.Constants;
-import org.tndata.android.compass.util.NetworkHelper;
+import org.tndata.android.compass.util.API;
+import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.NotificationUtil;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -65,35 +58,16 @@ public class ActionReportService extends IntentService{
         NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         manager.cancel(NotificationUtil.NOTIFICATION_TYPE_ACTION_TAG, actionId);
 
-        String url = Constants.BASE_URL + "users/actions/" + mappingId + "/complete/";
-
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Accept", "application/json");
-        headers.put("Content-type", "application/json");
-        headers.put("Authorization", "Token " + ((CompassApplication)getApplication()).getToken());
-
-        JSONObject body = new JSONObject();
-        try{
-            String state = intent.getStringExtra(STATE_KEY);
-            body.put("state", state);
-            if (state.equals(STATE_SNOOZED)){
-                body.put("length", intent.getStringExtra(LENGTH_KEY));
-            }
+        String token = ((CompassApplication)getApplication()).getToken();
+        JSONObject body;
+        String state = intent.getStringExtra(STATE_KEY);
+        if (state.equals(STATE_SNOOZED)){
+            body = API.getPostActionReportBody(state, intent.getStringExtra(LENGTH_KEY));
         }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
+        else{
+            body = API.getPostActionReportBody(state);
         }
-        Log.d(TAG, body.toString());
 
-        //Post to the URL with the given headers and an empty body object
-        InputStream stream = NetworkHelper.httpPostStream(url, headers, body.toString());
-        if (stream != null){
-            try{
-                stream.close();
-            }
-            catch (IOException iox){
-                iox.printStackTrace();
-            }
-        }
+        NetworkRequest.post(this, null, API.getPostActionReportUrl(mappingId), token, body);
     }
 }

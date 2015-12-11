@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.GoalAdapter;
@@ -25,10 +26,11 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Progress;
-import org.tndata.android.compass.task.DeleteGoalTask;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
+import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ImageLoader;
+import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.OnScrollListenerHub;
 import org.tndata.android.compass.util.ParallaxEffect;
 
@@ -240,9 +242,8 @@ public class GoalActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         if (item.getItemId() == R.id.goal_remove){
-            ArrayList<String> ids = new ArrayList<>();
-            ids.add(mGoal.getMappingId()+"");
-            new DeleteGoalTask(this, null, ids, mGoal).execute();
+            NetworkRequest.delete(this, null, API.getDeleteGoalUrl(mGoal.getMappingId()),
+                    mApplication.getToken(), new JSONObject());
             mApplication.getUserData().removeGoal(mGoal);
             finish();
             return true;

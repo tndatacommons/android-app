@@ -1,9 +1,10 @@
 package org.tndata.android.compass.fragment;
 
-import android.app.Activity;
-import android.app.Fragment;
+import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -59,7 +60,7 @@ public class LauncherFragment extends Fragment implements OnClickListener{
         mTourButton.setOnClickListener(this);
 
         //Set the color of the progress bar to the accent color
-        int color = getResources().getColor(R.color.grow_accent);
+        int color = ContextCompat.getColor(getActivity(), R.color.grow_accent);
         mProgressBar.getIndeterminateDrawable().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
 
         //Update the flags and show progress if necessary
@@ -113,15 +114,15 @@ public class LauncherFragment extends Fragment implements OnClickListener{
     }
 
     @Override
-    public void onAttach(Activity activity){
-        super.onAttach(activity);
+    public void onAttach(Context context){
+        super.onAttach(context);
         //This makes sure that the container activity has implemented the callback
         //  interface. If not, it throws an exception
         try{
-            mListener = (LauncherFragmentListener)activity;
+            mListener = (LauncherFragmentListener)context;
         }
         catch (ClassCastException e){
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement LauncherFragmentListener");
         }
     }

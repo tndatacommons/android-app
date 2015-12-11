@@ -1,6 +1,6 @@
 package org.tndata.android.compass.fragment;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,13 +14,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Reward;
-import org.tndata.android.compass.task.GetContentTask;
 import org.tndata.android.compass.ui.CompassPopupMenu;
+import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.Parser;
 
 
@@ -34,7 +33,7 @@ public class CheckInRewardFragment
         extends Fragment
         implements
                 View.OnClickListener,
-                GetContentTask.GetContentListener,
+                NetworkRequest.RequestCallback,
                 PopupMenu.OnMenuItemClickListener{
 
     public static final String REWARD_KEY = "org.tndata.compass.Reward.Reward";
@@ -80,15 +79,21 @@ public class CheckInRewardFragment
     }
 
     @Override
-    public void onAttach(Activity activity){
-        super.onAttach(activity);
+    public void onAttach(Context context){
+        super.onAttach(context);
         try{
-            mListener = (CheckInRewardListener)activity;
+            mListener = (CheckInRewardListener)context;
         }
         catch (ClassCastException ccx){
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement " + CheckInRewardListener.class);
         }
+    }
+
+    @Override
+    public void onDetach(){
+        super.onDetach();
+        mListener = null;
     }
 
     @Nullable
@@ -209,17 +214,12 @@ public class CheckInRewardFragment
      * Fires the request to get a new reward.
      */
     private void fetchReward(){
-        String token = ((CompassApplication)getActivity().getApplication()).getToken();
-        new GetContentTask(this, 0).execute(Constants.BASE_URL+"rewards/?random=1", token);
+        NetworkRequest.get(getActivity(), this, API.getRandomRewardUrl(), "");
     }
 
     @Override
-    public void onContentRetrieved(int requestCode, String content){
-        mReward = new Parser().parseRewards(content).get(0);
-    }
-
-    @Override
-    public void onRequestComplete(int requestCode){
+    public void onRequestComplete(int requestCode, String result){
+        mReward = new Parser().parseRewards(result).get(0);
         populateUI();
         mMoreSwitcher.showPrevious();
     }

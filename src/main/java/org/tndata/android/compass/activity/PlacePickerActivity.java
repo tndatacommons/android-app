@@ -29,11 +29,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.PlacePickerAdapter;
 import org.tndata.android.compass.model.Place;
-import org.tndata.android.compass.task.SavePlaceTask;
+import org.tndata.android.compass.util.API;
+import org.tndata.android.compass.util.NetworkRequest;
 
 
 /**
@@ -51,7 +54,7 @@ public class PlacePickerActivity
                 ResultCallback<PlaceBuffer>,
                 AdapterView.OnItemClickListener,
                 OnMapReadyCallback,
-                SavePlaceTask.SavePlaceCallback{
+                NetworkRequest.RequestCallback{
 
     //Data keys
     public static final String PLACE_KEY = "org.tndata.compass.Place";
@@ -139,20 +142,26 @@ public class PlacePickerActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         if (item.getItemId() == R.id.place_picker_save){
-            new SavePlaceTask(this, ((CompassApplication)getApplication()).getToken()).execute(mPlace);
+            if (mPlace.getId() == -1){
+                NetworkRequest.post(this, this, API.getPostPutPlaceUrl(mPlace),
+                        ((CompassApplication)getApplication()).getToken(),
+                        API.getPostPutPlaceBody(mPlace));
+            }
+            else{
+                NetworkRequest.put(this, this, API.getPostPutPlaceUrl(mPlace),
+                        ((CompassApplication)getApplication()).getToken(),
+                        API.getPostPutPlaceBody(mPlace));
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onPlaceSaved(int id){
-        if (id == -1){
-            Toast.makeText(this, R.string.places_save_error, Toast.LENGTH_SHORT).show();
-        }
-        else{
+    public void onRequestComplete(int requestCode, String result){
+        try{
             //Set the id
-            mPlace.setId(id);
+            mPlace.setId(new JSONObject(result).getInt("id"));
 
             //Return the place
             Intent data = new Intent();
@@ -160,6 +169,14 @@ public class PlacePickerActivity
             setResult(RESULT_OK, data);
             finish();
         }
+        catch (JSONException jsonx){
+            Toast.makeText(this, R.string.places_save_error, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode){
+        Toast.makeText(this, R.string.places_save_error, Toast.LENGTH_SHORT).show();
     }
 
     @Override

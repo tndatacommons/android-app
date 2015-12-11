@@ -15,7 +15,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import org.tndata.android.compass.BuildConfig;
-import org.tndata.android.compass.task.RegisterDeviceTask;
+import org.tndata.android.compass.CompassApplication;
 
 import java.io.IOException;
 
@@ -24,8 +24,7 @@ import java.io.IOException;
  * This is a utility class that encapsulates registering the app with GCM.
  *
  */
-public class GcmRegistration implements RegisterDeviceTask.RegisterDeviceTaskListener {
-
+public class GcmRegistration{
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -168,7 +167,9 @@ public class GcmRegistration implements RegisterDeviceTask.RegisterDeviceTaskLis
         WifiManager manager = (WifiManager)mContext.getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = manager.getConnectionInfo();
         String address = info.getMacAddress();
-        new RegisterDeviceTask(mContext, this, registration_id, address).execute();
+        NetworkRequest.post(mContext, null, API.getPostDeviceRegistrationUrl(),
+                ((CompassApplication)mContext.getApplicationContext()).getToken(),
+                API.getPostDeviceRegistrationBody(registration_id, address));
     }
 
     /**
@@ -183,9 +184,5 @@ public class GcmRegistration implements RegisterDeviceTask.RegisterDeviceTaskLis
         editor.putString(PROPERTY_REG_ID, regId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
         editor.commit();
-    }
-
-    public void deviceRegistered(String registration_id) {
-        Log.d(TAG, "Device Registered with API backend");
     }
 }

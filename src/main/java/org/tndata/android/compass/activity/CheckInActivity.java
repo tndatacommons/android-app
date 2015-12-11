@@ -17,8 +17,8 @@ import org.tndata.android.compass.fragment.CheckInRewardFragment;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Reward;
-import org.tndata.android.compass.task.GetContentTask;
-import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.util.API;
+import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.Parser;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ import me.relex.circleindicator.CircleIndicator;
 public class CheckInActivity
         extends AppCompatActivity
         implements
-                GetContentTask.GetContentListener,
+                NetworkRequest.RequestCallback,
                 CheckInRewardFragment.CheckInRewardListener,
                 CheckInFeedbackFragment.CheckInFeedbackListener{
 
@@ -47,15 +47,13 @@ public class CheckInActivity
     public static final int TYPE_REVIEW = 1;
     public static final int TYPE_FEEDBACK = 2;
 
-    public static final int TODAYS_ACTIONS_REQUEST_CODE = 0;
-    public static final int REWARD_REQUEST_CODE = TODAYS_ACTIONS_REQUEST_CODE+1;
-    public static final int PROGRESS_REQUEST_CODE = REWARD_REQUEST_CODE+1;
-    public static final int REQUEST_COUNT = PROGRESS_REQUEST_CODE+1;
-
-    public int mCompletedRequests;
-
-
     private int mType;
+
+    //Magic numbers!! This is the total amount of requests performed by this activity
+    public static final int REQUEST_COUNT = 3;
+
+
+    private CompassApplication mApplication;
 
     //UI components
     private ProgressBar mLoading;
@@ -71,13 +69,19 @@ public class CheckInActivity
     private float mProgress;
     private int mCurrentProgress[];
 
+    private int mGetActionsRequestCode;
+    private int mGetRewardRequestCode;
+    private int mGetProgressRequestCode;
+    private int mCompletedRequests;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_in);
 
-        mCompletedRequests = 0;
+        mApplication = (CompassApplication)getApplication();
+
         mType = getIntent().getIntExtra(TYPE_KEY, TYPE_REVIEW);
 
         mLoading = (ProgressBar)findViewById(R.id.check_in_loading);
@@ -85,21 +89,19 @@ public class CheckInActivity
         mPager = (ViewPager)findViewById(R.id.check_in_pager);
         mIndicator = (CircleIndicator)findViewById(R.id.check_in_indicator);
 
-        String token = ((CompassApplication)getApplication()).getToken();
-        String url = Constants.BASE_URL + "users/actions/?today=1";
-        new GetContentTask(this, TODAYS_ACTIONS_REQUEST_CODE).execute(url, token);
-
-        url = Constants.BASE_URL + "rewards/?random=1";
-        new GetContentTask(this, REWARD_REQUEST_CODE).execute(url, token);
-
-        url = Constants.BASE_URL + "users/goals/progress/average/";
-        new GetContentTask(this, PROGRESS_REQUEST_CODE).execute(url, token);
+        //API requests
+        mCompletedRequests = 0;
+        mGetActionsRequestCode = NetworkRequest.get(this, this, API.getTodaysActionsUrl(),
+                mApplication.getToken());
+        mGetRewardRequestCode = NetworkRequest.get(this, this, API.getRandomRewardUrl(), "");
+        mGetProgressRequestCode = NetworkRequest.get(this, this, API.getUserGoalProgressUrl(),
+                mApplication.getToken());
     }
 
     @Override
-    public void onContentRetrieved(int requestCode, String content){
-        if (requestCode == TODAYS_ACTIONS_REQUEST_CODE){
-            List<Action> actions = new Parser().parseTodaysActions(content);
+    public void onRequestComplete(int requestCode, String result){
+        if (requestCode == mGetActionsRequestCode){
+            List<Action> actions = new Parser().parseTodaysActions(result);
             mDataSet = new HashMap<>();
             //For each action
             for (Action action:actions){
@@ -121,22 +123,18 @@ public class CheckInActivity
             }
             mCurrentProgress = new int[mDataSet.size()];
         }
-        else if (requestCode == REWARD_REQUEST_CODE){
-            mReward = new Parser().parseRewards(content).get(0);
+        else if (requestCode == mGetRewardRequestCode){
+            mReward = new Parser().parseRewards(result).get(0);
         }
-        else if (requestCode == PROGRESS_REQUEST_CODE){
+        else if (requestCode == mGetProgressRequestCode){
             try{
-                mProgress = (float)new JSONObject(content).getDouble("weekly_checkin_avg");
+                mProgress = (float)new JSONObject(result).getDouble("weekly_checkin_avg");
             }
             catch (JSONException jsonx){
                 mProgress = 0;
                 jsonx.printStackTrace();
             }
         }
-    }
-
-    @Override
-    public void onRequestComplete(int requestCode){
         if (++mCompletedRequests == REQUEST_COUNT){
             setAdapter();
         }
@@ -144,7 +142,7 @@ public class CheckInActivity
 
     @Override
     public void onRequestFailed(int requestCode){
-
+        finish();
     }
 
     private void setAdapter(){
@@ -158,7 +156,7 @@ public class CheckInActivity
 
     @Override
     public void onReviewClick(){
-        if (((CompassApplication)getApplication()).getUserData() != null){
+        if (mApplication.getUserData() != null){
             startActivity(new Intent(this, MainActivity.class));
         }
         else{
