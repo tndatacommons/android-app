@@ -28,10 +28,6 @@ public class Constants{
 
     public final static String TERMS_AND_CONDITIONS_URL = "https://app.tndata.org/terms/";
     public static final String PRIVACY_URL = "https://app.tndata.org/privacy/";
-    public static final String TNDATA_BASE_URL = "https://app.tndata.org/api/";
-    public static final String TNDATA_STAGING_URL = "http://staging.tndata.org/api/";
-    public static final String NGROK_TUNNEL_URL = "https://tndata.ngrok.io/api/";
-    public static final String BASE_URL = BuildConfig.DEBUG ? TNDATA_STAGING_URL : TNDATA_BASE_URL;
 
     //Preferences
     public final static String PREFERENCES_NAME = "compass_pref";
