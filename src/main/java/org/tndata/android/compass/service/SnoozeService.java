@@ -4,19 +4,10 @@ import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Intent;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.Constants;
-import org.tndata.android.compass.util.NetworkHelper;
 import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.NotificationUtil;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**

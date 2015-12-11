@@ -98,14 +98,6 @@ public abstract class API{
         return postCategoriesBody;
     }
 
-    //TODO
-    public static Map<String, String> getDeleteUserCategoryBody(int userCategoryId){
-        Map<String, String> deleteCategoriesBody = new HashMap<>();
-        deleteCategoriesBody.put("usercategory", String.valueOf(userCategoryId));
-        Log.d("API", deleteCategoriesBody.toString());
-        return deleteCategoriesBody;
-    }
-
     public static String getInstrumentUrl(int instrument){
         return BASE_URL + "survey/instruments/" + instrument + "/";
     }
@@ -391,5 +383,24 @@ public abstract class API{
 
     public static String getDeleteActionUrl(int mappingId){
         return BASE_URL + "users/actions/" + mappingId + "/";
+    }
+
+    public static String getLogOutUrl(){
+        return BASE_URL + "auth/logout/";
+    }
+
+    public static JSONObject getLogOutBody(String registrationId){
+        JSONObject logOutBody = new JSONObject();
+        try{
+            logOutBody.put("registration_id", registrationId);
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return logOutBody;
+    }
+
+    public static String getDeleteCategoryUrl(int mappingId){
+        return BASE_URL + "users/categories/" + mappingId + "/";
     }
 }

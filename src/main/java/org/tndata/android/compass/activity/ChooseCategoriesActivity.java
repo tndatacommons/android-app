@@ -3,6 +3,7 @@ package org.tndata.android.compass.activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoriesAdapter;
@@ -98,17 +99,17 @@ public class ChooseCategoriesActivity
 
         if (toDelete.size() > 0){
             for (int i = 0; i < toDelete.size(); i++){
-                //TODO fix this
-                /*if (i == 0){
+                if (i == 0){
                     mInitialDeleteCategoryRequestCode = NetworkRequest.delete(this, this,
-                            API.getUserCategoriesUrl(), mApplication.getToken(),
-                            API.getDeleteUserCategoryBody(toDelete.get(i).getMappingId()));
+                            API.getDeleteCategoryUrl(toDelete.get(i).getMappingId()),
+                            mApplication.getToken(), new JSONObject());
                     mLastDeleteCategoryRequestCode = mInitialDeleteCategoryRequestCode+toDelete.size();
                 }
                 else{
-                    NetworkRequest.delete(this, this, API.getUserCategoriesUrl(), mApplication.getToken(),
-                            API.getDeleteUserCategoryBody(toDelete.get(i).getMappingId()));
-                }*/
+                    NetworkRequest.delete(this, this,
+                            API.getDeleteCategoryUrl(toDelete.get(i).getMappingId()),
+                            mApplication.getToken(), new JSONObject());
+                }
             }
         }
         else{
