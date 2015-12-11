@@ -12,17 +12,18 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Trigger;
-import org.tndata.android.compass.task.DeleteBehaviorTask;
 import org.tndata.android.compass.ui.CompassPopupMenu;
+import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
+import org.tndata.android.compass.util.NetworkRequest;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Stack;
@@ -243,9 +244,9 @@ public class GoalAdapter extends RecyclerView.Adapter{
                     case R.id.behavior_popup_remove:
                         Behavior behavior = mGoal.getBehaviors().get(position/2);
                         mApplication.removeBehavior(behavior);
-                        List<String> behaviorId = new ArrayList<>();
-                        behaviorId.add(behavior.getMappingId() + "");
-                        new DeleteBehaviorTask(mApplication.getToken(), null, behaviorId).execute();
+                        NetworkRequest.delete(mContext, null,
+                                API.getDeleteBehaviorURL(behavior.getMappingId()),
+                                mApplication.getToken(), new JSONObject());
                         Log.d("GoalAdapter", "Position: " + position);
                         if (position == 1){
                             Log.d("GoalAdapter", "Size: " + mGoal.getBehaviors().size());

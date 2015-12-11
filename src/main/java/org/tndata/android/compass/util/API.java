@@ -239,7 +239,7 @@ public abstract class API{
     public static JSONObject getPostBehaviorBody(int behaviorId){
         JSONObject postBehaviorBody = new JSONObject();
         try{
-            postBehaviorBody.put("goal", behaviorId);
+            postBehaviorBody.put("behavior", behaviorId);
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
@@ -363,5 +363,9 @@ public abstract class API{
             jsonx.printStackTrace();
         }
         return postDeviceRegistrationBody;
+    }
+
+    public static String getDeleteBehaviorURL(int mappingId){
+        return BASE_URL + "users/behaviors/" + mappingId + "/";
     }
 }

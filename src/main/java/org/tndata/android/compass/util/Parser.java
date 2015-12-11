@@ -214,6 +214,29 @@ public class Parser{
         }
     }
 
+    public Behavior parseAddedBehavior(String src){
+        try{
+            JSONObject userBehavior = new JSONObject(src);
+            ;
+            Behavior behavior = gson.fromJson(userBehavior.getString("behavior"), Behavior.class);
+            behavior.setMappingId(userBehavior.getInt("id"));
+
+            // Include the Behavior's Parent goals that have been selected by the user
+            JSONArray goalArray = userBehavior.getJSONArray("user_goals");
+            List<Goal> goals = behavior.getGoals();
+            for (int x = 0; x < goalArray.length(); x++){
+                Goal goal = gson.fromJson(goalArray.getString(x), Goal.class);
+                goals.add(goal);
+            }
+            behavior.setGoals(goals);
+            return behavior;
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * Parses out the goal list.
      *
