@@ -1,5 +1,7 @@
 package org.tndata.android.compass.fragment;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.util.API;
@@ -237,8 +239,21 @@ public class SignUpFragment
     }
 
     @Override
-    public void onRequestFailed(int requestCode){
-        mErrorString = getActivity().getResources().getString(R.string.signup_auth_error);
+    public void onRequestFailed(int requestCode, String message){
+        if (message.contains("email")){
+            try{
+                mErrorString = new JSONObject(message).getJSONArray("email").getString(0);
+            }
+            catch (JSONException jsonx){
+                jsonx.printStackTrace();
+            }
+        }
+        else{
+            mErrorString = message;
+        }
+        if (mErrorString.equals("")){
+            mErrorString = getActivity().getResources().getString(R.string.signup_error);
+        }
         setFormEnabled(true);
     }
 

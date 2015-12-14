@@ -158,9 +158,9 @@ public class PlacesActivity
     }
 
     @Override
-    public void onRequestFailed(int requestCode){
+    public void onRequestFailed(int requestCode, String message){
         //If the data couldn't be retrieved the user is notified
-        Toast.makeText(this, R.string.places_load_error, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

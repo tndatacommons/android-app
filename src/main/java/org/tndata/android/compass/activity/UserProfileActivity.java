@@ -140,7 +140,7 @@ public class UserProfileActivity
     }
 
     @Override
-    public void onRequestFailed(int requestCode){
+    public void onRequestFailed(int requestCode, String message){
         if (requestCode == mGetBioRequestCode){
             mProgressBar.setVisibility(View.GONE);
         }

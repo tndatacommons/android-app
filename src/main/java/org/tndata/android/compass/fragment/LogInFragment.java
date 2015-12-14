@@ -1,5 +1,7 @@
 package org.tndata.android.compass.fragment;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.util.API;
@@ -168,8 +170,21 @@ public class LogInFragment extends Fragment implements NetworkRequest.RequestCal
     }
 
     @Override
-    public void onRequestFailed(int requestCode){
-        mErrorString = getActivity().getResources().getString(R.string.login_auth_error);
+    public void onRequestFailed(int requestCode, String message){
+        if (message.contains("non_field_errors")){
+            try{
+                mErrorString = new JSONObject(message).getJSONArray("non_field_errors").getString(0);
+            }
+            catch (JSONException jsonx){
+                jsonx.printStackTrace();
+            }
+        }
+        else{
+            mErrorString = message;
+        }
+        if (mErrorString.equals("")){
+            mErrorString = getActivity().getResources().getString(R.string.login_error);
+        }
         setFormEnabled(true);
     }
 

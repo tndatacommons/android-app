@@ -386,7 +386,7 @@ public class ActionActivity
     }
 
     @Override
-    public void onRequestFailed(int requestCode){
+    public void onRequestFailed(int requestCode, String message){
         finish();
     }
 }
