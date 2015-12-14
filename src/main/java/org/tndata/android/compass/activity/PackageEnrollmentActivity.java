@@ -107,7 +107,7 @@ public class PackageEnrollmentActivity
     }
 
     @Override
-    public void onRequestFailed(int requestCode){
+    public void onRequestFailed(int requestCode, String message){
         if (requestCode == mGetPackageRequestCode){
             mProgressBar.setVisibility(View.GONE);
             Toast.makeText(this, R.string.package_load_error, Toast.LENGTH_SHORT).show();

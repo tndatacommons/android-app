@@ -390,7 +390,7 @@ public class MainActivity
     }
 
     @Override
-    public void onRequestFailed(int requestCode){
+    public void onRequestFailed(int requestCode, String message){
         if (requestCode == mGetUserDataRequestCode){
             Toast.makeText(this, "Couldn't reload", Toast.LENGTH_SHORT).show();
         }

@@ -225,7 +225,7 @@ public class CheckInRewardFragment
     }
 
     @Override
-    public void onRequestFailed(int requestCode){
+    public void onRequestFailed(int requestCode, String message){
         Toast.makeText(getActivity(), "Couldn't load a new item", Toast.LENGTH_SHORT).show();
         mMoreSwitcher.showPrevious();
     }

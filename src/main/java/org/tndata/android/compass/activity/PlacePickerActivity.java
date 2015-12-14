@@ -175,8 +175,8 @@ public class PlacePickerActivity
     }
 
     @Override
-    public void onRequestFailed(int requestCode){
-        Toast.makeText(this, R.string.places_save_error, Toast.LENGTH_SHORT).show();
+    public void onRequestFailed(int requestCode, String message){
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

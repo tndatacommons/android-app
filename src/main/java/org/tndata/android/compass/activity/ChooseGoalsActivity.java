@@ -278,7 +278,7 @@ public class ChooseGoalsActivity
     }
 
     @Override
-    public void onRequestFailed(int requestCode){
+    public void onRequestFailed(int requestCode, String message){
         if (mAddGoalRequestCodeMap.containsKey(requestCode)){
             Goal goal = mAddGoalRequestCodeMap.remove(requestCode);
             mAdapter.goalNotAdded(goal);

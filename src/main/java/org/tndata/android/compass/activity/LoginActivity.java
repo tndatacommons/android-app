@@ -309,7 +309,7 @@ public class LoginActivity
     }
 
     @Override
-    public void onRequestFailed(int requestCode){
+    public void onRequestFailed(int requestCode, String message){
         if (requestCode == mLogInRequestCode){
             Log.d("LogIn", "Login request failed");
             swapFragments(LOGIN, true);

@@ -7,10 +7,14 @@ import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
+import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -191,11 +195,7 @@ public final class NetworkRequest{
                 new Response.ErrorListener(){
                     @Override
                     public void onErrorResponse(VolleyError error){
-                        Log.d("NetworkRequest", error.toString());
-                        NetworkRequest request = sRequestMap.remove(requestCode);
-                        if (request.mCallback != null){
-                            request.mCallback.onRequestFailed(requestCode);
-                        }
+                        handleError(requestCode, error);
                     }
                 }
         ){
@@ -273,10 +273,7 @@ public final class NetworkRequest{
                 new Response.ErrorListener(){
                     @Override
                     public void onErrorResponse(VolleyError error){
-                        NetworkRequest request = sRequestMap.remove(requestCode);
-                        if (request.mCallback != null){
-                            request.mCallback.onRequestFailed(requestCode);
-                        }
+                        handleError(requestCode, error);
                     }
                 }
         ){
@@ -318,6 +315,32 @@ public final class NetworkRequest{
         sRequestQueue.add(volleyRequest);
 
         return requestCode;
+    }
+
+
+    private static void handleError(int requestCode, VolleyError error){
+        Log.d("NetworkRequest", error.toString());
+        NetworkResponse response = error.networkResponse;
+        String errorMessage = "";
+        if (error instanceof ServerError){
+            if (response != null && response.data != null){
+                errorMessage = new String(response.data);
+                Log.d("NetworkRequest", "Server error");
+                Log.d("NetworkRequest", "Error code: " + response.statusCode);
+                Log.d("NetworkRequest", "Error: " + errorMessage);
+            }
+        }
+        else if (error instanceof NoConnectionError || error instanceof NetworkError){
+            errorMessage = "Offline, check your internet connection";
+        }
+        else{
+            errorMessage = error.getMessage();
+        }
+
+        NetworkRequest request = sRequestMap.remove(requestCode);
+        if (request.mCallback != null){
+            request.mCallback.onRequestFailed(requestCode, errorMessage);
+        }
     }
 
 
@@ -398,6 +421,6 @@ public final class NetworkRequest{
          *
          * @param requestCode the request code of the particular request.
          */
-        void onRequestFailed(int requestCode);
+        void onRequestFailed(int requestCode, String message);
     }
 }
