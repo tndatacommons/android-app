@@ -12,7 +12,7 @@ public class TDCBase implements Serializable{
     private String html_description = "";
     private int mappingId = -1;
 
-    private boolean custom_triggers_allowed = true;
+    private boolean editable = true;
 
 
     public TDCBase(){
@@ -71,15 +71,21 @@ public class TDCBase implements Serializable{
         this.mappingId = mappingId;
     }
 
+    @Deprecated
     public void setCustomTriggersAllowed(boolean customTriggersAllowed){
-        custom_triggers_allowed = customTriggersAllowed;
+        editable = customTriggersAllowed;
     }
 
+    @Deprecated
     public boolean areCustomTriggersAllowed(){
-        return custom_triggers_allowed;
+        return editable;
+    }
+
+    public void setEditable(boolean editable){
+        this.editable = editable;
     }
 
     public boolean isEditable(){
-        return custom_triggers_allowed;
+        return editable;
     }
 }

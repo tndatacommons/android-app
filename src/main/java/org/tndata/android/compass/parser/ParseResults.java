@@ -6,16 +6,17 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
  * Created by isma on 12/14/15.
  */
 public final class ParseResults{
-    List<Category> mCategories;
-    List<Goal> mGoals;
-    List<Behavior> mBehaviors;
-    List<Action> mActions;
+    Map<Integer, Category> mCategories;
+    Map<Integer, Goal> mGoals;
+    Map<Integer, Behavior> mBehaviors;
+    Map<Integer, Action> mActions;
 
     /**
      * Modified default constructor. Makes the class instantiable only within the package.

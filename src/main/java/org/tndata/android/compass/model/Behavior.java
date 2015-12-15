@@ -116,15 +116,18 @@ public class Behavior extends TDCBase implements Serializable,
         this.goals = goals;
     }
 
-    public void addGoal(Goal goal) {
-        if(!this.goals.contains(goal)) {
-            this.goals.add(goal);
+    public void addGoal(Goal goal){
+        if (goals == null){
+            goals = new ArrayList<>();
+        }
+        if (!goals.contains(goal)){
+            goals.add(goal);
         }
     }
 
-    public void removeGoal(Goal goal) {
-        if(this.goals.contains(goal)) {
-            this.goals.remove(goal);
+    public void removeGoal(Goal goal){
+        if (goals.contains(goal)){
+            goals.remove(goal);
         }
     }
 
@@ -140,15 +143,18 @@ public class Behavior extends TDCBase implements Serializable,
         this.actions = actions;
     }
 
-    public void addAction(Action action) {
-        if(!this.actions.contains(action)) {
-            this.actions.add(action);
+    public void addAction(Action action){
+        if (actions == null){
+            actions = new ArrayList<>();
+        }
+        if (!actions.contains(action)){
+            actions.add(action);
         }
     }
 
-    public void removeAction(Action action) {
-        if(this.actions.contains(action)) {
-            this.actions.remove(action);
+    public void removeAction(Action action){
+        if (actions.contains(action)){
+            actions.remove(action);
         }
     }
 
