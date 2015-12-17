@@ -62,7 +62,7 @@ public class ChooseCategoriesActivity
 
         List<Category> toAdd = new ArrayList<>();
         for (Category category:selection){
-            if (!mApplication.getCategories().contains(category)){
+            if (!mApplication.getCategories().containsKey(category.getId())){
                 toAdd.add(category);
             }
         }
@@ -91,7 +91,7 @@ public class ChooseCategoriesActivity
      */
     private void deleteCategories(){
         List<Category> toDelete = new ArrayList<>();
-        for (Category category:mApplication.getCategories()){
+        for (Category category:mApplication.getCategories().values()){
             if (!mSelection.contains(category)){
                 toDelete.add(category);
             }

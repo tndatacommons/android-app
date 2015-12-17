@@ -209,7 +209,7 @@ public class ChooseGoalsActivity
 
         // Ensure the goal contains the user mapping id
         if (goal.getMappingId() <= 0) {
-            for (Goal g: mApplication.getGoals()) {
+            for (Goal g: mApplication.getGoals().values()) {
                 if (goal.getId() == g.getId()) {
                     goal.setMappingId(g.getMappingId());
                     break;

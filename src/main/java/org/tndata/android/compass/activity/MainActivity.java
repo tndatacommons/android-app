@@ -411,7 +411,7 @@ public class MainActivity
         mMenu.removeAllMenuButtons();
 
         //Populate the menu with a button per category
-        for (final Category category:mApplication.getUserData().getCategories()){
+        for (final Category category:mApplication.getUserData().getCategories().values()){
             //Skip packaged categories
             if (category.isPackagedContent()){
                 continue;

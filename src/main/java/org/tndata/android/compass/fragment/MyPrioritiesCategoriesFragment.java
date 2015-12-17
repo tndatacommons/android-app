@@ -15,6 +15,8 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.MyPrioritiesCategoryAdapter;
 import org.tndata.android.compass.model.Category;
 
+import java.util.ArrayList;
+
 
 /**
  * Fragment that displays the list of categories selected by the user.
@@ -53,7 +55,7 @@ public class MyPrioritiesCategoriesFragment
 
         mCategoryList = (ListView)rootView.findViewById(R.id.my_priorities_category_list);
         mCategoryList.setAdapter(new MyPrioritiesCategoryAdapter(getActivity().getApplicationContext(),
-                ((CompassApplication)getActivity().getApplication()).getCategories()));
+                new ArrayList<>(((CompassApplication)getActivity().getApplication()).getCategories().values())));
         mCategoryList.setOnItemClickListener(this);
 
         return rootView;

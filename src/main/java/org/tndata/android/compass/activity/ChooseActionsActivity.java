@@ -87,10 +87,9 @@ public class ChooseActionsActivity
         mGoal = (Goal)getIntent().getSerializableExtra("goal");
         mCategory = (Category)getIntent().getSerializableExtra("category");
 
-        List<Behavior> behaviors = mApplication.getUserData().getBehaviors();
-        int index = behaviors.indexOf(mBehavior);
-        if (index != -1){
-            mBehavior = behaviors.get(index);
+        Behavior behavior = mApplication.getUserData().getBehavior(mBehavior);
+        if (behavior != null){
+            mBehavior = behavior;
         }
 
         mToolbar = (Toolbar)findViewById(R.id.choose_actions_toolbar);
@@ -171,11 +170,11 @@ public class ChooseActionsActivity
     }
 
     private boolean isGoalSelected(){
-        return mApplication.getUserData().getGoals().contains(mGoal);
+        return mApplication.getUserData().getGoal(mGoal) != null;
     }
 
     private boolean isBehaviorSelected(){
-        return mApplication.getUserData().getBehaviors().contains(mBehavior);
+        return mApplication.getUserData().getBehavior(mBehavior) != null;
     }
 
     @Override
@@ -230,7 +229,7 @@ public class ChooseActionsActivity
     public void deleteAction(Action action){
         //Make sure we find the action that contains the user's mapping id.
         if (action.getMappingId() <= 0){
-            for (Action a:mApplication.getActions()){
+            for (Action a:mApplication.getActions().values()){
                 if (action.getId() == a.getId()){
                     action.setMappingId(a.getMappingId());
                     break;

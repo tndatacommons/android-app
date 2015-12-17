@@ -26,6 +26,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0 (WIP)
  */
+@Deprecated
 public class Parser{
     private Gson gson;
 
@@ -515,11 +516,11 @@ public class Parser{
 
             //Parse the user-selected content, store in userData; wait till all data is set
             //  before syncing parent/child relationships
-            userData.setCategories(parseCategories(userJson.getJSONArray("categories"), true), false);
-            userData.setGoals(parseGoals(userJson.getJSONArray("goals"), true), false);
-            userData.setBehaviors(parseBehaviors(userJson.getJSONArray("behaviors"), true), false);
-            userData.setActions(parseActions(userJson.getJSONArray("actions"), true), false);
-            userData.sync();
+            //userData.setCategories(parseCategories(userJson.getJSONArray("categories"), true), false);
+            //userData.setGoals(parseGoals(userJson.getJSONArray("goals"), true), false);
+            //userData.setBehaviors(parseBehaviors(userJson.getJSONArray("behaviors"), true), false);
+            //userData.setActions(parseActions(userJson.getJSONArray("actions"), true), false);
+            //userData.sync();
 
             //Parse the places and save write them into the database
             userData.setPlaces(parsePlaces(userJson.getJSONArray("places")));

@@ -134,7 +134,7 @@ public class ChooseCategoriesFragment
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetCategoriesRequestCode){
-            mAdapter.setCategories(new Parser().parseCategories(result), mApplication.getCategories());
+            mAdapter.setCategories(new Parser().parseCategories(result), mApplication.getCategories().values());
         }
     }
 

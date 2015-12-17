@@ -13,5 +13,5 @@ public interface ParserCallback{
      * @param requestCode the request code.
      * @param results the result set.
      */
-    void onParseSuccess(int requestCode, ParseResults results);
+    void onParseSuccess(int requestCode, ParserResults results);
 }

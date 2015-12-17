@@ -117,7 +117,7 @@ public abstract class API{
 
     //User data
     public static String getUserDataUrl(){
-        return BASE_URL + "users/";
+        return BASE_URL + "users/data/";
     }
 
 

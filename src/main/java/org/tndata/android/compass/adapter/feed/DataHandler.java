@@ -150,7 +150,7 @@ class DataHandler{
     }
 
     private List<Goal> getGoalList(){
-        List<Goal> src = mUserData.getGoals();
+        List<Goal> src = new ArrayList<>(mUserData.getGoals().values());
         if (src.isEmpty()){
             src = mFeedData.getSuggestions();
         }

@@ -194,7 +194,7 @@ public class ChooseBehaviorsActivity
     }
 
     private boolean isGoalSelected(){
-        return mApplication.getUserData().getGoals().contains(mGoal);
+        return mApplication.getUserData().getGoal(mGoal) != null;
     }
 
     @Override
@@ -276,7 +276,7 @@ public class ChooseBehaviorsActivity
     public void deleteBehavior(Behavior behavior){
         //Make sure we find the behavior that contains the user's mapping id
         if (behavior.getMappingId() <= 0){
-            for (Behavior b:mApplication.getBehaviors()){
+            for (Behavior b:mApplication.getBehaviors().values()){
                 if (behavior.getId() == b.getId()){
                     behavior.setMappingId(b.getMappingId());
                     break;
@@ -365,7 +365,7 @@ public class ChooseBehaviorsActivity
             mGoal = new Parser().parseGoal(result);
             //Look for a primary category
             for (Category category:mGoal.getCategories()){
-                if (mApplication.getUserData().getCategories().contains(category)){
+                if (mApplication.getUserData().getCategories().containsKey(category.getId())){
                     mGoal.setPrimaryCategory(category);
                     break;
                 }

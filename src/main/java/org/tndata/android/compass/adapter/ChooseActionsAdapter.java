@@ -160,7 +160,7 @@ public class ChooseActionsAdapter
      */
     private void selectActionClicked(ActionViewHolder holder){
         Action action = mActions.get(holder.getAdapterPosition()-1);
-        boolean isActionSelected = mApplication.getActions().contains(action);
+        boolean isActionSelected = mApplication.getActions().containsKey(action.getId());
 
         if (mBehavior.areCustomTriggersAllowed()){
             if (isActionSelected){
@@ -224,7 +224,7 @@ public class ChooseActionsAdapter
             ActionViewHolder holder = (ActionViewHolder)rawHolder;
 
             Action action = mActions.get(position);
-            final boolean action_is_selected = mApplication.getActions().contains(action);
+            final boolean action_is_selected = mApplication.getActions().containsKey(action.getId());
 
             if (position == 0 && action.getId() == 0){
                 //Display the header card
