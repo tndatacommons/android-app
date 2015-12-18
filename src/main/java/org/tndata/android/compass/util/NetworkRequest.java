@@ -20,6 +20,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
+import org.tndata.android.compass.BuildConfig;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,8 +35,13 @@ import java.util.Map;
 public final class NetworkRequest{
     private static final int MAX_REQUEST_CODE = 999999;
 
-    private static final int DEFAULT_REQUEST_TIMEOUT = 10*1000;
-    private static final int DEFAULT_MAX_RETRIES = 4;
+    private static final int DEBUG_MAX_RETRIES = 0;
+    private static final int DEBUG_REQUEST_TIMEOUT = 100*1000;
+    private static final int PROD_MAX_RETRIES = 4;
+    private static final int PROD_REQUEST_TIMEOUT = 10*1000;
+
+    private static final int DEFAULT_REQUEST_TIMEOUT = BuildConfig.DEBUG ? DEBUG_REQUEST_TIMEOUT : PROD_REQUEST_TIMEOUT;
+    private static final int DEFAULT_MAX_RETRIES = BuildConfig.DEBUG ? DEBUG_MAX_RETRIES : PROD_MAX_RETRIES;
     private static final float DEFAULT_RETRY_BACKOFF = 1.5f;
 
 
