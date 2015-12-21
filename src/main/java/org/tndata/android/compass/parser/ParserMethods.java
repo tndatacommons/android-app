@@ -31,7 +31,7 @@ import java.util.Map;
  */
 public final class ParserMethods{
     static UserData parseUserData(JSONObject src) throws JSONException{
-        Log.d("ParserWorker", "Parsing user data");
+        Log.d("Parser", "Parsing user data");
 
         Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).create();
         UserData userData = new UserData();
@@ -114,9 +114,10 @@ public final class ParserMethods{
         JSONArray primaryCategoryArray = dataGraph.getJSONArray("primary_categories");
         for (int i = 0; i < primaryCategoryArray.length(); i++){
             JSONArray goalCatRelationship = primaryCategoryArray.getJSONArray(i);
-            Goal goal = goals.get(goalCatRelationship.getInt(0));
-            Category category = categories.get(goalCatRelationship.getInt(1));
-            goal.setPrimaryCategory(category);
+            int categoryId = goalCatRelationship.optInt(1, -1);
+            if (categoryId != -1){
+                goals.get(goalCatRelationship.getInt(0)).setPrimaryCategory(categories.get(categoryId));
+            }
         }
 
         JSONArray primaryGoalArray = dataGraph.getJSONArray("primary_goals");

@@ -1,27 +1,9 @@
 package org.tndata.android.compass.parser;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Behavior;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.FeedData;
-import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.model.Place;
-import org.tndata.android.compass.model.UserData;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -36,7 +18,6 @@ final class ParserWorker extends AsyncTask<Void, Void, Void>{
     private ParserCallback mCallback;
 
     private ParserResults mResults;
-    private Gson gson;
 
     /**
      * Constructor.
@@ -51,7 +32,6 @@ final class ParserWorker extends AsyncTask<Void, Void, Void>{
         mCallback = callback;
 
         mResults = new ParserResults();
-        gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).create();
     }
 
     @Override
