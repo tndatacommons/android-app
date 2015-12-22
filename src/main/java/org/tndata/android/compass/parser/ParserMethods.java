@@ -29,7 +29,11 @@ import java.util.Map;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public final class ParserMethods{
+class ParserMethods{
+    protected static Gson sGson = new GsonBuilder()
+            .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
+            .create();
+
     static UserData parseUserData(JSONObject src) throws JSONException{
         Log.d("Parser", "Parsing user data");
 

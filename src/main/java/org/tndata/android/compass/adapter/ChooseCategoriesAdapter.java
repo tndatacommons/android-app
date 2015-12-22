@@ -90,7 +90,7 @@ public class ChooseCategoriesAdapter
      *
      * @param all the list of all available categories.
      */
-    public void setCategories(@NonNull List<Category> all, @NonNull Collection<Category> selected){
+    public void setCategories(@NonNull Collection<Category> all, @NonNull Collection<Category> selected){
         //Let the GC take care of the previous list and fill a new one
         mCategories = new ArrayList<>();
         mCategories.addAll(all);

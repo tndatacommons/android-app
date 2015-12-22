@@ -30,6 +30,7 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.util.API;
@@ -39,9 +40,11 @@ import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.Parser;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -286,15 +289,16 @@ public class ChooseActionsActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetActionsRequestCode){
-            List<Action> actions = new Parser().parseActions(result);
+            Map<Integer, Action> actions = ContentParser.parseActions(result);
             if (actions != null && !actions.isEmpty()){
-                Collections.sort(actions, new Comparator<Action>(){
+                List<Action> actionList = new ArrayList<>(actions.values());
+                Collections.sort(actionList, new Comparator<Action>(){
                     @Override
                     public int compare(Action act1, Action act2){
                         return (act1.getSequenceOrder() < act2.getSequenceOrder()) ? 0 : 1;
                     }
                 });
-                mAdapter.setActions(actions);
+                mAdapter.setActions(actionList);
             }
             mAdapter.notifyDataSetChanged();
         }

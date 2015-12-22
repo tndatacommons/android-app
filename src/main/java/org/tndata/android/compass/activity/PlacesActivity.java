@@ -25,7 +25,7 @@ import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.util.Parser;
+import org.tndata.android.compass.parser.PlaceParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,55 +106,61 @@ public class PlacesActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         //Parse the result
-        List<Place> primaryPlaces = new Parser().parsePrimaryPlaces(result);
+        List<Place> primaryPlaces = PlaceParser.parsePrimaryPlaces(result);
 
-        //In either case, the progress bar is hidden
+        //First off, the progress bar is hidden
         mProgress.setVisibility(View.GONE);
 
-        //Two lists are used to sort the list
-        List<Place> places = new ArrayList<>();
-        List<Place> userPlaces = new ArrayList<>();
-        List<Place> currentPlaces = mApplication.getUserData().getPlaces();
+        //If the result of the parser is null, the string was bad, otherwise, proceed
+        if (primaryPlaces != null){
+            //Two lists are used to sort the list
+            List<Place> places = new ArrayList<>();
+            List<Place> userPlaces = new ArrayList<>();
+            List<Place> currentPlaces = mApplication.getUserData().getPlaces();
 
-        //The user places are added to the list in the appropriate order
-        for (Place place:currentPlaces){
-            place.setSet(true);
+            //The user places are added to the list in the appropriate order
+            for (Place place : currentPlaces){
+                place.setSet(true);
 
-            int primaryIndex = -1;
-            for (int i = 0; i < primaryPlaces.size(); i++){
-                if (primaryPlaces.get(i).getName().equals(place.getName())){
-                    primaryIndex = i;
-                    break;
+                int primaryIndex = -1;
+                for (int i = 0; i < primaryPlaces.size(); i++){
+                    if (primaryPlaces.get(i).getName().equals(place.getName())){
+                        primaryIndex = i;
+                        break;
+                    }
+                }
+
+                //If the place is primary it is added at the head, otherwise it is added at the tail
+                if (primaryIndex != -1){
+                    place.setPrimary(true);
+                    places.add(place);
+                    //The primary place is removed from the list to keep track of which ones have
+                    //  been added already
+                    primaryPlaces.remove(primaryIndex);
+                }
+                else{
+                    place.setPrimary(false);
+                    userPlaces.add(place);
                 }
             }
-
-            //If the place is primary it is added at the head, otherwise it is added at the tail
-            if (primaryIndex != -1){
-                place.setPrimary(true);
+            //The reminder of primary places need to be added to the list as well
+            for (Place place : primaryPlaces){
+                place.setSet(false);
                 places.add(place);
-                //The primary place is removed from the list to keep track of which ones have
-                //  been added already
-                primaryPlaces.remove(primaryIndex);
             }
-            else{
-                place.setPrimary(false);
-                userPlaces.add(place);
-            }
-        }
-        //The reminder of primary places need to be added to the list as well
-        for (Place place:primaryPlaces){
-            place.setSet(false);
-            places.add(place);
-        }
-        //The list of user places are added to the final list
-        places.addAll(userPlaces);
+            //The list of user places are added to the final list
+            places.addAll(userPlaces);
 
-        //Finally, set the adapter and enable the add button.
-        mAdapter = new PlacesAdapter(this, places);
-        mList.setAdapter(mAdapter);
-        mList.setOnItemClickListener(this);
-        mList.setVisibility(View.VISIBLE);
-        mAdd.setEnabled(true);
+            //Finally, set the adapter and enable the add button.
+            mAdapter = new PlacesAdapter(this, places);
+            mList.setAdapter(mAdapter);
+            mList.setOnItemClickListener(this);
+            mList.setVisibility(View.VISIBLE);
+            mAdd.setEnabled(true);
+        }
+        else{
+            Toast.makeText(this, "Couldn't load the list of places", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

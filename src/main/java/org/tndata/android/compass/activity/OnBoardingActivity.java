@@ -14,10 +14,10 @@ import org.tndata.android.compass.fragment.InstrumentFragment;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.parser.UserDataParser;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.util.Parser;
 
 import java.util.List;
 
@@ -127,7 +127,7 @@ public class OnBoardingActivity
             }
         }
         else if (requestCode == mGetDataRequestCode){
-            UserData userData = new Parser().parseUserData(this, result);
+            UserData userData = UserDataParser.parseUserData(this, result);
             if (userData != null){
                 mApplication.setUserData(userData);
             }

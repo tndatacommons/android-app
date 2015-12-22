@@ -26,6 +26,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseGoalsAdapter;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.util.API;
@@ -33,7 +34,6 @@ import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.Parser;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -249,9 +249,9 @@ public class ChooseGoalsActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetGoalsRequestCode){
-            List<Goal> goals = new Parser().parseGoals(result);
+            Map<Integer, Goal> goals = ContentParser.parseGoals(result);
             if (goals != null && !goals.isEmpty()){
-                mAdapter.addGoals(goals);
+                mAdapter.addGoals(goals.values());
             }
             else{
                 showError();

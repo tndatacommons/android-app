@@ -19,12 +19,13 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoriesAdapter;
 import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.util.Parser;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -134,7 +135,10 @@ public class ChooseCategoriesFragment
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetCategoriesRequestCode){
-            mAdapter.setCategories(new Parser().parseCategories(result), mApplication.getCategories().values());
+            Map<Integer, Category> categories = ContentParser.parseCategories(result);
+            if (categories != null){
+                mAdapter.setCategories(categories.values(), mApplication.getCategories().values());
+            }
         }
     }
 

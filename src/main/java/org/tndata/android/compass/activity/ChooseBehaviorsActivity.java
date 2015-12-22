@@ -29,6 +29,7 @@ import org.tndata.android.compass.adapter.ChooseBehaviorsAdapter;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.util.API;
@@ -39,6 +40,7 @@ import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.Parser;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -383,9 +385,9 @@ public class ChooseBehaviorsActivity
             mApplication.getUserData().getGoal(goal).setMappingId(goal.getMappingId());
         }
         else if (requestCode == mGetBehaviorsRequestCode){
-            List<Behavior> behaviors = new Parser().parseBehaviors(result);
+            Map<Integer, Behavior> behaviors = ContentParser.parseBehaviors(result);
             if (behaviors != null){
-                mAdapter.setBehaviors(behaviors);
+                mAdapter.setBehaviors(behaviors.values());
             }
             mAdapter.notifyDataSetChanged();
         }

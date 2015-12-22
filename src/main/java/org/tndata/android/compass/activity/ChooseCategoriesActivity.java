@@ -9,9 +9,9 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoriesAdapter;
 import org.tndata.android.compass.fragment.ChooseCategoriesFragment;
 import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.parser.UserDataParser;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.util.Parser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,7 +140,7 @@ public class ChooseCategoriesActivity
             }
         }
         else if (requestCode == mGetDataRequestCode){
-            mApplication.setUserData(new Parser().parseUserData(this, result));
+            mApplication.setUserData(UserDataParser.parseUserData(this, result));
             setResult(RESULT_OK);
             finish();
         }

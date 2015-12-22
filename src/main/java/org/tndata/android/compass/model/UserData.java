@@ -350,6 +350,127 @@ public class UserData{
     }
 
 
+    /*----------------------------------------------------------*
+     * SYNCHRONIZATION METHODS. I REALLY WANT TO DEPRECATE THIS *
+     *----------------------------------------------------------*/
+
+    /**
+     * Sync up all parent/child objects.
+     */
+    public void sync(){
+        assignGoalsToCategories();
+        assignBehaviorsToGoals();
+        assignActionsToBehaviors();
+        setActionParents();
+    }
+
+    /**
+     * Goals are associated with one or more categories. This method will include
+     * the user's selected goals within their selected Categories.
+     */
+    public void assignGoalsToCategories(){
+        // add each goal to the correct category
+        for (Category category:getCategories().values()){
+            ArrayList<Goal> categoryGoals = new ArrayList<>();
+            for (Goal goal:getGoals().values()){
+                for (Category goalCategory:goal.getCategories()){
+                    if (goalCategory.getId() == category.getId()){
+                        categoryGoals.add(goal);
+                        break;
+                    }
+                }
+            }
+            category.setGoals(categoryGoals);
+        }
+    }
+
+    /**
+     * Behaviors are contained within a Goal. This method will take the list of
+     * selected behaviors, and associate them with the user's selected goals.
+     */
+    public void assignBehaviorsToGoals(){
+        //Look at all the selected goals
+        for (Goal goal:getGoals().values()){
+            ArrayList<Behavior> goalBehaviors = new ArrayList<>();
+            //Look at all the selected behaviors
+            for (Behavior behavior:getBehaviors().values()){
+                //The Behavior's parent goals
+                for (Goal behaviorGoal:behavior.getGoals()){
+                    if (behaviorGoal.getId() == goal.getId()){
+                        goalBehaviors.add(behavior);
+                        break;
+                    }
+                }
+            }
+            goal.setBehaviors(goalBehaviors);
+        }
+    }
+
+    /**
+     * Update a single Action in a user's collection; When some Action has been changed
+     * (e.g. it's custom-trigger updated), this method will replace stale instances of
+     * the Action with the new version.
+     *
+     * Updating an Action will also trigger an update to the parent behaviors.
+     *
+     * @param action the Action object to update.
+     */
+    /*public void updateAction(Action action){
+        //Given a single action, find it in the list of Actions and keep the input version
+        int i = 0;
+        boolean found = false;
+        for (Action a:mActions.values()){
+            if (a.getId() == action.getId()){
+                found = true;
+                break;
+            }
+            i++;
+        }
+        if(found){
+            //Remove the old action
+            removeAction(mActions.get(i));
+        }
+        mActions.add(action);
+        assignActionsToBehaviors();
+    }*/
+
+    /**
+     * Actions are contained within a single Behavior. This method will take the list
+     * of selected actions, and associate them with the user-selected behaviors.
+     *
+     * This ensures that all behaviors have a valid reference to their child Actions.
+     */
+    public void assignActionsToBehaviors(){
+        for (Behavior behavior:getBehaviors().values()){
+            List<Action> behaviorActions = new ArrayList<>();
+            for (Action action:getActions().values()){
+                if (behavior.getId() == action.getBehavior_id()){
+                    behaviorActions.add(action);
+                }
+            }
+            behavior.setActions(behaviorActions);
+        }
+
+        // now, set each Action's parent Behavior.
+        setActionParents();
+    }
+
+    /**
+     * This method will set the Behavior attribute for all of the user's selected Actions, so the
+     * Action will contain a valid reference to its parent.
+     */
+    public void setActionParents(){
+        // set a reference to the parent for each action.
+        for (Action action:getActions().values()){
+            for (Behavior behavior:getBehaviors().values()){
+                if (action.getBehavior_id() == behavior.getId()){
+                    action.setBehavior(behavior);
+                }
+            }
+        }
+    }
+
+
     /*-----------------------*
      * PLACE RELATED METHODS *
      *-----------------------*/

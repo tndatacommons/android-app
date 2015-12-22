@@ -17,11 +17,11 @@ import android.widget.ViewSwitcher;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Package;
+import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.NotificationUtil;
-import org.tndata.android.compass.util.Parser;
 
 
 /**
@@ -96,7 +96,7 @@ public class PackageEnrollmentActivity
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetPackageRequestCode){
             mProgressBar.setVisibility(View.GONE);
-            populateUI(new Parser().parsePackage(result));
+            populateUI(ContentParser.parsePackage(result));
         }
         else if (requestCode == mPutConsentRequestCode){
             //If the acknowledgement was successful, dismiss the notification and kill the activity
@@ -125,7 +125,8 @@ public class PackageEnrollmentActivity
         }
     }
 
-    private void populateUI(Package myPackage){mContent.setVisibility(View.VISIBLE);
+    private void populateUI(Package myPackage){
+        mContent.setVisibility(View.VISIBLE);
         CompassTagHandler tagHandler = new CompassTagHandler(this);
         mTitle.setText(myPackage.getTitle());
         if (myPackage.getHtmlDescription().isEmpty()){

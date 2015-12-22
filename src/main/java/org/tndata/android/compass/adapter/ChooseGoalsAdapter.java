@@ -27,6 +27,7 @@ import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -139,7 +140,7 @@ public class ChooseGoalsAdapter
      *
      * @param goals the list of goals to be added.
      */
-    public void addGoals(List<Goal> goals){
+    public void addGoals(Collection<Goal> goals){
         mGoals.clear();
 
         Goal headerGoal = new Goal();
