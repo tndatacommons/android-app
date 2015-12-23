@@ -31,7 +31,6 @@ import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.util.Parser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,7 +51,7 @@ public class ChooseGoalsActivity
                 SearchView.OnQueryTextListener,
                 SearchView.OnCloseListener{
 
-    public static final String CATEGORY_ID_KEY = "org.tndata.compass.ChooseGoals.CategoryId";
+    //public static final String CATEGORY_ID_KEY = "org.tndata.compass.ChooseGoals.CategoryId";
 
 
     private CompassApplication mApplication;
@@ -258,7 +257,7 @@ public class ChooseGoalsActivity
             }
         }
         else if (mAddGoalRequestCodeMap.containsKey(requestCode)){
-            Goal addedGoal = new Parser().parseAddedGoal(result);
+            Goal addedGoal = ContentParser.parseGoal(result);
             Goal goal = mAddGoalRequestCodeMap.remove(requestCode);
             if (addedGoal != null){
                 //We've already added the goal to the mApplication's collection.

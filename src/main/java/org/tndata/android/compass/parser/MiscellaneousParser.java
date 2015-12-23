@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import org.tndata.android.compass.model.Instrument;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.SearchResult;
+import org.tndata.android.compass.model.Survey;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +18,13 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class MiscellaneousParser extends ParserMethods{
+public final class MiscellaneousParser extends ParserMethods{
     public static Instrument parseInstrument(String src){
         return sGson.fromJson(src, Instrument.class);
+    }
+
+    public static Survey parseSurvey(String src){
+        return sGson.fromJson(src, Survey.class);
     }
 
     public static List<SearchResult> parseSearchResults(String src){

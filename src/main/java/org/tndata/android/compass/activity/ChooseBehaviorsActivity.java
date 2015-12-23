@@ -37,9 +37,7 @@ import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.util.Parser;
 
-import java.util.List;
 import java.util.Map;
 
 
@@ -364,7 +362,7 @@ public class ChooseBehaviorsActivity
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetGoalRequestCode){
             //Parse the goal
-            mGoal = new Parser().parseGoal(result);
+            mGoal = ContentParser.parseGoal(result);
             //Look for a primary category
             for (Category category:mGoal.getCategories()){
                 if (mApplication.getUserData().getCategories().containsKey(category.getId())){
@@ -381,8 +379,10 @@ public class ChooseBehaviorsActivity
             mSearchItem.setVisible(true);
         }
         else if (requestCode == mPostGoalRequestCode){
-            Goal goal = new Parser().parseAddedGoal(result);
-            mApplication.getUserData().getGoal(goal).setMappingId(goal.getMappingId());
+            Goal goal = ContentParser.parseGoal(result);
+            if (goal != null){
+                mApplication.getUserData().getGoal(goal).setMappingId(goal.getMappingId());
+            }
         }
         else if (requestCode == mGetBehaviorsRequestCode){
             Map<Integer, Behavior> behaviors = ContentParser.parseBehaviors(result);
@@ -392,10 +392,12 @@ public class ChooseBehaviorsActivity
             mAdapter.notifyDataSetChanged();
         }
         else if (requestCode == mPostBehaviorRequestCode){
-            Behavior behavior = new Parser().parseAddedBehavior(result);
-            Log.d("PostBehavior", behavior.toString());
-            mApplication.addBehavior(behavior);
-            mAdapter.notifyDataSetChanged();
+            Behavior behavior = ContentParser.parseBehavior(result);
+            if (behavior != null){
+                Log.d("PostBehavior", behavior.toString());
+                mApplication.addBehavior(behavior);
+                mAdapter.notifyDataSetChanged();
+            }
         }
         else if (requestCode == mDeleteBehaviorRequestCode){
             mAdapter.notifyDataSetChanged();

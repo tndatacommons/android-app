@@ -13,10 +13,10 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.UserProfileAdapter;
 import org.tndata.android.compass.fragment.SurveyDialogFragment;
 import org.tndata.android.compass.model.Survey;
+import org.tndata.android.compass.parser.MiscellaneousParser;
 import org.tndata.android.compass.parser.UserDataParser;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.util.Parser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,7 +124,7 @@ public class UserProfileActivity
             mAdapter.notifyDataSetChanged();
         }
         else if (requestCode == mGetSurveyRequestCode){
-            Survey survey = new Parser().getGson().fromJson(result, Survey.class);
+            Survey survey = MiscellaneousParser.parseSurvey(result);
             mSurveyLoading = false;
             mProgressBar.setVisibility(View.GONE);
             if (survey.getId() == mSelectedSurvey.getId()

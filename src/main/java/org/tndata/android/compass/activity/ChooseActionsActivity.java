@@ -38,7 +38,6 @@ import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.util.Parser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -303,15 +302,19 @@ public class ChooseActionsActivity
             mAdapter.notifyDataSetChanged();
         }
         else if (requestCode == mPostGoalRequestCode){
-            Goal goal = new Parser().parseAddedGoal(result);
-            mApplication.getUserData().getGoal(goal).setMappingId(goal.getMappingId());
+            Goal goal = ContentParser.parseGoal(result);
+            if (goal != null){
+                mApplication.getUserData().getGoal(goal).setMappingId(goal.getMappingId());
+            }
         }
         else if (requestCode == mPostBehaviorRequestCode){
-            Behavior behavior = new Parser().parseAddedBehavior(result);
-            mApplication.getUserData().getBehavior(behavior).setMappingId(behavior.getMappingId());
+            Behavior behavior = ContentParser.parseBehavior(result);
+            if (behavior != null){
+                mApplication.getUserData().getBehavior(behavior).setMappingId(behavior.getMappingId());
+            }
         }
         else if (requestCode == mPostActionRequestCode){
-            Action action = new Parser().parseAddedAction(result);
+            Action action = ContentParser.parseAction(result);
             Toast.makeText(getApplicationContext(),
                     getString(R.string.action_added, action.getTitle()),
                     Toast.LENGTH_SHORT).show();

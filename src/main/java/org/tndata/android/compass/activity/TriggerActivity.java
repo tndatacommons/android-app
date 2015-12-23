@@ -28,7 +28,6 @@ import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.util.Parser;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -528,7 +527,7 @@ public class TriggerActivity
             }
         }
         else if (requestCode == mPutTriggerRequestCode){
-            Action action = new Parser().parseActionWithTrigger(result);
+            Action action = ContentParser.parseAction(result);
             if(action != null){
                 Log.d(TAG, "Updated Action: " + action.getTitle());
                 Log.d(TAG, "Updated Trigger: " + action.getTrigger());

@@ -350,7 +350,6 @@ public final class ContentParser extends ParserMethods{
     }
 
     public static Action parseAction(String src){
-        System.out.println(src);
         try{
             JSONObject actionObject = new JSONObject(src);
             boolean userContent = actionObject.getString("object_type").equals("useraction");
@@ -378,6 +377,7 @@ public final class ContentParser extends ParserMethods{
 
                 action.setPrimaryCategory(parseCategoryModel(actionObject.getString("primary_category")));
             }
+            action.setBehavior(parseBehaviorModel(actionObject.getString("behavior")));
 
             return action;
         }

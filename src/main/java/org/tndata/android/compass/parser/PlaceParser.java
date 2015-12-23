@@ -15,7 +15,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class PlaceParser extends ParserMethods{
+public final class PlaceParser extends ParserMethods{
     /**
      * Parses a place list.
      *

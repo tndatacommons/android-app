@@ -29,7 +29,7 @@ import java.util.Map;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserDataParser extends ParserMethods{
+public final class UserDataParser extends ParserMethods{
     /**
      * Parses a user from a JSON string.
      *
