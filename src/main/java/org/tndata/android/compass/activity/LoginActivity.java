@@ -19,6 +19,7 @@ import org.tndata.android.compass.fragment.SignUpFragment;
 import org.tndata.android.compass.fragment.TourFragment;
 import org.tndata.android.compass.fragment.WebFragment;
 import org.tndata.android.compass.model.User;
+import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserResults;
 import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.UserDataParser;
@@ -306,7 +307,9 @@ public class LoginActivity
             }
         }
         else if (requestCode == mGetDataRequestCode){
-            mApplication.setUserData(UserDataParser.parseUserData(this, result));
+            Parser.parse(this, result, this);
+            //mApplication.setUserData(UserDataParser.parseUserData(this, result));
+            //transitionToMain();
         }
     }
 

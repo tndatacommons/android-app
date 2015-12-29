@@ -1,5 +1,6 @@
 package org.tndata.android.compass.parser;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import org.json.JSONException;
@@ -13,6 +14,7 @@ import org.json.JSONObject;
  * @version 1.0.0
  */
 final class ParserWorker extends AsyncTask<Void, Void, Void>{
+    private Context mContext;
     private int mRequestCode;
     private String mSrc;
     private ParserCallback mCallback;
@@ -26,7 +28,8 @@ final class ParserWorker extends AsyncTask<Void, Void, Void>{
      * @param src the string to parse.
      * @param callback the callback object.
      */
-    ParserWorker(int requestCode, String src, ParserCallback callback){
+    ParserWorker(Context context, int requestCode, String src, ParserCallback callback){
+        mContext = context;
         mRequestCode = requestCode;
         mSrc = src;
         mCallback = callback;
@@ -52,13 +55,7 @@ final class ParserWorker extends AsyncTask<Void, Void, Void>{
      * @throws JSONException
      */
     private void parse(JSONObject src) throws JSONException{
-        switch (src.optString("object_type")){
-            case "user_data":
-            default:
-                JSONObject result = src.getJSONArray("results").getJSONObject(0);
-                mResults.mUserData = ParserMethods.parseUserData(result);
-                break;
-        }
+        mResults.mUserData = UserDataParser.parseUserData(mContext, src.toString());
     }
 
     @Override

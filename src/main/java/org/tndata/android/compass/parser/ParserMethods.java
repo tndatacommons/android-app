@@ -34,7 +34,7 @@ class ParserMethods{
             .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
             .create();
 
-    static UserData parseUserData(JSONObject src) throws JSONException{
+    /*static UserData parseUserData(JSONObject src) throws JSONException{
         Log.d("Parser", "Parsing user data");
 
         Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).create();
@@ -188,5 +188,5 @@ class ParserMethods{
 
         userData.setFeedData(feedData);
         return userData;
-    }
+    }*/
 }

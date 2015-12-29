@@ -106,6 +106,9 @@ public final class ContentParser extends ParserMethods{
                 if (category != null){
                     categories.put(category.getId(), category);
                 }
+                else{
+                    Log.d("CategoryParser", "Category #" + i + " is null.");
+                }
             }
             catch (JSONException jsonx){
                 jsonx.printStackTrace();
@@ -137,7 +140,6 @@ public final class ContentParser extends ParserMethods{
     }
 
     public static Goal parseGoalModel(String src){
-        Log.d("GoalParser", src);
         return sGson.fromJson(src, Goal.class);
     }
 
@@ -216,6 +218,9 @@ public final class ContentParser extends ParserMethods{
                 Goal goal = parseGoal(goalArray.getString(i));
                 if (goal != null){
                     goals.put(goal.getId(), goal);
+                }
+                else{
+                    Log.d("GoalParser", "Goal #" + i + " is null.");
                 }
             }
             catch (JSONException jsonx){
@@ -417,10 +422,10 @@ public final class ContentParser extends ParserMethods{
     }
 
     public static Map<Integer, Action> parseActions(String src){
-        return parseActions(src, null);
+        return parseActionArray(src, null);
     }
 
-    public static Map<Integer, Action> parseActions(String src, @Nullable List<Action> target){
+    public static Map<Integer, Action> parseActionsFromResultSet(String src, @Nullable List<Action> target){
         try{
             return parseActionArray(new JSONObject(src).getString("results"), target);
         }
@@ -428,5 +433,9 @@ public final class ContentParser extends ParserMethods{
             jsonx.printStackTrace();
             return null;
         }
+    }
+
+    public static Map<Integer, Action> parseActions(String src, @Nullable List<Action> target){
+        return parseActionArray(src, target);
     }
 }

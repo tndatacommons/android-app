@@ -161,6 +161,7 @@ public class ChooseCategoriesActivity
             }
         }
         else if (requestCode == mGetDataRequestCode){
+            setResult(RESULT_OK);
             finish();
         }
     }

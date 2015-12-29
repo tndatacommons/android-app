@@ -103,7 +103,7 @@ public class CheckInActivity
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetActionsRequestCode){
             List<Action> actions = new ArrayList<>();
-            ContentParser.parseActions(result, actions);
+            ContentParser.parseActionsFromResultSet(result, actions);
             mDataSet = new HashMap<>();
             //For each action
             for (Action action:actions){

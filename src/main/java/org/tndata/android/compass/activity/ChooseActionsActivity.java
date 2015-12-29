@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -288,9 +287,9 @@ public class ChooseActionsActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetActionsRequestCode){
-            Map<Integer, Action> actions = ContentParser.parseActions(result);
-            if (actions != null && !actions.isEmpty()){
-                List<Action> actionList = new ArrayList<>(actions.values());
+            List<Action> actionList = new ArrayList<>();
+            ContentParser.parseActionsFromResultSet(result, actionList);
+            if (!actionList.isEmpty()){
                 Collections.sort(actionList, new Comparator<Action>(){
                     @Override
                     public int compare(Action act1, Action act2){
