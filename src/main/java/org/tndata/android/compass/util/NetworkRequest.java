@@ -16,11 +16,13 @@ import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -209,6 +211,17 @@ public final class NetworkRequest{
                 }
                 return headers;
             }
+
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response){
+                try{
+                    String utf8String = new String(response.data, "UTF-8");
+                    return Response.success(utf8String, HttpHeaderParser.parseCacheHeaders(response));
+                }
+                catch (UnsupportedEncodingException uex){
+                    return Response.error(new VolleyError("Internal error"));
+                }
+            }
         };
 
         //Create and set the retry policy
@@ -297,6 +310,17 @@ public final class NetworkRequest{
             @Override
             public byte[] getBody() throws AuthFailureError{
                 return sRequestMap.get(requestCode).mBody.toString().getBytes();
+            }
+
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response){
+                try{
+                    String utf8String = new String(response.data, "UTF-8");
+                    return Response.success(utf8String, HttpHeaderParser.parseCacheHeaders(response));
+                }
+                catch (UnsupportedEncodingException uex){
+                    return Response.error(new VolleyError("Internal error"));
+                }
             }
         };
 
