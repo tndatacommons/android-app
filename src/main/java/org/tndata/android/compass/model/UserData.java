@@ -361,7 +361,7 @@ public class UserData{
         assignGoalsToCategories();
         assignBehaviorsToGoals();
         assignActionsToBehaviors();
-        setActionParents();
+        //setActionParents();
     }
 
     /**
@@ -372,12 +372,10 @@ public class UserData{
         // add each goal to the correct category
         for (Category category:getCategories().values()){
             ArrayList<Goal> categoryGoals = new ArrayList<>();
-            for (Goal goal:getGoals().values()){
-                for (Category goalCategory:goal.getCategories()){
-                    if (goalCategory.getId() == category.getId()){
-                        categoryGoals.add(goal);
-                        break;
-                    }
+            for (Goal goal:category.getGoals()){
+                goal = getGoal(goal);
+                if (goal != null){
+                    categoryGoals.add(goal);
                 }
             }
             category.setGoals(categoryGoals);
@@ -392,14 +390,10 @@ public class UserData{
         //Look at all the selected goals
         for (Goal goal:getGoals().values()){
             ArrayList<Behavior> goalBehaviors = new ArrayList<>();
-            //Look at all the selected behaviors
-            for (Behavior behavior:getBehaviors().values()){
-                //The Behavior's parent goals
-                for (Goal behaviorGoal:behavior.getGoals()){
-                    if (behaviorGoal.getId() == goal.getId()){
-                        goalBehaviors.add(behavior);
-                        break;
-                    }
+            for (Behavior behavior:goal.getBehaviors()){
+                behavior = getBehavior(behavior);
+                if (behavior != null){
+                    goalBehaviors.add(behavior);
                 }
             }
             goal.setBehaviors(goalBehaviors);
@@ -443,16 +437,18 @@ public class UserData{
     public void assignActionsToBehaviors(){
         for (Behavior behavior:getBehaviors().values()){
             List<Action> behaviorActions = new ArrayList<>();
-            for (Action action:getActions().values()){
-                if (behavior.getId() == action.getBehavior_id()){
+            for (Action action:behavior.getActions()){
+                action = getAction(action);
+                if (action != null){
                     behaviorActions.add(action);
+                    action.setBehavior(behavior);
                 }
             }
             behavior.setActions(behaviorActions);
         }
 
         // now, set each Action's parent Behavior.
-        setActionParents();
+        //setActionParents();
     }
 
     /**

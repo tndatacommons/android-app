@@ -271,6 +271,7 @@ public final class ContentParser extends ParserMethods{
                 }
                 //This happens when there is no array in user_actions
                 catch (JSONException jsonx){
+                    jsonx.printStackTrace();
                     behavior.setActions(new ArrayList<Action>());
                 }
 
