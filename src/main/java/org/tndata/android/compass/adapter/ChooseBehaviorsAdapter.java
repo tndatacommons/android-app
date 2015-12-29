@@ -28,6 +28,7 @@ import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -146,7 +147,7 @@ public class ChooseBehaviorsAdapter
      *
      * @param behaviors the list of behaviors to be set.
      */
-    public void setBehaviors(List<Behavior> behaviors){
+    public void setBehaviors(Collection<Behavior> behaviors){
         mBehaviors.clear();
 
         Behavior headerBehavior = new Behavior();
@@ -180,7 +181,7 @@ public class ChooseBehaviorsAdapter
      */
     private void selectBehaviorClicked(BehaviorViewHolder holder){
         Behavior behavior = mBehaviors.get(holder.getAdapterPosition()-1);
-        boolean isBehaviorSelected = mApplication.getBehaviors().contains(behavior);
+        boolean isBehaviorSelected = mApplication.getBehaviors().containsKey(behavior.getId());
 
         if (mGoal.areCustomTriggersAllowed()){
             if (isBehaviorSelected){
@@ -273,7 +274,7 @@ public class ChooseBehaviorsAdapter
             BehaviorViewHolder holder = (BehaviorViewHolder)rawHolder;
             Behavior behavior = mBehaviors.get(position);
 
-            boolean isBehaviorSelected = mApplication.getBehaviors().contains(behavior);
+            boolean isBehaviorSelected = mApplication.getBehaviors().containsKey(behavior.getId());
 
             if (position == 0 && behavior.getId() == 0){
                 //Display the header card

@@ -27,7 +27,9 @@ import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -126,9 +128,9 @@ public class ChooseGoalsAdapter
     private void populateStateArray(){
         if (mGoals != null && mGoals.size() > 1){
             goalStates = new byte[mGoals.size()-1];
-            List<Goal> userGoals = mApplication.getGoals();
+            Map<Integer, Goal> userGoals = mApplication.getGoals();
             for (int i = 1; i < mGoals.size(); i++){
-                goalStates[i-1] = userGoals.contains(getItem(i)) ? STATE_ADDED : STATE_NOT_ADDED;
+                goalStates[i-1] = userGoals.containsKey(getItem(i).getId()) ? STATE_ADDED : STATE_NOT_ADDED;
             }
         }
     }
@@ -138,7 +140,7 @@ public class ChooseGoalsAdapter
      *
      * @param goals the list of goals to be added.
      */
-    public void addGoals(List<Goal> goals){
+    public void addGoals(Collection<Goal> goals){
         mGoals.clear();
 
         Goal headerGoal = new Goal();

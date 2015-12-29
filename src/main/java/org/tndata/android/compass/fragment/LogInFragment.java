@@ -4,9 +4,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.User;
+import org.tndata.android.compass.parser.UserDataParser;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.util.Parser;
 
 import android.support.v4.app.Fragment;
 import android.content.Context;
@@ -158,7 +158,7 @@ public class LogInFragment extends Fragment implements NetworkRequest.RequestCal
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        User user = new Parser().parseUser(result);
+        User user = UserDataParser.parseUser(result);
         if (user.getError().isEmpty()){
             user.setPassword(mPassword.getText().toString().trim());
             mCallback.onLoginSuccess(user);

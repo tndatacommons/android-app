@@ -30,6 +30,7 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.util.API;
@@ -37,8 +38,8 @@ import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.util.Parser;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -87,10 +88,9 @@ public class ChooseActionsActivity
         mGoal = (Goal)getIntent().getSerializableExtra("goal");
         mCategory = (Category)getIntent().getSerializableExtra("category");
 
-        List<Behavior> behaviors = mApplication.getUserData().getBehaviors();
-        int index = behaviors.indexOf(mBehavior);
-        if (index != -1){
-            mBehavior = behaviors.get(index);
+        Behavior behavior = mApplication.getUserData().getBehavior(mBehavior);
+        if (behavior != null){
+            mBehavior = behavior;
         }
 
         mToolbar = (Toolbar)findViewById(R.id.choose_actions_toolbar);
@@ -171,11 +171,11 @@ public class ChooseActionsActivity
     }
 
     private boolean isGoalSelected(){
-        return mApplication.getUserData().getGoals().contains(mGoal);
+        return mApplication.getUserData().getGoal(mGoal) != null;
     }
 
     private boolean isBehaviorSelected(){
-        return mApplication.getUserData().getBehaviors().contains(mBehavior);
+        return mApplication.getUserData().getBehavior(mBehavior) != null;
     }
 
     @Override
@@ -230,7 +230,7 @@ public class ChooseActionsActivity
     public void deleteAction(Action action){
         //Make sure we find the action that contains the user's mapping id.
         if (action.getMappingId() <= 0){
-            for (Action a:mApplication.getActions()){
+            for (Action a:mApplication.getActions().values()){
                 if (action.getId() == a.getId()){
                     action.setMappingId(a.getMappingId());
                     break;
@@ -287,28 +287,33 @@ public class ChooseActionsActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetActionsRequestCode){
-            List<Action> actions = new Parser().parseActions(result);
-            if (actions != null && !actions.isEmpty()){
-                Collections.sort(actions, new Comparator<Action>(){
+            List<Action> actionList = new ArrayList<>();
+            ContentParser.parseActionsFromResultSet(result, actionList);
+            if (!actionList.isEmpty()){
+                Collections.sort(actionList, new Comparator<Action>(){
                     @Override
                     public int compare(Action act1, Action act2){
                         return (act1.getSequenceOrder() < act2.getSequenceOrder()) ? 0 : 1;
                     }
                 });
-                mAdapter.setActions(actions);
+                mAdapter.setActions(actionList);
             }
             mAdapter.notifyDataSetChanged();
         }
         else if (requestCode == mPostGoalRequestCode){
-            Goal goal = new Parser().parseAddedGoal(result);
-            mApplication.getUserData().getGoal(goal).setMappingId(goal.getMappingId());
+            Goal goal = ContentParser.parseGoal(result);
+            if (goal != null){
+                mApplication.getUserData().getGoal(goal).setMappingId(goal.getMappingId());
+            }
         }
         else if (requestCode == mPostBehaviorRequestCode){
-            Behavior behavior = new Parser().parseAddedBehavior(result);
-            mApplication.getUserData().getBehavior(behavior).setMappingId(behavior.getMappingId());
+            Behavior behavior = ContentParser.parseBehavior(result);
+            if (behavior != null){
+                mApplication.getUserData().getBehavior(behavior).setMappingId(behavior.getMappingId());
+            }
         }
         else if (requestCode == mPostActionRequestCode){
-            Action action = new Parser().parseAddedAction(result);
+            Action action = ContentParser.parseAction(result);
             Toast.makeText(getApplicationContext(),
                     getString(R.string.action_added, action.getTitle()),
                     Toast.LENGTH_SHORT).show();

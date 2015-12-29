@@ -1,6 +1,6 @@
 package org.tndata.android.compass.activity;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -51,7 +51,9 @@ public class MyPrioritiesActivity
         mToolbar = (Toolbar)findViewById(R.id.tool_bar);
         mToolbar.setTitle("");
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         firstTransition = true;
 
@@ -85,23 +87,23 @@ public class MyPrioritiesActivity
             if (index == CATEGORIES){
                 mToolbar.setTitle(R.string.my_priorities_title);
                 if (firstTransition){
-                    getFragmentManager().beginTransaction()
-                            .setCustomAnimations(0, R.animator.fade_out_downwards)
+                    getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(0, R.anim.fade_out_downwards)
                             .replace(R.id.my_priorities_fragment_host, fragment)
                             .commit();
                     firstTransition = false;
                 }
                 else{
-                    getFragmentManager().beginTransaction()
-                            .setCustomAnimations(R.animator.fade_in, R.animator.fade_out_downwards)
+                    getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.fade_in, R.anim.fade_out_downwards)
                             .replace(R.id.my_priorities_fragment_host, fragment)
                             .commit();
                 }
             }
             else{
                 mToolbar.setTitle(category.getTitle());
-                getFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.animator.fade_in_upwards, R.animator.fade_out)
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.fade_in_upwards, R.anim.fade_out)
                         .replace(R.id.my_priorities_fragment_host, fragment)
                         .commit();
             }

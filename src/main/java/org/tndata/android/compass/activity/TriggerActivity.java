@@ -25,17 +25,18 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.util.Parser;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 
 /**
@@ -515,10 +516,10 @@ public class TriggerActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetActionRequestCode){
-            List<Action> actions = new Parser().parseUserActions(result);
+            Map<Integer, Action> actions = ContentParser.parseActions(result);
             //TODO this if statement won't be necessary when the Parser is fixed
             if (actions != null && actions.size() == 1){
-                mAction = mApplication.getUserData().getAction(actions.get(0));
+                mAction = mApplication.getUserData().getAction(new ArrayList<>(actions.values()).get(0));
                 setAction();
             }
             else{
@@ -526,7 +527,7 @@ public class TriggerActivity
             }
         }
         else if (requestCode == mPutTriggerRequestCode){
-            Action action = new Parser().parseActionWithTrigger(result);
+            Action action = ContentParser.parseAction(result);
             if(action != null){
                 Log.d(TAG, "Updated Action: " + action.getTitle());
                 Log.d(TAG, "Updated Trigger: " + action.getTrigger());

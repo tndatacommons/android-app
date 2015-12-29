@@ -19,6 +19,7 @@ import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -71,12 +72,8 @@ public class CompassApplication extends Application{
     // of this info used to be stored directly in the CompassApplication
     // class, so I've left these here for backwards compatibility.
     // -------------------------------------------------------------------
-    public List<Category> getCategories() {
+    public Map<Integer, Category> getCategories() {
         return mUserData.getCategories();
-    }
-
-    public void setCategories(ArrayList<Category> categories) {
-        mUserData.setCategories(categories);
     }
 
     public void addCategory(Category category) {
@@ -87,12 +84,8 @@ public class CompassApplication extends Application{
         return mUserData.getCategoryGoals(category);
     }
 
-    public List<Goal> getGoals() {
+    public Map<Integer, Goal> getGoals() {
         return mUserData.getGoals();
-    }
-
-    public void setGoals(List<Goal> goals) {
-        mUserData.setGoals(goals);
     }
 
     public void addGoal(Goal goal) {
@@ -105,12 +98,7 @@ public class CompassApplication extends Application{
         mUserData.logSelectedData("AFTER CompassApplication.removeGoal", false);
     }
 
-    public void setBehaviors(ArrayList<Behavior> behaviors) {
-        mUserData.setBehaviors(behaviors);
-        mUserData.logSelectedData("AFTER CompassApplication.setBehaviors", false);
-    }
-
-    public List<Behavior> getBehaviors() {
+    public Map<Integer, Behavior> getBehaviors() {
         return mUserData.getBehaviors();
     }
 
@@ -124,7 +112,7 @@ public class CompassApplication extends Application{
         mUserData.logSelectedData("AFTER CompassApplication.addBehavior", false);
     }
 
-    public List<Action> getActions() {
+    public Map<Integer, Action> getActions() {
         return mUserData.getActions();
     }
 
@@ -133,19 +121,9 @@ public class CompassApplication extends Application{
         mUserData.logSelectedData("AFTER CompassApplication.removeAction: ", false);
     }
 
-    public void setActions(List<Action> actions) {
-        mUserData.setActions(actions);
-        mUserData.logSelectedData("AFTER CompassApplication.setActions", false);
-    }
-
     public void addAction(Action action) {
         mUserData.addAction(action);
         mUserData.logSelectedData("AFTER CompassApplication.addAction", false);
-    }
-
-    public void updateAction(Action action) {
-        mUserData.updateAction(action);
-        mUserData.logSelectedData("AFTER CompassApplication.updateAction", false);
     }
 
     @Override

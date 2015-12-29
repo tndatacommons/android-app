@@ -11,20 +11,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
-
+public class Goal extends TDCBase implements Serializable, Comparable<Goal>{
     private static final long serialVersionUID = 7109406671934150671L;
     private String subtitle = "";
     private String outcome = "";
     private String icon_url = "";
     private int behaviors_count = 0;
-    private List<Category> categories = new ArrayList<>();
-    private List<Behavior> behaviors = new ArrayList<>();
     private double progress_value = 0.0; // Only used for UserGoals
     private Category primary_category;
     private Progress progress;
 
-    public Goal() {
+    private List<Category> categories = new ArrayList<>();
+    private List<Behavior> behaviors = new ArrayList<>();
+
+
+    public Goal(){
+
     }
 
     public Goal(int id, int order, String title, String titleSlug,
@@ -33,7 +35,7 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
         this.subtitle = subtitle;
         this.outcome = outcome;
         this.icon_url = iconUrl;
-        this.categories = new ArrayList<Category>();
+        this.categories = new ArrayList<>();
     }
 
     public Goal(int id, int order, String title, String titleSlug,
@@ -70,23 +72,26 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
         this.icon_url = icon_url;
     }
 
-    public List<Category> getCategories() {
-        return categories;
-    }
-
-    public void removeCategory(Category category) {
-        if(this.categories.contains(category)) {
-            this.categories.remove(category);
-        }
-    }
-
     public void setCategories(List<Category> categories) {
         this.categories = categories;
     }
 
-    public void addCategory(Category category) {
-        if(!this.categories.contains(category)) {
-            this.categories.add(category);
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void addCategory(Category category){
+        if (categories == null){
+            categories = new ArrayList<>();
+        }
+        if (!categories.contains(category)){
+            categories.add(category);
+        }
+    }
+
+    public void removeCategory(Category category){
+        if (categories.contains(category)){
+            categories.remove(category);
         }
     }
 
@@ -102,15 +107,18 @@ public class Goal extends TDCBase implements Serializable, Comparable<Goal> {
         this.behaviors = behaviors;
     }
 
-    public void addBehavior(Behavior behavior) {
-        if(!this.behaviors.contains(behavior)) {
-            this.behaviors.add(behavior);
+    public void addBehavior(Behavior behavior){
+        if (behaviors == null){
+            behaviors = new ArrayList<>();
+        }
+        if(!behaviors.contains(behavior)){
+            behaviors.add(behavior);
         }
     }
 
-    public void removeBehavior(Behavior behavior) {
-        if(this.behaviors.contains(behavior)) {
-            this.behaviors.remove(behavior);
+    public void removeBehavior(Behavior behavior){
+        if(behaviors.contains(behavior)){
+            behaviors.remove(behavior);
         }
     }
 

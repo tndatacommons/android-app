@@ -9,9 +9,11 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoriesAdapter;
 import org.tndata.android.compass.fragment.ChooseCategoriesFragment;
 import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.ParserResults;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.util.Parser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +29,8 @@ public class ChooseCategoriesActivity
         extends AppCompatActivity
         implements
                 ChooseCategoriesAdapter.OnCategoriesSelectedListener,
-                NetworkRequest.RequestCallback{
+                NetworkRequest.RequestCallback,
+                ParserCallback{
 
     private CompassApplication mApplication;
 
@@ -62,7 +65,7 @@ public class ChooseCategoriesActivity
 
         List<Category> toAdd = new ArrayList<>();
         for (Category category:selection){
-            if (!mApplication.getCategories().contains(category)){
+            if (!mApplication.getCategories().containsKey(category.getId())){
                 toAdd.add(category);
             }
         }
@@ -91,7 +94,7 @@ public class ChooseCategoriesActivity
      */
     private void deleteCategories(){
         List<Category> toDelete = new ArrayList<>();
-        for (Category category:mApplication.getCategories()){
+        for (Category category:mApplication.getCategories().values()){
             if (!mSelection.contains(category)){
                 toDelete.add(category);
             }
@@ -140,9 +143,7 @@ public class ChooseCategoriesActivity
             }
         }
         else if (requestCode == mGetDataRequestCode){
-            mApplication.setUserData(new Parser().parseUserData(this, result));
-            setResult(RESULT_OK);
-            finish();
+            Parser.parse(this, result, this);
         }
     }
 
@@ -161,7 +162,15 @@ public class ChooseCategoriesActivity
             }
         }
         else if (requestCode == mGetDataRequestCode){
+            setResult(RESULT_OK);
             finish();
         }
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserResults results){
+        mApplication.setUserData(results.getUserData());
+        setResult(RESULT_OK);
+        finish();
     }
 }

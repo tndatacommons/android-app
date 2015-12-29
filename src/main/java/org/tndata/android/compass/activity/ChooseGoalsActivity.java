@@ -26,14 +26,13 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseGoalsAdapter;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.util.Parser;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -52,7 +51,7 @@ public class ChooseGoalsActivity
                 SearchView.OnQueryTextListener,
                 SearchView.OnCloseListener{
 
-    public static final String CATEGORY_ID_KEY = "org.tndata.compass.ChooseGoals.CategoryId";
+    //public static final String CATEGORY_ID_KEY = "org.tndata.compass.ChooseGoals.CategoryId";
 
 
     private CompassApplication mApplication;
@@ -209,7 +208,7 @@ public class ChooseGoalsActivity
 
         // Ensure the goal contains the user mapping id
         if (goal.getMappingId() <= 0) {
-            for (Goal g: mApplication.getGoals()) {
+            for (Goal g: mApplication.getGoals().values()) {
                 if (goal.getId() == g.getId()) {
                     goal.setMappingId(g.getMappingId());
                     break;
@@ -249,16 +248,16 @@ public class ChooseGoalsActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetGoalsRequestCode){
-            List<Goal> goals = new Parser().parseGoals(result);
+            Map<Integer, Goal> goals = ContentParser.parseGoals(result);
             if (goals != null && !goals.isEmpty()){
-                mAdapter.addGoals(goals);
+                mAdapter.addGoals(goals.values());
             }
             else{
                 showError();
             }
         }
         else if (mAddGoalRequestCodeMap.containsKey(requestCode)){
-            Goal addedGoal = new Parser().parseAddedGoal(result);
+            Goal addedGoal = ContentParser.parseGoal(result);
             Goal goal = mAddGoalRequestCodeMap.remove(requestCode);
             if (addedGoal != null){
                 //We've already added the goal to the mApplication's collection.

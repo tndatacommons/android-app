@@ -16,11 +16,11 @@ import android.widget.ViewSwitcher;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Reward;
+import org.tndata.android.compass.parser.MiscellaneousParser;
 import org.tndata.android.compass.ui.CompassPopupMenu;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.util.Parser;
 
 
 /**
@@ -219,7 +219,7 @@ public class CheckInRewardFragment
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        mReward = new Parser().parseRewards(result).get(0);
+        mReward = MiscellaneousParser.parseRewards(result).get(0);
         populateUI();
         mMoreSwitcher.showPrevious();
     }

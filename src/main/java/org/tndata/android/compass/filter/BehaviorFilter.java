@@ -6,6 +6,7 @@ import org.tndata.android.compass.adapter.ChooseBehaviorsAdapter;
 import org.tndata.android.compass.model.Behavior;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -17,7 +18,7 @@ import java.util.List;
  */
 public class BehaviorFilter extends Filter{
     private ChooseBehaviorsAdapter mAdapter;
-    private List<Behavior> mList;
+    private Collection<Behavior> mList;
 
 
     /**
@@ -26,7 +27,7 @@ public class BehaviorFilter extends Filter{
      * @param adapter the adapter to be filtered.
      * @param list the original list of the adapter.
      */
-    public BehaviorFilter(ChooseBehaviorsAdapter adapter, List<Behavior> list){
+    public BehaviorFilter(ChooseBehaviorsAdapter adapter, Collection<Behavior> list){
         mAdapter = adapter;
         mList = list;
     }

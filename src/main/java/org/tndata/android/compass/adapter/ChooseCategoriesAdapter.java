@@ -24,6 +24,7 @@ import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -89,7 +90,7 @@ public class ChooseCategoriesAdapter
      *
      * @param all the list of all available categories.
      */
-    public void setCategories(@NonNull List<Category> all, @NonNull List<Category> selected){
+    public void setCategories(@NonNull Collection<Category> all, @NonNull Collection<Category> selected){
         //Let the GC take care of the previous list and fill a new one
         mCategories = new ArrayList<>();
         mCategories.addAll(all);

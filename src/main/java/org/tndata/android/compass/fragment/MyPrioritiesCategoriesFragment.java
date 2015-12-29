@@ -1,7 +1,7 @@
 package org.tndata.android.compass.fragment;
 
-import android.app.Activity;
-import android.app.Fragment;
+import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -14,6 +14,8 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.MyPrioritiesCategoryAdapter;
 import org.tndata.android.compass.model.Category;
+
+import java.util.ArrayList;
 
 
 /**
@@ -32,16 +34,16 @@ public class MyPrioritiesCategoriesFragment
 
 
     @Override
-    public void onAttach(Activity activity){
-        super.onAttach(activity);
+    public void onAttach(Context context){
+        super.onAttach(context);
 
         //This makes sure that the container activity has implemented the callback
         //  interface. If not, it throws an exception.
         try{
-            mListener = (OnCategorySelectedListener)activity;
+            mListener = (OnCategorySelectedListener)context;
         }
         catch (ClassCastException ccx){
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnCategorySelectedListener");
         }
     }
@@ -53,7 +55,7 @@ public class MyPrioritiesCategoriesFragment
 
         mCategoryList = (ListView)rootView.findViewById(R.id.my_priorities_category_list);
         mCategoryList.setAdapter(new MyPrioritiesCategoryAdapter(getActivity().getApplicationContext(),
-                ((CompassApplication)getActivity().getApplication()).getCategories()));
+                new ArrayList<>(((CompassApplication)getActivity().getApplication()).getCategories().values())));
         mCategoryList.setOnItemClickListener(this);
 
         return rootView;

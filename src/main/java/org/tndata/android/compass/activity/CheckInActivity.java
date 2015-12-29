@@ -17,9 +17,10 @@ import org.tndata.android.compass.fragment.CheckInRewardFragment;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Reward;
+import org.tndata.android.compass.parser.ContentParser;
+import org.tndata.android.compass.parser.MiscellaneousParser;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.util.Parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -101,7 +102,8 @@ public class CheckInActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetActionsRequestCode){
-            List<Action> actions = new Parser().parseTodaysActions(result);
+            List<Action> actions = new ArrayList<>();
+            ContentParser.parseActionsFromResultSet(result, actions);
             mDataSet = new HashMap<>();
             //For each action
             for (Action action:actions){
@@ -124,7 +126,7 @@ public class CheckInActivity
             mCurrentProgress = new int[mDataSet.size()];
         }
         else if (requestCode == mGetRewardRequestCode){
-            mReward = new Parser().parseRewards(result).get(0);
+            mReward = MiscellaneousParser.parseRewards(result).get(0);
         }
         else if (requestCode == mGetProgressRequestCode){
             try{

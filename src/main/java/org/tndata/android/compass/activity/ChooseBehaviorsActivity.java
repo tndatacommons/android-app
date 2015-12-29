@@ -29,6 +29,7 @@ import org.tndata.android.compass.adapter.ChooseBehaviorsAdapter;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.util.API;
@@ -36,9 +37,8 @@ import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.util.Parser;
 
-import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -194,7 +194,7 @@ public class ChooseBehaviorsActivity
     }
 
     private boolean isGoalSelected(){
-        return mApplication.getUserData().getGoals().contains(mGoal);
+        return mApplication.getUserData().getGoal(mGoal) != null;
     }
 
     @Override
@@ -276,7 +276,7 @@ public class ChooseBehaviorsActivity
     public void deleteBehavior(Behavior behavior){
         //Make sure we find the behavior that contains the user's mapping id
         if (behavior.getMappingId() <= 0){
-            for (Behavior b:mApplication.getBehaviors()){
+            for (Behavior b:mApplication.getBehaviors().values()){
                 if (behavior.getId() == b.getId()){
                     behavior.setMappingId(b.getMappingId());
                     break;
@@ -362,10 +362,10 @@ public class ChooseBehaviorsActivity
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetGoalRequestCode){
             //Parse the goal
-            mGoal = new Parser().parseGoal(result);
+            mGoal = ContentParser.parseGoal(result);
             //Look for a primary category
             for (Category category:mGoal.getCategories()){
-                if (mApplication.getUserData().getCategories().contains(category)){
+                if (mApplication.getUserData().getCategories().containsKey(category.getId())){
                     mGoal.setPrimaryCategory(category);
                     break;
                 }
@@ -379,21 +379,25 @@ public class ChooseBehaviorsActivity
             mSearchItem.setVisible(true);
         }
         else if (requestCode == mPostGoalRequestCode){
-            Goal goal = new Parser().parseAddedGoal(result);
-            mApplication.getUserData().getGoal(goal).setMappingId(goal.getMappingId());
+            Goal goal = ContentParser.parseGoal(result);
+            if (goal != null){
+                mApplication.getUserData().getGoal(goal).setMappingId(goal.getMappingId());
+            }
         }
         else if (requestCode == mGetBehaviorsRequestCode){
-            List<Behavior> behaviors = new Parser().parseBehaviors(result);
+            Map<Integer, Behavior> behaviors = ContentParser.parseBehaviors(result);
             if (behaviors != null){
-                mAdapter.setBehaviors(behaviors);
+                mAdapter.setBehaviors(behaviors.values());
             }
             mAdapter.notifyDataSetChanged();
         }
         else if (requestCode == mPostBehaviorRequestCode){
-            Behavior behavior = new Parser().parseAddedBehavior(result);
-            Log.d("PostBehavior", behavior.toString());
-            mApplication.addBehavior(behavior);
-            mAdapter.notifyDataSetChanged();
+            Behavior behavior = ContentParser.parseBehavior(result);
+            if (behavior != null){
+                Log.d("PostBehavior", behavior.toString());
+                mApplication.addBehavior(behavior);
+                mAdapter.notifyDataSetChanged();
+            }
         }
         else if (requestCode == mDeleteBehaviorRequestCode){
             mAdapter.notifyDataSetChanged();

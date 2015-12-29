@@ -16,10 +16,10 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Instrument;
 import org.tndata.android.compass.model.Survey;
+import org.tndata.android.compass.parser.MiscellaneousParser;
 import org.tndata.android.compass.ui.SurveyView;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.util.Parser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -220,7 +220,7 @@ public class InstrumentFragment
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetInstrumentRequestCode){
             mLoading.setVisibility(View.GONE);
-            Instrument instrument = new Parser().parseInstrument(result);
+            Instrument instrument = MiscellaneousParser.parseInstrument(result);
             if (!instrument.getInstructions().isEmpty()){
                 mInstructions.setText(instrument.getInstructions());
             }

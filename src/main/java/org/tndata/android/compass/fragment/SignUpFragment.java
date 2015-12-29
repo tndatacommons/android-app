@@ -4,9 +4,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.User;
+import org.tndata.android.compass.parser.UserDataParser;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.util.Parser;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
@@ -232,7 +232,7 @@ public class SignUpFragment
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mSignUpRequestCode){
-            User user = new Parser().parseUser(result);
+            User user = UserDataParser.parseUser(result);
             user.setPassword(mPassword.getText().toString().trim());
             mListener.onSignUpSuccess(user);
         }

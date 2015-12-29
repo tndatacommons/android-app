@@ -25,6 +25,7 @@ import android.widget.ViewSwitcher;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.util.API;
@@ -33,9 +34,10 @@ import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ImageLoader;
 import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.NotificationUtil;
-import org.tndata.android.compass.util.Parser;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -373,9 +375,10 @@ public class ActionActivity
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        List<Action> actions = new Parser().parseUserActions(result);
+        List<Action> actions = new ArrayList<>();
+        ContentParser.parseActionsFromResultSet(result, actions);
         //TODO this if statement won't be necessary when the Parser is fixed
-        if (actions != null && actions.size() == 1){
+        if (actions.size() == 1){
             mAction = actions.get(0);
             populateUI();
             invalidateOptionsMenu();

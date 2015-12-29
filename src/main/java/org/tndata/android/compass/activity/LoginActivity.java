@@ -19,10 +19,13 @@ import org.tndata.android.compass.fragment.SignUpFragment;
 import org.tndata.android.compass.fragment.TourFragment;
 import org.tndata.android.compass.fragment.WebFragment;
 import org.tndata.android.compass.model.User;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserResults;
+import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.UserDataParser;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.util.Parser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +38,8 @@ public class LoginActivity
                 SignUpFragment.SignUpFragmentListener,
                 LogInFragment.LogInFragmentCallback,
                 TourFragment.TourFragmentCallback,
-                NetworkRequest.RequestCallback{
+                NetworkRequest.RequestCallback,
+                ParserCallback{
 
 
     //Fragment ids
@@ -285,7 +289,7 @@ public class LoginActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mLogInRequestCode){
-            User user = new Parser().parseUser(result);
+            User user = UserDataParser.parseUser(result);
             Log.d("LogIn", user.getError());
             if (user.getError().isEmpty()){
                 mApplication.setToken(user.getToken());
@@ -303,8 +307,7 @@ public class LoginActivity
             }
         }
         else if (requestCode == mGetDataRequestCode){
-            mApplication.setUserData(new Parser().parseUserData(this, result));
-            transitionToMain();
+            Parser.parse(this, result, this);
         }
     }
 
@@ -317,5 +320,11 @@ public class LoginActivity
         else if (requestCode == mGetDataRequestCode){
             Log.d("LogIn", "Get data failed");
         }
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserResults results){
+        mApplication.setUserData(results.getUserData());
+        transitionToMain();
     }
 }

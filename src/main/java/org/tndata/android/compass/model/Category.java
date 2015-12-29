@@ -18,15 +18,17 @@ public class Category extends TDCBase implements Serializable,
     private int order = -1;
     private String icon_url = "";
     private String image_url = "";
-    private List<Goal> goals = new ArrayList<>();
     private String color = "";
     private String secondary_color = "";
     private int goals_count = 0;
     private double progress_value = 0.0; // Only used for UserCategories
     private boolean packaged_content = false;
 
+    private List<Goal> goals = new ArrayList<>();
 
-    public Category() {
+
+    public Category(){
+
     }
 
     public Category(int id, int order, String title, String titleSlug,
@@ -93,14 +95,17 @@ public class Category extends TDCBase implements Serializable,
         this.goals = goals;
     }
 
-    public void addGoal(Goal goal) {
-        if(!this.goals.contains(goal)) {
-            this.goals.add(goal);
+    public void addGoal(Goal goal){
+        if (goals == null){
+            goals = new ArrayList<>();
+        }
+        if (!goals.contains(goal)){
+            goals.add(goal);
         }
     }
 
-    public void removeGoal(Goal goal) {
-        if(this.goals.contains(goal)) {
+    public void removeGoal(Goal goal){
+        if(this.goals.contains(goal)){
             this.goals.remove(goal);
         }
     }

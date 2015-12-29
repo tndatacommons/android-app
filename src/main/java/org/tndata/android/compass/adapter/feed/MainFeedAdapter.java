@@ -261,13 +261,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             ((CardView)rawHolder.itemView).setRadius(0);
 
             int goalPosition = position - CardTypes.getMyGoalsHeaderPosition()-1;
-            Goal goal;
-            if (mUserData.getGoals().isEmpty()){
-                goal = mUserData.getFeedData().getSuggestions().get(goalPosition);
-            }
-            else{
-                goal = mUserData.getGoals().get(goalPosition);
-            }
+            Goal goal = mDataHandler.getGoals().get(goalPosition);
             ((GoalHolder)rawHolder).bind(goal, mUserData.getGoals().isEmpty());
         }
         else if (CardTypes.isMyGoalsFooter(position)){

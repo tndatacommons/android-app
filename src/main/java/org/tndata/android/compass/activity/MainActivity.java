@@ -43,6 +43,8 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.parser.MiscellaneousParser;
+import org.tndata.android.compass.parser.UserDataParser;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
@@ -50,7 +52,6 @@ import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.OnScrollListenerHub;
 import org.tndata.android.compass.util.ParallaxEffect;
-import org.tndata.android.compass.util.Parser;
 
 import java.util.ArrayList;
 
@@ -365,7 +366,7 @@ public class MainActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetUserDataRequestCode){
-            UserData userData = new Parser().parseUserData(this, result);
+            UserData userData = UserDataParser.parseUserData(this, result);
             if (userData != null){
                 mApplication.setUserData(userData);
 
@@ -385,7 +386,7 @@ public class MainActivity
         }
         else if (requestCode == mLastSearchRequestCode){
             mSearchHeader.setVisibility(View.VISIBLE);
-            mSearchAdapter.updateDataSet(new Parser().parseSearchResults(result));
+            mSearchAdapter.updateDataSet(MiscellaneousParser.parseSearchResults(result));
         }
     }
 
@@ -411,7 +412,7 @@ public class MainActivity
         mMenu.removeAllMenuButtons();
 
         //Populate the menu with a button per category
-        for (final Category category:mApplication.getUserData().getCategories()){
+        for (final Category category:mApplication.getUserData().getCategories().values()){
             //Skip packaged categories
             if (category.isPackagedContent()){
                 continue;
