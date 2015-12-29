@@ -308,8 +308,6 @@ public class LoginActivity
         }
         else if (requestCode == mGetDataRequestCode){
             Parser.parse(this, result, this);
-            //mApplication.setUserData(UserDataParser.parseUserData(this, result));
-            //transitionToMain();
         }
     }
 
