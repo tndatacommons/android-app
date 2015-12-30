@@ -130,4 +130,9 @@ public class UserGoal extends TDCBase implements Serializable{
             user_categories.remove(category);
         }
     }
+
+    @Override
+    public String toString(){
+        return "UserGoal #" + getId() + " (" + goal.toString() + ")";
+    }
 }

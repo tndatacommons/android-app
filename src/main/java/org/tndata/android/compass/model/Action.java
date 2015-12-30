@@ -20,7 +20,7 @@ public class Action extends TDCBase implements Serializable{
     private Trigger default_trigger;
 
     private Behavior behavior = null;
-    
+
 
     /*---------*
      * GETTERS *
