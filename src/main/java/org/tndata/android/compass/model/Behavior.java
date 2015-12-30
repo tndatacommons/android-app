@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Model class for behaviors.
  *
- * @author Ismael Alonso
+ * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
 public class Behavior extends TDCBase implements Serializable{

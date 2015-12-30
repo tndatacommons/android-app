@@ -41,6 +41,31 @@ public class UserAction extends TDCBase implements Serializable{
      * GETTERS *
      *---------*/
 
+    @Override
+    public String getTitle(){
+        return action.getTitle();
+    }
+
+    @Override
+    public String getTitleSlug(){
+        return action.getTitleSlug();
+    }
+
+    @Override
+    public String getDescription(){
+        return action.getDescription();
+    }
+
+    @Override
+    public String getHTMLDescription(){
+        return action.getHTMLDescription();
+    }
+
+    @Override
+    public String getIconUrl(){
+        return action.getIconUrl();
+    }
+
     public String getRawNextReminderDate(){
         return next_reminder_date;
     }
