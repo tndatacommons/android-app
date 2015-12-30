@@ -28,20 +28,6 @@ public abstract class TDCBase implements Serializable, Comparable<TDCBase>{
     private int mappingId = -1;
 
 
-
-    public TDCBase(){
-
-    }
-
-    public TDCBase(int id, String name, String nameSlug, String description, String htmlDescription){
-        this.setId(id);
-        this.setTitle(name);
-        this.setTitleSlug(nameSlug);
-        this.setDescription(description);
-        this.setHTMLDescription(htmlDescription);
-    }
-
-
     /*---------*
      * SETTERS *
      *---------*/
@@ -108,20 +94,9 @@ public abstract class TDCBase implements Serializable, Comparable<TDCBase>{
     }
 
 
-    @Deprecated
-    public int getMappingId() {
-        return mappingId;
-    }
-
-    @Deprecated
-    public void setMappingId(int mappingId) {
-        this.mappingId = mappingId;
-    }
-
-    @Deprecated
-    public boolean areCustomTriggersAllowed(){
-        return editable;
-    }
+    /*---------*
+     * UTILITY *
+     *---------*/
 
     @Override
     public boolean equals(Object object){

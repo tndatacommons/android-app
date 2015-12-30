@@ -24,11 +24,6 @@ public class Goal extends TDCBase implements Serializable{
     private List<Category> categories = new ArrayList<>();
 
 
-    public Goal(){
-
-    }
-
-
     /*---------*
      * SETTERS *
      *---------*/

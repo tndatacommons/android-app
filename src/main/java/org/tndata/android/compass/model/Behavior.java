@@ -25,11 +25,6 @@ public class Behavior extends TDCBase implements Serializable{
     private int actions_count = 0;
 
 
-    public Behavior(){
-
-    }
-
-
     /*---------*
      * SETTERS *
      *---------*/

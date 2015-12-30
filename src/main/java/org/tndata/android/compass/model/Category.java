@@ -29,11 +29,6 @@ public class Category extends TDCBase implements Serializable{
     private boolean packaged_content = false;
 
 
-    public Category(){
-
-    }
-
-
     /*---------*
      * SETTERS *
      *---------*/

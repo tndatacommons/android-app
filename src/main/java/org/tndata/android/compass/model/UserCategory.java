@@ -14,19 +14,20 @@ import java.util.List;
 public class UserCategory extends TDCBase implements Serializable{
     private static final long serialVersionUID = 1751646542285854670L;
 
-    private Category category = null;
+    private Category category;
     private List<UserGoal> user_goals;
 
     private double progress_value = 0.0;
 
 
+    public UserCategory(Category category){
+        this.category = category;
+    }
+
+
     /*---------*
      * SETTERS *
      *---------*/
-
-    public void setCategory(Category category){
-        this.category = category;
-    }
 
     public void setProgressValue(double value){
         this.progress_value = value;
