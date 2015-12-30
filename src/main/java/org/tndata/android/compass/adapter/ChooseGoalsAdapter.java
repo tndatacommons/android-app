@@ -109,7 +109,7 @@ public class ChooseGoalsAdapter
         View header = inflater.inflate(R.layout.header_choose_goals, mRecyclerView, false);
 
         ImageView headerImageView = (ImageView)header.findViewById(R.id.choose_goals_header_imageview);
-        mCategory.loadImageIntoView(mContext, headerImageView);
+        mCategory.loadImageIntoView(headerImageView);
 
         ((HeaderLayoutManagerFixed)mRecyclerView.getLayoutManager()).setHeaderIncrementFixer(header);
         setShouldClipView(false);

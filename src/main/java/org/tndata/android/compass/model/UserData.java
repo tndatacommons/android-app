@@ -480,9 +480,9 @@ public class UserData{
         // set a reference to the parent for each action.
         for (Action action:getActions().values()){
             for (Behavior behavior:getBehaviors().values()){
-                if (action.getBehavior_id() == behavior.getId()){
+                /*if (action.getBehavior_id() == behavior.getId()){
                     action.setBehavior(behavior);
-                }
+                }*/
             }
         }
     }
@@ -571,7 +571,7 @@ public class UserData{
         Log.d(TAG, "Actions.");
         for (Action item:mActions.values()){
             Log.d(TAG, "- (" + item.getId() + ") " + item.getTitle());
-            Log.d(TAG, "--> contains, behavior_id = " + item.getBehavior_id());
+            //Log.d(TAG, "--> contains, behavior_id = " + item.getBehavior_id());
         }
     }
 

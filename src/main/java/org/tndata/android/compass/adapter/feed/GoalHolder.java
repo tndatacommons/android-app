@@ -64,7 +64,7 @@ class GoalHolder extends MainFeedViewHolder implements View.OnClickListener{
             }
         }
 
-        goal.loadIconIntoView(mAdapter.mContext, mIcon);
+        goal.loadIconIntoView(mIcon);
         mTitle.setText(goal.getTitle());
     }
 }

@@ -96,7 +96,7 @@ public class ChooseActionsAdapter
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View header = inflater.inflate(R.layout.header_choose_actions, mRecyclerView, false);
         ImageView goalIconView = (ImageView)header.findViewById(R.id.choose_actions_header_icon);
-        mBehavior.loadIconIntoView(mContext, goalIconView);
+        mBehavior.loadIconIntoView(goalIconView);
 
         ((HeaderLayoutManagerFixed)mRecyclerView.getLayoutManager()).setHeaderIncrementFixer(header);
         setParallaxHeader(header, mRecyclerView);

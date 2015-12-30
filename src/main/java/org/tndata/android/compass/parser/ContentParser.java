@@ -275,18 +275,6 @@ public final class ContentParser extends ParserMethods{
                     behavior.setActions(new ArrayList<Action>());
                 }
 
-                try{
-                    JSONArray categoryArray = behaviorObject.getJSONArray("user_categories");
-                    List<Category> categories = behavior.getUserCategories();
-                    for (int i = 0; i < categoryArray.length(); i++){
-                        categories.add(parseCategoryModel(categoryArray.getString(i)));
-                    }
-                    behavior.setUserCategories(categories);
-                }
-                catch (JSONException jsonx){
-                    behavior.setUserCategories(new ArrayList<Category>());
-                }
-
                 behavior.setProgress(sGson.fromJson(behaviorObject.getString("behavior_progress"), Progress.class));
 
                 goalArrayName = "user_goals";

@@ -135,7 +135,7 @@ public class CategoryFragmentAdapter extends
 
         // If the user hasn't selected any Behaviors display the goal's icon instead of the
         // progress widget
-        goal.loadIconIntoView(mContext, iconImageView);
+        goal.loadIconIntoView(iconImageView);
 
         final Boolean goalIsEmpty = goal.getBehaviors().isEmpty();
         TextView ctaTextView = ((CategoryGoalViewHolder) viewHolder).moreInfoTextView;

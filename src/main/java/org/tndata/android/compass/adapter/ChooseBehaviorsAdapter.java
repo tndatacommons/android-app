@@ -114,7 +114,7 @@ public class ChooseBehaviorsAdapter
         View header = inflater.inflate(R.layout.header_choose_behaviors, mRecyclerView, false);
 
         ImageView headerIcon = (ImageView)header.findViewById(R.id.header_choose_behaviors_icon);
-        mGoal.loadIconIntoView(mContext, headerIcon);
+        mGoal.loadIconIntoView(headerIcon);
 
         RelativeLayout circleView = (RelativeLayout)header.findViewById(R.id.header_choose_behaviors_circle_view);
         GradientDrawable gradientDrawable = (GradientDrawable) circleView.getBackground();
