@@ -42,7 +42,7 @@ import org.tndata.android.compass.util.NotificationUtil;
  * whether they did it or snooze the action.
  *
  * @author Ismael Alonso
- * @version 1.2.0
+ * @version 1.2.1
  */
 public class ActionActivity
         extends AppCompatActivity

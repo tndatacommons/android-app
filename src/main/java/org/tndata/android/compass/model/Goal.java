@@ -22,6 +22,7 @@ public class Goal extends TDCBase implements Serializable{
     private int behaviors_count = 0;
 
     private List<Category> categories = new ArrayList<>();
+    private Category primary_category;
 
 
     /*---------*
@@ -51,6 +52,10 @@ public class Goal extends TDCBase implements Serializable{
 
     public List<Category> getCategories(){
         return categories;
+    }
+
+    public Category getPrimaryCategory(){
+        return primary_category;
     }
 
 

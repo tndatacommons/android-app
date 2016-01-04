@@ -14,9 +14,9 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.CheckInPagerAdapter;
 import org.tndata.android.compass.fragment.CheckInFeedbackFragment;
 import org.tndata.android.compass.fragment.CheckInRewardFragment;
-import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Reward;
+import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.parser.MiscellaneousParser;
 import org.tndata.android.compass.util.API;
@@ -65,7 +65,7 @@ public class CheckInActivity
     private CheckInPagerAdapter mAdapter;
 
     //Data
-    private Map<Goal, List<Action>> mDataSet;
+    private Map<Goal, List<UserAction>> mDataSet;
     private Reward mReward;
     private float mProgress;
     private int mCurrentProgress[];
@@ -102,11 +102,11 @@ public class CheckInActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetActionsRequestCode){
-            List<Action> actions = new ArrayList<>();
-            ContentParser.parseActionsFromResultSet(result, actions);
+            List<UserAction> actions = new ArrayList<>();
+            ContentParser.parseUserActionsFromResultSet(result, actions);
             mDataSet = new HashMap<>();
             //For each action
-            for (Action action:actions){
+            for (UserAction action:actions){
                 //If there is a primary goal
                 if (action.getPrimaryGoal() != null){
                     //If the primary goal is already in the data set
@@ -117,7 +117,7 @@ public class CheckInActivity
                     //Otherwise
                     else{
                         //Create the list and add the goal to the data set
-                        List<Action> actionList = new ArrayList<>();
+                        List<UserAction> actionList = new ArrayList<>();
                         actionList.add(action);
                         mDataSet.put(action.getPrimaryGoal(), actionList);
                     }
