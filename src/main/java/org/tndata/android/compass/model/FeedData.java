@@ -14,7 +14,7 @@ import java.util.List;
  * @version 1.0.0
  */
 public class FeedData{
-    private Action mNextAction;
+    private UserAction mNextAction;
 
     private String mFeedbackTitle;
     private String mFeedbackSubtitle;
@@ -24,7 +24,7 @@ public class FeedData{
     private int mCompletedActions;
     private int mPercentage;
 
-    private List<Action> mUpcomingActions;
+    private List<UserAction> mUpcomingActions;
     private List<Goal> mSuggestions;
 
 
@@ -33,7 +33,7 @@ public class FeedData{
      *
      * @param nextAction the next action.
      */
-    public void setNextAction(Action nextAction){
+    public void setNextAction(UserAction nextAction){
         mNextAction = nextAction;
     }
 
@@ -42,7 +42,7 @@ public class FeedData{
      *
      * @return the next action.
      */
-    public Action getNextAction(){
+    public UserAction getNextAction(){
         return mNextAction;
     }
 
@@ -181,7 +181,7 @@ public class FeedData{
      *
      * @param upcomingActions the list of upcoming actions.
      */
-    public void setUpcomingActions(List<Action> upcomingActions){
+    public void setUpcomingActions(List<UserAction> upcomingActions){
         mUpcomingActions = upcomingActions;
     }
 
@@ -190,7 +190,7 @@ public class FeedData{
      *
      * @return the list of upcoming actions.
      */
-    public List<Action> getUpcomingActions(){
+    public List<UserAction> getUpcomingActions(){
         return mUpcomingActions;
     }
 

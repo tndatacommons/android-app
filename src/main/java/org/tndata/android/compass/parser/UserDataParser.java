@@ -7,11 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.database.CompassDbHelper;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Behavior;
-import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.FeedData;
-import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.model.SurveyOptions;
 import org.tndata.android.compass.model.User;
@@ -110,10 +106,10 @@ public final class UserDataParser extends ParserMethods{
 
             //Parse the user-selected content, store in userData; wait till all data is set
             //  before syncing parent/child relationships
-            Map<Integer, UserCategory> categories = ContentParser.parseCategoryArray(userJson.getString("categories"));
-            Map<Integer, UserGoal> goals = ContentParser.parseGoalArray(userJson.getString("goals"));
-            Map<Integer, UserBehavior> behaviors = ContentParser.parseBehaviorArray(userJson.getString("behaviors"));
-            Map<Integer, UserAction> actions = ContentParser.parseActionArray(userJson.getString("actions"), null);
+            Map<Integer, UserCategory> categories = ContentParser.parseUserCategoryArray(userJson.getString("categories"));
+            Map<Integer, UserGoal> goals = ContentParser.parseUserGoalArray(userJson.getString("goals"));
+            Map<Integer, UserBehavior> behaviors = ContentParser.parseUserBehaviorArray(userJson.getString("behaviors"));
+            Map<Integer, UserAction> actions = ContentParser.parseUserActionArray(userJson.getString("actions"), null);
 
             if (categories == null || goals == null || behaviors == null || actions == null){
                 return null;
@@ -155,25 +151,20 @@ public final class UserDataParser extends ParserMethods{
             feedData.setCompletedActions(progress.getInt("completed"));
             feedData.setTotalActions(progress.getInt("total"));
 
-            List<Action> upcomingActions = new ArrayList<>();
-            ContentParser.parseActions(userJson.getString("upcoming_actions"), upcomingActions);
+            List<UserAction> upcomingActions = new ArrayList<>();
+            ContentParser.parseUserActions(userJson.getString("upcoming_actions"), upcomingActions);
             if (upcomingActions.size() > 1){
-                List<Action> actionReferences = new ArrayList<>();
-                for (Action action:upcomingActions.subList(1, upcomingActions.size())){
+                List<UserAction> actionReferences = new ArrayList<>();
+                for (UserAction action:upcomingActions.subList(1, upcomingActions.size())){
                     actionReferences.add(userData.getAction(action));
                 }
                 feedData.setUpcomingActions(actionReferences);
             }
             else{
-                feedData.setUpcomingActions(new ArrayList<Action>());
+                feedData.setUpcomingActions(new ArrayList<UserAction>());
             }
 
-            Map<Integer, Goal> suggestionMap = ContentParser.parseGoalArray(userJson.getString("suggestions"));
-            List<Goal> suggestions = new ArrayList<>();
-            if (suggestionMap != null){
-                suggestions.addAll(suggestionMap.values());
-            }
-            feedData.setSuggestions(suggestions);
+            feedData.setSuggestions(ContentParser.parseGoalArray(userJson.getString("suggestions")));
 
             userData.setFeedData(feedData);
             userData.logData();
