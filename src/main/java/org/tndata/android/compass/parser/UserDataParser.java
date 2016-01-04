@@ -15,7 +15,11 @@ import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.model.SurveyOptions;
 import org.tndata.android.compass.model.User;
+import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserBehavior;
+import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
@@ -106,10 +110,10 @@ public final class UserDataParser extends ParserMethods{
 
             //Parse the user-selected content, store in userData; wait till all data is set
             //  before syncing parent/child relationships
-            Map<Integer, Category> categories = ContentParser.parseCategoryArray(userJson.getString("categories"));
-            Map<Integer, Goal> goals = ContentParser.parseGoalArray(userJson.getString("goals"));
-            Map<Integer, Behavior> behaviors = ContentParser.parseBehaviorArray(userJson.getString("behaviors"));
-            Map<Integer, Action> actions = ContentParser.parseActionArray(userJson.getString("actions"), null);
+            Map<Integer, UserCategory> categories = ContentParser.parseCategoryArray(userJson.getString("categories"));
+            Map<Integer, UserGoal> goals = ContentParser.parseGoalArray(userJson.getString("goals"));
+            Map<Integer, UserBehavior> behaviors = ContentParser.parseBehaviorArray(userJson.getString("behaviors"));
+            Map<Integer, UserAction> actions = ContentParser.parseActionArray(userJson.getString("actions"), null);
 
             if (categories == null || goals == null || behaviors == null || actions == null){
                 return null;

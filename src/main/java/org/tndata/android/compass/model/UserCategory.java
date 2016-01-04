@@ -33,7 +33,7 @@ public class UserCategory extends TDCBase implements Serializable{
         this.progress_value = value;
     }
 
-    public void setUserGoals(List<UserGoal> userGoals){
+    public void setGoals(List<UserGoal> userGoals){
         this.user_goals = userGoals;
     }
 
@@ -44,6 +44,10 @@ public class UserCategory extends TDCBase implements Serializable{
 
     public Category getCategory(){
         return category;
+    }
+
+    public int getCategoryId(){
+        return category.getId();
     }
 
     @Override
@@ -71,7 +75,7 @@ public class UserCategory extends TDCBase implements Serializable{
         return category.getIconUrl();
     }
 
-    public List<UserGoal> getUserGoals(){
+    public List<UserGoal> getGoals(){
         return user_goals;
     }
 

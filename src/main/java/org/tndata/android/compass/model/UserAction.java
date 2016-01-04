@@ -15,6 +15,7 @@ public class UserAction extends TDCBase implements Serializable{
     private Action action;
     private String next_reminder_date;
 
+    private UserBehavior behavior;
     private Goal primary_goal = null;
     private Category primary_category = null;
 
@@ -32,6 +33,10 @@ public class UserAction extends TDCBase implements Serializable{
      * SETTERS *
      *---------*/
 
+    public void setBehavior(UserBehavior behavior){
+        this.behavior = behavior;
+    }
+
     public void setTrigger(Trigger trigger){
         this.trigger = trigger;
     }
@@ -40,6 +45,14 @@ public class UserAction extends TDCBase implements Serializable{
     /*---------*
      * GETTERS *
      *---------*/
+
+    public Action getAction(){
+        return action;
+    }
+
+    public int getActionId(){
+        return action.getId();
+    }
 
     @Override
     public String getTitle(){
@@ -92,6 +105,10 @@ public class UserAction extends TDCBase implements Serializable{
             nfx.printStackTrace();
             return "";
         }
+    }
+
+    public UserBehavior getBehavior(){
+        return behavior;
     }
 
     public Category getPrimaryCategory(){

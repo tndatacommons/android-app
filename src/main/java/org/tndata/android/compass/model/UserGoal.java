@@ -51,6 +51,10 @@ public class UserGoal extends TDCBase implements Serializable{
         return goal;
     }
 
+    public int getGoalId(){
+        return goal.getId();
+    }
+
     @Override
     public String getTitle(){
         return goal.getTitle();

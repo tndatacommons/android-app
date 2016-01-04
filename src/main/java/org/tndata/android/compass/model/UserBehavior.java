@@ -48,6 +48,10 @@ public class UserBehavior extends TDCBase implements Serializable{
         return behavior;
     }
 
+    public int getBehaviorId(){
+        return behavior.getId();
+    }
+
     @Override
     public String getTitle(){
         return behavior.getTitle();
