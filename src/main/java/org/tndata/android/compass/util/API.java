@@ -216,8 +216,15 @@ public abstract class API{
         return BASE_URL + "users/actions/?today=1";
     }
 
-    public static String getActionUrl(int actionId){
-        return BASE_URL + "users/actions/?action=" + actionId;
+    /**
+     * Gets the URL to fetch a particular user action. Hitting this endpoint will result
+     * in the retrieval of an unwrapped UserAction JSON object.
+     *
+     * @param actionMappingId the mapping id of the user action.
+     * @return the url of the endpoint to retrieve the requested user action.
+     */
+    public static String getActionUrl(int actionMappingId){
+        return BASE_URL + "users/actions/" + actionMappingId + "/";
     }
 
     public static String getPostActionUrl(){

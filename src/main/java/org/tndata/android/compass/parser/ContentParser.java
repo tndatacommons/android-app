@@ -406,7 +406,7 @@ public final class ContentParser extends ParserMethods{
         return parseUserActionArray(src, target);
     }
 
-    public static Map<Integer, UserAction> parseActionsFromResultSet(String src, @Nullable List<UserAction> target){
+    public static Map<Integer, UserAction> parseUserActionsFromResultSet(String src, @Nullable List<UserAction> target){
         try{
             return parseUserActionArray(new JSONObject(src).getString("results"), target);
         }

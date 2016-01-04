@@ -123,6 +123,10 @@ public class UserAction extends TDCBase implements Serializable{
         return trigger;
     }
 
+    public boolean hasTrigger(){
+        return trigger != null;
+    }
+
 
     /*---------*
      * UTILITY *
