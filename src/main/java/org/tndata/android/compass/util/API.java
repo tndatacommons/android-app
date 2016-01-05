@@ -6,9 +6,13 @@ import android.support.annotation.NonNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.BuildConfig;
+import org.tndata.android.compass.model.Behavior;
+import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.model.User;
+import org.tndata.android.compass.model.UserAction;
 
 import java.util.TimeZone;
 
@@ -166,10 +170,11 @@ public abstract class API{
         return BASE_URL + "users/goals/";
     }
 
-    public static JSONObject getPostGoalBody(int goalId){
+    public static JSONObject getPostGoalBody(Goal goal, Category primaryCategory){
         JSONObject postGoalBody = new JSONObject();
         try{
-            postGoalBody.put("goal", goalId);
+            postGoalBody.put("goal", goal.getId());
+            postGoalBody.put("primary_category", primaryCategory.getId());
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
@@ -208,8 +213,8 @@ public abstract class API{
 
 
     //Actions
-    public static String getActionsUrl(int behaviorId){
-        return BASE_URL + "actions/?behavior=" + behaviorId;
+    public static String getActionsUrl(Behavior behavior){
+        return BASE_URL + "actions/?behavior=" + behavior.getId();
     }
 
     public static String getTodaysActionsUrl(){
@@ -243,8 +248,8 @@ public abstract class API{
         return postActionBody;
     }
 
-    public static String getDeleteActionUrl(int mappingId){
-        return BASE_URL + "users/actions/" + mappingId + "/";
+    public static String getDeleteActionUrl(UserAction userAction){
+        return BASE_URL + "users/actions/" + userAction.getId() + "/";
     }
 
 

@@ -16,6 +16,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.filter.ActionFilter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
+import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
 import org.tndata.android.compass.util.CompassTagHandler;
@@ -47,6 +48,9 @@ public class ChooseActionsAdapter
     private List<Action> mActions;
     private int mExpandedAction;
 
+    private boolean mIsEditable;
+
+
     /**
      * Constructor.
      *
@@ -59,6 +63,7 @@ public class ChooseActionsAdapter
     public ChooseActionsAdapter(@NonNull Context context, @NonNull ChooseActionsListener listener,
                                 @NonNull CompassApplication app, @NonNull RecyclerView recyclerView,
                                 @NonNull Behavior behavior){
+
         super(new ArrayList<Action>());
 
         //Assign the references
@@ -76,6 +81,12 @@ public class ChooseActionsAdapter
         //Create an empty list and "nullify" the expanded action.
         mActions = new ArrayList<>();
         mExpandedAction = -1;
+
+        mIsEditable = true;
+        UserBehavior userBehavior = mApplication.getUserData().getBehavior(behavior);
+        if (userBehavior != null){
+            mIsEditable = userBehavior.isEditable();
+        }
 
         //Create and set the headers
         Action actionHeader = new Action();
@@ -162,7 +173,7 @@ public class ChooseActionsAdapter
         Action action = mActions.get(holder.getAdapterPosition()-1);
         boolean isActionSelected = mApplication.getActions().containsKey(action.getId());
 
-        if (mBehavior.areCustomTriggersAllowed()){
+        if (mIsEditable){
             if (isActionSelected){
                 mListener.deleteAction(action);
             }

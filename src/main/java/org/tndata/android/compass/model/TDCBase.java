@@ -24,9 +24,6 @@ public abstract class TDCBase implements Serializable, Comparable<TDCBase>{
     private String icon_url = "";
     private boolean editable = false;
 
-    //TODO this is not necessary anymore since user-content is going to use the ID
-    private int mappingId = -1;
-
 
     /*---------*
      * SETTERS *
