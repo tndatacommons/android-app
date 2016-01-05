@@ -288,8 +288,8 @@ public class GoalActivity
     @Override
     public void onActionSelected(Behavior behavior, Action action){
         Intent trigger = new Intent(this, TriggerActivity.class)
-                .putExtra("action", action)
-                .putExtra("goal", mGoal);
+                .putExtra(TriggerActivity.USER_ACTION_KEY, action)
+                .putExtra(TriggerActivity.GOAL_KEY, mGoal);
         startActivityForResult(trigger, TRIGGER_REQUEST_CODE);
     }
 }

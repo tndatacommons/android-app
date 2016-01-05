@@ -41,6 +41,10 @@ public class UserAction extends TDCBase implements Serializable{
         this.trigger = trigger;
     }
 
+    public void setNextReminderDate(String nextReminderDate){
+        next_reminder_date = nextReminderDate;
+    }
+
 
     /*---------*
      * GETTERS *
