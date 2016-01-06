@@ -14,6 +14,10 @@ import java.util.Stack;
 /**
  * Creates a parallax effect on the provided view.
  *
+ * TODO this is a class I've been adapting to new needs every time something new needed to
+ * TODO be done, therefore it's gotten real messy over the months. It needs proper design
+ * TODO and extended scrollable types support.
+ *
  * @author Ismael Alonso
  * @version 2.0.0
  */

@@ -20,6 +20,8 @@ public class Behavior extends TDCBase implements Serializable{
 
     private String more_info = "";
     private String html_more_info = "";
+    private String external_resource = "";
+    private String external_resource_name = "";
 
     private List<Goal> goals = new ArrayList<>();
     private int actions_count = 0;
@@ -44,6 +46,14 @@ public class Behavior extends TDCBase implements Serializable{
 
     public String getHTMLMoreInfo(){
         return html_more_info;
+    }
+
+    public String getExternalResource(){
+        return external_resource;
+    }
+
+    public String getExternalResourceName(){
+        return external_resource_name;
     }
 
     public List<Goal> getGoals(){

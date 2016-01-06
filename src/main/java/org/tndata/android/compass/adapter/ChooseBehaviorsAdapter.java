@@ -22,6 +22,7 @@ import org.tndata.android.compass.filter.BehaviorFilter;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
 import org.tndata.android.compass.util.CompassTagHandler;
@@ -57,6 +58,8 @@ public class ChooseBehaviorsAdapter
     private TextView mAddGoalCurrentButton;
     private boolean mIsGoalAdded;
 
+    private boolean mIsEditable;
+
 
     /**
      * Constructor,
@@ -90,6 +93,12 @@ public class ChooseBehaviorsAdapter
         //Create an empty list and "nullify" the expanded behavior.
         mBehaviors = new ArrayList<>();
         mExpandedBehavior = -1;
+
+        mIsEditable = true;
+        UserGoal userGoal = mApplication.getUserData().getGoal(goal);
+        if (userGoal != null){
+            mIsEditable = userGoal.isEditable();
+        }
 
         //Create and set the headers
         Behavior headerBehavior = new Behavior();
@@ -183,7 +192,8 @@ public class ChooseBehaviorsAdapter
         Behavior behavior = mBehaviors.get(holder.getAdapterPosition()-1);
         boolean isBehaviorSelected = mApplication.getBehaviors().containsKey(behavior.getId());
 
-        if (mGoal.areCustomTriggersAllowed()){
+        if (mIsEditable){
+            //TODO could be nice to check if the piece of content is being removed or added
             if (isBehaviorSelected){
                 //Tapping this again should remove the behavior
                 Log.d("GoalTryActivity", "Trying to remove behavior: " + behavior.getTitle());
@@ -292,7 +302,6 @@ public class ChooseBehaviorsAdapter
                 }
                 holder.mIcon.setVisibility(View.GONE);
                 holder.mDescription.setVisibility(View.GONE);
-                holder.mExternalResource.setVisibility(View.GONE);
                 holder.mTitle.setVisibility(View.GONE);
                 holder.mActionWrapper.setVisibility(View.GONE);
             }
@@ -344,17 +353,9 @@ public class ChooseBehaviorsAdapter
 
                 if (behavior.getExternalResource().isEmpty()){
                     holder.mDoItNow.setVisibility(View.GONE);
-                    holder.mExternalResource.setVisibility(View.GONE);
                 }
                 else{
-                    if (mExpandedBehavior == position+1){
-                        holder.mExternalResource.setVisibility(View.VISIBLE);
-                    }
-                    else{
-                        holder.mExternalResource.setVisibility(View.GONE);
-                    }
                     holder.mDoItNow.setVisibility(View.VISIBLE);
-                    holder.mExternalResource.setText(behavior.getExternalResource());
                 }
             }
         }
@@ -381,7 +382,6 @@ public class ChooseBehaviorsAdapter
         private ImageView mIcon;
         private TextView mTitle;
         private TextView mDescription;
-        private TextView mExternalResource;
 
         private LinearLayout mActionWrapper;
         private ImageView mMoreInfo;
@@ -405,7 +405,6 @@ public class ChooseBehaviorsAdapter
             mIcon = (ImageView)rootView.findViewById(R.id.choose_behavior_icon);
             mTitle = (TextView)rootView.findViewById(R.id.choose_behavior_title);
             mDescription = (TextView)rootView.findViewById(R.id.choose_behavior_description);
-            mExternalResource = (TextView)rootView.findViewById(R.id.choose_behavior_external_resource);
 
             mActionWrapper = (LinearLayout)rootView.findViewById(R.id.choose_behavior_action_wrapper);
             mSelectBehavior = (ImageView)rootView.findViewById(R.id.choose_behavior_select);

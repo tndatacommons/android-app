@@ -14,9 +14,10 @@ import java.util.List;
 
 /**
  * Created by poliveira on 03/11/2014.
+ *
+ * TODO I also want to deprecate this mess. Or do it properly from scratch
  */
-public class ParallaxRecyclerAdapter<T> extends
-        RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ParallaxRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private final float SCROLL_MULTIPLIER = 0.5f;
 
     public static class VIEW_TYPES {

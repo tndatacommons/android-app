@@ -532,7 +532,7 @@ public class MainActivity
                 }
                 if (mSelectedCategory != null){
                     Intent intent = new Intent(MainActivity.this, ChooseGoalsActivity.class);
-                    intent.putExtra("category", mSelectedCategory);
+                    intent.putExtra(ChooseGoalsActivity.CATEGORY_KEY, mSelectedCategory);
                     startActivityForResult(intent, Constants.CHOOSE_GOALS_REQUEST_CODE);
                 }
             }
@@ -656,7 +656,8 @@ public class MainActivity
     public void onGoalSelected(Goal goal){
         //User goal
         if (!mApplication.getUserData().getGoals().isEmpty()){
-            startActivityForResult(new Intent(this, GoalActivity.class).putExtra(GoalActivity.GOAL_KEY, goal),
+            //TODO user goal, not a goal
+            startActivityForResult(new Intent(this, GoalActivity.class).putExtra(GoalActivity.USER_GOAL_KEY, goal),
                     GOAL_REQUEST_CODE);
         }
         //Recommendation

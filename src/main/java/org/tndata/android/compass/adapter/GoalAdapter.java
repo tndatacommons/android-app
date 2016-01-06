@@ -246,7 +246,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
                         Behavior behavior = mGoal.getBehaviors().get(position/2);
                         mApplication.removeBehavior(behavior);
                         NetworkRequest.delete(mContext, null,
-                                API.getDeleteBehaviorURL(behavior.getMappingId()),
+                                API.getDeleteBehaviorUrl(behavior.getMappingId()),
                                 mApplication.getToken(), new JSONObject());
                         Log.d("GoalAdapter", "Position: " + position);
                         if (position == 1){

@@ -456,7 +456,7 @@ public class TriggerActivity
             //Time is required and one of date or rule is required
             //TODO: Fails when time/date/rrule is empty or null
             mPutTriggerRequestCode = NetworkRequest.put(this, this,
-                    API.getPutTriggerUrl(userAction.getId()),
+                    API.getPutTriggerUrl(userAction),
                     ((CompassApplication)getApplication()).getToken(),
                     API.getPutTriggerBody(time, rrule, date));
 

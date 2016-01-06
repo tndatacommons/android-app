@@ -20,6 +20,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.filter.GoalFilter;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.ui.button.TransitionButton;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
@@ -27,7 +28,6 @@ import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -128,9 +128,10 @@ public class ChooseGoalsAdapter
     private void populateStateArray(){
         if (mGoals != null && mGoals.size() > 1){
             goalStates = new byte[mGoals.size()-1];
-            Map<Integer, Goal> userGoals = mApplication.getGoals();
+            Map<Integer, UserGoal> userGoals = mApplication.getGoals();
             for (int i = 1; i < mGoals.size(); i++){
-                goalStates[i-1] = userGoals.containsKey(getItem(i).getId()) ? STATE_ADDED : STATE_NOT_ADDED;
+                goalStates[i-1] = userGoals.containsKey(getItem(i).getId())
+                        ? STATE_ADDED : STATE_NOT_ADDED;
             }
         }
     }
@@ -140,7 +141,7 @@ public class ChooseGoalsAdapter
      *
      * @param goals the list of goals to be added.
      */
-    public void addGoals(Collection<Goal> goals){
+    public void addGoals(List<Goal> goals){
         mGoals.clear();
 
         Goal headerGoal = new Goal();
@@ -310,6 +311,7 @@ public class ChooseGoalsAdapter
                     ImageLoader.loadBitmap(holder.icon, goal.getIconUrl(), new ImageLoader.Options());
                 }
 
+                //TODO Non-editable content that is not packaged? Ask Brad
                 if (mCategory.areCustomTriggersAllowed()){
                     holder.select.setBackgroundResource(R.drawable.circle_white);
                     holder.select.setImageResource(R.drawable.ic_action_new_large);

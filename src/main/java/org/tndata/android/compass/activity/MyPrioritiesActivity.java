@@ -158,24 +158,24 @@ public class MyPrioritiesActivity
     @Override
     public void onAddGoalsClick(Category category){
         Intent categoryIntent = new Intent(this, ChooseGoalsActivity.class);
-        categoryIntent.putExtra("category", category);
+        categoryIntent.putExtra(ChooseGoalsActivity.CATEGORY_KEY, category);
         startActivityForResult(categoryIntent, 1);
     }
 
     @Override
     public void onAddBehaviorsClick(Category category, Goal goal){
         Intent goalIntent = new Intent(this, ChooseBehaviorsActivity.class);
-        goalIntent.putExtra("category", category);
-        goalIntent.putExtra("goal", goal);
+        goalIntent.putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, category);
+        goalIntent.putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal);
         startActivityForResult(goalIntent, 1);
     }
 
     @Override
     public void onBehaviorClick(Category category, Goal goal, Behavior behavior){
         Intent behaviorIntent = new Intent(this, ChooseActionsActivity.class);
-        behaviorIntent.putExtra("category", category);
-        behaviorIntent.putExtra("goal", goal);
-        behaviorIntent.putExtra("behavior", behavior);
+        behaviorIntent.putExtra(ChooseActionsActivity.CATEGORY_KEY, category);
+        behaviorIntent.putExtra(ChooseActionsActivity.GOAL_KEY, goal);
+        behaviorIntent.putExtra(ChooseActionsActivity.BEHAVIOR_KEY, behavior);
         startActivityForResult(behaviorIntent, 1);
     }
 

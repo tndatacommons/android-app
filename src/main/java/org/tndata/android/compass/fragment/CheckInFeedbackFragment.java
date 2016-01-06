@@ -155,7 +155,7 @@ public class CheckInFeedbackFragment
     public void save(){
         NetworkRequest.post(getActivity(), null, API.getPostUserGoalProgressUrl(),
                 ((CompassApplication)getActivity().getApplication()).getToken(),
-                API.getPostUserGoalProgressBody(mGoal.getId(), mBar.getProgress()+1));
+                API.getPostUserGoalProgressBody(mGoal, mBar.getProgress()+1));
         mLastUpdate = -1;
         Log.d("Feedback", "Saving");
     }

@@ -24,8 +24,8 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.GoalAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
-import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Progress;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
@@ -33,8 +33,6 @@ import org.tndata.android.compass.util.ImageLoader;
 import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.OnScrollListenerHub;
 import org.tndata.android.compass.util.ParallaxEffect;
-
-import java.util.ArrayList;
 
 import at.grabner.circleprogress.CircleProgressView;
 
@@ -53,7 +51,9 @@ public class GoalActivity
                 View.OnClickListener{
 
     //Parameter keys
-    public static final String GOAL_KEY = "org.tndata.compass.GoalActivity.Goal";
+    public static final String USER_GOAL_KEY = "org.tndata.compass.GoalActivity.UserGoal";
+
+    private static final String TAG = "GoalActivity";
 
     //Request codes
     private static final int CHOOSE_BEHAVIORS_REQUEST_CODE = 57943;
@@ -65,7 +65,7 @@ public class GoalActivity
     private CompassApplication mApplication;
 
     //The goal to be displayed
-    private Goal mGoal;
+    private UserGoal mUserGoal;
 
     //UI components
     private TextView mTitle;
@@ -84,8 +84,7 @@ public class GoalActivity
         mApplication = (CompassApplication)getApplication();
 
         //Retrieve the goal
-        mGoal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
-        mGoal = mApplication.getUserData().getGoal(mGoal);
+        mUserGoal = (UserGoal)getIntent().getSerializableExtra(USER_GOAL_KEY);
 
         //Set up the toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.goal_toolbar);
@@ -100,12 +99,12 @@ public class GoalActivity
         hero.setLayoutParams(params);
         //TODO the first part of the if is a workaround
         //Packaged content ain't got no hero
-        if (mGoal.getPrimaryCategory() != null && mGoal.getPrimaryCategory().getImageUrl() != null){
-            ImageLoader.loadBitmap(hero, mGoal.getPrimaryCategory().getImageUrl(),
-                    new ImageLoader.Options().setCropBottom(false));
+        if (mUserGoal.getPrimaryCategory() != null && mUserGoal.getPrimaryCategory().getImageUrl() != null){
+            ImageLoader.loadBitmap(hero, mUserGoal.getPrimaryCategory().getImageUrl());
         }
         else{
-            hero.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.compass_master_illustration));
+            int resId = R.drawable.compass_master_illustration;
+            hero.setImageBitmap(BitmapFactory.decodeResource(getResources(), resId));
         }
 
         //Set up the FAB
@@ -115,9 +114,9 @@ public class GoalActivity
         fab.setLayoutParams(params);
         fab.setOnClickListener(this);
         //TODO this is a workaround
-        if (mGoal.getPrimaryCategory() != null){
-            fab.setColorNormal(Color.parseColor(mGoal.getPrimaryCategory().getSecondaryColor()));
-            fab.setColorPressed(Color.parseColor(mGoal.getPrimaryCategory().getSecondaryColor()));
+        if (mUserGoal.getPrimaryCategory() != null){
+            fab.setColorNormal(Color.parseColor(mUserGoal.getPrimaryCategory().getSecondaryColor()));
+            fab.setColorPressed(Color.parseColor(mUserGoal.getPrimaryCategory().getSecondaryColor()));
         }
         else{
             fab.setColorNormal(getResources().getColor(R.color.grow_accent));
@@ -125,7 +124,7 @@ public class GoalActivity
         }
 
         //Set up the general progress indicator
-        Progress progress = mGoal.getProgress();
+        Progress progress = mUserGoal.getProgress();
         CircleProgressView indicator = (CircleProgressView)findViewById(R.id.goal_indicator);
         params = (RelativeLayout.LayoutParams)indicator.getLayoutParams();
         params.topMargin = heroHeight-params.height-2*params.topMargin;
@@ -134,7 +133,7 @@ public class GoalActivity
         indicator.setAutoTextSize(true);
         indicator.setShowUnit(true);
         if (progress != null){
-            Log.d("GoalActivity", "Progress ain't null, setting...");
+            Log.d(TAG, "Progress ain't null, setting...");
             indicator.setValueAnimated(0, progress.getActionsProgressPercent(), 1500);
         }
 
@@ -145,8 +144,8 @@ public class GoalActivity
         params.height = mTitleHeight;
         mTitle.setLayoutParams(params);
         //TODO this is a workaround
-        if (mGoal.getPrimaryCategory() != null){
-            mTitle.setBackgroundColor(Color.parseColor(mGoal.getPrimaryCategory().getColor()));
+        if (mUserGoal.getPrimaryCategory() != null){
+            mTitle.setBackgroundColor(Color.parseColor(mUserGoal.getPrimaryCategory().getColor()));
         }
         else{
             mTitle.setBackgroundColor(getResources().getColor(R.color.grow_primary));
@@ -154,7 +153,7 @@ public class GoalActivity
         params = (RelativeLayout.LayoutParams)mTitle.getLayoutParams();
         params.topMargin += heroHeight;
         mTitle.setLayoutParams(params);
-        mTitle.setText(mGoal.getTitle());
+        mTitle.setText(mUserGoal.getTitle());
         mTitle.getViewTreeObserver().addOnGlobalLayoutListener(this);
 
         //Behavior list
@@ -208,12 +207,12 @@ public class GoalActivity
         //Since we are moving serializables around, the object that actually changes is not the
         //  one we are referencing. The Goal with the new list of behaviors needs to be pulled
         //  from the application's list
-        mGoal = mApplication.getUserData().getGoal(mGoal);
+        mUserGoal = mApplication.getUserData().getGoal(mUserGoal);
 
         //Set the adapter with the fresh goal
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)mTitle.getLayoutParams();
         int margin = params.topMargin + mTitle.getHeight() + params.bottomMargin + CompassUtil.getPixels(this, 1);
-        mAdapter = new GoalAdapter(this, this, mGoal, margin);
+        mAdapter = new GoalAdapter(this, this, mUserGoal, margin);
         mList.setAdapter(mAdapter);
     }
 
@@ -233,7 +232,7 @@ public class GoalActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-        if (mGoal.isEditable()){
+        if (mUserGoal.isEditable()){
             getMenuInflater().inflate(R.menu.goal, menu);
         }
         return super.onCreateOptionsMenu(menu);
@@ -242,9 +241,9 @@ public class GoalActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         if (item.getItemId() == R.id.goal_remove){
-            NetworkRequest.delete(this, null, API.getDeleteGoalUrl(mGoal.getMappingId()),
+            NetworkRequest.delete(this, null, API.getDeleteGoalUrl(mUserGoal.getMappingId()),
                     mApplication.getToken(), new JSONObject());
-            mApplication.getUserData().removeGoal(mGoal);
+            mApplication.getUserData().removeGoal(mUserGoal);
             finish();
             return true;
         }
@@ -255,8 +254,9 @@ public class GoalActivity
     public void onClick(View view){
         switch (view.getId()){
             case R.id.goal_fab:
+                //TODO category?
                 Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
-                        .putExtra(ChooseBehaviorsActivity.GOAL_KEY, mGoal);
+                        .putExtra(ChooseBehaviorsActivity.GOAL_KEY, mUserGoal);
                 startActivityForResult(chooseBehaviors, CHOOSE_BEHAVIORS_REQUEST_CODE);
         }
     }
@@ -279,8 +279,8 @@ public class GoalActivity
     @Override
     public void onBehaviorSelected(Behavior behavior){
         Intent actionPicker = new Intent(this, ChooseActionsActivity.class)
-                .putExtra("category", mGoal.getPrimaryCategory())
-                .putExtra("goal", mGoal)
+                .putExtra("category", mUserGoal.getPrimaryCategory())
+                .putExtra("goal", mUserGoal)
                 .putExtra("behavior", behavior);
         startActivityForResult(actionPicker, CHOOSE_ACTIONS_REQUEST_CODE);
     }
@@ -289,7 +289,7 @@ public class GoalActivity
     public void onActionSelected(Behavior behavior, Action action){
         Intent trigger = new Intent(this, TriggerActivity.class)
                 .putExtra(TriggerActivity.USER_ACTION_KEY, action)
-                .putExtra(TriggerActivity.GOAL_KEY, mGoal);
+                .putExtra(TriggerActivity.GOAL_KEY, mUserGoal);
         startActivityForResult(trigger, TRIGGER_REQUEST_CODE);
     }
 }

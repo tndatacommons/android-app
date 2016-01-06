@@ -20,12 +20,13 @@ import android.widget.Toast;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -89,15 +90,17 @@ public class ChooseCategoriesAdapter
      * Sets the dataset of the adapter.
      *
      * @param all the list of all available categories.
+     * @param selected the map of user selected categories.
      */
-    public void setCategories(@NonNull Collection<Category> all, @NonNull Collection<Category> selected){
+    public void setCategories(@NonNull List<Category> all, @NonNull Map<Integer, UserCategory> selected){
         //Let the GC take care of the previous list and fill a new one
         mCategories = new ArrayList<>();
         mCategories.addAll(all);
 
         mSelectedCategories = new ArrayList<>();
-        mSelectedCategories.addAll(selected);
-
+        for (UserCategory userCategory:selected.values()){
+            mSelectedCategories.add(userCategory.getCategory());
+        }
         notifyDataSetChanged();
     }
 
@@ -327,12 +330,12 @@ public class ChooseCategoriesAdapter
                 AlphaAnimation animation;
                 //If the category was selected, remove it and fade in the overlay
                 if (mSelectedCategories.contains(category)){
-                    mSelectedCategories.remove(category);
+                    mSelectedCategories.remove(category.getId());
                     animation = new AlphaAnimation(0, 1);
                 }
                 //Otherwise add it and fade out the overlay
                 else{
-                    mSelectedCategories.add(category);
+                    mSelectedCategories.remove(category.getId());
                     animation = new AlphaAnimation(1, 0);
                 }
                 //Start the animation

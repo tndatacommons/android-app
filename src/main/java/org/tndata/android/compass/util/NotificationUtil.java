@@ -108,16 +108,16 @@ public final class NotificationUtil{
      * @param title the title of the notification.
      * @param message the message of the notification.
      * @param actionId the id of the action enclosed in this notification.
-     * @param userMappingId the mapping id of the action for the user.
+     * @param actionMappingId the mapping id of the action for the user.
      */
     public static void generateActionNotification(Context context, int notificationId, String title,
-                                                  String message, int actionId, int userMappingId){
+                                                  String message, int actionId, int actionMappingId){
 
-        Reminder reminder = new Reminder(notificationId, -1, title, message, actionId, userMappingId);
+        Reminder reminder = new Reminder(notificationId, -1, title, message, actionId, actionMappingId);
 
         //Action intent; what happens when the user taps the notification
         Intent intent = new Intent(context, ActionActivity.class)
-                .putExtra(ActionActivity.ACTION_ID_KEY, actionId)
+                .putExtra(ActionActivity.ACTION_MAPPING_ID_KEY, actionMappingId)
                 .putExtra(ActionActivity.REMINDER_KEY, reminder);
 
         PendingIntent contentIntent = PendingIntent.getActivity(context,

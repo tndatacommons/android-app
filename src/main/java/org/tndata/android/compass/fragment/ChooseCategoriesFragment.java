@@ -25,7 +25,6 @@ import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -60,7 +59,7 @@ public class ChooseCategoriesFragment
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        mOnBoarding = getArguments() == null || getArguments().getBoolean(ON_BOARDING_KEY, true);
+        mOnBoarding = getArguments() != null && getArguments().getBoolean(ON_BOARDING_KEY, true);
     }
 
     @Override
@@ -101,7 +100,7 @@ public class ChooseCategoriesFragment
         mAdapter = new ChooseCategoriesAdapter(getActivity(), this, mOnBoarding);
         grid.setAdapter(mAdapter);
         grid.addItemDecoration(new ItemPadding());
-        grid.setOnScrollListener(new ParallaxEffect());
+        grid.addOnScrollListener(new ParallaxEffect());
 
         return root;
     }
@@ -135,9 +134,9 @@ public class ChooseCategoriesFragment
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetCategoriesRequestCode){
-            Map<Integer, Category> categories = ContentParser.parseCategories(result);
+            List<Category> categories = ContentParser.parseCategories(result);
             if (categories != null){
-                mAdapter.setCategories(categories.values(), mApplication.getCategories().values());
+                mAdapter.setCategories(categories, mApplication.getCategories());
             }
         }
     }

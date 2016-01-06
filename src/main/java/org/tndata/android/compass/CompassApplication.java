@@ -12,12 +12,15 @@ import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.User;
+import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserBehavior;
+import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.ImageLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -72,23 +75,23 @@ public class CompassApplication extends Application{
     // of this info used to be stored directly in the CompassApplication
     // class, so I've left these here for backwards compatibility.
     // -------------------------------------------------------------------
-    public Map<Integer, Category> getCategories() {
+    public Map<Integer, UserCategory> getCategories() {
         return mUserData.getCategories();
     }
 
-    public void addCategory(Category category) {
+    public void addCategory(UserCategory category) {
         mUserData.addCategory(category);
     }
 
-    public List<Goal> getCategoryGoals(Category category) {
+    public List<UserGoal> getCategoryGoals(Category category) {
         return mUserData.getCategoryGoals(category);
     }
 
-    public Map<Integer, Goal> getGoals() {
+    public Map<Integer, UserGoal> getGoals() {
         return mUserData.getGoals();
     }
 
-    public void addGoal(Goal goal) {
+    public void addGoal(UserGoal goal) {
         mUserData.addGoal(goal);
         mUserData.logSelectedData("AFTER CompassApplication.addGoal", false);
     }
@@ -98,7 +101,7 @@ public class CompassApplication extends Application{
         mUserData.logSelectedData("AFTER CompassApplication.removeGoal", false);
     }
 
-    public Map<Integer, Behavior> getBehaviors() {
+    public Map<Integer, UserBehavior> getBehaviors() {
         return mUserData.getBehaviors();
     }
 
@@ -107,12 +110,12 @@ public class CompassApplication extends Application{
         mUserData.logSelectedData("AFTER CompassApplication.removeBehavior: ", false);
     }
 
-    public void addBehavior(Behavior behavior) {
+    public void addBehavior(UserBehavior behavior) {
         mUserData.addBehavior(behavior);
         mUserData.logSelectedData("AFTER CompassApplication.addBehavior", false);
     }
 
-    public Map<Integer, Action> getActions() {
+    public Map<Integer, UserAction> getActions() {
         return mUserData.getActions();
     }
 
@@ -121,7 +124,7 @@ public class CompassApplication extends Application{
         mUserData.logSelectedData("AFTER CompassApplication.removeAction: ", false);
     }
 
-    public void addAction(Action action) {
+    public void addAction(UserAction action) {
         mUserData.addAction(action);
         mUserData.logSelectedData("AFTER CompassApplication.addAction", false);
     }

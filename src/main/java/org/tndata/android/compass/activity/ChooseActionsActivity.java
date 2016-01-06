@@ -39,7 +39,6 @@ import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFix
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.Collections;
@@ -212,18 +211,16 @@ public class ChooseActionsActivity
     @Override
     public void addAction(Action action){
         if (!isGoalSelected()){
-            mApplication.addGoal(mGoal);
             mPostGoalRequestCode = NetworkRequest.post(this, null, API.getPostGoalUrl(),
                     mApplication.getToken(), API.getPostGoalBody(mGoal, mCategory));
         }
         if (!isBehaviorSelected()){
-            mApplication.addBehavior(mBehavior);
             mPostBehaviorRequestCode = NetworkRequest.post(this, this, API.getPostBehaviorUrl(),
-                    mApplication.getToken(), API.getPostBehaviorBody(mBehavior.getId()));
+                    mApplication.getToken(), API.getPostBehaviorBody(mBehavior));
         }
         Toast.makeText(getApplicationContext(), getText(R.string.action_saving), Toast.LENGTH_SHORT).show();
         mPostActionRequestCode = NetworkRequest.post(this, this, API.getPostActionUrl(),
-                mApplication.getToken(), API.getPostActionBody(mGoal.getId(), action.getId()));
+                mApplication.getToken(), API.getPostActionBody(action, mGoal));
     }
 
     @Override
@@ -248,14 +245,6 @@ public class ChooseActionsActivity
     @Override
     public void doItNow(Action action){
         CompassUtil.doItNow(this, action.getExternalResource());
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        if (requestCode == Constants.VIEW_BEHAVIOR_REQUEST_CODE){
-            setResult(resultCode);
-        }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -295,20 +284,22 @@ public class ChooseActionsActivity
         }
         else if (requestCode == mPostGoalRequestCode){
             UserGoal userGoal = ContentParser.parseUserGoal(result);
-            mApplication.getUserData().addGoal(userGoal);
+            Log.d(TAG, "(Post) " + userGoal.toString());
+            mApplication.addGoal(userGoal);
         }
         else if (requestCode == mPostBehaviorRequestCode){
             UserBehavior userBehavior = ContentParser.parseUserBehavior(result);
-            mApplication.getUserData().addBehavior(userBehavior);
+            Log.d(TAG, "(Post) " + userBehavior.toString());
+            mApplication.addBehavior(userBehavior);
         }
         else if (requestCode == mPostActionRequestCode){
             UserAction userAction = ContentParser.parseUserAction(result);
+            Log.d(TAG, "(Post) " + userAction.toString());
+            mApplication.addAction(userAction);
 
             String toast = getString(R.string.action_added, userAction.getTitle());
             Toast.makeText(this, toast, Toast.LENGTH_SHORT).show();
 
-            //Add to the user's collection
-            mApplication.getUserData().addAction(userAction);
             mAdapter.notifyDataSetChanged();
 
             //Launch trigger picker
