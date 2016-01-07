@@ -13,7 +13,7 @@ import android.widget.ListView;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.MyPrioritiesCategoryAdapter;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.UserCategory;
 
 import java.util.ArrayList;
 
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 public class MyPrioritiesCategoriesFragment
         extends Fragment
         implements
-            AdapterView.OnItemClickListener{
+                AdapterView.OnItemClickListener{
 
     private OnCategorySelectedListener mListener;
     private ListView mCategoryList;
@@ -69,10 +69,10 @@ public class MyPrioritiesCategoriesFragment
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id){
-        mListener.onCategorySelected((Category)mCategoryList.getAdapter().getItem(position));
+        mListener.onCategorySelected((UserCategory)mCategoryList.getAdapter().getItem(position));
     }
 
     public interface OnCategorySelectedListener{
-        void onCategorySelected(Category category);
+        void onCategorySelected(UserCategory category);
     }
 }

@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.MyPrioritiesActivity;
 import org.tndata.android.compass.adapter.MyPrioritiesGoalAdapter;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.UserCategory;
 
 
 /**
@@ -22,13 +22,27 @@ import org.tndata.android.compass.model.Category;
  * @version 1.0.0
  */
 public class MyPrioritiesGoalsFragment extends Fragment{
-    private Category mCategory;
+    public static final String USER_CATEGORY_KEY = "org.tndata.compass.MyPrioritiesGoals.UserCategory";
+
+
+    private UserCategory mUserCategory;
     private MyPrioritiesGoalAdapter mAdapter;
+
+
+    public static MyPrioritiesGoalsFragment newInstance(UserCategory userCategory){
+        Bundle args = new Bundle();
+        args.putSerializable(USER_CATEGORY_KEY, userCategory);
+
+        MyPrioritiesGoalsFragment fragment = new MyPrioritiesGoalsFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        mCategory = getArguments() != null ? ((Category)getArguments().get("category")) : new Category();
+        mUserCategory = (UserCategory)getArguments().get(USER_CATEGORY_KEY);
     }
 
     @Nullable
@@ -37,7 +51,7 @@ public class MyPrioritiesGoalsFragment extends Fragment{
         View rootView =  inflater.inflate(R.layout.fragment_my_priorities_goals, container, false);
 
         mAdapter = new MyPrioritiesGoalAdapter(getActivity().getApplicationContext(),
-                mCategory, (MyPrioritiesActivity) getActivity());
+                mUserCategory, (MyPrioritiesActivity) getActivity());
 
         RecyclerView rv = (RecyclerView)rootView.findViewById(R.id.priorities_goals_recyclerview);
         rv.setAdapter(mAdapter);

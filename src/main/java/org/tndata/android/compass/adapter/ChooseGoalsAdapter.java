@@ -311,31 +311,24 @@ public class ChooseGoalsAdapter
                     ImageLoader.loadBitmap(holder.icon, goal.getIconUrl(), new ImageLoader.Options());
                 }
 
-                //TODO Non-editable content that is not packaged? Ask Brad
-                if (mCategory.areCustomTriggersAllowed()){
-                    holder.select.setBackgroundResource(R.drawable.circle_white);
-                    holder.select.setImageResource(R.drawable.ic_action_new_large);
-                    switch (goalStates[position - 1]){
-                        case STATE_NOT_ADDED:
-                            holder.select.setInactive(false);
-                            break;
+                holder.select.setBackgroundResource(R.drawable.circle_white);
+                holder.select.setImageResource(R.drawable.ic_action_new_large);
+                switch (goalStates[position - 1]){
+                    case STATE_NOT_ADDED:
+                        holder.select.setInactive(false);
+                        break;
 
-                        case STATE_ADDING:
-                            holder.select.setTransitioningToActive(false);
-                            break;
+                    case STATE_ADDING:
+                        holder.select.setTransitioningToActive(false);
+                        break;
 
-                        case STATE_ADDED:
-                            holder.select.setActive(false);
-                            break;
+                    case STATE_ADDED:
+                        holder.select.setActive(false);
+                        break;
 
-                        case STATE_REMOVING:
-                            holder.select.setTransitioningToInactive(false);
-                            break;
-                    }
-                }
-                else{
-                    holder.select.setBackgroundResource(0);
-                    holder.select.setImageResource(R.drawable.ic_selected_blue);
+                    case STATE_REMOVING:
+                        holder.select.setTransitioningToInactive(false);
+                        break;
                 }
 
                 GradientDrawable gradientDrawable = (GradientDrawable)holder.iconContainer.getBackground();
@@ -402,31 +395,26 @@ public class ChooseGoalsAdapter
             //Account for header only
             Goal goal = getItem(getAdapterPosition() - 1);
 
-            if (mCategory.areCustomTriggersAllowed()){
-                //Account for the header and the category description
-                switch (goalStates[getAdapterPosition() - 2]){
-                    case STATE_NOT_ADDED:
-                        if (goal.getBehaviorCount() > 0){
-                            goalStates[getAdapterPosition() - 2] = STATE_ADDED;
-                            notifyItemChanged(getAdapterPosition());
-                        }
-                        else{
-                            goalStates[getAdapterPosition() - 2] = STATE_ADDING;
-                            select.setTransitioningToActive();
-                            Toast.makeText(mContext, R.string.goal_selected, Toast.LENGTH_SHORT).show();
-                        }
-                        mListener.onGoalAddClicked(goal);
-                        break;
+            //Account for the header and the category description
+            switch (goalStates[getAdapterPosition() - 2]){
+                case STATE_NOT_ADDED:
+                    if (goal.getBehaviorCount() > 0){
+                        goalStates[getAdapterPosition() - 2] = STATE_ADDED;
+                        notifyItemChanged(getAdapterPosition());
+                    }
+                    else{
+                        goalStates[getAdapterPosition() - 2] = STATE_ADDING;
+                        select.setTransitioningToActive();
+                        Toast.makeText(mContext, R.string.goal_selected, Toast.LENGTH_SHORT).show();
+                    }
+                    mListener.onGoalAddClicked(goal);
+                    break;
 
-                    case STATE_ADDED:
-                        goalStates[getAdapterPosition() - 2] = STATE_REMOVING;
-                        select.setTransitioningToInactive();
-                        mListener.onGoalDeleteClicked(goal);
-                        break;
-                }
-            }
-            else{
-                mListener.onGoalOkClicked(goal);
+                case STATE_ADDED:
+                    goalStates[getAdapterPosition() - 2] = STATE_REMOVING;
+                    select.setTransitioningToInactive();
+                    mListener.onGoalDeleteClicked(goal);
+                    break;
             }
         }
     }
@@ -458,13 +446,6 @@ public class ChooseGoalsAdapter
          * @param goal the goal whose delete was tapped.
          */
         void onGoalDeleteClicked(Goal goal);
-
-        /**
-         * Called when the goal is not removable and the tick is clicked.
-         *
-         * @param goal the goal whose tick was tapped.
-         */
-        void onGoalOkClicked(Goal goal);
 
         /**
          * Called when the RecyclerView scrolls.

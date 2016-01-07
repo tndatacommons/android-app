@@ -13,11 +13,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Behavior;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Trigger;
+import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserBehavior;
+import org.tndata.android.compass.model.UserCategory;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.ui.PriorityItemView;
 import org.tndata.android.compass.util.ImageLoader;
 
@@ -36,7 +36,7 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter<MyPrioritiesGo
 
     //Context, category, and listener
     private Context mContext;
-    private Category mCategory;
+    private UserCategory mUserCategory;
     private boolean mEmptyCategory;
     private OnItemClickListener mListener;
 
@@ -53,22 +53,22 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter<MyPrioritiesGo
      * Constructor.
      *
      * @param context the application context.
-     * @param category the selected category.
+     * @param userCategory the selected category.
      * @param listener the receiver of tap events.
      */
-    public MyPrioritiesGoalAdapter(@NonNull Context context, @NonNull Category category,
+    public MyPrioritiesGoalAdapter(@NonNull Context context, @NonNull UserCategory userCategory,
                                    @NonNull OnItemClickListener listener){
         mSingleExpandedGoalMode = true;
 
         mContext = context;
-        mCategory = category;
+        mUserCategory = userCategory;
         mListener = listener;
 
-        mEmptyCategory = mCategory.getGoals().isEmpty();
+        mEmptyCategory = mUserCategory.getGoals().isEmpty();
 
         mClickedHolder = null;
 
-        mExpandedGoals = new boolean[mCategory.getGoals().size()];
+        mExpandedGoals = new boolean[mUserCategory.getGoals().size()];
         for (int i = 0; i < mExpandedGoals.length; i++){
             mExpandedGoals[i] = false;
         }
@@ -88,11 +88,11 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter<MyPrioritiesGo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position){
-        if (mCategory.getGoals().size() == 0){
+        if (mUserCategory.getGoals().size() == 0){
             holder.name.setText("Add a new activity");
         }
         else{
-            holder.name.setText(mCategory.getGoals().get(position).getTitle());
+            holder.name.setText(mUserCategory.getGoals().get(position).getTitle());
         }
     }
 
@@ -103,7 +103,7 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter<MyPrioritiesGo
 
     @Override
     public int getItemCount(){
-        return (!mEmptyCategory) ? mCategory.getGoals().size() : 1;
+        return (!mEmptyCategory) ? mUserCategory.getGoals().size() : 1;
     }
 
     /**
@@ -113,39 +113,39 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter<MyPrioritiesGo
      * @param position the position of the goal in the backing list.
      */
     private void populate(ViewHolder holder, int position){
-        Goal goal = mCategory.getGoals().get(position);
+        UserGoal userGoal = mUserCategory.getGoals().get(position);
         //For each behavior in the goal
-        for (Behavior behavior:goal.getBehaviors()){
+        for (UserBehavior userBehavior:userGoal.getBehaviors()){
             //A priority item view is retrieved and populated
             PriorityItemView behaviorView = getPriorityItemView();
-            behaviorView.setItemHierarchy(new ItemHierarchy(mCategory, goal, behavior, null));
+            behaviorView.setItemHierarchy(new ItemHierarchy(mUserCategory, userGoal, userBehavior, null));
             behaviorView.setLeftPadding(20);
-            behaviorView.getTextView().setText(behavior.getTitle());
-            if (behavior.getIconUrl() != null){
-                ImageLoader.loadBitmap(behaviorView.getImageView(), behavior.getIconUrl(), new ImageLoader.Options());
+            behaviorView.getTextView().setText(userBehavior.getTitle());
+            if (userBehavior.getIconUrl() != null){
+                ImageLoader.loadBitmap(behaviorView.getImageView(), userBehavior.getIconUrl(), new ImageLoader.Options());
             }
             behaviorView.setOnClickListener(holder);
 
             //The view is added to the goal's offspring
             holder.offspring.addView(behaviorView);
-            Log.d("BehaviourActions", behavior.getActions().size() + "");
+            Log.d("BehaviourActions", userBehavior.getActions().size() + "");
 
             //For each action in the behavior
-            for (Action action:behavior.getActions()){
+            for (UserAction userAction:userBehavior.getActions()){
                 PriorityItemView actionView = getPriorityItemView();
-                actionView.setItemHierarchy(new ItemHierarchy(mCategory, goal, behavior, action));
+                actionView.setItemHierarchy(new ItemHierarchy(mUserCategory, userGoal, userBehavior, userAction));
                 actionView.setLeftPadding(30);
-                actionView.getTextView().setText(action.getTitle());
-                if (action.getIconUrl() != null){
-                    ImageLoader.loadBitmap(actionView.getImageView(), action.getIconUrl(), new ImageLoader.Options());
+                actionView.getTextView().setText(userAction.getTitle());
+                if (userAction.getIconUrl() != null){
+                    ImageLoader.loadBitmap(actionView.getImageView(), userAction.getIconUrl(), new ImageLoader.Options());
                 }
                 actionView.setOnClickListener(holder);
                 holder.offspring.addView(actionView);
 
-                Trigger trigger = action.getCustomTrigger();
+                Trigger trigger = userAction.getTrigger();
                 if (trigger != null){
                     PriorityItemView triggerView = getPriorityItemView();
-                    triggerView.setItemHierarchy(new ItemHierarchy(mCategory, goal, behavior, action));
+                    triggerView.setItemHierarchy(new ItemHierarchy(mUserCategory, userGoal, userBehavior, userAction));
                     triggerView.setLeftPadding(65);
                     String triggerText = trigger.getRecurrencesDisplay();
                     String date = trigger.getFormattedDate();
@@ -169,10 +169,10 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter<MyPrioritiesGo
             }
         }
 
-        if (goal.getBehaviorCount() > 0){
+        if (userGoal.getGoal().getBehaviorCount() > 0){
             //Add behaviours view
             PriorityItemView addBehaviors = getPriorityItemView();
-            addBehaviors.setItemHierarchy(new ItemHierarchy(mCategory, goal, null, null));
+            addBehaviors.setItemHierarchy(new ItemHierarchy(mUserCategory, userGoal, null, null));
             addBehaviors.setLeftPadding(0);
             addBehaviors.getTextView().setText(R.string.my_priorities_edit_activities);
             addBehaviors.getImageView().setVisibility(View.GONE);
@@ -302,7 +302,7 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter<MyPrioritiesGo
      */
     public void onItemClick(ViewHolder holder, int position){
         if (mEmptyCategory){
-            mListener.onAddGoalsClick(mCategory);
+            mListener.onAddGoalsClick(mUserCategory);
         }
         else{
             if (mSingleExpandedGoalMode){
@@ -360,7 +360,7 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter<MyPrioritiesGo
      */
     public void updateData(){
         if (mEmptyCategory){
-            mEmptyCategory = mCategory.getGoals().isEmpty();
+            mEmptyCategory = mUserCategory.getGoals().isEmpty();
             notifyDataSetChanged();
         }
         else if (mClickedHolder != null){
@@ -434,10 +434,10 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter<MyPrioritiesGo
      * @version 1.0.1
      */
     public static class ItemHierarchy{
-        private Category mCategory;
-        private Goal mGoal;
-        private Behavior mBehavior;
-        private Action mAction;
+        private UserCategory mCategory;
+        private UserGoal mGoal;
+        private UserBehavior mBehavior;
+        private UserAction mAction;
 
 
         /**
@@ -448,7 +448,7 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter<MyPrioritiesGo
          * @param behavior the behavior.
          * @param action the action.
          */
-        public ItemHierarchy(Category category, Goal goal, Behavior behavior, Action action){
+        public ItemHierarchy(UserCategory category, UserGoal goal, UserBehavior behavior, UserAction action){
             mCategory = category;
             mGoal = goal;
             mBehavior = behavior;
@@ -476,36 +476,36 @@ public class MyPrioritiesGoalAdapter extends RecyclerView.Adapter<MyPrioritiesGo
         /**
          * Triggered when the add goals item is clicked.
          *
-         * @param category the selected category.
+         * @param userCategory the selected category.
          */
-        void onAddGoalsClick(Category category);
+        void onAddGoalsClick(UserCategory userCategory);
 
         /**
          * Triggered when the add behaviors item is clicked.
          *
-         * @param category the category containing the goal.
-         * @param goal the goal.
+         * @param userCategory the category containing the goal.
+         * @param userGoal the goal.
          */
-        void onAddBehaviorsClick(Category category, Goal goal);
+        void onAddBehaviorsClick(UserCategory userCategory, UserGoal userGoal);
 
         /**
          * Triggered when a behaviour is clicked.
          *
-         * @param category the category containing the goal containing the behavior.
-         * @param goal the goal containing the behavior.
-         * @param behavior the behavior.
+         * @param userCategory the category containing the goal containing the behavior.
+         * @param userGoal the goal containing the behavior.
+         * @param userBehavior the behavior.
          */
-        void onBehaviorClick(Category category, Goal goal, Behavior behavior);
+        void onBehaviorClick(UserCategory userCategory, UserGoal userGoal, UserBehavior userBehavior);
 
         /**
          * Triggered when an action is clicked.
          *
-         * @param category the category containing the goal containing the behavior containing
+         * @param userCategory the category containing the goal containing the behavior containing
          *                 the action.
-         * @param goal the goal containing the behavior containing the action.
-         * @param behavior the behavior containing the action.
-         * @param action the action.
+         * @param userGoal the goal containing the behavior containing the action.
+         * @param userBehavior the behavior containing the action.
+         * @param userAction the action.
          */
-        void onActionClick(Category category, Goal goal, Behavior behavior, Action action);
+        void onActionClick(UserCategory userCategory, UserGoal userGoal, UserBehavior userBehavior, UserAction userAction);
     }
 }

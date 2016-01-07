@@ -22,9 +22,9 @@ import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.GoalAdapter;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Progress;
+import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.API;
@@ -197,7 +197,7 @@ public class GoalActivity
         hub.addOnScrollListener(titleEffect);
 
         hub.addOnScrollListener(new ParallaxEffect(fab, 1));
-        mList.setOnScrollListener(hub);
+        mList.addOnScrollListener(hub);
     }
 
     /**
@@ -241,9 +241,9 @@ public class GoalActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         if (item.getItemId() == R.id.goal_remove){
-            NetworkRequest.delete(this, null, API.getDeleteGoalUrl(mUserGoal.getMappingId()),
+            NetworkRequest.delete(this, null, API.getDeleteGoalUrl(mUserGoal),
                     mApplication.getToken(), new JSONObject());
-            mApplication.getUserData().removeGoal(mUserGoal);
+            mApplication.getUserData().removeGoal(mUserGoal.getGoal());
             finish();
             return true;
         }
@@ -277,18 +277,18 @@ public class GoalActivity
     }
 
     @Override
-    public void onBehaviorSelected(Behavior behavior){
+    public void onBehaviorSelected(UserBehavior userBehavior){
         Intent actionPicker = new Intent(this, ChooseActionsActivity.class)
                 .putExtra("category", mUserGoal.getPrimaryCategory())
                 .putExtra("goal", mUserGoal)
-                .putExtra("behavior", behavior);
+                .putExtra("behavior", userBehavior);
         startActivityForResult(actionPicker, CHOOSE_ACTIONS_REQUEST_CODE);
     }
 
     @Override
-    public void onActionSelected(Behavior behavior, Action action){
+    public void onActionSelected(UserBehavior userBehavior, UserAction userAction){
         Intent trigger = new Intent(this, TriggerActivity.class)
-                .putExtra(TriggerActivity.USER_ACTION_KEY, action)
+                .putExtra(TriggerActivity.USER_ACTION_KEY, userAction)
                 .putExtra(TriggerActivity.GOAL_KEY, mUserGoal);
         startActivityForResult(trigger, TRIGGER_REQUEST_CODE);
     }

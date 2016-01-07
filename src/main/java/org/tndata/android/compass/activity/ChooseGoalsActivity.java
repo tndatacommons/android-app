@@ -217,17 +217,6 @@ public class ChooseGoalsActivity
     }
 
     @Override
-    public void onGoalOkClicked(Goal goal){
-        if (goal.getBehaviorCount() > 0){
-            //Launch the GoalTryActivity (where users choose a behavior for the Goal)
-            Intent intent = new Intent(getApplicationContext(), ChooseBehaviorsActivity.class);
-            intent.putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal);
-            intent.putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, mCategory);
-            startActivity(intent);
-        }
-    }
-
-    @Override
     public void onScroll(float percentage, float offset){
         Drawable drawable = mToolbar.getBackground();
         drawable.setAlpha(Math.round(percentage*255));
