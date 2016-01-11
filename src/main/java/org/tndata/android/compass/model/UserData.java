@@ -405,12 +405,18 @@ public class UserData{
         //Look at all the selected goals
         for (Goal goal:getGoals().values()){
             ArrayList<Behavior> goalBehaviors = new ArrayList<>();
+            for (Behavior behavior:getBehaviors().values()){
+                if (behavior.getGoals().contains(goal)){
+                    goalBehaviors.add(behavior);
+                    //break;
+                }
+            }/*
             for (Behavior behavior:goal.getBehaviors()){
                 behavior = getBehavior(behavior);
                 if (behavior != null){
                     goalBehaviors.add(behavior);
                 }
-            }
+            }*/
             goal.setBehaviors(goalBehaviors);
         }
     }
