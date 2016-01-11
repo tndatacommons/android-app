@@ -184,13 +184,16 @@ public class UserData{
      */
     public void addGoal(Goal goal){
         //If the goal ain't in the data set
-        if(!mGoals.containsKey(goal.getId())){
+        if (!mGoals.containsKey(goal.getId())){
             //Add it
             mGoals.put(goal.getId(), goal);
 
             //Add it to the relevant categories
             for (Category category:goal.getCategories()){
-                getCategory(category).addGoal(goal);
+                Category cat = getCategory(category);
+                if (cat != null){
+                    cat.addGoal(goal);
+                }
             }
 
             //Link behaviors
