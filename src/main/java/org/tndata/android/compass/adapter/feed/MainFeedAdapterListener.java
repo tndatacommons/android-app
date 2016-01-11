@@ -2,6 +2,8 @@ package org.tndata.android.compass.adapter.feed;
 
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserGoal;
 
 
 /**
@@ -25,12 +27,19 @@ public interface MainFeedAdapterListener{
     void onSuggestionOpened(Goal goal);
 
     /**
-     * Called when a goal is selected from either the context menu in actions or
-     * goals/recommendations.
+     * Called when a goal suggestion is selected.
      *
      * @param goal the selected goal.
      */
     void onGoalSelected(Goal goal);
+
+    /**
+     * Called when a goal is selected from either the context menu in actions or
+     * goals/recommendations.
+     *
+     * @param userGoal the selected user goal.
+     */
+    void onUserGoalSelected(UserGoal userGoal);
 
     /**
      * Called when the feedback card is tapped.
@@ -44,7 +53,7 @@ public interface MainFeedAdapterListener{
      *
      * @param action the action being displayed at the card.
      */
-    void onActionSelected(Action action);
+    void onActionSelected(UserAction action);
 
     /**
      * Called when a trigger is selected from the context menu.

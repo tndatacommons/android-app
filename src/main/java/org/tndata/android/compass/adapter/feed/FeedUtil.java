@@ -9,12 +9,16 @@ import android.view.View;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.ui.CompassPopupMenu;
 
 
 /**
- * Created by isma on 11/4/15.
+ * Utility class for the main feed.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
     MainFeedAdapter mAdapter;
@@ -110,11 +114,11 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
      * Sends a request to the API to mark an action as complete.
      *
      * @param context a reference to the context.
-     * @param action the action to be marked as complete.
+     * @param userAction the action to be marked as complete.
      */
-    void didIt(@NonNull Context context, @NonNull Action action){
+    void didIt(@NonNull Context context, @NonNull UserAction userAction){
         Intent completeAction = new Intent(context, ActionReportService.class)
-                .putExtra(ActionReportService.MAPPING_ID_KEY, action.getMappingId())
+                .putExtra(ActionReportService.USER_ACTION_KEY, userAction)
                 .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED);
         context.startService(completeAction);
     }

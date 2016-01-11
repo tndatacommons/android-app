@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.util.CompassUtil;
 
 import java.util.Calendar;
@@ -92,7 +92,7 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
      *
      * @param action the action to be bound to the holder.
      */
-    void bind(@Nullable Action action){
+    void bind(@Nullable UserAction action){
         if (action == null){
             mOverflow.setVisibility(View.GONE);
             mNoActionsContainer.setVisibility(View.VISIBLE);

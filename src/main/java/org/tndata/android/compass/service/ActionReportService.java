@@ -7,6 +7,7 @@ import android.content.Intent;
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.model.Reminder;
+import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.NotificationUtil;
@@ -21,8 +22,7 @@ import org.tndata.android.compass.util.NotificationUtil;
 public class ActionReportService extends IntentService{
     private static final String TAG = "ActionReportService";
 
-    public static final String ACTION_ID_KEY = "org.tndata.compass.CompleteAction.ActionId";
-    public static final String MAPPING_ID_KEY = "org.tndata.compass.CompleteAction.MappingId";
+    public static final String USER_ACTION_KEY = "org.tndata.compass.CompleteAction.UserAction";
     public static final String STATE_KEY = "org.tndata.compass.CompleteAction.State";
     public static final String LENGTH_KEY = "org.tndata.compass.CompleteAction.Length";
 
@@ -46,13 +46,18 @@ public class ActionReportService extends IntentService{
 
     @Override
     protected void onHandleIntent(Intent intent){
-        int mappingId = intent.getIntExtra(MAPPING_ID_KEY, -1);
-        int actionId = intent.getIntExtra(ACTION_ID_KEY, -1);
+        UserAction userAction = (UserAction)intent.getSerializableExtra(USER_ACTION_KEY);
         Reminder reminder = (Reminder)intent.getSerializableExtra(NotificationUtil.REMINDER_KEY);
 
+        int actionId;
+        String url;
         if (reminder != null){
-            mappingId = reminder.getUserMappingId();
             actionId = reminder.getObjectId();
+            url = API.getPostActionReportUrl(reminder);
+        }
+        else{
+            actionId = userAction.getActionId();
+            url = API.getPostActionReportUrl(userAction);
         }
 
         NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
@@ -68,6 +73,6 @@ public class ActionReportService extends IntentService{
             body = API.getPostActionReportBody(state);
         }
 
-        NetworkRequest.post(this, null, API.getPostActionReportUrl(mappingId), token, body);
+        NetworkRequest.post(this, null, url, token, body);
     }
 }

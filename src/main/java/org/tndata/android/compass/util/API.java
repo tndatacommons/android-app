@@ -323,6 +323,10 @@ public abstract class API{
         return BASE_URL + "users/actions/" + userAction.getId() + "/complete/";
     }
 
+    public static String getPostActionReportUrl(@NonNull Reminder reminder){
+        return BASE_URL + "users/actions/" + reminder.getUserMappingId() + "/complete/";
+    }
+
     public static JSONObject getPostActionReportBody(@NonNull String state){
         JSONObject postActionReportBody = new JSONObject();
         try{

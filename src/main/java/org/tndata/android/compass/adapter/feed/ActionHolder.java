@@ -4,7 +4,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.UserAction;
 
 
 /**
@@ -40,7 +40,7 @@ class ActionHolder extends MainFeedViewHolder implements View.OnClickListener{
     public void onClick(View view){
         mAdapter.setSelectedItem(getAdapterPosition());
         int index = getAdapterPosition()-(CardTypes.getUpcomingHeaderPosition()+1);
-        Action action = mAdapter.getDataHandler().getUpcoming().get(index);
+        UserAction action = mAdapter.getDataHandler().getUpcoming().get(index);
         switch (view.getId()){
             case R.id.action_overflow_box:
                 mAdapter.showActionPopup(view, getAdapterPosition());
@@ -51,7 +51,7 @@ class ActionHolder extends MainFeedViewHolder implements View.OnClickListener{
         }
     }
 
-    void bind(Action action){
+    void bind(UserAction action){
         mAction.setText(action.getTitle());
         //TODO this shouldn't be happening
         if (action.getPrimaryGoal() != null){

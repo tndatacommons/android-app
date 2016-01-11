@@ -350,11 +350,9 @@ public class ActionActivity
         if (mUserAction != null && !mActionUpdated){
             mActionUpdated = true;
 
-            Intent completeAction = new Intent(this, ActionReportService.class)
-                    .putExtra(ActionReportService.ACTION_ID_KEY, mUserAction.getId())
-                    .putExtra(ActionReportService.MAPPING_ID_KEY, mUserAction.getId())
-                    .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED);
-            startService(completeAction);
+            startService(new Intent(this, ActionReportService.class)
+                    .putExtra(ActionReportService.USER_ACTION_KEY, mUserAction)
+                    .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
 
             //Display the check mark and finish the activity after one second
             mTickSwitcher.showNext();
