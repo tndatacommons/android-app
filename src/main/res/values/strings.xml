@@ -13,6 +13,9 @@
     <string name="action_settings">Settings</string>
     <string name="action_check_in">Check in</string>
     <string name="action_tour">Tour</string>
+    <string name="action_support">Support</string>
+    <string name="action_support_share_title">Select your email client</string>
+    <string name="action_support_subject">Compass Feedback</string>
     <string name="nav_drawer_action">Compass</string>
     <string name="main_tab_title">My Journey</string>
     <string name="category_card_title">My %1$s goals</string>
