@@ -376,7 +376,9 @@ public class ChooseBehaviorsActivity
             setCategoryAndUserGoal();
             setAdapter();
             fetchBehaviors();
-            mSearchItem.setVisible(true);
+            if (mSearchItem != null){
+                mSearchItem.setVisible(true);
+            }
         }
         else if (requestCode == mPostGoalRequestCode){
             Goal goal = ContentParser.parseGoal(result);

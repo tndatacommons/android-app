@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +49,17 @@ public class UserData{
 
     //Data for the main feed
     private FeedData mFeedData;
+
+
+    /**
+     * Constructor.
+     */
+    public UserData(){
+        mCategories = new HashMap<>();
+        mGoals = new HashMap<>();
+        mBehaviors = new HashMap<>();
+        mActions = new HashMap<>();
+    }
 
 
     /*--------------------CONTENT SETTERS--------------------*
@@ -184,13 +196,16 @@ public class UserData{
      */
     public void addGoal(Goal goal){
         //If the goal ain't in the data set
-        if(!mGoals.containsKey(goal.getId())){
+        if (!mGoals.containsKey(goal.getId())){
             //Add it
             mGoals.put(goal.getId(), goal);
 
             //Add it to the relevant categories
             for (Category category:goal.getCategories()){
-                getCategory(category).addGoal(goal);
+                Category cat = getCategory(category);
+                if (cat != null){
+                    cat.addGoal(goal);
+                }
             }
 
             //Link behaviors
@@ -390,12 +405,18 @@ public class UserData{
         //Look at all the selected goals
         for (Goal goal:getGoals().values()){
             ArrayList<Behavior> goalBehaviors = new ArrayList<>();
+            for (Behavior behavior:getBehaviors().values()){
+                if (behavior.getGoals().contains(goal)){
+                    goalBehaviors.add(behavior);
+                    //break;
+                }
+            }/*
             for (Behavior behavior:goal.getBehaviors()){
                 behavior = getBehavior(behavior);
                 if (behavior != null){
                     goalBehaviors.add(behavior);
                 }
-            }
+            }*/
             goal.setBehaviors(goalBehaviors);
         }
     }

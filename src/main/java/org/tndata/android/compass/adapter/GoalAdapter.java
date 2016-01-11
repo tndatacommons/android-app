@@ -136,6 +136,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
     @Override
     public int getItemCount(){
         if (mGoal.getBehaviors().isEmpty()){
+            Log.d(TAG, "No behaviors");
             return 1;
         }
         return 2*mGoal.getBehaviors().size();

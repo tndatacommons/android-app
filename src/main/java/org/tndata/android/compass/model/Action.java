@@ -197,8 +197,10 @@ public class Action extends TDCBase implements Serializable, Comparable<Action> 
         try{
             boolean am = true;
             int hour = Integer.valueOf(hourStr);
-            if (hour > 12){
-                hour -= 12;
+            if (hour >= 12){
+                if (hour > 12){
+                    hour -= 12;
+                }
                 am = false;
             }
 
