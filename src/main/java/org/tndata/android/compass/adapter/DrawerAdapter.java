@@ -1,15 +1,5 @@
 package org.tndata.android.compass.adapter;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.tndata.android.compass.BuildConfig;
-import org.tndata.android.compass.CompassApplication;
-import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.DrawerItem;
-import org.tndata.android.compass.model.User;
-import org.tndata.android.compass.util.CompassUtil;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
@@ -19,6 +9,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import org.tndata.android.compass.BuildConfig;
+import org.tndata.android.compass.CompassApplication;
+import org.tndata.android.compass.R;
+import org.tndata.android.compass.model.DrawerItem;
+import org.tndata.android.compass.model.User;
+import org.tndata.android.compass.util.CompassUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -37,7 +37,8 @@ public class DrawerAdapter extends RecyclerView.Adapter{
     public static final int MY_PRIVACY = PLACES+1;
     public static final int TOUR = MY_PRIVACY+1;
     public static final int SETTINGS = TOUR+1;
-    public static final int DRAWER_COUNT = SETTINGS+1;
+    public static final int SUPPORT = SETTINGS+1;
+    public static final int DRAWER_COUNT = SUPPORT+1;
 
 
     private final Context mContext;
@@ -168,6 +169,9 @@ public class DrawerAdapter extends RecyclerView.Adapter{
                     items.add(new DrawerItem(mContext.getString(R.string.action_tour),
                             R.drawable.ic_tour));
                     break;
+                case SUPPORT:
+                    items.add(new DrawerItem(mContext.getString(R.string.action_support),
+                            R.drawable.ic_profile));
             }
         }
 
