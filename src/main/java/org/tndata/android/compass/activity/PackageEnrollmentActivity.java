@@ -155,7 +155,7 @@ public class PackageEnrollmentActivity
             case R.id.package_accept:
                 //Show the progress bar and fire up the acknowledgement task
                 mAcceptSwitcher.showNext();
-                mPutConsentRequestCode = NetworkRequest.post(this, this,
+                mPutConsentRequestCode = NetworkRequest.put(this, this,
                         API.getPutConsentAcknowledgementUrl(mPackageId), mApplication.getToken(),
                         API.getPutConsentAcknowledgementBody());
                 break;
