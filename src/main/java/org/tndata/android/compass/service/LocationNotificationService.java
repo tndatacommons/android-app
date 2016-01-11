@@ -1,11 +1,13 @@
 package org.tndata.android.compass.service;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
@@ -16,6 +18,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -82,7 +85,9 @@ public class LocationNotificationService
         super.onCreate();
         cancelled = false;
         mRunning = false;
-        mLocationRequest = new LocationRequest(this, this, 0);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            mLocationRequest = new LocationRequest(this, this, 0);
+        }
         mRequestInProgress = false;
     }
 
@@ -98,7 +103,9 @@ public class LocationNotificationService
 
         if (!mRunning){
             mRunning = true;
-            mLocationRequest.onStart();
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                mLocationRequest.onStart();
+            }
         }
         requestLocation();
         return START_STICKY;
@@ -111,14 +118,18 @@ public class LocationNotificationService
     private void requestLocation(){
         //If the service was cancelled, clean up and stop
         if (cancelled){
-            mLocationRequest.onStop();
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                mLocationRequest.onStop();
+            }
             stopSelf();
         }
         //Otherwise, request a location
         else{
             if (!mRequestInProgress){
                 mRequestInProgress = true;
-                mLocationRequest.requestLocation();
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                    mLocationRequest.requestLocation();
+                }
             }
         }
     }
