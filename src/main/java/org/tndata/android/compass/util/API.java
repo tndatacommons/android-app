@@ -30,7 +30,7 @@ public abstract class API{
             USE_NGROK_TUNNEL ?
                     NGROK_TUNNEL_URL
                     :
-                    !BuildConfig.DEBUG ?
+                    BuildConfig.DEBUG ?
                             TNDATA_STAGING_URL
                             :
                             TNDATA_BASE_URL;
