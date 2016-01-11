@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +49,17 @@ public class UserData{
 
     //Data for the main feed
     private FeedData mFeedData;
+
+
+    /**
+     * Constructor.
+     */
+    public UserData(){
+        mCategories = new HashMap<>();
+        mGoals = new HashMap<>();
+        mBehaviors = new HashMap<>();
+        mActions = new HashMap<>();
+    }
 
 
     /*--------------------CONTENT SETTERS--------------------*
