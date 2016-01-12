@@ -39,11 +39,13 @@ import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.SearchAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapterListener;
-import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.SearchResult;
+import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.MiscellaneousParser;
 import org.tndata.android.compass.parser.UserDataParser;
 import org.tndata.android.compass.util.API;
@@ -119,7 +121,7 @@ public class MainActivity
     private FloatingActionMenu mMenu;
 
     //The selected category from the FAB
-    private Category mSelectedCategory;
+    private UserCategory mSelectedCategory;
 
     private boolean mSuggestionDismissed;
 
@@ -413,7 +415,7 @@ public class MainActivity
         mMenu.removeAllMenuButtons();
 
         //Populate the menu with a button per category
-        for (final Category category:mApplication.getUserData().getCategories().values()){
+        for (final UserCategory category:mApplication.getUserData().getCategories().values()){
             //Skip packaged categories
             if (category.isPackagedContent()){
                 continue;
@@ -424,7 +426,7 @@ public class MainActivity
             fab.setColorNormal(Color.parseColor(category.getColor()));
             fab.setColorPressed(Color.parseColor(category.getColor()));
             fab.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            fab.setImageResource(getIconResourceId(category));
+            fab.setImageResource(getIconResourceId(category.getCategory()));
             mMenu.addMenuButton(fab);
             fab.setOnClickListener(new View.OnClickListener(){
                 @Override
@@ -489,10 +491,10 @@ public class MainActivity
     /**
      * Called when a FAB is clicked.
      *
-     * @param category the selected category.
+     * @param userCategory the selected category.
      */
-    private void addGoalsClicked(Category category){
-        mSelectedCategory = category;
+    private void addGoalsClicked(UserCategory userCategory){
+        mSelectedCategory = userCategory;
         mMenu.toggle(true);
     }
 
@@ -653,20 +655,10 @@ public class MainActivity
     }
 
     @Override
-    public void onGoalSelected(Goal goal){
-        //User goal
-        if (!mApplication.getUserData().getGoals().isEmpty()){
-            //TODO user goal, not a goal
-            startActivityForResult(new Intent(this, GoalActivity.class).putExtra(GoalActivity.USER_GOAL_KEY, goal),
-                    GOAL_REQUEST_CODE);
-        }
-        //Recommendation
-        else{
-            Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
-                    .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal)
-                    .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, goal.getCategories().get(0));
-            startActivity(chooseBehaviors);
-        }
+    public void onGoalSelected(UserGoal goal){
+        Intent goalActivityIntent = new Intent(this, GoalActivity.class)
+                .putExtra(GoalActivity.USER_GOAL_KEY, goal);
+        startActivityForResult(goalActivityIntent, GOAL_REQUEST_CODE);
     }
 
     @Override
@@ -679,17 +671,17 @@ public class MainActivity
     }
 
     @Override
-    public void onActionSelected(Action action){
+    public void onActionSelected(UserAction userAction){
         Intent actionIntent = new Intent(this, ActionActivity.class)
-                .putExtra(ActionActivity.ACTION_KEY, action);
+                .putExtra(ActionActivity.USER_ACTION_KEY, userAction);
         startActivityForResult(actionIntent, ACTION_REQUEST_CODE);
     }
 
     @Override
-    public void onTriggerSelected(Action action){
+    public void onTriggerSelected(UserAction userAction){
         Intent triggerIntent = new Intent(this, TriggerActivity.class)
-                .putExtra(TriggerActivity.USER_ACTION_KEY, action)
-                .putExtra(TriggerActivity.GOAL_KEY, action.getPrimaryGoal());
+                .putExtra(TriggerActivity.USER_ACTION_KEY, userAction)
+                .putExtra(TriggerActivity.GOAL_KEY, userAction.getPrimaryGoal());
         startActivityForResult(triggerIntent, TRIGGER_REQUEST_CODE);
     }
 

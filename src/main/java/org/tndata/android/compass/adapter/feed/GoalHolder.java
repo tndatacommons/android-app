@@ -3,6 +3,7 @@ package org.tndata.android.compass.adapter.feed;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.UserGoal;
 
 
 /**
@@ -19,6 +21,9 @@ import org.tndata.android.compass.model.Goal;
  * @version 1.0.0
  */
 class GoalHolder extends MainFeedViewHolder implements View.OnClickListener{
+    private Goal mSuggestion;
+    private UserGoal mUserGoal;
+
     RelativeLayout mIconContainer;
     ImageView mIcon;
     TextView mTitle;
@@ -42,29 +47,46 @@ class GoalHolder extends MainFeedViewHolder implements View.OnClickListener{
 
     @Override
     public void onClick(View view){
-        int position = getAdapterPosition()-(CardTypes.getMyGoalsHeaderPosition()+1);
-        mAdapter.mListener.onGoalSelected(mAdapter.getDataHandler().getGoals().get(position));
+        if (mUserGoal != null){
+            mAdapter.mListener.onGoalSelected(mUserGoal);
+        }
+        else{
+            mAdapter.mListener.onSuggestionOpened(mSuggestion);
+        }
     }
 
-    void bind(Goal goal, boolean suggestion){
-        if (!suggestion){
-            GradientDrawable gradientDrawable = (GradientDrawable)mIconContainer.getBackground();
-            if (goal.getPrimaryCategory() != null){
-                gradientDrawable.setColor(Color.parseColor(goal.getPrimaryCategory().getColor()));
-            }
-            else{
-                //TODO another workaround
-                gradientDrawable.setColor(mAdapter.mContext.getResources().getColor(R.color.grow_primary));
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-                mIconContainer.setBackground(gradientDrawable);
-            }
-            else{
-                mIconContainer.setBackgroundDrawable(gradientDrawable);
-            }
+    void bind(@NonNull UserGoal userGoal){
+        mUserGoal = userGoal;
+        mSuggestion = null;
+
+        GradientDrawable gradientDrawable = (GradientDrawable)mIconContainer.getBackground();
+        if (mUserGoal.getPrimaryCategory() != null){
+            gradientDrawable.setColor(Color.parseColor(mUserGoal.getPrimaryCategory().getColor()));
+        }
+        else{
+            //TODO another workaround
+            gradientDrawable.setColor(mAdapter.mContext.getResources().getColor(R.color.grow_primary));
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+            mIconContainer.setBackground(gradientDrawable);
+        }
+        else{
+            mIconContainer.setBackgroundDrawable(gradientDrawable);
         }
 
+        loadIcon(mUserGoal.getGoal());
+    }
+
+    void bind(@NonNull Goal suggestion){
+        mSuggestion = suggestion;
+        mUserGoal = null;
+
+        loadIcon(mSuggestion);
+    }
+
+    private void loadIcon(@NonNull Goal goal){
         goal.loadIconIntoView(mIcon);
         mTitle.setText(goal.getTitle());
+
     }
 }

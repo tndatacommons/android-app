@@ -94,7 +94,7 @@ final class CardTypes{
     }
 
     static boolean hasSuggestion(){
-        return sDisplaySuggestion && !sDataHandler.getGoals().isEmpty();
+        return sDisplaySuggestion && !sDataHandler.getUserGoals().isEmpty();
     }
 
     static int getSuggestionPosition(){
@@ -215,7 +215,7 @@ final class CardTypes{
      */
     static int getMyGoalsFooterPosition(){
         //My goals can be either my goals or suggestions
-        return getMyGoalsHeaderPosition() + sDataHandler.getGoals().size()+1;
+        return getMyGoalsHeaderPosition() + sDataHandler.getUserGoals().size()+1;
     }
 
     /**

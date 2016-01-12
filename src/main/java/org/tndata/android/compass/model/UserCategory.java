@@ -75,6 +75,14 @@ public class UserCategory extends TDCBase implements Serializable{
         return category.getIconUrl();
     }
 
+    public boolean isPackagedContent(){
+        return category.isPackagedContent();
+    }
+
+    public String getColor(){
+        return category.getColor();
+    }
+
     public List<UserGoal> getGoals(){
         return user_goals;
     }

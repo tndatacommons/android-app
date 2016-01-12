@@ -14,10 +14,9 @@ import android.view.ViewGroup.LayoutParams;
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
-import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -268,16 +267,14 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             ((CardView)rawHolder.itemView).setRadius(0);
 
             int goalPosition = position - CardTypes.getMyGoalsHeaderPosition()-1;
-            UserGoal goal = mDataHandler.getGoals().get(goalPosition);
-            ((GoalHolder)rawHolder).bind(goal, mUserData.getGoals().isEmpty());
+            ((GoalHolder)rawHolder).bind(mDataHandler.getUserGoals().get(goalPosition));
         }
         //My goals / suggestions
         else if (CardTypes.isGoalSuggestion(position)){
             ((CardView)rawHolder.itemView).setRadius(0);
 
             int goalPosition = position - CardTypes.getMyGoalsHeaderPosition()-1;
-            Goal goal = mDataHandler.getGoals().get(goalPosition);
-            ((GoalHolder)rawHolder).bind(goal, mUserData.getGoals().isEmpty());
+            ((GoalHolder)rawHolder).bind(mDataHandler.getSuggestions().get(goalPosition));
         }
         else if (CardTypes.isMyGoalsFooter(position)){
             ((CardView)rawHolder.itemView).setRadius(0);
@@ -407,7 +404,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * @param position the adapter position of the item to be removed.
      */
     void remove(int position){
-        Action action;
+        UserAction action;
         if (CardTypes.isUpNext(position)){
             action = mDataHandler.getUpNext();
             mDataHandler.remove(action);
@@ -420,7 +417,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             mDataHandler.removeUpcoming(getActionPosition(position));
             removeActionFromFeed(position);
         }
-        NetworkRequest.delete(mContext, null, API.getDeleteActionUrl(action.getMappingId()),
+        NetworkRequest.delete(mContext, null, API.getDeleteActionUrl(action),
                 ((CompassApplication)mContext.getApplicationContext()).getToken(), new JSONObject());
     }
 
@@ -431,7 +428,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * @param position the adapter position of the action whose goal is to be viewed.
      */
     void viewGoal(int position){
-        Action action;
+        UserAction action;
         if (CardTypes.isUpNext(position)){
             action = mUserData.getFeedData().getNextAction();
         }
@@ -440,7 +437,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
         //TODO this is another workaround
         if (action.getPrimaryGoal() != null){
-            mListener.onGoalSelected(action.getPrimaryGoal());
+            mListener.onGoalSelected(mUserData.getGoal(action.getPrimaryGoal()));
         }
     }
 

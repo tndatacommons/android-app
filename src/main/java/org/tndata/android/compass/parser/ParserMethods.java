@@ -31,6 +31,7 @@ import java.util.Map;
  */
 class ParserMethods{
     protected static Gson sGson = new GsonBuilder()
+            .registerTypeAdapter(List.class, new ListDeserializer())
             .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
             .create();
 

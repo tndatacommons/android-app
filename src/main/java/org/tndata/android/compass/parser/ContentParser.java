@@ -214,10 +214,11 @@ public final class ContentParser extends ParserMethods{
             try{
                 UserGoal goal = parseUserGoal(goalArray.getString(i));
                 if (goal != null){
+                    Log.d("UserGoalParser", goal.toString());
                     goals.put(goal.getId(), goal);
                 }
                 else{
-                    Log.d("USerGoalParser", "UserGoal #" + i + " is null.");
+                    Log.d("UserGoalParser", "UserGoal #" + i + " is null.");
                 }
             }
             catch (JSONException jsonx){
