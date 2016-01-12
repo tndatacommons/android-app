@@ -171,7 +171,7 @@ public class DrawerAdapter extends RecyclerView.Adapter{
                     break;
                 case SUPPORT:
                     items.add(new DrawerItem(mContext.getString(R.string.action_support),
-                            R.drawable.ic_profile));
+                            R.drawable.ic_support));
             }
         }
 

@@ -1,5 +1,6 @@
 package org.tndata.android.compass.activity;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -605,19 +606,18 @@ public class MainActivity
                 break;
 
             case DrawerAdapter.SUPPORT:
-                // Ask the user to open their default email client
-                Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                emailIntent.setData(Uri.parse("mailto:feedback@tndata.org"));
-                emailIntent.setType("text/plain");
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, getText(R.string.action_support_subject));
-                try {
+                //Ask the user to open their default email client
+                Intent emailIntent = new Intent(Intent.ACTION_SEND)
+                        .setData(Uri.parse("mailto:feedback@tndata.org"))
+                        .putExtra(Intent.EXTRA_EMAIL, new String[]{"feedback@tndata.org"})
+                        .putExtra(Intent.EXTRA_SUBJECT, getText(R.string.action_support_subject))
+                        .setType("text/plain");
+                try{
                     startActivity(Intent.createChooser(emailIntent, getText(R.string.action_support_share_title)));
-                    finish();
                 }
-                catch (android.content.ActivityNotFoundException ex) {
+                catch (ActivityNotFoundException anfx){
                     Toast.makeText(MainActivity.this, "There is no email client installed.", Toast.LENGTH_SHORT).show();
                 }
-
                 break;
 
             case DrawerAdapter.DRAWER_COUNT:
