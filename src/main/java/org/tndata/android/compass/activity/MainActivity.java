@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
@@ -608,7 +607,6 @@ public class MainActivity
             case DrawerAdapter.SUPPORT:
                 //Ask the user to open their default email client
                 Intent emailIntent = new Intent(Intent.ACTION_SEND)
-                        .setData(Uri.parse("mailto:feedback@tndata.org"))
                         .putExtra(Intent.EXTRA_EMAIL, new String[]{"feedback@tndata.org"})
                         .putExtra(Intent.EXTRA_SUBJECT, getText(R.string.action_support_subject))
                         .setType("text/plain");
