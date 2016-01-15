@@ -23,6 +23,9 @@ import java.util.Locale;
 /**
  * Contains the UI components of TriggerActivity.
  *
+ * TODO merge with TriggerActivity. Fragment here is unnecessary since it is not reused and
+ * TODO merging it would make the code more compact.
+ *
  * @author Edited by Ismael Alonso
  * @version 2.0.0
  */

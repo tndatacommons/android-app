@@ -179,6 +179,13 @@ public final class NetworkRequest{
         init(context);
         final int requestCode = generateRequestCode();
 
+        if (url.contains("?")){
+            url += "&version=2";
+        }
+        else{
+            url += "?version=2";
+        }
+
         //Create the request object and put it in the map
         NetworkRequest request = new NetworkRequest(callback, token);
         sRequestMap.put(requestCode, request);
@@ -267,6 +274,13 @@ public final class NetworkRequest{
         //Init and generate the request code
         init(context);
         final int requestCode = generateRequestCode();
+
+        if (url.contains("?")){
+            url += "&version=2";
+        }
+        else{
+            url += "?version=2";
+        }
 
         //Create the request object and put it in the map
         NetworkRequest request = new NetworkRequest(callback, token, body);

@@ -99,8 +99,8 @@ public class GoalActivity
         hero.setLayoutParams(params);
         //TODO the first part of the if is a workaround
         //Packaged content ain't got no hero
-        if (mUserGoal.getPrimaryCategory() != null && mUserGoal.getPrimaryCategory().getImageUrl() != null){
-            ImageLoader.loadBitmap(hero, mUserGoal.getPrimaryCategory().getImageUrl());
+        if (mUserGoal.getPrimaryCategory() != null && mUserGoal.getPrimaryCategory().getCategory().getImageUrl() != null){
+            ImageLoader.loadBitmap(hero, mUserGoal.getPrimaryCategory().getCategory().getImageUrl());
         }
         else{
             int resId = R.drawable.compass_master_illustration;
@@ -115,8 +115,8 @@ public class GoalActivity
         fab.setOnClickListener(this);
         //TODO this is a workaround
         if (mUserGoal.getPrimaryCategory() != null){
-            fab.setColorNormal(Color.parseColor(mUserGoal.getPrimaryCategory().getSecondaryColor()));
-            fab.setColorPressed(Color.parseColor(mUserGoal.getPrimaryCategory().getSecondaryColor()));
+            fab.setColorNormal(Color.parseColor(mUserGoal.getPrimaryCategory().getCategory().getSecondaryColor()));
+            fab.setColorPressed(Color.parseColor(mUserGoal.getPrimaryCategory().getCategory().getSecondaryColor()));
         }
         else{
             fab.setColorNormal(getResources().getColor(R.color.grow_accent));

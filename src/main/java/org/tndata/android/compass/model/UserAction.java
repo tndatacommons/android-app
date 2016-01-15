@@ -9,23 +9,28 @@ import java.io.Serializable;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserAction extends TDCBase implements Serializable{
+public class UserAction extends UserContent implements Serializable{
     private static final long serialVersionUID = 291944745632851923L;
 
+    //Values retrieved from the API
     private Action action;
     private String next_reminder_date;
 
-    private UserBehavior behavior;
-    private Goal primary_goal = null;
-    private Category primary_category = null;
+    private int primary_goal;
+    private int primary_category;
 
     private Trigger trigger;
+
+    //Values set during post-processing
+    private UserBehavior behavior;
+    private Goal primaryGoal;
+    private Category primaryCategory;
 
 
     public UserAction(Action action, Goal primaryGoal, Category primaryCategory){
         this.action = action;
-        this.primary_goal = primaryGoal;
-        this.primary_category = primaryCategory;
+        this.primaryGoal = primaryGoal;
+        this.primaryCategory = primaryCategory;
     }
 
 
@@ -54,18 +59,14 @@ public class UserAction extends TDCBase implements Serializable{
         return action;
     }
 
-    public int getActionId(){
+    @Override
+    public int getObjectId(){
         return action.getId();
     }
 
     @Override
     public String getTitle(){
         return action.getTitle();
-    }
-
-    @Override
-    public String getTitleSlug(){
-        return action.getTitleSlug();
     }
 
     @Override
@@ -116,11 +117,11 @@ public class UserAction extends TDCBase implements Serializable{
     }
 
     public Category getPrimaryCategory(){
-        return primary_category;
+        return primaryCategory;
     }
 
     public Goal getPrimaryGoal(){
-        return primary_goal;
+        return primaryGoal;
     }
 
     public Trigger getTrigger(){

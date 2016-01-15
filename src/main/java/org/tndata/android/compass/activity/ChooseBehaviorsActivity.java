@@ -317,7 +317,7 @@ public class ChooseBehaviorsActivity
         if (requestCode == mGetGoalRequestCode){
             //Parse the goal
             mGoal = ContentParser.parseGoal(result);
-            mCategory = mGoal.getPrimaryCategory();
+            //mCategory = mGoal.getPrimaryCategory();
 
             //Set UI and fetch the behaviors
             mToolbar.setTitle(mGoal.getTitle());

@@ -17,8 +17,8 @@ import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.SnoozeAdapter;
 import org.tndata.android.compass.database.CompassDbHelper;
-import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Reminder;
+import org.tndata.android.compass.model.UserPlace;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.service.SnoozeService;
@@ -51,7 +51,7 @@ public class SnoozeActivity
     private Reminder mReminder;
     private int mYear, mMonth, mDay;
 
-    private List<Place> mPlaces;
+    private List<UserPlace> mPlaces;
 
 
     @Override

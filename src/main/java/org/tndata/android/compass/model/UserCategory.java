@@ -11,30 +11,24 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserCategory extends TDCBase implements Serializable{
+public class UserCategory extends UserContent implements Serializable{
     private static final long serialVersionUID = 1751646542285854670L;
 
     private Category category;
-    private List<UserGoal> user_goals;
 
-    private double progress_value = 0.0;
-
-
-    public UserCategory(Category category){
-        this.category = category;
-    }
+    private List<UserGoal> userGoals;
 
 
     /*---------*
      * SETTERS *
      *---------*/
 
-    public void setProgressValue(double value){
-        this.progress_value = value;
+    public void setCategory(Category category){
+        this.category = category;
     }
 
     public void setGoals(List<UserGoal> userGoals){
-        this.user_goals = userGoals;
+        this.userGoals = userGoals;
     }
 
 
@@ -46,18 +40,14 @@ public class UserCategory extends TDCBase implements Serializable{
         return category;
     }
 
-    public int getCategoryId(){
+    @Override
+    public int getObjectId(){
         return category.getId();
     }
 
     @Override
     public String getTitle(){
         return category.getTitle();
-    }
-
-    @Override
-    public String getTitleSlug(){
-        return category.getTitleSlug();
     }
 
     @Override
@@ -84,11 +74,7 @@ public class UserCategory extends TDCBase implements Serializable{
     }
 
     public List<UserGoal> getGoals(){
-        return user_goals;
-    }
-
-    public double getProgressValue(){
-        return this.progress_value;
+        return userGoals;
     }
 
 
@@ -97,17 +83,17 @@ public class UserCategory extends TDCBase implements Serializable{
      *---------*/
 
     public void addGoal(UserGoal goal){
-        if (user_goals == null){
-            user_goals = new ArrayList<>();
+        if (userGoals == null){
+            userGoals = new ArrayList<>();
         }
-        if (!user_goals.contains(goal)){
-            user_goals.add(goal);
+        if (!userGoals.contains(goal)){
+            userGoals.add(goal);
         }
     }
 
     public void removeGoal(UserGoal goal){
-        if (user_goals != null && user_goals.contains(goal)){
-            user_goals.remove(goal);
+        if (userGoals != null && userGoals.contains(goal)){
+            userGoals.remove(goal);
         }
     }
 

@@ -17,9 +17,9 @@ public class Action extends TDCBase implements Serializable{
     private String html_more_info = "";
     private String external_resource = "";
     private String external_resource_name = "";
-    private Trigger default_trigger;
+    private Trigger trigger;
 
-    private Behavior behavior = null;
+    private int behavior;
 
 
     /*---------*
@@ -47,10 +47,10 @@ public class Action extends TDCBase implements Serializable{
     }
 
     public Trigger getTrigger(){
-        return default_trigger != null ? default_trigger : new Trigger();
+        return trigger != null ? trigger : new Trigger();
     }
 
-    public Behavior getBehavior(){
+    public int getBehavior(){
         return behavior;
     }
 

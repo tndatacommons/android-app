@@ -359,20 +359,20 @@ public abstract class API{
         return BASE_URL + "places/";
     }
 
-    public static String getPostPutPlaceUrl(@NonNull Place place){
+    public static String getPostPutPlaceUrl(@NonNull UserPlace userPlace){
         String url =  BASE_URL + "users/places/";
-        if (place.getId() != -1){
-            url += place.getId() + "/";
+        if (userPlace.getId() != -1){
+            url += userPlace.getId() + "/";
         }
         return url;
     }
 
-    public static JSONObject getPostPutPlaceBody(@NonNull Place place){
+    public static JSONObject getPostPutPlaceBody(@NonNull UserPlace userPlace){
         JSONObject postPutPlaceBody = new JSONObject();
         try{
-            postPutPlaceBody.put("place", place.getName());
-            postPutPlaceBody.put("latitude", place.getLatitude());
-            postPutPlaceBody.put("longitude", place.getLongitude());
+            postPutPlaceBody.put("place", userPlace.getName());
+            postPutPlaceBody.put("latitude", userPlace.getLatitude());
+            postPutPlaceBody.put("longitude", userPlace.getLongitude());
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();

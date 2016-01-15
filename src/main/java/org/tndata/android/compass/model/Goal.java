@@ -5,8 +5,7 @@ import android.widget.ImageView;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -19,10 +18,8 @@ public class Goal extends TDCBase implements Serializable{
     private static final long serialVersionUID = 7109406671934150671L;
 
     private String outcome = "";
+    private Set<Integer> categories;
     private int behaviors_count = 0;
-
-    private List<Category> categories = new ArrayList<>();
-    private Category primary_category;
 
 
     /*---------*
@@ -33,8 +30,12 @@ public class Goal extends TDCBase implements Serializable{
         this.outcome = outcome;
     }
 
-    public void setCategories(List<Category> categories){
+    public void setCategories(Set<Integer> categories){
         this.categories = categories;
+    }
+
+    public void setBehaviorCount(int behaviorCount){
+        this.behaviors_count = behaviorCount;
     }
 
 
@@ -46,16 +47,12 @@ public class Goal extends TDCBase implements Serializable{
         return outcome;
     }
 
-    public int getBehaviorCount(){
-        return behaviors_count;
-    }
-
-    public List<Category> getCategories(){
+    public Set<Integer> getCategories(){
         return categories;
     }
 
-    public Category getPrimaryCategory(){
-        return primary_category;
+    public int getBehaviorCount(){
+        return behaviors_count;
     }
 
 
@@ -71,8 +68,8 @@ public class Goal extends TDCBase implements Serializable{
      */
     public void loadIconIntoView(ImageView imageView){
         String iconUrl = getIconUrl();
-        if(iconUrl != null && !iconUrl.isEmpty()) {
-            ImageLoader.loadBitmap(imageView, iconUrl, new ImageLoader.Options());
+        if (iconUrl != null && !iconUrl.isEmpty()){
+            ImageLoader.loadBitmap(imageView, iconUrl);
         }
     }
 

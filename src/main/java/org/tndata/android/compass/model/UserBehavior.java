@@ -11,15 +11,17 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserBehavior extends TDCBase implements Serializable{
+public class UserBehavior extends UserContent implements Serializable{
     private static final long serialVersionUID = 774798265423822842L;
 
+    //Values retrieved from the API
     private Behavior behavior;
 
-    private List<UserGoal> user_goals = new ArrayList<>();
-    private List<UserAction> user_actions = new ArrayList<>();
-
     private Progress progress;
+
+    //Calues set during post-processing
+    private List<UserGoal> userGoals = new ArrayList<>();
+    private List<UserAction> userActions = new ArrayList<>();
 
 
     public UserBehavior(Behavior behavior){
@@ -31,12 +33,16 @@ public class UserBehavior extends TDCBase implements Serializable{
      * SETTERS *
      *---------*/
 
+    public void setProgress(Progress progress){
+        this.progress = progress;
+    }
+
     public void setGoals(List<UserGoal> goals) {
-        this.user_goals = goals;
+        this.userGoals = goals;
     }
 
     public void setActions(List<UserAction> actions){
-        this.user_actions = actions;
+        this.userActions = actions;
     }
 
 
@@ -48,18 +54,14 @@ public class UserBehavior extends TDCBase implements Serializable{
         return behavior;
     }
 
-    public int getBehaviorId(){
+    @Override
+    public int getObjectId(){
         return behavior.getId();
     }
 
     @Override
     public String getTitle(){
         return behavior.getTitle();
-    }
-
-    @Override
-    public String getTitleSlug(){
-        return behavior.getTitleSlug();
     }
 
     @Override
@@ -78,11 +80,11 @@ public class UserBehavior extends TDCBase implements Serializable{
     }
 
     public List<UserGoal> getGoals(){
-        return user_goals;
+        return userGoals;
     }
 
     public List<UserAction> getActions(){
-        return user_actions;
+        return userActions;
     }
 
     public Progress getProgress(){
@@ -95,32 +97,32 @@ public class UserBehavior extends TDCBase implements Serializable{
      *---------*/
 
     public void addGoal(UserGoal goal){
-        if (user_goals == null){
-            user_goals = new ArrayList<>();
+        if (userGoals == null){
+            userGoals = new ArrayList<>();
         }
-        if (!user_goals.contains(goal)){
-            user_goals.add(goal);
+        if (!userGoals.contains(goal)){
+            userGoals.add(goal);
         }
     }
 
     public void removeGoal(UserGoal goal){
-        if (user_goals.contains(goal)){
-            user_goals.remove(goal);
+        if (userGoals.contains(goal)){
+            userGoals.remove(goal);
         }
     }
 
     public void addAction(UserAction action){
-        if (user_actions == null){
-            user_actions = new ArrayList<>();
+        if (userActions == null){
+            userActions = new ArrayList<>();
         }
-        if (!user_actions.contains(action)){
-            user_actions.add(action);
+        if (!userActions.contains(action)){
+            userActions.add(action);
         }
     }
 
     public void removeAction(UserAction action){
-        if (user_actions.contains(action)){
-            user_actions.remove(action);
+        if (userActions.contains(action)){
+            userActions.remove(action);
         }
     }
 

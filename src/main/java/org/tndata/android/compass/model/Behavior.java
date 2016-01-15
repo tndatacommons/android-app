@@ -5,8 +5,7 @@ import android.widget.ImageView;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -23,7 +22,7 @@ public class Behavior extends TDCBase implements Serializable{
     private String external_resource = "";
     private String external_resource_name = "";
 
-    private List<Goal> goals = new ArrayList<>();
+    private Set<Integer> goals;
     private int actions_count = 0;
 
 
@@ -31,7 +30,7 @@ public class Behavior extends TDCBase implements Serializable{
      * SETTERS *
      *---------*/
 
-    public void setGoals(List<Goal> goals) {
+    public void setGoals(Set<Integer> goals) {
         this.goals = goals;
     }
 
@@ -56,7 +55,7 @@ public class Behavior extends TDCBase implements Serializable{
         return external_resource_name;
     }
 
-    public List<Goal> getGoals(){
+    public Set<Integer> getGoals(){
         return goals;
     }
 

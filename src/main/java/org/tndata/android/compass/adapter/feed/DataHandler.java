@@ -110,7 +110,7 @@ class DataHandler{
     Category getActionCategory(UserAction action){
         Category category = null;
         if (action.getPrimaryGoal() != null){
-            category = action.getPrimaryGoal().getPrimaryCategory();
+            //category = action.getPrimaryGoal().getPrimaryCategory();
             if (category == null){
                 UserGoal goal = mUserData.getGoal(action.getPrimaryGoal());
                 if (goal.getCategories().size() > 0){

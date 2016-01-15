@@ -649,8 +649,8 @@ public class MainActivity
     @Override
     public void onSuggestionOpened(Goal goal){
         Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
-                .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal)
-                .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, goal.getCategories().get(0));
+                .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal);
+                //.putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, goal.getCategories().get(0));
         startActivityForResult(chooseBehaviors, GOAL_SUGGESTION_REQUEST_CODE);
     }
 

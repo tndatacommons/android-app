@@ -2,6 +2,7 @@ package org.tndata.android.compass.parser;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 
 /**
@@ -40,6 +41,7 @@ public final class Parser{
      */
     public static int parse(@NonNull Context context, @NonNull String src,
                             @NonNull ParserCallback callback){
+        Log.d("Parser", "Startiing to parse");
         int requestCode = generateRequestCode();
         new ParserWorker(context, requestCode, src, callback).execute();
         return requestCode;

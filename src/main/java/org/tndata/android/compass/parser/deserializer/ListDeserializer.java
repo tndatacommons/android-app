@@ -1,4 +1,4 @@
-package org.tndata.android.compass.parser;
+package org.tndata.android.compass.parser.deserializer;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;

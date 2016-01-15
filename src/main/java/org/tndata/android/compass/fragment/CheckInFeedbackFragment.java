@@ -123,9 +123,9 @@ public class CheckInFeedbackFragment
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)header.getLayoutParams();
         params.height = CompassUtil.getScreenWidth(getActivity())*2/3;
         header.setLayoutParams(params);
-        if (mGoal.getPrimaryCategory() != null){
+        /*if (mGoal.getPrimaryCategory() != null){
             header.setBackgroundColor(Color.parseColor(mGoal.getPrimaryCategory().getColor()));
-        }
+        }*/
 
         //Header title
         String title = mGoal.getTitle().substring(0, 1).toLowerCase() + mGoal.getTitle().substring(1);

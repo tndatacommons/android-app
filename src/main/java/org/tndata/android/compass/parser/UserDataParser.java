@@ -176,4 +176,18 @@ public final class UserDataParser extends ParserMethods{
         }
         return null;
     }
+
+    /**
+     * New proposed method. Easy as π.
+     *
+     * @param src the string to parse from.
+     * @return the parsed UserData object.
+     */
+    public static UserData parseUserData2(String src){
+        Log.d("UserDataParser", "Parsing UserData");
+        UserData userData = sGson.fromJson(src, UserData.class);
+        Log.d("UserDataParser", userData.getCategories()==null?"null":"not null");
+        userData.sync();
+        return userData;
+    }
 }

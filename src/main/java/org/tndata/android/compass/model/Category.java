@@ -5,8 +5,6 @@ import android.widget.ImageView;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -23,19 +21,7 @@ public class Category extends TDCBase implements Serializable{
     private String color = "";
     private String secondary_color = "";
 
-    private int goals_count = 0;
-    private List<Goal> goals = new ArrayList<>();
-
     private boolean packaged_content = false;
-
-
-    /*---------*
-     * SETTERS *
-     *---------*/
-
-    public void setGoals(List<Goal> goals){
-        this.goals = goals;
-    }
 
 
     /*---------*
@@ -56,14 +42,6 @@ public class Category extends TDCBase implements Serializable{
 
     public String getSecondaryColor(){
         return this.secondary_color;
-    }
-
-    public int getGoalCount(){
-        return goals_count;
-    }
-
-    public List<Goal> getGoals(){
-        return goals;
     }
 
     public boolean isPackagedContent(){

@@ -11,22 +11,26 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserGoal extends TDCBase implements Serializable{
+public class UserGoal extends UserContent implements Serializable{
     private static final long serialVersionUID = 7109406686231550671L;
 
+    //Values retrieved from the API
+    //TODO getters
     private Goal goal;
 
-    private Category primary_category;
-    private List<UserCategory> user_categories = new ArrayList<>();
-    private List<UserBehavior> user_behaviors = new ArrayList<>();
+    private int primary_category;
 
-    private double progress_value = 0.0;
     private Progress progress = new Progress();
 
+    //Values set during post-processing
+    private UserCategory primaryCategory;
+    private List<UserCategory> userCategories;
+    private List<UserBehavior> userBehaviors;
 
-    public UserGoal(Goal goal, Category primaryCategory){
+
+    public UserGoal(Goal goal, UserCategory primaryCategory){
         this.goal = goal;
-        this.primary_category = primaryCategory;
+        this.primaryCategory = primaryCategory;
     }
 
 
@@ -34,12 +38,20 @@ public class UserGoal extends TDCBase implements Serializable{
      * SETTERS *
      *---------*/
 
+    public void setPrimaryCategoryId(int primaryCategory){
+        this.primary_category = primaryCategory;
+    }
+
+    public void setPrimaryCategory(UserCategory primaryCategory){
+        this.primaryCategory = primaryCategory;
+    }
+
     public void setCategories(List<UserCategory> categories){
-        this.user_categories = categories;
+        this.userCategories = categories;
     }
 
     public void setBehaviors(List<UserBehavior> behaviors){
-        this.user_behaviors = behaviors;
+        this.userBehaviors = behaviors;
     }
 
 
@@ -51,18 +63,14 @@ public class UserGoal extends TDCBase implements Serializable{
         return goal;
     }
 
-    public int getGoalId(){
+    @Override
+    public int getObjectId(){
         return goal.getId();
     }
 
     @Override
     public String getTitle(){
         return goal.getTitle();
-    }
-
-    @Override
-    public String getTitleSlug(){
-        return goal.getTitleSlug();
     }
 
     @Override
@@ -80,20 +88,20 @@ public class UserGoal extends TDCBase implements Serializable{
         return goal.getIconUrl();
     }
 
-    public Category getPrimaryCategory(){
+    public int getPrimaryCategoryId(){
         return primary_category;
     }
 
+    public UserCategory getPrimaryCategory(){
+        return primaryCategory;
+    }
+
     public List<UserCategory> getCategories(){
-        return user_categories;
+        return userCategories;
     }
 
     public List<UserBehavior> getBehaviors() {
-        return user_behaviors;
-    }
-
-    public double getProgressValue() {
-        return this.progress_value;
+        return userBehaviors;
     }
 
     public Progress getProgress(){
@@ -106,32 +114,32 @@ public class UserGoal extends TDCBase implements Serializable{
      *---------*/
 
     public void addBehavior(UserBehavior behavior){
-        if (user_behaviors == null){
-            user_behaviors = new ArrayList<>();
+        if (userBehaviors == null){
+            userBehaviors = new ArrayList<>();
         }
-        if (!user_behaviors.contains(behavior)){
-            user_behaviors.add(behavior);
+        if (!userBehaviors.contains(behavior)){
+            userBehaviors.add(behavior);
         }
     }
 
     public void removeBehavior(UserBehavior behavior){
-        if (user_behaviors != null && user_behaviors.contains(behavior)){
-            user_behaviors.remove(behavior);
+        if (userBehaviors != null && userBehaviors.contains(behavior)){
+            userBehaviors.remove(behavior);
         }
     }
 
     public void addCategory(UserCategory category){
-        if (user_categories == null){
-            user_categories = new ArrayList<>();
+        if (userCategories == null){
+            userCategories = new ArrayList<>();
         }
-        if (!user_categories.contains(category)){
-            user_categories.add(category);
+        if (!userCategories.contains(category)){
+            userCategories.add(category);
         }
     }
 
     public void removeCategory(UserCategory category){
-        if (user_categories != null && user_categories.contains(category)){
-            user_categories.remove(category);
+        if (userCategories != null && userCategories.contains(category)){
+            userCategories.remove(category);
         }
     }
 

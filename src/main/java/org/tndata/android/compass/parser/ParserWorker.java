@@ -2,6 +2,7 @@ package org.tndata.android.compass.parser;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,7 +56,8 @@ final class ParserWorker extends AsyncTask<Void, Void, Void>{
      * @throws JSONException
      */
     private void parse(JSONObject src) throws JSONException{
-        mResults.mUserData = UserDataParser.parseUserData(mContext, src.toString());
+        Log.d("ParserWorker", "Starting to parse UserData");
+        mResults.mUserData = UserDataParser.parseUserData2(src.toString());
     }
 
     @Override

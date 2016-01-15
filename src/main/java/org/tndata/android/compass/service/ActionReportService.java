@@ -56,7 +56,7 @@ public class ActionReportService extends IntentService{
             url = API.getPostActionReportUrl(reminder);
         }
         else{
-            actionId = userAction.getActionId();
+            actionId = userAction.getObjectId();
             url = API.getPostActionReportUrl(userAction);
         }
 

@@ -18,7 +18,6 @@ public abstract class TDCBase implements Serializable, Comparable<TDCBase>{
     //TODO make the id a long to avoid range problems. Not a problem yet.
     private int id = -1;
     private String title = "";
-    private String title_slug = "";
     private String description = "";
     private String html_description = "";
     private String icon_url = "";
@@ -35,10 +34,6 @@ public abstract class TDCBase implements Serializable, Comparable<TDCBase>{
 
     public void setTitle(String title){
         this.title = title;
-    }
-
-    public void setTitleSlug(String titleSlug){
-        this.title_slug = titleSlug;
     }
 
     public void setDescription(String description){
@@ -68,10 +63,6 @@ public abstract class TDCBase implements Serializable, Comparable<TDCBase>{
 
     public String getTitle(){
         return title;
-    }
-
-    public String getTitleSlug(){
-        return title_slug;
     }
 
     public String getDescription(){

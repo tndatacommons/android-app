@@ -28,15 +28,13 @@ import io.fabric.sdk.android.Fabric;
 
 
 public class CompassApplication extends Application{
-    private String TAG = "CompassApplication";
+    private static final String TAG = "CompassApplication";
+
+
     private String mToken;
     private User mUser; // The logged-in user
     private UserData mUserData = new UserData(); // The user's selected content.
 
-
-    public CompassApplication() {
-        super();
-    }
 
     public void setToken(String token) {
         mToken = token;
@@ -46,7 +44,8 @@ public class CompassApplication extends Application{
         if (mToken != null && !mToken.isEmpty()){
             return mToken;
         }
-        return PreferenceManager.getDefaultSharedPreferences(this).getString("auth_token", "");
+        mToken = PreferenceManager.getDefaultSharedPreferences(this).getString("auth_token", "");
+        return mToken;
     }
 
     public String getGcmRegistrationId(){
