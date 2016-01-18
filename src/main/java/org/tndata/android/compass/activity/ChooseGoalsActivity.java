@@ -25,6 +25,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseGoalsAdapter;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
@@ -68,7 +69,7 @@ public class ChooseGoalsActivity
 
     private TextView mErrorTextView;
     private View mHeaderView;
-    private Category mCategory = null;
+    private UserCategory mCategory = null;
 
     //Request codes
     private int mGetGoalsRequestCode;
@@ -85,7 +86,7 @@ public class ChooseGoalsActivity
 
         mApplication = (CompassApplication)getApplication();
 
-        mCategory = (Category)getIntent().getSerializableExtra(CATEGORY_KEY);
+        mCategory = (UserCategory)getIntent().getSerializableExtra(CATEGORY_KEY);
 
         mToolbar = (Toolbar)findViewById(R.id.choose_goals_toolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
@@ -106,7 +107,7 @@ public class ChooseGoalsActivity
 
         mErrorTextView = (TextView)findViewById(R.id.choose_goals_error_textview);
 
-        mAdapter = new ChooseGoalsAdapter(this, this, mApplication, mRecyclerView, mCategory);
+        mAdapter = new ChooseGoalsAdapter(this, this, mApplication, mRecyclerView, mCategory.getCategory());
 
         mRecyclerView.setAdapter(mAdapter);
 
@@ -181,13 +182,13 @@ public class ChooseGoalsActivity
      * Fires the goal loader task.
      */
     private void loadGoals(){
-        mGetGoalsRequestCode = NetworkRequest.get(this, this, API.getGoalsUrl(mCategory), "");
+        mGetGoalsRequestCode = NetworkRequest.get(this, this, API.getGoalsUrl(mCategory.getCategory()), "");
     }
 
     @Override
     public void onGoalAddClicked(Goal goal){
         int code = NetworkRequest.post(this, this, API.getPostGoalUrl(), mApplication.getToken(),
-                API.getPostGoalBody(goal, mCategory));
+                API.getPostGoalBody(goal, mCategory.getCategory()));
         mAddGoalRequestCodeMap.put(code, goal);
 
         if (goal.getBehaviorCount() > 0){

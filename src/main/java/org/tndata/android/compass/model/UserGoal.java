@@ -24,8 +24,8 @@ public class UserGoal extends UserContent implements Serializable{
 
     //Values set during post-processing
     private UserCategory primaryCategory;
-    private List<UserCategory> userCategories;
-    private List<UserBehavior> userBehaviors;
+    private List<UserCategory> userCategories = new ArrayList<>();
+    private List<UserBehavior> userBehaviors = new ArrayList<>();
 
 
     public UserGoal(Goal goal, UserCategory primaryCategory){
@@ -113,32 +113,36 @@ public class UserGoal extends UserContent implements Serializable{
      * UTILITY *
      *---------*/
 
-    public void addBehavior(UserBehavior behavior){
+    @Override
+    public void init(){
+        if (userCategories == null){
+            userCategories = new ArrayList<>();
+        }
         if (userBehaviors == null){
             userBehaviors = new ArrayList<>();
         }
+    }
+
+    public void addBehavior(UserBehavior behavior){
         if (!userBehaviors.contains(behavior)){
             userBehaviors.add(behavior);
         }
     }
 
     public void removeBehavior(UserBehavior behavior){
-        if (userBehaviors != null && userBehaviors.contains(behavior)){
+        if (userBehaviors.contains(behavior)){
             userBehaviors.remove(behavior);
         }
     }
 
     public void addCategory(UserCategory category){
-        if (userCategories == null){
-            userCategories = new ArrayList<>();
-        }
         if (!userCategories.contains(category)){
             userCategories.add(category);
         }
     }
 
     public void removeCategory(UserCategory category){
-        if (userCategories != null && userCategories.contains(category)){
+        if (userCategories.contains(category)){
             userCategories.remove(category);
         }
     }

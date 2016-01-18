@@ -110,16 +110,16 @@ public class CheckInActivity
                 //If there is a primary goal
                 if (action.getPrimaryGoal() != null){
                     //If the primary goal is already in the data set
-                    if (mDataSet.containsKey(action.getPrimaryGoal())){
+                    if (mDataSet.containsKey(action.getPrimaryGoal().getGoal())){
                         //Add the action to the associated list
-                        mDataSet.get(action.getPrimaryGoal()).add(action);
+                        mDataSet.get(action.getPrimaryGoal().getGoal()).add(action);
                     }
                     //Otherwise
                     else{
                         //Create the list and add the goal to the data set
                         List<UserAction> actionList = new ArrayList<>();
                         actionList.add(action);
-                        mDataSet.put(action.getPrimaryGoal(), actionList);
+                        mDataSet.put(action.getPrimaryGoal().getGoal(), actionList);
                     }
                 }
             }

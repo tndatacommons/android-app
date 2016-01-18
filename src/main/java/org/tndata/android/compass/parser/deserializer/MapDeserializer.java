@@ -18,6 +18,7 @@ import org.tndata.android.compass.model.UserGoal;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -41,11 +42,12 @@ public class MapDeserializer implements JsonDeserializer<Map<Integer, ? extends 
         Map<Integer, T> map = new HashMap<>();
 
         //We've got some JSONArrays that come as JSONObjects from the api, skip
-        //  those to return an empty Set, which is what that represents. That
+        //  those to return an empty Map, which is what that represents. That
         //  is not regular expected behavior though
         if (!item.toString().equals("{}")){
             //Build the GSON parser that looks for field matches
             Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Set.class, new SetDeserializer())
                     .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
                     .create();
 
@@ -54,6 +56,7 @@ public class MapDeserializer implements JsonDeserializer<Map<Integer, ? extends 
                 String src = element.toString();
                 Log.d("MapDeserializer", "Iteration: " + src);
                 T object = (T)gson.fromJson(src, getTypeOf(src));
+                object.init();
                 map.put(object.getObjectId(), object);
             }
         }

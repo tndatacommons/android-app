@@ -13,7 +13,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -41,7 +40,6 @@ public class ListDeserializer implements JsonDeserializer<List<?>>{
         if (!item.toString().equals("{}")){
             //Build the GSON parser that looks for field matches
             Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(Set.class, new SetDeserializer())
                     .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
                     .create();
 

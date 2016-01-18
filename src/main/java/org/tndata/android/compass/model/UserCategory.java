@@ -16,7 +16,7 @@ public class UserCategory extends UserContent implements Serializable{
 
     private Category category;
 
-    private List<UserGoal> userGoals;
+    private List<UserGoal> userGoals = new ArrayList<>();
 
 
     /*---------*
@@ -82,17 +82,21 @@ public class UserCategory extends UserContent implements Serializable{
      * UTILITY *
      *---------*/
 
-    public void addGoal(UserGoal goal){
+    @Override
+    public void init(){
         if (userGoals == null){
             userGoals = new ArrayList<>();
         }
+    }
+
+    public void addGoal(UserGoal goal){
         if (!userGoals.contains(goal)){
             userGoals.add(goal);
         }
     }
 
     public void removeGoal(UserGoal goal){
-        if (userGoals != null && userGoals.contains(goal)){
+        if (userGoals.contains(goal)){
             userGoals.remove(goal);
         }
     }

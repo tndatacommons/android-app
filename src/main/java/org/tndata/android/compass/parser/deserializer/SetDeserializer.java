@@ -30,7 +30,7 @@ public class SetDeserializer implements JsonDeserializer<Set<?>>{
 
     @SuppressWarnings("unchecked")
     public <T> Set<T> parse(JsonElement item, T type){
-        Log.d("SetDeserializer", "Called on: " + item.toString());
+        Log.d("SetDeserializer", "Deserializing: " + item.toString());
 
         //Create the set where the parsed objects will be put
         Set<T> set = new HashSet<>();

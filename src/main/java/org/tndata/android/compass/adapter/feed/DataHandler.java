@@ -41,7 +41,9 @@ class DataHandler{
         mFeedData = userData.getFeedData();
 
         if (mUserData.getFeedData().getNextAction() != null){
-            mFeedbackGoal = mUserData.getFeedData().getNextAction().getPrimaryGoal();
+            if (mUserData.getFeedData().getNextAction().getPrimaryGoal() != null){
+                mFeedbackGoal = mUserData.getFeedData().getNextAction().getPrimaryGoal().getGoal();
+            }
         }
 
         mDisplayedUpcoming = new ArrayList<>();

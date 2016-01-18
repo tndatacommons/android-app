@@ -23,11 +23,11 @@ public class UserAction extends UserContent implements Serializable{
 
     //Values set during post-processing
     private UserBehavior behavior;
-    private Goal primaryGoal;
-    private Category primaryCategory;
+    private UserGoal primaryGoal;
+    private UserCategory primaryCategory;
 
 
-    public UserAction(Action action, Goal primaryGoal, Category primaryCategory){
+    public UserAction(Action action, UserGoal primaryGoal, UserCategory primaryCategory){
         this.action = action;
         this.primaryGoal = primaryGoal;
         this.primaryCategory = primaryCategory;
@@ -48,6 +48,14 @@ public class UserAction extends UserContent implements Serializable{
 
     public void setNextReminderDate(String nextReminderDate){
         next_reminder_date = nextReminderDate;
+    }
+
+    public void setPrimaryCategory(UserCategory primaryCategory){
+        this.primaryCategory = primaryCategory;
+    }
+
+    public void setPrimaryGoal(UserGoal primaryGoal){
+        this.primaryGoal = primaryGoal;
     }
 
 
@@ -116,11 +124,19 @@ public class UserAction extends UserContent implements Serializable{
         return behavior;
     }
 
-    public Category getPrimaryCategory(){
+    public int getPrimaryCategoryId(){
+        return primary_category;
+    }
+
+    public int getPrimaryGoalId(){
+        return primary_goal;
+    }
+
+    public UserCategory getPrimaryCategory(){
         return primaryCategory;
     }
 
-    public Goal getPrimaryGoal(){
+    public UserGoal getPrimaryGoal(){
         return primaryGoal;
     }
 
@@ -136,6 +152,12 @@ public class UserAction extends UserContent implements Serializable{
     /*---------*
      * UTILITY *
      *---------*/
+
+    @Override
+    /* no-op */
+    public void init(){
+        //This method is not necessary here
+    }
 
     @Override
     public String toString(){

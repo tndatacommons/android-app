@@ -96,10 +96,17 @@ public class UserBehavior extends UserContent implements Serializable{
      * UTILITY *
      *---------*/
 
-    public void addGoal(UserGoal goal){
+    @Override
+    public void init(){
         if (userGoals == null){
             userGoals = new ArrayList<>();
         }
+        if (userActions == null){
+            userActions = new ArrayList<>();
+        }
+    }
+
+    public void addGoal(UserGoal goal){
         if (!userGoals.contains(goal)){
             userGoals.add(goal);
         }
@@ -112,9 +119,6 @@ public class UserBehavior extends UserContent implements Serializable{
     }
 
     public void addAction(UserAction action){
-        if (userActions == null){
-            userActions = new ArrayList<>();
-        }
         if (!userActions.contains(action)){
             userActions.add(action);
         }
