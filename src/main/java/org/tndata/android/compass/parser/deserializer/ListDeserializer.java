@@ -1,5 +1,7 @@
 package org.tndata.android.compass.parser.deserializer;
 
+import android.util.Log;
+
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -11,6 +13,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -27,6 +30,8 @@ public class ListDeserializer implements JsonDeserializer<List<?>>{
 
     @SuppressWarnings("unchecked")
     public <T> List<T> parse(JsonElement item, T type){
+        Log.d("ListDeserializer", "Deserializing: " + item.toString());
+
         //Create the list where the parsed objects will be put
         List<T> list = new ArrayList<>();
 
@@ -36,6 +41,7 @@ public class ListDeserializer implements JsonDeserializer<List<?>>{
         if (!item.toString().equals("{}")){
             //Build the GSON parser that looks for field matches
             Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Set.class, new SetDeserializer())
                     .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
                     .create();
 

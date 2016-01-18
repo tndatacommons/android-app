@@ -9,9 +9,12 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 
+import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserBehavior;
+import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserContent;
+import org.tndata.android.compass.model.UserGoal;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,12 +30,12 @@ public class MapDeserializer implements JsonDeserializer<Map<Integer, ? extends 
     @Override
     public Map<Integer, ? extends UserContent> deserialize(JsonElement json, Type typeOfT,
                                                            JsonDeserializationContext context){
-        return parse(json, ((ParameterizedType)typeOfT).getActualTypeArguments()[0]);
+        return parse(json);
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends UserContent> Map<Integer, T> parse(JsonElement item, Type type){
-        Log.d("MapDeserializer", item.toString());
+    public <T extends UserContent> Map<Integer, T> parse(JsonElement item){
+        Log.d("MapDeserializer", "Deserializing: " + item.toString());
 
         //Create the set where the parsed objects will be put
         Map<Integer, T> map = new HashMap<>();
@@ -48,11 +51,28 @@ public class MapDeserializer implements JsonDeserializer<Map<Integer, ? extends 
 
             //Parse all the elements of the array and put them into the map
             for (JsonElement element:item.getAsJsonArray()){
-                T object = (T)gson.fromJson(element, (Class<?>)type);
+                String src = element.toString();
+                Log.d("MapDeserializer", "Iteration: " + src);
+                T object = (T)gson.fromJson(src, getTypeOf(src));
                 map.put(object.getObjectId(), object);
             }
         }
 
         return map;
+    }
+
+    private Class getTypeOf(String src){
+        if (src.contains("usercategory")){
+            return UserCategory.class;
+        }
+        else if (src.contains("usergoal")){
+            return UserGoal.class;
+        }
+        else if (src.contains("userbehavior")){
+            return UserBehavior.class;
+        }
+        else /*if (src.contains("user_action"))*/{
+            return UserAction.class;
+        }
     }
 }

@@ -184,10 +184,17 @@ public final class UserDataParser extends ParserMethods{
      * @return the parsed UserData object.
      */
     public static UserData parseUserData2(String src){
-        Log.d("UserDataParser", "Parsing UserData");
-        UserData userData = sGson.fromJson(src, UserData.class);
-        Log.d("UserDataParser", userData.getCategories()==null?"null":"not null");
-        userData.sync();
-        return userData;
+        try{
+            src = new JSONObject(src).getJSONArray("results").getJSONObject(0).toString();
+            Log.d("UserDataParser", "Parsing UserData");
+            UserData userData = sGson.fromJson(src, UserData.class);
+            Log.d("UserDataParser", userData.getCategories()==null?"null":"not null");
+            userData.sync();
+            return userData;
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return null;
     }
 }

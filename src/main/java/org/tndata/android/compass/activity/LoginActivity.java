@@ -327,6 +327,8 @@ public class LoginActivity
 
     @Override
     public void onParseSuccess(int requestCode, ParserResults results){
+        Log.d("LogIn", "Parser callback called");
+        results.getUserData().logData();
         mApplication.setUserData(results.getUserData());
         transitionToMain();
     }

@@ -518,24 +518,24 @@ public class UserData{
      */
     public void logData() {
         Log.d(TAG, "Categories.");
-        for (UserCategory item: user_categories.values()){
+        for (UserCategory item:user_categories.values()){
             Log.d(TAG, "- " + item.toString());
             Log.d(TAG, "--> contains " + item.getGoals().size() + " user_goals");
         }
         Log.d(TAG, "Goals.");
-        for (UserGoal item: user_goals.values()){
+        for (UserGoal item:user_goals.values()){
             Log.d(TAG, "- " + item.toString());
             Log.d(TAG, "--> contains " + item.getCategories().size() + " user_categories");
             Log.d(TAG, "--> contains " + item.getBehaviors().size() + " user_behaviors");
         }
         Log.d(TAG, "Behaviors.");
-        for (UserBehavior item: user_behaviors.values()){
+        for (UserBehavior item:user_behaviors.values()){
             Log.d(TAG, "- " + item.toString());
             Log.d(TAG, "--> contains " + item.getGoals().size() + " user_goals");
             Log.d(TAG, "--> contains " + item.getActions().size() + " user_actions");
         }
         Log.d(TAG, "Actions.");
-        for (UserAction item: user_actions.values()){
+        for (UserAction item:user_actions.values()){
             Log.d(TAG, "- " + item.toString());
             Log.d(TAG, "--> contains: " + item.getBehavior().toString());
         }
