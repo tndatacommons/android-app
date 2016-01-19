@@ -20,7 +20,7 @@ import java.util.Set;
  * @version 1.0.0
  */
 class ParserMethods{
-    protected static Gson sGson = new GsonBuilder()
+    static Gson sGson = new GsonBuilder()
             .registerTypeAdapter(Map.class, new MapDeserializer())
             .registerTypeAdapter(List.class, new ListDeserializer())
             .registerTypeAdapter(Set.class, new SetDeserializer())

@@ -19,7 +19,7 @@ public class UserBehavior extends UserContent implements Serializable{
 
     private Progress progress;
 
-    //Calues set during post-processing
+    //Values set during post-processing
     private List<UserGoal> userGoals = new ArrayList<>();
     private List<UserAction> userActions = new ArrayList<>();
 

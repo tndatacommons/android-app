@@ -47,7 +47,8 @@ import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.MiscellaneousParser;
-import org.tndata.android.compass.parser.UserDataParser;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
@@ -79,7 +80,8 @@ public class MainActivity
                 SearchView.OnQueryTextListener,
                 SearchView.OnCloseListener,
                 RecyclerView.OnItemTouchListener,
-                SearchAdapter.SearchAdapterListener{
+                SearchAdapter.SearchAdapterListener,
+                ParserCallback<UserData>{
 
     //Activity request codes
     private static final int CATEGORIES_REQUEST_CODE = 4821;
@@ -369,23 +371,7 @@ public class MainActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetUserDataRequestCode){
-            UserData userData = UserDataParser.parseUserData(this, result);
-            if (userData != null){
-                mApplication.setUserData(userData);
-
-                //Remove the previous item decoration before recreating the adapter
-                mFeed.removeItemDecoration(mAdapter.getMainFeedPadding());
-
-                //Recreate the adapter and set the new decoration
-                mAdapter = new MainFeedAdapter(this, this, !mSuggestionDismissed);
-                mFeed.setAdapter(mAdapter);
-                mFeed.addItemDecoration(mAdapter.getMainFeedPadding());
-
-                mSuggestionDismissed = false;
-            }
-            if (mRefresh.isRefreshing()){
-                mRefresh.setRefreshing(false);
-            }
+            Parser.parse(result, UserData.class, this);
         }
         else if (requestCode == mLastSearchRequestCode){
             mSearchHeader.setVisibility(View.VISIBLE);
@@ -742,6 +728,31 @@ public class MainActivity
             Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
                     .putExtra(ChooseBehaviorsActivity.GOAL_ID_KEY, result.getId());
             startActivity(chooseBehaviors);
+        }
+    }
+
+    @Override
+    public void onBackgroundProcessing(int requestCode, UserData result){
+        result.sync();
+        result.logData();
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, UserData result){
+        mApplication.setUserData(result);
+
+        //Remove the previous item decoration before recreating the adapter
+        mFeed.removeItemDecoration(mAdapter.getMainFeedPadding());
+
+        //Recreate the adapter and set the new decoration
+        mAdapter = new MainFeedAdapter(this, this, !mSuggestionDismissed);
+        mFeed.setAdapter(mAdapter);
+        mFeed.addItemDecoration(mAdapter.getMainFeedPadding());
+
+        mSuggestionDismissed = false;
+
+        if (mRefresh.isRefreshing()){
+            mRefresh.setRefreshing(false);
         }
     }
 }

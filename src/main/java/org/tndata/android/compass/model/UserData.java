@@ -450,7 +450,7 @@ public class UserData{
      * Generates the inner list of children for behaviors and sets the parents for actions.
      */
     public void linkActions(){
-        for (UserAction userAction: actions.values()){
+        for (UserAction userAction:actions.values()){
             UserBehavior userBehavior = behaviors.get(userAction.getAction().getBehavior());
             userBehavior.addAction(userAction);
             userAction.setBehavior(userBehavior);
@@ -542,6 +542,8 @@ public class UserData{
         }
         Log.d(TAG, "Actions.");
         for (UserAction item:actions.values()){
+            Log.d(TAG, item.getAction().getBehavior()+"");
+            Log.d(TAG, behaviors.get(item.getAction().getBehavior()).getBehavior().toString());
             Log.d(TAG, "- " + item.toString());
             Log.d(TAG, "--> contains: " + item.getBehavior().toString());
         }

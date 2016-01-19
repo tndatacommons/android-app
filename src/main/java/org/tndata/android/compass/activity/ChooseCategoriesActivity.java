@@ -10,9 +10,9 @@ import org.tndata.android.compass.adapter.ChooseCategoriesAdapter;
 import org.tndata.android.compass.fragment.ChooseCategoriesFragment;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.UserCategory;
+import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserCallback;
-import org.tndata.android.compass.parser.ParserResults;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
 
@@ -31,7 +31,7 @@ public class ChooseCategoriesActivity
         implements
                 ChooseCategoriesAdapter.OnCategoriesSelectedListener,
                 NetworkRequest.RequestCallback,
-                ParserCallback{
+                ParserCallback<UserData>{
 
     private CompassApplication mApplication;
 
@@ -143,7 +143,7 @@ public class ChooseCategoriesActivity
             }
         }
         else if (requestCode == mGetDataRequestCode){
-            Parser.parse(this, result, this);
+            Parser.parse(result, UserData.class, this);
         }
     }
 
@@ -168,8 +168,13 @@ public class ChooseCategoriesActivity
     }
 
     @Override
-    public void onParseSuccess(int requestCode, ParserResults results){
-        mApplication.setUserData(results.getUserData());
+    public void onBackgroundProcessing(int requestCode, UserData result){
+
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, UserData results){
+        mApplication.setUserData(results);
         setResult(RESULT_OK);
         finish();
     }

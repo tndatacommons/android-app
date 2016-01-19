@@ -19,8 +19,8 @@ import org.tndata.android.compass.fragment.SignUpFragment;
 import org.tndata.android.compass.fragment.TourFragment;
 import org.tndata.android.compass.fragment.WebFragment;
 import org.tndata.android.compass.model.User;
+import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserResults;
 import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.UserDataParser;
 import org.tndata.android.compass.util.API;
@@ -39,7 +39,7 @@ public class LoginActivity
                 LogInFragment.LogInFragmentCallback,
                 TourFragment.TourFragmentCallback,
                 NetworkRequest.RequestCallback,
-                ParserCallback{
+                ParserCallback<UserData>{
 
 
     //Fragment ids
@@ -310,7 +310,7 @@ public class LoginActivity
         }
         else if (requestCode == mGetDataRequestCode){
             Log.d("LogIn", "UserData retrieved");
-            Parser.parse(this, result, this);
+            Parser.parse(result, UserData.class, this);
         }
     }
 
@@ -326,10 +326,14 @@ public class LoginActivity
     }
 
     @Override
-    public void onParseSuccess(int requestCode, ParserResults results){
-        Log.d("LogIn", "Parser callback called");
-        results.getUserData().logData();
-        mApplication.setUserData(results.getUserData());
+    public void onBackgroundProcessing(int requestCode, UserData result){
+        result.sync();
+        result.logData();
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, UserData result){
+        mApplication.setUserData(result);
         transitionToMain();
     }
 }
