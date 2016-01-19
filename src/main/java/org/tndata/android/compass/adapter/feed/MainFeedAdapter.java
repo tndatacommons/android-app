@@ -186,7 +186,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             LayoutInflater inflater = LayoutInflater.from(mContext);
             return new ActionHolder(this, inflater.inflate(R.layout.card_action, parent, false));
         }
-        else if (viewType == TYPE_USER_GOAL){
+        else if (viewType == TYPE_USER_GOAL || viewType == TYPE_GOAL_SUGGESTION){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             return new GoalHolder(this, inflater.inflate(R.layout.card_goal, parent, false));
         }

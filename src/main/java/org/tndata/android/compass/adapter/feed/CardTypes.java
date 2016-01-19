@@ -215,7 +215,12 @@ final class CardTypes{
      */
     static int getMyGoalsFooterPosition(){
         //My goals can be either my goals or suggestions
-        return getMyGoalsHeaderPosition() + sDataHandler.getUserGoals().size()+1;
+        if (sDataHandler.hasUserGoals()){
+            return getMyGoalsHeaderPosition() + sDataHandler.getUserGoals().size() + 1;
+        }
+        else{
+            return getMyGoalsHeaderPosition() + sDataHandler.getSuggestions().size() + 1;
+        }
     }
 
     /**

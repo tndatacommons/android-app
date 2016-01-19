@@ -1,5 +1,7 @@
 package org.tndata.android.compass.adapter.feed;
 
+import android.util.Log;
+
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
@@ -149,15 +151,17 @@ class DataHandler{
         if (hasUserGoals()){
             List<UserGoal> userGoals = new ArrayList<>(mUserData.getGoals().values());
             while (count < LOAD_MORE_COUNT && canLoadMoreGoals()){
-                mDisplayedUserGoals.add(userGoals.get(mDisplayedUpcoming.size()));
+                mDisplayedUserGoals.add(userGoals.get(mDisplayedUserGoals.size()));
                 count++;
             }
         }
         else{
+            Log.d("MainFeedAdapter", "Suggestions: " + mFeedData.getSuggestions().size());
             while (count < LOAD_MORE_COUNT && canLoadMoreGoals()){
-                mDisplayedGoalSuggestions.add(mFeedData.getSuggestions().get(mDisplayedUpcoming.size()));
+                mDisplayedGoalSuggestions.add(mFeedData.getSuggestions().get(mDisplayedGoalSuggestions.size()));
                 count++;
             }
+            Log.d("MainFeedAdapter", "Displayed suggestions: " + mDisplayedGoalSuggestions.size());
         }
         return count;
     }
