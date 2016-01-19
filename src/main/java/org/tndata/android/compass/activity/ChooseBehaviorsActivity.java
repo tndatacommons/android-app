@@ -58,6 +58,9 @@ public class ChooseBehaviorsActivity
                 SearchView.OnCloseListener{
 
     //Bundle keys
+    //NOTE: These need to be regular content because a user may dive down the library
+    //  without selecting things. User content ain't available in that use case, but
+    //  if it exists it can be retrieved from the UserData bundle
     public static final String CATEGORY_KEY = "org.tndata.compass.ChooseBehaviors.Category";
     public static final String GOAL_KEY = "org.tndata.compass.ChooseBehaviors.Goal";
     //This one is to load search results, which don't deliver the whole object

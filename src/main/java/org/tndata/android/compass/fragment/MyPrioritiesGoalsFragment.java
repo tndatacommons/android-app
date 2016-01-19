@@ -66,4 +66,8 @@ public class MyPrioritiesGoalsFragment extends Fragment{
     public void updateAdapterData(){
         mAdapter.updateData();
     }
+
+    public boolean equals(UserCategory userCategory){
+        return mUserCategory.equals(userCategory);
+    }
 }

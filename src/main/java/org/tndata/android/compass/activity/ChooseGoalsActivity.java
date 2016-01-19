@@ -25,7 +25,6 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseGoalsAdapter;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
@@ -53,6 +52,9 @@ public class ChooseGoalsActivity
                 SearchView.OnQueryTextListener,
                 SearchView.OnCloseListener{
 
+    //NOTE: This needs to be regular content because a user may dive down the library
+    //  without selecting things. User content ain't available in that use case, but
+    //  if it exists it can be retrieved from the UserData bundle
     public static final String CATEGORY_KEY = "org.tndata.compass.ChooseGoalsActivity.Category";
 
     private static final String TAG = "ChooseGoalsActivity";
@@ -69,7 +71,7 @@ public class ChooseGoalsActivity
 
     private TextView mErrorTextView;
     private View mHeaderView;
-    private UserCategory mCategory = null;
+    private Category mCategory = null;
 
     //Request codes
     private int mGetGoalsRequestCode;
@@ -86,7 +88,7 @@ public class ChooseGoalsActivity
 
         mApplication = (CompassApplication)getApplication();
 
-        mCategory = (UserCategory)getIntent().getSerializableExtra(CATEGORY_KEY);
+        mCategory = (Category)getIntent().getSerializableExtra(CATEGORY_KEY);
 
         mToolbar = (Toolbar)findViewById(R.id.choose_goals_toolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
@@ -107,7 +109,7 @@ public class ChooseGoalsActivity
 
         mErrorTextView = (TextView)findViewById(R.id.choose_goals_error_textview);
 
-        mAdapter = new ChooseGoalsAdapter(this, this, mApplication, mRecyclerView, mCategory.getCategory());
+        mAdapter = new ChooseGoalsAdapter(this, this, mApplication, mRecyclerView, mCategory);
 
         mRecyclerView.setAdapter(mAdapter);
 
@@ -182,13 +184,13 @@ public class ChooseGoalsActivity
      * Fires the goal loader task.
      */
     private void loadGoals(){
-        mGetGoalsRequestCode = NetworkRequest.get(this, this, API.getGoalsUrl(mCategory.getCategory()), "");
+        mGetGoalsRequestCode = NetworkRequest.get(this, this, API.getGoalsUrl(mCategory), "");
     }
 
     @Override
     public void onGoalAddClicked(Goal goal){
         int code = NetworkRequest.post(this, this, API.getPostGoalUrl(), mApplication.getToken(),
-                API.getPostGoalBody(goal, mCategory.getCategory()));
+                API.getPostGoalBody(goal, mCategory));
         mAddGoalRequestCodeMap.put(code, goal);
 
         if (goal.getBehaviorCount() > 0){

@@ -70,13 +70,10 @@ public class MyPrioritiesActivity
                 fragment = mCategoriesFragment;
                 break;
             case GOALS:
-                mGoalsFragment = new MyPrioritiesGoalsFragment();
+                if (mGoalsFragment == null || !mGoalsFragment.equals(userCategory)){
+                    mGoalsFragment = MyPrioritiesGoalsFragment.newInstance(userCategory);
+                }
                 fragment = mGoalsFragment;
-                Bundle args = new Bundle();
-                args.putSerializable("category", userCategory);
-                fragment.setArguments(args);
-                break;
-            default:
                 break;
         }
 

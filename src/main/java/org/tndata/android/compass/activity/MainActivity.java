@@ -521,7 +521,7 @@ public class MainActivity
                 }
                 if (mSelectedCategory != null){
                     Intent intent = new Intent(MainActivity.this, ChooseGoalsActivity.class);
-                    intent.putExtra(ChooseGoalsActivity.CATEGORY_KEY, mSelectedCategory);
+                    intent.putExtra(ChooseGoalsActivity.CATEGORY_KEY, mSelectedCategory.getCategory());
                     startActivityForResult(intent, Constants.CHOOSE_GOALS_REQUEST_CODE);
                 }
             }
