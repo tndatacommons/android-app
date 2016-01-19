@@ -3,14 +3,24 @@ package org.tndata.android.compass.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
-public class Instrument implements Serializable {
+
+/**
+ * Model class for an instrument.
+ *
+ * @author Edited by Ismael Alonso
+ * @version 1.0.0
+ */
+public class Instrument implements Serializable{
     private static final long serialVersionUID = 3492049583975743778L;
+
     private int id = -1;
     private String title = "";
     private String description = "";
     private String instructions = "";
-    private ArrayList<Survey> questions = new ArrayList<Survey>();
+    private List<Survey> questions = new ArrayList<>();
+
 
     public int getId() {
         return this.id;
@@ -28,7 +38,7 @@ public class Instrument implements Serializable {
         return instructions;
     }
 
-    public ArrayList<Survey> getQuestions() {
+    public List<Survey> getQuestions() {
         return questions;
     }
 
@@ -48,7 +58,7 @@ public class Instrument implements Serializable {
         this.instructions = instructions;
     }
 
-    public void setQuestions(ArrayList<Survey> questions) {
+    public void setQuestions(List<Survey> questions) {
         this.questions = questions;
     }
 }

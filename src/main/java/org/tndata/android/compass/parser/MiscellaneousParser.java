@@ -19,10 +19,6 @@ import java.util.List;
  * @version 1.0.0
  */
 public final class MiscellaneousParser extends ParserMethods{
-    public static Instrument parseInstrument(String src){
-        return sGson.fromJson(src, Instrument.class);
-    }
-
     public static Survey parseSurvey(String src){
         return sGson.fromJson(src, Survey.class);
     }

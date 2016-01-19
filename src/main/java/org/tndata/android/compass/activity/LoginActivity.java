@@ -290,8 +290,7 @@ public class LoginActivity
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mLogInRequestCode){
             User user = UserDataParser.parseUser(result);
-            Log.d("LogIn", "LogIn complete");
-            Log.d("LogIn", user.getError());
+            Log.d("LogInError", user.getError());
             if (user.getError().isEmpty()){
                 mApplication.setToken(user.getToken());
                 mApplication.setUser(user);
@@ -299,7 +298,7 @@ public class LoginActivity
                     transitionToOnBoarding();
                 }
                 else{
-                    Log.d("LogIn", "Proceeding to UserData retrieval");
+                    Log.d("LogIn", "Fetching user data");
                     mGetDataRequestCode = NetworkRequest.get(this, this, API.getUserDataUrl(),
                             mApplication.getToken(), 60*1000);
                 }
@@ -309,7 +308,6 @@ public class LoginActivity
             }
         }
         else if (requestCode == mGetDataRequestCode){
-            Log.d("LogIn", "UserData retrieved");
             Parser.parse(result, UserData.class, this);
         }
     }
