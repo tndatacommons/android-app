@@ -330,12 +330,12 @@ public class ChooseCategoriesAdapter
                 AlphaAnimation animation;
                 //If the category was selected, remove it and fade in the overlay
                 if (mSelectedCategories.contains(category)){
-                    mSelectedCategories.remove(category.getId());
+                    mSelectedCategories.remove(category);
                     animation = new AlphaAnimation(0, 1);
                 }
                 //Otherwise add it and fade out the overlay
                 else{
-                    mSelectedCategories.remove(category.getId());
+                    mSelectedCategories.add(category);
                     animation = new AlphaAnimation(1, 0);
                 }
                 //Start the animation
@@ -381,7 +381,7 @@ public class ChooseCategoriesAdapter
             //When the category has been selected, make the overlay gone, otherwise, when the
             //  animation ends, the overlay will restore to its original alpha state.
             if (getLayoutPosition() != -1){
-                if (mSelectedCategories.contains(getItem(getLayoutPosition() - 1))){
+                if (mSelectedCategories.contains(getItem(getLayoutPosition()-1))){
                     mOverlay.setVisibility(View.GONE);
                 }
             }

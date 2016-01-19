@@ -247,6 +247,7 @@ public class InstrumentFragment
 
     @Override
     public void onRequestFailed(int requestCode, String message){
+        //TODO user feedback
         if (requestCode == mGetInstrumentRequestCode){
             mLoading.setVisibility(View.GONE);
         }

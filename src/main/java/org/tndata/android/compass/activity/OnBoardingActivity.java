@@ -81,10 +81,7 @@ public class OnBoardingActivity
                 break;
 
             case STAGE_CHOOSE_CATEGORIES:
-                Bundle args = new Bundle();
-                args.putBoolean(ChooseCategoriesFragment.ON_BOARDING_KEY, true);
-                mFragment = new ChooseCategoriesFragment();
-                mFragment.setArguments(args);
+                mFragment = ChooseCategoriesFragment.newInstance(true);
                 break;
         }
 
