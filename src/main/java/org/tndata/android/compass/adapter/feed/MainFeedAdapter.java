@@ -94,15 +94,14 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 CardTypes.displaySuggestion(true);
             }
             else{
-                /*new Handler().postDelayed(new Runnable(){
+                new Handler().postDelayed(new Runnable(){
                     @Override
                     public void run(){
-                        Log.d("MainFeedAdapter", "gets here");
                         CardTypes.displaySuggestion(true);
                         notifyItemInserted(CardTypes.getSuggestionPosition());
                         notifyItemRangeChanged(CardTypes.getSuggestionPosition() + 1, getItemCount() - 1);
                     }
-                }, 2000);*/
+                }, 2000);
             }
         }
     }
