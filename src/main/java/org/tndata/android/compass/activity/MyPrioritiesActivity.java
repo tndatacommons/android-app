@@ -155,24 +155,24 @@ public class MyPrioritiesActivity
     @Override
     public void onAddGoalsClick(UserCategory userCategory){
         Intent categoryIntent = new Intent(this, ChooseGoalsActivity.class);
-        categoryIntent.putExtra(ChooseGoalsActivity.CATEGORY_KEY, userCategory);
+        categoryIntent.putExtra(ChooseGoalsActivity.CATEGORY_KEY, userCategory.getCategory());
         startActivityForResult(categoryIntent, 1);
     }
 
     @Override
     public void onAddBehaviorsClick(UserCategory userCategory, UserGoal userGoal){
         Intent goalIntent = new Intent(this, ChooseBehaviorsActivity.class);
-        goalIntent.putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, userCategory);
-        goalIntent.putExtra(ChooseBehaviorsActivity.GOAL_KEY, userGoal);
+        goalIntent.putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, userCategory.getCategory());
+        goalIntent.putExtra(ChooseBehaviorsActivity.GOAL_KEY, userGoal.getGoal());
         startActivityForResult(goalIntent, 1);
     }
 
     @Override
     public void onBehaviorClick(UserCategory userCategory, UserGoal userGoal, UserBehavior userBehavior){
         Intent behaviorIntent = new Intent(this, ChooseActionsActivity.class);
-        behaviorIntent.putExtra(ChooseActionsActivity.CATEGORY_KEY, userCategory);
-        behaviorIntent.putExtra(ChooseActionsActivity.GOAL_KEY, userGoal);
-        behaviorIntent.putExtra(ChooseActionsActivity.BEHAVIOR_KEY, userBehavior);
+        behaviorIntent.putExtra(ChooseActionsActivity.CATEGORY_KEY, userCategory.getCategory());
+        behaviorIntent.putExtra(ChooseActionsActivity.GOAL_KEY, userGoal.getGoal());
+        behaviorIntent.putExtra(ChooseActionsActivity.BEHAVIOR_KEY, userBehavior.getBehavior());
         startActivityForResult(behaviorIntent, 1);
     }
 
@@ -180,7 +180,7 @@ public class MyPrioritiesActivity
     public void onActionClick(UserCategory userCategory, UserGoal userGoal, UserBehavior userBehavior, UserAction userAction){
         Intent actionIntent = new Intent(this, TriggerActivity.class)
                 .putExtra(TriggerActivity.USER_ACTION_KEY, userAction)
-                .putExtra(TriggerActivity.GOAL_KEY, userGoal);
+                .putExtra(TriggerActivity.USER_GOAL_KEY, userGoal);
         startActivityForResult(actionIntent, 1);
     }
 

@@ -59,6 +59,9 @@ public class ChooseActionsActivity
                 SearchView.OnCloseListener{
 
 
+    //NOTE: These need to be regular content because a user may dive down the library
+    //  without selecting things. User content ain't available in that use case, but
+    //  if it exists it can be retrieved from the UserData bundle
     public static final String CATEGORY_KEY = "org.tndata.compass.ChooseActionsActivity.Category";
     public static final String GOAL_KEY = "org.tndata.compass.ChooseActionsActivity.Goal";
     public static final String BEHAVIOR_KEY = "org.tndata.compass.ChooseActionsActivity.Behavior";
@@ -204,7 +207,7 @@ public class ChooseActionsActivity
     public void editReminder(Action action){
         UserAction userAction = mApplication.getUserData().getAction(action);
         startActivity(new Intent(getApplicationContext(), TriggerActivity.class)
-                .putExtra(TriggerActivity.GOAL_KEY, mGoal)
+                .putExtra(TriggerActivity.USER_GOAL_KEY, mGoal)
                 .putExtra(TriggerActivity.USER_ACTION_KEY, userAction));
     }
 
@@ -304,7 +307,7 @@ public class ChooseActionsActivity
 
             //Launch trigger picker
             startActivity(new Intent(getApplicationContext(), TriggerActivity.class)
-                    .putExtra(TriggerActivity.GOAL_KEY, mGoal)
+                    .putExtra(TriggerActivity.USER_GOAL_KEY, mGoal)
                     .putExtra(TriggerActivity.USER_ACTION_KEY, userAction));
         }
         else if (requestCode == mDeleteActionRequestCode){

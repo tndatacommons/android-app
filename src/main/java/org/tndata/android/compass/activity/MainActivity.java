@@ -668,7 +668,7 @@ public class MainActivity
     public void onTriggerSelected(UserAction userAction){
         Intent triggerIntent = new Intent(this, TriggerActivity.class)
                 .putExtra(TriggerActivity.USER_ACTION_KEY, userAction)
-                .putExtra(TriggerActivity.GOAL_KEY, userAction.getPrimaryGoal());
+                .putExtra(TriggerActivity.USER_GOAL_KEY, userAction.getPrimaryGoal());
         startActivityForResult(triggerIntent, TRIGGER_REQUEST_CODE);
     }
 

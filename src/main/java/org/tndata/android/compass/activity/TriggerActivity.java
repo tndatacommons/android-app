@@ -19,10 +19,10 @@ import com.doomonafireball.betterpickers.recurrencepicker.RecurrencePickerDialog
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.TriggerFragment;
-import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -58,8 +58,10 @@ public class TriggerActivity
                 CalendarDatePickerDialog.OnDateSetListener,
                 TriggerFragment.TriggerFragmentListener{
 
+    //NOTE: These need to be user content. Once an action is added, the trigger can be
+    //  edited. The trigger needs to be attached to an action when it is added
     public static final String USER_ACTION_KEY = "org.tndata.compass.TriggerActivity.UserAction";
-    public static final String GOAL_KEY = "org.tndata.compass.TriggerActivity.Goal";
+    public static final String USER_GOAL_KEY = "org.tndata.compass.TriggerActivity.UserGoal";
 
     private static final String TAG = "TriggerActivity";
     private static final String FRAG_TAG_RECUR_PICKER = "recurrencePickerDialogFragment";
@@ -122,7 +124,7 @@ public class TriggerActivity
         UserData userData = ((CompassApplication)getApplication()).getUserData();
 
         //Retrieve the goal and the user action
-        Goal goal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
+        UserGoal goal = (UserGoal)getIntent().getSerializableExtra(USER_GOAL_KEY);
         mUserAction = (UserAction)getIntent().getSerializableExtra(USER_ACTION_KEY);
 
         //Fetch the original copy of the user action

@@ -289,7 +289,7 @@ public class GoalActivity
     public void onActionSelected(UserBehavior userBehavior, UserAction userAction){
         Intent trigger = new Intent(this, TriggerActivity.class)
                 .putExtra(TriggerActivity.USER_ACTION_KEY, userAction)
-                .putExtra(TriggerActivity.GOAL_KEY, mUserGoal);
+                .putExtra(TriggerActivity.USER_GOAL_KEY, mUserGoal);
         startActivityForResult(trigger, TRIGGER_REQUEST_CODE);
     }
 }
