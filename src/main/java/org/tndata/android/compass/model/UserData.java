@@ -208,7 +208,8 @@ public class UserData{
     public void addGoal(UserGoal userGoal){
         //If the goal ain't in the data set
         if (!contains(userGoal)){
-            //Add it
+            //Initialize the object and add it
+            userGoal.init();
             goals.put(userGoal.getGoal().getId(), userGoal);
 
             //Add it to the relevant categories

@@ -13,6 +13,7 @@ import android.view.MenuItem;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.fragment.LauncherFragment;
 import org.tndata.android.compass.fragment.LogInFragment;
 import org.tndata.android.compass.fragment.SignUpFragment;
@@ -327,6 +328,12 @@ public class LoginActivity
     public void onBackgroundProcessing(int requestCode, UserData result){
         result.sync();
         result.logData();
+
+        //Write the places
+        CompassDbHelper helper = new CompassDbHelper(this);
+        helper.emptyPlacesTable();
+        helper.savePlaces(result.getPlaces());
+        helper.close();
     }
 
     @Override
