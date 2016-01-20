@@ -17,7 +17,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -635,9 +634,15 @@ public class MainActivity
 
     @Override
     public void onSuggestionOpened(Goal goal){
+        Category category = null;
+        for (Integer categoryId:goal.getCategories()){
+            if (mApplication.getUserData().getCategories().containsKey(categoryId)){
+                category = mApplication.getCategories().get(categoryId).getCategory();
+            }
+        }
         Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
-                .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal);
-                //.putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, goal.getCategories().get(0));
+                .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal)
+                .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, category);
         startActivityForResult(chooseBehaviors, GOAL_SUGGESTION_REQUEST_CODE);
     }
 

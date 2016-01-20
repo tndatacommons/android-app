@@ -84,6 +84,7 @@ public class ChooseBehaviorsActivity
 
     //Request codes
     private int mGetGoalRequestCode;
+    private int mGetCategoryRequestCode;
     private int mPostGoalRequestCode;
     private int mGetBehaviorsRequestCode;
     private int mPostBehaviorRequestCode;
@@ -320,10 +321,14 @@ public class ChooseBehaviorsActivity
         if (requestCode == mGetGoalRequestCode){
             //Parse the goal
             mGoal = ContentParser.parseGoal(result);
-            //mCategory = mGoal.getPrimaryCategory();
+            mGetCategoryRequestCode = NetworkRequest.get(this, this,
+                    API.getCategoryUrl(mGoal.getCategories().iterator().next()), "");
 
             //Set UI and fetch the behaviors
             mToolbar.setTitle(mGoal.getTitle());
+        }
+        else if (requestCode == mGetCategoryRequestCode){
+            //Set UI and fetch the behaviors
             setAdapter();
             fetchBehaviors();
             if (mSearchItem != null){
