@@ -14,9 +14,11 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.CheckInPagerAdapter;
 import org.tndata.android.compass.fragment.CheckInFeedbackFragment;
 import org.tndata.android.compass.fragment.CheckInRewardFragment;
+import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.parser.MiscellaneousParser;
 import org.tndata.android.compass.util.API;
@@ -24,8 +26,10 @@ import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import me.relex.circleindicator.CircleIndicator;
 
@@ -51,7 +55,7 @@ public class CheckInActivity
     private int mType;
 
     //Magic numbers!! This is the total amount of requests performed by this activity
-    public static final int REQUEST_COUNT = 3;
+    public int mRequestCount = 3;
 
 
     private CompassApplication mApplication;
@@ -65,7 +69,9 @@ public class CheckInActivity
     private CheckInPagerAdapter mAdapter;
 
     //Data
+    private List<UserAction> mActions;
     private Map<Goal, List<UserAction>> mDataSet;
+    private Set<Integer> mBehaviorRequestSet;
     private Reward mReward;
     private float mProgress;
     private int mCurrentProgress[];
@@ -102,28 +108,25 @@ public class CheckInActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetActionsRequestCode){
-            List<UserAction> actions = new ArrayList<>();
-            ContentParser.parseUserActionsFromResultSet(result, actions);
+            mActions = ContentParser.parseUserActions(result);
             mDataSet = new HashMap<>();
+            mBehaviorRequestSet = new HashSet<>();
+            Set<Integer> goalRequestSet = new HashSet<>();
             //For each action
-            for (UserAction action:actions){
-                //If there is a primary goal
-                if (action.getPrimaryGoal() != null){
-                    //If the primary goal is already in the data set
-                    if (mDataSet.containsKey(action.getPrimaryGoal().getGoal())){
-                        //Add the action to the associated list
-                        mDataSet.get(action.getPrimaryGoal().getGoal()).add(action);
-                    }
-                    //Otherwise
-                    else{
-                        //Create the list and add the goal to the data set
-                        List<UserAction> actionList = new ArrayList<>();
-                        actionList.add(action);
-                        mDataSet.put(action.getPrimaryGoal().getGoal(), actionList);
-                    }
+            for (UserAction action:mActions){
+                if (!goalRequestSet.contains(action.getPrimaryGoalId())){
+                    //For each goal we need to add one request to the count
+                    mRequestCount++;
+                    goalRequestSet.add(action.getPrimaryGoalId());
+                    NetworkRequest.get(this, this, API.getGoalUrl(action.getPrimaryGoalId()), "");
+                }
+                if (mType == TYPE_REVIEW){
+                    mRequestCount++;
+                    mBehaviorRequestSet.add(NetworkRequest.get(this, this,
+                            API.getBehaviorUrl(action.getAction().getBehavior()), ""));
                 }
             }
-            mCurrentProgress = new int[mDataSet.size()];
+            mCurrentProgress = new int[goalRequestSet.size()];
         }
         else if (requestCode == mGetRewardRequestCode){
             mReward = MiscellaneousParser.parseRewards(result).get(0);
@@ -137,7 +140,26 @@ public class CheckInActivity
                 jsonx.printStackTrace();
             }
         }
-        if (++mCompletedRequests == REQUEST_COUNT){
+        else if (mBehaviorRequestSet.contains(requestCode)){
+            Behavior behavior = ContentParser.parseBehavior(result);
+            for (UserAction action:mActions){
+                if (action.getAction().getBehavior() == behavior.getId()){
+                    action.setBehavior(new UserBehavior(behavior));
+                }
+            }
+        }
+        else /* Goals */{
+            Goal goal = ContentParser.parseGoal(result);
+            List<UserAction> goalActionList = new ArrayList<>();
+            for (UserAction action:mActions){
+                if (action.getPrimaryGoalId() == goal.getId()){
+                    goalActionList.add(action);
+                }
+            }
+            mDataSet.put(goal, goalActionList);
+        }
+
+        if (++mCompletedRequests == mRequestCount){
             setAdapter();
         }
     }

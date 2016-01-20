@@ -188,6 +188,10 @@ public abstract class API{
         return BASE_URL + "behaviors/?goal=" + goal.getId();
     }
 
+    public static String getBehaviorUrl(int behaviorId){
+        return BASE_URL + "behaviors/" + behaviorId + "/";
+    }
+
     public static String getPostBehaviorUrl(){
         return BASE_URL + "users/behaviors/";
     }

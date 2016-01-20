@@ -8,9 +8,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserBehavior;
 
 import java.util.List;
 
@@ -55,8 +54,8 @@ public class CheckInReviewAdapter extends RecyclerView.Adapter<CheckInReviewAdap
         }
 
         //Retrieve the data holders
-        Action action = mActions.get(position).getAction();
-        Behavior behavior = null;//action.getBehavior();
+        UserAction action = mActions.get(position);
+        UserBehavior behavior = action.getBehavior();
 
         //Populate the UI
         holder.mAction.setText(action.getTitle());

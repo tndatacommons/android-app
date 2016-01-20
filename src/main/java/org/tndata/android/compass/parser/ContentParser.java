@@ -389,10 +389,6 @@ public final class ContentParser extends ParserMethods{
         return actions;
     }
 
-    public static List<Action> parseActions(String src){
-        return parseActionArray(src);
-    }
-
     public static List<Action> parseActionsFromResultSet(String src){
         try{
             return parseActionArray(new JSONObject(src).getString("results"));
@@ -415,5 +411,14 @@ public final class ContentParser extends ParserMethods{
             jsonx.printStackTrace();
             return null;
         }
+    }
+
+
+    public static List<UserAction> parseUserActions(String src){
+        return sGson.fromJson(src, ActionList.class).results;
+    }
+
+    public static class ActionList{
+        private List<UserAction> results = null;
     }
 }
