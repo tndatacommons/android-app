@@ -218,6 +218,9 @@ public class FeedData{
     public void sync(UserData userData){
         if (mNextAction != null && mNextAction.getAction() != null){
             mNextAction = userData.getAction(mNextAction);
+            if (!mUpcomingActions.isEmpty()){
+                mUpcomingActions.remove(0);
+            }
         }
         else{
             mNextAction = null;
