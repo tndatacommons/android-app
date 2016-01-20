@@ -256,7 +256,7 @@ public class GoalActivity
             case R.id.goal_fab:
                 //TODO category?
                 Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
-                        .putExtra(ChooseBehaviorsActivity.GOAL_KEY, mUserGoal);
+                        .putExtra(ChooseBehaviorsActivity.GOAL_KEY, mUserGoal.getGoal());
                 startActivityForResult(chooseBehaviors, CHOOSE_BEHAVIORS_REQUEST_CODE);
         }
     }

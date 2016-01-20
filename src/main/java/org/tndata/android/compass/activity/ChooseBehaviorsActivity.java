@@ -168,7 +168,7 @@ public class ChooseBehaviorsActivity
     }
 
     private boolean isGoalSelected(){
-        return mApplication.getUserData().getGoal(mGoal) != null;
+        return mApplication.getUserData().contains(mGoal);
     }
 
     @Override

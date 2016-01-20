@@ -5,8 +5,10 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -36,6 +38,7 @@ public class UserData{
     private Map<Integer, UserGoal> goals;
     private Map<Integer, UserBehavior> behaviors;
     private Map<Integer, UserAction> actions;
+    private Set<Integer> mRequestedGoals;
 
     //User places
     private List<UserPlace> places = new ArrayList<>();
@@ -193,8 +196,34 @@ public class UserData{
         return getGoal(userGoal.getGoal());
     }
 
+    /**
+     * Method used to check whether the user goal is <b>currently</b> in the user's collection.
+     *
+     * @param userGoal the user goal to be checked.
+     * @return true if the goal is in the user's collection, false otherwise.
+     */
     public boolean contains(UserGoal userGoal){
         return goals.containsKey(userGoal.getGoal().getId());
+    }
+
+    /**
+     * Method used to check wiether a particular goal is in the user's collection or in the
+     * process of being added.
+     *
+     * @param goal the goal to be checked.
+     * @return true if it is, false otherwise.
+     */
+    public boolean contains(Goal goal){
+        return goals.containsKey(goal.getId()) || mRequestedGoals.contains(goal.getId());
+    }
+
+    /**
+     * Adds a goal id to the list of goals to be added to the user's collection.
+     *
+     * @param id the id of the goal.
+     */
+    public void addGoal(int id){
+        mRequestedGoals.add(id);
     }
 
     /**
@@ -208,6 +237,8 @@ public class UserData{
     public void addGoal(UserGoal userGoal){
         //If the goal ain't in the data set
         if (!contains(userGoal)){
+            mRequestedGoals.remove(userGoal.getObjectId());
+
             //Initialize the object and add it
             userGoal.init();
             goals.put(userGoal.getGoal().getId(), userGoal);
@@ -408,6 +439,7 @@ public class UserData{
      * from that point on, the lists are supposed to be kept up to date.
      */
     public void sync(){
+        mRequestedGoals = new HashSet<>();
         linkGoalsAndCategories();
         linkBehaviorsAndGoals();
         linkActions();

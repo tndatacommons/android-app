@@ -216,7 +216,12 @@ public class FeedData{
     }
 
     public void sync(UserData userData){
-        mNextAction = userData.getAction(mNextAction);
+        if (mNextAction != null && mNextAction.getAction() != null){
+            mNextAction = userData.getAction(mNextAction);
+        }
+        else{
+            mNextAction = null;
+        }
         List<UserAction> upcomingActions = new ArrayList<>();
         for (UserAction userAction:mUpcomingActions){
             upcomingActions.add(userData.getAction(userAction));

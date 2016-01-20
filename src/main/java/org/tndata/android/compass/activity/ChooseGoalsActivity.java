@@ -189,6 +189,7 @@ public class ChooseGoalsActivity
 
     @Override
     public void onGoalAddClicked(Goal goal){
+        mApplication.getUserData().addGoal(goal.getId());
         int code = NetworkRequest.post(this, this, API.getPostGoalUrl(), mApplication.getToken(),
                 API.getPostGoalBody(goal, mCategory));
         mAddGoalRequestCodeMap.put(code, goal);
