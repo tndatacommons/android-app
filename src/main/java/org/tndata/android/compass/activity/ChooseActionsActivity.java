@@ -205,10 +205,7 @@ public class ChooseActionsActivity
 
     @Override
     public void editReminder(Action action){
-        UserAction userAction = mApplication.getUserData().getAction(action);
-        startActivity(new Intent(getApplicationContext(), TriggerActivity.class)
-                .putExtra(TriggerActivity.USER_GOAL_KEY, mGoal)
-                .putExtra(TriggerActivity.USER_ACTION_KEY, userAction));
+        startTriggerActivity(mApplication.getUserData().getAction(action));
     }
 
     @Override
@@ -304,11 +301,7 @@ public class ChooseActionsActivity
             Toast.makeText(this, toast, Toast.LENGTH_SHORT).show();
 
             mAdapter.notifyDataSetChanged();
-
-            //Launch trigger picker
-            startActivity(new Intent(getApplicationContext(), TriggerActivity.class)
-                    .putExtra(TriggerActivity.USER_GOAL_KEY, mGoal)
-                    .putExtra(TriggerActivity.USER_ACTION_KEY, userAction));
+            startTriggerActivity(userAction);
         }
         else if (requestCode == mDeleteActionRequestCode){
             Toast.makeText(this, getString(R.string.action_deleted), Toast.LENGTH_SHORT).show();
@@ -319,5 +312,11 @@ public class ChooseActionsActivity
     @Override
     public void onRequestFailed(int requestCode, String message){
 
+    }
+
+    private void startTriggerActivity(UserAction userAction){
+        startActivity(new Intent(getApplicationContext(), TriggerActivity.class)
+                .putExtra(TriggerActivity.USER_GOAL_KEY, mApplication.getUserData().getGoal(mGoal))
+                .putExtra(TriggerActivity.USER_ACTION_KEY, userAction));
     }
 }
