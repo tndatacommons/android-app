@@ -683,7 +683,7 @@ public class MainActivity
                 mAdapter.dismissSuggestion();
             }
             else if (requestCode == GOAL_REQUEST_CODE){
-                mAdapter.notifyDataSetChanged();
+                mAdapter.dataSetChanged();
             }
             else if (requestCode == ACTION_REQUEST_CODE){
                 if (data.getBooleanExtra(ActionActivity.DID_IT_KEY, false)){

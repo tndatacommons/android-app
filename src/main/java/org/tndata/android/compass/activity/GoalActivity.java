@@ -245,6 +245,7 @@ public class GoalActivity
             NetworkRequest.delete(this, null, API.getDeleteGoalUrl(mUserGoal),
                     mApplication.getToken(), new JSONObject());
             mApplication.getUserData().removeGoal(mUserGoal.getGoal());
+            setResult(RESULT_OK);
             finish();
             return true;
         }
@@ -283,9 +284,9 @@ public class GoalActivity
     @Override
     public void onBehaviorSelected(UserBehavior userBehavior){
         Intent actionPicker = new Intent(this, ChooseActionsActivity.class)
-                .putExtra("category", mUserGoal.getPrimaryCategory())
-                .putExtra("goal", mUserGoal)
-                .putExtra("behavior", userBehavior);
+                .putExtra(ChooseActionsActivity.CATEGORY_KEY, mUserGoal.getPrimaryCategory().getCategory())
+                .putExtra(ChooseActionsActivity.GOAL_KEY, mUserGoal.getGoal())
+                .putExtra(ChooseActionsActivity.BEHAVIOR_KEY, userBehavior.getBehavior());
         startActivityForResult(actionPicker, CHOOSE_ACTIONS_REQUEST_CODE);
     }
 

@@ -192,4 +192,13 @@ class DataHandler{
     String getProgressFraction(){
         return mFeedData.getProgressFraction();
     }
+
+    void reload(){
+        int size = mDisplayedUserGoals.size();
+        mDisplayedUserGoals.clear();
+        List<UserGoal> userGoals = new ArrayList<>(mUserData.getGoals().values());
+        while (size > mDisplayedUserGoals.size() && canLoadMoreGoals()){
+            mDisplayedUserGoals.add(userGoals.get(mDisplayedUserGoals.size()));
+        }
+    }
 }
