@@ -23,6 +23,10 @@ public class UserPlace implements Serializable{
     private double longitude = 0;
 
 
+    public UserPlace(String name){
+        this(new Place(name), -1, 0, 0);
+    }
+
     public UserPlace(Place place, int id, double latitude, double longitude){
         this.place = place;
         this.id = id;
@@ -77,6 +81,10 @@ public class UserPlace implements Serializable{
     @Override
     public boolean equals(Object o){
         return (o instanceof UserPlace) && (((UserPlace)o).id == id);
+    }
+
+    public boolean is(Place place){
+        return place.getName().equals(getName());
     }
 
     @Override

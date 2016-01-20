@@ -12,14 +12,17 @@ import java.io.Serializable;
 public class Place implements Serializable{
     static final long serialVersionUID = 9654318439L;
 
-    private String name = "";
 
-    private boolean primary = false;
-    private boolean set = false;
+    private String name;
+
+    private boolean primary;
+    private boolean set;
 
 
     public Place(String name){
         this.name = name;
+        this.primary = false;
+        this.set = false;
     }
 
     public void setName(String name){
@@ -49,5 +52,10 @@ public class Place implements Serializable{
     @Override
     public String toString(){
         return name;
+    }
+
+    @Override
+    public boolean equals(Object o){
+        return o instanceof Place && ((Place)o).getName().equals(name);
     }
 }

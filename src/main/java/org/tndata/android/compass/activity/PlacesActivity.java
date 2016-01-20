@@ -48,6 +48,8 @@ public class PlacesActivity
                 DialogInterface.OnShowListener,
                 View.OnClickListener{
 
+    private static final String TAG = "PlacesActivity";
+
     //Request codes
     private static final int PLACE_PICKER_REQUEST_CODE = 65485;
 
@@ -107,61 +109,56 @@ public class PlacesActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         //Parse the result
-        List<Place> primaryPlaces = PlaceParser.parsePrimaryPlaces2(result);
+        List<Place> primaryPlaces = PlaceParser.parsePrimaryPlaces(result);
+        Log.d(TAG, "Primary places: " + primaryPlaces.toString());
 
         //First off, the progress bar is hidden
         mProgress.setVisibility(View.GONE);
 
-        //If the result of the parser is null, the string was bad, otherwise, proceed
-        if (primaryPlaces != null){
-            //Two lists are used to sort the list
-            List<UserPlace> places = new ArrayList<>();
-            List<UserPlace> userPlaces = new ArrayList<>();
-            List<UserPlace> currentPlaces = mApplication.getUserData().getPlaces();
+        //Two lists are used to sort the list
+        List<UserPlace> places = new ArrayList<>();
+        List<UserPlace> userPlaces = new ArrayList<>();
+        List<UserPlace> currentPlaces = mApplication.getUserData().getPlaces();
 
-            //The user places are added to the list in the appropriate order
-            for (UserPlace userPlace:currentPlaces){
-                userPlace.getPlace().setSet(true);
+        //The user places are added to the list in the appropriate order
+        for (UserPlace userPlace:currentPlaces){
+            userPlace.getPlace().setSet(true);
 
-                int primaryIndex = -1;
-                for (int i = 0; i < primaryPlaces.size(); i++){
-                    if (primaryPlaces.get(i).getName().equals(userPlace.getName())){
-                        primaryIndex = i;
-                        break;
-                    }
-                }
-
-                //If the place is primary it is added at the head, otherwise it is added at the tail
-                if (primaryIndex != -1){
-                    userPlace.getPlace().setPrimary(true);
-                    places.add(userPlace);
-                    //The primary place is removed from the list to keep track of which ones have
-                    //  been added already
-                    primaryPlaces.remove(primaryIndex);
-                }
-                else{
-                    userPlace.getPlace().setPrimary(false);
-                    userPlaces.add(userPlace);
+            int primaryIndex = -1;
+            for (int i = 0; i < primaryPlaces.size(); i++){
+                if (userPlace.is(primaryPlaces.get(i))){
+                    primaryIndex = i;
+                    break;
                 }
             }
-            //The reminder of primary places need to be added to the list as well
-            for (Place place:primaryPlaces){
-                place.setSet(false);
-                places.add(new UserPlace(place, -1, 0, 0));
-            }
-            //The list of user places are added to the final list
-            places.addAll(userPlaces);
 
-            //Finally, set the adapter and enable the add button.
-            mAdapter = new PlacesAdapter(this, places);
-            mList.setAdapter(mAdapter);
-            mList.setOnItemClickListener(this);
-            mList.setVisibility(View.VISIBLE);
-            mAdd.setEnabled(true);
+            //If the place is primary it is added at the head, otherwise it is added at the tail
+            if (primaryIndex != -1){
+                userPlace.getPlace().setPrimary(true);
+                places.add(userPlace);
+                //The primary place is removed from the list to keep track of which ones have
+                //  been added already
+                primaryPlaces.remove(primaryIndex);
+            }
+            else{
+                userPlace.getPlace().setPrimary(false);
+                userPlaces.add(userPlace);
+            }
         }
-        else{
-            Toast.makeText(this, "Couldn't load the list of places", Toast.LENGTH_SHORT).show();
+        //The reminder of primary places need to be added to the list as well
+        for (Place place:primaryPlaces){
+            place.setSet(false);
+            places.add(new UserPlace(place, -1, 0, 0));
         }
+        //The list of user places are added to the final list
+        places.addAll(userPlaces);
+
+        //Finally, set the adapter and enable the add button.
+        mAdapter = new PlacesAdapter(this, places);
+        mList.setAdapter(mAdapter);
+        mList.setOnItemClickListener(this);
+        mList.setVisibility(View.VISIBLE);
+        mAdd.setEnabled(true);
     }
 
     @Override
@@ -237,10 +234,8 @@ public class PlacesActivity
                 }
                 //Otherwise this is a new place request, fire the place picker
                 else{
-                    Place newPlace = new Place(name);
-                    newPlace.setName(name);
                     Intent add = new Intent(this, PlacePickerActivity.class);
-                    add.putExtra(PlacePickerActivity.PLACE_KEY, newPlace);
+                    add.putExtra(PlacePickerActivity.PLACE_KEY, new UserPlace(name));
                     startActivityForResult(add, PLACE_PICKER_REQUEST_CODE);
                 }
             }
@@ -289,7 +284,7 @@ public class PlacesActivity
         if (resultCode == RESULT_OK){
             if (requestCode == PLACE_PICKER_REQUEST_CODE){
                 UserPlace place = (UserPlace)data.getSerializableExtra(PlacePickerActivity.PLACE_RESULT_KEY);
-                Log.d("PlacesActivity", place.toString());
+                Log.d(TAG, place.toString());
                 //If a place wasn't selected this is a new place, so save it.
                 if (mCurrentPlace == null){
                     place.getPlace().setName(mName.getText().toString().trim());
