@@ -120,6 +120,8 @@ public class UserData{
     }
 
     /**
+     * TODO these next two methods are irrelevant at the moment.
+     *
      * Adds a Category to the list of user-selected categories (if it's not
      * already included) and assigns any user-selected goals to the new Category.
      *
@@ -127,7 +129,7 @@ public class UserData{
      */
     public void addCategory(UserCategory userCategory){
         //If the category ain't in the data set
-        if (!contains(userCategory)){
+        /*if (!contains(userCategory)){
             //Add it
             categories.put(userCategory.getCategory().getId(), userCategory);
 
@@ -139,7 +141,7 @@ public class UserData{
                 goals.add(goal);
             }
             userCategory.setGoals(goals);
-        }
+        }*/
     }
 
     /**
@@ -149,7 +151,7 @@ public class UserData{
      * @param category the category to remove
      */
     public void removeCategory(Category category){
-        UserCategory removedCategory = categories.remove(category.getId());
+        /*UserCategory removedCategory = categories.remove(category.getId());
 
         if (removedCategory != null){
             List<UserGoal> goalsToRemove = new ArrayList<>();
@@ -165,7 +167,7 @@ public class UserData{
             for (UserGoal goal : goalsToRemove){
                 removeGoal(goal.getGoal());
             }
-        }
+        }*/
     }
 
 
@@ -241,24 +243,23 @@ public class UserData{
 
             //Initialize the object and add it
             userGoal.init();
-            goals.put(userGoal.getGoal().getId(), userGoal);
+            goals.put(userGoal.getObjectId(), userGoal);
 
-            //Add it to the relevant categories
-            for (UserCategory category:userGoal.getCategories()){
-                UserCategory cat = getCategory(category);
-                if (cat != null){
-                    cat.addGoal(userGoal);
+            //Link the goal with the relevant categories
+            for (Integer categoryId:userGoal.getGoal().getCategories()){
+                if (categories.containsKey(categoryId)){
+                    userGoal.addCategory(categories.get(categoryId));
+                    categories.get(categoryId).addGoal(userGoal);
                 }
             }
 
-            //Link behaviors
-            List<UserBehavior> behaviors = new ArrayList<>();
-            for (UserBehavior goalBehavior:userGoal.getBehaviors()){
-                UserBehavior behavior = getBehavior(goalBehavior.getBehavior());
-                behavior.addGoal(userGoal);
-                behaviors.add(behavior);
+            //Link the goal with the relevant behaviors
+            for (UserBehavior userBehavior:behaviors.values()){
+                if (userBehavior.getBehavior().getGoals().contains(userGoal.getObjectId())){
+                    userGoal.addBehavior(userBehavior);
+                    userBehavior.addGoal(userGoal);
+                }
             }
-            userGoal.setBehaviors(behaviors);
         }
     }
 
@@ -268,6 +269,7 @@ public class UserData{
      * Removing a goal also removes its reference from the parent Categories
      * as well as the child Behaviors.
      *
+     * TODO Goal vs UserGoal?
      * @param goal the goal to be removed from the user list.
      */
     public void removeGoal(Goal goal){
@@ -275,23 +277,24 @@ public class UserData{
 
         if (removedGoal != null){
             //Remove the goal from its parent categories
-            for (UserCategory category : removedGoal.getCategories()){
+            for (UserCategory category:removedGoal.getCategories()){
                 category.removeGoal(removedGoal);
             }
 
-            List<UserBehavior> behaviorsToRemove = new ArrayList<>();
+            //List<UserBehavior> behaviorsToRemove = new ArrayList<>();
             //Remove the goal from its child Behaviors
-            for (UserBehavior behavior : removedGoal.getBehaviors()){
+            for (UserBehavior behavior:removedGoal.getBehaviors()){
                 behavior.removeGoal(removedGoal);
                 //Record all the Behaviors w/o parent Goals
                 if (behavior.getGoals().isEmpty()){
-                    behaviorsToRemove.add(behavior);
+                    removeBehavior(behavior.getBehavior());
+                    //behaviorsToRemove.add(behavior);
                 }
             }
             //Remove Behaviors w/o parent Goals
-            for (UserBehavior behavior : behaviorsToRemove){
+            /*for (UserBehavior behavior : behaviorsToRemove){
                 removeBehavior(behavior.getBehavior());
-            }
+            }*/
         }
     }
 
@@ -330,16 +333,25 @@ public class UserData{
     /**
      * Add a single Behavior to the user's collection.
      *
-     * Adding this object will also trigger an update to behavior's parent goals.
-     *
      * @param userBehavior the behavior to be added to the user's list.
      */
     public void addBehavior(UserBehavior userBehavior){
         if (!contains(userBehavior)){
-            behaviors.put(userBehavior.getId(), userBehavior);
+            userBehavior.init();
+            behaviors.put(userBehavior.getObjectId(), userBehavior);
 
-            for (UserGoal goal:userBehavior.getGoals()){
-                getGoal(goal).addBehavior(userBehavior);
+            for (Integer goalId:userBehavior.getBehavior().getGoals()){
+                if (goals.containsKey(goalId)){
+                    userBehavior.addGoal(goals.get(goalId));
+                    goals.get(goalId).addBehavior(userBehavior);
+                }
+            }
+
+            for (UserAction userAction:actions.values()){
+                if (userAction.getAction().getBehavior() == userBehavior.getObjectId()){
+                    userAction.setBehavior(userBehavior);
+                    userBehavior.addAction(userAction);
+                }
             }
         }
     }
@@ -410,9 +422,11 @@ public class UserData{
         if (!contains(userAction)){
             actions.put(userAction.getAction().getId(), userAction);
 
-            UserBehavior behavior = getBehavior(userAction.getBehavior());
-            behavior.addAction(userAction);
-            userAction.setBehavior(behavior);
+            UserBehavior behavior = behaviors.get(userAction.getAction().getBehavior());
+            if (behavior != null){
+                behavior.addAction(userAction);
+                userAction.setBehavior(behavior);
+            }
         }
     }
 
@@ -424,7 +438,7 @@ public class UserData{
      */
     public void removeAction(Action action){
         UserAction removedAction = actions.remove(action.getId());
-        if (removedAction != null){
+        if (removedAction != null && removedAction.getBehavior() != null){
             removedAction.getBehavior().removeAction(removedAction);
         }
     }

@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.GoalAdapter;
+import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Progress;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserBehavior;
@@ -254,9 +255,12 @@ public class GoalActivity
     public void onClick(View view){
         switch (view.getId()){
             case R.id.goal_fab:
-                //TODO category?
                 Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
                         .putExtra(ChooseBehaviorsActivity.GOAL_KEY, mUserGoal.getGoal());
+                if (mUserGoal.getPrimaryCategory() != null){
+                    Category category = mUserGoal.getPrimaryCategory().getCategory();
+                    chooseBehaviors.putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, category);
+                }
                 startActivityForResult(chooseBehaviors, CHOOSE_BEHAVIORS_REQUEST_CODE);
         }
     }
