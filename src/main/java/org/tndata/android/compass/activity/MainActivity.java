@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -137,6 +138,8 @@ public class MainActivity
         setContentView(R.layout.activity_main);
 
         mApplication = (CompassApplication)getApplication();
+
+        Log.d("MainActivity", mApplication.getPublicCategories().size() + " public categories");
 
         //Update the timezone and register with GCM
         NetworkRequest.put(this, null, API.getPutUserProfileUrl(mApplication.getUser()),

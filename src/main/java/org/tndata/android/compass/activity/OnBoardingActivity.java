@@ -50,6 +50,7 @@ public class OnBoardingActivity
     private int mInitialPostCategoryRequestCode;
     private int mLastPostCategoryRequestCode;
     private int mGetDataRequestCode;
+    private int mGetCategoriesRequestCode;
 
 
     @Override
@@ -129,6 +130,9 @@ public class OnBoardingActivity
         else if (requestCode == mGetDataRequestCode){
             Parser.parse(result, ParserModels.UserDataResultSet.class, this);
         }
+        else if (requestCode == mGetCategoriesRequestCode){
+            Parser.parse(result, ParserModels.CategoriesResultSet.class, this);
+        }
     }
 
     @Override
@@ -155,15 +159,18 @@ public class OnBoardingActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof ParserModels.UserDataResultSet){
-            UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
+            mApplication.setUserData(((ParserModels.UserDataResultSet)result).results.get(0));
 
-            mApplication.setUserData(userData);
             User user = mApplication.getUser();
             user.setOnBoardingComplete();
             NetworkRequest.put(this, null, API.getPutUserProfileUrl(user), mApplication.getToken(),
                     API.getPutUserProfileBody(user));
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
+
+            mGetCategoriesRequestCode = NetworkRequest.get(this, this, API.getCategoriesUrl(), "");
+        }
+        else if (result instanceof ParserModels.CategoriesResultSet){
+            mApplication.setPublicCategories(((ParserModels.CategoriesResultSet)result).results);
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
         }
     }

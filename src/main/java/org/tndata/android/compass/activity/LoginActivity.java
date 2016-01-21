@@ -351,10 +351,7 @@ public class LoginActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof ParserModels.UserDataResultSet){
-            UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
-
-            mApplication.setUserData(userData);
-
+            mApplication.setUserData(((ParserModels.UserDataResultSet)result).results.get(0));
             mGetCategoriesRequestCode = NetworkRequest.get(this, this, API.getCategoriesUrl(), "");
         }
         else if (result instanceof ParserModels.CategoriesResultSet){
