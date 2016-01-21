@@ -11,6 +11,7 @@ import org.tndata.android.compass.database.CompassContract.PlaceEntry;
 import org.tndata.android.compass.database.CompassContract.ReminderEntry;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Reminder;
+import org.tndata.android.compass.model.UserPlace;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -68,9 +69,9 @@ public class CompassDbHelper extends SQLiteOpenHelper{
     /**
      * Saves a place in the database.
      *
-     * @param place the place to be saved.
+     * @param userPlace the place to be saved.
      */
-    public void savePlace(@NonNull Place place){
+    public void savePlace(@NonNull UserPlace userPlace){
         //Open a connection to the database
         SQLiteDatabase db = getWritableDatabase();
 
@@ -83,10 +84,10 @@ public class CompassDbHelper extends SQLiteOpenHelper{
 
         //Prepare the statement
         SQLiteStatement stmt = db.compileStatement(query);
-        stmt.bindLong(1, place.getId());
-        stmt.bindString(2, place.getName());
-        stmt.bindDouble(3, place.getLatitude());
-        stmt.bindDouble(4, place.getLongitude());
+        stmt.bindLong(1, userPlace.getId());
+        stmt.bindString(2, userPlace.getName());
+        stmt.bindDouble(3, userPlace.getLatitude());
+        stmt.bindDouble(4, userPlace.getLongitude());
 
         //Execute the query
         stmt.executeInsert();
@@ -99,9 +100,9 @@ public class CompassDbHelper extends SQLiteOpenHelper{
     /**
      * Saves a list of places in the database using a single transaction.
      *
-     * @param places the list of places to be saved.
+     * @param userPlaces the list of places to be saved.
      */
-    public void savePlaces(@NonNull List<Place> places){
+    public void savePlaces(@NonNull List<UserPlace> userPlaces){
         //Retrieve a database, begin the transaction, and compile the query
         SQLiteDatabase db = getWritableDatabase();
 
@@ -115,15 +116,15 @@ public class CompassDbHelper extends SQLiteOpenHelper{
         db.beginTransaction();
         SQLiteStatement stmt = db.compileStatement(query);
 
-        for (Place place:places){
+        for (UserPlace userPlace:userPlaces){
             //Previous bindings (if any) are emptied
             stmt.clearBindings();
 
             //Bindings
-            stmt.bindLong(1, place.getId());
-            stmt.bindString(2, place.getName());
-            stmt.bindDouble(3, place.getLatitude());
-            stmt.bindDouble(4, place.getLongitude());
+            stmt.bindLong(1, userPlace.getId());
+            stmt.bindString(2, userPlace.getName());
+            stmt.bindDouble(3, userPlace.getLatitude());
+            stmt.bindDouble(4, userPlace.getLongitude());
 
             //Execution
             stmt.executeInsert();
@@ -141,9 +142,9 @@ public class CompassDbHelper extends SQLiteOpenHelper{
     /**
      * Updates a place in the database.
      *
-     * @param place the place to be updated.
+     * @param userPlace the place to be updated.
      */
-    public void updatePlace(@NonNull Place place){
+    public void updatePlace(@NonNull UserPlace userPlace){
         //Open a connection to the database
         SQLiteDatabase db = getWritableDatabase();
 
@@ -155,10 +156,10 @@ public class CompassDbHelper extends SQLiteOpenHelper{
 
         //Prepare the statement
         SQLiteStatement stmt = db.compileStatement(query);
-        stmt.bindString(1, place.getName());
-        stmt.bindDouble(2, place.getLatitude());
-        stmt.bindDouble(3, place.getLongitude());
-        stmt.bindLong(4, place.getId());
+        stmt.bindString(1, userPlace.getName());
+        stmt.bindDouble(2, userPlace.getLatitude());
+        stmt.bindDouble(3, userPlace.getLongitude());
+        stmt.bindLong(4, userPlace.getId());
 
         //Execute the query
         stmt.execute();
@@ -173,26 +174,31 @@ public class CompassDbHelper extends SQLiteOpenHelper{
      *
      * @return the list of places currently stored in the database.
      */
-    public List<Place> getPlaces(){
+    public List<UserPlace> getPlaces(){
         //Open a readable database and execute the query
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + PlaceEntry.TABLE + " ORDER BY " + PlaceEntry.NAME + " ASC", null);
 
-        List<Place> places = new ArrayList<>();
+        List<UserPlace> userPlaces = new ArrayList<>();
 
         //If there are rows in the cursor returned by the query
         if (cursor.moveToFirst()){
             //For each item
             do{
                 //Create the Place and populate it
-                Place place = new Place();
-                place.setId(cursor.getInt(cursor.getColumnIndex(PlaceEntry.CLOUD_ID)));
-                place.setName(cursor.getString(cursor.getColumnIndex(PlaceEntry.NAME)));
-                place.setLatitude(cursor.getDouble(cursor.getColumnIndex(PlaceEntry.LATITUDE)));
-                place.setLongitude(cursor.getDouble(cursor.getColumnIndex(PlaceEntry.LONGITUDE)));
+                Place place = new Place(
+                        cursor.getString(cursor.getColumnIndex(PlaceEntry.NAME))
+                );
+
+                UserPlace userPlace = new UserPlace(
+                        place,
+                        cursor.getInt(cursor.getColumnIndex(PlaceEntry.CLOUD_ID)),
+                        cursor.getDouble(cursor.getColumnIndex(PlaceEntry.LATITUDE)),
+                        cursor.getDouble(cursor.getColumnIndex(PlaceEntry.LONGITUDE))
+                );
 
                 //Add the place to the target list
-                places.add(place);
+                userPlaces.add(userPlace);
             }
             //Move on until the cursor is empty
             while(cursor.moveToNext());
@@ -202,7 +208,7 @@ public class CompassDbHelper extends SQLiteOpenHelper{
         cursor.close();
         db.close();
 
-        return places;
+        return userPlaces;
     }
 
     /**

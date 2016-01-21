@@ -30,16 +30,17 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserBehavior;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkRequest;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -57,7 +58,16 @@ public class ChooseActionsActivity
                 SearchView.OnQueryTextListener,
                 SearchView.OnCloseListener{
 
+
+    //NOTE: These need to be regular content because a user may dive down the library
+    //  without selecting things. User content ain't available in that use case, but
+    //  if it exists it can be retrieved from the UserData bundle
+    public static final String CATEGORY_KEY = "org.tndata.compass.ChooseActionsActivity.Category";
+    public static final String GOAL_KEY = "org.tndata.compass.ChooseActionsActivity.Goal";
+    public static final String BEHAVIOR_KEY = "org.tndata.compass.ChooseActionsActivity.Behavior";
+
     private static final String TAG = "ChooseActionsActivity";
+
 
     private CompassApplication mApplication;
 
@@ -84,14 +94,9 @@ public class ChooseActionsActivity
         setContentView(R.layout.activity_choose_actions);
 
         mApplication = (CompassApplication)getApplication();
-        mBehavior = (Behavior)getIntent().getSerializableExtra("behavior");
-        mGoal = (Goal)getIntent().getSerializableExtra("goal");
-        mCategory = (Category)getIntent().getSerializableExtra("category");
-
-        Behavior behavior = mApplication.getUserData().getBehavior(mBehavior);
-        if (behavior != null){
-            mBehavior = behavior;
-        }
+        mCategory = (Category)getIntent().getSerializableExtra(CATEGORY_KEY);
+        mGoal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
+        mBehavior = (Behavior)getIntent().getSerializableExtra(BEHAVIOR_KEY);
 
         mToolbar = (Toolbar)findViewById(R.id.choose_actions_toolbar);
         mToolbar.setTitle(mBehavior.getTitle());
@@ -118,7 +123,7 @@ public class ChooseActionsActivity
             mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
         }
 
-        mGetActionsRequestCode = NetworkRequest.get(this, this, API.getActionsUrl(mBehavior.getId()),
+        mGetActionsRequestCode = NetworkRequest.get(this, this, API.getActionsUrl(mBehavior),
                 mApplication.getToken());
     }
 
@@ -200,68 +205,46 @@ public class ChooseActionsActivity
 
     @Override
     public void editReminder(Action action){
-        Intent intent = new Intent(getApplicationContext(), TriggerActivity.class);
-        intent.putExtra("goal", mGoal);
-        //Need to pass the action that contains the trigger set by the user (if any), not the
-        //  action in the master list, which likely won't contain that information.
-        intent.putExtra("action", mApplication.getUserData().getAction(action));
-        startActivity(intent);
+        startTriggerActivity(mApplication.getUserData().getAction(action));
     }
 
     @Override
     public void addAction(Action action){
         if (!isGoalSelected()){
-            mGoal.setPrimaryCategory(mCategory);
-            mApplication.addGoal(mGoal);
             mPostGoalRequestCode = NetworkRequest.post(this, null, API.getPostGoalUrl(),
-                    mApplication.getToken(), API.getPostGoalBody(mGoal.getId()));
+                    mApplication.getToken(), API.getPostGoalBody(mGoal, mCategory));
         }
         if (!isBehaviorSelected()){
-            mApplication.addBehavior(mBehavior);
             mPostBehaviorRequestCode = NetworkRequest.post(this, this, API.getPostBehaviorUrl(),
-                    mApplication.getToken(), API.getPostBehaviorBody(mBehavior.getId()));
+                    mApplication.getToken(), API.getPostBehaviorBody(mBehavior));
         }
         Toast.makeText(getApplicationContext(), getText(R.string.action_saving), Toast.LENGTH_SHORT).show();
         mPostActionRequestCode = NetworkRequest.post(this, this, API.getPostActionUrl(),
-                mApplication.getToken(), API.getPostActionBody(mGoal.getId(), action.getId()));
+                mApplication.getToken(), API.getPostActionBody(action, mGoal));
     }
 
     @Override
     public void deleteAction(Action action){
-        //Make sure we find the action that contains the user's mapping id.
-        if (action.getMappingId() <= 0){
-            for (Action a:mApplication.getActions().values()){
-                if (action.getId() == a.getId()){
-                    action.setMappingId(a.getMappingId());
-                    break;
-                }
-            }
-        }
+        //Make sure we find the user action.
+        UserAction userAction = mApplication.getUserData().getAction(action);
+        if (userAction != null){
+            Log.e(TAG, "Deleting Action: " + userAction.toString());
 
-        Log.e(TAG, "Deleting Action, id = " + action.getId() + ", user_action id = "
-                + action.getMappingId() + ", " + action.getTitle());
-
-        if (action.getMappingId() > 0){
-            NetworkRequest.delete(this, this, API.getDeleteActionUrl(action.getMappingId()),
-                    mApplication.getToken(), new JSONObject());
+            mDeleteActionRequestCode = NetworkRequest.delete(this, this,
+                    API.getDeleteActionUrl(userAction), mApplication.getToken(), new JSONObject());
 
             // Remove from the application's collection
             mApplication.removeAction(action);
+            mAdapter.notifyDataSetChanged();
         }
-        mAdapter.notifyDataSetChanged();
+        else{
+            Log.d(TAG, "(Delete) Action not found: " + action.toString());
+        }
     }
 
     @Override
     public void doItNow(Action action){
         CompassUtil.doItNow(this, action.getExternalResource());
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        if (requestCode == Constants.VIEW_BEHAVIOR_REQUEST_CODE){
-            setResult(resultCode);
-        }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -287,9 +270,8 @@ public class ChooseActionsActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetActionsRequestCode){
-            List<Action> actionList = new ArrayList<>();
-            ContentParser.parseActionsFromResultSet(result, actionList);
-            if (!actionList.isEmpty()){
+            List<Action> actionList = ContentParser.parseActionsFromResultSet(result);
+            if (actionList != null && !actionList.isEmpty()){
                 Collections.sort(actionList, new Comparator<Action>(){
                     @Override
                     public int compare(Action act1, Action act2){
@@ -301,35 +283,28 @@ public class ChooseActionsActivity
             mAdapter.notifyDataSetChanged();
         }
         else if (requestCode == mPostGoalRequestCode){
-            Goal goal = ContentParser.parseGoal(result);
-            if (goal != null){
-                mApplication.getUserData().getGoal(goal).setMappingId(goal.getMappingId());
-            }
+            UserGoal userGoal = ContentParser.parseUserGoal(result);
+            Log.d(TAG, "(Post) " + userGoal.toString());
+            mApplication.addGoal(userGoal);
         }
         else if (requestCode == mPostBehaviorRequestCode){
-            Behavior behavior = ContentParser.parseBehavior(result);
-            if (behavior != null){
-                mApplication.getUserData().getBehavior(behavior).setMappingId(behavior.getMappingId());
-            }
+            UserBehavior userBehavior = ContentParser.parseUserBehavior(result);
+            Log.d(TAG, "(Post) " + userBehavior.toString());
+            mApplication.addBehavior(userBehavior);
         }
         else if (requestCode == mPostActionRequestCode){
-            Action action = ContentParser.parseAction(result);
-            Toast.makeText(getApplicationContext(),
-                    getString(R.string.action_added, action.getTitle()),
-                    Toast.LENGTH_SHORT).show();
+            UserAction userAction = ContentParser.parseUserAction(result);
+            Log.d(TAG, "(Post) " + userAction.toString());
+            mApplication.addAction(userAction);
 
-            // Add to the application's collection
-            mApplication.addAction(action);
+            String toast = getString(R.string.action_added, userAction.getTitle());
+            Toast.makeText(this, toast, Toast.LENGTH_SHORT).show();
+
             mAdapter.notifyDataSetChanged();
-
-            // launch trigger stuff
-            Intent intent = new Intent(getApplicationContext(), TriggerActivity.class);
-            intent.putExtra("goal", mGoal);
-            intent.putExtra("action", action);
-            startActivity(intent);
+            startTriggerActivity(userAction);
         }
         else if (requestCode == mDeleteActionRequestCode){
-            Toast.makeText(getApplicationContext(), getString(R.string.action_deleted), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.action_deleted), Toast.LENGTH_SHORT).show();
             mAdapter.notifyDataSetChanged();
         }
     }
@@ -337,5 +312,11 @@ public class ChooseActionsActivity
     @Override
     public void onRequestFailed(int requestCode, String message){
 
+    }
+
+    private void startTriggerActivity(UserAction userAction){
+        startActivity(new Intent(getApplicationContext(), TriggerActivity.class)
+                .putExtra(TriggerActivity.USER_GOAL_KEY, mApplication.getUserData().getGoal(mGoal))
+                .putExtra(TriggerActivity.USER_ACTION_KEY, userAction));
     }
 }

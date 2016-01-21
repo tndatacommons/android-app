@@ -5,8 +5,10 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -21,44 +23,38 @@ import java.util.Map;
  * It includes methods to set & get those values, and keeps a consistently updated
  * hierarchy (i.e. Behaviors know about their parent goals & child actions, etc).
  *
+ * This class also contains the data to be displayed at the main feed.
+ *
  * @author Brad Montgomery
  * @author Ismael Alonso
+ * @version 2.0.0
  */
 public class UserData{
     private static final String TAG = "UserData";
 
 
-    //User selected content. There are the master lists. References to all the objects in
-    //  the data structure are placed here. All other lists to be used within this class
-    //  should contain references to these same exact objects, not references to other
-    //  equivalent objects. This makes easier the access to and modification of the data
-    //  structure. These lists are deprecated and will eventually be removed, use the
-    //  <Id -> Content> maps instead for improved performance.
-    //private List<Category> mCategories = new ArrayList<>();
-    //private List<Goal> mGoals = new ArrayList<>();
-    //private List<Behavior> mBehaviors = new ArrayList<>();
-    //private List<Action> mActions = new ArrayList<>();
-
-    private Map<Integer, Category> mCategories;
-    private Map<Integer, Goal> mGoals;
-    private Map<Integer, Behavior> mBehaviors;
-    private Map<Integer, Action> mActions;
+    //User selected content. id -> content maps
+    private Map<Integer, UserCategory> categories;
+    private Map<Integer, UserGoal> goals;
+    private Map<Integer, UserBehavior> behaviors;
+    private Map<Integer, UserAction> actions;
+    private Set<Integer> mRequestedGoals;
 
     //User places
-    private List<Place> mPlaces = new ArrayList<>();
+    private List<UserPlace> places = new ArrayList<>();
 
     //Data for the main feed
-    private FeedData mFeedData;
+    private FeedData feed_data;
 
 
     /**
      * Constructor.
      */
     public UserData(){
-        mCategories = new HashMap<>();
-        mGoals = new HashMap<>();
-        mBehaviors = new HashMap<>();
-        mActions = new HashMap<>();
+        categories = new HashMap<>();
+        goals = new HashMap<>();
+        behaviors = new HashMap<>();
+        actions = new HashMap<>();
     }
 
 
@@ -66,20 +62,20 @@ public class UserData{
      * These methods are meant to be used by the parser only *
      *-------------------------------------------------------*/
 
-    public void setCategories(@NonNull Map<Integer, Category> categories){
-        mCategories = categories;
+    public void setCategories(@NonNull Map<Integer, UserCategory> categories){
+        this.categories = categories;
     }
 
-    public void setGoals(@NonNull Map<Integer, Goal> goals){
-        mGoals = goals;
+    public void setGoals(@NonNull Map<Integer, UserGoal> goals){
+        this.goals = goals;
     }
 
-    public void setBehaviors(@NonNull Map<Integer, Behavior> behaviors){
-        mBehaviors = behaviors;
+    public void setBehaviors(@NonNull Map<Integer, UserBehavior> behaviors){
+        this.behaviors = behaviors;
     }
 
-    public void setActions(@NonNull Map<Integer, Action> actions){
-        mActions = actions;
+    public void setActions(@NonNull Map<Integer, UserAction> actions){
+        this.actions = actions;
     }
 
 
@@ -92,8 +88,8 @@ public class UserData{
      *
      * @return an ArrayList of Category objects
      */
-    public Map<Integer, Category> getCategories(){
-        return mCategories;
+    public Map<Integer, UserCategory> getCategories(){
+        return categories;
     }
 
     /**
@@ -102,8 +98,16 @@ public class UserData{
      * @param category the category whose original copy needs to be fetched.
      * @return the original copy of such category.
      */
-    public Category getCategory(Category category){
-        return mCategories.get(category.getId());
+    public UserCategory getCategory(Category category){
+        return categories.get(category.getId());
+    }
+
+    public UserCategory getCategory(UserCategory userCategory){
+        return getCategory(userCategory.getCategory());
+    }
+
+    public boolean contains(UserCategory userCategory){
+        return categories.containsKey(userCategory.getCategory().getId());
     }
 
     /**
@@ -111,31 +115,33 @@ public class UserData{
      *
      * @return a List of Goal objects.
      */
-    public List<Goal> getCategoryGoals(Category category){
+    public List<UserGoal> getCategoryGoals(Category category){
         return getCategory(category).getGoals();
     }
 
     /**
+     * TODO these next two methods are irrelevant at the moment.
+     *
      * Adds a Category to the list of user-selected categories (if it's not
      * already included) and assigns any user-selected goals to the new Category.
      *
-     * @param category the Category object to add.
+     * @param userCategory the Category object to add.
      */
-    public void addCategory(Category category){
+    public void addCategory(UserCategory userCategory){
         //If the category ain't in the data set
-        if(!mCategories.containsKey(category.getId())){
+        /*if (!contains(userCategory)){
             //Add it
-            mCategories.put(category.getId(), category);
+            categories.put(userCategory.getCategory().getId(), userCategory);
 
             //Link goals
-            List<Goal> goals = new ArrayList<>();
-            for (Goal categoryGoal:category.getGoals()){
-                Goal goal = getGoal(categoryGoal);
-                goal.addCategory(category);
+            List<UserGoal> goals = new ArrayList<>();
+            for (UserGoal categoryGoal : userCategory.getGoals()){
+                UserGoal goal = getGoal(categoryGoal.getGoal());
+                goal.addCategory(userCategory);
                 goals.add(goal);
             }
-            category.setGoals(goals);
-        }
+            userCategory.setGoals(goals);
+        }*/
     }
 
     /**
@@ -145,21 +151,23 @@ public class UserData{
      * @param category the category to remove
      */
     public void removeCategory(Category category){
-        category = mCategories.remove(category.getId());
+        /*UserCategory removedCategory = categories.remove(category.getId());
 
-        List<Goal> toRemove = new ArrayList<>();
-        //Remove this category from any child goals
-        for (Goal goal:category.getGoals()){
-            goal.removeCategory(category);
-            //Record all the Goals w/o parent Categories
-            if (goal.getCategories().isEmpty()){
-                toRemove.add(goal);
+        if (removedCategory != null){
+            List<UserGoal> goalsToRemove = new ArrayList<>();
+            //Remove this category from any child goals
+            for (UserGoal goal : removedCategory.getGoals()){
+                goal.removeCategory(removedCategory);
+                //Record all the Goals w/o parent Categories
+                if (goal.getCategories().isEmpty()){
+                    goalsToRemove.add(goal);
+                }
             }
-        }
-        //Remove all the Goals w/o parent Categories
-        for (Goal goal:toRemove){
-            removeGoal(goal);
-        }
+            //Remove all the Goals w/o parent Categories
+            for (UserGoal goal : goalsToRemove){
+                removeGoal(goal.getGoal());
+            }
+        }*/
     }
 
 
@@ -172,8 +180,8 @@ public class UserData{
      *
      * @return a List of Goal objects.
      */
-    public Map<Integer, Goal> getGoals(){
-        return mGoals;
+    public Map<Integer, UserGoal> getGoals(){
+        return goals;
     }
 
     /**
@@ -182,8 +190,42 @@ public class UserData{
      * @param goal the goal whose original copy needs to be fetched.
      * @return the original copy of such goal.
      */
-    public Goal getGoal(Goal goal){
-        return mGoals.get(goal.getId());
+    public UserGoal getGoal(Goal goal){
+        return goals.get(goal.getId());
+    }
+
+    public UserGoal getGoal(UserGoal userGoal){
+        return getGoal(userGoal.getGoal());
+    }
+
+    /**
+     * Method used to check whether the user goal is <b>currently</b> in the user's collection.
+     *
+     * @param userGoal the user goal to be checked.
+     * @return true if the goal is in the user's collection, false otherwise.
+     */
+    public boolean contains(UserGoal userGoal){
+        return goals.containsKey(userGoal.getGoal().getId());
+    }
+
+    /**
+     * Method used to check wiether a particular goal is in the user's collection or in the
+     * process of being added.
+     *
+     * @param goal the goal to be checked.
+     * @return true if it is, false otherwise.
+     */
+    public boolean contains(Goal goal){
+        return goals.containsKey(goal.getId()) || mRequestedGoals.contains(goal.getId());
+    }
+
+    /**
+     * Adds a goal id to the list of goals to be added to the user's collection.
+     *
+     * @param id the id of the goal.
+     */
+    public void addGoal(int id){
+        mRequestedGoals.add(id);
     }
 
     /**
@@ -192,30 +234,32 @@ public class UserData{
      * Adding a Goal also assigns it to any existing user-selected categories,
      * as well as assigning any existing Behaviors to the Goal.
      *
-     * @param goal the goal to be added to the user list.
+     * @param userGoal the goal to be added to the user list.
      */
-    public void addGoal(Goal goal){
+    public void addGoal(UserGoal userGoal){
         //If the goal ain't in the data set
-        if (!mGoals.containsKey(goal.getId())){
-            //Add it
-            mGoals.put(goal.getId(), goal);
+        if (!contains(userGoal)){
+            mRequestedGoals.remove(userGoal.getObjectId());
 
-            //Add it to the relevant categories
-            for (Category category:goal.getCategories()){
-                Category cat = getCategory(category);
-                if (cat != null){
-                    cat.addGoal(goal);
+            //Initialize the object and add it
+            userGoal.init();
+            goals.put(userGoal.getObjectId(), userGoal);
+
+            //Link the goal with the relevant categories
+            for (Integer categoryId:userGoal.getGoal().getCategories()){
+                if (categories.containsKey(categoryId)){
+                    userGoal.addCategory(categories.get(categoryId));
+                    categories.get(categoryId).addGoal(userGoal);
                 }
             }
 
-            //Link behaviors
-            List<Behavior> behaviors = new ArrayList<>();
-            for (Behavior goalBehavior:goal.getBehaviors()){
-                Behavior behavior = getBehavior(goalBehavior);
-                behavior.addGoal(goal);
-                behaviors.add(behavior);
+            //Link the goal with the relevant behaviors
+            for (UserBehavior userBehavior:behaviors.values()){
+                if (userBehavior.getBehavior().getGoals().contains(userGoal.getObjectId())){
+                    userGoal.addBehavior(userBehavior);
+                    userBehavior.addGoal(userGoal);
+                }
             }
-            goal.setBehaviors(behaviors);
         }
     }
 
@@ -225,28 +269,32 @@ public class UserData{
      * Removing a goal also removes its reference from the parent Categories
      * as well as the child Behaviors.
      *
+     * TODO Goal vs UserGoal?
      * @param goal the goal to be removed from the user list.
      */
     public void removeGoal(Goal goal){
-        goal = mGoals.remove(goal.getId());
+        UserGoal removedGoal = goals.remove(goal.getId());
 
-        // Remove the goal from its parent categories
-        for(Category category:goal.getCategories()){
-            category.removeGoal(goal);
-        }
-
-        List<Behavior> toRemove = new ArrayList<>();
-        //Remove the goal from its child Behaviors
-        for (Behavior behavior:goal.getBehaviors()){
-            behavior.removeGoal(goal);
-            //Record all the Behaviors w/o parent Goals
-            if (behavior.getGoals().isEmpty()){
-                toRemove.add(behavior);
+        if (removedGoal != null){
+            //Remove the goal from its parent categories
+            for (UserCategory category:removedGoal.getCategories()){
+                category.removeGoal(removedGoal);
             }
-        }
-        //Remove Behaviors w/o parent Goals
-        for (Behavior behavior:toRemove){
-            removeBehavior(behavior);
+
+            //List<UserBehavior> behaviorsToRemove = new ArrayList<>();
+            //Remove the goal from its child Behaviors
+            for (UserBehavior behavior:removedGoal.getBehaviors()){
+                behavior.removeGoal(removedGoal);
+                //Record all the Behaviors w/o parent Goals
+                if (behavior.getGoals().isEmpty()){
+                    removeBehavior(behavior.getBehavior());
+                    //behaviorsToRemove.add(behavior);
+                }
+            }
+            //Remove Behaviors w/o parent Goals
+            /*for (UserBehavior behavior : behaviorsToRemove){
+                removeBehavior(behavior.getBehavior());
+            }*/
         }
     }
 
@@ -260,8 +308,8 @@ public class UserData{
      *
      * @return an ArrayList of Behavior objects.
      */
-    public Map<Integer, Behavior> getBehaviors(){
-        return mBehaviors;
+    public Map<Integer, UserBehavior> getBehaviors(){
+        return behaviors;
     }
 
     /**
@@ -270,23 +318,40 @@ public class UserData{
      * @param behavior the behavior whose original copy needs to be fetched.
      * @return the original copy of such behavior.
      */
-    public Behavior getBehavior(Behavior behavior){
-        return mBehaviors.get(behavior.getId());
+    public UserBehavior getBehavior(Behavior behavior){
+        return behaviors.get(behavior.getId());
+    }
+
+    public UserBehavior getBehavior(UserBehavior userBehavior){
+        return getBehavior(userBehavior.getBehavior());
+    }
+
+    public boolean contains(UserBehavior userBehavior){
+        return behaviors.containsKey(userBehavior.getBehavior().getId());
     }
 
     /**
      * Add a single Behavior to the user's collection.
      *
-     * Adding this object will also trigger an update to behavior's parent goals.
-     *
-     * @param behavior the behavior to be added to the user's list.
+     * @param userBehavior the behavior to be added to the user's list.
      */
-    public void addBehavior(Behavior behavior){
-        if (!mBehaviors.containsKey(behavior.getId())){
-            mBehaviors.put(behavior.getId(), behavior);
+    public void addBehavior(UserBehavior userBehavior){
+        if (!contains(userBehavior)){
+            userBehavior.init();
+            behaviors.put(userBehavior.getObjectId(), userBehavior);
 
-            for (Goal goal:behavior.getGoals()){
-                getGoal(goal).addBehavior(behavior);
+            for (Integer goalId:userBehavior.getBehavior().getGoals()){
+                if (goals.containsKey(goalId)){
+                    userBehavior.addGoal(goals.get(goalId));
+                    goals.get(goalId).addBehavior(userBehavior);
+                }
+            }
+
+            for (UserAction userAction:actions.values()){
+                if (userAction.getAction().getBehavior() == userBehavior.getObjectId()){
+                    userAction.setBehavior(userBehavior);
+                    userBehavior.addAction(userAction);
+                }
             }
         }
     }
@@ -299,16 +364,18 @@ public class UserData{
      * @param behavior the Behavior instance to remove.
      */
     public void removeBehavior(Behavior behavior){
-        behavior = mBehaviors.remove(behavior.getId());
+        UserBehavior removedBehavior = behaviors.remove(behavior.getId());
 
-        //Remove the behavior from any parent Goals
-        for (Goal goal:behavior.getGoals()){
-            goal.removeBehavior(behavior);
-        }
+        if (removedBehavior != null){
+            //Remove the behavior from any parent Goals
+            for (UserGoal goal:removedBehavior.getGoals()){
+                goal.removeBehavior(removedBehavior);
+            }
 
-        //Remove the child Actions
-        for (Action action:behavior.getActions()){
-            mActions.remove(action.getId());
+            //Remove the child Actions
+            for (UserAction action:removedBehavior.getActions()){
+                actions.remove(action.getAction().getId());
+            }
         }
     }
 
@@ -322,8 +389,8 @@ public class UserData{
      *
      * @return an ArrayList of Action objects.
      */
-    public Map<Integer, Action> getActions(){
-        return mActions;
+    public Map<Integer, UserAction> getActions(){
+        return actions;
     }
 
     /**
@@ -332,8 +399,16 @@ public class UserData{
      * @param action the action whose original copy needs to be fetched.
      * @return the original copy of such action.
      */
-    public Action getAction(Action action){
-        return mActions.get(action.getId());
+    public UserAction getAction(Action action){
+        return actions.get(action.getId());
+    }
+
+    public UserAction getAction(UserAction userAction){
+        return getAction(userAction.getAction());
+    }
+
+    public boolean contains(UserAction userAction){
+        return actions.containsKey(userAction.getAction().getId());
     }
 
     /**
@@ -341,15 +416,17 @@ public class UserData{
      *  update the user's selected Behaviors, including a reference to the new
      *  action within any relevant parent Behavior.
      *
-     * @param action the action to be added to the list.
+     * @param userAction the action to be added to the list.
      */
-    public void addAction(Action action){
-        if (!mActions.containsKey(action.getId())){
-            mActions.put(action.getId(), action);
+    public void addAction(UserAction userAction){
+        if (!contains(userAction)){
+            actions.put(userAction.getAction().getId(), userAction);
 
-            Behavior behavior = getBehavior(action.getBehavior());
-            behavior.addAction(action);
-            action.setBehavior(behavior);
+            UserBehavior behavior = behaviors.get(userAction.getAction().getBehavior());
+            if (behavior != null){
+                behavior.addAction(userAction);
+                userAction.setBehavior(behavior);
+            }
         }
     }
 
@@ -360,130 +437,72 @@ public class UserData{
      * @param action the Action object to remove.
      */
     public void removeAction(Action action){
-        action = mActions.remove(action.getId());
-        action.getBehavior().removeAction(action);
+        UserAction removedAction = actions.remove(action.getId());
+        if (removedAction != null && removedAction.getBehavior() != null){
+            removedAction.getBehavior().removeAction(removedAction);
+        }
     }
 
 
-    /*----------------------------------------------------------*
-     * SYNCHRONIZATION METHODS. I REALLY WANT TO DEPRECATE THIS *
-     *----------------------------------------------------------*/
+    /*-------------------------*
+     * SYNCHRONIZATION METHODS *
+     *-------------------------*/
 
     /**
-     * Sync up all parent/child objects.
+     * Sync up all parent/child objects. This method should only be used at startup,
+     * from that point on, the lists are supposed to be kept up to date.
      */
     public void sync(){
-        assignGoalsToCategories();
-        assignBehaviorsToGoals();
-        assignActionsToBehaviors();
-        //setActionParents();
+        mRequestedGoals = new HashSet<>();
+        linkGoalsAndCategories();
+        linkBehaviorsAndGoals();
+        linkActions();
+        feed_data.sync(this);
     }
 
     /**
-     * Goals are associated with one or more categories. This method will include
-     * the user's selected goals within their selected Categories.
+     * Generates the inner lists of parents and children for goals and categories, respectively.
      */
-    public void assignGoalsToCategories(){
-        // add each goal to the correct category
-        for (Category category:getCategories().values()){
-            ArrayList<Goal> categoryGoals = new ArrayList<>();
-            for (Goal goal:category.getGoals()){
-                goal = getGoal(goal);
-                if (goal != null){
-                    categoryGoals.add(goal);
+    private void linkGoalsAndCategories(){
+        //Add each goal to the correct category and vice versa
+        for (UserGoal userGoal: goals.values()){
+            for (Integer categoryId:userGoal.getGoal().getCategories()){
+                if (categories.containsKey(categoryId)){
+                    UserCategory userCategory = categories.get(categoryId);
+                    userCategory.addGoal(userGoal);
+                    userGoal.addCategory(userCategory);
                 }
             }
-            category.setGoals(categoryGoals);
+            userGoal.setPrimaryCategory(categories.get(userGoal.getPrimaryCategoryId()));
         }
     }
 
     /**
-     * Behaviors are contained within a Goal. This method will take the list of
-     * selected behaviors, and associate them with the user's selected goals.
+     * Generates the inner lists of parents and children for behaviors and goals, respectively.
      */
-    public void assignBehaviorsToGoals(){
+    private void linkBehaviorsAndGoals(){
         //Look at all the selected goals
-        for (Goal goal:getGoals().values()){
-            ArrayList<Behavior> goalBehaviors = new ArrayList<>();
-            for (Behavior behavior:getBehaviors().values()){
-                if (behavior.getGoals().contains(goal)){
-                    goalBehaviors.add(behavior);
-                    //break;
+        for (UserBehavior userBehavior: behaviors.values()){
+            for (Integer goalId:userBehavior.getBehavior().getGoals()){
+                if (goals.containsKey(goalId)){
+                    UserGoal userGoal = goals.get(goalId);
+                    userGoal.addBehavior(userBehavior);
+                    userBehavior.addGoal(userGoal);
                 }
-            }/*
-            for (Behavior behavior:goal.getBehaviors()){
-                behavior = getBehavior(behavior);
-                if (behavior != null){
-                    goalBehaviors.add(behavior);
-                }
-            }*/
-            goal.setBehaviors(goalBehaviors);
+            }
         }
     }
 
     /**
-     * Update a single Action in a user's collection; When some Action has been changed
-     * (e.g. it's custom-trigger updated), this method will replace stale instances of
-     * the Action with the new version.
-     *
-     * Updating an Action will also trigger an update to the parent behaviors.
-     *
-     * @param action the Action object to update.
+     * Generates the inner list of children for behaviors and sets the parents for actions.
      */
-    /*public void updateAction(Action action){
-        //Given a single action, find it in the list of Actions and keep the input version
-        int i = 0;
-        boolean found = false;
-        for (Action a:mActions.values()){
-            if (a.getId() == action.getId()){
-                found = true;
-                break;
-            }
-            i++;
-        }
-        if(found){
-            //Remove the old action
-            removeAction(mActions.get(i));
-        }
-        mActions.add(action);
-        assignActionsToBehaviors();
-    }*/
-
-    /**
-     * Actions are contained within a single Behavior. This method will take the list
-     * of selected actions, and associate them with the user-selected behaviors.
-     *
-     * This ensures that all behaviors have a valid reference to their child Actions.
-     */
-    public void assignActionsToBehaviors(){
-        for (Behavior behavior:getBehaviors().values()){
-            List<Action> behaviorActions = new ArrayList<>();
-            for (Action action:behavior.getActions()){
-                action = getAction(action);
-                if (action != null){
-                    behaviorActions.add(action);
-                    action.setBehavior(behavior);
-                }
-            }
-            behavior.setActions(behaviorActions);
-        }
-
-        // now, set each Action's parent Behavior.
-        //setActionParents();
-    }
-
-    /**
-     * This method will set the Behavior attribute for all of the user's selected Actions, so the
-     * Action will contain a valid reference to its parent.
-     */
-    public void setActionParents(){
-        // set a reference to the parent for each action.
-        for (Action action:getActions().values()){
-            for (Behavior behavior:getBehaviors().values()){
-                if (action.getBehavior_id() == behavior.getId()){
-                    action.setBehavior(behavior);
-                }
-            }
+    public void linkActions(){
+        for (UserAction userAction:actions.values()){
+            UserBehavior userBehavior = behaviors.get(userAction.getAction().getBehavior());
+            userBehavior.addAction(userAction);
+            userAction.setBehavior(userBehavior);
+            userAction.setPrimaryGoal(goals.get(userAction.getPrimaryGoalId()));
+            userAction.setPrimaryCategory(categories.get(userAction.getPrimaryCategoryId()));
         }
     }
 
@@ -497,8 +516,8 @@ public class UserData{
      *
      * @param places the list of places set by the user.
      */
-    public void setPlaces(List<Place> places){
-        mPlaces = places;
+    public void setPlaces(List<UserPlace> places){
+        this.places = places;
     }
 
     /**
@@ -506,8 +525,8 @@ public class UserData{
      *
      * @return the list of places set by te user.
      */
-    public List<Place> getPlaces(){
-        return mPlaces;
+    public List<UserPlace> getPlaces(){
+        return places;
     }
 
     /**
@@ -515,8 +534,8 @@ public class UserData{
      *
      * @param place the place to be added.
      */
-    public void addPlace(Place place){
-        mPlaces.add(place);
+    public void addPlace(UserPlace place){
+        places.add(place);
     }
 
 
@@ -530,7 +549,7 @@ public class UserData{
      * @param feedData the object containing the information to be displayed in the feed.
      */
     public void setFeedData(FeedData feedData){
-        mFeedData = feedData;
+        feed_data = feedData;
     }
 
     /**
@@ -539,7 +558,7 @@ public class UserData{
      * @return the object containing the information to be displayed in the feed.
      */
     public FeedData getFeedData(){
-        return mFeedData;
+        return feed_data;
     }
 
 
@@ -552,40 +571,42 @@ public class UserData{
      */
     public void logData() {
         Log.d(TAG, "Categories.");
-        for (Category item:mCategories.values()){
-            Log.d(TAG, "- (" + item.getId() + ") " + item.getTitle());
+        for (UserCategory item:categories.values()){
+            Log.d(TAG, "- " + item.toString());
             Log.d(TAG, "--> contains " + item.getGoals().size() + " goals");
         }
         Log.d(TAG, "Goals.");
-        for (Goal item:mGoals.values()){
-            Log.d(TAG, "- (" + item.getId() + ") " + item.getTitle());
+        for (UserGoal item:goals.values()){
+            Log.d(TAG, "- " + item.toString());
             Log.d(TAG, "--> contains " + item.getCategories().size() + " categories");
             Log.d(TAG, "--> contains " + item.getBehaviors().size() + " behaviors");
         }
         Log.d(TAG, "Behaviors.");
-        for (Behavior item:mBehaviors.values()){
-            Log.d(TAG, "- (" + item.getId() + ") " + item.getTitle());
+        for (UserBehavior item:behaviors.values()){
+            Log.d(TAG, "- " + item.toString());
             Log.d(TAG, "--> contains " + item.getGoals().size() + " goals");
             Log.d(TAG, "--> contains " + item.getActions().size() + " actions");
         }
         Log.d(TAG, "Actions.");
-        for (Action item:mActions.values()){
-            Log.d(TAG, "- (" + item.getId() + ") " + item.getTitle());
-            Log.d(TAG, "--> contains, behavior_id = " + item.getBehavior_id());
+        for (UserAction item:actions.values()){
+            Log.d(TAG, item.getAction().getBehavior()+"");
+            Log.d(TAG, behaviors.get(item.getAction().getBehavior()).getBehavior().toString());
+            Log.d(TAG, "- " + item.toString());
+            Log.d(TAG, "--> contains: " + item.getBehavior().toString());
         }
     }
 
     /**
      * Given a goal, Log information for it's parent Categories.
      *
-     * @param goal the goal whose information needs to be logged.
+     * @param userGoal the goal whose information needs to be logged.
      */
-    public void logParentCategories(Goal goal){
+    public void logParentCategories(UserGoal userGoal){
         String output = "NONE";
-        if (!goal.getCategories().isEmpty()){
+        if (!userGoal.getCategories().isEmpty()){
             output = "";
-            for (Category c:goal.getCategories()){
-                output += "(" + c.getId() + ") " + c.getTitle() + ", ";
+            for (UserCategory userCategory:userGoal.getCategories()){
+                output += "(" + userCategory.getObjectId() + ") " + userCategory.getTitle() + ", ";
             }
         }
         Log.d(TAG, "- (parents) -> " + output);
@@ -594,14 +615,14 @@ public class UserData{
     /**
      * Given a behavior, log information for it's parent Goals.
      *
-     * @param behavior the behavior whose information needs to be logged.
+     * @param userBehavior the behavior whose information needs to be logged.
      */
-    public void logParentGoals(Behavior behavior){
+    public void logParentGoals(UserBehavior userBehavior){
         String output = "NONE";
-        if (!behavior.getGoals().isEmpty()){
+        if (!userBehavior.getGoals().isEmpty()){
             output = "";
-            for (Goal g:behavior.getGoals()){
-                output += "(" + g.getId() + ") " + g.getTitle() + ", ";
+            for (UserGoal userGoal:userBehavior.getGoals()){
+                output += "(" + userGoal.getObjectId() + ") " + userGoal.getTitle() + ", ";
             }
         }
         Log.d(TAG, "-- (parents) ->" + output);
@@ -610,12 +631,13 @@ public class UserData{
     /**
      * Given an Action, log information for it's parent Behavior
      *
-     * @param action the action whose information needs to be logged.
+     * @param userAction the action whose information needs to be logged.
      */
-    public void logParentBehavior(Action action){
+    public void logParentBehavior(UserAction userAction){
         String output = "NONE";
-        if (action.getBehavior() != null){
-            output = "(" + action.getBehavior().getId() + ") " + action.getBehavior().getTitle();
+        UserBehavior userBehavior = userAction.getBehavior();
+        if (userBehavior != null){
+            output = "(" + userBehavior.getObjectId() + ") " + userBehavior.getTitle();
         }
         Log.d(TAG, "--- (parent)-> " + output);
     }
@@ -642,27 +664,27 @@ public class UserData{
      * include each level's parent data.
      *
      * @param title a custom title to display above the output.
-     * @param include_parents if true, will Log each item's parent objects.
+     * @param includeParents if true, will Log each item's parent objects.
      */
-    public void logSelectedData(String title, boolean include_parents){
+    public void logSelectedData(String title, boolean includeParents){
         // Log user-selected categories, goals, behaviors, actions
         Log.d(TAG, "------------- " + title + " --------------- ");
-        for(Category c:getCategories().values()){
-            Log.d(TAG, "CATEGORY: " + c.getTitle());
-            for (Goal g:c.getGoals()){
-                Log.d(TAG, "- GOAL: " + g.getTitle());
-                if (include_parents){
-                    logParentCategories(g);
+        for (UserCategory userCategory:getCategories().values()){
+            Log.d(TAG, "CATEGORY: " + userCategory.getTitle());
+            for (UserGoal userGoal:userCategory.getGoals()){
+                Log.d(TAG, "- GOAL: " + userGoal.getTitle());
+                if (includeParents){
+                    logParentCategories(userGoal);
                 }
-                for (Behavior b:g.getBehaviors()){
-                    Log.d(TAG, "-- BEHAVIOR: " + b.getTitle());
-                    if (include_parents){
-                        logParentGoals(b);
+                for (UserBehavior userBehavior:userGoal.getBehaviors()){
+                    Log.d(TAG, "-- BEHAVIOR: " + userBehavior.getTitle());
+                    if (includeParents){
+                        logParentGoals(userBehavior);
                     }
-                    for (Action a:b.getActions()){
-                        Log.d(TAG, "--- ACTION: " + a.getTitle());
-                        if (include_parents){
-                            logParentBehavior(a);
+                    for (UserAction userAction:userBehavior.getActions()){
+                        Log.d(TAG, "--- ACTION: " + userAction.getTitle());
+                        if (includeParents){
+                            logParentBehavior(userAction);
                         }
                     }
                 }

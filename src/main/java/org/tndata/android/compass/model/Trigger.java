@@ -29,7 +29,6 @@ public class Trigger implements Serializable, Comparable<Trigger>{
 
     private int id = -1;
     private String recurrences_display = "";
-    private String name_slug = "";
     private String location = "";
     private String name = "";
 
@@ -181,24 +180,6 @@ public class Trigger implements Serializable, Comparable<Trigger>{
      */
     public void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * Name slug getter.
-     *
-     * @return the name slug.
-     */
-    public String getNameSlug() {
-        return name_slug;
-    }
-
-    /**
-     * Name slug setter.
-     *
-     * @param name_slug the name slug.
-     */
-    public void setNameSlug(String name_slug) {
-        this.name_slug = name_slug;
     }
 
     /**

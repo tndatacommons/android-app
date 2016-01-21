@@ -15,10 +15,10 @@ import android.widget.TextView;
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Behavior;
-import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Trigger;
+import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserBehavior;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.ui.CompassPopupMenu;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
@@ -52,7 +52,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
 
     private Context mContext;
     private GoalAdapterListener mListener;
-    private Goal mGoal;
+    private UserGoal mUserGoal;
     private int mSpacingRowHeight;
 
     //This is a pool of ActionHolders to be reused. Any unused ActionHolders should be
@@ -70,14 +70,14 @@ public class GoalAdapter extends RecyclerView.Adapter{
      *
      * @param context the application context.
      * @param listener the object that should receive the events triggered from the adapter.
-     * @param goal the goal whose content is to be displayed.
+     * @param userGoal the goal whose content is to be displayed.
      * @param spacingRowHeight the height of the header.
      */
     public GoalAdapter(@NonNull Context context, @NonNull GoalAdapterListener listener,
-                       @NonNull Goal goal, int spacingRowHeight){
+                       @NonNull UserGoal userGoal, int spacingRowHeight){
         mContext = context;
         mListener = listener;
-        mGoal = goal;
+        mUserGoal = userGoal;
         mSpacingRowHeight = spacingRowHeight;
 
         mApplication = (CompassApplication)context.getApplicationContext();
@@ -86,7 +86,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
 
         mSelectedBehaviorPosition = -1;
 
-        Log.d(TAG, mGoal.getBehaviors().size()+"");
+        Log.d(TAG, mUserGoal.getBehaviors().size()+"");
     }
 
     @Override
@@ -115,31 +115,30 @@ public class GoalAdapter extends RecyclerView.Adapter{
             Calendar calendar = Calendar.getInstance();
             String month = CompassUtil.getMonthString(calendar.get(Calendar.MONTH) + 1);
 
-            Behavior behavior = mGoal.getBehaviors().get(position/2);
+            UserBehavior userBehavior = mUserGoal.getBehaviors().get(position / 2);
             BehaviorHolder holder = (BehaviorHolder)rawHolder;
-            holder.mTitle.setText(behavior.getTitle());
+            holder.mTitle.setText(userBehavior.getTitle());
             holder.mIndicator.setValue(0);
             holder.mIndicator.setAutoTextSize(true);
             holder.mIndicator.setShowUnit(false);
             holder.mIndicator.setText(month);
             holder.mIndicator.setTextMode(TextMode.TEXT);
 
-            if (behavior.getProgress() != null){
-                holder.mIndicator.setValue(behavior.getProgress().getDailyActionsProgressPercent());
+            if (userBehavior.getProgress() != null){
+                holder.mIndicator.setValue(userBehavior.getProgress().getDailyActionsProgressPercent());
                 holder.mIndicatorCaption.setText(mContext.getString(R.string.goal_indicator_caption,
-                        behavior.getProgress().getDailyActionsProgressPercent()));
+                        userBehavior.getProgress().getDailyActionsProgressPercent()));
             }
-            populate(holder, behavior);
+            populate(holder, userBehavior);
         }
     }
 
     @Override
     public int getItemCount(){
-        if (mGoal.getBehaviors().isEmpty()){
-            Log.d(TAG, "No behaviors");
+        if (mUserGoal.getBehaviors().isEmpty()){
             return 1;
         }
-        return 2*mGoal.getBehaviors().size();
+        return 2* mUserGoal.getBehaviors().size();
     }
 
     @Override
@@ -157,20 +156,20 @@ public class GoalAdapter extends RecyclerView.Adapter{
      * Recycles and populates a row holder.
      *
      * @param holder the victim.
-     * @param behavior the new behavior.
+     * @param userBehavior the new behavior.
      */
-    private void populate(BehaviorHolder holder, Behavior behavior){
-        List<Action> actions = mApplication.getUserData().getBehavior(behavior).getActions();
+    private void populate(BehaviorHolder holder, UserBehavior userBehavior){
+        List<UserAction> userActions = userBehavior.getActions();
 
         //Unnecessary holders (if any) are recycled
-        while (actions.size() < holder.mActionContainer.getChildCount()){
+        while (userActions.size() < holder.mActionContainer.getChildCount()){
             int last = holder.mActionContainer.getChildCount()-1;
             mHolderPool.push(getActionHolder(holder.mActionContainer, last));
             holder.mActionContainer.removeViewAt(last);
         }
 
         //For each action
-        for (int i = 0; i < actions.size(); i++){
+        for (int i = 0; i < userActions.size(); i++){
             ActionHolder actionHolder;
             //If a holder already exists, retrieve it
             if (i < holder.mActionContainer.getChildCount()){
@@ -182,11 +181,11 @@ public class GoalAdapter extends RecyclerView.Adapter{
             }
 
             //Populate the ui contained by the holder
-            actionHolder.mTitle.setText(actions.get(i).getTitle());
-            actionHolder.setBehaviorPosition(mGoal.getBehaviors().indexOf(behavior));
+            actionHolder.mTitle.setText(userActions.get(i).getTitle());
+            actionHolder.setBehaviorPosition(mUserGoal.getBehaviors().indexOf(userBehavior));
             actionHolder.setActionPosition(i);
 
-            Trigger trigger = actions.get(i).getTrigger();
+            Trigger trigger = userActions.get(i).getTrigger();
             String triggerText = trigger.getRecurrencesDisplay();
             String date = trigger.getFormattedDate();
             if (!date.equals("")){
@@ -243,22 +242,21 @@ public class GoalAdapter extends RecyclerView.Adapter{
             public boolean onMenuItemClick(MenuItem item){
                 switch (item.getItemId()){
                     case R.id.behavior_popup_remove:
-                        Behavior behavior = mGoal.getBehaviors().get(position/2);
-                        mApplication.removeBehavior(behavior);
-                        NetworkRequest.delete(mContext, null,
-                                API.getDeleteBehaviorURL(behavior.getMappingId()),
+                        UserBehavior userBehavior = mUserGoal.getBehaviors().get(position/2);
+                        mApplication.removeBehavior(userBehavior.getBehavior());
+                        NetworkRequest.delete(mContext, null, API.getDeleteBehaviorUrl(userBehavior),
                                 mApplication.getToken(), new JSONObject());
-                        Log.d("GoalAdapter", "Position: " + position);
+                        Log.d(TAG, "Position: " + position);
                         if (position == 1){
-                            Log.d("GoalAdapter", "Size: " + mGoal.getBehaviors().size());
-                            if (mGoal.getBehaviors().size() > 0){
+                            Log.d(TAG, "Size: " + mUserGoal.getBehaviors().size());
+                            if (mUserGoal.getBehaviors().size() > 0){
                                 notifyItemRemoved(2);
                             }
                         }
                         else{
                             notifyItemRemoved(position-1);
                         }
-                        if (mGoal.getBehaviors().size() > 0){
+                        if (mUserGoal.getBehaviors().size() > 0){
                             Log.d("GoalAdapter", "behaviors left");
                             notifyItemRemoved(position);
                         }
@@ -313,7 +311,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
             mActionContainer = (LinearLayout)itemView.findViewById(R.id.behavior_actions);
 
             //Granularity of editable content goes only down to a goal
-            if (mGoal.isEditable()){
+            if (mUserGoal.isEditable()){
                 itemView.findViewById(R.id.behavior_overflow).setOnClickListener(this);
             }
             else{
@@ -331,7 +329,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
 
                 case R.id.behavior_title:
                     mSelectedBehaviorPosition = getAdapterPosition();
-                    mListener.onBehaviorSelected(mGoal.getBehaviors().get(getAdapterPosition()/2));
+                    mListener.onBehaviorSelected(mUserGoal.getBehaviors().get(getAdapterPosition()/2));
             }
         }
     }
@@ -388,8 +386,8 @@ public class GoalAdapter extends RecyclerView.Adapter{
         public void onClick(View v){
             //Take separators into account
             mSelectedBehaviorPosition = 2*mBehaviorPosition+1;
-            Behavior behavior = mGoal.getBehaviors().get(mBehaviorPosition);
-            mListener.onActionSelected(behavior, behavior.getActions().get(mActionPosition));
+            UserBehavior userBehavior = mUserGoal.getBehaviors().get(mBehaviorPosition);
+            mListener.onActionSelected(userBehavior, userBehavior.getActions().get(mActionPosition));
         }
     }
 
@@ -404,16 +402,16 @@ public class GoalAdapter extends RecyclerView.Adapter{
         /**
          * Called when a behavior title has been tapped.
          *
-         * @param behavior the selected behavior.
+         * @param userBehavior the selected behavior.
          */
-        void onBehaviorSelected(Behavior behavior);
+        void onBehaviorSelected(UserBehavior userBehavior);
 
         /**
          * Called when an action has been tapped.
          *
-         * @param behavior the parent behavior of the selected action.
-         * @param action the selected action.
+         * @param userBehavior the parent behavior of the selected action.
+         * @param userAction the selected action.
          */
-        void onActionSelected(Behavior behavior, Action action);
+        void onActionSelected(UserBehavior userBehavior, UserAction userAction);
     }
 }

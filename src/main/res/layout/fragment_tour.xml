@@ -11,7 +11,7 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <org.tndata.android.compass.ui.CustomViewPager
+        <org.tndata.android.compass.ui.SwipeOutViewPager
             android:id="@+id/tour_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

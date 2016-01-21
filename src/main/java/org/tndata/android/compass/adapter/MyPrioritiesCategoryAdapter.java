@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.UserCategory;
 
 import java.util.List;
 
@@ -22,28 +22,28 @@ import java.util.List;
  */
 public class MyPrioritiesCategoryAdapter extends BaseAdapter{
     private Context mContext;
-    private List<Category> mCategories;
+    private List<UserCategory> mUserCategories;
 
 
     /**
      * Constructor.
      *
      * @param context the application context.
-     * @param categories the list of  categories selected by the user.
+     * @param userCategories the list of  categories selected by the user.
      */
-    public MyPrioritiesCategoryAdapter(@NonNull Context context, @NonNull List<Category> categories){
+    public MyPrioritiesCategoryAdapter(@NonNull Context context, @NonNull List<UserCategory> userCategories){
         mContext = context;
-        mCategories = categories;
+        mUserCategories = userCategories;
     }
 
     @Override
     public int getCount(){
-        return mCategories.size();
+        return mUserCategories.size();
     }
 
-    //@Override
-    public Category getItem(int position){
-        return mCategories.get(position);
+    @Override
+    public UserCategory getItem(int position){
+        return mUserCategories.get(position);
     }
 
     @Override
@@ -76,6 +76,7 @@ public class MyPrioritiesCategoryAdapter extends BaseAdapter{
         holder.name = (TextView)view.findViewById(R.id.my_priorities_category_name);
         view.setTag(R.id.view_holder_tag, holder);
     }
+
 
     /**
      * The item view holder. Also contains a pool of resources.

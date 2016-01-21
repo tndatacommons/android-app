@@ -7,7 +7,10 @@ import org.tndata.android.compass.R;
 
 
 /**
- * Created by isma on 11/18/15.
+ * View holder for the standalone goal suggestion card.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class GoalSuggestionHolder extends MainFeedViewHolder implements View.OnClickListener{
     TextView mTitle;

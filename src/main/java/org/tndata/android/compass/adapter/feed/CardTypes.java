@@ -10,8 +10,8 @@ package org.tndata.android.compass.adapter.feed;
  * @version 1.0.0
  */
 final class CardTypes{
-    private static DataHandler mDataHandler;
-    private static boolean mDisplaySuggestion;
+    private static DataHandler sDataHandler;
+    private static boolean sDisplaySuggestion;
 
 
     /**
@@ -21,8 +21,8 @@ final class CardTypes{
      * @param dataHandler the data handler of the adapter.
      */
     static void setDataSource(DataHandler dataHandler){
-        mDataHandler = dataHandler;
-        mDisplaySuggestion = false;
+        sDataHandler = dataHandler;
+        sDisplaySuggestion = false;
     }
 
     /**
@@ -31,7 +31,7 @@ final class CardTypes{
      * @param displaySuggestion true if a suggestion should be included in the dataset.
      */
     static void displaySuggestion(boolean displaySuggestion){
-        mDisplaySuggestion = displaySuggestion;
+        sDisplaySuggestion = displaySuggestion;
     }
 
     /**
@@ -40,7 +40,7 @@ final class CardTypes{
      * @return true if there is a welcome card, false otherwise.
      */
     static boolean hasWelcomeCard(){
-        return !mDataHandler.hasGoals();
+        return !sDataHandler.hasUserGoals();
     }
 
     /**
@@ -49,7 +49,7 @@ final class CardTypes{
      * @return true if there is an up next card, false otherwise.
      */
     static boolean hasUpNextAction(){
-        return mDataHandler.getUpNext() != null;
+        return sDataHandler.getUpNext() != null;
     }
 
     /**
@@ -94,7 +94,7 @@ final class CardTypes{
     }
 
     static boolean hasSuggestion(){
-        return mDisplaySuggestion && !mDataHandler.getGoals().isEmpty();
+        return sDisplaySuggestion && !sDataHandler.getUserGoals().isEmpty();
     }
 
     static int getSuggestionPosition(){
@@ -111,7 +111,7 @@ final class CardTypes{
      * @return true if there are upcoming actions, false otherwise.
      */
     static boolean hasUpcoming(){
-        return !mDataHandler.getUpcoming().isEmpty();
+        return !sDataHandler.getUpcoming().isEmpty();
     }
 
     /**
@@ -142,7 +142,7 @@ final class CardTypes{
     }
 
     static boolean hasUpcomingFooter(){
-        return mDataHandler.canLoadMoreActions();
+        return sDataHandler.canLoadMoreActions();
     }
 
     /**
@@ -151,7 +151,7 @@ final class CardTypes{
      * @return the position of the upcoming footer.
      */
     static int getUpcomingFooterPosition(){
-        return getUpcomingHeaderPosition()+mDataHandler.getUpcoming().size()+1;
+        return getUpcomingHeaderPosition()+ sDataHandler.getUpcoming().size()+1;
     }
 
     /**
@@ -205,7 +205,7 @@ final class CardTypes{
     }
 
     static boolean hasMyGoalsFooter(){
-        return mDataHandler.canLoadMoreGoals();
+        return sDataHandler.canLoadMoreGoals();
     }
 
     /**
@@ -215,7 +215,12 @@ final class CardTypes{
      */
     static int getMyGoalsFooterPosition(){
         //My goals can be either my goals or suggestions
-        return getMyGoalsHeaderPosition() + mDataHandler.getGoals().size()+1;
+        if (sDataHandler.hasUserGoals()){
+            return getMyGoalsHeaderPosition() + sDataHandler.getUserGoals().size() + 1;
+        }
+        else{
+            return getMyGoalsHeaderPosition() + sDataHandler.getSuggestions().size() + 1;
+        }
     }
 
     /**
@@ -229,13 +234,21 @@ final class CardTypes{
     }
 
     /**
-     * Tells whether the position is that of a my goals inner item.
+     * Tells whether the position is that of a my goals or goal suggestions inner item.
      *
      * @param position the position to be checked.
      * @return true if the position is that of a my goals inner item, false otherwise.
      */
-    static boolean isGoal(int position){
+    private static boolean isGoal(int position){
         return position > getMyGoalsHeaderPosition() && position < getMyGoalsFooterPosition();
+    }
+
+    static boolean isMyGoal(int position){
+        return sDataHandler.hasUserGoals() && isGoal(position);
+    }
+
+    static boolean isGoalSuggestion(int position){
+        return !sDataHandler.hasUserGoals() && isGoal(position);
     }
 
     static int getItemCount(){

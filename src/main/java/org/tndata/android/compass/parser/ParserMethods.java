@@ -1,26 +1,16 @@
 package org.tndata.android.compass.parser;
 
-import android.util.Log;
-
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Behavior;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.FeedData;
-import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.model.Place;
-import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.parser.deserializer.ListDeserializer;
+import org.tndata.android.compass.parser.deserializer.MapDeserializer;
+import org.tndata.android.compass.parser.deserializer.SetDeserializer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -30,7 +20,10 @@ import java.util.Map;
  * @version 1.0.0
  */
 class ParserMethods{
-    protected static Gson sGson = new GsonBuilder()
+    static Gson sGson = new GsonBuilder()
+            .registerTypeAdapter(Map.class, new MapDeserializer())
+            .registerTypeAdapter(List.class, new ListDeserializer())
+            .registerTypeAdapter(Set.class, new SetDeserializer())
             .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
             .create();
 

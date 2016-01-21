@@ -39,13 +39,16 @@ import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.SearchAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapterListener;
-import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.SearchResult;
+import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.MiscellaneousParser;
-import org.tndata.android.compass.parser.UserDataParser;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
@@ -77,7 +80,8 @@ public class MainActivity
                 SearchView.OnQueryTextListener,
                 SearchView.OnCloseListener,
                 RecyclerView.OnItemTouchListener,
-                SearchAdapter.SearchAdapterListener{
+                SearchAdapter.SearchAdapterListener,
+                ParserCallback<UserData>{
 
     //Activity request codes
     private static final int CATEGORIES_REQUEST_CODE = 4821;
@@ -119,7 +123,7 @@ public class MainActivity
     private FloatingActionMenu mMenu;
 
     //The selected category from the FAB
-    private Category mSelectedCategory;
+    private UserCategory mSelectedCategory;
 
     private boolean mSuggestionDismissed;
 
@@ -367,23 +371,7 @@ public class MainActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetUserDataRequestCode){
-            UserData userData = UserDataParser.parseUserData(this, result);
-            if (userData != null){
-                mApplication.setUserData(userData);
-
-                //Remove the previous item decoration before recreating the adapter
-                mFeed.removeItemDecoration(mAdapter.getMainFeedPadding());
-
-                //Recreate the adapter and set the new decoration
-                mAdapter = new MainFeedAdapter(this, this, !mSuggestionDismissed);
-                mFeed.setAdapter(mAdapter);
-                mFeed.addItemDecoration(mAdapter.getMainFeedPadding());
-
-                mSuggestionDismissed = false;
-            }
-            if (mRefresh.isRefreshing()){
-                mRefresh.setRefreshing(false);
-            }
+            Parser.parse(result, UserData.class, this);
         }
         else if (requestCode == mLastSearchRequestCode){
             mSearchHeader.setVisibility(View.VISIBLE);
@@ -413,7 +401,7 @@ public class MainActivity
         mMenu.removeAllMenuButtons();
 
         //Populate the menu with a button per category
-        for (final Category category:mApplication.getUserData().getCategories().values()){
+        for (final UserCategory category:mApplication.getUserData().getCategories().values()){
             //Skip packaged categories
             if (category.isPackagedContent()){
                 continue;
@@ -424,7 +412,7 @@ public class MainActivity
             fab.setColorNormal(Color.parseColor(category.getColor()));
             fab.setColorPressed(Color.parseColor(category.getColor()));
             fab.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            fab.setImageResource(getIconResourceId(category));
+            fab.setImageResource(getIconResourceId(category.getCategory()));
             mMenu.addMenuButton(fab);
             fab.setOnClickListener(new View.OnClickListener(){
                 @Override
@@ -489,10 +477,10 @@ public class MainActivity
     /**
      * Called when a FAB is clicked.
      *
-     * @param category the selected category.
+     * @param userCategory the selected category.
      */
-    private void addGoalsClicked(Category category){
-        mSelectedCategory = category;
+    private void addGoalsClicked(UserCategory userCategory){
+        mSelectedCategory = userCategory;
         mMenu.toggle(true);
     }
 
@@ -532,7 +520,7 @@ public class MainActivity
                 }
                 if (mSelectedCategory != null){
                     Intent intent = new Intent(MainActivity.this, ChooseGoalsActivity.class);
-                    intent.putExtra("category", mSelectedCategory);
+                    intent.putExtra(ChooseGoalsActivity.CATEGORY_KEY, mSelectedCategory.getCategory());
                     startActivityForResult(intent, Constants.CHOOSE_GOALS_REQUEST_CODE);
                 }
             }
@@ -644,26 +632,23 @@ public class MainActivity
 
     @Override
     public void onSuggestionOpened(Goal goal){
+        Category category = null;
+        for (Integer categoryId:goal.getCategories()){
+            if (mApplication.getUserData().getCategories().containsKey(categoryId)){
+                category = mApplication.getCategories().get(categoryId).getCategory();
+            }
+        }
         Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
                 .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal)
-                .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, goal.getCategories().get(0));
+                .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, category);
         startActivityForResult(chooseBehaviors, GOAL_SUGGESTION_REQUEST_CODE);
     }
 
     @Override
-    public void onGoalSelected(Goal goal){
-        //User goal
-        if (!mApplication.getUserData().getGoals().isEmpty()){
-            startActivityForResult(new Intent(this, GoalActivity.class).putExtra(GoalActivity.GOAL_KEY, goal),
-                    GOAL_REQUEST_CODE);
-        }
-        //Recommendation
-        else{
-            Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
-                    .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal)
-                    .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, goal.getCategories().get(0));
-            startActivity(chooseBehaviors);
-        }
+    public void onGoalSelected(UserGoal goal){
+        Intent goalActivityIntent = new Intent(this, GoalActivity.class)
+                .putExtra(GoalActivity.USER_GOAL_KEY, goal);
+        startActivityForResult(goalActivityIntent, GOAL_REQUEST_CODE);
     }
 
     @Override
@@ -676,17 +661,17 @@ public class MainActivity
     }
 
     @Override
-    public void onActionSelected(Action action){
+    public void onActionSelected(UserAction userAction){
         Intent actionIntent = new Intent(this, ActionActivity.class)
-                .putExtra(ActionActivity.ACTION_KEY, action);
+                .putExtra(ActionActivity.USER_ACTION_KEY, userAction);
         startActivityForResult(actionIntent, ACTION_REQUEST_CODE);
     }
 
     @Override
-    public void onTriggerSelected(Action action){
+    public void onTriggerSelected(UserAction userAction){
         Intent triggerIntent = new Intent(this, TriggerActivity.class)
-                .putExtra("action", action)
-                .putExtra("goal", action.getPrimaryGoal());
+                .putExtra(TriggerActivity.USER_ACTION_KEY, userAction)
+                .putExtra(TriggerActivity.USER_GOAL_KEY, userAction.getPrimaryGoal());
         startActivityForResult(triggerIntent, TRIGGER_REQUEST_CODE);
     }
 
@@ -701,7 +686,7 @@ public class MainActivity
                 mAdapter.dismissSuggestion();
             }
             else if (requestCode == GOAL_REQUEST_CODE){
-                mAdapter.notifyDataSetChanged();
+                mAdapter.dataSetChanged();
             }
             else if (requestCode == ACTION_REQUEST_CODE){
                 if (data.getBooleanExtra(ActionActivity.DID_IT_KEY, false)){
@@ -747,6 +732,31 @@ public class MainActivity
             Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
                     .putExtra(ChooseBehaviorsActivity.GOAL_ID_KEY, result.getId());
             startActivity(chooseBehaviors);
+        }
+    }
+
+    @Override
+    public void onBackgroundProcessing(int requestCode, UserData result){
+        result.sync();
+        result.logData();
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, UserData result){
+        mApplication.setUserData(result);
+
+        //Remove the previous item decoration before recreating the adapter
+        mFeed.removeItemDecoration(mAdapter.getMainFeedPadding());
+
+        //Recreate the adapter and set the new decoration
+        mAdapter = new MainFeedAdapter(this, this, !mSuggestionDismissed);
+        mFeed.setAdapter(mAdapter);
+        mFeed.addItemDecoration(mAdapter.getMainFeedPadding());
+
+        mSuggestionDismissed = false;
+
+        if (mRefresh.isRefreshing()){
+            mRefresh.setRefreshing(false);
         }
     }
 }

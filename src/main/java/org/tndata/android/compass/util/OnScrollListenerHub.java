@@ -11,6 +11,9 @@ import java.util.List;
  * The rationale of this class is that RecyclerView takes a single OnScrollListener, and when a
  * new one is set, the old one is replaced.
  *
+ * TODO since the addition of RecyclerView.addScrollListener there ain't a real need for this
+ * TODO class any more.
+ *
  * @author Ismael Alonso
  * @version 1.0.0
  */

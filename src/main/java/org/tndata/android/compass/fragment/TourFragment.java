@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.TourPagerAdapter;
-import org.tndata.android.compass.ui.CustomViewPager;
+import org.tndata.android.compass.ui.SwipeOutViewPager;
 
 import me.relex.circleindicator.CircleIndicator;
 
@@ -24,13 +24,13 @@ public class TourFragment
         extends Fragment
         implements
                 View.OnClickListener,
-                CustomViewPager.OnSwipeOutListener{
+                SwipeOutViewPager.OnSwipeOutListener{
 
     //Callback interface
     private TourFragmentCallback mCallback;
 
     //UI components
-    private CustomViewPager mPager;
+    private SwipeOutViewPager mPager;
 
 
     @Override
@@ -59,7 +59,7 @@ public class TourFragment
         View rootView = inflater.inflate(R.layout.fragment_tour, container, false);
 
         //Fetch UI components
-        mPager = (CustomViewPager)rootView.findViewById(R.id.tour_pager);
+        mPager = (SwipeOutViewPager)rootView.findViewById(R.id.tour_pager);
         CircleIndicator indicator = (CircleIndicator)rootView.findViewById(R.id.tour_indicator);
 
         //Listeners and adapters

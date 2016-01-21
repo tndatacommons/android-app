@@ -1,10 +1,13 @@
 package org.tndata.android.compass.adapter.feed;
 
-import org.tndata.android.compass.model.Action;
+import android.util.Log;
+
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.model.UserGoal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +28,9 @@ class DataHandler{
 
     private Goal mFeedbackGoal;
 
-    private List<Action> mDisplayedUpcoming;
-    private List<Goal> mDisplayedGoals;
+    private List<UserAction> mDisplayedUpcoming;
+    private List<UserGoal> mDisplayedUserGoals;
+    private List<Goal> mDisplayedGoalSuggestions;
 
 
     /**
@@ -39,13 +43,16 @@ class DataHandler{
         mFeedData = userData.getFeedData();
 
         if (mUserData.getFeedData().getNextAction() != null){
-            mFeedbackGoal = mUserData.getFeedData().getNextAction().getPrimaryGoal();
+            if (mUserData.getFeedData().getNextAction().getPrimaryGoal() != null){
+                mFeedbackGoal = mUserData.getFeedData().getNextAction().getPrimaryGoal().getGoal();
+            }
         }
 
         mDisplayedUpcoming = new ArrayList<>();
         loadMoreUpcoming();
 
-        mDisplayedGoals = new ArrayList<>();
+        mDisplayedUserGoals = new ArrayList<>();
+        mDisplayedGoalSuggestions = new ArrayList<>();
         loadMoreGoals();
     }
 
@@ -55,19 +62,19 @@ class DataHandler{
         mFeedData.setProgressPercentage(percentage);
     }
 
-    void remove(Action action){
+    void remove(UserAction action){
         mFeedData.setTotalActions(mFeedData.getTotalActions() - 1);
         int percentage = mFeedData.getCompletedActions() * 100 / mFeedData.getTotalActions();
         mFeedData.setProgressPercentage(percentage);
 
-        mUserData.removeAction(action);
+        mUserData.removeAction(action.getAction());
     }
 
-    boolean hasGoals(){
+    boolean hasUserGoals(){
         return !mUserData.getGoals().isEmpty();
     }
 
-    Action getUpNext(){
+    UserAction getUpNext(){
         return mFeedData.getNextAction();
     }
 
@@ -87,39 +94,43 @@ class DataHandler{
         return mFeedbackGoal;
     }
 
-    List<Action> getUpcoming(){
+    List<UserAction> getUpcoming(){
         return mDisplayedUpcoming;
     }
 
-    Action getUpcoming(int position){
+    UserAction getUpcoming(int position){
         return mDisplayedUpcoming.get(position);
     }
 
-    Action removeUpcoming(int position){
+    UserAction removeUpcoming(int position){
         mDisplayedUpcoming.remove(position);
-        Action removed = mFeedData.getUpcomingActions().remove(position);
+        UserAction removed = mFeedData.getUpcomingActions().remove(position);
 
         checkActions();
 
         return removed;
     }
 
-    Category getActionCategory(Action action){
+    Category getActionCategory(UserAction action){
         Category category = null;
         if (action.getPrimaryGoal() != null){
-            category = action.getPrimaryGoal().getPrimaryCategory();
+            //category = action.getPrimaryGoal().getPrimaryCategory();
             if (category == null){
-                Goal goal = mUserData.getGoal(action.getPrimaryGoal());
+                UserGoal goal = mUserData.getGoal(action.getPrimaryGoal());
                 if (goal.getCategories().size() > 0){
-                    category = goal.getCategories().get(0);
+                    category = goal.getCategories().get(0).getCategory();
                 }
             }
         }
         return category;
     }
 
-    List<Goal> getGoals(){
-        return mDisplayedGoals;
+    List<UserGoal> getUserGoals(){
+        return mDisplayedUserGoals;
+    }
+
+    List<Goal> getSuggestions(){
+        return mDisplayedGoalSuggestions;
     }
 
     int loadMoreUpcoming(){
@@ -136,25 +147,32 @@ class DataHandler{
     }
 
     int loadMoreGoals(){
-        List<Goal> src = getGoalList();
         int count = 0;
-        for (int i = 0; i < LOAD_MORE_COUNT && canLoadMoreGoals(); i++){
-            mDisplayedGoals.add(src.get(mDisplayedGoals.size()));
-            count++;
+        if (hasUserGoals()){
+            List<UserGoal> userGoals = new ArrayList<>(mUserData.getGoals().values());
+            while (count < LOAD_MORE_COUNT && canLoadMoreGoals()){
+                mDisplayedUserGoals.add(userGoals.get(mDisplayedUserGoals.size()));
+                count++;
+            }
+        }
+        else{
+            Log.d("MainFeedAdapter", "Suggestions: " + mFeedData.getSuggestions().size());
+            while (count < LOAD_MORE_COUNT && canLoadMoreGoals()){
+                mDisplayedGoalSuggestions.add(mFeedData.getSuggestions().get(mDisplayedGoalSuggestions.size()));
+                count++;
+            }
+            Log.d("MainFeedAdapter", "Displayed suggestions: " + mDisplayedGoalSuggestions.size());
         }
         return count;
     }
 
     boolean canLoadMoreGoals(){
-        return mDisplayedGoals.size() < getGoalList().size();
-    }
-
-    private List<Goal> getGoalList(){
-        List<Goal> src = new ArrayList<>(mUserData.getGoals().values());
-        if (src.isEmpty()){
-            src = mFeedData.getSuggestions();
+        if (hasUserGoals()){
+            return mDisplayedUserGoals.size() < mUserData.getGoals().size();
         }
-        return src;
+        else{
+            return mDisplayedGoalSuggestions.size() < mUserData.getFeedData().getSuggestions().size();
+        }
     }
 
     private void checkActions(){
@@ -173,5 +191,14 @@ class DataHandler{
 
     String getProgressFraction(){
         return mFeedData.getProgressFraction();
+    }
+
+    void reload(){
+        int size = mDisplayedUserGoals.size();
+        mDisplayedUserGoals.clear();
+        List<UserGoal> userGoals = new ArrayList<>(mUserData.getGoals().values());
+        while (size > mDisplayedUserGoals.size() && canLoadMoreGoals()){
+            mDisplayedUserGoals.add(userGoals.get(mDisplayedUserGoals.size()));
+        }
     }
 }

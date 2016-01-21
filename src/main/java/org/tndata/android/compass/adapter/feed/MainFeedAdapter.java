@@ -14,8 +14,8 @@ import android.view.ViewGroup.LayoutParams;
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
@@ -39,8 +39,9 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     private static final int TYPE_SUGGESTION = TYPE_FEEDBACK+1;
     private static final int TYPE_HEADER = TYPE_SUGGESTION+1;
     private static final int TYPE_ACTION = TYPE_HEADER+1;
-    private static final int TYPE_GOAL = TYPE_ACTION+1;
-    private static final int TYPE_FOOTER = TYPE_GOAL+1;
+    private static final int TYPE_USER_GOAL = TYPE_ACTION+1;
+    private static final int TYPE_GOAL_SUGGESTION = TYPE_USER_GOAL+1;
+    private static final int TYPE_FOOTER = TYPE_GOAL_SUGGESTION +1;
     private static final int TYPE_OTHER = TYPE_FOOTER+1;
 
 
@@ -62,8 +63,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      *
      * @param context the context,
      * @param listener the listener.
+     * @param initialSuggestion true the feed should display an initial suggestion.
      */
-    public MainFeedAdapter(@NonNull Context context, @NonNull MainFeedAdapterListener listener, boolean initialSuggestion){
+    public MainFeedAdapter(@NonNull Context context, @NonNull MainFeedAdapterListener listener,
+                           boolean initialSuggestion){
         mContext = context;
         mListener = listener;
         mUserData = ((CompassApplication)mContext.getApplicationContext()).getUserData();
@@ -133,8 +136,11 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         if (CardTypes.isUpcomingAction(position)){
             return TYPE_ACTION;
         }
-        if (CardTypes.isGoal(position)){
-            return TYPE_GOAL;
+        if (CardTypes.isMyGoal(position)){
+            return TYPE_USER_GOAL;
+        }
+        if (CardTypes.isGoalSuggestion(position)){
+            return TYPE_GOAL_SUGGESTION;
         }
         if (CardTypes.isUpcomingFooter(position) || CardTypes.isMyGoalsFooter(position)){
             return TYPE_FOOTER;
@@ -178,7 +184,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             LayoutInflater inflater = LayoutInflater.from(mContext);
             return new ActionHolder(this, inflater.inflate(R.layout.card_action, parent, false));
         }
-        else if (viewType == TYPE_GOAL){
+        else if (viewType == TYPE_USER_GOAL || viewType == TYPE_GOAL_SUGGESTION){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             return new GoalHolder(this, inflater.inflate(R.layout.card_goal, parent, false));
         }
@@ -257,12 +263,18 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             }
         }
         //My goals / suggestions
-        else if (CardTypes.isGoal(position)){
+        else if (CardTypes.isMyGoal(position)){
             ((CardView)rawHolder.itemView).setRadius(0);
 
             int goalPosition = position - CardTypes.getMyGoalsHeaderPosition()-1;
-            Goal goal = mDataHandler.getGoals().get(goalPosition);
-            ((GoalHolder)rawHolder).bind(goal, mUserData.getGoals().isEmpty());
+            ((GoalHolder)rawHolder).bind(mDataHandler.getUserGoals().get(goalPosition));
+        }
+        //My goals / suggestions
+        else if (CardTypes.isGoalSuggestion(position)){
+            ((CardView)rawHolder.itemView).setRadius(0);
+
+            int goalPosition = position - CardTypes.getMyGoalsHeaderPosition()-1;
+            ((GoalHolder)rawHolder).bind(mDataHandler.getSuggestions().get(goalPosition));
         }
         else if (CardTypes.isMyGoalsFooter(position)){
             ((CardView)rawHolder.itemView).setRadius(0);
@@ -392,7 +404,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * @param position the adapter position of the item to be removed.
      */
     void remove(int position){
-        Action action;
+        UserAction action;
         if (CardTypes.isUpNext(position)){
             action = mDataHandler.getUpNext();
             mDataHandler.remove(action);
@@ -405,7 +417,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             mDataHandler.removeUpcoming(getActionPosition(position));
             removeActionFromFeed(position);
         }
-        NetworkRequest.delete(mContext, null, API.getDeleteActionUrl(action.getMappingId()),
+        NetworkRequest.delete(mContext, null, API.getDeleteActionUrl(action),
                 ((CompassApplication)mContext.getApplicationContext()).getToken(), new JSONObject());
     }
 
@@ -416,7 +428,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * @param position the adapter position of the action whose goal is to be viewed.
      */
     void viewGoal(int position){
-        Action action;
+        UserAction action;
         if (CardTypes.isUpNext(position)){
             action = mUserData.getFeedData().getNextAction();
         }
@@ -425,7 +437,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
         //TODO this is another workaround
         if (action.getPrimaryGoal() != null){
-            mListener.onGoalSelected(action.getPrimaryGoal());
+            mListener.onGoalSelected(mUserData.getGoal(action.getPrimaryGoal()));
         }
     }
 
@@ -554,5 +566,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             removeActionFromFeed(mSelectedItem);
         }
         mSelectedItem = -1;
+    }
+
+    public void dataSetChanged(){
+        mDataHandler.reload();
+        notifyDataSetChanged();
     }
 }

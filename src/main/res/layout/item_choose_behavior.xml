@@ -87,18 +87,6 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/choose_behavior_external_resource"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_marginBottom="0dp"
-                android:paddingTop="5dp"
-                android:paddingLeft="2dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textSize="16sp"
-                android:visibility="gone" />
-
             <LinearLayout
                 android:id="@+id/choose_behavior_action_wrapper"
                 android:orientation="horizontal"

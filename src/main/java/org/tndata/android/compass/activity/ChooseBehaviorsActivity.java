@@ -29,16 +29,17 @@ import org.tndata.android.compass.adapter.ChooseBehaviorsAdapter;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.UserBehavior;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkRequest;
 
-import java.util.Map;
+import java.util.List;
 
 
 /**
@@ -57,8 +58,12 @@ public class ChooseBehaviorsActivity
                 SearchView.OnCloseListener{
 
     //Bundle keys
+    //NOTE: These need to be regular content because a user may dive down the library
+    //  without selecting things. User content ain't available in that use case, but
+    //  if it exists it can be retrieved from the UserData bundle
     public static final String CATEGORY_KEY = "org.tndata.compass.ChooseBehaviors.Category";
     public static final String GOAL_KEY = "org.tndata.compass.ChooseBehaviors.Goal";
+    //This one is to load search results, which don't deliver the whole object
     public static final String GOAL_ID_KEY = "org.tndata.compass.ChooseBehaviors.GoalId";
 
     //Activity tag
@@ -79,6 +84,7 @@ public class ChooseBehaviorsActivity
 
     //Request codes
     private int mGetGoalRequestCode;
+    private int mGetCategoryRequestCode;
     private int mPostGoalRequestCode;
     private int mGetBehaviorsRequestCode;
     private int mPostBehaviorRequestCode;
@@ -109,19 +115,14 @@ public class ChooseBehaviorsActivity
         mBehaviorList.setLayoutManager(manager);
         mBehaviorList.setHasFixedSize(true);
 
-        //TODO remove the use of old keys in favor of the new ones from the app
-        //Pull the goal, try with the new key first, if that fails, try the old one, then log
+        //Pull the goal
         mGoal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
-        if (mGoal == null){
-            mGoal = (Goal)getIntent().getSerializableExtra("goal");
-        }
-
         if (mGoal == null){
             fetchGoal(getIntent().getIntExtra(GOAL_ID_KEY, -1));
         }
         else{
             mToolbar.setTitle(mGoal.getTitle());
-            setCategoryAndUserGoal();
+            mCategory = (Category)getIntent().getSerializableExtra(CATEGORY_KEY);
             setAdapter();
             fetchBehaviors();
         }
@@ -152,33 +153,7 @@ public class ChooseBehaviorsActivity
      * Retrieves the behaviors of the current goal
      */
     private void fetchBehaviors(){
-        mGetBehaviorsRequestCode = NetworkRequest.get(this, this,
-                API.getBehaviorsUrl(mGoal.getId()), "");
-    }
-
-    /**
-     * Sets the category and the user goal properly.
-     */
-    public void setCategoryAndUserGoal(){
-        Goal userGoal = mApplication.getUserData().getGoal(mGoal);
-        if (userGoal != null){
-            mGoal = userGoal;
-        }
-
-        //Pull the category, try with the new key first, if that fails try the old, of that
-        //  fails as well, pull it from the goal
-        mCategory = (Category)getIntent().getSerializableExtra(CATEGORY_KEY);
-        if (mCategory == null){
-            mCategory = (Category)getIntent().getSerializableExtra("category");
-            if (mCategory == null){
-                mCategory = mGoal.getPrimaryCategory();
-                if (mCategory == null){
-                    if (mGoal.getCategories() != null && !mGoal.getCategories().isEmpty()){
-                        mCategory = mGoal.getCategories().get(0);
-                    }
-                }
-            }
-        }
+        mGetBehaviorsRequestCode = NetworkRequest.get(this, this, API.getBehaviorsUrl(mGoal), "");
     }
 
     /**
@@ -194,7 +169,7 @@ public class ChooseBehaviorsActivity
     }
 
     private boolean isGoalSelected(){
-        return mApplication.getUserData().getGoal(mGoal) != null;
+        return mApplication.getUserData().contains(mGoal);
     }
 
     @Override
@@ -248,10 +223,8 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void addGoal(){
-        mGoal.setPrimaryCategory(mCategory);
-        mApplication.getUserData().addGoal(mGoal);
         mPostGoalRequestCode = NetworkRequest.post(this, this, API.getPostGoalUrl(),
-                mApplication.getToken(), API.getPostGoalBody(mGoal.getId()));
+                mApplication.getToken(), API.getPostGoalBody(mGoal, mCategory));
         setResult(RESULT_OK);
     }
 
@@ -265,7 +238,7 @@ public class ChooseBehaviorsActivity
 
         //Then select the behavior
         mPostBehaviorRequestCode = NetworkRequest.post(this, this, API.getPostBehaviorUrl(),
-                mApplication.getToken(), API.getPostBehaviorBody(behavior.getId()));
+                mApplication.getToken(), API.getPostBehaviorBody(behavior));
 
         if (behavior.getActionCount() > 0){
             selectActions(behavior);
@@ -274,35 +247,28 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void deleteBehavior(Behavior behavior){
-        //Make sure we find the behavior that contains the user's mapping id
-        if (behavior.getMappingId() <= 0){
-            for (Behavior b:mApplication.getBehaviors().values()){
-                if (behavior.getId() == b.getId()){
-                    behavior.setMappingId(b.getMappingId());
-                    break;
-                }
-            }
+        UserBehavior userBehavior = mApplication.getUserData().getBehavior(behavior);
+        if (userBehavior != null){
+            Log.e(TAG, "Deleting Behavior: " + userBehavior.toString());
+
+            mDeleteBehaviorRequestCode = NetworkRequest.delete(this, this,
+                    API.getDeleteBehaviorUrl(userBehavior),
+                    mApplication.getToken(), new JSONObject());
+
+            mApplication.removeBehavior(behavior);
         }
-
-        Log.e(TAG, "Deleting Behavior, id = " + behavior.getId() +
-                ", user_behavior id = " + behavior.getMappingId() + ", " + behavior.getTitle());
-
-        mDeleteBehaviorRequestCode = NetworkRequest.delete(this, this,
-                API.getDeleteBehaviorURL(behavior.getMappingId()),
-                mApplication.getToken(), new JSONObject());
-
-        mApplication.removeBehavior(behavior);
-        Toast.makeText(this, getText(R.string.choose_behaviors_behavior_removed), Toast.LENGTH_SHORT).show();
+        else{
+            Log.d(TAG, "(Delete) behavior not found: " + behavior.toString());
+        }
     }
 
     @Override
     public void selectActions(Behavior behavior){
-        // Launch the ChooseActionsActivity (where users choose actions for this Behavior)
-        Intent intent = new Intent(getApplicationContext(), ChooseActionsActivity.class);
-        intent.putExtra("category", mCategory);
-        intent.putExtra("goal", mGoal);
-        intent.putExtra("behavior", behavior);
-        startActivity(intent);
+        //Launch the ChooseActionsActivity (where users choose actions for this Behavior)
+        startActivity(new Intent(this, ChooseActionsActivity.class)
+                .putExtra(ChooseActionsActivity.CATEGORY_KEY, mCategory)
+                .putExtra(ChooseActionsActivity.GOAL_KEY, mGoal)
+                .putExtra(ChooseActionsActivity.BEHAVIOR_KEY, behavior));
     }
 
     @Override
@@ -341,14 +307,6 @@ public class ChooseBehaviorsActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.VIEW_BEHAVIOR_REQUEST_CODE) {
-            setResult(resultCode);
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case android.R.id.home:
@@ -363,17 +321,14 @@ public class ChooseBehaviorsActivity
         if (requestCode == mGetGoalRequestCode){
             //Parse the goal
             mGoal = ContentParser.parseGoal(result);
-            //Look for a primary category
-            for (Category category:mGoal.getCategories()){
-                if (mApplication.getUserData().getCategories().containsKey(category.getId())){
-                    mGoal.setPrimaryCategory(category);
-                    break;
-                }
-            }
+            mGetCategoryRequestCode = NetworkRequest.get(this, this,
+                    API.getCategoryUrl(mGoal.getCategories().iterator().next()), "");
 
             //Set UI and fetch the behaviors
             mToolbar.setTitle(mGoal.getTitle());
-            setCategoryAndUserGoal();
+        }
+        else if (requestCode == mGetCategoryRequestCode){
+            //Set UI and fetch the behaviors
             setAdapter();
             fetchBehaviors();
             if (mSearchItem != null){
@@ -381,27 +336,26 @@ public class ChooseBehaviorsActivity
             }
         }
         else if (requestCode == mPostGoalRequestCode){
-            Goal goal = ContentParser.parseGoal(result);
-            if (goal != null){
-                mApplication.getUserData().getGoal(goal).setMappingId(goal.getMappingId());
-            }
+            UserGoal userGoal = ContentParser.parseUserGoal(result);
+            Log.d(TAG, "(Post) " + userGoal.toString());
+            mApplication.getUserData().addGoal(userGoal);
         }
         else if (requestCode == mGetBehaviorsRequestCode){
-            Map<Integer, Behavior> behaviors = ContentParser.parseBehaviors(result);
-            if (behaviors != null){
-                mAdapter.setBehaviors(behaviors.values());
+            List<Behavior> behaviorList = ContentParser.parseBehaviors(result);
+            if (behaviorList != null && !behaviorList.isEmpty()){
+                mAdapter.setBehaviors(behaviorList);
             }
             mAdapter.notifyDataSetChanged();
         }
         else if (requestCode == mPostBehaviorRequestCode){
-            Behavior behavior = ContentParser.parseBehavior(result);
-            if (behavior != null){
-                Log.d("PostBehavior", behavior.toString());
-                mApplication.addBehavior(behavior);
-                mAdapter.notifyDataSetChanged();
-            }
+            UserBehavior userBehavior = ContentParser.parseUserBehavior(result);
+            Log.d(TAG, "(Post) " + userBehavior.toString());
+            mApplication.addBehavior(userBehavior);
+            mAdapter.notifyDataSetChanged();
         }
         else if (requestCode == mDeleteBehaviorRequestCode){
+            String toast = getString(R.string.choose_behaviors_behavior_removed);
+            Toast.makeText(this, toast, Toast.LENGTH_SHORT).show();
             mAdapter.notifyDataSetChanged();
         }
     }

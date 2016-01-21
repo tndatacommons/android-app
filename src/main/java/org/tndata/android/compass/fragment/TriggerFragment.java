@@ -1,10 +1,9 @@
 package org.tndata.android.compass.fragment;
 
-import android.app.Activity;
-import android.app.Fragment;
+import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +12,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Trigger;
+import org.tndata.android.compass.model.UserAction;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,6 +22,9 @@ import java.util.Locale;
 
 /**
  * Contains the UI components of TriggerActivity.
+ *
+ * TODO merge with TriggerActivity. Fragment here is unnecessary since it is not reused and
+ * TODO merging it would make the code more compact.
  *
  * @author Edited by Ismael Alonso
  * @version 2.0.0
@@ -33,11 +35,11 @@ public class TriggerFragment
                 View.OnClickListener,
                 CompoundButton.OnCheckedChangeListener{
 
-    private static final String TAG = "TriggerFragment";
+    private static final String USER_ACTION_KEY = "org.tndata.compass.TriggerFragment.UserAction";
 
     private TriggerFragmentListener mCallback;
 
-    private Action mAction;
+    private UserAction mUserAction;
     private Trigger mTrigger;
 
     private TextView datePickerTextView;
@@ -53,9 +55,9 @@ public class TriggerFragment
      * @param action the action to be delivered.
      * @return the fragment.
      */
-    public static TriggerFragment newInstance(Action action){
+    public static TriggerFragment newInstance(UserAction action){
         Bundle args = new Bundle();
-        args.putSerializable("action", action);
+        args.putSerializable(USER_ACTION_KEY, action);
 
         TriggerFragment fragment = new TriggerFragment();
         fragment.setArguments(args);
@@ -63,16 +65,16 @@ public class TriggerFragment
     }
 
     @Override
-    public void onAttach(Activity activity){
-        super.onAttach(activity);
+    public void onAttach(Context context){
+        super.onAttach(context);
 
-        //This makes sure that the container activity has implemented
-        //   the callback interface. If not, it throws an exception
+        //This makes sure that the container activity has implemented the callback
+        //  interface. If not, it throws an exception
         try{
-            mCallback = (TriggerFragmentListener)activity;
+            mCallback = (TriggerFragmentListener)context;
         }
-        catch (ClassCastException e){
-            throw new ClassCastException(activity.toString()
+        catch (ClassCastException ccx){
+            throw new ClassCastException(context.toString()
                     + " must implement ActionTriggerFragmentListener");
         }
     }
@@ -80,37 +82,39 @@ public class TriggerFragment
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        mAction = (getArguments() != null) ? ((Action)getArguments().get("action")) : new Action();
+        mUserAction = (UserAction)getArguments().get(USER_ACTION_KEY);
+        if (mUserAction != null){
+            mTrigger = mUserAction.getTrigger();
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        mTrigger = mAction.getTrigger();
+        return inflater.inflate(R.layout.fragment_trigger, container, false);
+    }
 
-        View view = inflater.inflate(R.layout.fragment_trigger, container, false);
+    @Override
+    public void onViewCreated(View rootView, Bundle savedInstanceState){
+        TextView title = (TextView)rootView.findViewById(R.id.action_title);
+        title.setText(mUserAction.getTitle());
 
-        TextView title = (TextView)view.findViewById(R.id.action_title);
-        title.setText(mAction.getTitle());
-
-        SwitchCompat notificationSwitch = (SwitchCompat)view.findViewById(R.id.notification_option_switch);
+        SwitchCompat notificationSwitch = (SwitchCompat)rootView.findViewById(R.id.trigger_enabled);
         notificationSwitch.setChecked(!mTrigger.isDisabled());
 
-        timePickerTextView = (TextView)view.findViewById(R.id.time_picker_textview);
-        datePickerTextView = (TextView)view.findViewById(R.id.date_picker_textview);
-        recurrencePickerTextView = (TextView)view.findViewById(R.id.recurrence_picker_textview);
+        timePickerTextView = (TextView)rootView.findViewById(R.id.trigger_time);
+        datePickerTextView = (TextView)rootView.findViewById(R.id.trigger_date);
+        recurrencePickerTextView = (TextView)rootView.findViewById(R.id.trigger_recurrence);
 
-        mProgress = (ProgressBar)view.findViewById(R.id.trigger_progress);
-        mUpdateTrigger = (TextView)view.findViewById(R.id.trigger_update);
+        mProgress = (ProgressBar)rootView.findViewById(R.id.trigger_progress);
+        mUpdateTrigger = (TextView)rootView.findViewById(R.id.trigger_update);
         mUpdateTrigger.setOnClickListener(this);
 
-        Log.d(TAG, "Custom triggers allowed: " + mAction.areCustomTriggersAllowed());
-
-        if (mAction.areCustomTriggersAllowed()){
+        if (mUserAction.isEditable()){
             notificationSwitch.setEnabled(true);
             notificationSwitch.setOnCheckedChangeListener(this);
-            view.findViewById(R.id.time_picker_container).setOnClickListener(this);
-            view.findViewById(R.id.date_picker_container).setOnClickListener(this);
-            view.findViewById(R.id.recurrence_picker_container).setOnClickListener(this);
+            rootView.findViewById(R.id.trigger_time_container).setOnClickListener(this);
+            rootView.findViewById(R.id.trigger_date_container).setOnClickListener(this);
+            rootView.findViewById(R.id.trigger_recurrence_container).setOnClickListener(this);
         }
         else{
             notificationSwitch.setEnabled(false);
@@ -126,14 +130,12 @@ public class TriggerFragment
         if(!mTrigger.getRecurrences().isEmpty()) {
             updateRecurrenceView(mTrigger.getRecurrencesDisplay());
         }
-
-        return view;
     }
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
         switch (buttonView.getId()){
-            case R.id.notification_option_switch:
+            case R.id.trigger_enabled:
                 if (!isChecked){
                     mCallback.onDisableTrigger();
                 }
@@ -144,15 +146,15 @@ public class TriggerFragment
     @Override
     public void onClick(View view){
         switch (view.getId()){
-            case R.id.time_picker_container:
+            case R.id.trigger_time_container:
                 mCallback.onFireTimePicker();
                 break;
 
-            case R.id.date_picker_container:
+            case R.id.trigger_date_container:
                 mCallback.onFireDatePicker();
                 break;
 
-            case R.id.recurrence_picker_container:
+            case R.id.trigger_recurrence_container:
                 if (!mTrigger.getRecurrences().isEmpty()){
                     mCallback.onFireRecurrencePicker(mTrigger.getRRULE());
                 }

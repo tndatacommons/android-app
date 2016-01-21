@@ -1,12 +1,10 @@
 package org.tndata.android.compass.model;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import java.io.Serializable;
 
 
 /**
- * A representation of a place.
+ * A model representation of a place.
  *
  * @author Ismael Alonso
  * @version 1.0.0
@@ -14,31 +12,21 @@ import java.io.Serializable;
 public class Place implements Serializable{
     static final long serialVersionUID = 9654318439L;
 
-    private int id = -1;
 
-    private String name = "";
+    private String name;
 
-    private double latitude = 0;
-    private double longitude = 0;
-
-    private boolean primary = false;
-    private boolean set = false;
+    private boolean primary;
+    private boolean set;
 
 
-    public void setId(int id){
-        this.id = id;
+    public Place(String name){
+        this.name = name;
+        this.primary = false;
+        this.set = false;
     }
 
     public void setName(String name){
         this.name = name;
-    }
-
-    public void setLatitude(double latitude){
-        this.latitude = latitude;
-    }
-
-    public void setLongitude(double longitude){
-        this.longitude = longitude;
     }
 
     public void setPrimary(boolean primary){
@@ -49,24 +37,8 @@ public class Place implements Serializable{
         this.set = set;
     }
 
-    public int getId(){
-        return id;
-    }
-
     public String getName(){
         return name;
-    }
-
-    public LatLng getLocation(){
-        return new LatLng(latitude, longitude);
-    }
-
-    public double getLatitude(){
-        return latitude;
-    }
-
-    public double getLongitude(){
-        return longitude;
     }
 
     public boolean isPrimary(){
@@ -78,16 +50,12 @@ public class Place implements Serializable{
     }
 
     @Override
-    public boolean equals(Object o){
-        return (o instanceof Place) && (((Place)o).id == id);
+    public String toString(){
+        return name;
     }
 
     @Override
-    public String toString(){
-        return "(" + id + ") " + name + ": " + latitude + ", " + longitude;
-    }
-
-    public String getDisplayString(){
-        return name + ((primary&&!set) ? " (not set)" : "");
+    public boolean equals(Object o){
+        return o instanceof Place && ((Place)o).getName().equals(name);
     }
 }

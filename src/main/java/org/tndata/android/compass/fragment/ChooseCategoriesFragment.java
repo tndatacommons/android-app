@@ -25,7 +25,6 @@ import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -56,11 +55,26 @@ public class ChooseCategoriesFragment
     private int mGetCategoriesRequestCode;
 
 
+    /**
+     * Createsa new instance of this fragment.
+     *
+     * @param onBoarding true if this was called from onboarding, false otherwise.
+     * @return the new instance of the fragment.
+     */
+    public static ChooseCategoriesFragment newInstance(boolean onBoarding){
+        Bundle args = new Bundle();
+        args.putBoolean(ChooseCategoriesFragment.ON_BOARDING_KEY, onBoarding);
+        ChooseCategoriesFragment mFragment = new ChooseCategoriesFragment();
+        mFragment.setArguments(args);
+        return mFragment;
+    }
+
+
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        mOnBoarding = getArguments() == null || getArguments().getBoolean(ON_BOARDING_KEY, true);
+        mOnBoarding = getArguments() != null && getArguments().getBoolean(ON_BOARDING_KEY, true);
     }
 
     @Override
@@ -88,22 +102,23 @@ public class ChooseCategoriesFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View root = inflater.inflate(R.layout.fragment_choose_categories, container, false);
+        return inflater.inflate(R.layout.fragment_choose_categories, container, false);
+    }
 
-        mMaterialHeader = root.findViewById(R.id.choose_categories_material_header);
+    @Override
+    public void onViewCreated(View rootView, Bundle savedInstanceState){
+        mMaterialHeader = rootView.findViewById(R.id.choose_categories_material_header);
         ViewGroup.LayoutParams params = mMaterialHeader.getLayoutParams();
         params.height = CompassUtil.getScreenWidth(getActivity())*2/3;
         mMaterialHeader.setLayoutParams(params);
 
-        RecyclerView grid = (RecyclerView)root.findViewById(R.id.choose_categories_grid);
+        RecyclerView grid = (RecyclerView)rootView.findViewById(R.id.choose_categories_grid);
         grid.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
         mAdapter = new ChooseCategoriesAdapter(getActivity(), this, mOnBoarding);
         grid.setAdapter(mAdapter);
         grid.addItemDecoration(new ItemPadding());
-        grid.setOnScrollListener(new ParallaxEffect());
-
-        return root;
+        grid.addOnScrollListener(new ParallaxEffect());
     }
 
     @Override
@@ -135,9 +150,10 @@ public class ChooseCategoriesFragment
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetCategoriesRequestCode){
-            Map<Integer, Category> categories = ContentParser.parseCategories(result);
+            List<Category> categories = ContentParser.parseCategories(result);
+            //TODO error reporting
             if (categories != null){
-                mAdapter.setCategories(categories.values(), mApplication.getCategories().values());
+                mAdapter.setCategories(categories, mApplication.getCategories());
             }
         }
     }

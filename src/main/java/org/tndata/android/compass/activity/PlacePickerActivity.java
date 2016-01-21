@@ -35,6 +35,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.PlacePickerAdapter;
 import org.tndata.android.compass.model.Place;
+import org.tndata.android.compass.model.UserPlace;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
 
@@ -61,7 +62,7 @@ public class PlacePickerActivity
     public static final String PLACE_RESULT_KEY = "org.tndata.compass.ResultPlace";
 
 
-    private Place mPlace;
+    private UserPlace mPlace;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -81,7 +82,7 @@ public class PlacePickerActivity
         setContentView(R.layout.activity_place_picker);
 
         //Retrieve the place, which may be null
-        mPlace = (Place)getIntent().getSerializableExtra(PLACE_KEY);
+        mPlace = (UserPlace)getIntent().getSerializableExtra(PLACE_KEY);
 
         //Get and set the toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.place_picker_toolbar);
@@ -230,7 +231,7 @@ public class PlacePickerActivity
         if (placeBuffer.getStatus().isSuccess()){
             //If the place doesn't exist, create it
             if (mPlace == null){
-                mPlace = new Place();
+                mPlace = new UserPlace(new Place(""), -1, 0, 0);
             }
             //Populate the place
             LatLng latLng = placeBuffer.get(0).getLatLng();

@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Behavior;
+import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserBehavior;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class CheckInReviewAdapter extends RecyclerView.Adapter<CheckInReviewAdapter.ActionHolder>{
     private Context mContext;
-    private List<Action> mActions;
+    private List<UserAction> mActions;
 
 
     /**
@@ -31,7 +31,7 @@ public class CheckInReviewAdapter extends RecyclerView.Adapter<CheckInReviewAdap
      * @param context the context.
      * @param actions the list of actions to be displayed.
      */
-    public CheckInReviewAdapter(Context context, List<Action> actions){
+    public CheckInReviewAdapter(Context context, List<UserAction> actions){
         mContext = context;
         mActions = actions;
     }
@@ -45,7 +45,7 @@ public class CheckInReviewAdapter extends RecyclerView.Adapter<CheckInReviewAdap
 
     @Override
     public void onBindViewHolder(ActionHolder holder, int position){
-        //The header shold be shown only if this is the first element
+        //The header should be shown only if this is the first element
         if (position == 0){
             holder.mHeader.setVisibility(View.VISIBLE);
         }
@@ -54,8 +54,8 @@ public class CheckInReviewAdapter extends RecyclerView.Adapter<CheckInReviewAdap
         }
 
         //Retrieve the data holders
-        Action action = mActions.get(position);
-        Behavior behavior = action.getBehavior();
+        UserAction action = mActions.get(position);
+        UserBehavior behavior = action.getBehavior();
 
         //Populate the UI
         holder.mAction.setText(action.getTitle());

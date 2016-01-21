@@ -18,7 +18,7 @@
     <View style="@style/Divider"/>
 
     <RelativeLayout
-        android:id="@+id/notification_option_container"
+        android:id="@+id/trigger_enabled_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
@@ -26,7 +26,7 @@
         android:layout_gravity="center_vertical">
 
         <ImageView
-            android:id="@+id/notification_option_icon_imageview"
+            android:id="@+id/trigger_enabled_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -35,25 +35,26 @@
             android:src="@drawable/ic_alarm_black_24dp" />
 
         <android.support.v7.widget.SwitchCompat
-            android:id="@+id/notification_option_switch"
+            android:id="@+id/trigger_enabled"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/notification_option_icon_imageview"
-            android:layout_toRightOf="@+id/notification_option_icon_imageview"
+            android:layout_toEndOf="@+id/trigger_enabled_icon"
+            android:layout_toRightOf="@+id/trigger_enabled_icon"
             android:layout_marginLeft="30dp"
             android:text="@string/trigger_switch_label"
             android:textColor="@color/dark_text_color"
             android:theme="@style/Preference.SwitchPreference"
             android:layout_centerVertical="true"
             android:checked="true" />
+
     </RelativeLayout>
 
     <View
-    android:layout_marginLeft="76dp"
-    style="@style/Divider"/>
+        android:layout_marginLeft="76dp"
+        style="@style/Divider" />
 
     <RelativeLayout
-        android:id="@+id/time_picker_container"
+        android:id="@+id/trigger_time_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
@@ -61,7 +62,7 @@
         android:layout_gravity="center_vertical">
 
         <ImageView
-            android:id="@+id/time_picker_icon_imageview"
+            android:id="@+id/trigger_time_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -70,11 +71,11 @@
             android:src="@drawable/ic_access_time_black_24dp" />
 
         <TextView
-            android:id="@+id/time_picker_textview"
+            android:id="@+id/trigger_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/time_picker_icon_imageview"
-            android:layout_toRightOf="@+id/time_picker_icon_imageview"
+            android:layout_toEndOf="@+id/trigger_time_icon"
+            android:layout_toRightOf="@+id/trigger_time_icon"
             android:layout_centerVertical="true"
             android:layout_marginLeft="30dp"
             android:text="@string/trigger_time_picker_label" />
@@ -87,7 +88,7 @@
 
 
     <RelativeLayout
-        android:id="@+id/date_picker_container"
+        android:id="@+id/trigger_date_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
@@ -95,7 +96,7 @@
         android:layout_gravity="center_vertical">
 
         <ImageView
-            android:id="@+id/date_picker_icon_imageview"
+            android:id="@+id/trigger_date_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -104,11 +105,11 @@
             android:src="@drawable/ic_event_black_24dp"/>
 
         <TextView
-            android:id="@+id/date_picker_textview"
+            android:id="@+id/trigger_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/date_picker_icon_imageview"
-            android:layout_toRightOf="@+id/date_picker_icon_imageview"
+            android:layout_toEndOf="@+id/trigger_date_icon"
+            android:layout_toRightOf="@+id/trigger_date_icon"
             android:layout_centerVertical="true"
             android:layout_marginLeft="30dp"
             android:text="@string/trigger_date_picker_label" />
@@ -120,7 +121,7 @@
         style="@style/Divider"/>
 
     <RelativeLayout
-        android:id="@+id/recurrence_picker_container"
+        android:id="@+id/trigger_recurrence_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
@@ -128,7 +129,7 @@
         android:layout_gravity="center_vertical">
 
         <ImageView
-            android:id="@+id/recurrence_picker_icon_imageview"
+            android:id="@+id/trigger_recurrence_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -137,11 +138,11 @@
             android:src="@drawable/ic_autorenew_black_24dp"/>
 
         <TextView
-            android:id="@+id/recurrence_picker_textview"
+            android:id="@+id/trigger_recurrence"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/recurrence_picker_icon_imageview"
-            android:layout_toRightOf="@+id/recurrence_picker_icon_imageview"
+            android:layout_toEndOf="@+id/trigger_recurrence_icon"
+            android:layout_toRightOf="@+id/trigger_recurrence_icon"
             android:layout_centerVertical="true"
             android:layout_marginLeft="30dp"
             android:text="@string/trigger_recurrence_picker_label" />

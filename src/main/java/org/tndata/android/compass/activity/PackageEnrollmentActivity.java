@@ -40,8 +40,7 @@ public class PackageEnrollmentActivity
     //Keys
     public static final String PACKAGE_ID_KEY = "org.tndata.compass.PackageId";
 
-    //The package id for this consent
-    private int mPackageId;
+    private Package mPackage;
 
     //A reference to the application class
     private CompassApplication mApplication;
@@ -65,8 +64,6 @@ public class PackageEnrollmentActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_package_enrollment);
 
-        mPackageId = getIntent().getIntExtra(PACKAGE_ID_KEY, -1);
-
         mApplication = (CompassApplication)getApplication();
 
         //Get and set the toolbar
@@ -88,7 +85,8 @@ public class PackageEnrollmentActivity
         explanation.setMovementMethod(LinkMovementMethod.getInstance());
 
         //Fetch the package
-        mGetPackageRequestCode = NetworkRequest.get(this, this, API.getPackageUrl(mPackageId),
+        int packageId = getIntent().getIntExtra(PACKAGE_ID_KEY, -1);
+        mGetPackageRequestCode = NetworkRequest.get(this, this, API.getPackageUrl(packageId),
                 mApplication.getToken());
     }
 
@@ -96,12 +94,13 @@ public class PackageEnrollmentActivity
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetPackageRequestCode){
             mProgressBar.setVisibility(View.GONE);
-            populateUI(ContentParser.parsePackage(result));
+            mPackage = ContentParser.parsePackage(result);
+            populateUI(mPackage);
         }
         else if (requestCode == mPutConsentRequestCode){
             //If the acknowledgement was successful, dismiss the notification and kill the activity
             ((NotificationManager)getSystemService(NOTIFICATION_SERVICE))
-                    .cancel(NotificationUtil.NOTIFICATION_TYPE_ENROLLMENT_TAG, mPackageId);
+                    .cancel(NotificationUtil.NOTIFICATION_TYPE_ENROLLMENT_TAG, mPackage.getId());
             finish();
         }
     }
@@ -156,7 +155,7 @@ public class PackageEnrollmentActivity
                 //Show the progress bar and fire up the acknowledgement task
                 mAcceptSwitcher.showNext();
                 mPutConsentRequestCode = NetworkRequest.put(this, this,
-                        API.getPutConsentAcknowledgementUrl(mPackageId), mApplication.getToken(),
+                        API.getPutConsentAcknowledgementUrl(mPackage), mApplication.getToken(),
                         API.getPutConsentAcknowledgementBody());
                 break;
         }

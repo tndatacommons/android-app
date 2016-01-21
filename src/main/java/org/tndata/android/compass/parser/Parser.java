@@ -1,6 +1,5 @@
 package org.tndata.android.compass.parser;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
 
@@ -35,13 +34,15 @@ public final class Parser{
      * Starts the parsing process.
      *
      * @param src the string to parse.
+     * @param type the type of the target object.
      * @param callback the callback object.
      * @return a request code.
      */
-    public static int parse(@NonNull Context context, @NonNull String src,
-                            @NonNull ParserCallback callback){
+    public static <T> int parse(@NonNull String src, @NonNull Class<T> type,
+                                @NonNull ParserCallback<T> callback){
+
         int requestCode = generateRequestCode();
-        new ParserWorker(context, requestCode, src, callback).execute();
+        new ParserWorker<>(requestCode, src, type, callback).execute();
         return requestCode;
     }
 

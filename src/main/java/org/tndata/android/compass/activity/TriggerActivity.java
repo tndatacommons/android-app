@@ -1,6 +1,5 @@
 package org.tndata.android.compass.activity;
 
-import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -19,12 +18,11 @@ import com.doomonafireball.betterpickers.recurrencepicker.RecurrencePickerDialog
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.fragment.ProgressFragment;
 import org.tndata.android.compass.fragment.TriggerFragment;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Trigger;
+import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -32,11 +30,9 @@ import org.tndata.android.compass.util.NetworkRequest;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Map;
 
 
 /**
@@ -62,23 +58,20 @@ public class TriggerActivity
                 CalendarDatePickerDialog.OnDateSetListener,
                 TriggerFragment.TriggerFragmentListener{
 
-    public static final String NEEDS_FETCHING_KEY = "org.tndata.compass.Trigger.NeedsFetching";
-    public static final String NOTIFICATION_ID_KEY = "org.tndata.compass.Trigger.NotificationId";
-    public static final String ACTION_ID_KEY = "org.tndata.compass.Trigger.ActionId";
-    public static final String ACTION_KEY = "org.tndata.compass.Trigger.Action";
-    public static final String GOAL_KEY = "org.tndata.compass.Trigger.Goal";
+    //NOTE: These need to be user content. Once an action is added, the trigger can be
+    //  edited. The trigger needs to be attached to an action when it is added
+    public static final String USER_ACTION_KEY = "org.tndata.compass.TriggerActivity.UserAction";
+    public static final String USER_GOAL_KEY = "org.tndata.compass.TriggerActivity.UserGoal";
 
-    private static final String TAG = "BaseTriggerActivity";
+    private static final String TAG = "TriggerActivity";
     private static final String FRAG_TAG_RECUR_PICKER = "recurrencePickerDialogFragment";
     private static final String FRAG_TAG_DATE_PICKER = "datePickerDialogFragment";
     private static final String FRAG_TAG_TIME_PICKER = "timePickerDialogFragment";
 
 
-    private CompassApplication mApplication;
-
     private TriggerFragment fragment;
 
-    private Action mAction;
+    private UserAction mUserAction;
 
     // An EventRecurrence instance gives us access to different representations
     // of the RRULE data.
@@ -101,15 +94,12 @@ public class TriggerActivity
     private DateFormat mApiDateTimeFormat;
 
     //Request codes
-    private int mGetActionRequestCode;
     private int mPutTriggerRequestCode;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-
-        mApplication = (CompassApplication)getApplication();
 
         mDateTime = new Date();
         mTimeSelected = false;
@@ -131,68 +121,38 @@ public class TriggerActivity
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        //If we are coming from a notification
-        if (getIntent().getBooleanExtra(NEEDS_FETCHING_KEY, false)){
-            getSupportActionBar().setTitle("Reschedule reminder");
+        UserData userData = ((CompassApplication)getApplication()).getUserData();
 
-            ProgressFragment progressFragment = new ProgressFragment();
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.base_content, progressFragment)
-                    .commit();
+        //Retrieve the goal and the user action
+        UserGoal goal = (UserGoal)getIntent().getSerializableExtra(USER_GOAL_KEY);
+        mUserAction = (UserAction)getIntent().getSerializableExtra(USER_ACTION_KEY);
 
-            int notificationId = getIntent().getIntExtra(NOTIFICATION_ID_KEY, -1);
-            ((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).cancel(notificationId);
-
-            fetchAction(getIntent().getIntExtra(ACTION_ID_KEY, -1));
+        //Fetch the original copy of the user action
+        UserAction userAction = userData.getAction(mUserAction);
+        //This shouldn't happen, but just in case
+        if (userAction != null){
+            mUserAction = userAction;
         }
-        else{
-            UserData userData = mApplication.getUserData();
 
-            Goal goal = (Goal)getIntent().getSerializableExtra("goal");
-            if (goal == null){
-                goal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
-            }
-            mAction = (Action)getIntent().getSerializableExtra("action");
-            if (mAction == null){
-                mAction = (Action)getIntent().getSerializableExtra(ACTION_KEY);
-            }
-            Action userAction = userData.getAction(mAction);
-            if (userAction != null){
-                mAction = userAction;
-            }
-
-            //TODO this is another workaround
-            if (goal != null){
-                getSupportActionBar().setTitle(goal.getTitle());
-            }
-            setAction();
+        //TODO this is another workaround
+        if (goal != null){
+            getSupportActionBar().setTitle(goal.getTitle());
         }
-    }
-
-    /**
-     * Retrieves an action from an id.
-     *
-     * @param actionId the id of the action to be fetched.
-     */
-    private void fetchAction(int actionId){
-        String token = ((CompassApplication)getApplication()).getToken();
-        if (!token.isEmpty()){
-            mGetActionRequestCode = NetworkRequest.get(this, this, API.getActionUrl(actionId), token);
-        }
-        else{
-            finish();
-        }
+        setAction();
     }
 
     /**
      * Calls the initialisation routine and brings in the TriggerFragment.
      */
     private void setAction(){
-        initializeReminders(mAction.getTrigger());
+        initializeReminders(mUserAction.getTrigger());
 
-        fragment = TriggerFragment.newInstance(mAction);
+        fragment = TriggerFragment.newInstance(mUserAction);
         if (fragment != null) {
-            getFragmentManager().beginTransaction().replace(R.id.base_content, fragment).commit();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.base_content, fragment)
+                    .commit();
         }
     }
 
@@ -377,8 +337,7 @@ public class TriggerActivity
         b.putString(RecurrencePickerDialog.BUNDLE_RRULE, rrule);
 
         FragmentManager fm = getSupportFragmentManager();
-        RecurrencePickerDialog rpd = (RecurrencePickerDialog) fm.findFragmentByTag(
-                FRAG_TAG_RECUR_PICKER);
+        RecurrencePickerDialog rpd = (RecurrencePickerDialog)fm.findFragmentByTag(FRAG_TAG_RECUR_PICKER);
         if (rpd != null) {
             rpd.dismiss();
         }
@@ -390,20 +349,20 @@ public class TriggerActivity
 
     @Override
     public void onDisableTrigger(){
-        if (mAction.getCustomTrigger() == null){
-            finish();
-        }
-        else{
+        if (mUserAction.isEditable()){
             mTimeSelected = false;
             mDateSelected = false;
             setRRULE(null);
-            saveActionTrigger(mAction);
+            saveActionTrigger(mUserAction);
+        }
+        else{
+            finish();
         }
     }
 
     @Override
     public void onSaveTrigger(){
-        saveActionTrigger(mAction);
+        saveActionTrigger(mUserAction);
     }
 
     @Override
@@ -483,27 +442,26 @@ public class TriggerActivity
     /**
      * Use the selected Time/Date/Recurrence to update the given User's Action.
      *
-     * @param action the action to which the trigger belongs to.
+     * @param userAction the action to which the trigger belongs to.
      */
-    private void saveActionTrigger(Action action){
-        if (mAction.areCustomTriggersAllowed()){
+    private void saveActionTrigger(UserAction userAction){
+        if (mUserAction.isEditable()){
             String rrule = getRRULE();
             String date = getApiDate();
             String time = getApiTime();
 
-            Log.d(TAG, "saveActionTrigger, for Action: " + action.getTitle());
+            Log.d(TAG, "saveActionTrigger, for Action: " + userAction.getTitle());
             Log.d(TAG, "Time: " + time);
             Log.d(TAG, "Date: " + date);
             Log.d(TAG, "RRULE: " + rrule);
 
-            // Time is required and one of date or rule is required
-            if (action != null){
-                //TODO: Fails when time/date/rrule is empty or null
-                mPutTriggerRequestCode = NetworkRequest.put(this, this,
-                        API.getPutTriggerUrl(action.getMappingId()),
-                        ((CompassApplication)getApplication()).getToken(),
-                        API.getPutTriggerBody(time, rrule, date));
-            }
+            //Time is required and one of date or rule is required
+            //TODO: Fails when time/date/rrule is empty or null
+            mPutTriggerRequestCode = NetworkRequest.put(this, this,
+                    API.getPutTriggerUrl(userAction),
+                    ((CompassApplication)getApplication()).getToken(),
+                    API.getPutTriggerBody(time, rrule, date));
+
             //We want to know that we've attempted to save, even if saving fails.
             savingTrigger = true;
         }
@@ -515,36 +473,23 @@ public class TriggerActivity
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mGetActionRequestCode){
-            Map<Integer, Action> actions = ContentParser.parseActions(result);
-            //TODO this if statement won't be necessary when the Parser is fixed
-            if (actions != null && actions.size() == 1){
-                mAction = mApplication.getUserData().getAction(new ArrayList<>(actions.values()).get(0));
-                setAction();
-            }
-            else{
-                finish();
-            }
-        }
-        else if (requestCode == mPutTriggerRequestCode){
-            Action action = ContentParser.parseAction(result);
-            if(action != null){
-                Log.d(TAG, "Updated Action: " + action.getTitle());
-                Log.d(TAG, "Updated Trigger: " + action.getTrigger());
+        if (requestCode == mPutTriggerRequestCode){
+            UserAction userAction = ContentParser.parseUserAction(result);
+            Log.d(TAG, "Updated Action: " + userAction.getTitle());
+            Log.d(TAG, "Updated Trigger: " + userAction.getTrigger());
 
-                mAction.setCustomTrigger(action.getTrigger());
-                mAction.setNextReminderDate(action.getRawNextReminderDate());
+            mUserAction.setTrigger(userAction.getTrigger());
+            mUserAction.setNextReminderDate(userAction.getRawNextReminderDate());
 
-                // We'll return the updated Action to the parent activity (GoalDetailsActivity)
-                // but we also want to tell the Application about the updated version of the Action.
-                //((CompassApplication) getApplication()).updateAction(action);
+            // We'll return the updated Action to the parent activity (GoalDetailsActivity)
+            // but we also want to tell the Application about the updated version of the Action.
+            //((CompassApplication) getApplication()).updateAction(action);
 
-                Toast.makeText(this, getText(R.string.trigger_saved_confirmation_toast), Toast.LENGTH_SHORT).show();
-                Intent returnIntent = new Intent();
-                returnIntent.putExtra("action", mAction);
-                setResult(RESULT_OK, returnIntent);
-                finish();
-            }
+            Toast.makeText(this, getText(R.string.trigger_saved_confirmation_toast), Toast.LENGTH_SHORT).show();
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra(USER_ACTION_KEY, mUserAction);
+            setResult(RESULT_OK, returnIntent);
+            finish();
         }
     }
 

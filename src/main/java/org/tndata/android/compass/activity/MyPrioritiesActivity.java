@@ -11,10 +11,10 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.MyPrioritiesGoalAdapter;
 import org.tndata.android.compass.fragment.MyPrioritiesCategoriesFragment;
 import org.tndata.android.compass.fragment.MyPrioritiesGoalsFragment;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Behavior;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserBehavior;
+import org.tndata.android.compass.model.UserCategory;
+import org.tndata.android.compass.model.UserGoal;
 
 import java.util.ArrayList;
 
@@ -60,7 +60,7 @@ public class MyPrioritiesActivity
         swapFragments(CATEGORIES, true, null);
     }
 
-    private void swapFragments(int index, boolean addToStack, Category category){
+    private void swapFragments(int index, boolean addToStack, UserCategory userCategory){
         Fragment fragment = null;
         switch (index){
             case CATEGORIES:
@@ -70,13 +70,10 @@ public class MyPrioritiesActivity
                 fragment = mCategoriesFragment;
                 break;
             case GOALS:
-                mGoalsFragment = new MyPrioritiesGoalsFragment();
+                if (mGoalsFragment == null || !mGoalsFragment.equals(userCategory)){
+                    mGoalsFragment = MyPrioritiesGoalsFragment.newInstance(userCategory);
+                }
                 fragment = mGoalsFragment;
-                Bundle args = new Bundle();
-                args.putSerializable("category", category);
-                fragment.setArguments(args);
-                break;
-            default:
                 break;
         }
 
@@ -101,7 +98,7 @@ public class MyPrioritiesActivity
                 }
             }
             else{
-                mToolbar.setTitle(category.getTitle());
+                mToolbar.setTitle(userCategory.getTitle());
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.fade_in_upwards, R.anim.fade_out)
                         .replace(R.id.my_priorities_fragment_host, fragment)
@@ -142,8 +139,8 @@ public class MyPrioritiesActivity
     }
 
     @Override
-    public void onCategorySelected(Category category){
-        swapFragments(GOALS, true, category);
+    public void onCategorySelected(UserCategory userCategory){
+        swapFragments(GOALS, true, userCategory);
     }
 
     @Override
@@ -156,34 +153,34 @@ public class MyPrioritiesActivity
     }
 
     @Override
-    public void onAddGoalsClick(Category category){
+    public void onAddGoalsClick(UserCategory userCategory){
         Intent categoryIntent = new Intent(this, ChooseGoalsActivity.class);
-        categoryIntent.putExtra("category", category);
+        categoryIntent.putExtra(ChooseGoalsActivity.CATEGORY_KEY, userCategory.getCategory());
         startActivityForResult(categoryIntent, 1);
     }
 
     @Override
-    public void onAddBehaviorsClick(Category category, Goal goal){
+    public void onAddBehaviorsClick(UserCategory userCategory, UserGoal userGoal){
         Intent goalIntent = new Intent(this, ChooseBehaviorsActivity.class);
-        goalIntent.putExtra("category", category);
-        goalIntent.putExtra("goal", goal);
+        goalIntent.putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, userCategory.getCategory());
+        goalIntent.putExtra(ChooseBehaviorsActivity.GOAL_KEY, userGoal.getGoal());
         startActivityForResult(goalIntent, 1);
     }
 
     @Override
-    public void onBehaviorClick(Category category, Goal goal, Behavior behavior){
+    public void onBehaviorClick(UserCategory userCategory, UserGoal userGoal, UserBehavior userBehavior){
         Intent behaviorIntent = new Intent(this, ChooseActionsActivity.class);
-        behaviorIntent.putExtra("category", category);
-        behaviorIntent.putExtra("goal", goal);
-        behaviorIntent.putExtra("behavior", behavior);
+        behaviorIntent.putExtra(ChooseActionsActivity.CATEGORY_KEY, userCategory.getCategory());
+        behaviorIntent.putExtra(ChooseActionsActivity.GOAL_KEY, userGoal.getGoal());
+        behaviorIntent.putExtra(ChooseActionsActivity.BEHAVIOR_KEY, userBehavior.getBehavior());
         startActivityForResult(behaviorIntent, 1);
     }
 
     @Override
-    public void onActionClick(Category category, Goal goal, Behavior behavior, Action action){
-        Intent actionIntent = new Intent(this, TriggerActivity.class);
-        actionIntent.putExtra("goal", goal);
-        actionIntent.putExtra("action", action);
+    public void onActionClick(UserCategory userCategory, UserGoal userGoal, UserBehavior userBehavior, UserAction userAction){
+        Intent actionIntent = new Intent(this, TriggerActivity.class)
+                .putExtra(TriggerActivity.USER_ACTION_KEY, userAction)
+                .putExtra(TriggerActivity.USER_GOAL_KEY, userGoal);
         startActivityForResult(actionIntent, 1);
     }
 

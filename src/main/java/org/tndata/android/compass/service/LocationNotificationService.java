@@ -1,35 +1,21 @@
 package org.tndata.android.compass.service;
 
 import android.Manifest;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import org.tndata.android.compass.R;
-import org.tndata.android.compass.activity.ActionActivity;
-import org.tndata.android.compass.activity.SnoozeActivity;
 import org.tndata.android.compass.database.CompassDbHelper;
-import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Reminder;
+import org.tndata.android.compass.model.UserPlace;
 import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.LocationRequest;
 import org.tndata.android.compass.util.NotificationUtil;
 
@@ -73,7 +59,7 @@ public class LocationNotificationService
     private boolean mRequestInProgress;
 
     //Map of places and list of reminders
-    private Map<Integer, Place> mPlaces;
+    private Map<Integer, UserPlace> mPlaces;
     private List<Reminder> mReminders;
 
     //Next update time
@@ -95,8 +81,8 @@ public class LocationNotificationService
     public synchronized int onStartCommand(Intent intent, int flags, int startId){
         CompassDbHelper dbHelper = new CompassDbHelper(this);
         mPlaces = new HashMap<>();
-        for (Place place:dbHelper.getPlaces()){
-            mPlaces.put(place.getId(), place);
+        for (UserPlace userPlace:dbHelper.getPlaces()){
+            mPlaces.put(userPlace.getId(), userPlace);
         }
         mReminders = dbHelper.getReminders();
         dbHelper.close();
@@ -150,7 +136,7 @@ public class LocationNotificationService
         //For every location based reminder in sight
         for (Reminder reminder:mReminders){
             //The place is retrieved from the map and the distance calculated
-            Place place = mPlaces.get(reminder.getPlaceId());
+            UserPlace place = mPlaces.get(reminder.getPlaceId());
             double distance = CompassUtil.getDistance(place.getLocation(), current);
 
             //If the pone is within the geofence a notification is created

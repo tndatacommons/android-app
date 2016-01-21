@@ -14,7 +14,8 @@ import org.tndata.android.compass.fragment.InstrumentFragment;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserData;
-import org.tndata.android.compass.parser.UserDataParser;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -34,7 +35,8 @@ public class OnBoardingActivity
         implements
                 InstrumentFragment.InstrumentFragmentCallback,
                 ChooseCategoriesAdapter.OnCategoriesSelectedListener,
-                NetworkRequest.RequestCallback{
+                NetworkRequest.RequestCallback,
+                ParserCallback<UserData>{
 
     private static final int STAGE_PROFILE = 0;
     private static final int STAGE_CHOOSE_CATEGORIES = 1;
@@ -79,10 +81,7 @@ public class OnBoardingActivity
                 break;
 
             case STAGE_CHOOSE_CATEGORIES:
-                Bundle args = new Bundle();
-                args.putBoolean(ChooseCategoriesFragment.ON_BOARDING_KEY, true);
-                mFragment = new ChooseCategoriesFragment();
-                mFragment.setArguments(args);
+                mFragment = ChooseCategoriesFragment.newInstance(true);
                 break;
         }
 
@@ -107,12 +106,12 @@ public class OnBoardingActivity
             if (i == 0){
                 mInitialPostCategoryRequestCode = NetworkRequest.post(this, this,
                         API.getUserCategoriesUrl(), mApplication.getToken(),
-                        API.getPostCategoryBody(selection.get(i).getId()));
+                        API.getPostCategoryBody(selection.get(i)));
                 mLastPostCategoryRequestCode = mInitialPostCategoryRequestCode+selection.size();
             }
             else{
                 NetworkRequest.post(this, this, API.getUserCategoriesUrl(), mApplication.getToken(),
-                        API.getPostCategoryBody(selection.get(i).getId()));
+                        API.getPostCategoryBody(selection.get(i)));
             }
         }
     }
@@ -127,17 +126,7 @@ public class OnBoardingActivity
             }
         }
         else if (requestCode == mGetDataRequestCode){
-            UserData userData = UserDataParser.parseUserData(this, result);
-            if (userData != null){
-                mApplication.setUserData(userData);
-            }
-            User user = mApplication.getUser();
-            user.setOnBoardingComplete();
-            NetworkRequest.put(this, null, API.getPutUserProfileUrl(user), mApplication.getToken(),
-                    API.getPutUserProfileBody(user));
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
-            finish();
+            Parser.parse(result, UserData.class, this);
         }
     }
 
@@ -150,5 +139,23 @@ public class OnBoardingActivity
                         mApplication.getToken(), 60 * 1000);
             }
         }
+    }
+
+    @Override
+    public void onBackgroundProcessing(int requestCode, UserData result){
+        result.sync();
+        result.logData();
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, UserData result){
+        mApplication.setUserData(result);
+        User user = mApplication.getUser();
+        user.setOnBoardingComplete();
+        NetworkRequest.put(this, null, API.getPutUserProfileUrl(user), mApplication.getToken(),
+                API.getPutUserProfileBody(user));
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

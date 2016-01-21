@@ -13,14 +13,15 @@ import android.view.MenuItem;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.fragment.LauncherFragment;
 import org.tndata.android.compass.fragment.LogInFragment;
 import org.tndata.android.compass.fragment.SignUpFragment;
 import org.tndata.android.compass.fragment.TourFragment;
 import org.tndata.android.compass.fragment.WebFragment;
 import org.tndata.android.compass.model.User;
+import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserResults;
 import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.UserDataParser;
 import org.tndata.android.compass.util.API;
@@ -39,7 +40,7 @@ public class LoginActivity
                 LogInFragment.LogInFragmentCallback,
                 TourFragment.TourFragmentCallback,
                 NetworkRequest.RequestCallback,
-                ParserCallback{
+                ParserCallback<UserData>{
 
 
     //Fragment ids
@@ -290,7 +291,7 @@ public class LoginActivity
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mLogInRequestCode){
             User user = UserDataParser.parseUser(result);
-            Log.d("LogIn", user.getError());
+            Log.d("LogInError", user.getError());
             if (user.getError().isEmpty()){
                 mApplication.setToken(user.getToken());
                 mApplication.setUser(user);
@@ -298,6 +299,7 @@ public class LoginActivity
                     transitionToOnBoarding();
                 }
                 else{
+                    Log.d("LogIn", "Fetching user data");
                     mGetDataRequestCode = NetworkRequest.get(this, this, API.getUserDataUrl(),
                             mApplication.getToken(), 60*1000);
                 }
@@ -307,7 +309,7 @@ public class LoginActivity
             }
         }
         else if (requestCode == mGetDataRequestCode){
-            Parser.parse(this, result, this);
+            Parser.parse(result, UserData.class, this);
         }
     }
 
@@ -323,8 +325,20 @@ public class LoginActivity
     }
 
     @Override
-    public void onParseSuccess(int requestCode, ParserResults results){
-        mApplication.setUserData(results.getUserData());
+    public void onBackgroundProcessing(int requestCode, UserData result){
+        result.sync();
+        result.logData();
+
+        //Write the places
+        CompassDbHelper helper = new CompassDbHelper(this);
+        helper.emptyPlacesTable();
+        helper.savePlaces(result.getPlaces());
+        helper.close();
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, UserData result){
+        mApplication.setUserData(result);
         transitionToMain();
     }
 }

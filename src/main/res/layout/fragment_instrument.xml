@@ -23,6 +23,7 @@
                 android:id="@+id/instrument_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
                 android:layout_marginLeft="5dp"
                 android:layout_centerVertical="true"
                 android:textAppearance="?android:attr/textAppearanceMedium"
@@ -64,15 +65,25 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <Button
-            android:id="@+id/instrument_next"
+        <ViewSwitcher
+            android:id="@+id/instrument_next_switcher"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="25dp"
-            android:layout_gravity="right"
-            android:gravity="center"
-            android:text="@string/instrument_next"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:layout_gravity="end" >
 
+            <Button
+                android:id="@+id/instrument_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/instrument_next"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </ViewSwitcher>
     </LinearLayout>
 </ScrollView>

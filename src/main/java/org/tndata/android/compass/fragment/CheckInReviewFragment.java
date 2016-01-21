@@ -16,8 +16,8 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.CheckInReviewAdapter;
-import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.util.CompassUtil;
 
 import java.util.ArrayList;
@@ -33,12 +33,12 @@ import java.util.List;
 public class CheckInReviewFragment extends Fragment{
     private static final String GOAL_KEY = "org.tndata.compass.CheckInReview.Goal";
     private static final String ACTION_NUMBER_KEY = "org.tndata.compass.CheckInReview.ActionNumber";
-    private static final String ACTION_KEY = "org.tndata.compass.CheckInReview.Action";
+    private static final String USER_ACTION_KEY = "org.tndata.compass.CheckInReview.UserAction";
 
 
     //Model components
     private Goal mGoal;
-    private List<Action> mActions;
+    private List<UserAction> mActions;
 
 
     @Override
@@ -51,7 +51,7 @@ public class CheckInReviewFragment extends Fragment{
         mActions = new ArrayList<>();
         int actionNumber = arguments.getInt(ACTION_NUMBER_KEY);
         for (int i = 0; i < actionNumber; i++){
-            mActions.add((Action)arguments.getSerializable(getActionKey(i)));
+            mActions.add((UserAction)arguments.getSerializable(getActionKey(i)));
         }
     }
 
@@ -72,12 +72,13 @@ public class CheckInReviewFragment extends Fragment{
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)header.getLayoutParams();
         params.height = CompassUtil.getScreenWidth(getActivity())*2/3;
         header.setLayoutParams(params);
-        if (mGoal.getPrimaryCategory() != null){
+        /*if (mGoal.getPrimaryCategory() != null){
             header.setBackgroundColor(Color.parseColor(mGoal.getPrimaryCategory().getColor()));
-        }
+        }*/
 
         //Header title
-        String title = mGoal.getTitle().substring(0, 1).toLowerCase() + mGoal.getTitle().substring(1);
+        String title = mGoal.getTitle().substring(0, 1).toLowerCase()
+                + mGoal.getTitle().substring(1);
         goalTitle.setText(getResources().getString(R.string.check_in_review_title, title));
 
         list.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
@@ -92,7 +93,7 @@ public class CheckInReviewFragment extends Fragment{
      * @param actions the actions associated to that goal.
      * @return an instance of the fragment.
      */
-    public static CheckInReviewFragment newInstance(@NonNull Goal goal, @NonNull List<Action> actions){
+    public static CheckInReviewFragment newInstance(@NonNull Goal goal, @NonNull List<UserAction> actions){
         //Create the argument bundle
         Bundle args = new Bundle();
         args.putSerializable(GOAL_KEY, goal);
@@ -114,6 +115,6 @@ public class CheckInReviewFragment extends Fragment{
      * @return the key of the action.
      */
     private static String getActionKey(int action){
-        return ACTION_KEY + action;
+        return USER_ACTION_KEY + action;
     }
 }

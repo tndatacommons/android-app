@@ -11,12 +11,14 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Instrument;
 import org.tndata.android.compass.model.Survey;
-import org.tndata.android.compass.parser.MiscellaneousParser;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.ui.SurveyView;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -36,7 +38,8 @@ public class InstrumentFragment
         implements
                 View.OnClickListener,
                 SurveyView.SurveyViewListener,
-                NetworkRequest.RequestCallback{
+                NetworkRequest.RequestCallback,
+                ParserCallback<Instrument>{
 
     private static final String TAG = "InstrumentFragment";
 
@@ -49,6 +52,7 @@ public class InstrumentFragment
     private ProgressBar mProgress;
     private ProgressBar mLoading;
     private LinearLayout mSurveyContainer;
+    private ViewSwitcher mNextSwitcher;
     private Button mNext;
 
     //Survey related attributes
@@ -98,18 +102,20 @@ public class InstrumentFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View rootView = inflater.inflate(R.layout.fragment_instrument, container, false);
+        return inflater.inflate(R.layout.fragment_instrument, container, false);
+    }
 
+    @Override
+    public void onViewCreated(View rootView, Bundle savedInstanceState){
         mInstructions = (TextView)rootView.findViewById(R.id.instrument_info);
         mProgress = (ProgressBar)rootView.findViewById(R.id.instrument_progress);
         mLoading = (ProgressBar)rootView.findViewById(R.id.instrument_loading);
         mSurveyContainer = (LinearLayout)rootView.findViewById(R.id.instrument_survey_container);
+        mNextSwitcher = (ViewSwitcher)rootView.findViewById(R.id.instrument_next_switcher);
         mNext = (Button)rootView.findViewById(R.id.instrument_next);
 
         mNext.setEnabled(false);
         mNext.setOnClickListener(this);
-
-        return rootView;
     }
 
     @Override
@@ -160,7 +166,7 @@ public class InstrumentFragment
      * Saves the responses to the current survey set being displayed.
      */
     private void saveCurrentSurveySet(){
-        mNext.setEnabled(false);
+        mNextSwitcher.showNext();
         for (int i = 0; i < mSurveyContainer.getChildCount(); i++){
             ((SurveyView)mSurveyContainer.getChildAt(i)).disable();
         }
@@ -185,6 +191,10 @@ public class InstrumentFragment
      * Displays the next set of surveys.
      */
     private void showNextSurveySet(){
+        if (mSurveyContainer.getChildCount() > 0){
+            mNextSwitcher.showPrevious();
+        }
+        mNext.setEnabled(false);
         mSurveyContainer.removeAllViews();
         int lastSurvey = mCurrentSurvey + mPageQuestions;
         while (mCurrentSurvey < mSurveys.size() && mCurrentSurvey < lastSurvey){
@@ -219,18 +229,10 @@ public class InstrumentFragment
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetInstrumentRequestCode){
-            mLoading.setVisibility(View.GONE);
-            Instrument instrument = MiscellaneousParser.parseInstrument(result);
-            if (!instrument.getInstructions().isEmpty()){
-                mInstructions.setText(instrument.getInstructions());
-            }
-            mSurveys = new ArrayList<>();
-            mSurveys.addAll(instrument.getQuestions());
-            mProgress.setMax(mSurveys.size());
-            showNextSurveySet();
+            Parser.parse(result, Instrument.class, this);
         }
         else if (requestCode == mPostSurveyRequestCode){
-            Log.d("InstrumentFrag", "Survey set saved");
+            Log.d(TAG, "Survey set saved");
             if (mCurrentSurvey >= mSurveys.size()){
                 mCallback.onInstrumentFinished(mInstrumentId);
             }
@@ -245,6 +247,7 @@ public class InstrumentFragment
 
     @Override
     public void onRequestFailed(int requestCode, String message){
+        //TODO user feedback
         if (requestCode == mGetInstrumentRequestCode){
             mLoading.setVisibility(View.GONE);
         }
@@ -259,6 +262,24 @@ public class InstrumentFragment
                 showNextSurveySet();
             }
         }
+    }
+
+    /* no-op */
+    @Override
+    public void onBackgroundProcessing(int requestCode, Instrument result){
+        //Unused
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, Instrument result){
+        if (!result.getInstructions().isEmpty()){
+            mInstructions.setText(result.getInstructions());
+        }
+        mSurveys = new ArrayList<>();
+        mSurveys.addAll(result.getQuestions());
+        mProgress.setMax(mSurveys.size());
+        showNextSurveySet();
+        mLoading.setVisibility(View.GONE);
     }
 
 

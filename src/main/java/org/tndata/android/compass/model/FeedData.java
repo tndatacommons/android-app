@@ -2,8 +2,11 @@ package org.tndata.android.compass.model;
 
 import android.support.annotation.DrawableRes;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.tndata.android.compass.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -14,17 +17,17 @@ import java.util.List;
  * @version 1.0.0
  */
 public class FeedData{
-    private Action mNextAction;
+    @SerializedName("next_action")
+    private UserAction mNextAction;
 
-    private String mFeedbackTitle;
-    private String mFeedbackSubtitle;
-    private int mFeedbackIconId;
+    @SerializedName("action_feedback")
+    private ActionFeedback mActionFeedback;
+    @SerializedName("progress")
+    private Progress mProgress;
 
-    private int mTotalActions;
-    private int mCompletedActions;
-    private int mPercentage;
-
-    private List<Action> mUpcomingActions;
+    @SerializedName("upcoming_actions")
+    private List<UserAction> mUpcomingActions;
+    @SerializedName("suggestions")
     private List<Goal> mSuggestions;
 
 
@@ -33,7 +36,7 @@ public class FeedData{
      *
      * @param nextAction the next action.
      */
-    public void setNextAction(Action nextAction){
+    public void setNextAction(UserAction nextAction){
         mNextAction = nextAction;
     }
 
@@ -42,7 +45,7 @@ public class FeedData{
      *
      * @return the next action.
      */
-    public Action getNextAction(){
+    public UserAction getNextAction(){
         return mNextAction;
     }
 
@@ -52,7 +55,7 @@ public class FeedData{
      * @param feedbackTitle the feedback title
      */
     public void setFeedbackTitle(String feedbackTitle){
-        mFeedbackTitle = feedbackTitle;
+        mActionFeedback.mFeedbackTitle = feedbackTitle;
     }
 
     /**
@@ -61,7 +64,7 @@ public class FeedData{
      * @return the feedback title.
      */
     public String getFeedbackTitle(){
-        return mFeedbackTitle;
+        return mActionFeedback.mFeedbackTitle;
     }
 
     /**
@@ -70,7 +73,7 @@ public class FeedData{
      * @param feedbackSubtitle the feedback subtitle.
      */
     public void setFeedbackSubtitle(String feedbackSubtitle){
-        mFeedbackSubtitle = feedbackSubtitle;
+        mActionFeedback.mFeedbackSubtitle = feedbackSubtitle;
     }
 
     /**
@@ -79,7 +82,7 @@ public class FeedData{
      * @return the feedback subtitle.
      */
     public String getFeedbackSubtitle(){
-        return mFeedbackSubtitle;
+        return mActionFeedback.mFeedbackSubtitle;
     }
 
     /**
@@ -88,7 +91,7 @@ public class FeedData{
      * @param feedbackIconId the feedback icon id.
      */
     public void setFeedbackIconId(int feedbackIconId){
-        mFeedbackIconId = feedbackIconId;
+        mActionFeedback.mFeedbackIconId = feedbackIconId;
     }
 
     /**
@@ -98,7 +101,7 @@ public class FeedData{
      */
     @DrawableRes
     public int getFeedbackIcon(){
-        switch (mFeedbackIconId){
+        switch (mActionFeedback.mFeedbackIconId){
             case 1:
                 return R.drawable.feedback1;
             case 2:
@@ -118,7 +121,7 @@ public class FeedData{
      * @param totalActions the total actions.
      */
     public void setTotalActions(int totalActions){
-        mTotalActions = totalActions;
+        mProgress.mTotalActions = totalActions;
     }
 
     /**
@@ -127,7 +130,7 @@ public class FeedData{
      * @param completedActions the completed actions.
      */
     public void setCompletedActions(int completedActions){
-        mCompletedActions = completedActions;
+        mProgress.mCompletedActions = completedActions;
     }
 
     /**
@@ -137,7 +140,7 @@ public class FeedData{
      * @param percentage progress percentage of completed actions.
      */
     public void setProgressPercentage(int percentage){
-        mPercentage = percentage;
+        mProgress.mPercentage = percentage;
     }
 
     /**
@@ -146,7 +149,7 @@ public class FeedData{
      * @return the completed actions.
      */
     public int getCompletedActions(){
-        return mCompletedActions;
+        return mProgress.mCompletedActions;
     }
 
     /**
@@ -155,7 +158,7 @@ public class FeedData{
      * @return the total actions.
      */
     public int getTotalActions(){
-        return mTotalActions;
+        return mProgress.mTotalActions;
     }
 
     /**
@@ -164,7 +167,7 @@ public class FeedData{
      * @return the progress percentage of completed actions.
      */
     public int getProgress(){
-        return mPercentage;
+        return mProgress.mPercentage;
     }
 
     /**
@@ -173,7 +176,7 @@ public class FeedData{
      * @return the progress percentage as a fraction.
      */
     public String getProgressFraction(){
-        return mCompletedActions + "/" + mTotalActions;
+        return mProgress.mCompletedActions + "/" + mProgress.mTotalActions;
     }
 
     /**
@@ -181,7 +184,7 @@ public class FeedData{
      *
      * @param upcomingActions the list of upcoming actions.
      */
-    public void setUpcomingActions(List<Action> upcomingActions){
+    public void setUpcomingActions(List<UserAction> upcomingActions){
         mUpcomingActions = upcomingActions;
     }
 
@@ -190,7 +193,7 @@ public class FeedData{
      *
      * @return the list of upcoming actions.
      */
-    public List<Action> getUpcomingActions(){
+    public List<UserAction> getUpcomingActions(){
         return mUpcomingActions;
     }
 
@@ -210,5 +213,41 @@ public class FeedData{
      */
     public List<Goal> getSuggestions(){
         return mSuggestions;
+    }
+
+    public void sync(UserData userData){
+        if (mNextAction != null && mNextAction.getAction() != null){
+            mNextAction = userData.getAction(mNextAction);
+            if (!mUpcomingActions.isEmpty()){
+                mUpcomingActions.remove(0);
+            }
+        }
+        else{
+            mNextAction = null;
+        }
+        List<UserAction> upcomingActions = new ArrayList<>();
+        for (UserAction userAction:mUpcomingActions){
+            upcomingActions.add(userData.getAction(userAction));
+        }
+        mUpcomingActions = upcomingActions;
+    }
+
+
+    private class ActionFeedback{
+        @SerializedName("title")
+        private String mFeedbackTitle;
+        @SerializedName("subtitle")
+        private String mFeedbackSubtitle;
+        @SerializedName("icon")
+        private int mFeedbackIconId;
+    }
+
+    private class Progress{
+        @SerializedName("total")
+        private int mTotalActions;
+        @SerializedName("completed")
+        private int mCompletedActions;
+        @SerializedName("progress")
+        private int mPercentage;
     }
 }

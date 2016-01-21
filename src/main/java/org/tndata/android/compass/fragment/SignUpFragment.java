@@ -78,8 +78,11 @@ public class SignUpFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View rootView = inflater.inflate(R.layout.fragment_signup, container, false);
+        return inflater.inflate(R.layout.fragment_signup, container, false);
+    }
 
+    @Override
+    public void onViewCreated(View rootView, Bundle savedInstanceState){
         //Fetch UI components
         mEmail = (EditText)rootView.findViewById(R.id.signup_email);
         mPassword = (EditText)rootView.findViewById(R.id.signup_password);
@@ -96,8 +99,6 @@ public class SignUpFragment
         mInfo.setOnClickListener(this);
 
         mErrorString = "";
-
-        return rootView;
     }
 
     @Override

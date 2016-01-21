@@ -9,20 +9,23 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Place;
+import org.tndata.android.compass.model.UserPlace;
 
 import java.util.List;
 
 
 /**
- * Created by isma on 9/3/15.
+ * Displays the list of UserPlaces.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class PlacesAdapter extends BaseAdapter{
     private Context mContext;
-    private List<Place> mPlaces;
+    private List<UserPlace> mPlaces;
 
 
-    public PlacesAdapter(@NonNull Context context, @NonNull List<Place> places){
+    public PlacesAdapter(@NonNull Context context, @NonNull List<UserPlace> places){
         mContext = context;
         mPlaces = places;
     }
@@ -33,7 +36,7 @@ public class PlacesAdapter extends BaseAdapter{
     }
 
     @Override
-    public Place getItem(int position){
+    public UserPlace getItem(int position){
         return mPlaces.get(position);
     }
 
@@ -54,12 +57,12 @@ public class PlacesAdapter extends BaseAdapter{
         return convertView;
     }
 
-    public void addPlace(Place place){
+    public void addPlace(UserPlace place){
         mPlaces.add(place);
         notifyDataSetChanged();
     }
 
-    public List<Place> getPlaces(){
+    public List<UserPlace> getPlaces(){
         return mPlaces;
     }
 }
