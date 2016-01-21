@@ -67,6 +67,7 @@ public class LoginActivity
     //Request codes
     private int mLogInRequestCode;
     private int mGetDataRequestCode;
+    private int mGetCategoriesRequestCode;
 
 
     @Override
@@ -312,6 +313,9 @@ public class LoginActivity
         else if (requestCode == mGetDataRequestCode){
             Parser.parse(result, ParserModels.UserDataResultSet.class, this);
         }
+        else if (requestCode == mGetCategoriesRequestCode){
+            Parser.parse(result, ParserModels.CategoriesResultSet.class, this);
+        }
     }
 
     @Override
@@ -322,6 +326,9 @@ public class LoginActivity
         }
         else if (requestCode == mGetDataRequestCode){
             Log.d("LogIn", "Get data failed");
+        }
+        else if (requestCode == mGetCategoriesRequestCode){
+            Log.d("LogIn", "Get categories failed");
         }
     }
 
@@ -347,6 +354,11 @@ public class LoginActivity
             UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
 
             mApplication.setUserData(userData);
+
+            mGetCategoriesRequestCode = NetworkRequest.get(this, this, API.getCategoriesUrl(), "");
+        }
+        else if (result instanceof ParserModels.CategoriesResultSet){
+            mApplication.setPublicCategories(((ParserModels.CategoriesResultSet)result).results);
             transitionToMain();
         }
     }
