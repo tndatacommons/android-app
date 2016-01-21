@@ -38,8 +38,9 @@ public final class Parser{
      * @param callback the callback object.
      * @return a request code.
      */
-    public static <T> int parse(@NonNull String src, @NonNull Class<T> type,
-                                @NonNull ParserCallback<T> callback){
+    public static <T extends ParserModels.ResultSet> int parse(@NonNull String src,
+                                                               @NonNull Class<T> type,
+                                                               @NonNull ParserCallback callback){
 
         int requestCode = generateRequestCode();
         new ParserWorker<>(requestCode, src, type, callback).execute();

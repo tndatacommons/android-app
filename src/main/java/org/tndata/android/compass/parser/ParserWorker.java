@@ -2,8 +2,7 @@ package org.tndata.android.compass.parser;
 
 import android.os.AsyncTask;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.tndata.android.compass.parser.ParserModels.ResultSet;
 
 
 /**
@@ -12,11 +11,11 @@ import org.json.JSONObject;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-final class ParserWorker<T> extends AsyncTask<Void, Void, T>{
+final class ParserWorker<T extends ResultSet> extends AsyncTask<Void, Void, ResultSet>{
     private int mRequestCode;
     private String mSrc;
     private Class<T> mType;
-    private ParserCallback<T> mCallback;
+    private ParserCallback mCallback;
 
     /**
      * Constructor.
@@ -26,7 +25,7 @@ final class ParserWorker<T> extends AsyncTask<Void, Void, T>{
      * @param type the type of the target object.
      * @param callback the callback object.
      */
-    ParserWorker(int requestCode, String src, Class<T> type, ParserCallback<T> callback){
+    ParserWorker(int requestCode, String src, Class<T> type, ParserCallback callback){
         mRequestCode = requestCode;
         mSrc = src;
         mType = type;
@@ -34,7 +33,7 @@ final class ParserWorker<T> extends AsyncTask<Void, Void, T>{
     }
 
     @Override
-    protected T doInBackground(Void... params){
+    protected ResultSet doInBackground(Void... params){
         return parse(mSrc);
     }
 
@@ -43,26 +42,14 @@ final class ParserWorker<T> extends AsyncTask<Void, Void, T>{
      *
      * @param src the source object.
      */
-    private T parse(String src){
-        //TODO this ain't completely generic
-        try{
-            JSONObject object = new JSONObject(src);
-            if (object.has("results")){
-                src = object.getJSONArray("results").getString(0);
-            }
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-            return null;
-        }
-
-        T result = ParserMethods.sGson.fromJson(src, mType);
-        mCallback.onBackgroundProcessing(mRequestCode, result);
+    private ResultSet parse(String src){
+        ResultSet result = ParserMethods.sGson.fromJson(src, mType);
+        mCallback.onProcessResult(mRequestCode, result);
         return result;
     }
 
     @Override
-    protected void onPostExecute(T result){
+    protected void onPostExecute(ResultSet result){
         mCallback.onParseSuccess(mRequestCode, result);
     }
 }

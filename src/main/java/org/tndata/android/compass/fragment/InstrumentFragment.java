@@ -19,6 +19,7 @@ import org.tndata.android.compass.model.Instrument;
 import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.ui.SurveyView;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -39,7 +40,7 @@ public class InstrumentFragment
                 View.OnClickListener,
                 SurveyView.SurveyViewListener,
                 NetworkRequest.RequestCallback,
-                ParserCallback<Instrument>{
+                ParserCallback{
 
     private static final String TAG = "InstrumentFragment";
 
@@ -266,20 +267,23 @@ public class InstrumentFragment
 
     /* no-op */
     @Override
-    public void onBackgroundProcessing(int requestCode, Instrument result){
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
         //Unused
     }
 
     @Override
-    public void onParseSuccess(int requestCode, Instrument result){
-        if (!result.getInstructions().isEmpty()){
-            mInstructions.setText(result.getInstructions());
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof Instrument){
+            Instrument instrument = (Instrument)result;
+            if (!instrument.getInstructions().isEmpty()){
+                mInstructions.setText(instrument.getInstructions());
+            }
+            mSurveys = new ArrayList<>();
+            mSurveys.addAll(instrument.getQuestions());
+            mProgress.setMax(mSurveys.size());
+            showNextSurveySet();
+            mLoading.setVisibility(View.GONE);
         }
-        mSurveys = new ArrayList<>();
-        mSurveys.addAll(result.getQuestions());
-        mProgress.setMax(mSurveys.size());
-        showNextSurveySet();
-        mLoading.setVisibility(View.GONE);
     }
 
 

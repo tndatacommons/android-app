@@ -79,10 +79,10 @@ public abstract class API{
 
         JSONObject signUpBody = new JSONObject();
         try{
-            signUpBody.put("email", email);
-            signUpBody.put("password", password);
-            signUpBody.put("first_name", firstName);
-            signUpBody.put("last_name", lastName);
+            signUpBody.put("email", email)
+                    .put("password", password)
+                    .put("first_name", firstName)
+                    .put("last_name", lastName);
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
@@ -98,11 +98,9 @@ public abstract class API{
                                                            @NonNull String deviceId){
         JSONObject postDeviceRegistrationBody = new JSONObject();
         try{
-            postDeviceRegistrationBody.put("registration_id", registrationId);
-            postDeviceRegistrationBody.put("device_name", Build.MANUFACTURER + " " + Build.PRODUCT);
-            if (deviceId != null){
-                postDeviceRegistrationBody.put("device_id", deviceId);
-            }
+            postDeviceRegistrationBody.put("registration_id", registrationId)
+                    .put("device_name", Build.MANUFACTURER + " " + Build.PRODUCT)
+                    .put("device_id", deviceId);
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
@@ -173,8 +171,8 @@ public abstract class API{
     public static JSONObject getPostGoalBody(@NonNull Goal goal, @NonNull Category primaryCategory){
         JSONObject postGoalBody = new JSONObject();
         try{
-            postGoalBody.put("goal", goal.getId());
-            postGoalBody.put("primary_category", primaryCategory.getId());
+            postGoalBody.put("goal", goal.getId())
+                    .put("primary_category", primaryCategory.getId());
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
@@ -200,10 +198,13 @@ public abstract class API{
         return BASE_URL + "users/behaviors/";
     }
 
-    public static JSONObject getPostBehaviorBody(@NonNull Behavior behavior){
+    public static JSONObject getPostBehaviorBody(@NonNull Behavior behavior, @NonNull Goal goal,
+                                                 @NonNull Category category){
         JSONObject postBehaviorBody = new JSONObject();
         try{
-            postBehaviorBody.put("behavior", behavior.getId());
+            postBehaviorBody.put("behavior", behavior.getId())
+                    .put("goal", goal.getId())
+                    .put("category", category.getId());
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
@@ -240,11 +241,14 @@ public abstract class API{
         return BASE_URL + "users/actions/";
     }
 
-    public static JSONObject getPostActionBody(@NonNull Action action, @NonNull Goal goal){
+    public static JSONObject getPostActionBody(@NonNull Action action, @NonNull Behavior behavior,
+                                               @NonNull Goal goal, @NonNull Category category){
         JSONObject postActionBody = new JSONObject();
         try{
-            postActionBody.put("action", action.getId());
-            postActionBody.put("primary_goal", goal.getId());
+            postActionBody.put("action", action.getId())
+                    .put("behavior", behavior.getId())
+                    .put("goal", goal.getId())
+                    .put("category", category.getId());
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
@@ -266,9 +270,9 @@ public abstract class API{
                                                @NonNull String date){
         JSONObject putTriggerBody = new JSONObject();
         try{
-            putTriggerBody.put("custom_trigger_time", time);
-            putTriggerBody.put("custom_trigger_rrule", rrule);
-            putTriggerBody.put("custom_trigger_date", date);
+            putTriggerBody.put("custom_trigger_time", time)
+                    .put("custom_trigger_rrule", rrule)
+                    .put("custom_trigger_date", date);
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
@@ -293,8 +297,8 @@ public abstract class API{
     public static JSONObject getPostUserGoalProgressBody(@NonNull Goal goal, int progress){
         JSONObject postUserGoalProgressBody = new JSONObject();
         try{
-            postUserGoalProgressBody.put("goal", goal.getId());
-            postUserGoalProgressBody.put("daily_checkin", progress);
+            postUserGoalProgressBody.put("goal", goal.getId())
+                    .put("daily_checkin", progress);
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
@@ -318,8 +322,8 @@ public abstract class API{
     public static JSONObject getPutSnoozeBody(@NonNull String date, @NonNull String time){
         JSONObject putSnoozeBody = new JSONObject();
         try{
-            putSnoozeBody.put("date", date);
-            putSnoozeBody.put("time", time);
+            putSnoozeBody.put("date", date)
+                    .put("time", time);
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
@@ -349,8 +353,8 @@ public abstract class API{
     public static JSONObject getPostActionReportBody(@NonNull String state, @NonNull String length){
         JSONObject postActionReportBody = new JSONObject();
         try{
-            postActionReportBody.put("state", state);
-            postActionReportBody.put("length", length);
+            postActionReportBody.put("state", state)
+                    .put("length", length);
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
@@ -378,9 +382,9 @@ public abstract class API{
     public static JSONObject getPostPutPlaceBody(@NonNull UserPlace userPlace){
         JSONObject postPutPlaceBody = new JSONObject();
         try{
-            postPutPlaceBody.put("place", userPlace.getName());
-            postPutPlaceBody.put("latitude", userPlace.getLatitude());
-            postPutPlaceBody.put("longitude", userPlace.getLongitude());
+            postPutPlaceBody.put("place", userPlace.getName())
+                    .put("latitude", userPlace.getLatitude())
+                    .put("longitude", userPlace.getLongitude());
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
@@ -442,8 +446,8 @@ public abstract class API{
     public static JSONObject getPutUserProfileBody(@NonNull User user){
         JSONObject putUserProfileBody = new JSONObject();
         try{
-            putUserProfileBody.put("timezone", TimeZone.getDefault().getID());
-            putUserProfileBody.put("needs_onboarding", user.needsOnBoarding());
+            putUserProfileBody.put("timezone", TimeZone.getDefault().getID())
+                    .put("needs_onboarding", user.needsOnBoarding());
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();

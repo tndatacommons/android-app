@@ -9,6 +9,8 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 
+import org.tndata.android.compass.parser.ParserMethods;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -21,7 +23,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class ListDeserializer implements JsonDeserializer<List<?>>{
+public class ListDeserializer extends ParserMethods implements JsonDeserializer<List<?>>{
     @Override
     public List<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context){
         return parse(json, ((ParameterizedType)typeOfT).getActualTypeArguments()[0]);
@@ -45,7 +47,7 @@ public class ListDeserializer implements JsonDeserializer<List<?>>{
 
             //Parse all the elements of the array and add them to the list
             for (JsonElement element:item.getAsJsonArray()){
-                list.add((T)gson.fromJson(element, (Class<?>)type));
+                list.add(sGson.fromJson(element, (Class<T>)type));
             }
         }
 

@@ -16,6 +16,7 @@ import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -36,7 +37,7 @@ public class OnBoardingActivity
                 InstrumentFragment.InstrumentFragmentCallback,
                 ChooseCategoriesAdapter.OnCategoriesSelectedListener,
                 NetworkRequest.RequestCallback,
-                ParserCallback<UserData>{
+                ParserCallback{
 
     private static final int STAGE_PROFILE = 0;
     private static final int STAGE_CHOOSE_CATEGORIES = 1;
@@ -126,7 +127,7 @@ public class OnBoardingActivity
             }
         }
         else if (requestCode == mGetDataRequestCode){
-            Parser.parse(result, UserData.class, this);
+            Parser.parse(result, ParserModels.UserDataResultSet.class, this);
         }
     }
 
@@ -142,20 +143,28 @@ public class OnBoardingActivity
     }
 
     @Override
-    public void onBackgroundProcessing(int requestCode, UserData result){
-        result.sync();
-        result.logData();
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.UserDataResultSet){
+            UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
+
+            userData.sync();
+            userData.logData();
+        }
     }
 
     @Override
-    public void onParseSuccess(int requestCode, UserData result){
-        mApplication.setUserData(result);
-        User user = mApplication.getUser();
-        user.setOnBoardingComplete();
-        NetworkRequest.put(this, null, API.getPutUserProfileUrl(user), mApplication.getToken(),
-                API.getPutUserProfileBody(user));
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-        finish();
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.UserDataResultSet){
+            UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
+
+            mApplication.setUserData(userData);
+            User user = mApplication.getUser();
+            user.setOnBoardingComplete();
+            NetworkRequest.put(this, null, API.getPutUserProfileUrl(user), mApplication.getToken(),
+                    API.getPutUserProfileBody(user));
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 }
