@@ -23,6 +23,7 @@ import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.parser.UserDataParser;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.Constants;
@@ -40,7 +41,7 @@ public class LoginActivity
                 LogInFragment.LogInFragmentCallback,
                 TourFragment.TourFragmentCallback,
                 NetworkRequest.RequestCallback,
-                ParserCallback<UserData>{
+                ParserCallback{
 
 
     //Fragment ids
@@ -309,7 +310,7 @@ public class LoginActivity
             }
         }
         else if (requestCode == mGetDataRequestCode){
-            Parser.parse(result, UserData.class, this);
+            Parser.parse(result, ParserModels.UserDataResultSet.class, this);
         }
     }
 
@@ -325,20 +326,28 @@ public class LoginActivity
     }
 
     @Override
-    public void onBackgroundProcessing(int requestCode, UserData result){
-        result.sync();
-        result.logData();
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.UserDataResultSet){
+            UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
 
-        //Write the places
-        CompassDbHelper helper = new CompassDbHelper(this);
-        helper.emptyPlacesTable();
-        helper.savePlaces(result.getPlaces());
-        helper.close();
+            userData.sync();
+            userData.logData();
+
+            //Write the places
+            CompassDbHelper helper = new CompassDbHelper(this);
+            helper.emptyPlacesTable();
+            helper.savePlaces(userData.getPlaces());
+            helper.close();
+        }
     }
 
     @Override
-    public void onParseSuccess(int requestCode, UserData result){
-        mApplication.setUserData(result);
-        transitionToMain();
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.UserDataResultSet){
+            UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
+
+            mApplication.setUserData(userData);
+            transitionToMain();
+        }
     }
 }

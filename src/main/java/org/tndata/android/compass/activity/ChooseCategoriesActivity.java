@@ -7,12 +7,14 @@ import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoriesAdapter;
+import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.fragment.ChooseCategoriesFragment;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
 
@@ -31,7 +33,7 @@ public class ChooseCategoriesActivity
         implements
                 ChooseCategoriesAdapter.OnCategoriesSelectedListener,
                 NetworkRequest.RequestCallback,
-                ParserCallback<UserData>{
+                ParserCallback{
 
     private CompassApplication mApplication;
 
@@ -143,7 +145,7 @@ public class ChooseCategoriesActivity
             }
         }
         else if (requestCode == mGetDataRequestCode){
-            Parser.parse(result, UserData.class, this);
+            Parser.parse(result, ParserModels.UserDataResultSet.class, this);
         }
     }
 
@@ -168,14 +170,29 @@ public class ChooseCategoriesActivity
     }
 
     @Override
-    public void onBackgroundProcessing(int requestCode, UserData result){
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.UserDataResultSet){
+            UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
 
+            userData.sync();
+            userData.logData();
+
+            //Write the places
+            CompassDbHelper helper = new CompassDbHelper(this);
+            helper.emptyPlacesTable();
+            helper.savePlaces(userData.getPlaces());
+            helper.close();
+        }
     }
 
     @Override
-    public void onParseSuccess(int requestCode, UserData results){
-        mApplication.setUserData(results);
-        setResult(RESULT_OK);
-        finish();
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.UserDataResultSet){
+            UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
+
+            mApplication.setUserData(userData);
+            setResult(RESULT_OK);
+            finish();
+        }
     }
 }

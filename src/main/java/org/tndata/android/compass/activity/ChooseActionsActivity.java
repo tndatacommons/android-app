@@ -31,9 +31,10 @@ import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UserAction;
-import org.tndata.android.compass.model.UserBehavior;
-import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.ContentParser;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.util.API;
@@ -53,6 +54,7 @@ public class ChooseActionsActivity
         extends AppCompatActivity
         implements
                 NetworkRequest.RequestCallback,
+                ParserCallback,
                 ChooseActionsAdapter.ChooseActionsListener,
                 MenuItemCompat.OnActionExpandListener,
                 SearchView.OnQueryTextListener,
@@ -82,8 +84,6 @@ public class ChooseActionsActivity
     private View mHeaderView;
 
     private int mGetActionsRequestCode;
-    private int mPostGoalRequestCode;
-    private int mPostBehaviorRequestCode;
     private int mPostActionRequestCode;
     private int mDeleteActionRequestCode;
 
@@ -175,14 +175,6 @@ public class ChooseActionsActivity
         return false;
     }
 
-    private boolean isGoalSelected(){
-        return mApplication.getUserData().getGoal(mGoal) != null;
-    }
-
-    private boolean isBehaviorSelected(){
-        return mApplication.getUserData().getBehavior(mBehavior) != null;
-    }
-
     @Override
     public void moreInfo(Action action){
         AlertDialog.Builder builder = new AlertDialog.Builder(ChooseActionsActivity.this);
@@ -210,17 +202,9 @@ public class ChooseActionsActivity
 
     @Override
     public void addAction(Action action){
-        if (!isGoalSelected()){
-            mPostGoalRequestCode = NetworkRequest.post(this, null, API.getPostGoalUrl(),
-                    mApplication.getToken(), API.getPostGoalBody(mGoal, mCategory));
-        }
-        if (!isBehaviorSelected()){
-            mPostBehaviorRequestCode = NetworkRequest.post(this, this, API.getPostBehaviorUrl(),
-                    mApplication.getToken(), API.getPostBehaviorBody(mBehavior));
-        }
         Toast.makeText(getApplicationContext(), getText(R.string.action_saving), Toast.LENGTH_SHORT).show();
         mPostActionRequestCode = NetworkRequest.post(this, this, API.getPostActionUrl(),
-                mApplication.getToken(), API.getPostActionBody(action, mGoal));
+                mApplication.getToken(), API.getPostActionBody(action, mBehavior, mGoal, mCategory));
     }
 
     @Override
@@ -233,7 +217,7 @@ public class ChooseActionsActivity
             mDeleteActionRequestCode = NetworkRequest.delete(this, this,
                     API.getDeleteActionUrl(userAction), mApplication.getToken(), new JSONObject());
 
-            // Remove from the application's collection
+            //Remove from the application's collection
             mApplication.removeAction(action);
             mAdapter.notifyDataSetChanged();
         }
@@ -282,26 +266,8 @@ public class ChooseActionsActivity
             }
             mAdapter.notifyDataSetChanged();
         }
-        else if (requestCode == mPostGoalRequestCode){
-            UserGoal userGoal = ContentParser.parseUserGoal(result);
-            Log.d(TAG, "(Post) " + userGoal.toString());
-            mApplication.addGoal(userGoal);
-        }
-        else if (requestCode == mPostBehaviorRequestCode){
-            UserBehavior userBehavior = ContentParser.parseUserBehavior(result);
-            Log.d(TAG, "(Post) " + userBehavior.toString());
-            mApplication.addBehavior(userBehavior);
-        }
         else if (requestCode == mPostActionRequestCode){
-            UserAction userAction = ContentParser.parseUserAction(result);
-            Log.d(TAG, "(Post) " + userAction.toString());
-            mApplication.addAction(userAction);
-
-            String toast = getString(R.string.action_added, userAction.getTitle());
-            Toast.makeText(this, toast, Toast.LENGTH_SHORT).show();
-
-            mAdapter.notifyDataSetChanged();
-            startTriggerActivity(userAction);
+            Parser.parse(result, UserAction.class, this);
         }
         else if (requestCode == mDeleteActionRequestCode){
             Toast.makeText(this, getString(R.string.action_deleted), Toast.LENGTH_SHORT).show();
@@ -311,7 +277,33 @@ public class ChooseActionsActivity
 
     @Override
     public void onRequestFailed(int requestCode, String message){
+        //TODO error reporting
+    }
 
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof UserAction){
+            UserAction userAction = (UserAction)result;
+            Log.d(TAG, "(Post) " + userAction.toString());
+
+            mApplication.getUserData().addCategory(userAction.getParentUserCategory());
+            mApplication.getUserData().addGoal(userAction.getParentUserGoal());
+            mApplication.getUserData().addBehavior(userAction.getParentUserBehavior());
+            mApplication.getUserData().addAction(userAction);
+        }
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof UserAction){
+            UserAction userAction = (UserAction)result;
+
+            String toast = getString(R.string.action_added, userAction.getTitle());
+            Toast.makeText(this, toast, Toast.LENGTH_SHORT).show();
+
+            mAdapter.notifyDataSetChanged();
+            startTriggerActivity(userAction);
+        }
     }
 
     private void startTriggerActivity(UserAction userAction){

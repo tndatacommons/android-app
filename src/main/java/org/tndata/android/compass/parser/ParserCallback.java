@@ -6,14 +6,20 @@ package org.tndata.android.compass.parser;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public interface ParserCallback<T>{
-    void onBackgroundProcessing(int requestCode, T result);
-
+public interface ParserCallback{
     /**
-     * Called when the parsing is complete.
+     * Called to potentially process the parsing result in the background if needed.
      *
      * @param requestCode the request code.
      * @param result the result set.
      */
-    void onParseSuccess(int requestCode, T result);
+    void onProcessResult(int requestCode, ParserModels.ResultSet result);
+
+    /**
+     * Called in the foreground when parsing is complete.
+     *
+     * @param requestCode the request code.
+     * @param result the result set.
+     */
+    void onParseSuccess(int requestCode, ParserModels.ResultSet result);
 }

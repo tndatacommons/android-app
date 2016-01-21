@@ -32,6 +32,9 @@ import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.ContentParser;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.util.API;
@@ -52,6 +55,7 @@ public class ChooseBehaviorsActivity
         extends AppCompatActivity
         implements
                 NetworkRequest.RequestCallback,
+                ParserCallback,
                 ChooseBehaviorsAdapter.ChooseBehaviorsListener,
                 MenuItemCompat.OnActionExpandListener,
                 SearchView.OnQueryTextListener,
@@ -230,15 +234,12 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void addBehavior(Behavior behavior){
-        //If the goal isn't selected, select it
-        if (!isGoalSelected()){
-            addGoal();
-            mAdapter.disableAddGoalButton();
-        }
+        //Disable the 'I want this' button
+        mAdapter.disableAddGoalButton();
 
         //Then select the behavior
         mPostBehaviorRequestCode = NetworkRequest.post(this, this, API.getPostBehaviorUrl(),
-                mApplication.getToken(), API.getPostBehaviorBody(behavior));
+                mApplication.getToken(), API.getPostBehaviorBody(behavior, mGoal, mCategory));
 
         if (behavior.getActionCount() > 0){
             selectActions(behavior);
@@ -348,10 +349,7 @@ public class ChooseBehaviorsActivity
             mAdapter.notifyDataSetChanged();
         }
         else if (requestCode == mPostBehaviorRequestCode){
-            UserBehavior userBehavior = ContentParser.parseUserBehavior(result);
-            Log.d(TAG, "(Post) " + userBehavior.toString());
-            mApplication.addBehavior(userBehavior);
-            mAdapter.notifyDataSetChanged();
+            Parser.parse(result, UserBehavior.class, this);
         }
         else if (requestCode == mDeleteBehaviorRequestCode){
             String toast = getString(R.string.choose_behaviors_behavior_removed);
@@ -362,6 +360,26 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void onRequestFailed(int requestCode, String message){
+        //TODO user feedback
+    }
 
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof UserBehavior){
+            UserBehavior userBehavior = (UserBehavior)result;
+            Log.d(TAG, "(Post) " + userBehavior.toString());
+
+            mApplication.getUserData().addCategory(userBehavior.getParentUserCategory());
+            mApplication.getUserData().addGoal(userBehavior.getParentUserGoal());
+            mApplication.getUserData().addBehavior(userBehavior);
+        }
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof UserBehavior){
+            mApplication.addBehavior((UserBehavior)result);
+            mAdapter.notifyDataSetChanged();
+        }
     }
 }

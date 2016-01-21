@@ -120,8 +120,6 @@ public class UserData{
     }
 
     /**
-     * TODO these next two methods are irrelevant at the moment.
-     *
      * Adds a Category to the list of user-selected categories (if it's not
      * already included) and assigns any user-selected goals to the new Category.
      *
@@ -129,22 +127,24 @@ public class UserData{
      */
     public void addCategory(UserCategory userCategory){
         //If the category ain't in the data set
-        /*if (!contains(userCategory)){
+        if (!contains(userCategory)){
             //Add it
-            categories.put(userCategory.getCategory().getId(), userCategory);
+            categories.put(userCategory.getObjectId(), userCategory);
 
             //Link goals
-            List<UserGoal> goals = new ArrayList<>();
-            for (UserGoal categoryGoal : userCategory.getGoals()){
-                UserGoal goal = getGoal(categoryGoal.getGoal());
-                goal.addCategory(userCategory);
-                goals.add(goal);
+            for (UserGoal userGoals:goals.values()){
+                if (userGoals.getGoal().getCategories().contains(userCategory.getObjectId())){
+                    userGoals.addCategory(userCategory);
+                    userCategory.addGoal(userGoals);
+                }
             }
-            userCategory.setGoals(goals);
-        }*/
+
+        }
     }
 
     /**
+     * TODO This method may be irrelevant?
+     *
      * Remove a single Category from the user's collection. This also removes the
      * reference to that category from all Goals.
      *

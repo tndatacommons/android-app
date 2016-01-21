@@ -1,5 +1,7 @@
 package org.tndata.android.compass.model;
 
+import org.tndata.android.compass.parser.ParserModels;
+
 import java.io.Serializable;
 
 
@@ -9,7 +11,7 @@ import java.io.Serializable;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserAction extends UserContent implements Serializable{
+public class UserAction extends UserContent implements Serializable, ParserModels.ResultSet{
     private static final long serialVersionUID = 291944745632851923L;
 
     //Values retrieved from the API
@@ -20,6 +22,10 @@ public class UserAction extends UserContent implements Serializable{
     private int primary_category;
 
     private Trigger trigger;
+
+    private UserBehavior parent_userbehavior;
+    private UserGoal parent_usergoal;
+    private UserCategory parent_usercategory;
 
     //Values set during post-processing
     private UserBehavior behavior;
@@ -146,6 +152,18 @@ public class UserAction extends UserContent implements Serializable{
 
     public boolean hasTrigger(){
         return trigger != null;
+    }
+
+    public UserBehavior getParentUserBehavior(){
+        return parent_userbehavior;
+    }
+
+    public UserGoal getParentUserGoal(){
+        return parent_usergoal;
+    }
+
+    public UserCategory getParentUserCategory(){
+        return parent_usercategory;
     }
 
 

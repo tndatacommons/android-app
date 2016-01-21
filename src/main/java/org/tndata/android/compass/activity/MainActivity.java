@@ -49,6 +49,7 @@ import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.MiscellaneousParser;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
@@ -81,7 +82,7 @@ public class MainActivity
                 SearchView.OnCloseListener,
                 RecyclerView.OnItemTouchListener,
                 SearchAdapter.SearchAdapterListener,
-                ParserCallback<UserData>{
+                ParserCallback{
 
     //Activity request codes
     private static final int CATEGORIES_REQUEST_CODE = 4821;
@@ -371,7 +372,7 @@ public class MainActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetUserDataRequestCode){
-            Parser.parse(result, UserData.class, this);
+            Parser.parse(result, ParserModels.UserDataResultSet.class, this);
         }
         else if (requestCode == mLastSearchRequestCode){
             mSearchHeader.setVisibility(View.VISIBLE);
@@ -738,27 +739,35 @@ public class MainActivity
     }
 
     @Override
-    public void onBackgroundProcessing(int requestCode, UserData result){
-        result.sync();
-        result.logData();
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.UserDataResultSet){
+            UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
+
+            userData.sync();
+            userData.logData();
+        }
     }
 
     @Override
-    public void onParseSuccess(int requestCode, UserData result){
-        mApplication.setUserData(result);
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.UserDataResultSet){
+            UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
 
-        //Remove the previous item decoration before recreating the adapter
-        mFeed.removeItemDecoration(mAdapter.getMainFeedPadding());
+            mApplication.setUserData(userData);
 
-        //Recreate the adapter and set the new decoration
-        mAdapter = new MainFeedAdapter(this, this, !mSuggestionDismissed);
-        mFeed.setAdapter(mAdapter);
-        mFeed.addItemDecoration(mAdapter.getMainFeedPadding());
+            //Remove the previous item decoration before recreating the adapter
+            mFeed.removeItemDecoration(mAdapter.getMainFeedPadding());
 
-        mSuggestionDismissed = false;
+            //Recreate the adapter and set the new decoration
+            mAdapter = new MainFeedAdapter(this, this, !mSuggestionDismissed);
+            mFeed.setAdapter(mAdapter);
+            mFeed.addItemDecoration(mAdapter.getMainFeedPadding());
 
-        if (mRefresh.isRefreshing()){
-            mRefresh.setRefreshing(false);
+            mSuggestionDismissed = false;
+
+            if (mRefresh.isRefreshing()){
+                mRefresh.setRefreshing(false);
+            }
         }
     }
 }

@@ -1,5 +1,7 @@
 package org.tndata.android.compass.model;
 
+import org.tndata.android.compass.parser.ParserModels;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,13 +13,16 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserBehavior extends UserContent implements Serializable{
+public class UserBehavior extends UserContent implements Serializable, ParserModels.ResultSet{
     private static final long serialVersionUID = 774798265423822842L;
 
     //Values retrieved from the API
     private Behavior behavior;
 
     private Progress progress;
+
+    private UserGoal parent_usergoal;
+    private UserCategory parent_usercategory;
 
     //Values set during post-processing
     private List<UserGoal> userGoals = new ArrayList<>();
@@ -89,6 +94,14 @@ public class UserBehavior extends UserContent implements Serializable{
 
     public Progress getProgress(){
         return progress;
+    }
+
+    public UserGoal getParentUserGoal(){
+        return parent_usergoal;
+    }
+
+    public UserCategory getParentUserCategory(){
+        return parent_usercategory;
     }
 
 
