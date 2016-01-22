@@ -1,5 +1,6 @@
 package org.tndata.android.compass.model;
 
+import android.graphics.Bitmap;
 import android.widget.ImageView;
 
 import org.tndata.android.compass.util.ImageLoader;
@@ -22,6 +23,13 @@ public class Category extends TDCBase implements Serializable{
     private String secondary_color = "";
 
     private boolean packaged_content = false;
+
+    private Bitmap mCircleImage;
+
+
+    public void setCircleImage(Bitmap circleImage){
+        mCircleImage = circleImage;
+    }
 
 
     /*---------*
@@ -46,6 +54,10 @@ public class Category extends TDCBase implements Serializable{
 
     public boolean isPackagedContent(){
         return packaged_content;
+    }
+
+    public Bitmap getCircleImage(){
+        return mCircleImage;
     }
 
 

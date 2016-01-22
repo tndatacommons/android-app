@@ -19,14 +19,19 @@ import org.tndata.android.compass.model.Category;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class ChooseCategoryActivity extends AppCompatActivity implements ChooseCategoryAdapter.ChooseCategoryAdapterListener{
+public class ChooseCategoryActivity
+        extends AppCompatActivity
+        implements ChooseCategoryAdapter.ChooseCategoryAdapterListener{
+
+    private Toolbar mToolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_category);
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.choose_category_toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar)findViewById(R.id.choose_category_toolbar);
+        setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -34,6 +39,12 @@ public class ChooseCategoryActivity extends AppCompatActivity implements ChooseC
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.choose_category_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(new ChooseCategoryAdapter(this, this, ((CompassApplication)getApplication()).getPublicCategories()));
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        mToolbar.getBackground().setAlpha(255);
     }
 
     @Override
