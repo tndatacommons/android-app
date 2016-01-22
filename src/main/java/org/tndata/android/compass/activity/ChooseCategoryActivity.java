@@ -49,6 +49,8 @@ public class ChooseCategoryActivity
 
     @Override
     public void onCategorySelected(Category category){
-        startActivity(new Intent(this, ChooseGoalsActivity.class).putExtra(ChooseGoalsActivity.CATEGORY_KEY, category));
+        Intent chooseGoals = new Intent(this, ChooseGoalsActivity.class)
+                .putExtra(ChooseGoalsActivity.CATEGORY_KEY, category);
+        startActivity(chooseGoals);
     }
 }

@@ -19,7 +19,10 @@ import java.util.List;
 
 
 /**
- * Created by isma on 1/22/16.
+ * Adapter for the category chooser.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class ChooseCategoryAdapter extends RecyclerView.Adapter<ChooseCategoryAdapter.CategoryViewHolder>{
     private Context mContext;
@@ -29,12 +32,25 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter<ChooseCategoryAd
     private Bitmap[] mBitmaps;
 
 
+    /**
+     * Constructor.
+     * @param context a reference to the context.
+     * @param listener the listener.
+     * @param categories the list of categories to choose from.
+     */
     public ChooseCategoryAdapter(Context context, ChooseCategoryAdapterListener listener, List<Category> categories){
         mContext = context;
         mListener = listener;
         mCategories = categories;
 
         mBitmaps = new Bitmap[categories.size()];
+        for (int i = 0; i < mCategories.size(); i++){
+            Category category = mCategories.get(i);
+            int imageResId = CompassUtil.getCategoryTileResId(category.getTitle());
+            Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), imageResId);
+            mBitmaps[i] = ImageHelper.getCircleBitmap(bitmap, CompassUtil.getPixels(mContext, 100));
+            bitmap.recycle();
+        }
     }
 
     @Override
@@ -46,18 +62,8 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter<ChooseCategoryAd
 
     @Override
     public void onBindViewHolder(CategoryViewHolder holder, int position){
-        Category category = mCategories.get(position);
-        Bitmap circle = mBitmaps[position];
-        if (circle == null){
-            int imageResId = CompassUtil.getCategoryTileResId(category.getTitle());
-            Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), imageResId);
-            circle = ImageHelper.getCircleBitmap(bitmap, CompassUtil.getPixels(mContext, 100));
-            bitmap.recycle();
-            mBitmaps[position] = circle;
-        }
-
-        holder.mImage.setImageBitmap(circle);
-        holder.mCaption.setText(category.getTitle());
+        holder.mImage.setImageBitmap(mBitmaps[position]);
+        holder.mCaption.setText(mCategories.get(position).getTitle());
     }
 
     @Override
@@ -65,10 +71,23 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter<ChooseCategoryAd
         return mCategories.size();
     }
 
+
+    /**
+     * View holder for a category.
+     *
+     * @author Ismael Alonso.
+     * @version 1.0.0
+     */
     protected class CategoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private ImageView mImage;
         private TextView mCaption;
 
+
+        /**
+         * Constructor.
+         *
+         * @param rootView the root view of this holder.
+         */
         public CategoryViewHolder(View rootView){
             super(rootView);
 
@@ -84,7 +103,19 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter<ChooseCategoryAd
         }
     }
 
+
+    /**
+     * Listener interface for the category adapter.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface ChooseCategoryAdapterListener{
+        /**
+         * Called when the user selects a category.
+         *
+         * @param category the selected category.
+         */
         void onCategorySelected(Category category);
     }
 }
