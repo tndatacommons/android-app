@@ -453,7 +453,7 @@ public class MainActivity
      * Called when the create goal FAB is clicked.
      */
     private void createCustomGoalClicked(){
-
+        startActivity(new Intent(this, CreateGoalActivity.class));
     }
 
     /**
