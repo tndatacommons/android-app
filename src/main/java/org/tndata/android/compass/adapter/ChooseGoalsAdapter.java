@@ -1,6 +1,8 @@
 package org.tndata.android.compass.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
@@ -25,6 +27,8 @@ import org.tndata.android.compass.ui.button.TransitionButton;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
 import org.tndata.android.compass.util.CompassTagHandler;
+import org.tndata.android.compass.util.CompassUtil;
+import org.tndata.android.compass.util.ImageHelper;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
@@ -109,7 +113,11 @@ public class ChooseGoalsAdapter
         View header = inflater.inflate(R.layout.header_choose_goals, mRecyclerView, false);
 
         ImageView headerImageView = (ImageView)header.findViewById(R.id.choose_goals_header_imageview);
-        mCategory.loadImageIntoView(headerImageView);
+        int id = CompassUtil.getCategoryTileResId(mCategory.getTitle());
+        Bitmap image = BitmapFactory.decodeResource(mContext.getResources(), id);
+        Bitmap circle = ImageHelper.getCircleBitmap(image, CompassUtil.getPixels(mContext, 200));
+        headerImageView.setImageBitmap(circle);
+        image.recycle();
 
         ((HeaderLayoutManagerFixed)mRecyclerView.getLayoutManager()).setHeaderIncrementFixer(header);
         setShouldClipView(false);

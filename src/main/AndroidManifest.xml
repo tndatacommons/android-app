@@ -11,9 +11,6 @@
         * MINOR version when you add functionality in a backwards-compatible manner, and
         * PATCH version when you make backwards-compatible bug fixes.
     -->
-    <uses-sdk
-        android:minSdkVersion="14"
-        android:targetSdkVersion="22" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -119,7 +116,7 @@
         </activity>
 
         <activity
-            android:name="org.tndata.android.compass.activity.ChooseGoalsActivity"
+            android:name=".activity.ChooseInterestsActivity"
             android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -133,9 +130,10 @@
         </activity>
 
         <activity
-            android:name="org.tndata.android.compass.activity.ChooseCategoriesActivity"
+            android:name="org.tndata.android.compass.activity.ChooseCategoryActivity"
+            android:label="@string/choose_category_title"
             android:parentActivityName=".activity.MainActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -144,6 +142,20 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity" />
+        </activity>
+
+        <activity
+            android:name="org.tndata.android.compass.activity.ChooseGoalsActivity"
+            android:parentActivityName=".activity.ChooseCategoryActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.ChooseCategoryActivity" />
         </activity>
 
         <activity

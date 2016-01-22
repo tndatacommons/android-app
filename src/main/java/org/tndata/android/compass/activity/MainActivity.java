@@ -4,10 +4,8 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.DrawableRes;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -17,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,7 +42,6 @@ import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.UserAction;
-import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.MiscellaneousParser;
@@ -82,6 +80,7 @@ public class MainActivity
                 SearchView.OnCloseListener,
                 RecyclerView.OnItemTouchListener,
                 SearchAdapter.SearchAdapterListener,
+                View.OnClickListener,
                 ParserCallback{
 
     //Activity request codes
@@ -124,7 +123,7 @@ public class MainActivity
     private FloatingActionMenu mMenu;
 
     //The selected category from the FAB
-    private UserCategory mSelectedCategory;
+    private Category mSelectedCategory;
 
     private boolean mSuggestionDismissed;
 
@@ -137,6 +136,8 @@ public class MainActivity
         setContentView(R.layout.activity_main);
 
         mApplication = (CompassApplication)getApplication();
+
+        Log.d("MainActivity", mApplication.getPublicCategories().size() + " public categories");
 
         //Update the timezone and register with GCM
         NetworkRequest.put(this, null, API.getPutUserProfileUrl(mApplication.getUser()),
@@ -398,99 +399,69 @@ public class MainActivity
      * Creates the FAB menu.
      */
     private void populateMenu(){
-        //First of all, clear the menu
-        mMenu.removeAllMenuButtons();
-
-        //Populate the menu with a button per category
-        for (final UserCategory category:mApplication.getUserData().getCategories().values()){
-            //Skip packaged categories
-            if (category.isPackagedContent()){
-                continue;
-            }
+        for (int i = 0; i < 3; i++){
             ContextThemeWrapper ctx = new ContextThemeWrapper(this, R.style.MenuButtonStyle);
             FloatingActionButton fab = new FloatingActionButton(ctx);
-            fab.setLabelText(category.getTitle());
-            fab.setColorNormal(Color.parseColor(category.getColor()));
-            fab.setColorPressed(Color.parseColor(category.getColor()));
+            fab.setColorNormalResId(R.color.grow_accent);
+            fab.setColorPressedResId(R.color.grow_accent);
+            fab.setColorRippleResId(R.color.grow_accent);
             fab.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            fab.setImageResource(getIconResourceId(category.getCategory()));
-            mMenu.addMenuButton(fab);
-            fab.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v){
-                    addGoalsClicked(category);
-                }
-            });
-        }
-
-        //Add categories button
-        ContextThemeWrapper ctx = new ContextThemeWrapper(this, R.style.MenuButtonStyle);
-        FloatingActionButton fab = new FloatingActionButton(ctx);
-        fab.setLabelText("Add categories");
-        fab.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        fab.setImageResource(R.drawable.fab_add);
-        fab.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                addCategoriesClicked();
+            fab.setImageResource(R.drawable.fab_add);
+            fab.setOnClickListener(this);
+            if (i == 0){
+                fab.setId(R.id.fab_choose_goals);
+                fab.setLabelText(getString(R.string.fab_choose_goals));
             }
-        });
-        mMenu.addMenuButton(fab);
-    }
-
-    /**
-     * Gets a drawable resource id mapped to a category.
-     *
-     * @param category the category whose drawable resource id is to be retrieved
-     * @return the drawable resource id of the category's drawable.
-     */
-    @DrawableRes
-    private int getIconResourceId(Category category){
-        if (category.getTitle().equalsIgnoreCase("Happiness & fun")){
-            return R.drawable.ic_category1;
-        }
-        else if (category.getTitle().equalsIgnoreCase("Family & parenting")){
-            return R.drawable.ic_category2;
-        }
-        else if (category.getTitle().equalsIgnoreCase("Work & prosperity")){
-            return R.drawable.ic_category3;
-        }
-        else if (category.getTitle().equalsIgnoreCase("Home & safety")){
-            return R.drawable.ic_category4;
-        }
-        else if (category.getTitle().equalsIgnoreCase("Education & skills")){
-            return R.drawable.ic_category5;
-        }
-        else if (category.getTitle().equalsIgnoreCase("Health & wellness")){
-            return R.drawable.ic_category6;
-        }
-        else if (category.getTitle().equalsIgnoreCase("Community & friendship")){
-            return R.drawable.ic_category7;
-        }
-        else if (category.getTitle().equalsIgnoreCase("Romance & relationships")){
-            return R.drawable.ic_category8;
-        }
-        else{
-            return R.drawable.ic_add_white_24dp;
+            else if (i == 1){
+                fab.setId(R.id.fab_create_goal);
+                fab.setLabelText(getString(R.string.fab_create_goal));
+            }
+            else if (i == 2){
+                fab.setId(R.id.fab_choose_interests);
+                fab.setLabelText(getString(R.string.fab_choose_interests));
+            }
+            mMenu.addMenuButton(fab);
         }
     }
 
-    /**
-     * Called when a FAB is clicked.
-     *
-     * @param userCategory the selected category.
-     */
-    private void addGoalsClicked(UserCategory userCategory){
-        mSelectedCategory = userCategory;
+    @Override
+    public void onClick(View v){
         mMenu.toggle(true);
+        switch (v.getId()){
+            case R.id.fab_choose_goals:
+                chooseGoalsClicked();
+                break;
+
+            case R.id.fab_create_goal:
+                createCustomGoalClicked();
+                break;
+
+            case R.id.fab_choose_interests:
+                chooseInterestsClicked();
+                break;
+        }
     }
 
     /**
-     * Called when the add categories FAB is clicked.
+     * Called when the choose Goals FAB is clicked.
      */
-    private void addCategoriesClicked(){
-        startActivityForResult(new Intent(MainActivity.this, ChooseCategoriesActivity.class), CATEGORIES_REQUEST_CODE);
-        mMenu.toggle(false);
+    private void chooseGoalsClicked(){
+        startActivity(new Intent(this, ChooseCategoryActivity.class));
+    }
+
+    /**
+     * Called when the create goal FAB is clicked.
+     */
+    private void createCustomGoalClicked(){
+
+    }
+
+    /**
+     * Called when the choose interests FAB is clicked.
+    */
+    private void chooseInterestsClicked(){
+        startActivityForResult(new Intent(this, ChooseInterestsActivity.class),
+                CATEGORIES_REQUEST_CODE);
     }
 
     /**
@@ -521,7 +492,7 @@ public class MainActivity
                 }
                 if (mSelectedCategory != null){
                     Intent intent = new Intent(MainActivity.this, ChooseGoalsActivity.class);
-                    intent.putExtra(ChooseGoalsActivity.CATEGORY_KEY, mSelectedCategory.getCategory());
+                    intent.putExtra(ChooseGoalsActivity.CATEGORY_KEY, mSelectedCategory);
                     startActivityForResult(intent, Constants.CHOOSE_GOALS_REQUEST_CODE);
                 }
             }
@@ -680,7 +651,7 @@ public class MainActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (resultCode == RESULT_OK){
             if (requestCode == CATEGORIES_REQUEST_CODE){
-                populateMenu();
+                //populateMenu();
                 mAdapter.notifyDataSetChanged();
             }
             else if (requestCode == GOAL_SUGGESTION_REQUEST_CODE){

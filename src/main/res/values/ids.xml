@@ -4,4 +4,8 @@
     <item name="view_item_position_tag" type="id" />
 
     <item name="quiet_toggle_tag" type="id" />
+
+    <item name="fab_choose_goals" type="id" />
+    <item name="fab_choose_interests" type="id" />
+    <item name="fab_create_goal" type="id" />
 </resources>

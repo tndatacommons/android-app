@@ -34,6 +34,7 @@ public class CompassApplication extends Application{
     private String mToken;
     private User mUser; // The logged-in user
     private UserData mUserData = new UserData(); // The user's selected content.
+    private List<Category> mPublicCategories;
 
 
     public void setToken(String token) {
@@ -67,6 +68,14 @@ public class CompassApplication extends Application{
 
     public void setUserData(UserData userData) {
         mUserData = userData;
+    }
+
+    public void setPublicCategories(List<Category> publicCategories){
+        mPublicCategories = publicCategories;
+    }
+
+    public List<Category> getPublicCategories(){
+        return mPublicCategories;
     }
 
     // -------------------------------------------------------------------

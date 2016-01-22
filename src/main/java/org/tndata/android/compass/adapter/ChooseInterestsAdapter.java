@@ -35,7 +35,7 @@ import java.util.Map;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class ChooseCategoriesAdapter
+public class ChooseInterestsAdapter
         extends RecyclerView.Adapter
         implements Animation.AnimationListener{
 
@@ -64,8 +64,8 @@ public class ChooseCategoriesAdapter
      * @param callback the callback interface.
      * @param onBoarding whether the containing fragment is part of on boarding or not.
      */
-    public ChooseCategoriesAdapter(Context context, OnCategoriesSelectedListener callback,
-                                   boolean onBoarding){
+    public ChooseInterestsAdapter(Context context, OnCategoriesSelectedListener callback,
+                                  boolean onBoarding){
         mContext = context;
         mCallback = callback;
         mOnBoarding = onBoarding;
@@ -118,15 +118,15 @@ public class ChooseCategoriesAdapter
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
         LayoutInflater inflater = LayoutInflater.from(mContext);
         if (viewType == VIEW_TYPE_HEADER){
-            View root = inflater.inflate(R.layout.item_choose_categories_header, parent, false);
+            View root = inflater.inflate(R.layout.item_choose_interests_header, parent, false);
             return new HeaderViewHolder(root);
         }
         else if (viewType == VIEW_TYPE_NEXT){
-            View root = inflater.inflate(R.layout.item_choose_categories_next, parent, false);
+            View root = inflater.inflate(R.layout.item_choose_interests_next, parent, false);
             return new NextViewHolder(root);
         }
         else if (viewType == VIEW_TYPE_CATEGORY){
-            View root = inflater.inflate(R.layout.item_choose_categories_category, parent, false);
+            View root = inflater.inflate(R.layout.item_choose_interests_category, parent, false);
             return new CategoryViewHolder(root);
         }
         return null;
@@ -163,34 +163,7 @@ public class ChooseCategoriesAdapter
                 holder.mOverlay.setVisibility(View.GONE);
             }
 
-            if (category.getTitle().equalsIgnoreCase("Happiness & fun")){
-                holder.mBackground.setImageResource(R.drawable.tile_fun);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Family & parenting")){
-                holder.mBackground.setImageResource(R.drawable.tile_parenting);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Work & prosperity")){
-                holder.mBackground.setImageResource(R.drawable.tile_prosperity);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Home & safety")){
-                holder.mBackground.setImageResource(R.drawable.tile_home);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Education & skills")){
-                holder.mBackground.setImageResource(R.drawable.tile_skills);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Health & wellness")){
-                holder.mBackground.setImageResource(R.drawable.tile_health);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Community & friendship")){
-                holder.mBackground.setImageResource(R.drawable.tile_community);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Romance & relationships")){
-                holder.mBackground.setImageResource(R.drawable.tile_romance);
-            }
-            else{
-                holder.mBackground.setImageResource(0);
-            }
-
+            holder.mBackground.setImageResource(CompassUtil.getCategoryTileResId(category.getTitle()));
             holder.mCaption.setText(category.getTitle());
             setAnimation(holder, position);
         }

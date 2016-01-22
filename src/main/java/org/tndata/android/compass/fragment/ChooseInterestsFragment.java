@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.adapter.ChooseCategoriesAdapter;
+import org.tndata.android.compass.adapter.ChooseInterestsAdapter;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.util.API;
@@ -33,22 +33,22 @@ import java.util.List;
  * @author Edited by Ismael Alonso
  * @version 2.0.0
  */
-public class ChooseCategoriesFragment
+public class ChooseInterestsFragment
         extends Fragment
         implements
                 NetworkRequest.RequestCallback,
-                ChooseCategoriesAdapter.OnCategoriesSelectedListener{
+                ChooseInterestsAdapter.OnCategoriesSelectedListener{
 
     public static final String ON_BOARDING_KEY = "org.tndata.compass.ChooseCategories.OnBoarding";
 
 
     private View mMaterialHeader;
-    private ChooseCategoriesAdapter mAdapter;
+    private ChooseInterestsAdapter mAdapter;
     private boolean mOnBoarding;
 
     private AlertDialog mDialog;
 
-    private ChooseCategoriesAdapter.OnCategoriesSelectedListener mCallback;
+    private ChooseInterestsAdapter.OnCategoriesSelectedListener mCallback;
     private CompassApplication mApplication;
 
     //Request codes
@@ -61,10 +61,10 @@ public class ChooseCategoriesFragment
      * @param onBoarding true if this was called from onboarding, false otherwise.
      * @return the new instance of the fragment.
      */
-    public static ChooseCategoriesFragment newInstance(boolean onBoarding){
+    public static ChooseInterestsFragment newInstance(boolean onBoarding){
         Bundle args = new Bundle();
-        args.putBoolean(ChooseCategoriesFragment.ON_BOARDING_KEY, onBoarding);
-        ChooseCategoriesFragment mFragment = new ChooseCategoriesFragment();
+        args.putBoolean(ChooseInterestsFragment.ON_BOARDING_KEY, onBoarding);
+        ChooseInterestsFragment mFragment = new ChooseInterestsFragment();
         mFragment.setArguments(args);
         return mFragment;
     }
@@ -83,7 +83,7 @@ public class ChooseCategoriesFragment
         //This makes sure that the container activity has implemented the callback
         //  interface. If not, it throws an exception
         try{
-            mCallback = (ChooseCategoriesAdapter.OnCategoriesSelectedListener)context;
+            mCallback = (ChooseInterestsAdapter.OnCategoriesSelectedListener)context;
         }
         catch (ClassCastException ccx){
             throw new ClassCastException(context.toString()
@@ -115,7 +115,7 @@ public class ChooseCategoriesFragment
         RecyclerView grid = (RecyclerView)rootView.findViewById(R.id.choose_categories_grid);
         grid.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
-        mAdapter = new ChooseCategoriesAdapter(getActivity(), this, mOnBoarding);
+        mAdapter = new ChooseInterestsAdapter(getActivity(), this, mOnBoarding);
         grid.setAdapter(mAdapter);
         grid.addItemDecoration(new ItemPadding());
         grid.addOnScrollListener(new ParallaxEffect());
