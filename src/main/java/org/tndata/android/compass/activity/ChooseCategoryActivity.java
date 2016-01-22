@@ -1,5 +1,6 @@
 package org.tndata.android.compass.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
+import org.tndata.android.compass.model.Category;
 
 
 /**
@@ -17,7 +19,7 @@ import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class ChooseCategoryActivity extends AppCompatActivity{
+public class ChooseCategoryActivity extends AppCompatActivity implements ChooseCategoryAdapter.ChooseCategoryAdapterListener{
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -31,6 +33,11 @@ public class ChooseCategoryActivity extends AppCompatActivity{
 
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.choose_category_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        recyclerView.setAdapter(new ChooseCategoryAdapter(this, ((CompassApplication)getApplication()).getPublicCategories()));
+        recyclerView.setAdapter(new ChooseCategoryAdapter(this, this, ((CompassApplication)getApplication()).getPublicCategories()));
+    }
+
+    @Override
+    public void onCategorySelected(Category category){
+        startActivity(new Intent(this, ChooseGoalsActivity.class).putExtra(ChooseGoalsActivity.CATEGORY_KEY, category));
     }
 }

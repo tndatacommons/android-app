@@ -1,14 +1,19 @@
 package org.tndata.android.compass.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.util.CompassUtil;
+import org.tndata.android.compass.util.ImageHelper;
 
 import java.util.List;
 
@@ -18,11 +23,13 @@ import java.util.List;
  */
 public class ChooseCategoryAdapter extends RecyclerView.Adapter<ChooseCategoryAdapter.CategoryViewHolder>{
     private Context mContext;
+    private ChooseCategoryAdapterListener mListener;
     private List<Category> mCategories;
 
 
-    public ChooseCategoryAdapter(Context context, List<Category> categories){
+    public ChooseCategoryAdapter(Context context, ChooseCategoryAdapterListener listener, List<Category> categories){
         mContext = context;
+        mListener = listener;
         mCategories = categories;
     }
 
@@ -35,7 +42,14 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter<ChooseCategoryAd
 
     @Override
     public void onBindViewHolder(CategoryViewHolder holder, int position){
-        holder.mCaption.setText(mCategories.get(position).getTitle());
+        Category category = mCategories.get(position);
+        int imageResId = CompassUtil.getCategoryTileResId(category.getTitle());
+        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), imageResId);
+        Bitmap circle = ImageHelper.getCircleBitmap(bitmap, CompassUtil.getPixels(mContext, 100));
+        bitmap.recycle();
+
+        holder.mImage.setImageBitmap(circle);
+        holder.mCaption.setText(category.getTitle());
     }
 
     @Override
@@ -43,13 +57,26 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter<ChooseCategoryAd
         return mCategories.size();
     }
 
-    protected class CategoryViewHolder extends RecyclerView.ViewHolder{
+    protected class CategoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private ImageView mImage;
         private TextView mCaption;
 
-        public CategoryViewHolder(View itemView){
-            super(itemView);
+        public CategoryViewHolder(View rootView){
+            super(rootView);
 
-            mCaption = (TextView)itemView.findViewById(R.id.choose_category_category_caption);
+            mImage = (ImageView)rootView.findViewById(R.id.choose_category_category_image);
+            mCaption = (TextView)rootView.findViewById(R.id.choose_category_category_caption);
+
+            rootView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v){
+            mListener.onCategorySelected(mCategories.get(getAdapterPosition()));
+        }
+    }
+
+    public interface ChooseCategoryAdapterListener{
+        void onCategorySelected(Category category);
     }
 }
