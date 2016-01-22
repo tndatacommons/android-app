@@ -23,6 +23,9 @@
     <string name="fab_create_goal">Create goal</string>
     <string name="fab_choose_interests">Choose interests</string>
 
+    <!-- ChooseCategoryActivity -->
+    <string name="choose_category_title">What interests you?</string>
+
     <!-- CategoryFragment -->
     <string name="popup_menu_content_description">View more options</string>
     <string name="goal_deleted">Goal deleted</string>
