@@ -163,34 +163,7 @@ public class ChooseInterestsAdapter
                 holder.mOverlay.setVisibility(View.GONE);
             }
 
-            if (category.getTitle().equalsIgnoreCase("Happiness & fun")){
-                holder.mBackground.setImageResource(R.drawable.tile_fun);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Family & parenting")){
-                holder.mBackground.setImageResource(R.drawable.tile_parenting);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Work & prosperity")){
-                holder.mBackground.setImageResource(R.drawable.tile_prosperity);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Home & safety")){
-                holder.mBackground.setImageResource(R.drawable.tile_home);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Education & skills")){
-                holder.mBackground.setImageResource(R.drawable.tile_skills);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Health & wellness")){
-                holder.mBackground.setImageResource(R.drawable.tile_health);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Community & friendship")){
-                holder.mBackground.setImageResource(R.drawable.tile_community);
-            }
-            else if (category.getTitle().equalsIgnoreCase("Romance & relationships")){
-                holder.mBackground.setImageResource(R.drawable.tile_romance);
-            }
-            else{
-                holder.mBackground.setImageResource(0);
-            }
-
+            holder.mBackground.setImageResource(CompassUtil.getCategoryTileResId(category.getTitle()));
             holder.mCaption.setText(category.getTitle());
             setAnimation(holder, position);
         }
