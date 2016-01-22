@@ -6,9 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.adapter.ChooseCategoriesAdapter;
+import org.tndata.android.compass.adapter.ChooseInterestsAdapter;
 import org.tndata.android.compass.database.CompassDbHelper;
-import org.tndata.android.compass.fragment.ChooseCategoriesFragment;
+import org.tndata.android.compass.fragment.ChooseInterestsFragment;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserData;
@@ -28,10 +28,10 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class ChooseCategoriesActivity
+public class ChooseInterestsActivity
         extends AppCompatActivity
         implements
-                ChooseCategoriesAdapter.OnCategoriesSelectedListener,
+                ChooseInterestsAdapter.OnCategoriesSelectedListener,
                 NetworkRequest.RequestCallback,
                 ParserCallback{
 
@@ -55,9 +55,9 @@ public class ChooseCategoriesActivity
         mApplication = (CompassApplication) getApplication();
 
         Bundle args = new Bundle();
-        args.putBoolean(ChooseCategoriesFragment.ON_BOARDING_KEY, false);
+        args.putBoolean(ChooseInterestsFragment.ON_BOARDING_KEY, false);
 
-        ChooseCategoriesFragment fragment = new ChooseCategoriesFragment();
+        ChooseInterestsFragment fragment = new ChooseInterestsFragment();
         fragment.setArguments(args);
         getSupportFragmentManager().beginTransaction().replace(R.id.base_content, fragment).commit();
     }

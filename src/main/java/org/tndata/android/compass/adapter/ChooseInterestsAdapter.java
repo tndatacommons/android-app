@@ -35,7 +35,7 @@ import java.util.Map;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class ChooseCategoriesAdapter
+public class ChooseInterestsAdapter
         extends RecyclerView.Adapter
         implements Animation.AnimationListener{
 
@@ -64,8 +64,8 @@ public class ChooseCategoriesAdapter
      * @param callback the callback interface.
      * @param onBoarding whether the containing fragment is part of on boarding or not.
      */
-    public ChooseCategoriesAdapter(Context context, OnCategoriesSelectedListener callback,
-                                   boolean onBoarding){
+    public ChooseInterestsAdapter(Context context, OnCategoriesSelectedListener callback,
+                                  boolean onBoarding){
         mContext = context;
         mCallback = callback;
         mOnBoarding = onBoarding;

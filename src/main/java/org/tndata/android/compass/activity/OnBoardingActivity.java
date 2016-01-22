@@ -8,8 +8,8 @@ import android.support.v7.widget.Toolbar;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.adapter.ChooseCategoriesAdapter;
-import org.tndata.android.compass.fragment.ChooseCategoriesFragment;
+import org.tndata.android.compass.adapter.ChooseInterestsAdapter;
+import org.tndata.android.compass.fragment.ChooseInterestsFragment;
 import org.tndata.android.compass.fragment.InstrumentFragment;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.User;
@@ -35,7 +35,7 @@ public class OnBoardingActivity
         extends AppCompatActivity
         implements
                 InstrumentFragment.InstrumentFragmentCallback,
-                ChooseCategoriesAdapter.OnCategoriesSelectedListener,
+                ChooseInterestsAdapter.OnCategoriesSelectedListener,
                 NetworkRequest.RequestCallback,
                 ParserCallback{
 
@@ -83,7 +83,7 @@ public class OnBoardingActivity
                 break;
 
             case STAGE_CHOOSE_CATEGORIES:
-                mFragment = ChooseCategoriesFragment.newInstance(true);
+                mFragment = ChooseInterestsFragment.newInstance(true);
                 break;
         }
 
