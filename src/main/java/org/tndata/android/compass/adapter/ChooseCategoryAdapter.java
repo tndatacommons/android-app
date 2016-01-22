@@ -26,11 +26,15 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter<ChooseCategoryAd
     private ChooseCategoryAdapterListener mListener;
     private List<Category> mCategories;
 
+    private Bitmap[] mBitmaps;
+
 
     public ChooseCategoryAdapter(Context context, ChooseCategoryAdapterListener listener, List<Category> categories){
         mContext = context;
         mListener = listener;
         mCategories = categories;
+
+        mBitmaps = new Bitmap[categories.size()];
     }
 
     @Override
@@ -43,13 +47,13 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter<ChooseCategoryAd
     @Override
     public void onBindViewHolder(CategoryViewHolder holder, int position){
         Category category = mCategories.get(position);
-        Bitmap circle = category.getCircleImage();
+        Bitmap circle = mBitmaps[position];
         if (circle == null){
             int imageResId = CompassUtil.getCategoryTileResId(category.getTitle());
             Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), imageResId);
             circle = ImageHelper.getCircleBitmap(bitmap, CompassUtil.getPixels(mContext, 100));
             bitmap.recycle();
-            category.setCircleImage(circle);
+            mBitmaps[position] = circle;
         }
 
         holder.mImage.setImageBitmap(circle);
