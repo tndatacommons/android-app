@@ -410,16 +410,16 @@ public class MainActivity
             fab.setImageResource(R.drawable.fab_add);
             fab.setOnClickListener(this);
             if (i == 0){
-                fab.setId(R.id.fab_choose_interests);
-                fab.setLabelText(getString(R.string.fab_choose_interests));
+                fab.setId(R.id.fab_choose_goals);
+                fab.setLabelText(getString(R.string.fab_choose_goals));
             }
             else if (i == 1){
                 fab.setId(R.id.fab_create_goal);
                 fab.setLabelText(getString(R.string.fab_create_goal));
             }
             else if (i == 2){
-                fab.setId(R.id.fab_choose_goals);
-                fab.setLabelText(getString(R.string.fab_choose_goals));
+                fab.setId(R.id.fab_choose_interests);
+                fab.setLabelText(getString(R.string.fab_choose_interests));
             }
             mMenu.addMenuButton(fab);
         }
@@ -447,7 +447,7 @@ public class MainActivity
      * Called when the choose Goals FAB is clicked.
      */
     private void chooseGoalsClicked(){
-
+        startActivity(new Intent(this, ChooseCategoryActivity.class));
     }
 
     /**

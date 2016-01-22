@@ -118,15 +118,15 @@ public class ChooseInterestsAdapter
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
         LayoutInflater inflater = LayoutInflater.from(mContext);
         if (viewType == VIEW_TYPE_HEADER){
-            View root = inflater.inflate(R.layout.item_choose_categories_header, parent, false);
+            View root = inflater.inflate(R.layout.item_choose_interests_header, parent, false);
             return new HeaderViewHolder(root);
         }
         else if (viewType == VIEW_TYPE_NEXT){
-            View root = inflater.inflate(R.layout.item_choose_categories_next, parent, false);
+            View root = inflater.inflate(R.layout.item_choose_interests_next, parent, false);
             return new NextViewHolder(root);
         }
         else if (viewType == VIEW_TYPE_CATEGORY){
-            View root = inflater.inflate(R.layout.item_choose_categories_category, parent, false);
+            View root = inflater.inflate(R.layout.item_choose_interests_category, parent, false);
             return new CategoryViewHolder(root);
         }
         return null;
