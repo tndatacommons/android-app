@@ -134,7 +134,7 @@
 
         <activity
             android:name="org.tndata.android.compass.activity.ChooseCategoryActivity"
-            android:label="Where from?"
+            android:label="What interests you?"
             android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
