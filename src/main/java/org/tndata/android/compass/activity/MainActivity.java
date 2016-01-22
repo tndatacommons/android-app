@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.DrawableRes;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -463,43 +462,6 @@ public class MainActivity
     private void chooseInterestsClicked(){
         startActivityForResult(new Intent(this, ChooseInterestsActivity.class),
                 CATEGORIES_REQUEST_CODE);
-    }
-
-    /**
-     * Gets a drawable resource id mapped to a category.
-     *
-     * @param category the category whose drawable resource id is to be retrieved
-     * @return the drawable resource id of the category's drawable.
-     */
-    @DrawableRes
-    private int getIconResourceId(Category category){
-        if (category.getTitle().equalsIgnoreCase("Happiness & fun")){
-            return R.drawable.ic_category1;
-        }
-        else if (category.getTitle().equalsIgnoreCase("Family & parenting")){
-            return R.drawable.ic_category2;
-        }
-        else if (category.getTitle().equalsIgnoreCase("Work & prosperity")){
-            return R.drawable.ic_category3;
-        }
-        else if (category.getTitle().equalsIgnoreCase("Home & safety")){
-            return R.drawable.ic_category4;
-        }
-        else if (category.getTitle().equalsIgnoreCase("Education & skills")){
-            return R.drawable.ic_category5;
-        }
-        else if (category.getTitle().equalsIgnoreCase("Health & wellness")){
-            return R.drawable.ic_category6;
-        }
-        else if (category.getTitle().equalsIgnoreCase("Community & friendship")){
-            return R.drawable.ic_category7;
-        }
-        else if (category.getTitle().equalsIgnoreCase("Romance & relationships")){
-            return R.drawable.ic_category8;
-        }
-        else{
-            return R.drawable.ic_add_white_24dp;
-        }
     }
 
     /**
