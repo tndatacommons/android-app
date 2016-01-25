@@ -10,8 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.model.UserGoal;
+import org.tndata.android.compass.util.ImageLoader;
 
 
 /**
@@ -21,8 +20,7 @@ import org.tndata.android.compass.model.UserGoal;
  * @version 1.0.0
  */
 class GoalHolder extends MainFeedViewHolder implements View.OnClickListener{
-    private Goal mSuggestion;
-    private UserGoal mUserGoal;
+    private DisplayableGoal mGoal;
 
     RelativeLayout mIconContainer;
     ImageView mIcon;
@@ -47,26 +45,17 @@ class GoalHolder extends MainFeedViewHolder implements View.OnClickListener{
 
     @Override
     public void onClick(View view){
-        if (mUserGoal != null){
-            mAdapter.mListener.onGoalSelected(mUserGoal);
-        }
-        else{
-            mAdapter.mListener.onSuggestionOpened(mSuggestion);
-        }
+        mAdapter.mListener.onGoalSelected(mGoal);
     }
 
-    void bind(@NonNull UserGoal userGoal){
-        mUserGoal = userGoal;
-        mSuggestion = null;
+    void bind(@NonNull DisplayableGoal goal){
+        mGoal = goal;
+
+        mTitle.setText(mGoal.getTitle());
 
         GradientDrawable gradientDrawable = (GradientDrawable)mIconContainer.getBackground();
-        if (mUserGoal.getPrimaryCategory() != null){
-            gradientDrawable.setColor(Color.parseColor(mUserGoal.getPrimaryCategory().getColor()));
-        }
-        else{
-            //TODO another workaround
-            gradientDrawable.setColor(mAdapter.mContext.getResources().getColor(R.color.grow_primary));
-        }
+        gradientDrawable.setColor(Color.parseColor(mGoal.getColor(mAdapter.mContext)));
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
             mIconContainer.setBackground(gradientDrawable);
         }
@@ -74,19 +63,8 @@ class GoalHolder extends MainFeedViewHolder implements View.OnClickListener{
             mIconContainer.setBackgroundDrawable(gradientDrawable);
         }
 
-        loadIcon(mUserGoal.getGoal());
-    }
-
-    void bind(@NonNull Goal suggestion){
-        mSuggestion = suggestion;
-        mUserGoal = null;
-
-        loadIcon(mSuggestion);
-    }
-
-    private void loadIcon(@NonNull Goal goal){
-        goal.loadIconIntoView(mIcon);
-        mTitle.setText(goal.getTitle());
-
+        if (!mGoal.getIconUrl().isEmpty()){
+            ImageLoader.loadBitmap(mIcon, mGoal.getIconUrl());
+        }
     }
 }
