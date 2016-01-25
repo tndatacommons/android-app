@@ -230,6 +230,16 @@ public class FeedData{
             upcomingActions.add(userData.getAction(userAction));
         }
         mUpcomingActions = upcomingActions;
+
+        //Assign colors to suggestions
+        for (Goal suggestion:mSuggestions){
+            for (Integer categoryId:suggestion.getCategories()){
+                if (userData.getCategories().containsKey(categoryId)){
+                    suggestion.setColor(userData.getCategories().get(categoryId).getColor());
+                    break;
+                }
+            }
+        }
     }
 
 

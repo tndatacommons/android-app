@@ -1,5 +1,10 @@
 package org.tndata.android.compass.model;
 
+import android.content.Context;
+
+import org.tndata.android.compass.R;
+import org.tndata.android.compass.adapter.feed.DisplayableGoal;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +16,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserGoal extends UserContent implements Serializable{
+public class UserGoal extends UserContent implements Serializable, DisplayableGoal{
     private static final long serialVersionUID = 7109406686231550671L;
 
     //Values retrieved from the API
@@ -86,6 +91,14 @@ public class UserGoal extends UserContent implements Serializable{
     @Override
     public String getIconUrl(){
         return goal.getIconUrl();
+    }
+
+    @Override
+    public String getColor(Context context){
+        if (primaryCategory == null){
+            return String.format("#%06X", 0xFFFFFF & context.getResources().getColor(R.color.grow_primary));
+        }
+        return primaryCategory.getColor();
     }
 
     public int getPrimaryCategoryId(){

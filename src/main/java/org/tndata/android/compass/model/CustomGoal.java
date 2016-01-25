@@ -1,5 +1,10 @@
 package org.tndata.android.compass.model;
 
+import android.content.Context;
+
+import org.tndata.android.compass.R;
+import org.tndata.android.compass.adapter.feed.DisplayableGoal;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +15,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class CustomGoal extends TDCBase{
+public class CustomGoal extends TDCBase implements DisplayableGoal{
     private List<CustomAction> mActions;
 
 
@@ -30,5 +35,15 @@ public class CustomGoal extends TDCBase{
 
     public void removeAction(CustomAction action){
         mActions.remove(action);
+    }
+
+    @Override
+    public String getIconUrl(){
+        return "";
+    }
+
+    @Override
+    public String getColor(Context context){
+        return String.format("#%06X", 0xFFFFFF & context.getResources().getColor(R.color.grow_primary));
     }
 }

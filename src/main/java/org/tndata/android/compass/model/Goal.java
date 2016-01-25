@@ -1,7 +1,10 @@
 package org.tndata.android.compass.model;
 
+import android.content.Context;
 import android.widget.ImageView;
 
+import org.tndata.android.compass.R;
+import org.tndata.android.compass.adapter.feed.DisplayableGoal;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.io.Serializable;
@@ -14,12 +17,14 @@ import java.util.Set;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class Goal extends TDCBase implements Serializable{
+public class Goal extends TDCBase implements Serializable, DisplayableGoal{
     private static final long serialVersionUID = 7109406671934150671L;
 
     private String outcome = "";
     private Set<Integer> categories;
     private int behaviors_count = 0;
+
+    private String mColor;
 
 
     /*---------*
@@ -38,6 +43,10 @@ public class Goal extends TDCBase implements Serializable{
         this.behaviors_count = behaviorCount;
     }
 
+    public void setColor(String color){
+        mColor = color;
+    }
+
 
     /*---------*
      * GETTERS *
@@ -53,6 +62,13 @@ public class Goal extends TDCBase implements Serializable{
 
     public int getBehaviorCount(){
         return behaviors_count;
+    }
+
+    public String getColor(Context context){
+        if (mColor == null || mColor.isEmpty()){
+            return String.format("#%06X", 0xFFFFFF & context.getResources().getColor(R.color.grow_primary));
+        }
+        return mColor;
     }
 
 
