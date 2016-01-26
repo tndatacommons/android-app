@@ -2,6 +2,8 @@ package org.tndata.android.compass.model;
 
 import android.widget.ImageView;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.io.Serializable;
@@ -14,25 +16,25 @@ import java.util.Set;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class Behavior extends TDCBase implements Serializable{
+public class BehaviorContent extends TDCContent implements Serializable{
     private static final long serialVersionUID = 7747989797893422842L;
 
-    private String more_info = "";
-    private String html_more_info = "";
-    private String external_resource = "";
-    private String external_resource_name = "";
-
-    private Set<Integer> goals;
-    private int actions_count = 0;
+    public static final String TYPE = "behavior";
 
 
-    /*---------*
-     * SETTERS *
-     *---------*/
+    @SerializedName("more_info")
+    private String mMoreInfo = "";
+    @SerializedName("html_more_info")
+    private String mHtmlMoreInfo = "";
+    @SerializedName("external_resource")
+    private String mExternalResource = "";
+    @SerializedName("external_resource_name")
+    private String mExternalResourceName = "";
 
-    public void setGoals(Set<Integer> goals) {
-        this.goals = goals;
-    }
+    @SerializedName("goals")
+    private Set<Integer> mGoalIdSet;
+    @SerializedName("actions_count")
+    private int mActionCount = 0;
 
 
     /*---------*
@@ -40,29 +42,33 @@ public class Behavior extends TDCBase implements Serializable{
      *---------*/
 
     public String getMoreInfo(){
-        return more_info;
+        return mMoreInfo;
     }
 
     public String getHTMLMoreInfo(){
-        return html_more_info;
+        return mHtmlMoreInfo;
     }
 
     public String getExternalResource(){
-        return external_resource;
+        return mExternalResource;
     }
 
     public String getExternalResourceName(){
-        return external_resource_name;
+        return mExternalResourceName;
     }
 
-    public Set<Integer> getGoals(){
-        return goals;
+    public Set<Integer> getGoalIdSet(){
+        return mGoalIdSet;
     }
 
     public int getActionCount(){
-        return actions_count;
+        return mActionCount;
     }
 
+    @Override
+    protected String getType(){
+        return TYPE;
+    }
 
     /*---------*
      * UTILITY *
@@ -73,7 +79,7 @@ public class Behavior extends TDCBase implements Serializable{
      *
      * @param imageView: an ImageView
      */
-    public void loadIconIntoView(ImageView imageView) {
+    public void loadIconIntoView(ImageView imageView){
         String iconUrl = getIconUrl();
         if(iconUrl != null && !iconUrl.isEmpty()) {
             ImageLoader.loadBitmap(imageView, iconUrl, new ImageLoader.Options());
@@ -82,6 +88,6 @@ public class Behavior extends TDCBase implements Serializable{
 
     @Override
     public String toString(){
-        return "Behavior #" + getId() + ": " + getTitle();
+        return "BehaviorContent #" + getId() + ": " + getTitle();
     }
 }

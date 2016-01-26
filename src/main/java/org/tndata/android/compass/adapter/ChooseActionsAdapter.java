@@ -15,7 +15,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.filter.ActionFilter;
 import org.tndata.android.compass.model.ActionContent;
-import org.tndata.android.compass.model.Behavior;
+import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
@@ -40,7 +40,7 @@ public class ChooseActionsAdapter
     private CompassApplication mApplication;
     private ChooseActionsListener mListener;
     private RecyclerView mRecyclerView;
-    private Behavior mBehavior;
+    private BehaviorContent mBehavior;
     private ActionFilter mFilter;
 
     private CompassTagHandler mTagHandler;
@@ -62,7 +62,7 @@ public class ChooseActionsAdapter
      */
     public ChooseActionsAdapter(@NonNull Context context, @NonNull ChooseActionsListener listener,
                                 @NonNull CompassApplication app, @NonNull RecyclerView recyclerView,
-                                @NonNull Behavior behavior){
+                                @NonNull BehaviorContent behavior){
 
         super(new ArrayList<ActionContent>());
 

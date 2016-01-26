@@ -243,15 +243,15 @@ public final class ContentParser extends ParserMethods{
      * BEHAVIORS *
      *-----------*/
 
-    public static Behavior parseBehavior(String src){
-        return sGson.fromJson(src, Behavior.class);
+    public static BehaviorContent parseBehavior(String src){
+        return sGson.fromJson(src, BehaviorContent.class);
     }
 
     public static UserBehavior parseUserBehavior(String src){
         return sGson.fromJson(src, UserBehavior.class);
     }
 
-    public static List<Behavior> parseBehaviorArray(String src){
+    public static List<BehaviorContent> parseBehaviorArray(String src){
         JSONArray behaviorArray;
         try{
             behaviorArray = new JSONArray(src);
@@ -261,10 +261,10 @@ public final class ContentParser extends ParserMethods{
             return null;
         }
 
-        List<Behavior> behaviors = new ArrayList<>();
+        List<BehaviorContent> behaviors = new ArrayList<>();
         for (int i = 0; i < behaviorArray.length(); i++){
             try{
-                Behavior behavior = parseBehavior(behaviorArray.getString(i));
+                BehaviorContent behavior = parseBehavior(behaviorArray.getString(i));
                 if (behavior != null){
                     behaviors.add(behavior);
                 }
@@ -276,7 +276,7 @@ public final class ContentParser extends ParserMethods{
         return behaviors;
     }
 
-    public static List<Behavior> parseBehaviors(String src){
+    public static List<BehaviorContent> parseBehaviors(String src){
         try{
             return parseBehaviorArray(new JSONObject(src).getString("results"));
         }

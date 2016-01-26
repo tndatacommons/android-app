@@ -27,7 +27,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseActionsAdapter;
 import org.tndata.android.compass.model.ActionContent;
-import org.tndata.android.compass.model.Behavior;
+import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UserAction;
@@ -79,7 +79,7 @@ public class ChooseActionsActivity
 
     private Category mCategory;
     private Goal mGoal;
-    private Behavior mBehavior;
+    private BehaviorContent mBehavior;
     private ChooseActionsAdapter mAdapter;
     private View mHeaderView;
 
@@ -96,7 +96,7 @@ public class ChooseActionsActivity
         mApplication = (CompassApplication)getApplication();
         mCategory = (Category)getIntent().getSerializableExtra(CATEGORY_KEY);
         mGoal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
-        mBehavior = (Behavior)getIntent().getSerializableExtra(BEHAVIOR_KEY);
+        mBehavior = (BehaviorContent)getIntent().getSerializableExtra(BEHAVIOR_KEY);
 
         mToolbar = (Toolbar)findViewById(R.id.choose_actions_toolbar);
         mToolbar.setTitle(mBehavior.getTitle());

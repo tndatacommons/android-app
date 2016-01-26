@@ -3,7 +3,7 @@ package org.tndata.android.compass.filter;
 import android.widget.Filter;
 
 import org.tndata.android.compass.adapter.ChooseBehaviorsAdapter;
-import org.tndata.android.compass.model.Behavior;
+import org.tndata.android.compass.model.BehaviorContent;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class BehaviorFilter extends Filter{
     private ChooseBehaviorsAdapter mAdapter;
-    private Collection<Behavior> mList;
+    private Collection<BehaviorContent> mList;
 
 
     /**
@@ -27,7 +27,7 @@ public class BehaviorFilter extends Filter{
      * @param adapter the adapter to be filtered.
      * @param list the original list of the adapter.
      */
-    public BehaviorFilter(ChooseBehaviorsAdapter adapter, Collection<Behavior> list){
+    public BehaviorFilter(ChooseBehaviorsAdapter adapter, Collection<BehaviorContent> list){
         mAdapter = adapter;
         mList = list;
     }
@@ -36,10 +36,10 @@ public class BehaviorFilter extends Filter{
     protected FilterResults performFiltering(CharSequence constraint){
         //The constraint is split into words
         String constraintArray[] = constraint.toString().toLowerCase().split(" ");
-        List<Behavior> output = new ArrayList<>();
+        List<BehaviorContent> output = new ArrayList<>();
         int matchCount;
         //For each goal
-        for (Behavior behavior:mList){
+        for (BehaviorContent behavior:mList){
             //The match count is reset
             matchCount = 0;
             //For each item in the constraint array
@@ -74,14 +74,14 @@ public class BehaviorFilter extends Filter{
      * @version 1.0.0
      */
     private class BehaviorFilterResults extends FilterResults{
-        private final List<Behavior> mOutput;
+        private final List<BehaviorContent> mOutput;
 
         /**
          * Constructor.
          *
          * @param output the result of the filtering.
          */
-        BehaviorFilterResults(List<Behavior> output){
+        BehaviorFilterResults(List<BehaviorContent> output){
             mOutput = output;
         }
     }

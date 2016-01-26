@@ -318,7 +318,7 @@ public class UserData{
      * @param behavior the behavior whose original copy needs to be fetched.
      * @return the original copy of such behavior.
      */
-    public UserBehavior getBehavior(Behavior behavior){
+    public UserBehavior getBehavior(BehaviorContent behavior){
         return behaviors.get(behavior.getId());
     }
 
@@ -363,7 +363,7 @@ public class UserData{
      *
      * @param behavior the Behavior instance to remove.
      */
-    public void removeBehavior(Behavior behavior){
+    public void removeBehavior(BehaviorContent behavior){
         UserBehavior removedBehavior = behaviors.remove(behavior.getId());
 
         if (removedBehavior != null){

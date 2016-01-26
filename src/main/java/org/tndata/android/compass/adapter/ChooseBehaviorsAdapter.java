@@ -19,7 +19,7 @@ import android.widget.TextView;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.filter.BehaviorFilter;
-import org.tndata.android.compass.model.Behavior;
+import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UserGoal;
@@ -40,7 +40,7 @@ import java.util.List;
  * @version 1.0.0
  */
 public class ChooseBehaviorsAdapter
-        extends ParallaxRecyclerAdapter<Behavior>
+        extends ParallaxRecyclerAdapter<BehaviorContent>
         implements ParallaxRecyclerAdapter.OnClickEvent{
 
     private Context mContext;
@@ -52,7 +52,7 @@ public class ChooseBehaviorsAdapter
 
     private CompassTagHandler mTagHandler;
 
-    private List<Behavior> mBehaviors;
+    private List<BehaviorContent> mBehaviors;
     private int mExpandedBehavior;
 
     private TextView mAddGoalCurrentButton;
@@ -75,7 +75,7 @@ public class ChooseBehaviorsAdapter
     public ChooseBehaviorsAdapter(@NonNull Context context, @NonNull ChooseBehaviorsListener listener,
                                   @NonNull CompassApplication app, @NonNull RecyclerView recyclerView,
                                   @NonNull Category category, @NonNull Goal goal, boolean isGoalAdded){
-        super(new ArrayList<Behavior>());
+        super(new ArrayList<BehaviorContent>());
 
         //Assign the references
         mContext = context;
@@ -101,7 +101,7 @@ public class ChooseBehaviorsAdapter
         }
 
         //Create and set the headers
-        Behavior headerBehavior = new Behavior();
+        BehaviorContent headerBehavior = new BehaviorContent();
         headerBehavior.setDescription(mGoal.getDescription());
         headerBehavior.setId(0);
         mBehaviors.add(headerBehavior);
@@ -156,10 +156,10 @@ public class ChooseBehaviorsAdapter
      *
      * @param behaviors the list of behaviors to be set.
      */
-    public void setBehaviors(Collection<Behavior> behaviors){
+    public void setBehaviors(Collection<BehaviorContent> behaviors){
         mBehaviors.clear();
 
-        Behavior headerBehavior = new Behavior();
+        BehaviorContent headerBehavior = new BehaviorContent();
         headerBehavior.setDescription(mGoal.getDescription());
         headerBehavior.setId(0);
         mBehaviors.add(headerBehavior);
@@ -189,7 +189,7 @@ public class ChooseBehaviorsAdapter
      * @param holder the view holder containing the behavior.
      */
     private void selectBehaviorClicked(BehaviorViewHolder holder){
-        Behavior behavior = mBehaviors.get(holder.getAdapterPosition()-1);
+        BehaviorContent behavior = mBehaviors.get(holder.getAdapterPosition()-1);
         boolean isBehaviorSelected = mApplication.getBehaviors().containsKey(behavior.getId());
 
         if (mIsEditable){
@@ -282,7 +282,7 @@ public class ChooseBehaviorsAdapter
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
             BehaviorViewHolder holder = (BehaviorViewHolder)rawHolder;
-            Behavior behavior = mBehaviors.get(position);
+            BehaviorContent behavior = mBehaviors.get(position);
 
             boolean isBehaviorSelected = mApplication.getBehaviors().containsKey(behavior.getId());
 
@@ -463,35 +463,35 @@ public class ChooseBehaviorsAdapter
          *
          * @param behavior the containing behavior.
          */
-        void addBehavior(Behavior behavior);
+        void addBehavior(BehaviorContent behavior);
 
         /**
          * Called when the delete behavior button is clicked.
          *
          * @param behavior the containing behavior.
          */
-        void deleteBehavior(Behavior behavior);
+        void deleteBehavior(BehaviorContent behavior);
 
         /**
          * Called when the select actions button is clicked.
          *
          * @param behavior the containing behavior.
          */
-        void selectActions(Behavior behavior);
+        void selectActions(BehaviorContent behavior);
 
         /**
          * Called when the more info button is clicked.
          *
          * @param behavior the containing behavior.
          */
-        void moreInfo(Behavior behavior);
+        void moreInfo(BehaviorContent behavior);
 
         /**
          * Called when the do it now button is clicked.
          *
          * @param behavior the containing behavior.
          */
-        void doItNow(Behavior behavior);
+        void doItNow(BehaviorContent behavior);
 
         /**
          * Called when the RecyclerView scrolls.

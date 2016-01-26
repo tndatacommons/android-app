@@ -2,7 +2,7 @@ package com.tndata.android.compass.tests.model;
 
 import org.junit.Test;
 import org.tndata.android.compass.model.ActionContent;
-import org.tndata.android.compass.model.Behavior;
+import org.tndata.android.compass.model.BehaviorContent;
 
 import java.lang.reflect.Field;
 
@@ -183,11 +183,11 @@ public class ActionTest {
     @Test
     public void action_getter_behavior_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
         ActionContent action = new ActionContent();
-        Behavior value = new Behavior();
+        BehaviorContent value = new BehaviorContent();
         final Field field = action.getClass().getDeclaredField("behavior");
         field.setAccessible(true);
         field.set(action, value);
-        final Behavior result = action.getBehaviorId();
+        final BehaviorContent result = action.getBehaviorId();
         assertEquals(value, result);
     }
 

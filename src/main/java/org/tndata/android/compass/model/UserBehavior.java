@@ -17,7 +17,7 @@ public class UserBehavior extends UserContent implements Serializable, ParserMod
     private static final long serialVersionUID = 774798265423822842L;
 
     //Values retrieved from the API
-    private Behavior behavior;
+    private BehaviorContent behavior;
 
     private Progress progress;
 
@@ -29,7 +29,7 @@ public class UserBehavior extends UserContent implements Serializable, ParserMod
     private List<UserAction> userActions = new ArrayList<>();
 
 
-    public UserBehavior(Behavior behavior){
+    public UserBehavior(BehaviorContent behavior){
         this.behavior = behavior;
     }
 
@@ -55,7 +55,7 @@ public class UserBehavior extends UserContent implements Serializable, ParserMod
      * GETTERS *
      *---------*/
 
-    public Behavior getBehavior(){
+    public BehaviorContent getBehavior(){
         return behavior;
     }
 

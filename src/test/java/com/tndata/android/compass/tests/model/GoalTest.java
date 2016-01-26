@@ -1,7 +1,7 @@
 package com.tndata.android.compass.tests.model;
 
 import org.junit.Test;
-import org.tndata.android.compass.model.Behavior;
+import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 
@@ -119,7 +119,7 @@ public class GoalTest {
 
         assertEquals(0, goal.getBehaviors().size());
 
-        Behavior behavior1 = new Behavior();
+        BehaviorContent behavior1 = new BehaviorContent();
         behavior1.setId(100);
         goal.addBehavior(behavior1);
 
@@ -136,11 +136,11 @@ public class GoalTest {
 
         assertEquals(0, goal.getBehaviors().size());
 
-        Behavior behavior1 = new Behavior();
+        BehaviorContent behavior1 = new BehaviorContent();
         behavior1.setId(100);
         goal.addBehavior(behavior1);
 
-        Behavior behavior2 = new Behavior();
+        BehaviorContent behavior2 = new BehaviorContent();
         behavior2.setId(200);
         goal.addBehavior(behavior2);
 

@@ -2,7 +2,7 @@ package com.tndata.android.compass.tests.model;
 
 import org.junit.Test;
 import org.tndata.android.compass.model.ActionContent;
-import org.tndata.android.compass.model.Behavior;
+import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UserData;
@@ -149,8 +149,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Behavior> behaviors = new ArrayList<>();
-        Behavior behaviorOne = new Behavior();
+        ArrayList<BehaviorContent> behaviors = new ArrayList<>();
+        BehaviorContent behaviorOne = new BehaviorContent();
         behaviorOne.setId(1);
         behaviors.add(behaviorOne);
 
@@ -166,8 +166,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Behavior> behaviors = new ArrayList<>();
-        Behavior behaviorOne = new Behavior();
+        ArrayList<BehaviorContent> behaviors = new ArrayList<>();
+        BehaviorContent behaviorOne = new BehaviorContent();
         behaviorOne.setId(1);
         behaviors.add(behaviorOne);
 
@@ -184,10 +184,10 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Behavior> behaviors = new ArrayList<>();
-        Behavior behaviorOne = new Behavior();
+        ArrayList<BehaviorContent> behaviors = new ArrayList<>();
+        BehaviorContent behaviorOne = new BehaviorContent();
         behaviorOne.setId(1);
-        Behavior behaviorTwo = new Behavior();
+        BehaviorContent behaviorTwo = new BehaviorContent();
         behaviorTwo.setId(2);
         behaviors.add(behaviorTwo);
 
@@ -214,8 +214,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Behavior> behaviors = new ArrayList<>();
-        Behavior behaviorOne = new Behavior();
+        ArrayList<BehaviorContent> behaviors = new ArrayList<>();
+        BehaviorContent behaviorOne = new BehaviorContent();
         behaviorOne.setId(1);
 
         userData.addBehavior(behaviorOne);

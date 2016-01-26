@@ -198,7 +198,7 @@ public abstract class API{
         return BASE_URL + "users/behaviors/";
     }
 
-    public static JSONObject getPostBehaviorBody(@NonNull Behavior behavior, @NonNull Goal goal,
+    public static JSONObject getPostBehaviorBody(@NonNull BehaviorContent behavior, @NonNull Goal goal,
                                                  @NonNull Category category){
         JSONObject postBehaviorBody = new JSONObject();
         try{
@@ -218,7 +218,7 @@ public abstract class API{
 
 
     //Actions
-    public static String getActionsUrl(@NonNull Behavior behavior){
+    public static String getActionsUrl(@NonNull BehaviorContent behavior){
         return BASE_URL + "actions/?behavior=" + behavior.getId();
     }
 
@@ -241,7 +241,7 @@ public abstract class API{
         return BASE_URL + "users/actions/";
     }
 
-    public static JSONObject getPostActionBody(@NonNull ActionContent action, @NonNull Behavior behavior,
+    public static JSONObject getPostActionBody(@NonNull ActionContent action, @NonNull BehaviorContent behavior,
                                                @NonNull Goal goal, @NonNull Category category){
         JSONObject postActionBody = new JSONObject();
         try{

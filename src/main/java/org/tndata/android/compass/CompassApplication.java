@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
 import com.crashlytics.android.Crashlytics;
 
 import org.tndata.android.compass.model.ActionContent;
-import org.tndata.android.compass.model.Behavior;
+import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.User;
@@ -113,7 +113,7 @@ public class CompassApplication extends Application{
         return mUserData.getBehaviors();
     }
 
-    public void removeBehavior(Behavior behavior) {
+    public void removeBehavior(BehaviorContent behavior) {
         mUserData.removeBehavior(behavior);
         mUserData.logSelectedData("AFTER CompassApplication.removeBehavior: ", false);
     }

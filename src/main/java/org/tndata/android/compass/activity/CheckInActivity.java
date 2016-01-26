@@ -14,7 +14,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.CheckInPagerAdapter;
 import org.tndata.android.compass.fragment.CheckInFeedbackFragment;
 import org.tndata.android.compass.fragment.CheckInRewardFragment;
-import org.tndata.android.compass.model.Behavior;
+import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.UserAction;
@@ -141,7 +141,7 @@ public class CheckInActivity
             }
         }
         else if (mBehaviorRequestSet.contains(requestCode)){
-            Behavior behavior = ContentParser.parseBehavior(result);
+            BehaviorContent behavior = ContentParser.parseBehavior(result);
             for (UserAction action:mActions){
                 if (action.getAction().getBehaviorId() == behavior.getId()){
                     action.setBehavior(new UserBehavior(behavior));
