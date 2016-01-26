@@ -20,7 +20,7 @@ import android.widget.Toast;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.filter.GoalFilter;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.ui.button.TransitionButton;
@@ -58,7 +58,7 @@ public class ChooseGoalsAdapter
     private ChooseGoalsListener mListener;
     private CompassApplication mApplication;
     private RecyclerView mRecyclerView;
-    private Category mCategory;
+    private CategoryContent mCategory;
     private List<GoalContent> mGoals;
     private GoalFilter mFilter;
 
@@ -76,7 +76,7 @@ public class ChooseGoalsAdapter
      */
     public ChooseGoalsAdapter(@NonNull Context context, @NonNull ChooseGoalsListener listener,
                               @NonNull CompassApplication app, @NonNull RecyclerView recyclerView,
-                              @NonNull Category category){
+                              @NonNull CategoryContent category){
         super(new ArrayList<GoalContent>());
 
         mContext = context;

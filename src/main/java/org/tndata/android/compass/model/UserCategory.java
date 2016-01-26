@@ -14,7 +14,7 @@ import java.util.List;
 public class UserCategory extends UserContent implements Serializable{
     private static final long serialVersionUID = 1751646542285854670L;
 
-    private Category category;
+    private CategoryContent category;
 
     private List<UserGoal> userGoals = new ArrayList<>();
 
@@ -23,7 +23,7 @@ public class UserCategory extends UserContent implements Serializable{
      * SETTERS *
      *---------*/
 
-    public void setCategory(Category category){
+    public void setCategory(CategoryContent category){
         this.category = category;
     }
 
@@ -36,7 +36,7 @@ public class UserCategory extends UserContent implements Serializable{
      * GETTERS *
      *---------*/
 
-    public Category getCategory(){
+    public CategoryContent getCategory(){
         return category;
     }
 

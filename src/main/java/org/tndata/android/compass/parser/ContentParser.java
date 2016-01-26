@@ -34,8 +34,8 @@ public final class ContentParser extends ParserMethods{
      * @param src the JSON string from which the category will be created.
      * @return a category.
      */
-    public static Category parseCategory(String src){
-        return sGson.fromJson(src, Category.class);
+    public static CategoryContent parseCategory(String src){
+        return sGson.fromJson(src, CategoryContent.class);
     }
 
     /**
@@ -54,7 +54,7 @@ public final class ContentParser extends ParserMethods{
      * @param src a JSON string containing a list of categories.
      * @return a map of categories.
      */
-    public static List<Category> parseCategoryArray(String src){
+    public static List<CategoryContent> parseCategoryArray(String src){
         JSONArray categoriesArray;
         try{
             categoriesArray = new JSONArray(src);
@@ -64,10 +64,10 @@ public final class ContentParser extends ParserMethods{
             return null;
         }
 
-        List<Category> categories = new ArrayList<>();
+        List<CategoryContent> categories = new ArrayList<>();
         for (int i = 0; i < categoriesArray.length(); i++){
             try{
-                Category category = parseCategory(categoriesArray.getString(i));
+                CategoryContent category = parseCategory(categoriesArray.getString(i));
                 if (category != null){
                     categories.add(category);
                 }
@@ -82,7 +82,7 @@ public final class ContentParser extends ParserMethods{
         return categories;
     }
 
-    public static List<Category> parseCategories(String src){
+    public static List<CategoryContent> parseCategories(String src){
         try{
             return parseCategoryArray(new JSONObject(src).getString("results"));
         }

@@ -9,7 +9,7 @@ import com.crashlytics.android.Crashlytics;
 
 import org.tndata.android.compass.model.ActionContent;
 import org.tndata.android.compass.model.BehaviorContent;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserAction;
@@ -34,7 +34,7 @@ public class CompassApplication extends Application{
     private String mToken;
     private User mUser; // The logged-in user
     private UserData mUserData = new UserData(); // The user's selected content.
-    private List<Category> mPublicCategories;
+    private List<CategoryContent> mPublicCategories;
 
 
     public void setToken(String token) {
@@ -70,11 +70,11 @@ public class CompassApplication extends Application{
         mUserData = userData;
     }
 
-    public void setPublicCategories(List<Category> publicCategories){
+    public void setPublicCategories(List<CategoryContent> publicCategories){
         mPublicCategories = publicCategories;
     }
 
-    public List<Category> getPublicCategories(){
+    public List<CategoryContent> getPublicCategories(){
         return mPublicCategories;
     }
 
@@ -91,7 +91,7 @@ public class CompassApplication extends Application{
         mUserData.addCategory(category);
     }
 
-    public List<UserGoal> getCategoryGoals(Category category) {
+    public List<UserGoal> getCategoryGoals(CategoryContent category) {
         return mUserData.getCategoryGoals(category);
     }
 

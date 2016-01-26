@@ -2,7 +2,7 @@ package org.tndata.android.compass.adapter.feed;
 
 import android.util.Log;
 
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserAction;
@@ -113,8 +113,8 @@ class DataHandler{
         return removed;
     }
 
-    Category getActionCategory(UserAction action){
-        Category category = null;
+    CategoryContent getActionCategory(UserAction action){
+        CategoryContent category = null;
         if (action.getPrimaryGoal() != null){
             //category = action.getPrimaryGoal().getPrimaryCategory();
             if (category == null){

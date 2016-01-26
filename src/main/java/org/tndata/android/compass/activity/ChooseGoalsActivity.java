@@ -23,7 +23,7 @@ import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseGoalsAdapter;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.ContentParser;
@@ -71,7 +71,7 @@ public class ChooseGoalsActivity
 
     private TextView mErrorTextView;
     private View mHeaderView;
-    private Category mCategory = null;
+    private CategoryContent mCategory = null;
 
     //Request codes
     private int mGetGoalsRequestCode;
@@ -88,7 +88,7 @@ public class ChooseGoalsActivity
 
         mApplication = (CompassApplication)getApplication();
 
-        mCategory = (Category)getIntent().getSerializableExtra(CATEGORY_KEY);
+        mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
 
         mToolbar = (Toolbar)findViewById(R.id.choose_goals_toolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);

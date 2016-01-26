@@ -27,7 +27,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseBehaviorsAdapter;
 import org.tndata.android.compass.model.BehaviorContent;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserGoal;
@@ -80,7 +80,7 @@ public class ChooseBehaviorsActivity
     private MenuItem mSearchItem;
     private SearchView mSearchView;
 
-    private Category mCategory;
+    private CategoryContent mCategory;
     private GoalContent mGoal;
     private ChooseBehaviorsAdapter mAdapter;
     private View mHeaderView;
@@ -126,7 +126,7 @@ public class ChooseBehaviorsActivity
         }
         else{
             mToolbar.setTitle(mGoal.getTitle());
-            mCategory = (Category)getIntent().getSerializableExtra(CATEGORY_KEY);
+            mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
             setAdapter();
             fetchBehaviors();
         }

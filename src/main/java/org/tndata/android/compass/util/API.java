@@ -143,7 +143,7 @@ public abstract class API{
         return BASE_URL + "users/categories/";
     }
 
-    public static JSONObject getPostCategoryBody(@NonNull Category category){
+    public static JSONObject getPostCategoryBody(@NonNull CategoryContent category){
         JSONObject postCategoriesBody = new JSONObject();
         try{
             postCategoriesBody.put("category", category.getId());
@@ -156,7 +156,7 @@ public abstract class API{
 
 
     //Goals
-    public static String getGoalsUrl(@NonNull Category category){
+    public static String getGoalsUrl(@NonNull CategoryContent category){
         return BASE_URL + "goals/?category=" + category.getId();
     }
 
@@ -168,7 +168,7 @@ public abstract class API{
         return BASE_URL + "users/goals/";
     }
 
-    public static JSONObject getPostGoalBody(@NonNull GoalContent goal, @NonNull Category primaryCategory){
+    public static JSONObject getPostGoalBody(@NonNull GoalContent goal, @NonNull CategoryContent primaryCategory){
         JSONObject postGoalBody = new JSONObject();
         try{
             postGoalBody.put("goal", goal.getId())
@@ -199,7 +199,7 @@ public abstract class API{
     }
 
     public static JSONObject getPostBehaviorBody(@NonNull BehaviorContent behavior, @NonNull GoalContent goal,
-                                                 @NonNull Category category){
+                                                 @NonNull CategoryContent category){
         JSONObject postBehaviorBody = new JSONObject();
         try{
             postBehaviorBody.put("behavior", behavior.getId())
@@ -242,7 +242,7 @@ public abstract class API{
     }
 
     public static JSONObject getPostActionBody(@NonNull ActionContent action, @NonNull BehaviorContent behavior,
-                                               @NonNull GoalContent goal, @NonNull Category category){
+                                               @NonNull GoalContent goal, @NonNull CategoryContent category){
         JSONObject postActionBody = new JSONObject();
         try{
             postActionBody.put("action", action.getId())

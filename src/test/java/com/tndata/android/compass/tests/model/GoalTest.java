@@ -2,7 +2,7 @@ package com.tndata.android.compass.tests.model;
 
 import org.junit.Test;
 import org.tndata.android.compass.model.BehaviorContent;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 
 import java.lang.reflect.Field;
@@ -163,7 +163,7 @@ public class GoalTest {
 
         assertEquals(0, goal.getCategoryIdSet().size());
 
-        Category category1 = new Category();
+        CategoryContent category1 = new CategoryContent();
         category1.setId(100);
         goal.addCategory(category1);
 
@@ -180,11 +180,11 @@ public class GoalTest {
 
         assertEquals(0, goal.getCategoryIdSet().size());
 
-        Category category1 = new Category();
+        CategoryContent category1 = new CategoryContent();
         category1.setId(100);
         goal.addCategory(category1);
 
-        Category category2 = new Category();
+        CategoryContent category2 = new CategoryContent();
         category2.setId(200);
         goal.addCategory(category2);
 

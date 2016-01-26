@@ -98,7 +98,7 @@ public class UserData{
      * @param category the category whose original copy needs to be fetched.
      * @return the original copy of such category.
      */
-    public UserCategory getCategory(Category category){
+    public UserCategory getCategory(CategoryContent category){
         return categories.get(category.getId());
     }
 
@@ -115,7 +115,7 @@ public class UserData{
      *
      * @return a List of Goal objects.
      */
-    public List<UserGoal> getCategoryGoals(Category category){
+    public List<UserGoal> getCategoryGoals(CategoryContent category){
         return getCategory(category).getGoals();
     }
 
@@ -150,7 +150,7 @@ public class UserData{
      *
      * @param category the category to remove
      */
-    public void removeCategory(Category category){
+    public void removeCategory(CategoryContent category){
         /*UserCategory removedCategory = categories.remove(category.getId());
 
         if (removedCategory != null){

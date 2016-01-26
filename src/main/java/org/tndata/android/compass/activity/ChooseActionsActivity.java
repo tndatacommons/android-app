@@ -28,7 +28,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseActionsAdapter;
 import org.tndata.android.compass.model.ActionContent;
 import org.tndata.android.compass.model.BehaviorContent;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.parser.ContentParser;
@@ -77,7 +77,7 @@ public class ChooseActionsActivity
     private MenuItem mSearchItem;
     private SearchView mSearchView;
 
-    private Category mCategory;
+    private CategoryContent mCategory;
     private GoalContent mGoal;
     private BehaviorContent mBehavior;
     private ChooseActionsAdapter mAdapter;
@@ -94,7 +94,7 @@ public class ChooseActionsActivity
         setContentView(R.layout.activity_choose_actions);
 
         mApplication = (CompassApplication)getApplication();
-        mCategory = (Category)getIntent().getSerializableExtra(CATEGORY_KEY);
+        mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
         mGoal = (GoalContent)getIntent().getSerializableExtra(GOAL_KEY);
         mBehavior = (BehaviorContent)getIntent().getSerializableExtra(BEHAVIOR_KEY);
 

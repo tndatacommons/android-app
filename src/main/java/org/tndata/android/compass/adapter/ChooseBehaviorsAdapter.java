@@ -20,7 +20,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.filter.BehaviorFilter;
 import org.tndata.android.compass.model.BehaviorContent;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
@@ -74,7 +74,7 @@ public class ChooseBehaviorsAdapter
      */
     public ChooseBehaviorsAdapter(@NonNull Context context, @NonNull ChooseBehaviorsListener listener,
                                   @NonNull CompassApplication app, @NonNull RecyclerView recyclerView,
-                                  @NonNull Category category, @NonNull GoalContent goal, boolean isGoalAdded){
+                                  @NonNull CategoryContent category, @NonNull GoalContent goal, boolean isGoalAdded){
         super(new ArrayList<BehaviorContent>());
 
         //Assign the references
@@ -118,7 +118,7 @@ public class ChooseBehaviorsAdapter
      * @param category the parent category of the goal whose behaviors are to be listed.
      */
     @SuppressWarnings("deprecation")
-    private void setHeader(Category category){
+    private void setHeader(CategoryContent category){
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View header = inflater.inflate(R.layout.header_choose_behaviors, mRecyclerView, false);
 

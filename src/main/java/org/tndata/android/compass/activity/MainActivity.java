@@ -38,7 +38,7 @@ import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.SearchAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapterListener;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.UserAction;
@@ -123,7 +123,7 @@ public class MainActivity
     private FloatingActionMenu mMenu;
 
     //The selected category from the FAB
-    private Category mSelectedCategory;
+    private CategoryContent mSelectedCategory;
 
     private boolean mSuggestionDismissed;
 
@@ -604,7 +604,7 @@ public class MainActivity
 
     @Override
     public void onSuggestionOpened(GoalContent goal){
-        Category category = null;
+        CategoryContent category = null;
         for (Integer categoryId:goal.getCategoryIdSet()){
             if (mApplication.getUserData().getCategories().containsKey(categoryId)){
                 category = mApplication.getCategories().get(categoryId).getCategory();

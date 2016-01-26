@@ -11,7 +11,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseInterestsAdapter;
 import org.tndata.android.compass.fragment.ChooseInterestsFragment;
 import org.tndata.android.compass.fragment.InstrumentFragment;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.Parser;
@@ -101,7 +101,7 @@ public class OnBoardingActivity
     }
 
     @Override
-    public void onCategoriesSelected(List<Category> selection){
+    public void onCategoriesSelected(List<CategoryContent> selection){
         //Process and log the selection, and save it
         //int[] categoryIds = new int[selection.size()];
         for (int i = 0; i < selection.size(); i++){

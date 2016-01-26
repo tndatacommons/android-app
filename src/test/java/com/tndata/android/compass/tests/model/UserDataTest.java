@@ -3,7 +3,7 @@ package com.tndata.android.compass.tests.model;
 import org.junit.Test;
 import org.tndata.android.compass.model.ActionContent;
 import org.tndata.android.compass.model.BehaviorContent;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserData;
 
@@ -329,8 +329,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Category> category = new ArrayList<>();
-        Category categoryOne = new Category();
+        ArrayList<CategoryContent> category = new ArrayList<>();
+        CategoryContent categoryOne = new CategoryContent();
         categoryOne.setId(1);
         category.add(categoryOne);
 
@@ -346,8 +346,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Category> category = new ArrayList<>();
-        Category categoryOne = new Category();
+        ArrayList<CategoryContent> category = new ArrayList<>();
+        CategoryContent categoryOne = new CategoryContent();
         categoryOne.setId(1);
         category.add(categoryOne);
 
@@ -364,10 +364,10 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Category> category = new ArrayList<>();
-        Category categoryOne = new Category();
+        ArrayList<CategoryContent> category = new ArrayList<>();
+        CategoryContent categoryOne = new CategoryContent();
         categoryOne.setId(1);
-        Category categoryTwo = new Category();
+        CategoryContent categoryTwo = new CategoryContent();
         categoryTwo.setId(2);
         category.add(categoryTwo);
 
@@ -394,8 +394,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Category> category = new ArrayList<>();
-        Category categoryOne = new Category();
+        ArrayList<CategoryContent> category = new ArrayList<>();
+        CategoryContent categoryOne = new CategoryContent();
         categoryOne.setId(1);
 
         userData.addCategory(categoryOne);

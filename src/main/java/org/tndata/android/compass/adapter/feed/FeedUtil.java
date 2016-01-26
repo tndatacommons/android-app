@@ -7,7 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.ui.CompassPopupMenu;
@@ -42,7 +42,7 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
         //The category of the selected action needs to be retrieved to determine which menu
         //  should be inflated.
         UserAction userAction;
-        Category category;
+        CategoryContent category;
         if (position == CardTypes.getUpNextPosition()){
             userAction = mAdapter.getDataHandler().getUpNext();
         }

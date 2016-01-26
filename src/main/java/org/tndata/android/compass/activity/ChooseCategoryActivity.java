@@ -10,7 +10,7 @@ import android.support.v7.widget.Toolbar;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.CategoryContent;
 
 
 /**
@@ -48,7 +48,7 @@ public class ChooseCategoryActivity
     }
 
     @Override
-    public void onCategorySelected(Category category){
+    public void onCategorySelected(CategoryContent category){
         Intent chooseGoals = new Intent(this, ChooseGoalsActivity.class)
                 .putExtra(ChooseGoalsActivity.CATEGORY_KEY, category);
         startActivity(chooseGoals);
