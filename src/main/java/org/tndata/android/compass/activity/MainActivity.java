@@ -39,7 +39,7 @@ import org.tndata.android.compass.adapter.SearchAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapterListener;
 import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
@@ -603,9 +603,9 @@ public class MainActivity
     }
 
     @Override
-    public void onSuggestionOpened(Goal goal){
+    public void onSuggestionOpened(GoalContent goal){
         Category category = null;
-        for (Integer categoryId:goal.getCategories()){
+        for (Integer categoryId:goal.getCategoryIdSet()){
             if (mApplication.getUserData().getCategories().containsKey(categoryId)){
                 category = mApplication.getCategories().get(categoryId).getCategory();
             }
@@ -624,7 +624,7 @@ public class MainActivity
     }
 
     @Override
-    public void onFeedbackSelected(Goal goal){
+    public void onFeedbackSelected(GoalContent goal){
         if (goal != null){
             Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
                     .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal);

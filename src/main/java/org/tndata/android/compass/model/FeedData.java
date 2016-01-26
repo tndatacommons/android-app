@@ -28,7 +28,7 @@ public class FeedData{
     @SerializedName("upcoming_actions")
     private List<UserAction> mUpcomingActions;
     @SerializedName("suggestions")
-    private List<Goal> mSuggestions;
+    private List<GoalContent> mSuggestions;
 
 
     /**
@@ -202,7 +202,7 @@ public class FeedData{
      *
      * @param suggestions the list of suggerstions.
      */
-    public void setSuggestions(List<Goal> suggestions){
+    public void setSuggestions(List<GoalContent> suggestions){
         mSuggestions = suggestions;
     }
 
@@ -211,7 +211,7 @@ public class FeedData{
      *
      * @return the list of suggestions.
      */
-    public List<Goal> getSuggestions(){
+    public List<GoalContent> getSuggestions(){
         return mSuggestions;
     }
 
@@ -232,8 +232,8 @@ public class FeedData{
         mUpcomingActions = upcomingActions;
 
         //Assign colors to suggestions
-        for (Goal suggestion:mSuggestions){
-            for (Integer categoryId:suggestion.getCategories()){
+        for (GoalContent suggestion:mSuggestions){
+            for (Integer categoryId:suggestion.getCategoryIdSet()){
                 if (userData.getCategories().containsKey(categoryId)){
                     suggestion.setColor(userData.getCategories().get(categoryId).getColor());
                     break;

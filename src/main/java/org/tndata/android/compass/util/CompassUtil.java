@@ -14,7 +14,7 @@ import android.view.WindowManager;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserCategory;
@@ -234,7 +234,7 @@ public final class CompassUtil{
             return UserPlace.class;
         }
         else if (src.contains("goal")){
-            return Goal.class;
+            return GoalContent.class;
         }
         else{
             return null;

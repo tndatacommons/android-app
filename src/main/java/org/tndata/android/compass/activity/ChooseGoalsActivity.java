@@ -24,7 +24,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseGoalsAdapter;
 import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
@@ -77,8 +77,8 @@ public class ChooseGoalsActivity
     private int mGetGoalsRequestCode;
     //The maps are necessary if the request fails, since the goal whose op
     //  failed needs to be indexed
-    private Map<Integer, Goal> mAddGoalRequestCodeMap;
-    private Map<Integer, Goal> mDeleteGoalRequestCodeMap;
+    private Map<Integer, GoalContent> mAddGoalRequestCodeMap;
+    private Map<Integer, GoalContent> mDeleteGoalRequestCodeMap;
 
 
     @Override
@@ -188,7 +188,7 @@ public class ChooseGoalsActivity
     }
 
     @Override
-    public void onGoalAddClicked(Goal goal){
+    public void onGoalAddClicked(GoalContent goal){
         mApplication.getUserData().addGoal(goal.getId());
         int code = NetworkRequest.post(this, this, API.getPostGoalUrl(), mApplication.getToken(),
                 API.getPostGoalBody(goal, mCategory));
@@ -204,7 +204,7 @@ public class ChooseGoalsActivity
     }
 
     @Override
-    public void onGoalDeleteClicked(Goal goal){
+    public void onGoalDeleteClicked(GoalContent goal){
         UserGoal userGoal = mApplication.getUserData().getGoal(goal);
         if (userGoal != null){
             Log.d(TAG, "Deleting Goal: " + userGoal.toString());
@@ -233,7 +233,7 @@ public class ChooseGoalsActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetGoalsRequestCode){
-            List<Goal> goals = ContentParser.parseGoals(result);
+            List<GoalContent> goals = ContentParser.parseGoals(result);
             if (goals != null && !goals.isEmpty()){
                 mAdapter.addGoals(goals);
             }

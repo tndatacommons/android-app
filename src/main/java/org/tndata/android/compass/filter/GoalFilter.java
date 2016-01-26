@@ -3,7 +3,7 @@ package org.tndata.android.compass.filter;
 import android.widget.Filter;
 
 import org.tndata.android.compass.adapter.ChooseGoalsAdapter;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.GoalContent;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class GoalFilter extends Filter{
     private ChooseGoalsAdapter mAdapter;
-    private Collection<Goal> mList;
+    private Collection<GoalContent> mList;
 
 
     /**
@@ -27,7 +27,7 @@ public class GoalFilter extends Filter{
      * @param adapter the adapter to be filtered.
      * @param list the original list of the adapter.
      */
-    public GoalFilter(ChooseGoalsAdapter adapter, Collection<Goal> list){
+    public GoalFilter(ChooseGoalsAdapter adapter, Collection<GoalContent> list){
         mAdapter = adapter;
         mList = list;
     }
@@ -36,10 +36,10 @@ public class GoalFilter extends Filter{
     protected FilterResults performFiltering(CharSequence constraint){
         //The constraint is split into words
         String constraintArray[] = constraint.toString().toLowerCase().split(" ");
-        List<Goal> output = new ArrayList<>();
+        List<GoalContent> output = new ArrayList<>();
         int matchCount;
         //For each goal
-        for (Goal goal:mList){
+        for (GoalContent goal:mList){
             //The match count is reset
             matchCount = 0;
             //For each item in the constraint array
@@ -74,14 +74,14 @@ public class GoalFilter extends Filter{
      * @version 1.0.0
      */
     private class GoalFilterResults extends FilterResults{
-        private final List<Goal> mOutput;
+        private final List<GoalContent> mOutput;
 
         /**
          * Constructor.
          *
          * @param output the result of the filtering.
          */
-        GoalFilterResults(List<Goal> output){
+        GoalFilterResults(List<GoalContent> output){
             mOutput = output;
         }
     }

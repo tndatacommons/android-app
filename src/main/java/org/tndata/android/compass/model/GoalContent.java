@@ -3,6 +3,8 @@ package org.tndata.android.compass.model;
 import android.content.Context;
 import android.widget.ImageView;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.feed.DisplayableGoal;
 import org.tndata.android.compass.util.ImageLoader;
@@ -17,12 +19,18 @@ import java.util.Set;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class Goal extends TDCBase implements Serializable, DisplayableGoal{
+public class GoalContent extends TDCContent implements Serializable, DisplayableGoal{
     private static final long serialVersionUID = 7109406671934150671L;
 
-    private String outcome = "";
-    private Set<Integer> categories;
-    private int behaviors_count = 0;
+    public static final String TYPE = "goal";
+
+
+    @SerializedName("outcome")
+    private String mOutcome = "";
+    @SerializedName("categories")
+    private Set<Integer> mCategoryIdSet;
+    @SerializedName("behaviors_count")
+    private int mBehaviorCount = 0;
 
     private String mColor;
 
@@ -32,15 +40,15 @@ public class Goal extends TDCBase implements Serializable, DisplayableGoal{
      *---------*/
 
     public void setOutcome(String outcome){
-        this.outcome = outcome;
+        this.mOutcome = outcome;
     }
 
     public void setCategories(Set<Integer> categories){
-        this.categories = categories;
+        this.mCategoryIdSet = categories;
     }
 
     public void setBehaviorCount(int behaviorCount){
-        this.behaviors_count = behaviorCount;
+        this.mBehaviorCount = behaviorCount;
     }
 
     public void setColor(String color){
@@ -53,15 +61,15 @@ public class Goal extends TDCBase implements Serializable, DisplayableGoal{
      *---------*/
 
     public String getOutcome(){
-        return outcome;
+        return mOutcome;
     }
 
-    public Set<Integer> getCategories(){
-        return categories;
+    public Set<Integer> getCategoryIdSet(){
+        return mCategoryIdSet;
     }
 
     public int getBehaviorCount(){
-        return behaviors_count;
+        return mBehaviorCount;
     }
 
     public String getColor(Context context){
@@ -69,6 +77,11 @@ public class Goal extends TDCBase implements Serializable, DisplayableGoal{
             return String.format("#%06X", 0xFFFFFF & context.getResources().getColor(R.color.grow_primary));
         }
         return mColor;
+    }
+
+    @Override
+    protected String getType(){
+        return TYPE;
     }
 
 
@@ -91,6 +104,6 @@ public class Goal extends TDCBase implements Serializable, DisplayableGoal{
 
     @Override
     public String toString(){
-        return "Goal #" + getId() + ": " + getTitle();
+        return "GoalContent #" + getId() + ": " + getTitle();
     }
 }

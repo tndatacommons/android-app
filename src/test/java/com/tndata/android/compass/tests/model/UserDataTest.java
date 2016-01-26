@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.tndata.android.compass.model.ActionContent;
 import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserData;
 
 import java.lang.reflect.Field;
@@ -239,8 +239,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Goal> goals = new ArrayList<>();
-        Goal goalOne = new Goal();
+        ArrayList<GoalContent> goals = new ArrayList<>();
+        GoalContent goalOne = new GoalContent();
         goalOne.setId(1);
         goals.add(goalOne);
 
@@ -256,8 +256,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Goal> goals = new ArrayList<>();
-        Goal goalOne = new Goal();
+        ArrayList<GoalContent> goals = new ArrayList<>();
+        GoalContent goalOne = new GoalContent();
         goalOne.setId(1);
         goals.add(goalOne);
 
@@ -274,10 +274,10 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Goal> goals = new ArrayList<>();
-        Goal goalOne = new Goal();
+        ArrayList<GoalContent> goals = new ArrayList<>();
+        GoalContent goalOne = new GoalContent();
         goalOne.setId(1);
-        Goal goalTwo = new Goal();
+        GoalContent goalTwo = new GoalContent();
         goalTwo.setId(2);
         goals.add(goalTwo);
 
@@ -304,8 +304,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Goal> goals = new ArrayList<>();
-        Goal goalOne = new Goal();
+        ArrayList<GoalContent> goals = new ArrayList<>();
+        GoalContent goalOne = new GoalContent();
         goalOne.setId(1);
 
         userData.addGoal(goalOne);

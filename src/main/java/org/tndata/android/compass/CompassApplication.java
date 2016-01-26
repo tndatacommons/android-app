@@ -10,7 +10,7 @@ import com.crashlytics.android.Crashlytics;
 import org.tndata.android.compass.model.ActionContent;
 import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserBehavior;
@@ -104,7 +104,7 @@ public class CompassApplication extends Application{
         mUserData.logSelectedData("AFTER CompassApplication.addGoal", false);
     }
 
-    public void removeGoal(Goal goal) {
+    public void removeGoal(GoalContent goal) {
         mUserData.removeGoal(goal);
         mUserData.logSelectedData("AFTER CompassApplication.removeGoal", false);
     }

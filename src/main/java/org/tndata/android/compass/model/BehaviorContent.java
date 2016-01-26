@@ -70,6 +70,7 @@ public class BehaviorContent extends TDCContent implements Serializable{
         return TYPE;
     }
 
+
     /*---------*
      * UTILITY *
      *---------*/

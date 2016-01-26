@@ -1,6 +1,5 @@
 package org.tndata.android.compass.fragment;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,7 +15,7 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.CheckInReviewAdapter;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.util.CompassUtil;
 
@@ -37,7 +36,7 @@ public class CheckInReviewFragment extends Fragment{
 
 
     //Model components
-    private Goal mGoal;
+    private GoalContent mGoal;
     private List<UserAction> mActions;
 
 
@@ -47,7 +46,7 @@ public class CheckInReviewFragment extends Fragment{
 
         //Retrieve the arguments
         Bundle arguments = getArguments();
-        mGoal = (Goal)arguments.getSerializable(GOAL_KEY);
+        mGoal = (GoalContent)arguments.getSerializable(GOAL_KEY);
         mActions = new ArrayList<>();
         int actionNumber = arguments.getInt(ACTION_NUMBER_KEY);
         for (int i = 0; i < actionNumber; i++){
@@ -93,7 +92,7 @@ public class CheckInReviewFragment extends Fragment{
      * @param actions the actions associated to that goal.
      * @return an instance of the fragment.
      */
-    public static CheckInReviewFragment newInstance(@NonNull Goal goal, @NonNull List<UserAction> actions){
+    public static CheckInReviewFragment newInstance(@NonNull GoalContent goal, @NonNull List<UserAction> actions){
         //Create the argument bundle
         Bundle args = new Bundle();
         args.putSerializable(GOAL_KEY, goal);

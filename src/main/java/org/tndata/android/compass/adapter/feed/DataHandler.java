@@ -4,7 +4,7 @@ import android.util.Log;
 
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.FeedData;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.model.UserGoal;
@@ -26,13 +26,13 @@ class DataHandler{
     private UserData mUserData;
     private FeedData mFeedData;
 
-    private Goal mFeedbackGoal;
+    private GoalContent mFeedbackGoal;
 
     private List<UserAction> mDisplayedUpcoming;
     private List<DisplayableGoal> mDisplayedGoals;
 
     private List<UserGoal> mDisplayedUserGoals;
-    private List<Goal> mDisplayedGoalSuggestions;
+    private List<GoalContent> mDisplayedGoalSuggestions;
 
 
     /**
@@ -92,7 +92,7 @@ class DataHandler{
         }
     }
 
-    Goal getFeedbackGoal(){
+    GoalContent getFeedbackGoal(){
         return mFeedbackGoal;
     }
 
@@ -131,7 +131,7 @@ class DataHandler{
         return mDisplayedUserGoals;
     }
 
-    List<Goal> getSuggestions(){
+    List<GoalContent> getSuggestions(){
         return mDisplayedGoalSuggestions;
     }
 

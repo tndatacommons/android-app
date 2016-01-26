@@ -28,7 +28,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseBehaviorsAdapter;
 import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.ContentParser;
@@ -81,7 +81,7 @@ public class ChooseBehaviorsActivity
     private SearchView mSearchView;
 
     private Category mCategory;
-    private Goal mGoal;
+    private GoalContent mGoal;
     private ChooseBehaviorsAdapter mAdapter;
     private View mHeaderView;
     private RecyclerView mBehaviorList;
@@ -120,7 +120,7 @@ public class ChooseBehaviorsActivity
         mBehaviorList.setHasFixedSize(true);
 
         //Pull the goal
-        mGoal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
+        mGoal = (GoalContent)getIntent().getSerializableExtra(GOAL_KEY);
         if (mGoal == null){
             fetchGoal(getIntent().getIntExtra(GOAL_ID_KEY, -1));
         }
@@ -323,7 +323,7 @@ public class ChooseBehaviorsActivity
             //Parse the goal
             mGoal = ContentParser.parseGoal(result);
             mGetCategoryRequestCode = NetworkRequest.get(this, this,
-                    API.getCategoryUrl(mGoal.getCategories().iterator().next()), "");
+                    API.getCategoryUrl(mGoal.getCategoryIdSet().iterator().next()), "");
 
             //Set UI and fetch the behaviors
             mToolbar.setTitle(mGoal.getTitle());

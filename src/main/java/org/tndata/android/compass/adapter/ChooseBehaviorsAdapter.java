@@ -21,7 +21,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.filter.BehaviorFilter;
 import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
@@ -47,7 +47,7 @@ public class ChooseBehaviorsAdapter
     private CompassApplication mApplication;
     private ChooseBehaviorsListener mListener;
     private RecyclerView mRecyclerView;
-    private Goal mGoal;
+    private GoalContent mGoal;
     private BehaviorFilter mFilter;
 
     private CompassTagHandler mTagHandler;
@@ -74,7 +74,7 @@ public class ChooseBehaviorsAdapter
      */
     public ChooseBehaviorsAdapter(@NonNull Context context, @NonNull ChooseBehaviorsListener listener,
                                   @NonNull CompassApplication app, @NonNull RecyclerView recyclerView,
-                                  @NonNull Category category, @NonNull Goal goal, boolean isGoalAdded){
+                                  @NonNull Category category, @NonNull GoalContent goal, boolean isGoalAdded){
         super(new ArrayList<BehaviorContent>());
 
         //Assign the references

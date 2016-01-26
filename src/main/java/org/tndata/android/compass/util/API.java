@@ -168,7 +168,7 @@ public abstract class API{
         return BASE_URL + "users/goals/";
     }
 
-    public static JSONObject getPostGoalBody(@NonNull Goal goal, @NonNull Category primaryCategory){
+    public static JSONObject getPostGoalBody(@NonNull GoalContent goal, @NonNull Category primaryCategory){
         JSONObject postGoalBody = new JSONObject();
         try{
             postGoalBody.put("goal", goal.getId())
@@ -186,7 +186,7 @@ public abstract class API{
 
 
     //Behaviors
-    public static String getBehaviorsUrl(@NonNull Goal goal){
+    public static String getBehaviorsUrl(@NonNull GoalContent goal){
         return BASE_URL + "behaviors/?goal=" + goal.getId();
     }
 
@@ -198,7 +198,7 @@ public abstract class API{
         return BASE_URL + "users/behaviors/";
     }
 
-    public static JSONObject getPostBehaviorBody(@NonNull BehaviorContent behavior, @NonNull Goal goal,
+    public static JSONObject getPostBehaviorBody(@NonNull BehaviorContent behavior, @NonNull GoalContent goal,
                                                  @NonNull Category category){
         JSONObject postBehaviorBody = new JSONObject();
         try{
@@ -242,7 +242,7 @@ public abstract class API{
     }
 
     public static JSONObject getPostActionBody(@NonNull ActionContent action, @NonNull BehaviorContent behavior,
-                                               @NonNull Goal goal, @NonNull Category category){
+                                               @NonNull GoalContent goal, @NonNull Category category){
         JSONObject postActionBody = new JSONObject();
         try{
             postActionBody.put("action", action.getId())
@@ -294,7 +294,7 @@ public abstract class API{
     }
 
     //TODO
-    public static JSONObject getPostUserGoalProgressBody(@NonNull Goal goal, int progress){
+    public static JSONObject getPostUserGoalProgressBody(@NonNull GoalContent goal, int progress){
         JSONObject postUserGoalProgressBody = new JSONObject();
         try{
             postUserGoalProgressBody.put("goal", goal.getId())

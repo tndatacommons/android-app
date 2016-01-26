@@ -14,7 +14,7 @@ import android.view.ViewGroup.LayoutParams;
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.util.API;
@@ -51,7 +51,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     private UserData mUserData;
     private DataHandler mDataHandler;
     private FeedUtil mFeedUtil;
-    private Goal mSuggestion;
+    private GoalContent mSuggestion;
 
     private MainFeedPadding mMainFeedPadding;
 
@@ -77,7 +77,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         else{
             mDataHandler = new DataHandler(mUserData);
             CardTypes.setDataSource(mDataHandler);
-            List<Goal> suggestions = mUserData.getFeedData().getSuggestions();
+            List<GoalContent> suggestions = mUserData.getFeedData().getSuggestions();
             if (suggestions.isEmpty()){
                 mSuggestion = null;
             }
@@ -492,7 +492,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     void refreshSuggestion(){
-        List<Goal> suggestions = mUserData.getFeedData().getSuggestions();
+        List<GoalContent> suggestions = mUserData.getFeedData().getSuggestions();
         mSuggestion = suggestions.get((int)(Math.random()*suggestions.size()));
         notifyItemChanged(CardTypes.getSuggestionPosition());
     }

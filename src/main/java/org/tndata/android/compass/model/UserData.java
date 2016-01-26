@@ -111,7 +111,7 @@ public class UserData{
     }
 
     /**
-     * Returns all of the goals for a given Category. This is a wrapper for category.getGoals().
+     * Returns all of the goals for a given Category. This is a wrapper for category.getGoalIdSet().
      *
      * @return a List of Goal objects.
      */
@@ -133,7 +133,7 @@ public class UserData{
 
             //Link goals
             for (UserGoal userGoals:goals.values()){
-                if (userGoals.getGoal().getCategories().contains(userCategory.getObjectId())){
+                if (userGoals.getGoal().getCategoryIdSet().contains(userCategory.getObjectId())){
                     userGoals.addCategory(userCategory);
                     userCategory.addGoal(userGoals);
                 }
@@ -156,10 +156,10 @@ public class UserData{
         if (removedCategory != null){
             List<UserGoal> goalsToRemove = new ArrayList<>();
             //Remove this category from any child goals
-            for (UserGoal goal : removedCategory.getGoals()){
+            for (UserGoal goal : removedCategory.getGoalIdSet()){
                 goal.removeCategory(removedCategory);
                 //Record all the Goals w/o parent Categories
-                if (goal.getCategories().isEmpty()){
+                if (goal.getCategoryIdSet().isEmpty()){
                     goalsToRemove.add(goal);
                 }
             }
@@ -190,7 +190,7 @@ public class UserData{
      * @param goal the goal whose original copy needs to be fetched.
      * @return the original copy of such goal.
      */
-    public UserGoal getGoal(Goal goal){
+    public UserGoal getGoal(GoalContent goal){
         return goals.get(goal.getId());
     }
 
@@ -215,7 +215,7 @@ public class UserData{
      * @param goal the goal to be checked.
      * @return true if it is, false otherwise.
      */
-    public boolean contains(Goal goal){
+    public boolean contains(GoalContent goal){
         return goals.containsKey(goal.getId()) || mRequestedGoals.contains(goal.getId());
     }
 
@@ -246,7 +246,7 @@ public class UserData{
             goals.put(userGoal.getObjectId(), userGoal);
 
             //Link the goal with the relevant categories
-            for (Integer categoryId:userGoal.getGoal().getCategories()){
+            for (Integer categoryId:userGoal.getGoal().getCategoryIdSet()){
                 if (categories.containsKey(categoryId)){
                     userGoal.addCategory(categories.get(categoryId));
                     categories.get(categoryId).addGoal(userGoal);
@@ -255,7 +255,7 @@ public class UserData{
 
             //Link the goal with the relevant behaviors
             for (UserBehavior userBehavior:behaviors.values()){
-                if (userBehavior.getBehavior().getGoals().contains(userGoal.getObjectId())){
+                if (userBehavior.getBehavior().getGoalIdSet().contains(userGoal.getObjectId())){
                     userGoal.addBehavior(userBehavior);
                     userBehavior.addGoal(userGoal);
                 }
@@ -272,7 +272,7 @@ public class UserData{
      * TODO Goal vs UserGoal?
      * @param goal the goal to be removed from the user list.
      */
-    public void removeGoal(Goal goal){
+    public void removeGoal(GoalContent goal){
         UserGoal removedGoal = goals.remove(goal.getId());
 
         if (removedGoal != null){
@@ -340,7 +340,7 @@ public class UserData{
             userBehavior.init();
             behaviors.put(userBehavior.getObjectId(), userBehavior);
 
-            for (Integer goalId:userBehavior.getBehavior().getGoals()){
+            for (Integer goalId:userBehavior.getBehavior().getGoalIdSet()){
                 if (goals.containsKey(goalId)){
                     userBehavior.addGoal(goals.get(goalId));
                     goals.get(goalId).addBehavior(userBehavior);
@@ -466,7 +466,7 @@ public class UserData{
     private void linkGoalsAndCategories(){
         //Add each goal to the correct category and vice versa
         for (UserGoal userGoal: goals.values()){
-            for (Integer categoryId:userGoal.getGoal().getCategories()){
+            for (Integer categoryId:userGoal.getGoal().getCategoryIdSet()){
                 if (categories.containsKey(categoryId)){
                     UserCategory userCategory = categories.get(categoryId);
                     userCategory.addGoal(userGoal);
@@ -483,7 +483,7 @@ public class UserData{
     private void linkBehaviorsAndGoals(){
         //Look at all the selected goals
         for (UserBehavior userBehavior: behaviors.values()){
-            for (Integer goalId:userBehavior.getBehavior().getGoals()){
+            for (Integer goalId:userBehavior.getBehavior().getGoalIdSet()){
                 if (goals.containsKey(goalId)){
                     UserGoal userGoal = goals.get(goalId);
                     userGoal.addBehavior(userBehavior);

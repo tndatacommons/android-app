@@ -3,7 +3,7 @@ package com.tndata.android.compass.tests.model;
 import org.junit.Test;
 import org.tndata.android.compass.model.ActionContent;
 import org.tndata.android.compass.model.BehaviorContent;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.GoalContent;
 
 import java.lang.reflect.Field;
 
@@ -153,7 +153,7 @@ public class BehaviorTest {
     public void behavior_getter_lists_ReturnsTrue() {
         BehaviorContent behavior = new BehaviorContent();
         assertEquals(0, behavior.getActions().size());
-        assertEquals(0, behavior.getGoals().size());
+        assertEquals(0, behavior.getGoalIdSet().size());
         assertEquals(0, behavior.getUserCategories().size());
     }
 
@@ -205,16 +205,16 @@ public class BehaviorTest {
     public void behavior_add_goals_operations_ReturnsTrue() {
         BehaviorContent behavior = new BehaviorContent();
 
-        assertEquals(0, behavior.getGoals().size());
+        assertEquals(0, behavior.getGoalIdSet().size());
 
-        Goal goal1 = new Goal();
+        GoalContent goal1 = new GoalContent();
         goal1.setId(100);
         behavior.addGoal(goal1);
 
-        assertEquals(1, behavior.getGoals().size());
+        assertEquals(1, behavior.getGoalIdSet().size());
 
         behavior.addGoal(goal1);
-        assertEquals(1, behavior.getGoals().size());
+        assertEquals(1, behavior.getGoalIdSet().size());
     }
 
 
@@ -222,24 +222,24 @@ public class BehaviorTest {
     public void behavior_remove_goals_operations_ReturnsTrue() {
         BehaviorContent behavior = new BehaviorContent();
 
-        assertEquals(0, behavior.getGoals().size());
+        assertEquals(0, behavior.getGoalIdSet().size());
 
-        Goal goal1 = new Goal();
+        GoalContent goal1 = new GoalContent();
         goal1.setId(100);
         behavior.addGoal(goal1);
 
-        Goal goal2 = new Goal();
+        GoalContent goal2 = new GoalContent();
         goal2.setId(200);
         behavior.addGoal(goal2);
 
         behavior.removeGoal(goal1);
-        assertEquals(1, behavior.getGoals().size());
+        assertEquals(1, behavior.getGoalIdSet().size());
 
         behavior.removeGoal(goal1);
-        assertEquals(1, behavior.getGoals().size());
+        assertEquals(1, behavior.getGoalIdSet().size());
 
         behavior.removeGoal(goal2);
-        assertEquals(0, behavior.getGoals().size());
+        assertEquals(0, behavior.getGoalIdSet().size());
     }
 
 

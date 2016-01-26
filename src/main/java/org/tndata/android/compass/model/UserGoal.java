@@ -21,7 +21,7 @@ public class UserGoal extends UserContent implements Serializable, DisplayableGo
 
     //Values retrieved from the API
     //TODO getters
-    private Goal goal;
+    private GoalContent goal;
 
     private int primary_category;
 
@@ -33,7 +33,7 @@ public class UserGoal extends UserContent implements Serializable, DisplayableGo
     private List<UserBehavior> userBehaviors = new ArrayList<>();
 
 
-    public UserGoal(Goal goal, UserCategory primaryCategory){
+    public UserGoal(GoalContent goal, UserCategory primaryCategory){
         this.goal = goal;
         this.primaryCategory = primaryCategory;
     }
@@ -64,7 +64,7 @@ public class UserGoal extends UserContent implements Serializable, DisplayableGo
      * GETTERS *
      *---------*/
 
-    public Goal getGoal(){
+    public GoalContent getGoal(){
         return goal;
     }
 
