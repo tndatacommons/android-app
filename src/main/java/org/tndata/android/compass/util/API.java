@@ -241,7 +241,7 @@ public abstract class API{
         return BASE_URL + "users/actions/";
     }
 
-    public static JSONObject getPostActionBody(@NonNull Action action, @NonNull Behavior behavior,
+    public static JSONObject getPostActionBody(@NonNull ActionContent action, @NonNull Behavior behavior,
                                                @NonNull Goal goal, @NonNull Category category){
         JSONObject postActionBody = new JSONObject();
         try{

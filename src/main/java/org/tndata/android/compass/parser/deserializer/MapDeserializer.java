@@ -74,7 +74,7 @@ public class MapDeserializer implements JsonDeserializer<Map<Integer, ? extends 
         else if (src.contains("userbehavior")){
             return UserBehavior.class;
         }
-        else /*if (src.contains("user_action"))*/{
+        else /*if (src.contains("useraction"))*/{
             return UserAction.class;
         }
     }

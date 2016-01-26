@@ -14,7 +14,7 @@ import android.widget.TextView;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.filter.ActionFilter;
-import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.ActionContent;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
@@ -33,7 +33,7 @@ import java.util.List;
  * @version 1.0.0
  */
 public class ChooseActionsAdapter
-        extends ParallaxRecyclerAdapter<Action>
+        extends ParallaxRecyclerAdapter<ActionContent>
         implements ParallaxRecyclerAdapter.OnClickEvent{
 
     private Context mContext;
@@ -45,7 +45,7 @@ public class ChooseActionsAdapter
 
     private CompassTagHandler mTagHandler;
 
-    private List<Action> mActions;
+    private List<ActionContent> mActions;
     private int mExpandedAction;
 
     private boolean mIsEditable;
@@ -64,7 +64,7 @@ public class ChooseActionsAdapter
                                 @NonNull CompassApplication app, @NonNull RecyclerView recyclerView,
                                 @NonNull Behavior behavior){
 
-        super(new ArrayList<Action>());
+        super(new ArrayList<ActionContent>());
 
         //Assign the references
         mContext = context;
@@ -89,7 +89,7 @@ public class ChooseActionsAdapter
         }
 
         //Create and set the headers
-        Action actionHeader = new Action();
+        ActionContent actionHeader = new ActionContent();
         actionHeader.setDescription(mBehavior.getDescription());
         actionHeader.setId(0);
         mActions.add(actionHeader);
@@ -124,10 +124,10 @@ public class ChooseActionsAdapter
      *
      * @param actions the list of actions to be set.
      */
-    public void setActions(List<Action> actions){
+    public void setActions(List<ActionContent> actions){
         mActions.clear();
 
-        Action headerAction = new Action();
+        ActionContent headerAction = new ActionContent();
         headerAction.setDescription(mBehavior.getDescription());
         headerAction.setId(0);
         mActions.add(headerAction);
@@ -170,7 +170,7 @@ public class ChooseActionsAdapter
      * @param holder the view holder containing the action.
      */
     private void selectActionClicked(ActionViewHolder holder){
-        Action action = mActions.get(holder.getAdapterPosition()-1);
+        ActionContent action = mActions.get(holder.getAdapterPosition()-1);
         boolean isActionSelected = mApplication.getActions().containsKey(action.getId());
 
         if (mIsEditable){
@@ -234,7 +234,7 @@ public class ChooseActionsAdapter
         public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
             ActionViewHolder holder = (ActionViewHolder)rawHolder;
 
-            Action action = mActions.get(position);
+            ActionContent action = mActions.get(position);
             final boolean action_is_selected = mApplication.getActions().containsKey(action.getId());
 
             if (position == 0 && action.getId() == 0){
@@ -394,35 +394,35 @@ public class ChooseActionsAdapter
          *
          * @param action the action more info was called upon.
          */
-        void moreInfo(Action action);
+        void moreInfo(ActionContent action);
 
         /**
          * Called when edit reminder is clicked.
          *
          * @param action the action edit reminder was called upon.
          */
-        void editReminder(Action action);
+        void editReminder(ActionContent action);
 
         /**
          * Called when add action is clicked.
          *
          * @param action the action add action was called upon.
          */
-        void addAction(Action action);
+        void addAction(ActionContent action);
 
         /**
          * Called when delete action is clicked.
          *
          * @param action the action delete action was called upon.
          */
-        void deleteAction(Action action);
+        void deleteAction(ActionContent action);
 
         /**
          * Called when do it now is clicked.
          *
          * @param action the action do it now was called upon.
          */
-        void doItNow(Action action);
+        void doItNow(ActionContent action);
         
         /**
          * Called when the RecyclerView scrolls.

@@ -293,7 +293,7 @@ public class UserData{
             }
             //Remove Behaviors w/o parent Goals
             /*for (UserBehavior behavior : behaviorsToRemove){
-                removeBehavior(behavior.getBehavior());
+                removeBehavior(behavior.getBehaviorId());
             }*/
         }
     }
@@ -348,7 +348,7 @@ public class UserData{
             }
 
             for (UserAction userAction:actions.values()){
-                if (userAction.getAction().getBehavior() == userBehavior.getObjectId()){
+                if (userAction.getAction().getBehaviorId() == userBehavior.getObjectId()){
                     userAction.setBehavior(userBehavior);
                     userBehavior.addAction(userAction);
                 }
@@ -399,7 +399,7 @@ public class UserData{
      * @param action the action whose original copy needs to be fetched.
      * @return the original copy of such action.
      */
-    public UserAction getAction(Action action){
+    public UserAction getAction(ActionContent action){
         return actions.get(action.getId());
     }
 
@@ -422,7 +422,7 @@ public class UserData{
         if (!contains(userAction)){
             actions.put(userAction.getAction().getId(), userAction);
 
-            UserBehavior behavior = behaviors.get(userAction.getAction().getBehavior());
+            UserBehavior behavior = behaviors.get(userAction.getAction().getBehaviorId());
             if (behavior != null){
                 behavior.addAction(userAction);
                 userAction.setBehavior(behavior);
@@ -436,7 +436,7 @@ public class UserData{
      *
      * @param action the Action object to remove.
      */
-    public void removeAction(Action action){
+    public void removeAction(ActionContent action){
         UserAction removedAction = actions.remove(action.getId());
         if (removedAction != null && removedAction.getBehavior() != null){
             removedAction.getBehavior().removeAction(removedAction);
@@ -498,7 +498,7 @@ public class UserData{
      */
     public void linkActions(){
         for (UserAction userAction:actions.values()){
-            UserBehavior userBehavior = behaviors.get(userAction.getAction().getBehavior());
+            UserBehavior userBehavior = behaviors.get(userAction.getAction().getBehaviorId());
             userBehavior.addAction(userAction);
             userAction.setBehavior(userBehavior);
             userAction.setPrimaryGoal(goals.get(userAction.getPrimaryGoalId()));
@@ -589,8 +589,8 @@ public class UserData{
         }
         Log.d(TAG, "Actions.");
         for (UserAction item:actions.values()){
-            Log.d(TAG, item.getAction().getBehavior()+"");
-            Log.d(TAG, behaviors.get(item.getAction().getBehavior()).getBehavior().toString());
+            Log.d(TAG, item.getAction().getBehaviorId()+"");
+            Log.d(TAG, behaviors.get(item.getAction().getBehaviorId()).getBehavior().toString());
             Log.d(TAG, "- " + item.toString());
             Log.d(TAG, "--> contains: " + item.getBehavior().toString());
         }

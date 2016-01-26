@@ -24,7 +24,7 @@ import android.widget.ViewSwitcher;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.ActionContent;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.service.ActionReportService;
@@ -174,7 +174,7 @@ public class ActionActivity
         }
         mActionDescription.setText(mUserAction.getDescription());
 
-        Action action = mUserAction.getAction();
+        ActionContent action = mUserAction.getAction();
         if (!action.getMoreInfo().isEmpty()){
             mMoreInfoHeader.setVisibility(View.VISIBLE);
             mMoreInfo.setVisibility(View.VISIBLE);

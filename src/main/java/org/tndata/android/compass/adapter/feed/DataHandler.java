@@ -29,6 +29,8 @@ class DataHandler{
     private Goal mFeedbackGoal;
 
     private List<UserAction> mDisplayedUpcoming;
+    private List<DisplayableGoal> mDisplayedGoals;
+
     private List<UserGoal> mDisplayedUserGoals;
     private List<Goal> mDisplayedGoalSuggestions;
 

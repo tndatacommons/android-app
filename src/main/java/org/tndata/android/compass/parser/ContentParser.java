@@ -326,15 +326,15 @@ public final class ContentParser extends ParserMethods{
      * ACTIONS *
      *---------*/
 
-    public static Action parseAction(String src){
-        return sGson.fromJson(src, Action.class);
+    public static ActionContent parseAction(String src){
+        return sGson.fromJson(src, ActionContent.class);
     }
 
     public static UserAction parseUserAction(String src){
         return sGson.fromJson(src, UserAction.class);
     }
 
-    public static List<Action> parseActionArray(String src){
+    public static List<ActionContent> parseActionArray(String src){
         JSONArray actionArray;
         try{
             actionArray = new JSONArray(src);
@@ -344,11 +344,11 @@ public final class ContentParser extends ParserMethods{
             return null;
         }
 
-        List<Action> actions = new ArrayList<>();
+        List<ActionContent> actions = new ArrayList<>();
         //For each action in the array
         for (int i = 0; i < actionArray.length(); i++){
             try{
-                Action action = parseAction(actionArray.getString(i));
+                ActionContent action = parseAction(actionArray.getString(i));
                 if (action != null){
                     actions.add(action);
                 }
@@ -389,7 +389,7 @@ public final class ContentParser extends ParserMethods{
         return actions;
     }
 
-    public static List<Action> parseActionsFromResultSet(String src){
+    public static List<ActionContent> parseActionsFromResultSet(String src){
         try{
             return parseActionArray(new JSONObject(src).getString("results"));
         }

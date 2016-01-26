@@ -14,6 +14,12 @@ import android.view.WindowManager;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserBehavior;
+import org.tndata.android.compass.model.UserCategory;
+import org.tndata.android.compass.model.UserGoal;
+import org.tndata.android.compass.model.UserPlace;
 
 
 /**
@@ -208,6 +214,30 @@ public final class CompassUtil{
         }
         else{
             return 0;
+        }
+    }
+
+    public static Class getTypeOf(String src){
+        if (src.contains("usercategory")){
+            return UserCategory.class;
+        }
+        else if (src.contains("usergoal")){
+            return UserGoal.class;
+        }
+        else if (src.contains("userbehavior")){
+            return UserBehavior.class;
+        }
+        else if (src.contains("useraction")){
+            return UserAction.class;
+        }
+        else if (src.contains("userplace")){
+            return UserPlace.class;
+        }
+        else if (src.contains("goal")){
+            return Goal.class;
+        }
+        else{
+            return null;
         }
     }
 }

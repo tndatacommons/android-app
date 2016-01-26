@@ -17,14 +17,14 @@ import org.tndata.android.compass.util.ImageLoader;
  * View holder for a goal card.
  *
  * @author Ismael Alonso
- * @version 1.0.0
+ * @version 1.1.0
  */
 class GoalHolder extends MainFeedViewHolder implements View.OnClickListener{
     private DisplayableGoal mGoal;
 
-    RelativeLayout mIconContainer;
-    ImageView mIcon;
-    TextView mTitle;
+    private RelativeLayout mIconContainer;
+    private ImageView mIcon;
+    private TextView mTitle;
 
 
     /**
@@ -48,6 +48,12 @@ class GoalHolder extends MainFeedViewHolder implements View.OnClickListener{
         mAdapter.mListener.onGoalSelected(mGoal);
     }
 
+    /**
+     * Binds a displayable goal to this holder.
+     *
+     * @param goal the goal to be bound.
+     */
+    @SuppressWarnings("deprecation")
     void bind(@NonNull DisplayableGoal goal){
         mGoal = goal;
 
@@ -56,11 +62,11 @@ class GoalHolder extends MainFeedViewHolder implements View.OnClickListener{
         GradientDrawable gradientDrawable = (GradientDrawable)mIconContainer.getBackground();
         gradientDrawable.setColor(Color.parseColor(mGoal.getColor(mAdapter.mContext)));
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-            mIconContainer.setBackground(gradientDrawable);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
+            mIconContainer.setBackgroundDrawable(gradientDrawable);
         }
         else{
-            mIconContainer.setBackgroundDrawable(gradientDrawable);
+            mIconContainer.setBackground(gradientDrawable);
         }
 
         if (!mGoal.getIconUrl().isEmpty()){

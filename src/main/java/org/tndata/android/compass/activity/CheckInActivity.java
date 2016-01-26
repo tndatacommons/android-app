@@ -123,7 +123,7 @@ public class CheckInActivity
                 if (mType == TYPE_REVIEW){
                     mRequestCount++;
                     mBehaviorRequestSet.add(NetworkRequest.get(this, this,
-                            API.getBehaviorUrl(action.getAction().getBehavior()), ""));
+                            API.getBehaviorUrl(action.getAction().getBehaviorId()), ""));
                 }
             }
             mCurrentProgress = new int[goalRequestSet.size()];
@@ -143,7 +143,7 @@ public class CheckInActivity
         else if (mBehaviorRequestSet.contains(requestCode)){
             Behavior behavior = ContentParser.parseBehavior(result);
             for (UserAction action:mActions){
-                if (action.getAction().getBehavior() == behavior.getId()){
+                if (action.getAction().getBehaviorId() == behavior.getId()){
                     action.setBehavior(new UserBehavior(behavior));
                 }
             }

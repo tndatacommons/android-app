@@ -15,7 +15,7 @@ public class UserAction extends UserContent implements Serializable, ParserModel
     private static final long serialVersionUID = 291944745632851923L;
 
     //Values retrieved from the API
-    private Action action;
+    private ActionContent action;
     private String next_reminder_date;
 
     private int primary_goal;
@@ -33,7 +33,7 @@ public class UserAction extends UserContent implements Serializable, ParserModel
     private UserCategory primaryCategory;
 
 
-    public UserAction(Action action, UserGoal primaryGoal, UserCategory primaryCategory){
+    public UserAction(ActionContent action, UserGoal primaryGoal, UserCategory primaryCategory){
         this.action = action;
         this.primaryGoal = primaryGoal;
         this.primaryCategory = primaryCategory;
@@ -69,7 +69,7 @@ public class UserAction extends UserContent implements Serializable, ParserModel
      * GETTERS *
      *---------*/
 
-    public Action getAction(){
+    public ActionContent getAction(){
         return action;
     }
 

@@ -1,7 +1,7 @@
 package com.tndata.android.compass.tests.model;
 
 import org.junit.Test;
-import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.ActionContent;
 import org.tndata.android.compass.model.Behavior;
 import org.tndata.android.compass.model.Category;
 import org.tndata.android.compass.model.Goal;
@@ -19,8 +19,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Action> actions = new ArrayList<>();
-        Action actionOne = new Action();
+        ArrayList<ActionContent> actions = new ArrayList<>();
+        ActionContent actionOne = new ActionContent();
         actionOne.setId(1);
         actions.add(actionOne);
 
@@ -36,8 +36,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Action> actions = new ArrayList<>();
-        Action actionOne = new Action();
+        ArrayList<ActionContent> actions = new ArrayList<>();
+        ActionContent actionOne = new ActionContent();
         actionOne.setId(1);
         actions.add(actionOne);
 
@@ -54,10 +54,10 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Action> actions = new ArrayList<>();
-        Action actionOne = new Action();
+        ArrayList<ActionContent> actions = new ArrayList<>();
+        ActionContent actionOne = new ActionContent();
         actionOne.setId(1);
-        Action actionTwo = new Action();
+        ActionContent actionTwo = new ActionContent();
         actionTwo.setId(2);
         actions.add(actionTwo);
 
@@ -84,8 +84,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Action> actions = new ArrayList<>();
-        Action actionOne = new Action();
+        ArrayList<ActionContent> actions = new ArrayList<>();
+        ActionContent actionOne = new ActionContent();
         actionOne.setId(1);
 
         userData.addAction(actionOne);
@@ -109,8 +109,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Action> actions = new ArrayList<>();
-        Action actionOne = new Action();
+        ArrayList<ActionContent> actions = new ArrayList<>();
+        ActionContent actionOne = new ActionContent();
         actionOne.setId(1);
         actionOne.setNotificationText("text");
 
@@ -130,8 +130,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Action> actions = new ArrayList<>();
-        Action actionOne = new Action();
+        ArrayList<ActionContent> actions = new ArrayList<>();
+        ActionContent actionOne = new ActionContent();
         actionOne.setId(1);
         actionOne.setNotificationText("text");
 
