@@ -2,8 +2,9 @@ package org.tndata.android.compass.model;
 
 import android.content.Context;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.adapter.feed.DisplayableGoal;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,26 +17,29 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserGoal extends UserContent implements Serializable, DisplayableGoal{
+public class UserGoal extends Goal implements Serializable, UserSelectedContent{
     private static final long serialVersionUID = 7109406686231550671L;
 
+    public static final String TYPE = "usergoal";
+
+
     //Values retrieved from the API
-    //TODO getters
-    private GoalContent goal;
-
-    private int primary_category;
-
-    private Progress progress = new Progress();
+    @SerializedName("goal")
+    private GoalContent mGoal;
+    @SerializedName("primary_category")
+    private int mPrimaryCategoryId;
+    @SerializedName("progress")
+    private Progress mProgress;
 
     //Values set during post-processing
-    private UserCategory primaryCategory;
-    private List<UserCategory> userCategories = new ArrayList<>();
-    private List<UserBehavior> userBehaviors = new ArrayList<>();
+    private UserCategory mPrimaryCategory;
+    private List<UserCategory> mUserCategories = new ArrayList<>();
+    private List<UserBehavior> mUserBehaviors = new ArrayList<>();
 
 
     public UserGoal(GoalContent goal, UserCategory primaryCategory){
-        this.goal = goal;
-        this.primaryCategory = primaryCategory;
+        this.mGoal = goal;
+        this.mPrimaryCategory = primaryCategory;
     }
 
 
@@ -44,19 +48,19 @@ public class UserGoal extends UserContent implements Serializable, DisplayableGo
      *---------*/
 
     public void setPrimaryCategoryId(int primaryCategory){
-        this.primary_category = primaryCategory;
+        this.mPrimaryCategoryId = primaryCategory;
     }
 
     public void setPrimaryCategory(UserCategory primaryCategory){
-        this.primaryCategory = primaryCategory;
+        this.mPrimaryCategory = primaryCategory;
     }
 
     public void setCategories(List<UserCategory> categories){
-        this.userCategories = categories;
+        this.mUserCategories = categories;
     }
 
     public void setBehaviors(List<UserBehavior> behaviors){
-        this.userBehaviors = behaviors;
+        this.mUserBehaviors = behaviors;
     }
 
 
@@ -65,60 +69,65 @@ public class UserGoal extends UserContent implements Serializable, DisplayableGo
      *---------*/
 
     public GoalContent getGoal(){
-        return goal;
+        return mGoal;
     }
 
     @Override
-    public int getObjectId(){
-        return goal.getId();
+    public long getContentId(){
+        return mGoal.getId();
     }
 
     @Override
     public String getTitle(){
-        return goal.getTitle();
+        return mGoal.getTitle();
     }
 
     @Override
     public String getDescription(){
-        return goal.getDescription();
+        return mGoal.getDescription();
     }
 
     @Override
     public String getHTMLDescription(){
-        return goal.getHTMLDescription();
+        return mGoal.getHTMLDescription();
     }
 
     @Override
     public String getIconUrl(){
-        return goal.getIconUrl();
+        return mGoal.getIconUrl();
     }
 
     @Override
     public String getColor(Context context){
-        if (primaryCategory == null){
+        if (mPrimaryCategory == null){
             return String.format("#%06X", 0xFFFFFF & context.getResources().getColor(R.color.grow_primary));
         }
-        return primaryCategory.getColor();
+        return mPrimaryCategory.getColor();
     }
 
     public int getPrimaryCategoryId(){
-        return primary_category;
+        return mPrimaryCategoryId;
     }
 
     public UserCategory getPrimaryCategory(){
-        return primaryCategory;
+        return mPrimaryCategory;
     }
 
     public List<UserCategory> getCategories(){
-        return userCategories;
+        return mUserCategories;
     }
 
     public List<UserBehavior> getBehaviors() {
-        return userBehaviors;
+        return mUserBehaviors;
     }
 
     public Progress getProgress(){
-        return progress;
+        return mProgress;
+    }
+
+    @Override
+    protected String getType(){
+        return TYPE;
     }
 
 
@@ -128,40 +137,40 @@ public class UserGoal extends UserContent implements Serializable, DisplayableGo
 
     @Override
     public void init(){
-        if (userCategories == null){
-            userCategories = new ArrayList<>();
+        if (mUserCategories == null){
+            mUserCategories = new ArrayList<>();
         }
-        if (userBehaviors == null){
-            userBehaviors = new ArrayList<>();
+        if (mUserBehaviors == null){
+            mUserBehaviors = new ArrayList<>();
         }
     }
 
     public void addBehavior(UserBehavior behavior){
-        if (!userBehaviors.contains(behavior)){
-            userBehaviors.add(behavior);
+        if (!mUserBehaviors.contains(behavior)){
+            mUserBehaviors.add(behavior);
         }
     }
 
     public void removeBehavior(UserBehavior behavior){
-        if (userBehaviors.contains(behavior)){
-            userBehaviors.remove(behavior);
+        if (mUserBehaviors.contains(behavior)){
+            mUserBehaviors.remove(behavior);
         }
     }
 
     public void addCategory(UserCategory category){
-        if (!userCategories.contains(category)){
-            userCategories.add(category);
+        if (!mUserCategories.contains(category)){
+            mUserCategories.add(category);
         }
     }
 
     public void removeCategory(UserCategory category){
-        if (userCategories.contains(category)){
-            userCategories.remove(category);
+        if (mUserCategories.contains(category)){
+            mUserCategories.remove(category);
         }
     }
 
     @Override
     public String toString(){
-        return "UserGoal #" + getId() + " (" + goal.toString() + ")";
+        return "UserGoal #" + getId() + " (" + mGoal.toString() + ")";
     }
 }

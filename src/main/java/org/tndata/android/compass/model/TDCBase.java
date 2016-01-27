@@ -4,8 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 
 /**
- * Base class for the content. Use it for both, user and regular content and rewire
- * its methods in user content to the instance of regular content.
+ * Base class for all content. This class forces a type on every model type.
  *
  * @author Edited by Ismael Alonso
  * @version 1.0.0

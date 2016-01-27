@@ -2,6 +2,8 @@ package org.tndata.android.compass.model;
 
 import android.content.Context;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.feed.DisplayableGoal;
 
@@ -15,26 +17,33 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class CustomGoal extends TDCBase implements DisplayableGoal{
+public class CustomGoal extends Goal{
+    public static final String TYPE = "customgoal";
+
+
+    //API delivered values
+    @SerializedName("title")
+    private String mTitle;
+
+    //Set values
     private List<CustomAction> mActions;
 
 
-    public List<CustomAction> getActions(){
-        return mActions;
-    }
-
+    @Override
     public void init(){
         if (mActions == null){
             mActions = new ArrayList<>();
         }
     }
 
-    public void addAction(CustomAction action){
-        mActions.add(action);
+    @Override
+    public String getTitle(){
+        return mTitle;
     }
 
-    public void removeAction(CustomAction action){
-        mActions.remove(action);
+    @Override
+    protected String getType(){
+        return TYPE;
     }
 
     @Override
@@ -45,5 +54,17 @@ public class CustomGoal extends TDCBase implements DisplayableGoal{
     @Override
     public String getColor(Context context){
         return String.format("#%06X", 0xFFFFFF & context.getResources().getColor(R.color.grow_primary));
+    }
+
+    public List<CustomAction> getActions(){
+        return mActions;
+    }
+
+    public void addAction(CustomAction action){
+        mActions.add(action);
+    }
+
+    public void removeAction(CustomAction action){
+        mActions.remove(action);
     }
 }

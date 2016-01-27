@@ -13,11 +13,4 @@ public abstract class UserContent extends TDCBase{
      * Method used to initialize the content's inner Lists.
      */
     public abstract void init();
-
-    /**
-     * Getter for the id of the regular content class embedded into the user content class.
-     *
-     * @return the id of such piece of content.
-     */
-    public abstract int getObjectId();
 }
