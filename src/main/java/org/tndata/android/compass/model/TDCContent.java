@@ -13,11 +13,9 @@ import java.io.Serializable;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public abstract class TDCContent implements Serializable, Comparable<TDCContent>{
+public abstract class TDCContent extends TDCBase implements Serializable, Comparable<TDCContent>{
     private static final long serialVersionUID = -7297141782846963404L;
 
-    @SerializedName("id")
-    private long mId;
     @SerializedName("title")
     private String mTitle;
     @SerializedName("description")
@@ -33,10 +31,6 @@ public abstract class TDCContent implements Serializable, Comparable<TDCContent>
     /*---------*
      * SETTERS *
      *---------*/
-
-    public void setId(long id){
-        this.mId = id;
-    }
 
     public void setTitle(String title){
         this.mTitle = title;
@@ -63,10 +57,6 @@ public abstract class TDCContent implements Serializable, Comparable<TDCContent>
      * GETTERS *
      *---------*/
 
-    public long getId() {
-        return mId;
-    }
-
     public String getTitle(){
         return mTitle;
     }
@@ -86,8 +76,6 @@ public abstract class TDCContent implements Serializable, Comparable<TDCContent>
     public boolean isEditable(){
         return mEditable;
     }
-
-    protected abstract String getType();
 
 
     /*---------*
@@ -117,6 +105,7 @@ public abstract class TDCContent implements Serializable, Comparable<TDCContent>
 
     @Override
     public int compareTo(@NonNull TDCContent another){
+        //By default, order by title in alphabetical order
         return getTitle().compareTo(another.getTitle());
     }
 }

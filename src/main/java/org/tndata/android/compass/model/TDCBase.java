@@ -1,8 +1,6 @@
 package org.tndata.android.compass.model;
 
-import android.support.annotation.NonNull;
-
-import java.io.Serializable;
+import com.google.gson.annotations.SerializedName;
 
 
 /**
@@ -12,44 +10,17 @@ import java.io.Serializable;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public abstract class TDCBase implements Serializable, Comparable<TDCBase>{
-    private static final long serialVersionUID = -7297141782846963404L;
-
-    //TODO make the id a long to avoid range problems. Not a problem yet.
-    private int id = -1;
-    private String title = "";
-    private String description = "";
-    private String html_description = "";
-    private String icon_url = "";
-    private boolean editable = false;
+public abstract class TDCBase{
+    @SerializedName("id")
+    private long mId;
 
 
     /*---------*
      * SETTERS *
      *---------*/
 
-    public void setId(int id){
-        this.id = id;
-    }
-
-    public void setTitle(String title){
-        this.title = title;
-    }
-
-    public void setDescription(String description){
-        this.description = description;
-    }
-
-    public void setHTMLDescription(String htmlDescription){
-        this.html_description = htmlDescription;
-    }
-
-    public void setIconUrl(String iconUrl){
-        this.icon_url = iconUrl;
-    }
-
-    public void setEditable(boolean editable){
-        this.editable = editable;
+    public void setId(long id){
+        this.mId = id;
     }
 
 
@@ -57,29 +28,16 @@ public abstract class TDCBase implements Serializable, Comparable<TDCBase>{
      * GETTERS *
      *---------*/
 
-    public int getId() {
-        return id;
+    public long getId(){
+        return mId;
     }
 
-    public String getTitle(){
-        return title;
-    }
-
-    public String getDescription(){
-        return description;
-    }
-
-    public String getHTMLDescription(){
-        return html_description;
-    }
-
-    public String getIconUrl(){
-        return icon_url;
-    }
-
-    public boolean isEditable(){
-        return editable;
-    }
+    /**
+     * Getter for the object type as returned by the API.
+     *
+     * @return an object type.
+     */
+    protected abstract String getType();
 
 
     /*---------*
@@ -89,35 +47,17 @@ public abstract class TDCBase implements Serializable, Comparable<TDCBase>{
     @Override
     public boolean equals(Object object){
         boolean result = false;
-        if (object == null){
-            result = false;
-        }
-        else if (object == this){
+        if (object == this){
             result = true;
         }
-        else if (object instanceof TDCBase){
-            if (this.getId() == ((TDCBase)object).getId()){
-                result = true;
+        else if (object != null && object instanceof TDCBase){
+            TDCBase cast = (TDCBase)object;
+            if (getType().equals(cast.getType())){
+                if (getId() == cast.getId()){
+                    result = true;
+                }
             }
         }
         return result;
-    }
-
-    @Override
-    public int hashCode(){
-        return 21 + title.hashCode();
-    }
-
-    @Override
-    public int compareTo(@NonNull TDCBase another){
-        if (getId() == another.getId()){
-            return 0;
-        }
-        else if (getId() < another.getId()){
-            return -1;
-        }
-        else{
-            return 1;
-        }
     }
 }
