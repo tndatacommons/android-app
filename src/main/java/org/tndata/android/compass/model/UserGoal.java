@@ -27,7 +27,7 @@ public class UserGoal extends Goal implements Serializable, UserSelectedContent{
     @SerializedName("goal")
     private GoalContent mGoal;
     @SerializedName("primary_category")
-    private int mPrimaryCategoryId;
+    private long mPrimaryCategoryId;
     @SerializedName("progress")
     private Progress mProgress;
 
@@ -105,7 +105,7 @@ public class UserGoal extends Goal implements Serializable, UserSelectedContent{
         return mPrimaryCategory.getColor();
     }
 
-    public int getPrimaryCategoryId(){
+    public long getPrimaryCategoryId(){
         return mPrimaryCategoryId;
     }
 

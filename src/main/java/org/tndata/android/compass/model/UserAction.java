@@ -19,7 +19,7 @@ public class UserAction
                 Serializable,
                 ParserModels.ResultSet,
                 UserSelectedContent{
-    
+
     private static final long serialVersionUID = 291944745632851923L;
 
     public static final String TYPE = "useraction";
@@ -29,9 +29,9 @@ public class UserAction
     @SerializedName("action")
     private ActionContent mAction;
     @SerializedName("primary_goal")
-    private int mPrimaryGoalId;
+    private long mPrimaryGoalId;
     @SerializedName("primary_category")
-    private int mPrimaryCategoryId;
+    private long mPrimaryCategoryId;
 
     //These values are retrieved from the API when an Action is POSTed
     @SerializedName("parent_userbehavior")
@@ -108,11 +108,11 @@ public class UserAction
         return mBehavior;
     }
 
-    public int getPrimaryCategoryId(){
+    public long getPrimaryCategoryId(){
         return mPrimaryCategoryId;
     }
 
-    public int getPrimaryGoalId(){
+    public long getPrimaryGoalId(){
         return mPrimaryGoalId;
     }
 

@@ -32,7 +32,7 @@ public class BehaviorContent extends TDCContent implements Serializable{
     private String mExternalResourceName = "";
 
     @SerializedName("goals")
-    private Set<Integer> mGoalIdSet;
+    private Set<Long> mGoalIdSet;
     @SerializedName("actions_count")
     private int mActionCount = 0;
 
@@ -57,7 +57,7 @@ public class BehaviorContent extends TDCContent implements Serializable{
         return mExternalResourceName;
     }
 
-    public Set<Integer> getGoalIdSet(){
+    public Set<Long> getGoalIdSet(){
         return mGoalIdSet;
     }
 

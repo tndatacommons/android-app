@@ -31,7 +31,7 @@ public class ActionContent extends TDCContent implements Serializable{
     private Trigger mTrigger;
 
     @SerializedName("behavior")
-    private int mBehaviorId;
+    private long mBehaviorId;
 
 
     /*---------*
@@ -62,7 +62,7 @@ public class ActionContent extends TDCContent implements Serializable{
         return mTrigger;
     }
 
-    public int getBehaviorId(){
+    public long getBehaviorId(){
         return mBehaviorId;
     }
 

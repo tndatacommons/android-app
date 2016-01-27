@@ -34,11 +34,11 @@ public class UserData{
 
 
     //User selected content. id -> content maps
-    private Map<Integer, UserCategory> categories;
-    private Map<Integer, UserGoal> goals;
-    private Map<Integer, UserBehavior> behaviors;
-    private Map<Integer, UserAction> actions;
-    private Set<Integer> mRequestedGoals;
+    private Map<Long, UserCategory> categories;
+    private Map<Long, UserGoal> goals;
+    private Map<Long, UserBehavior> behaviors;
+    private Map<Long, UserAction> actions;
+    private Set<Long> mRequestedGoals;
 
     //User places
     private List<UserPlace> places = new ArrayList<>();
@@ -62,19 +62,19 @@ public class UserData{
      * These methods are meant to be used by the parser only *
      *-------------------------------------------------------*/
 
-    public void setCategories(@NonNull Map<Integer, UserCategory> categories){
+    public void setCategories(@NonNull Map<Long, UserCategory> categories){
         this.categories = categories;
     }
 
-    public void setGoals(@NonNull Map<Integer, UserGoal> goals){
+    public void setGoals(@NonNull Map<Long, UserGoal> goals){
         this.goals = goals;
     }
 
-    public void setBehaviors(@NonNull Map<Integer, UserBehavior> behaviors){
+    public void setBehaviors(@NonNull Map<Long, UserBehavior> behaviors){
         this.behaviors = behaviors;
     }
 
-    public void setActions(@NonNull Map<Integer, UserAction> actions){
+    public void setActions(@NonNull Map<Long, UserAction> actions){
         this.actions = actions;
     }
 
@@ -88,7 +88,7 @@ public class UserData{
      *
      * @return an ArrayList of Category objects
      */
-    public Map<Integer, UserCategory> getCategories(){
+    public Map<Long, UserCategory> getCategories(){
         return categories;
     }
 
@@ -129,11 +129,11 @@ public class UserData{
         //If the category ain't in the data set
         if (!contains(userCategory)){
             //Add it
-            categories.put(userCategory.getObjectId(), userCategory);
+            categories.put(userCategory.getContentId(), userCategory);
 
             //Link goals
             for (UserGoal userGoals:goals.values()){
-                if (userGoals.getGoal().getCategoryIdSet().contains(userCategory.getObjectId())){
+                if (userGoals.getGoal().getCategoryIdSet().contains(userCategory.getContentId())){
                     userGoals.addCategory(userCategory);
                     userCategory.addGoal(userGoals);
                 }
@@ -180,7 +180,7 @@ public class UserData{
      *
      * @return a List of Goal objects.
      */
-    public Map<Integer, UserGoal> getGoals(){
+    public Map<Long, UserGoal> getGoals(){
         return goals;
     }
 
@@ -224,7 +224,7 @@ public class UserData{
      *
      * @param id the id of the goal.
      */
-    public void addGoal(int id){
+    public void addGoal(long id){
         mRequestedGoals.add(id);
     }
 
@@ -239,14 +239,14 @@ public class UserData{
     public void addGoal(UserGoal userGoal){
         //If the goal ain't in the data set
         if (!contains(userGoal)){
-            mRequestedGoals.remove(userGoal.getObjectId());
+            mRequestedGoals.remove(userGoal.getContentId());
 
             //Initialize the object and add it
             userGoal.init();
-            goals.put(userGoal.getObjectId(), userGoal);
+            goals.put(userGoal.getContentId(), userGoal);
 
             //Link the goal with the relevant categories
-            for (Integer categoryId:userGoal.getGoal().getCategoryIdSet()){
+            for (Long categoryId:userGoal.getGoal().getCategoryIdSet()){
                 if (categories.containsKey(categoryId)){
                     userGoal.addCategory(categories.get(categoryId));
                     categories.get(categoryId).addGoal(userGoal);
@@ -255,7 +255,7 @@ public class UserData{
 
             //Link the goal with the relevant behaviors
             for (UserBehavior userBehavior:behaviors.values()){
-                if (userBehavior.getBehavior().getGoalIdSet().contains(userGoal.getObjectId())){
+                if (userBehavior.getBehavior().getGoalIdSet().contains(userGoal.getContentId())){
                     userGoal.addBehavior(userBehavior);
                     userBehavior.addGoal(userGoal);
                 }
@@ -308,7 +308,7 @@ public class UserData{
      *
      * @return an ArrayList of Behavior objects.
      */
-    public Map<Integer, UserBehavior> getBehaviors(){
+    public Map<Long, UserBehavior> getBehaviors(){
         return behaviors;
     }
 
@@ -338,9 +338,9 @@ public class UserData{
     public void addBehavior(UserBehavior userBehavior){
         if (!contains(userBehavior)){
             userBehavior.init();
-            behaviors.put(userBehavior.getObjectId(), userBehavior);
+            behaviors.put(userBehavior.getContentId(), userBehavior);
 
-            for (Integer goalId:userBehavior.getBehavior().getGoalIdSet()){
+            for (Long goalId:userBehavior.getBehavior().getGoalIdSet()){
                 if (goals.containsKey(goalId)){
                     userBehavior.addGoal(goals.get(goalId));
                     goals.get(goalId).addBehavior(userBehavior);
@@ -348,7 +348,7 @@ public class UserData{
             }
 
             for (UserAction userAction:actions.values()){
-                if (userAction.getAction().getBehaviorId() == userBehavior.getObjectId()){
+                if (userAction.getAction().getBehaviorId() == userBehavior.getContentId()){
                     userAction.setBehavior(userBehavior);
                     userBehavior.addAction(userAction);
                 }
@@ -389,7 +389,7 @@ public class UserData{
      *
      * @return an ArrayList of Action objects.
      */
-    public Map<Integer, UserAction> getActions(){
+    public Map<Long, UserAction> getActions(){
         return actions;
     }
 
@@ -466,7 +466,7 @@ public class UserData{
     private void linkGoalsAndCategories(){
         //Add each goal to the correct category and vice versa
         for (UserGoal userGoal: goals.values()){
-            for (Integer categoryId:userGoal.getGoal().getCategoryIdSet()){
+            for (Long categoryId:userGoal.getGoal().getCategoryIdSet()){
                 if (categories.containsKey(categoryId)){
                     UserCategory userCategory = categories.get(categoryId);
                     userCategory.addGoal(userGoal);
@@ -483,7 +483,7 @@ public class UserData{
     private void linkBehaviorsAndGoals(){
         //Look at all the selected goals
         for (UserBehavior userBehavior: behaviors.values()){
-            for (Integer goalId:userBehavior.getBehavior().getGoalIdSet()){
+            for (Long goalId:userBehavior.getBehavior().getGoalIdSet()){
                 if (goals.containsKey(goalId)){
                     UserGoal userGoal = goals.get(goalId);
                     userGoal.addBehavior(userBehavior);
@@ -606,7 +606,7 @@ public class UserData{
         if (!userGoal.getCategories().isEmpty()){
             output = "";
             for (UserCategory userCategory:userGoal.getCategories()){
-                output += "(" + userCategory.getObjectId() + ") " + userCategory.getTitle() + ", ";
+                output += "(" + userCategory.getContentId() + ") " + userCategory.getTitle() + ", ";
             }
         }
         Log.d(TAG, "- (parents) -> " + output);
@@ -622,7 +622,7 @@ public class UserData{
         if (!userBehavior.getGoals().isEmpty()){
             output = "";
             for (UserGoal userGoal:userBehavior.getGoals()){
-                output += "(" + userGoal.getObjectId() + ") " + userGoal.getTitle() + ", ";
+                output += "(" + userGoal.getContentId() + ") " + userGoal.getTitle() + ", ";
             }
         }
         Log.d(TAG, "-- (parents) ->" + output);
@@ -637,7 +637,7 @@ public class UserData{
         String output = "NONE";
         UserBehavior userBehavior = userAction.getBehavior();
         if (userBehavior != null){
-            output = "(" + userBehavior.getObjectId() + ") " + userBehavior.getTitle();
+            output = "(" + userBehavior.getContentId() + ") " + userBehavior.getTitle();
         }
         Log.d(TAG, "--- (parent)-> " + output);
     }

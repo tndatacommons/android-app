@@ -28,7 +28,7 @@ public class GoalContent extends TDCContent implements Serializable, Displayable
     @SerializedName("outcome")
     private String mOutcome = "";
     @SerializedName("categories")
-    private Set<Integer> mCategoryIdSet;
+    private Set<Long> mCategoryIdSet;
     @SerializedName("behaviors_count")
     private int mBehaviorCount = 0;
 
@@ -43,7 +43,7 @@ public class GoalContent extends TDCContent implements Serializable, Displayable
         this.mOutcome = outcome;
     }
 
-    public void setCategories(Set<Integer> categories){
+    public void setCategories(Set<Long> categories){
         this.mCategoryIdSet = categories;
     }
 
@@ -64,7 +64,7 @@ public class GoalContent extends TDCContent implements Serializable, Displayable
         return mOutcome;
     }
 
-    public Set<Integer> getCategoryIdSet(){
+    public Set<Long> getCategoryIdSet(){
         return mCategoryIdSet;
     }
 

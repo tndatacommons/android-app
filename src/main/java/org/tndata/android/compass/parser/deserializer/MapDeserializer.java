@@ -14,6 +14,7 @@ import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserContent;
 import org.tndata.android.compass.model.UserGoal;
+import org.tndata.android.compass.model.UserSelectedContent;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -27,10 +28,10 @@ import java.util.Set;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class MapDeserializer implements JsonDeserializer<Map<Integer, ? extends UserContent>>{
+public class MapDeserializer implements JsonDeserializer<Map<Integer, ? extends UserSelectedContent>>{
     @Override
-    public Map<Integer, ? extends UserContent> deserialize(JsonElement json, Type typeOfT,
-                                                           JsonDeserializationContext context){
+    public Map<Integer, ? extends UserSelectedContent> deserialize(JsonElement json, Type typeOfT,
+                                                                   JsonDeserializationContext context){
         return parse(json);
     }
 
