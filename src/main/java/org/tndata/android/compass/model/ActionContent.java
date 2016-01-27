@@ -27,7 +27,7 @@ public class ActionContent extends TDCContent implements Serializable{
     private String mExternalResource;
     @SerializedName("external_resource_name")
     private String mExternalResourceName;
-    @SerializedName("trigger")
+    @SerializedName("default_trigger")
     private Trigger mTrigger;
 
     @SerializedName("behavior")

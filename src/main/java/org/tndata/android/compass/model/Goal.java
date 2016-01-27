@@ -4,7 +4,7 @@ import android.content.Context;
 
 
 /**
- * Model for anything that can be classified as a goal.
+ * Model superclass for anything that can be classified as a goal.
  *
  * @author Ismael Alonso.
  * @version 1.0.0

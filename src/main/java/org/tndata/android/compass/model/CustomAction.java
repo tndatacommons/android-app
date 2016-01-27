@@ -9,19 +9,17 @@ import com.google.gson.annotations.SerializedName;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class CustomAction extends TDCBase{
+public class CustomAction extends Action{
+    public static final String TYPE = "custom_action";
+
+
     //API delivered values
+    @SerializedName("title")
+    private String mTitle;
     @SerializedName("customgoal")
     private int mCustomGoalId;
-
     @SerializedName("notification_text")
     private String mNotificationText;
-
-    @SerializedName("custom_trigger")
-    private Trigger mTrigger;
-
-    @SerializedName("next_trigger_date")
-    private String mNextTriggerDate;
 
 
     //Post processing set values
@@ -36,36 +34,14 @@ public class CustomAction extends TDCBase{
         return mNotificationText;
     }
 
-    public Trigger getCustomTrigger(){
-        return mTrigger;
+    @Override
+    public String getTitle(){
+        return mTitle;
     }
 
-    public String getRawNextReminderDate(){
-        return mNextTriggerDate;
-    }
-
-    public String getNextReminderDate(){
-        if (mNextTriggerDate == null){
-            return "";
-        }
-
-        String time = mNextTriggerDate.substring(mNextTriggerDate.indexOf('T')+1);
-        String hourStr = time.substring(0, time.indexOf(':'));
-        time = time.substring(time.indexOf(':')+1);
-        try{
-            boolean am = true;
-            int hour = Integer.valueOf(hourStr);
-            if (hour > 12){
-                hour -= 12;
-                am = false;
-            }
-
-            return hour + ":" + time.substring(0, time.indexOf(":")) + (am ? " am" : " pm");
-        }
-        catch (NumberFormatException nfx){
-            nfx.printStackTrace();
-            return "";
-        }
+    @Override
+    public String getGoalTitle(){
+        return mGoal.getTitle();
     }
 
     public void setGoal(CustomGoal goal){
@@ -74,5 +50,15 @@ public class CustomAction extends TDCBase{
 
     public CustomGoal getGoal(){
         return mGoal;
+    }
+
+    @Override
+    protected String getType(){
+        return TYPE;
+    }
+
+    @Override
+    public void init(){
+        //Unused
     }
 }

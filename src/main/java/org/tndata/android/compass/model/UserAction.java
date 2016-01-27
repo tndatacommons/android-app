@@ -1,5 +1,7 @@
 package org.tndata.android.compass.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.tndata.android.compass.parser.ParserModels;
 
 import java.io.Serializable;
@@ -11,32 +13,44 @@ import java.io.Serializable;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserAction extends UserContent implements Serializable, ParserModels.ResultSet{
+public class UserAction
+        extends UserContent
+        implements
+                Serializable,
+                ParserModels.ResultSet,
+                UserSelectedContent{
+    
     private static final long serialVersionUID = 291944745632851923L;
 
+    public static final String TYPE = "useraction";
+
+
     //Values retrieved from the API
-    private ActionContent action;
-    private String next_reminder_date;
+    @SerializedName("action")
+    private ActionContent mAction;
+    @SerializedName("primary_goal")
+    private int mPrimaryGoalId;
+    @SerializedName("primary_category")
+    private int mPrimaryCategoryId;
 
-    private int primary_goal;
-    private int primary_category;
-
-    private Trigger trigger;
-
-    private UserBehavior parent_userbehavior;
-    private UserGoal parent_usergoal;
-    private UserCategory parent_usercategory;
+    //These values are retrieved from the API when an Action is POSTed
+    @SerializedName("parent_userbehavior")
+    private UserBehavior mParentUserBehavior;
+    @SerializedName("parent_usergoal")
+    private UserGoal mParentUserGoal;
+    @SerializedName("parent_usercategory")
+    private UserCategory mParentUserCategory;
 
     //Values set during post-processing
-    private UserBehavior behavior;
-    private UserGoal primaryGoal;
-    private UserCategory primaryCategory;
+    private UserBehavior mBehavior;
+    private UserGoal mPrimaryGoal;
+    private UserCategory mPrimaryCategory;
 
 
     public UserAction(ActionContent action, UserGoal primaryGoal, UserCategory primaryCategory){
-        this.action = action;
-        this.primaryGoal = primaryGoal;
-        this.primaryCategory = primaryCategory;
+        this.mAction = action;
+        this.mPrimaryGoal = primaryGoal;
+        this.mPrimaryCategory = primaryCategory;
     }
 
 
@@ -45,23 +59,15 @@ public class UserAction extends UserContent implements Serializable, ParserModel
      *---------*/
 
     public void setBehavior(UserBehavior behavior){
-        this.behavior = behavior;
-    }
-
-    public void setTrigger(Trigger trigger){
-        this.trigger = trigger;
-    }
-
-    public void setNextReminderDate(String nextReminderDate){
-        next_reminder_date = nextReminderDate;
+        this.mBehavior = behavior;
     }
 
     public void setPrimaryCategory(UserCategory primaryCategory){
-        this.primaryCategory = primaryCategory;
+        this.mPrimaryCategory = primaryCategory;
     }
 
     public void setPrimaryGoal(UserGoal primaryGoal){
-        this.primaryGoal = primaryGoal;
+        this.mPrimaryGoal = primaryGoal;
     }
 
 
@@ -70,100 +76,69 @@ public class UserAction extends UserContent implements Serializable, ParserModel
      *---------*/
 
     public ActionContent getAction(){
-        return action;
+        return mAction;
     }
 
     @Override
-    public int getObjectId(){
-        return action.getId();
+    public long getContentId(){
+        return mAction.getId();
     }
 
     @Override
     public String getTitle(){
-        return action.getTitle();
+        return mAction.getTitle();
     }
 
     @Override
     public String getDescription(){
-        return action.getDescription();
+        return mAction.getDescription();
     }
 
     @Override
     public String getHTMLDescription(){
-        return action.getHTMLDescription();
+        return mAction.getHTMLDescription();
     }
 
     @Override
     public String getIconUrl(){
-        return action.getIconUrl();
-    }
-
-    public String getRawNextReminderDate(){
-        return next_reminder_date;
-    }
-
-    public String getNextReminderDate(){
-        if (next_reminder_date == null){
-            return "";
-        }
-
-        String time = next_reminder_date.substring(next_reminder_date.indexOf('T')+1);
-        String hourStr = time.substring(0, time.indexOf(':'));
-        time = time.substring(time.indexOf(':')+1);
-        try{
-            boolean am = true;
-            int hour = Integer.valueOf(hourStr);
-            if (hour > 12){
-                hour -= 12;
-                am = false;
-            }
-
-            return hour + ":" + time.substring(0, time.indexOf(":")) + (am ? " am" : " pm");
-        }
-        catch (NumberFormatException nfx){
-            nfx.printStackTrace();
-            return "";
-        }
+        return mAction.getIconUrl();
     }
 
     public UserBehavior getBehavior(){
-        return behavior;
+        return mBehavior;
     }
 
     public int getPrimaryCategoryId(){
-        return primary_category;
+        return mPrimaryCategoryId;
     }
 
     public int getPrimaryGoalId(){
-        return primary_goal;
+        return mPrimaryGoalId;
     }
 
     public UserCategory getPrimaryCategory(){
-        return primaryCategory;
+        return mPrimaryCategory;
     }
 
     public UserGoal getPrimaryGoal(){
-        return primaryGoal;
-    }
-
-    public Trigger getTrigger(){
-        return trigger;
-    }
-
-    public boolean hasTrigger(){
-        return trigger != null;
+        return mPrimaryGoal;
     }
 
     public UserBehavior getParentUserBehavior(){
-        return parent_userbehavior;
+        return mParentUserBehavior;
     }
 
     public UserGoal getParentUserGoal(){
-        return parent_usergoal;
+        return mParentUserGoal;
     }
 
     public UserCategory getParentUserCategory(){
-        return parent_usercategory;
+        return mParentUserCategory;
+    }
+
+    @Override
+    protected String getType(){
+        return TYPE;
     }
 
 
@@ -179,6 +154,6 @@ public class UserAction extends UserContent implements Serializable, ParserModel
 
     @Override
     public String toString(){
-        return "UserAction #" + getId() + " (" + action.toString() + ")";
+        return "UserAction #" + getId() + " (" + mAction.toString() + ")";
     }
 }
