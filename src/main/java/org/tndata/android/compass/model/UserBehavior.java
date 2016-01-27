@@ -1,5 +1,7 @@
 package org.tndata.android.compass.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.tndata.android.compass.parser.ParserModels;
 
 import java.io.Serializable;
@@ -13,16 +15,28 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserBehavior extends UserContent implements Serializable, ParserModels.ResultSet{
+public class UserBehavior
+        extends UserContent
+        implements
+                Serializable,
+                ParserModels.ResultSet,
+                UserSelectedContent{
+
     private static final long serialVersionUID = 774798265423822842L;
 
+    public static final String TYPE = "userbehavior";
+
+
     //Values retrieved from the API
-    private BehaviorContent behavior;
+    @SerializedName("behavior")
+    private BehaviorContent mBehavior;
+    @SerializedName("progress")
+    private Progress mProgress;
 
-    private Progress progress;
-
-    private UserGoal parent_usergoal;
-    private UserCategory parent_usercategory;
+    @SerializedName("parent_usergoal")
+    private UserGoal mParentUserGoal;
+    @SerializedName("parent_usercategory")
+    private UserCategory mParentUserCategory;
 
     //Values set during post-processing
     private List<UserGoal> userGoals = new ArrayList<>();
@@ -30,7 +44,7 @@ public class UserBehavior extends UserContent implements Serializable, ParserMod
 
 
     public UserBehavior(BehaviorContent behavior){
-        this.behavior = behavior;
+        this.mBehavior = behavior;
     }
 
 
@@ -39,7 +53,7 @@ public class UserBehavior extends UserContent implements Serializable, ParserMod
      *---------*/
 
     public void setProgress(Progress progress){
-        this.progress = progress;
+        this.mProgress = progress;
     }
 
     public void setGoals(List<UserGoal> goals) {
@@ -56,32 +70,32 @@ public class UserBehavior extends UserContent implements Serializable, ParserMod
      *---------*/
 
     public BehaviorContent getBehavior(){
-        return behavior;
+        return mBehavior;
     }
 
     @Override
-    public int getObjectId(){
-        return behavior.getId();
+    public long getContentId(){
+        return mBehavior.getId();
     }
 
     @Override
     public String getTitle(){
-        return behavior.getTitle();
+        return mBehavior.getTitle();
     }
 
     @Override
     public String getDescription(){
-        return behavior.getDescription();
+        return mBehavior.getDescription();
     }
 
     @Override
     public String getHTMLDescription(){
-        return behavior.getHTMLDescription();
+        return mBehavior.getHTMLDescription();
     }
 
     @Override
     public String getIconUrl(){
-        return behavior.getIconUrl();
+        return mBehavior.getIconUrl();
     }
 
     public List<UserGoal> getGoals(){
@@ -93,17 +107,21 @@ public class UserBehavior extends UserContent implements Serializable, ParserMod
     }
 
     public Progress getProgress(){
-        return progress;
+        return mProgress;
     }
 
     public UserGoal getParentUserGoal(){
-        return parent_usergoal;
+        return mParentUserGoal;
     }
 
     public UserCategory getParentUserCategory(){
-        return parent_usercategory;
+        return mParentUserCategory;
     }
 
+    @Override
+    protected String getType(){
+        return TYPE;
+    }
 
     /*---------*
      * UTILITY *
@@ -145,6 +163,6 @@ public class UserBehavior extends UserContent implements Serializable, ParserMod
 
     @Override
     public String toString(){
-        return "UserBehavior #" + getId() + " (" + behavior.toString() + ")";
+        return "UserBehavior #" + getId() + " (" + mBehavior.toString() + ")";
     }
 }

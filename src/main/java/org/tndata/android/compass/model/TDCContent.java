@@ -83,22 +83,6 @@ public abstract class TDCContent extends TDCBase implements Serializable, Compar
      *---------*/
 
     @Override
-    public boolean equals(Object object){
-        boolean result = false;
-        if (object == this){
-            result = true;
-        }
-        else if (object != null && object instanceof TDCContent){
-            if (getType().equals(((TDCContent)object).getType())){
-                if (getId() == ((TDCContent)object).getId()){
-                    result = true;
-                }
-            }
-        }
-        return result;
-    }
-
-    @Override
     public int hashCode(){
         return 21 + mTitle.hashCode();
     }
