@@ -11,4 +11,6 @@ public interface UserSelectedContent{
     String getDescription();
     String getHTMLDescription();
     String getIconUrl();
+
+    void init();
 }

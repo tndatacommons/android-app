@@ -1,17 +1,14 @@
 package org.tndata.android.compass.parser.deserializer;
 
-import android.util.Log;
-
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
+import org.tndata.android.compass.model.TDCBase;
 import org.tndata.android.compass.parser.ParserMethods;
+import org.tndata.android.compass.util.CompassUtil;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,16 +20,14 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class ListDeserializer extends ParserMethods implements JsonDeserializer<List<?>>{
+public class ListDeserializer extends ParserMethods implements JsonDeserializer<List<? extends TDCBase>>{
     @Override
-    public List<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context){
-        return parse(json, ((ParameterizedType)typeOfT).getActualTypeArguments()[0]);
+    public List<? extends TDCBase> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context){
+        return parse(json);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> parse(JsonElement item, T type){
-        Log.d("ListDeserializer", "Deserializing: " + item.toString());
-
+    public <T extends TDCBase> List<T> parse(JsonElement item){
         //Create the list where the parsed objects will be put
         List<T> list = new ArrayList<>();
 
@@ -40,14 +35,10 @@ public class ListDeserializer extends ParserMethods implements JsonDeserializer<
         //  those to return an empty List, which is what that represents. That
         //  is not regular expected behavior though
         if (!item.toString().equals("{}")){
-            //Build the GSON parser that looks for field matches
-            Gson gson = new GsonBuilder()
-                    .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
-                    .create();
-
             //Parse all the elements of the array and add them to the list
             for (JsonElement element:item.getAsJsonArray()){
-                list.add(sGson.fromJson(element, (Class<T>)type));
+                String type = ((JsonObject)element).get("object_type").getAsString();
+                list.add((T)sGson.fromJson(element, CompassUtil.getTypeOf(type)));
             }
         }
 

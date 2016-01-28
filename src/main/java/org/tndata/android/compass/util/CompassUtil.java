@@ -15,6 +15,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.TDCBase;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserCategory;
@@ -237,7 +238,7 @@ public final class CompassUtil{
             return GoalContent.class;
         }
         else{
-            return null;
+            return TDCBase.class;
         }
     }
 }
