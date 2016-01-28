@@ -46,7 +46,13 @@ public class UserData{
     private Map<Long, UserAction> mActions;
     private Set<Long> mRequestedGoals;
 
-    //User mPlaces
+    //Custom content: Custom(*).id -> Custom(*) maps
+    @SerializedName("custom_goals")
+    private Map<Long, CustomGoal> mCustomGoals;
+    @SerializedName("custom_actions")
+    private Map<Long, CustomAction> mCustomActions;
+
+    //User places
     @SerializedName("places")
     private List<UserPlace> mPlaces = new ArrayList<>();
 
@@ -63,6 +69,9 @@ public class UserData{
         mGoals = new HashMap<>();
         mBehaviors = new HashMap<>();
         mActions = new HashMap<>();
+
+        mCustomGoals = new HashMap<>();
+        mCustomActions = new HashMap<>();
     }
 
 
@@ -428,7 +437,7 @@ public class UserData{
      */
     public void addAction(UserAction userAction){
         if (!contains(userAction)){
-            mActions.put(userAction.getAction().getId(), userAction);
+            mActions.put(userAction.getContentId(), userAction);
 
             UserBehavior behavior = mBehaviors.get(userAction.getAction().getBehaviorId());
             if (behavior != null){
@@ -449,6 +458,50 @@ public class UserData{
         if (removedAction != null && removedAction.getBehavior() != null){
             removedAction.getBehavior().removeAction(removedAction);
         }
+    }
+
+
+    /*-----------------------------*
+     * CUSTOM GOAL RELATED METHODS *
+     *-----------------------------*/
+
+    public Map<Long, CustomGoal> getCustomGoals(){
+        return mCustomGoals;
+    }
+
+    public void addCustomGoal(CustomGoal customGoal){
+        if (!mCustomGoals.containsKey(customGoal.getContentId())){
+            mCustomGoals.put(customGoal.getContentId(), customGoal);
+        }
+    }
+
+    public void removeCustomGoal(CustomGoal customGoal){
+        mCustomGoals.remove(customGoal.getContentId());
+
+        for (CustomAction customAction:customGoal.getActions()){
+            if (mCustomActions.containsKey(customAction.getContentId())){
+                removeCustomAction(customAction);
+            }
+        }
+    }
+
+
+    /*-------------------------------*
+     * CUSTOM ACTION RELATED METHODS *
+     *-------------------------------*/
+
+    public Map<Long, CustomAction> getCustomActions(){
+        return mCustomActions;
+    }
+
+    public void addCustomAction(CustomAction customAction){
+        mCustomActions.put(customAction.getContentId(), customAction);
+        mCustomGoals.get(customAction.getCustomGoalId()).addAction(customAction);
+    }
+
+    public void removeCustomAction(CustomAction customAction){
+        mCustomActions.remove(customAction.getContentId());
+        mCustomGoals.get(customAction.getCustomGoalId()).removeAction(customAction);
     }
 
 

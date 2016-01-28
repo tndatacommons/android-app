@@ -36,7 +36,7 @@ public class CustomAction extends Action{
     private CustomGoal mGoal;
 
 
-    public int getCustomGoalId(){
+    public long getCustomGoalId(){
         return mCustomGoalId;
     }
 
