@@ -26,7 +26,7 @@ public class FeedData{
     private Progress mProgress;
 
     @SerializedName("upcoming_actions")
-    private List<UserAction> mUpcomingActions;
+    private List<Action> mUpcomingActions;
     @SerializedName("suggestions")
     private List<GoalContent> mSuggestions;
 
@@ -184,7 +184,7 @@ public class FeedData{
      *
      * @param upcomingActions the list of upcoming actions.
      */
-    public void setUpcomingActions(List<UserAction> upcomingActions){
+    public void setUpcomingActions(List<Action> upcomingActions){
         mUpcomingActions = upcomingActions;
     }
 
@@ -193,7 +193,7 @@ public class FeedData{
      *
      * @return the list of upcoming actions.
      */
-    public List<UserAction> getUpcomingActions(){
+    public List<Action> getUpcomingActions(){
         return mUpcomingActions;
     }
 
@@ -225,15 +225,20 @@ public class FeedData{
         else{
             mNextAction = null;
         }
-        List<UserAction> upcomingActions = new ArrayList<>();
-        for (UserAction userAction:mUpcomingActions){
-            upcomingActions.add(userData.getAction(userAction));
+        List<Action> upcomingActions = new ArrayList<>();
+        for (Action action:mUpcomingActions){
+            if (action instanceof UserAction){
+                upcomingActions.add(userData.getAction((UserAction)action));
+            }
+            else if (action instanceof CustomAction){
+                //TODO where does this list go?
+            }
         }
         mUpcomingActions = upcomingActions;
 
         //Assign colors to suggestions
         for (GoalContent suggestion:mSuggestions){
-            for (Integer categoryId:suggestion.getCategoryIdSet()){
+            for (Long categoryId:suggestion.getCategoryIdSet()){
                 if (userData.getCategories().containsKey(categoryId)){
                     suggestion.setColor(userData.getCategories().get(categoryId).getColor());
                     break;

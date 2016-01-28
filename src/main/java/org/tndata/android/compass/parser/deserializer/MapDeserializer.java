@@ -8,7 +8,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.tndata.android.compass.model.UserSelectedContent;
+import org.tndata.android.compass.model.UserContent;
 import org.tndata.android.compass.util.CompassUtil;
 
 import java.lang.reflect.Type;
@@ -23,15 +23,15 @@ import java.util.Set;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class MapDeserializer implements JsonDeserializer<Map<Long, ? extends UserSelectedContent>>{
+public class MapDeserializer implements JsonDeserializer<Map<Long, ? extends UserContent>>{
     @Override
-    public Map<Long, ? extends UserSelectedContent> deserialize(JsonElement json, Type typeOfT,
-                                                                JsonDeserializationContext context){
+    public Map<Long, ? extends UserContent> deserialize(JsonElement json, Type typeOfT,
+                                                        JsonDeserializationContext context){
         return parse(json);
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends UserSelectedContent> Map<Long, T> parse(JsonElement item){
+    public <T extends UserContent> Map<Long, T> parse(JsonElement item){
         //Create the set where the parsed objects will be put
         Map<Long, T> map = new HashMap<>();
 

@@ -22,6 +22,16 @@ public class CustomAction extends Action{
     private String mNotificationText;
 
 
+    @Override
+    public long getContentId(){
+        return getId();
+    }
+
+    @Override
+    public void init(){
+        //Unused
+    }
+
     //Post processing set values
     private CustomGoal mGoal;
 
@@ -55,10 +65,5 @@ public class CustomAction extends Action{
     @Override
     protected String getType(){
         return TYPE;
-    }
-
-    @Override
-    public void init(){
-        //Unused
     }
 }

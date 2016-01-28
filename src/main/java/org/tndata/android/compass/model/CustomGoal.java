@@ -30,6 +30,11 @@ public class CustomGoal extends Goal{
 
 
     @Override
+    public long getContentId(){
+        return getId();
+    }
+
+    @Override
     public void init(){
         if (mActions == null){
             mActions = new ArrayList<>();

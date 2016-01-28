@@ -10,6 +10,14 @@ package org.tndata.android.compass.model;
  */
 public abstract class UserContent extends TDCBase{
     /**
+     * Gets the id of the actual piece of content for selected content or the id of the
+     * object for custom content. In custom content, getContentId() === getId().
+     *
+     * @return an ID as described above.
+     */
+    public abstract long getContentId();
+
+    /**
      * Method used to initialize the content's inner Lists.
      */
     public abstract void init();

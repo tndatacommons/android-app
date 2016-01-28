@@ -6,7 +6,6 @@ package org.tndata.android.compass.model;
  * @author Ismael Alonso
  */
 public interface UserSelectedContent{
-    long getContentId();
     String getTitle();
     String getDescription();
     String getHTMLDescription();

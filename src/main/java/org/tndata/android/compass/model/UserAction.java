@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @version 1.0.0
  */
 public class UserAction
-        extends UserContent
+        extends Action
         implements
                 Serializable,
                 ParserModels.ResultSet,
@@ -87,6 +87,11 @@ public class UserAction
     @Override
     public String getTitle(){
         return mAction.getTitle();
+    }
+
+    @Override
+    public String getGoalTitle(){
+        return mPrimaryGoal.getTitle();
     }
 
     @Override
