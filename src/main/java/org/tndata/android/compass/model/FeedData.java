@@ -231,7 +231,7 @@ public class FeedData{
                 upcomingActions.add(userData.getAction((UserAction)action));
             }
             else if (action instanceof CustomAction){
-                //TODO where does this list go?
+                upcomingActions.add(userData.getCustomActions().get(action.getContentId()));
             }
         }
         mUpcomingActions = upcomingActions;
