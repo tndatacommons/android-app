@@ -496,7 +496,8 @@ public class UserData{
 
     public void addCustomAction(CustomAction customAction){
         mCustomActions.put(customAction.getContentId(), customAction);
-        mCustomGoals.get(customAction.getCustomGoalId()).addAction(customAction);
+        customAction.setGoal(mCustomGoals.get(customAction.getCustomGoalId()));
+        customAction.getGoal().addAction(customAction);
     }
 
     public void removeCustomAction(CustomAction customAction){
@@ -518,15 +519,16 @@ public class UserData{
         linkGoalsAndCategories();
         linkBehaviorsAndGoals();
         linkActions();
+        linkCustomContent();
         mFeedData.sync(this);
     }
 
     /**
-     * Generates the inner lists of parents and children for mGoals and mCategories, respectively.
+     * Generates the inner lists of parents and children for goals and categories, respectively.
      */
     private void linkGoalsAndCategories(){
         //Add each goal to the correct category and vice versa
-        for (UserGoal userGoal: mGoals.values()){
+        for (UserGoal userGoal:mGoals.values()){
             for (Long categoryId:userGoal.getGoal().getCategoryIdSet()){
                 if (mCategories.containsKey(categoryId)){
                     UserCategory userCategory = mCategories.get(categoryId);
@@ -539,11 +541,11 @@ public class UserData{
     }
 
     /**
-     * Generates the inner lists of parents and children for mBehaviors and mGoals, respectively.
+     * Generates the inner lists of parents and children for behaviors and goals, respectively.
      */
     private void linkBehaviorsAndGoals(){
         //Look at all the selected mGoals
-        for (UserBehavior userBehavior: mBehaviors.values()){
+        for (UserBehavior userBehavior:mBehaviors.values()){
             for (Long goalId:userBehavior.getBehavior().getGoalIdSet()){
                 if (mGoals.containsKey(goalId)){
                     UserGoal userGoal = mGoals.get(goalId);
@@ -555,15 +557,26 @@ public class UserData{
     }
 
     /**
-     * Generates the inner list of children for mBehaviors and sets the parents for mActions.
+     * Generates the inner list of children for mBehaviors and sets the parents for actions.
      */
     public void linkActions(){
-        for (UserAction userAction: mActions.values()){
+        for (UserAction userAction:mActions.values()){
             UserBehavior userBehavior = mBehaviors.get(userAction.getAction().getBehaviorId());
             userBehavior.addAction(userAction);
             userAction.setBehavior(userBehavior);
             userAction.setPrimaryGoal(mGoals.get(userAction.getPrimaryGoalId()));
             userAction.setPrimaryCategory(mCategories.get(userAction.getPrimaryCategoryId()));
+        }
+    }
+
+    /**
+     * Fills the CustomAction list of CustomGoals and sets the parent CustomGoals
+     * for CustomActions.
+     */
+    public void linkCustomContent(){
+        for (CustomAction customAction:mCustomActions.values()){
+            customAction.setGoal(mCustomGoals.get(customAction.getCustomGoalId()));
+            customAction.getGoal().addAction(customAction);
         }
     }
 
@@ -632,24 +645,24 @@ public class UserData{
      */
     public void logData() {
         Log.d(TAG, "Categories.");
-        for (UserCategory item: mCategories.values()){
+        for (UserCategory item:mCategories.values()){
             Log.d(TAG, "- " + item.toString());
             Log.d(TAG, "--> contains " + item.getGoals().size() + " goals");
         }
         Log.d(TAG, "Goals.");
-        for (UserGoal item: mGoals.values()){
+        for (UserGoal item:mGoals.values()){
             Log.d(TAG, "- " + item.toString());
             Log.d(TAG, "--> contains " + item.getCategories().size() + " categories");
             Log.d(TAG, "--> contains " + item.getBehaviors().size() + " behaviors");
         }
         Log.d(TAG, "Behaviors.");
-        for (UserBehavior item: mBehaviors.values()){
+        for (UserBehavior item:mBehaviors.values()){
             Log.d(TAG, "- " + item.toString());
             Log.d(TAG, "--> contains " + item.getGoals().size() + " goals");
             Log.d(TAG, "--> contains " + item.getActions().size() + " actions");
         }
         Log.d(TAG, "Actions.");
-        for (UserAction item: mActions.values()){
+        for (UserAction item:mActions.values()){
             Log.d(TAG, item.getAction().getBehaviorId()+"");
             Log.d(TAG, mBehaviors.get(item.getAction().getBehaviorId()).getBehavior().toString());
             Log.d(TAG, "- " + item.toString());
