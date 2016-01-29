@@ -14,6 +14,7 @@ import android.view.ViewGroup.LayoutParams;
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
@@ -39,9 +40,8 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     private static final int TYPE_SUGGESTION = TYPE_FEEDBACK+1;
     private static final int TYPE_HEADER = TYPE_SUGGESTION+1;
     private static final int TYPE_ACTION = TYPE_HEADER+1;
-    private static final int TYPE_USER_GOAL = TYPE_ACTION+1;
-    private static final int TYPE_GOAL_SUGGESTION = TYPE_USER_GOAL+1;
-    private static final int TYPE_FOOTER = TYPE_GOAL_SUGGESTION +1;
+    private static final int TYPE_GOAL = TYPE_ACTION+1;
+    private static final int TYPE_FOOTER = TYPE_GOAL +1;
     private static final int TYPE_OTHER = TYPE_FOOTER+1;
 
 
@@ -136,11 +136,8 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         if (CardTypes.isUpcomingAction(position)){
             return TYPE_ACTION;
         }
-        if (CardTypes.isMyGoal(position)){
-            return TYPE_USER_GOAL;
-        }
-        if (CardTypes.isGoalSuggestion(position)){
-            return TYPE_GOAL_SUGGESTION;
+        if (CardTypes.isGoal(position)){
+            return TYPE_GOAL;
         }
         if (CardTypes.isUpcomingFooter(position) || CardTypes.isMyGoalsFooter(position)){
             return TYPE_FOOTER;
@@ -184,7 +181,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             LayoutInflater inflater = LayoutInflater.from(mContext);
             return new ActionHolder(this, inflater.inflate(R.layout.card_action, parent, false));
         }
-        else if (viewType == TYPE_USER_GOAL || viewType == TYPE_GOAL_SUGGESTION){
+        else if (viewType == TYPE_GOAL || viewType == TYPE_GOAL_SUGGESTION){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             return new GoalHolder(this, inflater.inflate(R.layout.card_goal, parent, false));
         }
@@ -227,10 +224,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
         //Feedback
         else if (CardTypes.isFeedback(position)){
-            FeedbackHolder holder = (FeedbackHolder)rawHolder;
-            holder.mIcon.setImageResource(mUserData.getFeedData().getFeedbackIcon());
-            holder.mTitle.setText(mUserData.getFeedData().getFeedbackTitle());
-            holder.mSubtitle.setText(mUserData.getFeedData().getFeedbackSubtitle());
+            ((FeedbackHolder)rawHolder).bind(mUserData.getFeedData());
         }
         //Goal suggestion card
         else if (CardTypes.isSuggestion(position)){
@@ -263,18 +257,11 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             }
         }
         //My goals / suggestions
-        else if (CardTypes.isMyGoal(position)){
+        else if (CardTypes.isGoal(position)){
             ((CardView)rawHolder.itemView).setRadius(0);
 
             int goalPosition = position - CardTypes.getMyGoalsHeaderPosition()-1;
-            ((GoalHolder)rawHolder).bind(mDataHandler.getUserGoals().get(goalPosition));
-        }
-        //My goals / suggestions
-        else if (CardTypes.isGoalSuggestion(position)){
-            ((CardView)rawHolder.itemView).setRadius(0);
-
-            int goalPosition = position - CardTypes.getMyGoalsHeaderPosition()-1;
-            ((GoalHolder)rawHolder).bind(mDataHandler.getSuggestions().get(goalPosition));
+            ((GoalHolder)rawHolder).bind(mDataHandler.getGoals().get(goalPosition));
         }
         else if (CardTypes.isMyGoalsFooter(position)){
             ((CardView)rawHolder.itemView).setRadius(0);
@@ -404,7 +391,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * @param position the adapter position of the item to be removed.
      */
     void remove(int position){
-        UserAction action;
+        Action action;
         if (CardTypes.isUpNext(position)){
             action = mDataHandler.getUpNext();
             mDataHandler.remove(action);

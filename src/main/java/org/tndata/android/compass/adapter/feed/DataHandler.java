@@ -3,7 +3,6 @@ package org.tndata.android.compass.adapter.feed;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.model.UserGoal;
 
@@ -56,7 +55,7 @@ class DataHandler{
         mFeedData.setProgressPercentage(percentage);
     }
 
-    void remove(UserAction action){
+    void remove(Action action){
         mFeedData.setTotalActions(mFeedData.getTotalActions() - 1);
         int percentage = mFeedData.getCompletedActions() * 100 / mFeedData.getTotalActions();
         mFeedData.setProgressPercentage(percentage);

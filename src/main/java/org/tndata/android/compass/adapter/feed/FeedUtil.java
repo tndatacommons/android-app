@@ -7,7 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.ui.CompassPopupMenu;
@@ -39,22 +39,19 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
         mOpenPopup = position;
         CompassPopupMenu popup = CompassPopupMenu.newInstance(mAdapter.mContext, anchor);
 
-        //The category of the selected action needs to be retrieved to determine which menu
-        //  should be inflated.
-        UserAction userAction;
-        CategoryContent category;
+        //Get the action to determine which popup should be inflated
+        Action action;
         if (position == CardTypes.getUpNextPosition()){
-            userAction = mAdapter.getDataHandler().getUpNext();
+            action = mAdapter.getDataHandler().getUpNext();
         }
         else{
             int actionPosition = mAdapter.getActionPosition(position);
-            userAction = mAdapter.getDataHandler().getUpcoming().get(actionPosition);
+            action = mAdapter.getDataHandler().getUpcoming().get(actionPosition);
         }
-        category = mAdapter.getDataHandler().getActionCategory(userAction);
 
         //If the category couldn't be found or it is packaged, exclude removal options.
-        if (category == null || category.isPackagedContent()){
-            popup.getMenuInflater().inflate(R.menu.popup_action_packaged, popup.getMenu());
+        if (action instanceof UserAction && !((UserAction)action).getAction().isEditable()){
+            popup.getMenuInflater().inflate(R.menu.popup_action_non_editable, popup.getMenu());
         }
         else{
             popup.getMenuInflater().inflate(R.menu.popup_action, popup.getMenu());
@@ -113,11 +110,11 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
      * Sends a request to the API to mark an action as complete.
      *
      * @param context a reference to the context.
-     * @param userAction the action to be marked as complete.
+     * @param action the action to be marked as complete.
      */
-    void didIt(@NonNull Context context, @NonNull UserAction userAction){
+    void didIt(@NonNull Context context, @NonNull Action action){
         Intent completeAction = new Intent(context, ActionReportService.class)
-                .putExtra(ActionReportService.USER_ACTION_KEY, userAction)
+                .putExtra(ActionReportService.USER_ACTION_KEY, action)
                 .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED);
         context.startService(completeAction);
     }

@@ -94,7 +94,7 @@ final class CardTypes{
     }
 
     static boolean hasSuggestion(){
-        return sDisplaySuggestion && !sDataHandler.getUserGoals().isEmpty();
+        return sDisplaySuggestion && !sDataHandler.getGoals().isEmpty();
     }
 
     static int getSuggestionPosition(){
@@ -214,13 +214,7 @@ final class CardTypes{
      * @return the position of my goals footer.
      */
     static int getMyGoalsFooterPosition(){
-        //My goals can be either my goals or suggestions
-        if (sDataHandler.hasUserGoals()){
-            return getMyGoalsHeaderPosition() + sDataHandler.getUserGoals().size() + 1;
-        }
-        else{
-            return getMyGoalsHeaderPosition() + sDataHandler.getSuggestions().size() + 1;
-        }
+        return getMyGoalsHeaderPosition() + sDataHandler.getGoals().size() + 1;
     }
 
     /**
@@ -239,16 +233,8 @@ final class CardTypes{
      * @param position the position to be checked.
      * @return true if the position is that of a my goals inner item, false otherwise.
      */
-    private static boolean isGoal(int position){
+    static boolean isGoal(int position){
         return position > getMyGoalsHeaderPosition() && position < getMyGoalsFooterPosition();
-    }
-
-    static boolean isMyGoal(int position){
-        return sDataHandler.hasUserGoals() && isGoal(position);
-    }
-
-    static boolean isGoalSuggestion(int position){
-        return !sDataHandler.hasUserGoals() && isGoal(position);
     }
 
     static int getItemCount(){

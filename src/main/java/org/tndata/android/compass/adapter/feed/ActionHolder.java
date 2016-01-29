@@ -4,7 +4,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.Action;
 
 
 /**
@@ -40,7 +40,7 @@ class ActionHolder extends MainFeedViewHolder implements View.OnClickListener{
     public void onClick(View view){
         mAdapter.setSelectedItem(getAdapterPosition());
         int index = getAdapterPosition()-(CardTypes.getUpcomingHeaderPosition()+1);
-        UserAction action = mAdapter.getDataHandler().getUpcoming().get(index);
+        Action action = mAdapter.getDataHandler().getUpcoming().get(index);
         switch (view.getId()){
             case R.id.action_overflow_box:
                 mAdapter.showActionPopup(view, getAdapterPosition());
@@ -51,17 +51,18 @@ class ActionHolder extends MainFeedViewHolder implements View.OnClickListener{
         }
     }
 
-    void bind(UserAction action){
+    /**
+     * Binds an Action to this holder.
+     *
+     * @param action the action to display in the card contained in the holder.
+     */
+    void bind(Action action){
         mAction.setText(action.getTitle());
-        //TODO this shouldn't be happening
-        if (action.getPrimaryGoal() != null){
-            String goalTitle = action.getPrimaryGoal().getTitle().substring(0, 1).toLowerCase();
-            goalTitle += action.getPrimaryGoal().getTitle().substring(1);
-            mGoal.setText(mAdapter.mContext.getString(R.string.card_upcoming_goal_title, goalTitle));
-        }
-        else{
-            mGoal.setText("");
-        }
-        mTime.setText(action.getNextReminderDate());
+
+        String goalTitle = action.getGoal().getTitle().substring(0, 1).toLowerCase();
+        goalTitle += action.getGoal().getTitle().substring(1);
+        mGoal.setText(mAdapter.mContext.getString(R.string.card_upcoming_goal_title, goalTitle));
+
+        mTime.setText(action.getNextReminderDisplay());
     }
 }

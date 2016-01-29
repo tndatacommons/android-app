@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.util.CompassUtil;
 
 import java.util.Calendar;
@@ -92,7 +92,7 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
      *
      * @param action the action to be bound to the holder.
      */
-    void bind(@Nullable UserAction action){
+    void bind(@Nullable Action action){
         if (action == null){
             mOverflow.setVisibility(View.GONE);
             mNoActionsContainer.setVisibility(View.VISIBLE);
@@ -117,16 +117,10 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
 
             mHeader.setText(R.string.card_up_next_header);
             mAction.setText(action.getTitle());
-            //TODO this is a workaround
-            if (action.getPrimaryGoal() != null){
-                String goalTitle = action.getPrimaryGoal().getTitle().substring(0, 1).toLowerCase();
-                goalTitle += action.getPrimaryGoal().getTitle().substring(1);
-                mGoal.setText(mAdapter.mContext.getString(R.string.card_up_next_goal_title, goalTitle));
-            }
-            else{
-                mGoal.setText("");
-            }
-            mTime.setText(action.getNextReminderDate());
+            String goalTitle = action.getGoalTitle().substring(0, 1).toLowerCase();
+            goalTitle += action.getGoalTitle().substring(1);
+            mGoal.setText(mAdapter.mContext.getString(R.string.card_up_next_goal_title, goalTitle));
+            mTime.setText(action.getNextReminderDisplay());
         }
 
         mIndicator.setAutoTextSize(true);
