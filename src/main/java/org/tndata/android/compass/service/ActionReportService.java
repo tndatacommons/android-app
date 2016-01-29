@@ -1,11 +1,11 @@
 package org.tndata.android.compass.service;
 
 import android.app.IntentService;
-import android.app.NotificationManager;
 import android.content.Intent;
 
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
+import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.util.API;
@@ -22,7 +22,7 @@ import org.tndata.android.compass.util.NotificationUtil;
 public class ActionReportService extends IntentService{
     private static final String TAG = "ActionReportService";
 
-    public static final String USER_ACTION_KEY = "org.tndata.compass.CompleteAction.UserAction";
+    public static final String ACTION_KEY = "org.tndata.compass.CompleteAction.Action";
     public static final String STATE_KEY = "org.tndata.compass.CompleteAction.State";
     public static final String LENGTH_KEY = "org.tndata.compass.CompleteAction.Length";
 
@@ -46,22 +46,34 @@ public class ActionReportService extends IntentService{
 
     @Override
     protected void onHandleIntent(Intent intent){
-        UserAction userAction = (UserAction)intent.getSerializableExtra(USER_ACTION_KEY);
+        Action action = (Action)intent.getSerializableExtra(ACTION_KEY);
         Reminder reminder = (Reminder)intent.getSerializableExtra(NotificationUtil.REMINDER_KEY);
 
-        int actionId;
+        String notificationTag;
+        long actionId;
         String url;
         if (reminder != null){
             actionId = reminder.getObjectId();
             url = API.getPostActionReportUrl(reminder);
+            if (reminder.getObjectTypeId() == Reminder.TYPE_USER_ACTION_ID){
+                notificationTag = NotificationUtil.USER_ACTION_TAG;
+            }
+            else{
+                notificationTag = NotificationUtil.CUSTOM_ACTION_TAG;
+            }
         }
         else{
-            actionId = userAction.getObjectId();
-            url = API.getPostActionReportUrl(userAction);
+            actionId = action.getId();
+            url = API.getPostActionReportUrl(action);
+            if (action instanceof UserAction){
+                notificationTag = NotificationUtil.USER_ACTION_TAG;
+            }
+            else{
+                notificationTag = NotificationUtil.CUSTOM_ACTION_TAG;
+            }
         }
 
-        NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-        manager.cancel(NotificationUtil.NOTIFICATION_TYPE_ACTION_TAG, actionId);
+        NotificationUtil.cancel(this, notificationTag, actionId);
 
         String token = ((CompassApplication)getApplication()).getToken();
         JSONObject body;

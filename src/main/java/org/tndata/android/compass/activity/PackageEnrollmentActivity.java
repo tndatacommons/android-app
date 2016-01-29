@@ -100,7 +100,7 @@ public class PackageEnrollmentActivity
         else if (requestCode == mPutConsentRequestCode){
             //If the acknowledgement was successful, dismiss the notification and kill the activity
             ((NotificationManager)getSystemService(NOTIFICATION_SERVICE))
-                    .cancel(NotificationUtil.NOTIFICATION_TYPE_ENROLLMENT_TAG, mPackage.getId());
+                    .cancel(NotificationUtil.ENROLLMENT_TAG, mPackage.getId());
             finish();
         }
     }

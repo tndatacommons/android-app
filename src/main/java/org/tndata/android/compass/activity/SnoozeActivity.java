@@ -208,7 +208,7 @@ public class SnoozeActivity
             dbHelper.close();
 
             NotificationManager manager = ((NotificationManager)getSystemService(NOTIFICATION_SERVICE));
-            manager.cancel(NotificationUtil.NOTIFICATION_TYPE_ACTION_TAG, mReminder.getObjectId());
+            manager.cancel(NotificationUtil.USER_ACTION_TAG, mReminder.getObjectId());
 
             startService(new Intent(this, LocationNotificationService.class));
 

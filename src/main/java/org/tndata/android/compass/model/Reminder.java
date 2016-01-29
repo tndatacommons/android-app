@@ -1,16 +1,26 @@
 package org.tndata.android.compass.model;
 
+import org.tndata.android.compass.service.GcmIntentService;
+
 import java.io.Serializable;
 
 
 /**
- * Model class for a reminder.
+ * Model class for a reminder. This is an app specific object to records received reminders
+ * in a database. when snoozed to a location.
  *
  * @author Ismael Alonso
- * @version 1.0.0
+ * @version 1.1.0
  */
 public class Reminder implements Serializable{
     static final long serialVersionUID = 94124918239L;
+
+    public static final int TYPE_USER_ACTION_ID = 1;
+    public static final int TYPE_CUSTOM_ACTION_ID = 2;
+
+    private static final String TYPE_USER_ACTION = GcmIntentService.MESSAGE_TYPE_ACTION;
+    private static final String TYPE_CUSTOM_ACTION = GcmIntentService.MESSAGE_TYPE_CUSTOM_ACTION;
+
 
     private int mId;
     private int mNotificationId;
@@ -22,9 +32,11 @@ public class Reminder implements Serializable{
     private boolean mSnoozed;
     private long mLastDelivered;
 
+    private final int mActionType;
+
 
     /**
-     * Constructor.
+     * Constructor for UserAction reminders.
      *
      * @param placeId the place id.
      * @param title the title of the reminder.
@@ -32,7 +44,8 @@ public class Reminder implements Serializable{
      * @param objectId the id of the action reminder.
      * @param userMappingId the mapping id of the action in the reminder.
      */
-    public Reminder(int notificationId, int placeId, String title, String message, int objectId, int userMappingId){
+    public Reminder(int notificationId, int placeId, String title, String message, int objectId,
+                    int userMappingId){
         mId = -1;
         mNotificationId = notificationId;
         mPlaceId = placeId;
@@ -41,6 +54,29 @@ public class Reminder implements Serializable{
         mObjectId = objectId;
         mUserMappingId = userMappingId;
         mSnoozed = true;
+
+        mActionType = TYPE_USER_ACTION_ID;
+    }
+
+    /**
+     * Constructor for CustomAction reminders.
+     *
+     * @param placeId the place id.
+     * @param title the title of the reminder.
+     * @param message the message of the reminder.
+     * @param objectId the id of the action reminder.
+     */
+    public Reminder(int notificationId, int placeId, String title, String message, int objectId){
+        mId = -1;
+        mNotificationId = notificationId;
+        mPlaceId = placeId;
+        mTitle = title;
+        mMessage = message;
+        mObjectId = objectId;
+        mUserMappingId = -1;
+        mSnoozed = true;
+
+        mActionType = TYPE_CUSTOM_ACTION_ID;
     }
 
     /**
@@ -158,5 +194,26 @@ public class Reminder implements Serializable{
      */
     public long getLastDelivered(){
         return mLastDelivered;
+    }
+
+    /**
+     * Gets the object type id of the reminder.
+     *
+     * @return the object type id of the reminder.
+     */
+    public int getObjectTypeId(){
+        return mActionType;
+    }
+
+    /**
+     * Gets the object type of the reminder.
+     *
+     * @return the object type of the reminder.
+     */
+    public String getObjectType(){
+        if (mActionType == TYPE_USER_ACTION_ID){
+            return TYPE_USER_ACTION;
+        }
+        return TYPE_CUSTOM_ACTION;
     }
 }

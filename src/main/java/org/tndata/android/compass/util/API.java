@@ -180,8 +180,37 @@ public abstract class API{
         return postGoalBody;
     }
 
-    public static String getDeleteGoalUrl(@NonNull UserGoal userGoal){
-        return BASE_URL + "users/goals/" + userGoal.getId() + "/";
+    //Custom goals
+    public static String getPostCustomGoalUrl(){
+        return BASE_URL + "users/customgoals/";
+    }
+
+    public static String getPutCustomGoalUrl(@NonNull CustomGoal customGoal){
+        return BASE_URL + "users/customgoals/" + customGoal.getId() + "/";
+    }
+
+    public static JSONObject getPostPutCustomGoalBody(@NonNull CustomGoal customGoal){
+        JSONObject postPutCustomGoalBody = new JSONObject();
+        try{
+            postPutCustomGoalBody.put("title", customGoal.getTitle());
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return postPutCustomGoalBody;
+    }
+
+    //Goal generic getters
+    public static String getDeleteGoalUrl(@NonNull Goal goal){
+        if (goal instanceof UserGoal){
+            return BASE_URL + "users/goals/" + goal.getId() + "/";
+        }
+        else if (goal instanceof CustomGoal){
+            return BASE_URL + "users/customgoals/" + goal.getId() + "/";
+        }
+        else{
+            return "";
+        }
     }
 
 
@@ -256,8 +285,41 @@ public abstract class API{
         return postActionBody;
     }
 
-    public static String getDeleteActionUrl(@NonNull UserAction userAction){
-        return BASE_URL + "users/actions/" + userAction.getId() + "/";
+    //Custom actions
+    public static String getPostCustomActionUrl(){
+        return BASE_URL + "users/customactions/";
+    }
+
+    public static String getPutCustomActionUrl(@NonNull CustomAction customAction){
+        return BASE_URL + "users/customactions/" + customAction.getId() + "/";
+    }
+
+    public static JSONObject getPostPutCustomActionBody(@NonNull CustomAction customAction,
+                                                        @NonNull CustomGoal customGoal){
+
+        JSONObject postPutCustomActionBody = new JSONObject();
+        try{
+            postPutCustomActionBody.put("title", customAction.getTitle())
+                    .put("notification_text", customAction.getNotificationText())
+                    .put("customgoal", customGoal.getId());
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return postPutCustomActionBody;
+    }
+
+    //Generic action getters
+    public static String getDeleteActionUrl(@NonNull Action action){
+        if (action instanceof UserAction){
+            return BASE_URL + "users/actions/" + action.getId() + "/";
+        }
+        else if (action instanceof CustomAction){
+            return BASE_URL + "users/customactions/" + action.getId() + "/";
+        }
+        else{
+            return "";
+        }
     }
 
 
@@ -331,12 +393,28 @@ public abstract class API{
         return putSnoozeBody;
     }
 
-    public static String getPostActionReportUrl(@NonNull UserAction userAction){
-        return BASE_URL + "users/actions/" + userAction.getId() + "/complete/";
+    public static String getPostActionReportUrl(@NonNull Action action){
+        if (action instanceof UserAction){
+            return BASE_URL + "users/actions/" + action.getId() + "/complete/";
+        }
+        else if (action instanceof CustomAction){
+            return BASE_URL + "users/customactions/" + action.getId() + "/complete/";
+        }
+        else{
+            return "";
+        }
     }
 
     public static String getPostActionReportUrl(@NonNull Reminder reminder){
-        return BASE_URL + "users/actions/" + reminder.getUserMappingId() + "/complete/";
+        if (reminder.getObjectTypeId() == Reminder.TYPE_USER_ACTION_ID){
+            return BASE_URL + "users/actions/" + reminder.getUserMappingId() + "/complete/";
+        }
+        else if (reminder.getObjectTypeId() == Reminder.TYPE_CUSTOM_ACTION_ID){
+            return BASE_URL + "users/customactions/" + reminder.getObjectId() + "/complete/";
+        }
+        else{
+            return "";
+        }
     }
 
     public static JSONObject getPostActionReportBody(@NonNull String state){

@@ -322,7 +322,7 @@ public class ActionActivity
                     //  dismissed
                     if (mActionNeededFetching){
                         ((NotificationManager)getSystemService(NOTIFICATION_SERVICE))
-                                .cancel(NotificationUtil.NOTIFICATION_TYPE_ACTION_TAG,
+                                .cancel(NotificationUtil.USER_ACTION_TAG,
                                         mReminder.getObjectId());
                     }
 

@@ -39,19 +39,20 @@ public final class NotificationUtil{
     public static final String REMINDER_KEY = "org.tndata.compass.Notification.Reminder";
 
     //Notification tags
-    public static final String NOTIFICATION_TYPE_ACTION_TAG = "org.tndata.compass.ActionNotification";
-    public static final String NOTIFICATION_TYPE_ENROLLMENT_TAG = "org.tndata.compass.EnrollmentNotification";
-    public static final String NOTIFICATION_TYPE_CHECK_IN_TAG = "org.tndata.compass.CheckInNotification";
+    public static final String USER_ACTION_TAG = "org.tndata.compass.Notification.UserAction";
+    public static final String CUSTOM_ACTION_TAG = "org.tndata.compass.Notification.CustomAction";
+    public static final String ENROLLMENT_TAG = "org.tndata.compass.Notification.Enrollment";
+    public static final String CHECK_IN_TAG = "org.tndata.compass.Notification.CheckIn";
 
     //Notification ids for notification tags with more than one type
-    public static final int NOTIFICATION_TYPE_CHECK_IN_REVIEW_ID = 1;
-    public static final int NOTIFICATION_TYPE_CHECK_IN_FEEDBACK_ID = 2;
+    public static final int CHECK_IN_REVIEW_ID = 1;
+    public static final int CHECK_IN_FEEDBACK_ID = 2;
 
 
     /**
      * Constructor. Should never be called. Period.
      */
-    public NotificationUtil(){
+    private NotificationUtil(){
         throw new RuntimeException(getClass().toString() + " is not to be instantiated");
     }
 
@@ -110,8 +111,9 @@ public final class NotificationUtil{
      * @param actionId the id of the action enclosed in this notification.
      * @param actionMappingId the mapping id of the action for the user.
      */
-    public static void generateActionNotification(Context context, int notificationId, String title,
-                                                  String message, int actionId, int actionMappingId){
+    public static void putActionNotification(Context context, String objectType, int notificationId,
+                                             String title, String message, int actionId,
+                                             int actionMappingId){
 
         Reminder reminder = new Reminder(notificationId, -1, title, message, actionId, actionMappingId);
 
@@ -173,7 +175,7 @@ public final class NotificationUtil{
             notification.flags |= Notification.FLAG_ONGOING_EVENT;
         }
         ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
-                .notify(NOTIFICATION_TYPE_ACTION_TAG, actionId, notification);
+                .notify(USER_ACTION_TAG, actionId, notification);
     }
 
     /**
@@ -184,8 +186,8 @@ public final class NotificationUtil{
      * @param title the title of the notification.
      * @param message the message of the notification.
      */
-    public static void generateEnrollmentNotification(Context context, int packageId, String title,
-                                                      String message){
+    public static void putEnrollmentNotification(Context context, int packageId, String title,
+                                                 String message){
 
         Intent intent = new Intent(context, PackageEnrollmentActivity.class)
                 .putExtra(PackageEnrollmentActivity.PACKAGE_ID_KEY, packageId);
@@ -199,7 +201,7 @@ public final class NotificationUtil{
 
         notification.flags |= Notification.FLAG_ONGOING_EVENT;
         ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
-                .notify(NOTIFICATION_TYPE_ENROLLMENT_TAG, packageId, notification);
+                .notify(ENROLLMENT_TAG, packageId, notification);
     }
 
     /**
@@ -211,17 +213,17 @@ public final class NotificationUtil{
      * @param title the title of the notification.
      * @param message the message of the notification.
      */
-    public static void generateCheckInNotification(Context context, boolean review, String title,
-                                                   String message){
+    public static void putCheckInNotification(Context context, boolean review, String title,
+                                              String message){
         Intent intent = new Intent(context, CheckInActivity.class);
         int notificationId;
         if (review){
             intent.putExtra(CheckInActivity.TYPE_KEY, CheckInActivity.TYPE_REVIEW);
-            notificationId = NOTIFICATION_TYPE_CHECK_IN_REVIEW_ID;
+            notificationId = CHECK_IN_REVIEW_ID;
         }
         else{
             intent.putExtra(CheckInActivity.TYPE_KEY, CheckInActivity.TYPE_FEEDBACK);
-            notificationId = NOTIFICATION_TYPE_CHECK_IN_FEEDBACK_ID;
+            notificationId = CHECK_IN_FEEDBACK_ID;
         }
         PendingIntent contentIntent = PendingIntent.getActivity(context,
                 (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -232,6 +234,12 @@ public final class NotificationUtil{
                 .build();
 
         ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
-                .notify(NOTIFICATION_TYPE_CHECK_IN_TAG, notificationId, notification);
+                .notify(CHECK_IN_TAG, notificationId, notification);
+    }
+
+    public static void cancel(Context context, String tag, long id){
+        String service = Context.NOTIFICATION_SERVICE;
+        NotificationManager manager = (NotificationManager)context.getSystemService(service);
+        manager.cancel(tag, (int)(id%Integer.MAX_VALUE));
     }
 }
