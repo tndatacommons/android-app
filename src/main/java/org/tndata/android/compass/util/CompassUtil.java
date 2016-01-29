@@ -14,7 +14,13 @@ import android.view.WindowManager;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.model.ActionContent;
+import org.tndata.android.compass.model.BehaviorContent;
+import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.CustomAction;
+import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.TDCBase;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserBehavior;
@@ -219,7 +225,25 @@ public final class CompassUtil{
     }
 
     public static Class getTypeOf(String src){
-        if (src.contains("usercategory")){
+        //Default to Long (for IDs)
+        if (src == null){
+            return Long.class;
+        }
+        //TDCContent
+        else if (src.contains("category")){
+            return CategoryContent.class;
+        }
+        else if (src.contains("goal")){
+            return GoalContent.class;
+        }
+        else if (src.contains("behavior")){
+            return BehaviorContent.class;
+        }
+        else if (src.contains("action")){
+            return ActionContent.class;
+        }
+        //UserContent
+        else if (src.contains("usercategory")){
             return UserCategory.class;
         }
         else if (src.contains("usergoal")){
@@ -231,12 +255,21 @@ public final class CompassUtil{
         else if (src.contains("useraction")){
             return UserAction.class;
         }
+        //CustomContent
+        else if (src.contains("customgoal")){
+            return CustomGoal.class;
+        }
+        else if (src.contains("customaction")){
+            return CustomAction.class;
+        }
+        //Places
         else if (src.contains("userplace")){
             return UserPlace.class;
         }
-        else if (src.contains("goal")){
-            return GoalContent.class;
+        else if (src.contains("place")){
+            return Place.class;
         }
+        //Second default to TDCBase; the API should NOT deliver anything that's not TDCBase
         else{
             return TDCBase.class;
         }
