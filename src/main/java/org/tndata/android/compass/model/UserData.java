@@ -1,6 +1,5 @@
 package org.tndata.android.compass.model;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
@@ -33,8 +32,10 @@ import java.util.Set;
  * @author Ismael Alonso
  * @version 2.0.0
  */
-public class UserData{
+public class UserData extends TDCBase{
     private static final String TAG = "UserData";
+
+    public static final String TYPE = "user_data";
 
 
     //User selected content: TDCContent.id -> UserSelectedContent maps
@@ -76,25 +77,15 @@ public class UserData{
         mCustomActions = new HashMap<>();
     }
 
-
-    /*--------------------CONTENT SETTERS--------------------*
-     * These methods are meant to be used by the parser only *
-     *-------------------------------------------------------*/
-
-    public void setCategories(@NonNull Map<Long, UserCategory> categories){
-        this.mCategories = categories;
+    @Override
+    protected String getType(){
+        return TYPE;
     }
 
-    public void setGoals(@NonNull Map<Long, UserGoal> goals){
-        this.mGoals = goals;
-    }
-
-    public void setBehaviors(@NonNull Map<Long, UserBehavior> behaviors){
-        this.mBehaviors = behaviors;
-    }
-
-    public void setActions(@NonNull Map<Long, UserAction> actions){
-        this.mActions = actions;
+    @Override
+    public long getId(){
+        //Not actual content, but a container
+        return -1;
     }
 
 
@@ -169,7 +160,7 @@ public class UserData{
      *
      * @param category the category to remove
      */
-    public void removeCategory(CategoryContent category){
+    public void removeCategory(UserCategory category){
         /*UserCategory removedCategory = mCategories.remove(category.getId());
 
         if (removedCategory != null){
@@ -292,11 +283,10 @@ public class UserData{
      * Removing a goal also removes its reference from the parent Categories
      * as well as the child Behaviors.
      *
-     * TODO Goal vs UserGoal?
      * @param goal the goal to be removed from the user list.
      */
-    public void removeGoal(GoalContent goal){
-        UserGoal removedGoal = mGoals.remove(goal.getId());
+    private void removeGoal(UserGoal goal){
+        UserGoal removedGoal = mGoals.remove(goal.getContentId());
 
         if (removedGoal != null){
             //Remove the goal from its parent mCategories
@@ -304,20 +294,14 @@ public class UserData{
                 category.removeGoal(removedGoal);
             }
 
-            //List<UserBehavior> behaviorsToRemove = new ArrayList<>();
             //Remove the goal from its child Behaviors
             for (UserBehavior behavior:removedGoal.getBehaviors()){
                 behavior.removeGoal(removedGoal);
                 //Record all the Behaviors w/o parent Goals
                 if (behavior.getGoals().isEmpty()){
-                    removeBehavior(behavior.getBehavior());
-                    //behaviorsToRemove.add(behavior);
+                    removeBehavior(behavior);
                 }
             }
-            //Remove Behaviors w/o parent Goals
-            /*for (UserBehavior behavior : behaviorsToRemove){
-                removeBehavior(behavior.getBehaviorId());
-            }*/
         }
     }
 
@@ -386,8 +370,8 @@ public class UserData{
      *
      * @param behavior the Behavior instance to remove.
      */
-    public void removeBehavior(BehaviorContent behavior){
-        UserBehavior removedBehavior = mBehaviors.remove(behavior.getId());
+    public void removeBehavior(UserBehavior behavior){
+        UserBehavior removedBehavior = mBehaviors.remove(behavior.getContentId());
 
         if (removedBehavior != null){
             //Remove the behavior from any parent Goals
@@ -459,8 +443,8 @@ public class UserData{
      *
      * @param action the Action object to remove.
      */
-    public void removeAction(ActionContent action){
-        UserAction removedAction = mActions.remove(action.getId());
+    private void removeAction(UserAction action){
+        UserAction removedAction = mActions.remove(action.getContentId());
         if (removedAction != null && removedAction.getBehavior() != null){
             removedAction.getBehavior().removeAction(removedAction);
         }
@@ -481,12 +465,12 @@ public class UserData{
         }
     }
 
-    public void removeCustomGoal(CustomGoal customGoal){
+    private void removeGoal(CustomGoal customGoal){
         mCustomGoals.remove(customGoal.getContentId());
 
         for (CustomAction customAction:customGoal.getActions()){
             if (mCustomActions.containsKey(customAction.getContentId())){
-                removeCustomAction(customAction);
+                removeAction(customAction);
             }
         }
     }
@@ -506,7 +490,7 @@ public class UserData{
         customAction.getGoal().addAction(customAction);
     }
 
-    public void removeCustomAction(CustomAction customAction){
+    private void removeAction(CustomAction customAction){
         mCustomActions.remove(customAction.getContentId());
         mCustomGoals.get(customAction.getCustomGoalId()).removeAction(customAction);
     }
@@ -525,17 +509,35 @@ public class UserData{
         }
     }
 
+    public void removeGoal(Goal goal){
+        if (goal instanceof UserGoal){
+            removeGoal((UserGoal)goal);
+        }
+        else if (goal instanceof CustomGoal){
+            removeGoal((CustomGoal)goal);
+        }
+    }
+
 
     /*------------------------*
      * ACTION GENERIC METHODS *
      *------------------------*/
 
     public void addAction(Action action){
-        if (action instanceof CustomAction){
+        if (action instanceof UserAction){
+            addAction((UserAction)action);
+        }
+        else if (action instanceof CustomAction){
             addAction((CustomAction)action);
         }
-        else if (action instanceof UserAction){
-            addAction((UserAction)action);
+    }
+
+    public void removeAction(Action action){
+        if (action instanceof UserAction){
+            removeAction((UserAction)action);
+        }
+        else if (action instanceof CustomAction){
+            removeAction((CustomAction)action);
         }
     }
 
