@@ -79,20 +79,12 @@ public class ChooseInterestsAdapter
     }
 
     /**
-     * Makes the progress bar go away in the header view.
-     */
-    public void hideProgressBar(){
-        mHideProgressBar = true;
-        notifyItemChanged(0);
-    }
-
-    /**
      * Sets the dataset of the adapter.
      *
      * @param all the list of all available categories.
      * @param selected the map of user selected categories.
      */
-    public void setCategories(@NonNull List<CategoryContent> all, @NonNull Map<Integer, UserCategory> selected){
+    public void setCategories(@NonNull List<CategoryContent> all, @NonNull Map<Long, UserCategory> selected){
         //Let the GC take care of the previous list and fill a new one
         mCategories = new ArrayList<>();
         mCategories.addAll(all);

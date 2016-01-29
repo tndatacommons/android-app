@@ -286,6 +286,10 @@ public abstract class API{
     }
 
     //Custom actions
+    public static String getCustomActionUrl(int customActionId){
+        return BASE_URL + "users/customactions/" + customActionId + "/";
+    }
+
     public static String getPostCustomActionUrl(){
         return BASE_URL + "users/customactions/";
     }

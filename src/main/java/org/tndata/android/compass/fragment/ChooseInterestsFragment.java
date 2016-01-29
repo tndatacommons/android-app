@@ -2,7 +2,6 @@ package org.tndata.android.compass.fragment;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -13,16 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseInterestsAdapter;
 import org.tndata.android.compass.model.CategoryContent;
-import org.tndata.android.compass.parser.ContentParser;
-import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.List;
 
@@ -35,9 +30,7 @@ import java.util.List;
  */
 public class ChooseInterestsFragment
         extends Fragment
-        implements
-                NetworkRequest.RequestCallback,
-                ChooseInterestsAdapter.OnCategoriesSelectedListener{
+        implements ChooseInterestsAdapter.OnCategoriesSelectedListener{
 
     public static final String ON_BOARDING_KEY = "org.tndata.compass.ChooseCategories.OnBoarding";
 
@@ -49,14 +42,10 @@ public class ChooseInterestsFragment
     private AlertDialog mDialog;
 
     private ChooseInterestsAdapter.OnCategoriesSelectedListener mCallback;
-    private CompassApplication mApplication;
-
-    //Request codes
-    private int mGetCategoriesRequestCode;
 
 
     /**
-     * Createsa new instance of this fragment.
+     * Creates a new instance of this fragment.
      *
      * @param onBoarding true if this was called from onboarding, false otherwise.
      * @return the new instance of the fragment.
@@ -124,16 +113,8 @@ public class ChooseInterestsFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-        mApplication = (CompassApplication) getActivity().getApplication();
-        loadCategories();
-    }
-
-    /**
-     * Starts the category load process.
-     */
-    private void loadCategories(){
-        mGetCategoriesRequestCode = NetworkRequest.get(getActivity(), this, API.getCategoriesUrl(),
-                mApplication.getToken());
+        CompassApplication application = (CompassApplication) getActivity().getApplication();
+        mAdapter.setCategories(application.getPublicCategories(), application.getCategories());
     }
 
     @Override
@@ -145,34 +126,6 @@ public class ChooseInterestsFragment
                 .create();
         mDialog.show();
         mCallback.onCategoriesSelected(selection);
-    }
-
-    @Override
-    public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mGetCategoriesRequestCode){
-            List<CategoryContent> categories = ContentParser.parseCategories(result);
-            //TODO error reporting
-            if (categories != null){
-                mAdapter.setCategories(categories, mApplication.getCategories());
-            }
-        }
-    }
-
-    @Override
-    public void onRequestFailed(int requestCode, String message){
-        if (requestCode == mGetCategoriesRequestCode){
-            notifyError(R.string.choose_categories_error);
-        }
-    }
-
-    /**
-     * Hides the progress bar and toasts an error.
-     *
-     * @param resId the resource id of the string.
-     */
-    private void notifyError(@StringRes int resId){
-        mAdapter.hideProgressBar();
-        Toast.makeText(getActivity(), resId, Toast.LENGTH_SHORT).show();
     }
 
 
