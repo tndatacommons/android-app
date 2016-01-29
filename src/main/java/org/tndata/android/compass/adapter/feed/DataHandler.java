@@ -1,11 +1,8 @@
 package org.tndata.android.compass.adapter.feed;
 
-import android.util.Log;
-
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.FeedData;
-import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.model.UserGoal;
@@ -27,13 +24,10 @@ class DataHandler{
     private UserData mUserData;
     private FeedData mFeedData;
 
-    private GoalContent mFeedbackGoal;
+    private Goal mFeedbackGoal;
 
     private List<Action> mDisplayedUpcoming;
     private List<DisplayableGoal> mDisplayedGoals;
-
-    private List<UserGoal> mDisplayedUserGoals;
-    private List<GoalContent> mDisplayedGoalSuggestions;
 
 
     /**
@@ -45,17 +39,14 @@ class DataHandler{
         mUserData = userData;
         mFeedData = userData.getFeedData();
 
-        if (mUserData.getFeedData().getNextAction() != null){
-            if (mUserData.getFeedData().getNextAction().getPrimaryGoal() != null){
-                mFeedbackGoal = mUserData.getFeedData().getNextAction().getPrimaryGoal().getGoal();
-            }
+        if (mFeedData.getNextAction() != null){
+            mFeedbackGoal = mFeedData.getNextAction().getGoal();
         }
 
         mDisplayedUpcoming = new ArrayList<>();
         loadMoreUpcoming();
 
-        mDisplayedUserGoals = new ArrayList<>();
-        mDisplayedGoalSuggestions = new ArrayList<>();
+        mDisplayedGoals = new ArrayList<>();
         loadMoreGoals();
     }
 
@@ -77,7 +68,7 @@ class DataHandler{
         return !mUserData.getGoals().isEmpty();
     }
 
-    UserAction getUpNext(){
+    Action getUpNext(){
         return mFeedData.getNextAction();
     }
 
@@ -93,47 +84,29 @@ class DataHandler{
         }
     }
 
-    GoalContent getFeedbackGoal(){
+    Goal getFeedbackGoal(){
         return mFeedbackGoal;
     }
 
-    List<UserAction> getUpcoming(){
+    List<Action> getUpcoming(){
         return mDisplayedUpcoming;
     }
 
-    UserAction getUpcoming(int position){
+    Action getUpcoming(int position){
         return mDisplayedUpcoming.get(position);
     }
 
-    UserAction removeUpcoming(int position){
+    Action removeUpcoming(int position){
         mDisplayedUpcoming.remove(position);
-        UserAction removed = mFeedData.getUpcomingActions().remove(position);
+        Action removed = mFeedData.getUpcomingActions().remove(position);
 
         checkActions();
 
         return removed;
     }
 
-    CategoryContent getActionCategory(UserAction action){
-        CategoryContent category = null;
-        if (action.getPrimaryGoal() != null){
-            //category = action.getPrimaryGoal().getPrimaryCategory();
-            if (category == null){
-                UserGoal goal = mUserData.getGoal(action.getPrimaryGoal());
-                if (goal.getCategories().size() > 0){
-                    category = goal.getCategories().get(0).getCategory();
-                }
-            }
-        }
-        return category;
-    }
-
-    List<UserGoal> getUserGoals(){
-        return mDisplayedUserGoals;
-    }
-
-    List<GoalContent> getSuggestions(){
-        return mDisplayedGoalSuggestions;
+    List<DisplayableGoal> getGoals(){
+        return mDisplayedGoals;
     }
 
     int loadMoreUpcoming(){
@@ -151,30 +124,26 @@ class DataHandler{
 
     int loadMoreGoals(){
         int count = 0;
+        List<DisplayableGoal> src = new ArrayList<>();
         if (hasUserGoals()){
-            List<UserGoal> userGoals = new ArrayList<>(mUserData.getGoals().values());
-            while (count < LOAD_MORE_COUNT && canLoadMoreGoals()){
-                mDisplayedUserGoals.add(userGoals.get(mDisplayedUserGoals.size()));
-                count++;
-            }
+            src.addAll(mUserData.getGoals().values());
         }
         else{
-            Log.d("MainFeedAdapter", "Suggestions: " + mFeedData.getSuggestions().size());
-            while (count < LOAD_MORE_COUNT && canLoadMoreGoals()){
-                mDisplayedGoalSuggestions.add(mFeedData.getSuggestions().get(mDisplayedGoalSuggestions.size()));
-                count++;
-            }
-            Log.d("MainFeedAdapter", "Displayed suggestions: " + mDisplayedGoalSuggestions.size());
+            src.addAll(mFeedData.getSuggestions());
+        }
+        while (count < LOAD_MORE_COUNT && canLoadMoreGoals()){
+            mDisplayedGoals.add(src.get(mDisplayedGoals.size()));
+            count++;
         }
         return count;
     }
 
     boolean canLoadMoreGoals(){
         if (hasUserGoals()){
-            return mDisplayedUserGoals.size() < mUserData.getGoals().size();
+            return mDisplayedGoals.size() < mUserData.getGoals().size();
         }
         else{
-            return mDisplayedGoalSuggestions.size() < mUserData.getFeedData().getSuggestions().size();
+            return mDisplayedGoals.size() < mUserData.getFeedData().getSuggestions().size();
         }
     }
 
@@ -197,11 +166,11 @@ class DataHandler{
     }
 
     void reload(){
-        int size = mDisplayedUserGoals.size();
-        mDisplayedUserGoals.clear();
+        int size = mDisplayedGoals.size();
+        mDisplayedGoals.clear();
         List<UserGoal> userGoals = new ArrayList<>(mUserData.getGoals().values());
-        while (size > mDisplayedUserGoals.size() && canLoadMoreGoals()){
-            mDisplayedUserGoals.add(userGoals.get(mDisplayedUserGoals.size()));
+        while (size > mDisplayedGoals.size() && canLoadMoreGoals()){
+            mDisplayedGoals.add(userGoals.get(mDisplayedGoals.size()));
         }
     }
 }

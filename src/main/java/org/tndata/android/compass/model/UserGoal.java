@@ -5,6 +5,7 @@ import android.content.Context;
 import com.google.gson.annotations.SerializedName;
 
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.adapter.feed.DisplayableGoal;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserGoal extends Goal implements Serializable, UserSelectedContent{
+public class UserGoal extends Goal implements Serializable, UserSelectedContent, DisplayableGoal{
     private static final long serialVersionUID = 7109406686231550671L;
 
     public static final String TYPE = "usergoal";
