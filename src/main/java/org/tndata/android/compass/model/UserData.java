@@ -259,7 +259,7 @@ public class UserData{
      *
      * @param userGoal the goal to be added to the user list.
      */
-    public void addGoal(UserGoal userGoal){
+    private void addGoal(UserGoal userGoal){
         //If the goal ain't in the data set
         if (!contains(userGoal)){
             mRequestedGoals.remove(userGoal.getContentId());
@@ -441,7 +441,7 @@ public class UserData{
      *
      * @param userAction the action to be added to the list.
      */
-    public void addAction(UserAction userAction){
+    private void addAction(UserAction userAction){
         if (!contains(userAction)){
             mActions.put(userAction.getContentId(), userAction);
 
@@ -475,7 +475,7 @@ public class UserData{
         return mCustomGoals;
     }
 
-    public void addCustomGoal(CustomGoal customGoal){
+    private void addGoal(CustomGoal customGoal){
         if (!mCustomGoals.containsKey(customGoal.getContentId())){
             mCustomGoals.put(customGoal.getContentId(), customGoal);
         }
@@ -500,7 +500,7 @@ public class UserData{
         return mCustomActions;
     }
 
-    public void addCustomAction(CustomAction customAction){
+    private void addAction(CustomAction customAction){
         mCustomActions.put(customAction.getContentId(), customAction);
         customAction.setGoal(mCustomGoals.get(customAction.getCustomGoalId()));
         customAction.getGoal().addAction(customAction);
@@ -509,6 +509,34 @@ public class UserData{
     public void removeCustomAction(CustomAction customAction){
         mCustomActions.remove(customAction.getContentId());
         mCustomGoals.get(customAction.getCustomGoalId()).removeAction(customAction);
+    }
+
+
+    /*----------------------*
+     * GOAL GENERIC METHODS *
+     *----------------------*/
+
+    public void addGoal(Goal goal){
+        if (goal instanceof UserGoal){
+            addGoal((UserGoal)goal);
+        }
+        else if (goal instanceof CustomGoal){
+            addGoal((CustomGoal)goal);
+        }
+    }
+
+
+    /*------------------------*
+     * ACTION GENERIC METHODS *
+     *------------------------*/
+
+    public void addAction(Action action){
+        if (action instanceof CustomAction){
+            addAction((CustomAction)action);
+        }
+        else if (action instanceof UserAction){
+            addAction((UserAction)action);
+        }
     }
 
 
