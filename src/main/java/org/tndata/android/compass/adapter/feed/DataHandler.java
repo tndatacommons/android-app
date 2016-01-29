@@ -60,7 +60,7 @@ class DataHandler{
         int percentage = mFeedData.getCompletedActions() * 100 / mFeedData.getTotalActions();
         mFeedData.setProgressPercentage(percentage);
 
-        mUserData.removeAction(action.getAction());
+        mUserData.removeAction(action);
     }
 
     boolean hasUserGoals(){

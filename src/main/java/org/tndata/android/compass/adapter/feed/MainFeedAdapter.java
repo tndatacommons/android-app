@@ -181,7 +181,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             LayoutInflater inflater = LayoutInflater.from(mContext);
             return new ActionHolder(this, inflater.inflate(R.layout.card_action, parent, false));
         }
-        else if (viewType == TYPE_GOAL || viewType == TYPE_GOAL_SUGGESTION){
+        else if (viewType == TYPE_GOAL){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             return new GoalHolder(this, inflater.inflate(R.layout.card_goal, parent, false));
         }
@@ -415,7 +415,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * @param position the adapter position of the action whose goal is to be viewed.
      */
     void viewGoal(int position){
-        UserAction action;
+        Action action;
         if (CardTypes.isUpNext(position)){
             action = mUserData.getFeedData().getNextAction();
         }
@@ -423,8 +423,8 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             action = mUserData.getFeedData().getUpcomingActions().get(getActionPosition(position));
         }
         //TODO this is another workaround
-        if (action.getPrimaryGoal() != null){
-            mListener.onGoalSelected(mUserData.getGoal(action.getPrimaryGoal()));
+        if (action.getGoal() != null){
+            mListener.onGoalSelected(mUserData.getGoal(action.getGoal()));
         }
     }
 

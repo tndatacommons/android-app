@@ -32,6 +32,8 @@ public interface MainFeedAdapterListener{
      */
     void onGoalSelected(DisplayableGoal goal);
 
+    void onGoalSelected(Goal goal);
+
     /**
      * Called when the feedback card is tapped.
      *
