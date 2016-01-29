@@ -129,6 +129,11 @@ public class UserAction
         return mPrimaryGoal;
     }
 
+    @Override
+    public UserGoal getGoal(){
+        return mPrimaryGoal;
+    }
+
     public UserBehavior getParentUserBehavior(){
         return mParentUserBehavior;
     }

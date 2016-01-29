@@ -70,5 +70,6 @@ public abstract class Action extends UserContent{
     }
 
     public abstract String getTitle();
+    public abstract Goal getGoal();
     public abstract String getGoalTitle();
 }

@@ -39,7 +39,7 @@ class DataHandler{
     /**
      * Constructor.
      *
-     * @param userData the data bundle.
+     * @param userData the user data bundle.
      */
     DataHandler(UserData userData){
         mUserData = userData;
