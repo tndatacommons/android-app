@@ -2,6 +2,8 @@ package org.tndata.android.compass.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 
 /**
  * Model object for custom actions.
@@ -9,7 +11,9 @@ import com.google.gson.annotations.SerializedName;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class CustomAction extends Action{
+public class CustomAction extends Action implements Serializable{
+    private static final long serialVersionUID = 291946133239951923L;
+
     public static final String TYPE = "custom_action";
 
 

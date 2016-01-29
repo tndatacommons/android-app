@@ -2,6 +2,8 @@ package org.tndata.android.compass.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 
 /**
  * Base class for all content. This class forces a type on every model type.
@@ -9,7 +11,10 @@ import com.google.gson.annotations.SerializedName;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public abstract class TDCBase{
+public abstract class TDCBase implements Serializable{
+    private static final long serialVersionUID = 7554126338541297545L;
+
+
     @SerializedName("id")
     private long mId;
 
