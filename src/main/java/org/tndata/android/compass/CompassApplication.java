@@ -7,10 +7,9 @@ import android.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
 
-import org.tndata.android.compass.model.ActionContent;
-import org.tndata.android.compass.model.BehaviorContent;
+import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CategoryContent;
-import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserBehavior;
@@ -27,6 +26,7 @@ import java.util.Map;
 import io.fabric.sdk.android.Fabric;
 
 
+//TODO Fix this mess.
 public class CompassApplication extends Application{
     private static final String TAG = "CompassApplication";
 
@@ -83,7 +83,7 @@ public class CompassApplication extends Application{
     // of this info used to be stored directly in the CompassApplication
     // class, so I've left these here for backwards compatibility.
     // -------------------------------------------------------------------
-    public Map<Integer, UserCategory> getCategories() {
+    public Map<Long, UserCategory> getCategories() {
         return mUserData.getCategories();
     }
 
@@ -95,7 +95,7 @@ public class CompassApplication extends Application{
         return mUserData.getCategoryGoals(category);
     }
 
-    public Map<Integer, UserGoal> getGoals() {
+    public Map<Long, UserGoal> getGoals() {
         return mUserData.getGoals();
     }
 
@@ -104,16 +104,16 @@ public class CompassApplication extends Application{
         mUserData.logSelectedData("AFTER CompassApplication.addGoal", false);
     }
 
-    public void removeGoal(GoalContent goal) {
+    public void removeGoal(Goal goal) {
         mUserData.removeGoal(goal);
         mUserData.logSelectedData("AFTER CompassApplication.removeGoal", false);
     }
 
-    public Map<Integer, UserBehavior> getBehaviors() {
+    public Map<Long, UserBehavior> getBehaviors() {
         return mUserData.getBehaviors();
     }
 
-    public void removeBehavior(BehaviorContent behavior) {
+    public void removeBehavior(UserBehavior behavior) {
         mUserData.removeBehavior(behavior);
         mUserData.logSelectedData("AFTER CompassApplication.removeBehavior: ", false);
     }
@@ -123,11 +123,11 @@ public class CompassApplication extends Application{
         mUserData.logSelectedData("AFTER CompassApplication.addBehavior", false);
     }
 
-    public Map<Integer, UserAction> getActions() {
+    public Map<Long, UserAction> getActions() {
         return mUserData.getActions();
     }
 
-    public void removeAction(ActionContent action) {
+    public void removeAction(Action action) {
         mUserData.removeAction(action);
         mUserData.logSelectedData("AFTER CompassApplication.removeAction: ", false);
     }
