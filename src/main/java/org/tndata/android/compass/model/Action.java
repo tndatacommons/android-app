@@ -2,6 +2,8 @@ package org.tndata.android.compass.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
+
 
 /**
  * Model superclass for anything that can be classified as an action.
@@ -26,6 +28,11 @@ public abstract class Action extends UserContent{
 
     public String getNextReminder(){
         return mNextReminder;
+    }
+
+    public Date getNextReminderDate(){
+        //TODO implement
+        return null;
     }
 
     public String getNextReminderDisplay(){

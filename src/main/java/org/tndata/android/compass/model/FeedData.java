@@ -16,27 +16,48 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class FeedData{
-    @SerializedName("next_action")
-    private UserAction mNextAction;
+public class FeedData extends TDCBase{
+    public static final String TYPE = "feed_data";
 
+
+    //API delivered fields
     @SerializedName("action_feedback")
     private ActionFeedback mActionFeedback;
     @SerializedName("progress")
     private Progress mProgress;
 
     @SerializedName("upcoming_actions")
-    private List<Action> mUpcomingActions;
+    private List<Long> mUpcomingActionIds;
+    @SerializedName("upcoming_customactions")
+    private List<Long> mUpcomingCustomActionsIds;
+
     @SerializedName("suggestions")
     private List<GoalContent> mSuggestions;
 
+
+    //Fields set during post-processing
+    private Action mNextAction;
+    private List<Action> mUpcomingActions;
+
+
+    @Override
+    protected String getType(){
+        return TYPE;
+    }
+
+    @Override
+    public long getId(){
+        //This class ain't actual content, but TDCBase requires this, and extending TDCBase is
+        //  required to parse JSONArrays
+        return -1;
+    }
 
     /**
      * Sets the next action.
      *
      * @param nextAction the next action.
      */
-    public void setNextAction(UserAction nextAction){
+    public void setNextAction(Action nextAction){
         mNextAction = nextAction;
     }
 
@@ -45,7 +66,7 @@ public class FeedData{
      *
      * @return the next action.
      */
-    public UserAction getNextAction(){
+    public Action getNextAction(){
         return mNextAction;
     }
 
@@ -180,15 +201,6 @@ public class FeedData{
     }
 
     /**
-     * Sets the list of upcoming actions.
-     *
-     * @param upcomingActions the list of upcoming actions.
-     */
-    public void setUpcomingActions(List<Action> upcomingActions){
-        mUpcomingActions = upcomingActions;
-    }
-
-    /**
      * Gets the list of upcoming actions.
      *
      * @return the list of upcoming actions.
@@ -216,25 +228,36 @@ public class FeedData{
     }
 
     public void sync(UserData userData){
-        if (mNextAction != null && mNextAction.getAction() != null){
-            mNextAction = userData.getAction(mNextAction);
-            if (!mUpcomingActions.isEmpty()){
-                mUpcomingActions.remove(0);
+        //Create the upcoming action array
+        mUpcomingActions = new ArrayList<>();
+        //Populate it in action's trigger-time order
+        while (!mUpcomingActionIds.isEmpty() && !mUpcomingCustomActionsIds.isEmpty()){
+            Action userAction = userData.getActions().get(mUpcomingActionIds.get(0));
+            Action customAction = userData.getCustomActions().get(mUpcomingCustomActionsIds.get(0));
+            //This favors CustomActions over UserActions in case of equal trigger time
+            if (userAction.getNextReminderDate().compareTo(customAction.getNextReminderDate()) < 0){
+                mUpcomingActions.add(userAction);
+                mUpcomingActionIds.remove(0);
+            }
+            else{
+                mUpcomingActions.add(customAction);
+                mUpcomingCustomActionsIds.remove(0);
             }
         }
-        else{
-            mNextAction = null;
+
+        //The remaining actions are added (Note that only one of the two for loops will
+        //  get to execute the inner block)
+        for (Long upcomingActionId:mUpcomingActionIds){
+            mUpcomingActions.add(userData.getActions().get(upcomingActionId));
         }
-        List<Action> upcomingActions = new ArrayList<>();
-        for (Action action:mUpcomingActions){
-            if (action instanceof UserAction){
-                upcomingActions.add(userData.getAction((UserAction)action));
-            }
-            else if (action instanceof CustomAction){
-                upcomingActions.add(userData.getCustomActions().get(action.getContentId()));
-            }
+        for (Long upcomingCustomActionId:mUpcomingCustomActionsIds){
+            mUpcomingActions.add(userData.getActions().get(upcomingCustomActionId));
         }
-        mUpcomingActions = upcomingActions;
+
+        //Set the next Action of there is one
+        if (!mUpcomingActions.isEmpty()){
+            mNextAction = mUpcomingActions.remove(0);;
+        }
 
         //Assign colors to suggestions
         for (GoalContent suggestion:mSuggestions){
@@ -256,6 +279,7 @@ public class FeedData{
         @SerializedName("icon")
         private int mFeedbackIconId;
     }
+
 
     private class Progress{
         @SerializedName("total")

@@ -20,6 +20,8 @@ import java.util.Set;
  * - Goals
  * - Behaviors
  * - Actions
+ * - Custom Goals
+ * - Custom Actions
  * - Places
  *
  * It includes methods to set & get those values, and keeps a consistently updated
@@ -199,6 +201,10 @@ public class UserData{
      */
     public Map<Long, UserGoal> getGoals(){
         return mGoals;
+    }
+
+    public Goal getGoal(Goal goal){
+        return mCustomGoals.get(goal.getContentId());
     }
 
     /**

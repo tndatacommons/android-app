@@ -2,6 +2,7 @@ package org.tndata.android.compass.adapter.feed;
 
 import android.util.Log;
 
+import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.GoalContent;
@@ -28,7 +29,7 @@ class DataHandler{
 
     private GoalContent mFeedbackGoal;
 
-    private List<UserAction> mDisplayedUpcoming;
+    private List<Action> mDisplayedUpcoming;
     private List<DisplayableGoal> mDisplayedGoals;
 
     private List<UserGoal> mDisplayedUserGoals;
