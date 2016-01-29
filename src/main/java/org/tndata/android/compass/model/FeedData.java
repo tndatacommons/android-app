@@ -227,6 +227,11 @@ public class FeedData extends TDCBase{
         return mSuggestions;
     }
 
+    /**
+     * Synchronizes the feed data with the user data.
+     *
+     * @param userData the user data bundle.
+     */
     public void sync(UserData userData){
         //Create the upcoming action array
         mUpcomingActions = new ArrayList<>();

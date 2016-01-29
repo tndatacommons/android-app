@@ -2,6 +2,7 @@ package org.tndata.android.compass.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Calendar;
 import java.util.Date;
 
 
@@ -31,8 +32,17 @@ public abstract class Action extends UserContent{
     }
 
     public Date getNextReminderDate(){
-        //TODO implement
-        return null;
+        String time = mNextReminder.substring(mNextReminder.indexOf('T')+1);
+        String hour = time.substring(0, time.indexOf(':'));
+        time = time.substring(time.indexOf(':')+1);
+        String minute = time.substring(0, time.indexOf(':'));
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(hour));
+        calendar.set(Calendar.MINUTE, Integer.valueOf(minute));
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
     }
 
     public String getNextReminderDisplay(){
