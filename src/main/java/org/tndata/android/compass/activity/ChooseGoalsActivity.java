@@ -213,7 +213,7 @@ public class ChooseGoalsActivity
                     mApplication.getToken(), new JSONObject());
             mDeleteGoalRequestCodeMap.put(code, goal);
 
-            mApplication.removeGoal(goal);
+            mApplication.removeGoal(userGoal);
         }
         else{
             Log.d(TAG, "(Delete) Goal not found: " + goal.toString());

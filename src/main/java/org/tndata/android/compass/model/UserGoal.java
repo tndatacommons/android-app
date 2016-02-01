@@ -127,6 +127,11 @@ public class UserGoal extends Goal implements Serializable, UserSelectedContent,
     }
 
     @Override
+    public boolean isEditable(){
+        return mGoal.isEditable();
+    }
+
+    @Override
     protected String getType(){
         return TYPE;
     }

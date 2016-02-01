@@ -179,8 +179,8 @@ public class MyPrioritiesActivity
     @Override
     public void onActionClick(UserCategory userCategory, UserGoal userGoal, UserBehavior userBehavior, UserAction userAction){
         Intent actionIntent = new Intent(this, TriggerActivity.class)
-                .putExtra(TriggerActivity.USER_ACTION_KEY, userAction)
-                .putExtra(TriggerActivity.USER_GOAL_KEY, userGoal);
+                .putExtra(TriggerActivity.ACTION_KEY, userAction)
+                .putExtra(TriggerActivity.GOAL_KEY, userGoal);
         startActivityForResult(actionIntent, 1);
     }
 

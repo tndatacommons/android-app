@@ -111,7 +111,7 @@ public class CheckInActivity
             mActions = ContentParser.parseUserActions(result);
             mDataSet = new HashMap<>();
             mBehaviorRequestSet = new HashSet<>();
-            Set<Integer> goalRequestSet = new HashSet<>();
+            Set<Long> goalRequestSet = new HashSet<>();
             //For each action
             for (UserAction action:mActions){
                 if (!goalRequestSet.contains(action.getPrimaryGoalId())){

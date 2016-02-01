@@ -10,6 +10,7 @@ public interface UserSelectedContent{
     String getDescription();
     String getHTMLDescription();
     String getIconUrl();
+    boolean isEditable();
 
     void init();
 }

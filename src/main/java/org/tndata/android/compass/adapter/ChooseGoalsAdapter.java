@@ -136,7 +136,7 @@ public class ChooseGoalsAdapter
     private void populateStateArray(){
         if (mGoals != null && mGoals.size() > 1){
             goalStates = new byte[mGoals.size()-1];
-            Map<Integer, UserGoal> userGoals = mApplication.getGoals();
+            Map<Long, UserGoal> userGoals = mApplication.getGoals();
             for (int i = 1; i < mGoals.size(); i++){
                 goalStates[i-1] = userGoals.containsKey(getItem(i).getId())
                         ? STATE_ADDED : STATE_NOT_ADDED;

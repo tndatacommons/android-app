@@ -256,7 +256,7 @@ public class ChooseBehaviorsActivity
                     API.getDeleteBehaviorUrl(userBehavior),
                     mApplication.getToken(), new JSONObject());
 
-            mApplication.removeBehavior(behavior);
+            mApplication.removeBehavior(userBehavior);
         }
         else{
             Log.d(TAG, "(Delete) behavior not found: " + behavior.toString());

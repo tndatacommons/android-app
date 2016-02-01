@@ -119,6 +119,11 @@ public class UserBehavior
     }
 
     @Override
+    public boolean isEditable(){
+        return mBehavior.isEditable();
+    }
+
+    @Override
     protected String getType(){
         return TYPE;
     }

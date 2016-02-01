@@ -86,6 +86,11 @@ public class UserCategory extends UserContent implements Serializable, UserSelec
     }
 
     @Override
+    public boolean isEditable(){
+        return mCategory.isEditable();
+    }
+
+    @Override
     protected String getType(){
         return TYPE;
     }

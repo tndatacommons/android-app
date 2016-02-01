@@ -36,9 +36,12 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.SearchAdapter;
+import org.tndata.android.compass.adapter.feed.DisplayableGoal;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapterListener;
+import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.UserAction;
@@ -605,7 +608,7 @@ public class MainActivity
     @Override
     public void onSuggestionOpened(GoalContent goal){
         CategoryContent category = null;
-        for (Integer categoryId:goal.getCategoryIdSet()){
+        for (Long categoryId:goal.getCategoryIdSet()){
             if (mApplication.getUserData().getCategories().containsKey(categoryId)){
                 category = mApplication.getCategories().get(categoryId).getCategory();
             }
@@ -617,14 +620,19 @@ public class MainActivity
     }
 
     @Override
-    public void onGoalSelected(UserGoal goal){
+    public void onGoalSelected(DisplayableGoal goal){
+        
+    }
+
+    @Override
+    public void onGoalSelected(Goal goal){
         Intent goalActivityIntent = new Intent(this, GoalActivity.class)
                 .putExtra(GoalActivity.USER_GOAL_KEY, goal);
         startActivityForResult(goalActivityIntent, GOAL_REQUEST_CODE);
     }
 
     @Override
-    public void onFeedbackSelected(GoalContent goal){
+    public void onFeedbackSelected(Goal goal){
         if (goal != null){
             Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
                     .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal);
@@ -633,17 +641,17 @@ public class MainActivity
     }
 
     @Override
-    public void onActionSelected(UserAction userAction){
+    public void onActionSelected(Action userAction){
         Intent actionIntent = new Intent(this, ActionActivity.class)
-                .putExtra(ActionActivity.USER_ACTION_KEY, userAction);
+                .putExtra(ActionActivity.ACTION_KEY, userAction);
         startActivityForResult(actionIntent, ACTION_REQUEST_CODE);
     }
 
     @Override
-    public void onTriggerSelected(UserAction userAction){
+    public void onTriggerSelected(Action userAction){
         Intent triggerIntent = new Intent(this, TriggerActivity.class)
-                .putExtra(TriggerActivity.USER_ACTION_KEY, userAction)
-                .putExtra(TriggerActivity.USER_GOAL_KEY, userAction.getPrimaryGoal());
+                .putExtra(TriggerActivity.ACTION_KEY, userAction)
+                .putExtra(TriggerActivity.GOAL_KEY, userAction.getGoal());
         startActivityForResult(triggerIntent, TRIGGER_REQUEST_CODE);
     }
 

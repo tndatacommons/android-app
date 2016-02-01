@@ -131,7 +131,7 @@ public abstract class API{
         return BASE_URL + "categories/";
     }
 
-    public static String getCategoryUrl(int categoryId){
+    public static String getCategoryUrl(long categoryId){
         return BASE_URL + "categories/" + categoryId + "/";
     }
 
@@ -160,7 +160,7 @@ public abstract class API{
         return BASE_URL + "goals/?category=" + category.getId();
     }
 
-    public static String getGoalUrl(int goalId){
+    public static String getGoalUrl(long goalId){
         return BASE_URL + "goals/" + goalId + "/";
     }
 
@@ -219,7 +219,7 @@ public abstract class API{
         return BASE_URL + "behaviors/?goal=" + goal.getId();
     }
 
-    public static String getBehaviorUrl(int behaviorId){
+    public static String getBehaviorUrl(long behaviorId){
         return BASE_URL + "behaviors/" + behaviorId + "/";
     }
 

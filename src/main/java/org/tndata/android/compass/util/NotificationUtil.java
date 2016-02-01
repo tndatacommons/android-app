@@ -119,7 +119,7 @@ public final class NotificationUtil{
 
         //Action intent; what happens when the user taps the notification
         Intent intent = new Intent(context, ActionActivity.class)
-                .putExtra(ActionActivity.ACTION_MAPPING_ID_KEY, actionMappingId)
+                .putExtra(ActionActivity.ACTION_ID_KEY, actionMappingId)
                 .putExtra(ActionActivity.REMINDER_KEY, reminder);
 
         PendingIntent contentIntent = PendingIntent.getActivity(context,
