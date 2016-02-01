@@ -32,6 +32,11 @@ public class CustomGoal extends Goal implements Serializable{
     private List<CustomAction> mActions;
 
 
+    public CustomGoal(String title){
+        mTitle = title;
+        mActions = new ArrayList<>();
+    }
+
     @Override
     public long getContentId(){
         return getId();
