@@ -2,6 +2,8 @@ package org.tndata.android.compass.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -9,12 +11,16 @@ import android.widget.LinearLayout;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.adapter.CustomActionAdapter;
+import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
+
+import java.util.ArrayList;
 
 
 /**
@@ -28,7 +34,8 @@ public class CreateGoalActivity
         implements
                 View.OnClickListener,
                 NetworkRequest.RequestCallback,
-                ParserCallback{
+                ParserCallback,
+                CustomActionAdapter.CustomActionAdapterListener{
 
     public static final String CUSTOM_GOAL_TITLE_KEY = "org.tndata.compass.CreateGoal.GoalTitle";
 
@@ -38,6 +45,8 @@ public class CreateGoalActivity
     private EditText mGoalTitle;
     private Button mAddGoal;
     private LinearLayout mActionContainer;
+
+    private CustomActionAdapter mAdapter;
 
     private int mAddGoalRequestCode;
 
@@ -52,7 +61,13 @@ public class CreateGoalActivity
         mGoalTitle = (EditText)findViewById(R.id.create_goal_title);
         mAddGoal = (Button)findViewById(R.id.create_goal_add_goal);
         mActionContainer = (LinearLayout)findViewById(R.id.create_goal_action_container);
+        RecyclerView actionList = (RecyclerView)findViewById(R.id.create_goal_action_list);
+
         mAddGoal.setOnClickListener(this);
+
+        mAdapter = new CustomActionAdapter(this, this, new ArrayList<CustomAction>());
+        actionList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        actionList.setAdapter(mAdapter);
 
         String title = getIntent().getStringExtra(CUSTOM_GOAL_TITLE_KEY);
         if (title != null){
@@ -94,5 +109,15 @@ public class CreateGoalActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         mActionContainer.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onAddClicked(CustomAction customAction){
+
+    }
+
+    @Override
+    public void onRemoveClicked(CustomAction customAction){
+
     }
 }

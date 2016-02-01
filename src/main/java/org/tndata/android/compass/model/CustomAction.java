@@ -21,10 +21,18 @@ public class CustomAction extends Action implements Serializable{
     @SerializedName("title")
     private String mTitle;
     @SerializedName("customgoal")
-    private int mCustomGoalId;
+    private long mCustomGoalId;
     @SerializedName("notification_text")
     private String mNotificationText;
 
+
+    //Post processing set values
+    private CustomGoal mGoal;
+
+
+    public CustomAction(String title){
+        mTitle = title;
+    }
 
     @Override
     public long getContentId(){
@@ -35,10 +43,6 @@ public class CustomAction extends Action implements Serializable{
     public void init(){
         //Unused
     }
-
-    //Post processing set values
-    private CustomGoal mGoal;
-
 
     public long getCustomGoalId(){
         return mCustomGoalId;
