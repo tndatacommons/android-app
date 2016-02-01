@@ -39,13 +39,13 @@ public class UserData extends TDCBase{
 
 
     //User selected content: TDCContent.id -> UserSelectedContent maps
-    @SerializedName("categories")
+    @SerializedName("user_categories")
     private Map<Long, UserCategory> mCategories;
-    @SerializedName("goals")
+    @SerializedName("user_goals")
     private Map<Long, UserGoal> mGoals;
-    @SerializedName("behaviors")
+    @SerializedName("user_behaviors")
     private Map<Long, UserBehavior> mBehaviors;
-    @SerializedName("actions")
+    @SerializedName("user_actions")
     private Map<Long, UserAction> mActions;
     private Set<Long> mRequestedGoals;
 

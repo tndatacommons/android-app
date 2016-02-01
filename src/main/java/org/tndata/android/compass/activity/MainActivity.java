@@ -621,7 +621,7 @@ public class MainActivity
 
     @Override
     public void onGoalSelected(DisplayableGoal goal){
-        
+
     }
 
     @Override

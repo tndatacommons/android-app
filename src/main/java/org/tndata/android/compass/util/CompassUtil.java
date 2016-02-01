@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.WindowManager;
@@ -21,10 +22,10 @@ import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.Place;
-import org.tndata.android.compass.model.TDCBase;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserCategory;
+import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.model.UserPlace;
 
@@ -225,22 +226,11 @@ public final class CompassUtil{
     }
 
     public static Class getTypeOf(String src){
+        Log.d("GetTypeOf", src);
+        //IMPORTANT NOTE: the order of the statements matters.
         //Default to Long (for IDs)
         if (src == null){
             return Long.class;
-        }
-        //TDCContent
-        else if (src.contains("category")){
-            return CategoryContent.class;
-        }
-        else if (src.contains("goal")){
-            return GoalContent.class;
-        }
-        else if (src.contains("behavior")){
-            return BehaviorContent.class;
-        }
-        else if (src.contains("action")){
-            return ActionContent.class;
         }
         //UserContent
         else if (src.contains("usercategory")){
@@ -262,6 +252,19 @@ public final class CompassUtil{
         else if (src.contains("customaction")){
             return CustomAction.class;
         }
+        //TDCContent
+        else if (src.contains("category")){
+            return CategoryContent.class;
+        }
+        else if (src.contains("goal")){
+            return GoalContent.class;
+        }
+        else if (src.contains("behavior")){
+            return BehaviorContent.class;
+        }
+        else if (src.contains("action")){
+            return ActionContent.class;
+        }
         //Places
         else if (src.contains("userplace")){
             return UserPlace.class;
@@ -269,9 +272,13 @@ public final class CompassUtil{
         else if (src.contains("place")){
             return Place.class;
         }
+        //UserData
+        else if (src.contains("user")){
+            return UserData.class;
+        }
         //Second default to TDCBase; the API should NOT deliver anything that's not TDCBase
         else{
-            return TDCBase.class;
+            return Long.class;
         }
     }
 }
