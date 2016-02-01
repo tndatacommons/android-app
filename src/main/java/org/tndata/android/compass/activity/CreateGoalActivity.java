@@ -46,9 +46,11 @@ public class CreateGoalActivity
     private Button mAddGoal;
     private LinearLayout mActionContainer;
 
+    private CustomGoal mCustomGoal;
     private CustomActionAdapter mAdapter;
 
     private int mAddGoalRequestCode;
+    private int mAddActionRequestCode;
 
 
     @Override
@@ -94,6 +96,9 @@ public class CreateGoalActivity
         if (requestCode == mAddGoalRequestCode){
             Parser.parse(result, CustomGoal.class, this);
         }
+        else if (requestCode == mAddActionRequestCode){
+            Parser.parse(result, CustomAction.class, this);
+        }
     }
 
     @Override
@@ -103,17 +108,31 @@ public class CreateGoalActivity
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        mApplication.getUserData().addGoal((CustomGoal)result);
+        if (result instanceof CustomGoal){
+            ((CustomGoal)result).init();
+            mApplication.getUserData().addGoal((CustomGoal)result);
+        }
+        else if (result instanceof CustomAction){
+            ((CustomAction)result).init();
+            mApplication.getUserData().addAction((CustomAction)result);
+        }
     }
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        mActionContainer.setVisibility(View.VISIBLE);
+        if (result instanceof CustomGoal){
+            mCustomGoal = (CustomGoal)result;
+            mActionContainer.setVisibility(View.VISIBLE);
+        }
+        else if (result instanceof CustomAction){
+            mAdapter.addCustomAction((CustomAction)result);
+        }
     }
 
     @Override
     public void onAddClicked(CustomAction customAction){
-
+        mAddActionRequestCode = NetworkRequest.post(this, this, API.getPostCustomActionUrl(),
+                mApplication.getToken(), API.getPostPutCustomActionBody(customAction, mCustomGoal));
     }
 
     @Override

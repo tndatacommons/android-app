@@ -51,11 +51,18 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
             holder.mTitle.setText(mNewActionTitle);
             holder.mAction.setText("Add");
         }
+        holder.enable();
     }
 
     @Override
     public int getItemCount(){
         return mCustomActions.size()+1;
+    }
+
+    public void addCustomAction(CustomAction customAction){
+        mCustomActions.add(customAction);
+        notifyItemInserted(mCustomActions.size()-1);
+        notifyItemChanged(mCustomActions.size());
     }
 
 
@@ -78,9 +85,14 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
                 mListener.onRemoveClicked(mCustomActions.get(getAdapterPosition()));
             }
             else{
+                mAction.setEnabled(false);
                 mListener.onAddClicked(new CustomAction(mTitle.getText().toString().trim()));
                 mNewActionTitle = "";
             }
+        }
+
+        public void enable(){
+            mAction.setEnabled(true);
         }
 
         public void recordTitle(boolean enabled){

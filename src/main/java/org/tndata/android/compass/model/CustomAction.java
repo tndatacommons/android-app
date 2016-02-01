@@ -32,6 +32,7 @@ public class CustomAction extends Action implements Serializable{
 
     public CustomAction(String title){
         mTitle = title;
+        mNotificationText = title;
     }
 
     @Override
