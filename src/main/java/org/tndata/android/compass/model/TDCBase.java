@@ -2,6 +2,8 @@ package org.tndata.android.compass.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.tndata.android.compass.parser.ParserModels;
+
 import java.io.Serializable;
 
 
@@ -11,7 +13,7 @@ import java.io.Serializable;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public abstract class TDCBase implements Serializable{
+public abstract class TDCBase implements Serializable, ParserModels.ResultSet{
     private static final long serialVersionUID = 7554126338541297545L;
 
 

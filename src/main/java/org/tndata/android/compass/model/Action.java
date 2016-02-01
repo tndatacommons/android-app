@@ -22,6 +22,9 @@ public abstract class Action extends UserContent implements Serializable{
     @SerializedName("next_reminder")
     private String mNextReminder;
 
+    public void setTrigger(Trigger trigger){
+        mTrigger = trigger;
+    }
 
     public Trigger getTrigger(){
         return mTrigger;
@@ -29,6 +32,10 @@ public abstract class Action extends UserContent implements Serializable{
 
     public boolean hasTrigger(){
         return mTrigger != null;
+    }
+
+    public void setNextReminder(String nextReminder){
+        mNextReminder = nextReminder;
     }
 
     public String getNextReminder(){
@@ -76,4 +83,5 @@ public abstract class Action extends UserContent implements Serializable{
     public abstract String getTitle();
     public abstract Goal getGoal();
     public abstract String getGoalTitle();
+    public abstract boolean isEditable();
 }

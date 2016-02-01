@@ -194,10 +194,6 @@ public class UserData extends TDCBase{
         return mGoals;
     }
 
-    public Goal getGoal(Goal goal){
-        return mCustomGoals.get(goal.getContentId());
-    }
-
     /**
      * Returns the original copy of the provided goal.
      *
@@ -206,10 +202,6 @@ public class UserData extends TDCBase{
      */
     public UserGoal getGoal(GoalContent goal){
         return mGoals.get(goal.getId());
-    }
-
-    public UserGoal getGoal(UserGoal userGoal){
-        return getGoal(userGoal.getGoal());
     }
 
     /**
@@ -410,10 +402,6 @@ public class UserData extends TDCBase{
         return mActions.get(action.getId());
     }
 
-    public UserAction getAction(UserAction userAction){
-        return getAction(userAction.getAction());
-    }
-
     public boolean contains(UserAction userAction){
         return mActions.containsKey(userAction.getAction().getId());
     }
@@ -500,6 +488,15 @@ public class UserData extends TDCBase{
      * GOAL GENERIC METHODS *
      *----------------------*/
 
+    public Goal getGoal(Goal goal){
+        if (goal instanceof UserGoal){
+            return mGoals.get(goal.getContentId());
+        }
+        else{
+            return mCustomGoals.get(goal.getContentId());
+        }
+    }
+
     public void addGoal(Goal goal){
         if (goal instanceof UserGoal){
             addGoal((UserGoal)goal);
@@ -522,6 +519,15 @@ public class UserData extends TDCBase{
     /*------------------------*
      * ACTION GENERIC METHODS *
      *------------------------*/
+
+    public Action getAction(Action action){
+        if (action instanceof UserAction){
+            return mActions.get(action.getContentId());
+        }
+        else{
+            return mCustomActions.get(action.getContentId());
+        }
+    }
 
     public void addAction(Action action){
         if (action instanceof UserAction){

@@ -218,7 +218,7 @@ public class ChooseActionsActivity
                     API.getDeleteActionUrl(userAction), mApplication.getToken(), new JSONObject());
 
             //Remove from the application's collection
-            mApplication.removeAction(action);
+            mApplication.removeAction(userAction);
             mAdapter.notifyDataSetChanged();
         }
         else{
@@ -308,7 +308,7 @@ public class ChooseActionsActivity
 
     private void startTriggerActivity(UserAction userAction){
         startActivity(new Intent(getApplicationContext(), TriggerActivity.class)
-                .putExtra(TriggerActivity.USER_GOAL_KEY, mApplication.getUserData().getGoal(mGoal))
-                .putExtra(TriggerActivity.USER_ACTION_KEY, userAction));
+                .putExtra(TriggerActivity.GOAL_KEY, mApplication.getUserData().getGoal(mGoal))
+                .putExtra(TriggerActivity.ACTION_KEY, userAction));
     }
 }

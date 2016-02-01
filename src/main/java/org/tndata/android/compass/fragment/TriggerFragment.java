@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.model.UserAction;
 
@@ -35,11 +36,11 @@ public class TriggerFragment
                 View.OnClickListener,
                 CompoundButton.OnCheckedChangeListener{
 
-    private static final String USER_ACTION_KEY = "org.tndata.compass.TriggerFragment.UserAction";
+    private static final String ACTION_KEY = "org.tndata.compass.TriggerFragment.Action";
 
     private TriggerFragmentListener mCallback;
 
-    private UserAction mUserAction;
+    private Action mAction;
     private Trigger mTrigger;
 
     private TextView datePickerTextView;
@@ -55,9 +56,9 @@ public class TriggerFragment
      * @param action the action to be delivered.
      * @return the fragment.
      */
-    public static TriggerFragment newInstance(UserAction action){
+    public static TriggerFragment newInstance(Action action){
         Bundle args = new Bundle();
-        args.putSerializable(USER_ACTION_KEY, action);
+        args.putSerializable(ACTION_KEY, action);
 
         TriggerFragment fragment = new TriggerFragment();
         fragment.setArguments(args);
@@ -82,9 +83,9 @@ public class TriggerFragment
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        mUserAction = (UserAction)getArguments().get(USER_ACTION_KEY);
-        if (mUserAction != null){
-            mTrigger = mUserAction.getTrigger();
+        mAction = (UserAction)getArguments().get(ACTION_KEY);
+        if (mAction != null){
+            mTrigger = mAction.getTrigger();
         }
     }
 
@@ -96,7 +97,7 @@ public class TriggerFragment
     @Override
     public void onViewCreated(View rootView, Bundle savedInstanceState){
         TextView title = (TextView)rootView.findViewById(R.id.action_title);
-        title.setText(mUserAction.getTitle());
+        title.setText(mAction.getTitle());
 
         SwitchCompat notificationSwitch = (SwitchCompat)rootView.findViewById(R.id.trigger_enabled);
         notificationSwitch.setChecked(!mTrigger.isDisabled());
@@ -109,7 +110,7 @@ public class TriggerFragment
         mUpdateTrigger = (TextView)rootView.findViewById(R.id.trigger_update);
         mUpdateTrigger.setOnClickListener(this);
 
-        if (mUserAction.isEditable()){
+        if (mAction.isEditable()){
             notificationSwitch.setEnabled(true);
             notificationSwitch.setOnCheckedChangeListener(this);
             rootView.findViewById(R.id.trigger_time_container).setOnClickListener(this);

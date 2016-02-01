@@ -26,6 +26,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.ActionContent;
+import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.service.ActionReportService;
@@ -146,7 +147,12 @@ public class ActionActivity
         else{
             mActionNeededFetching = false;
             timeOption.setText(R.string.action_reschedule);
-            populateUI();
+            if (mAction instanceof UserAction){
+                populateUI((UserAction)mAction);
+            }
+            else if (mAction instanceof CustomAction){
+                populateUI((CustomAction)mAction);
+            }
         }
     }
 
@@ -169,19 +175,19 @@ public class ActionActivity
     /**
      * Takes the action's parameters and populates the UI with them.
      */
-    private void populateUI(){
-        ImageLoader.loadBitmap(mActionImage, mAction.getIconUrl(), new ImageLoader.Options());
+    private void populateUI(UserAction userAction){
+        ImageLoader.loadBitmap(mActionImage, userAction.getIconUrl(), new ImageLoader.Options());
         mActionTitle.setText(mAction.getTitle());
-        if (!mAction.getHTMLDescription().isEmpty()){
-            mActionDescription.setText(Html.fromHtml(mAction.getHTMLDescription(), null,
+        if (!userAction.getHTMLDescription().isEmpty()){
+            mActionDescription.setText(Html.fromHtml(userAction.getHTMLDescription(), null,
                     new CompassTagHandler(this)));
         }
         else{
-            mActionDescription.setText(mAction.getDescription());
+            mActionDescription.setText(userAction.getDescription());
         }
-        mActionDescription.setText(mAction.getDescription());
+        mActionDescription.setText(userAction.getDescription());
 
-        ActionContent action = mAction.getAction();
+        ActionContent action = userAction.getAction();
         if (!action.getMoreInfo().isEmpty()){
             mMoreInfoHeader.setVisibility(View.VISIBLE);
             mMoreInfo.setVisibility(View.VISIBLE);
@@ -229,6 +235,10 @@ public class ActionActivity
                 });
             }
         }
+    }
+
+    private void populateUI(CustomAction customAction){
+        mActionTitle.setText(customAction.getTitle());
     }
 
     @Override
@@ -281,7 +291,7 @@ public class ActionActivity
                 break;
 
             case R.id.action_do_it_now:
-                CompassUtil.doItNow(this, mAction.getAction().getExternalResource());
+                CompassUtil.doItNow(this, ((UserAction)mAction).getAction().getExternalResource());
                 break;
         }
     }
@@ -303,8 +313,8 @@ public class ActionActivity
     private void reschedule(){
         if (mAction != null && !mActionUpdated){
             Intent reschedule = new Intent(this, TriggerActivity.class)
-                    .putExtra(TriggerActivity.USER_ACTION_KEY, mAction)
-                    .putExtra(TriggerActivity.USER_GOAL_KEY, mAction.getPrimaryGoal());
+                    .putExtra(TriggerActivity.ACTION_KEY, mAction)
+                    .putExtra(TriggerActivity.GOAL_KEY, mAction.getGoal());
             startActivityForResult(reschedule, RESCHEDULE_REQUEST_CODE);
         }
     }
@@ -358,7 +368,7 @@ public class ActionActivity
             mActionUpdated = true;
 
             startService(new Intent(this, ActionReportService.class)
-                    .putExtra(ActionReportService.USER_ACTION_KEY, mAction)
+                    .putExtra(ActionReportService.ACTION_KEY, mAction)
                     .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
 
             //Display the check mark and finish the activity after one second
@@ -376,7 +386,7 @@ public class ActionActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         mAction = ContentParser.parseUserAction(result);
-        populateUI();
+        populateUI((UserAction)mAction);
         invalidateOptionsMenu();
     }
 

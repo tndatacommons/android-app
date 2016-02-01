@@ -70,4 +70,9 @@ public class CustomAction extends Action implements Serializable{
     protected String getType(){
         return TYPE;
     }
+
+    @Override
+    public boolean isEditable(){
+        return true;
+    }
 }
