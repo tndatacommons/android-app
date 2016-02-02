@@ -28,7 +28,7 @@ public abstract class Action extends UserContent implements Serializable{
     }
 
     public Trigger getTrigger(){
-        return mTrigger;
+        return mTrigger != null ? mTrigger : new Trigger();
     }
 
     public boolean hasTrigger(){

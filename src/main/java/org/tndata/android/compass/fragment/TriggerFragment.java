@@ -83,7 +83,7 @@ public class TriggerFragment
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        mAction = (UserAction)getArguments().get(ACTION_KEY);
+        mAction = (Action)getArguments().get(ACTION_KEY);
         if (mAction != null){
             mTrigger = mAction.getTrigger();
         }

@@ -88,10 +88,6 @@ public class ChooseGoalsAdapter
         mGoals = new ArrayList<>();
         mFilter = null;
 
-        if (mCategory.getHTMLDescription() == null){
-            Log.d("ChooseGoalsAdapter", "Cat desc is null");
-        }
-
         //Create the header goal and add it to the list
         GoalContent headerGoal = new GoalContent();
         headerGoal.setDescription(mCategory.getDescription());
