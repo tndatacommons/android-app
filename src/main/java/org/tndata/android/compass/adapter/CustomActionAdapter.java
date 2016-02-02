@@ -61,7 +61,7 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
 
     public void addCustomAction(CustomAction customAction){
         mCustomActions.add(customAction);
-        notifyItemInserted(mCustomActions.size()-1);
+        notifyItemInserted(mCustomActions.size() - 1);
         notifyItemChanged(mCustomActions.size());
     }
 
@@ -82,7 +82,9 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
         @Override
         public void onClick(View v){
             if (getAdapterPosition() < mCustomActions.size()){
-                mListener.onRemoveClicked(mCustomActions.get(getAdapterPosition()));
+                CustomAction customAction = mCustomActions.remove(getAdapterPosition());
+                notifyItemRemoved(getAdapterPosition());
+                mListener.onRemoveClicked(customAction);
             }
             else{
                 mAction.setEnabled(false);

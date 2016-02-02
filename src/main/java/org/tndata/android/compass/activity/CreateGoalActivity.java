@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.CustomActionAdapter;
@@ -137,6 +138,8 @@ public class CreateGoalActivity
 
     @Override
     public void onRemoveClicked(CustomAction customAction){
-
+        NetworkRequest.delete(this, this, API.getDeleteActionUrl(customAction),
+                mApplication.getToken(), new JSONObject());
+        mApplication.getUserData().removeAction(customAction);
     }
 }
