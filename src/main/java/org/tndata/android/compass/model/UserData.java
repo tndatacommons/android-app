@@ -686,33 +686,39 @@ public class UserData extends TDCBase{
      * Log the value of individual private data members.
      */
     public void logData() {
-        Log.d(TAG, "Categories.");
-        for (UserCategory item:mCategories.values()){
-            Log.d(TAG, "- " + item.toString());
-            Log.d(TAG, "--> contains " + item.getGoals().size() + " goals");
+        Log.d(TAG, "Categories (" + mCategories.size() + "):");
+        for (UserCategory userCategory:mCategories.values()){
+            Log.d(TAG, "- " + userCategory);
+            Log.d(TAG, "--> contains " + userCategory.getGoals().size() + " goals");
         }
-        Log.d(TAG, "Goals.");
-        for (UserGoal item:mGoals.values()){
-            Log.d(TAG, "- " + item.toString());
-            Log.d(TAG, "--> contains " + item.getCategories().size() + " categories");
-            Log.d(TAG, "--> contains " + item.getBehaviors().size() + " behaviors");
+        Log.d(TAG, "Goals (" + mGoals.size() + "):");
+        for (UserGoal userGoal:mGoals.values()){
+            Log.d(TAG, "- " + userGoal);
+            Log.d(TAG, "--> parents: " + userGoal.getGoal().getCategoryIdSet());
+            Log.d(TAG, "--> contains " + userGoal.getBehaviors().size() + " behaviors");
         }
-        Log.d(TAG, "Behaviors.");
-        for (UserBehavior item:mBehaviors.values()){
-            Log.d(TAG, "- " + item.toString());
-            Log.d(TAG, "--> contains " + item.getGoals().size() + " goals");
-            Log.d(TAG, "--> contains " + item.getActions().size() + " actions");
+        Log.d(TAG, "Behaviors (" + mBehaviors.size() + "):");
+        for (UserBehavior userBehavior:mBehaviors.values()){
+            Log.d(TAG, "- " + userBehavior);
+            Log.d(TAG, "--> parents: " + userBehavior.getBehavior().getGoalIdSet());
+            Log.d(TAG, "--> contains " + userBehavior.getActions().size() + " actions");
         }
-        Log.d(TAG, "Actions.");
-        for (UserAction item:mActions.values()){
-            Log.d(TAG, item.getAction().getBehaviorId()+"");
-            Log.d(TAG, mBehaviors.get(item.getAction().getBehaviorId()).getBehavior().toString());
-            Log.d(TAG, "- " + item.toString());
-            Log.d(TAG, "--> contains: " + item.getBehavior().toString());
+        Log.d(TAG, "Actions (" + mActions.size() + "):");
+        for (UserAction userAction:mActions.values()){
+            Log.d(TAG, "- " + userAction);
+            Log.d(TAG, "--> parent: " + userAction.getBehavior());
         }
 
-        Log.d(TAG, "CustomGoals: " + mCustomGoals.toString());
-        Log.d(TAG, "CustomActions: " + mCustomActions.toString());
+        Log.d(TAG, "CustomGoals (" + mCustomGoals.size() + "):");
+        for (CustomGoal customGoal:mCustomGoals.values()){
+            Log.d(TAG, "- " + customGoal);
+            Log.d(TAG, "--> contains " + customGoal.getActions().size() + " actions");
+        }
+        Log.d(TAG, "CustomActions (" + mCustomActions.size() + "):");
+        for (CustomAction customAction:mCustomActions.values()){
+            Log.d(TAG, "- " + customAction);
+            Log.d(TAG, "--> parent: " + customAction.getGoal());
+        }
     }
 
     /**

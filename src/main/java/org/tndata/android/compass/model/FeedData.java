@@ -1,7 +1,6 @@
 package org.tndata.android.compass.model;
 
 import android.support.annotation.DrawableRes;
-import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -155,6 +154,8 @@ public class FeedData extends TDCBase{
         mProgress.mCompletedActions = completedActions;
     }
 
+
+
     /**
      *
      * Sets the progress percentage of completed actions.
@@ -213,7 +214,7 @@ public class FeedData extends TDCBase{
     /**
      * Sets the list of suggestions.
      *
-     * @param suggestions the list of suggerstions.
+     * @param suggestions the list of suggestions.
      */
     public void setSuggestions(List<GoalContent> suggestions){
         mSuggestions = suggestions;
@@ -234,8 +235,6 @@ public class FeedData extends TDCBase{
      * @param userData the user data bundle.
      */
     public void sync(UserData userData){
-        Log.d("FeedSync", "UserUpcoming: " + mUpcomingActionIds.toString());
-        Log.d("FeedSync", "CustomUpcoming: " + mUpcomingCustomActionIds.toString());
         //Create the upcoming action array
         mUpcomingActions = new ArrayList<>();
         //Populate it in action's trigger-time order
@@ -244,12 +243,10 @@ public class FeedData extends TDCBase{
             Action customAction = userData.getCustomActions().get(mUpcomingCustomActionIds.get(0));
             //This favors CustomActions over UserActions in case of equal trigger time
             if (userAction.getNextReminderDate().compareTo(customAction.getNextReminderDate()) < 0){
-                Log.d("FeedSync", "UserAction");
                 mUpcomingActions.add(userAction);
                 mUpcomingActionIds.remove(0);
             }
             else{
-                Log.d("FeedSync", "CustomAction");
                 mUpcomingActions.add(customAction);
                 mUpcomingCustomActionIds.remove(0);
             }

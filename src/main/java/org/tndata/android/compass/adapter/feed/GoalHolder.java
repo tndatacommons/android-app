@@ -69,7 +69,7 @@ class GoalHolder extends MainFeedViewHolder implements View.OnClickListener{
             mIconContainer.setBackground(gradientDrawable);
         }
 
-        if (!mGoal.getIconUrl().isEmpty()){
+        if (mGoal.getIconUrl() != null && !mGoal.getIconUrl().isEmpty()){
             ImageLoader.loadBitmap(mIcon, mGoal.getIconUrl());
         }
     }
