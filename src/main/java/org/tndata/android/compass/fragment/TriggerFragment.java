@@ -14,7 +14,6 @@ import android.widget.TextView;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Trigger;
-import org.tndata.android.compass.model.UserAction;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

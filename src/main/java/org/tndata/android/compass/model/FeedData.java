@@ -1,6 +1,7 @@
 package org.tndata.android.compass.model;
 
 import android.support.annotation.DrawableRes;
+import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -29,7 +30,7 @@ public class FeedData extends TDCBase{
     @SerializedName("upcoming_actions")
     private List<Long> mUpcomingActionIds;
     @SerializedName("upcoming_customactions")
-    private List<Long> mUpcomingCustomActionsIds;
+    private List<Long> mUpcomingCustomActionIds;
 
     @SerializedName("suggestions")
     private List<GoalContent> mSuggestions;
@@ -233,20 +234,24 @@ public class FeedData extends TDCBase{
      * @param userData the user data bundle.
      */
     public void sync(UserData userData){
+        Log.d("FeedSync", "UserUpcoming: " + mUpcomingActionIds.toString());
+        Log.d("FeedSync", "CustomUpcoming: " + mUpcomingCustomActionIds.toString());
         //Create the upcoming action array
         mUpcomingActions = new ArrayList<>();
         //Populate it in action's trigger-time order
-        while (!mUpcomingActionIds.isEmpty() && !mUpcomingCustomActionsIds.isEmpty()){
+        while (!mUpcomingActionIds.isEmpty() && !mUpcomingCustomActionIds.isEmpty()){
             Action userAction = userData.getActions().get(mUpcomingActionIds.get(0));
-            Action customAction = userData.getCustomActions().get(mUpcomingCustomActionsIds.get(0));
+            Action customAction = userData.getCustomActions().get(mUpcomingCustomActionIds.get(0));
             //This favors CustomActions over UserActions in case of equal trigger time
             if (userAction.getNextReminderDate().compareTo(customAction.getNextReminderDate()) < 0){
+                Log.d("FeedSync", "UserAction");
                 mUpcomingActions.add(userAction);
                 mUpcomingActionIds.remove(0);
             }
             else{
+                Log.d("FeedSync", "CustomAction");
                 mUpcomingActions.add(customAction);
-                mUpcomingCustomActionsIds.remove(0);
+                mUpcomingCustomActionIds.remove(0);
             }
         }
 
@@ -255,8 +260,8 @@ public class FeedData extends TDCBase{
         for (Long upcomingActionId:mUpcomingActionIds){
             mUpcomingActions.add(userData.getActions().get(upcomingActionId));
         }
-        for (Long upcomingCustomActionId:mUpcomingCustomActionsIds){
-            mUpcomingActions.add(userData.getActions().get(upcomingCustomActionId));
+        for (Long upcomingCustomActionId:mUpcomingCustomActionIds){
+            mUpcomingActions.add(userData.getCustomActions().get(upcomingCustomActionId));
         }
 
         //Set the next Action of there is one

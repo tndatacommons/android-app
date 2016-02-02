@@ -710,6 +710,9 @@ public class UserData extends TDCBase{
             Log.d(TAG, "- " + item.toString());
             Log.d(TAG, "--> contains: " + item.getBehavior().toString());
         }
+
+        Log.d(TAG, "CustomGoals: " + mCustomGoals.toString());
+        Log.d(TAG, "CustomActions: " + mCustomActions.toString());
     }
 
     /**

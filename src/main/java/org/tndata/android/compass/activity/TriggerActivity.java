@@ -20,6 +20,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.TriggerFragment;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.model.UserAction;
@@ -466,7 +467,12 @@ public class TriggerActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mPutTriggerRequestCode){
-            Parser.parse(result, UserAction.class, this);
+            if (mAction instanceof UserAction){
+                Parser.parse(result, UserAction.class, this);
+            }
+            else if (mAction instanceof CustomAction){
+                Parser.parse(result, CustomAction.class, this);
+            }
         }
     }
 
@@ -483,13 +489,13 @@ public class TriggerActivity
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof UserAction){
-            UserAction userAction = (UserAction)result;
-            Log.d(TAG, "Updated Action: " + userAction.getTitle());
-            Log.d(TAG, "Updated Trigger: " + userAction.getTrigger());
+        if (result instanceof Action){
+            Action action = (Action)result;
+            Log.d(TAG, "Updated Action: " + action.getTitle());
+            Log.d(TAG, "Updated Trigger: " + action.getTrigger());
 
-            mAction.setTrigger(userAction.getTrigger());
-            mAction.setNextReminder(userAction.getNextReminder());
+            mAction.setTrigger(action.getTrigger());
+            mAction.setNextReminder(action.getNextReminder());
         }
     }
 

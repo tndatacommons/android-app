@@ -44,8 +44,8 @@ public class ListDeserializer extends ParserMethods implements JsonDeserializer<
                     list.add((T)sGson.fromJson(element, CompassUtil.getTypeOf(type)));
                 }
                 catch (ClassCastException ccx){
-                    ccx.printStackTrace();
                     list.add((T)sGson.fromJson(element, Long.class));
+                    Log.d("LongList", list.size()+"");
                 }
             }
         }
