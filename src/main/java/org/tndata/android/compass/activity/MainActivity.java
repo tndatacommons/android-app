@@ -636,9 +636,9 @@ public class MainActivity
 
     @Override
     public void onFeedbackSelected(Goal goal){
-        if (goal != null){
+        if (goal != null && goal instanceof UserGoal){
             Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
-                    .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal);
+                    .putExtra(ChooseBehaviorsActivity.GOAL_KEY, ((UserGoal)goal).getGoal());
             startActivity(chooseBehaviors);
         }
     }

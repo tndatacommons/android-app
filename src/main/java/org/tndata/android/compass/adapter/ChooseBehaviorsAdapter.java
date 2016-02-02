@@ -103,6 +103,7 @@ public class ChooseBehaviorsAdapter
         //Create and set the headers
         BehaviorContent headerBehavior = new BehaviorContent();
         headerBehavior.setDescription(mGoal.getDescription());
+        headerBehavior.setHTMLDescription(mGoal.getHTMLDescription());
         headerBehavior.setId(0);
         mBehaviors.add(headerBehavior);
         setHeader(category);
@@ -161,6 +162,7 @@ public class ChooseBehaviorsAdapter
 
         BehaviorContent headerBehavior = new BehaviorContent();
         headerBehavior.setDescription(mGoal.getDescription());
+        headerBehavior.setHTMLDescription(mGoal.getHTMLDescription());
         headerBehavior.setId(0);
         mBehaviors.add(headerBehavior);
 
