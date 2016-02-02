@@ -91,6 +91,7 @@ public class ChooseActionsAdapter
         //Create and set the headers
         ActionContent actionHeader = new ActionContent();
         actionHeader.setDescription(mBehavior.getDescription());
+        actionHeader.setHTMLDescription(mBehavior.getHTMLDescription());
         actionHeader.setId(0);
         mActions.add(actionHeader);
         setHeader();
@@ -129,6 +130,7 @@ public class ChooseActionsAdapter
 
         ActionContent headerAction = new ActionContent();
         headerAction.setDescription(mBehavior.getDescription());
+        headerAction.setHTMLDescription(mBehavior.getHTMLDescription());
         headerAction.setId(0);
         mActions.add(headerAction);
 
