@@ -46,10 +46,12 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
         if (position < mCustomActions.size()){
             holder.mTitle.setText(mCustomActions.get(position).getTitle());
             holder.mAction.setText("Remove");
+            holder.recordTitle(false);
         }
         else{
             holder.mTitle.setText(mNewActionTitle);
             holder.mAction.setText("Add");
+            holder.recordTitle(true);
         }
         holder.enable();
     }
