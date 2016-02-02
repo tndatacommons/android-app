@@ -50,9 +50,9 @@ public class UserData extends TDCBase{
     private Set<Long> mRequestedGoals;
 
     //Custom content: Custom(*).id -> Custom(*) maps
-    @SerializedName("custom_goals")
+    @SerializedName("customgoals")
     private Map<Long, CustomGoal> mCustomGoals;
-    @SerializedName("custom_actions")
+    @SerializedName("customactions")
     private Map<Long, CustomAction> mCustomActions;
 
     //User places

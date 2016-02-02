@@ -226,7 +226,6 @@ public final class CompassUtil{
     }
 
     public static Class getTypeOf(String src){
-        Log.d("GetTypeOf", src);
         //IMPORTANT NOTE: the order of the statements matters.
         //Default to Long (for IDs)
         if (src == null){
