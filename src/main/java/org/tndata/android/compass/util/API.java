@@ -329,7 +329,15 @@ public abstract class API{
 
     //Triggers
     public static String getPutTriggerUrl(@NonNull Action action){
-        return BASE_URL + "users/actions/" + action.getId() + "/";
+        if (action instanceof UserAction){
+            return BASE_URL + "users/actions/" + action.getId() + "/";
+        }
+        else if (action instanceof CustomAction){
+            return BASE_URL + "users/customactions/" + action.getId() + "/";
+        }
+        else{
+            return "";
+        }
     }
 
     public static JSONObject getPutTriggerBody(@NonNull String time, @NonNull String rrule,

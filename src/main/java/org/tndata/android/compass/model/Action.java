@@ -22,6 +22,7 @@ public abstract class Action extends UserContent implements Serializable{
     @SerializedName("next_reminder")
     private String mNextReminder;
 
+
     public void setTrigger(Trigger trigger){
         mTrigger = trigger;
     }

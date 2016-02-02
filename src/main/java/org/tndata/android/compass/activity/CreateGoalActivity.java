@@ -1,5 +1,6 @@
 package org.tndata.android.compass.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -141,5 +142,12 @@ public class CreateGoalActivity
         NetworkRequest.delete(this, this, API.getDeleteActionUrl(customAction),
                 mApplication.getToken(), new JSONObject());
         mApplication.getUserData().removeAction(customAction);
+    }
+
+    @Override
+    public void onEditTrigger(CustomAction customAction){
+        startActivity(new Intent(this, TriggerActivity.class)
+                .putExtra(TriggerActivity.GOAL_KEY, mCustomGoal)
+                .putExtra(TriggerActivity.ACTION_KEY, customAction));
     }
 }

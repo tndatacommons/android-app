@@ -9,6 +9,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,9 +88,14 @@ public class ChooseGoalsAdapter
         mGoals = new ArrayList<>();
         mFilter = null;
 
+        if (mCategory.getHTMLDescription() == null){
+            Log.d("ChooseGoalsAdapter", "Cat desc is null");
+        }
+
         //Create the header goal and add it to the list
         GoalContent headerGoal = new GoalContent();
         headerGoal.setDescription(mCategory.getDescription());
+        headerGoal.setHTMLDescription(mCategory.getHTMLDescription());
         headerGoal.setId(0);
         mGoals.add(headerGoal);
         setData(mGoals);
@@ -154,6 +160,7 @@ public class ChooseGoalsAdapter
 
         GoalContent headerGoal = new GoalContent();
         headerGoal.setDescription(mCategory.getDescription());
+        headerGoal.setHTMLDescription(mCategory.getHTMLDescription());
         headerGoal.setId(0);
         mGoals.add(headerGoal);
 

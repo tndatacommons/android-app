@@ -44,7 +44,6 @@ import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.SearchResult;
-import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.MiscellaneousParser;
@@ -255,7 +254,7 @@ public class MainActivity
                 }
             }
         });
-        mFeed.setOnScrollListener(hub);
+        mFeed.addOnScrollListener(hub);
 
         mStopper = findViewById(R.id.main_stopper);
         mMenu = (FloatingActionMenu)findViewById(R.id.main_fab_menu);
@@ -621,7 +620,11 @@ public class MainActivity
 
     @Override
     public void onGoalSelected(DisplayableGoal goal){
-
+        if (goal instanceof UserGoal){
+            Intent goalActivityIntent = new Intent(this, GoalActivity.class)
+                    .putExtra(GoalActivity.USER_GOAL_KEY, (UserGoal)goal);
+            startActivityForResult(goalActivityIntent, GOAL_REQUEST_CODE);
+        }
     }
 
     @Override
