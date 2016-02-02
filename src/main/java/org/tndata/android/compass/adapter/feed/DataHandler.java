@@ -1,5 +1,7 @@
 package org.tndata.android.compass.adapter.feed;
 
+import android.util.Log;
+
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
@@ -7,6 +9,8 @@ import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.model.UserGoal;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -126,12 +130,21 @@ class DataHandler{
         List<DisplayableGoal> src = new ArrayList<>();
         if (hasUserGoals()){
             src.addAll(mUserData.getGoals().values());
+            src.addAll(mUserData.getCustomGoals().values());
+            Log.d("Adapter", "CustomGoals: " + mUserData.getCustomGoals().size());
+            Collections.sort(src, new Comparator<DisplayableGoal>(){
+                @Override
+                public int compare(DisplayableGoal lhs, DisplayableGoal rhs){
+                    return lhs.getTitle().toLowerCase().compareTo(rhs.getTitle().toLowerCase());
+                }
+            });
         }
         else{
             src.addAll(mFeedData.getSuggestions());
         }
         while (count < LOAD_MORE_COUNT && canLoadMoreGoals()){
             mDisplayedGoals.add(src.get(mDisplayedGoals.size()));
+            Log.d("Adapter", "Loading: " + mDisplayedGoals.get(mDisplayedGoals.size() - 1).getTitle());
             count++;
         }
         return count;
@@ -139,7 +152,7 @@ class DataHandler{
 
     boolean canLoadMoreGoals(){
         if (hasUserGoals()){
-            return mDisplayedGoals.size() < mUserData.getGoals().size();
+            return mDisplayedGoals.size() < mUserData.getGoals().size() + mUserData.getCustomGoals().size();
         }
         else{
             return mDisplayedGoals.size() < mUserData.getFeedData().getSuggestions().size();

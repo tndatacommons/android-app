@@ -18,7 +18,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class CustomGoal extends Goal implements Serializable{
+public class CustomGoal extends Goal implements Serializable, DisplayableGoal{
     private static final long serialVersionUID = 3564217130245211923L;
 
     public static final String TYPE = "customgoal";

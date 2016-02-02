@@ -340,6 +340,8 @@ public class LoginActivity
             userData.sync();
             userData.logData();
 
+            Log.d("LogIn", "CustomGoals: " + userData.getCustomGoals().size());
+
             //Write the places
             CompassDbHelper helper = new CompassDbHelper(this);
             helper.emptyPlacesTable();
