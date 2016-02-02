@@ -80,4 +80,9 @@ public class CustomAction extends Action implements Serializable{
     public boolean isEditable(){
         return true;
     }
+
+    @Override
+    public String toString(){
+        return "CustomAction #" + getId() + ": " + mTitle;
+    }
 }

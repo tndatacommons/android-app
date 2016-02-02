@@ -80,4 +80,9 @@ public class CustomGoal extends Goal implements Serializable, DisplayableGoal{
     public void removeAction(CustomAction action){
         mActions.remove(action);
     }
+
+    @Override
+    public String toString(){
+        return "CustomGoal #" + getId() + ": " + mTitle;
+    }
 }
