@@ -251,7 +251,7 @@ public class ChooseBehaviorsActivity
     public void deleteBehavior(BehaviorContent behavior){
         UserBehavior userBehavior = mApplication.getUserData().getBehavior(behavior);
         if (userBehavior != null){
-            Log.e(TAG, "Deleting Behavior: " + userBehavior.toString());
+            Log.d(TAG, "Deleting Behavior: " + userBehavior.toString());
 
             mDeleteBehaviorRequestCode = NetworkRequest.delete(this, this,
                     API.getDeleteBehaviorUrl(userBehavior),

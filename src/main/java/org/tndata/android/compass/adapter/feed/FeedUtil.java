@@ -8,7 +8,6 @@ import android.view.View;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.ui.CompassPopupMenu;
 
@@ -50,7 +49,7 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
         }
 
         //If the category couldn't be found or it is packaged, exclude removal options.
-        if (action instanceof UserAction && !((UserAction)action).getAction().isEditable()){
+        if (!action.isEditable()){
             popup.getMenuInflater().inflate(R.menu.popup_action_non_editable, popup.getMenu());
         }
         else{

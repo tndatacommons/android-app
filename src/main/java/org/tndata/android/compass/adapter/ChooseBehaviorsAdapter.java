@@ -191,17 +191,14 @@ public class ChooseBehaviorsAdapter
      * @param holder the view holder containing the behavior.
      */
     private void selectBehaviorClicked(BehaviorViewHolder holder){
-        BehaviorContent behavior = mBehaviors.get(holder.getAdapterPosition()-1);
-        boolean isBehaviorSelected = mApplication.getBehaviors().containsKey(behavior.getId());
-
-        Log.d("ChooseBehaviors", "Editable: " + mIsEditable);
-        Log.d("ChooseBehaviors", "Selected: " + isBehaviorSelected);
-
         if (mIsEditable){
+            BehaviorContent behavior = mBehaviors.get(holder.getAdapterPosition()-1);
+            boolean isBehaviorSelected = mApplication.getBehaviors().containsKey(behavior.getId());
+
             //TODO could be nice to check if the piece of content is being removed or added
             if (isBehaviorSelected){
                 //Tapping this again should remove the behavior
-                Log.d("GoalTryActivity", "Trying to remove behavior: " + behavior.getTitle());
+                Log.d("ChooseBehaviorsAdapter", "Trying to remove behavior: " + behavior.getTitle());
                 mListener.deleteBehavior(behavior);
                 holder.mSelectBehavior.setImageResource(R.drawable.ic_blue_plus_circle);
             }
