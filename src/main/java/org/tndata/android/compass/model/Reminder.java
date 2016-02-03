@@ -15,11 +15,8 @@ import java.io.Serializable;
 public class Reminder implements Serializable{
     static final long serialVersionUID = 94124918239L;
 
-    public static final int TYPE_USER_ACTION_ID = 1;
-    public static final int TYPE_CUSTOM_ACTION_ID = 2;
-
-    private static final String TYPE_USER_ACTION = GcmIntentService.MESSAGE_TYPE_ACTION;
-    private static final String TYPE_CUSTOM_ACTION = GcmIntentService.MESSAGE_TYPE_CUSTOM_ACTION;
+    public static final String TYPE_USER_ACTION = GcmIntentService.MESSAGE_TYPE_ACTION;
+    public static final String TYPE_CUSTOM_ACTION = GcmIntentService.MESSAGE_TYPE_CUSTOM_ACTION;
 
 
     private int mId;
@@ -31,8 +28,6 @@ public class Reminder implements Serializable{
     private int mUserMappingId;
     private boolean mSnoozed;
     private long mLastDelivered;
-
-    private final int mActionType;
 
 
     /**
@@ -54,29 +49,6 @@ public class Reminder implements Serializable{
         mObjectId = objectId;
         mUserMappingId = userMappingId;
         mSnoozed = true;
-
-        mActionType = TYPE_USER_ACTION_ID;
-    }
-
-    /**
-     * Constructor for CustomAction reminders.
-     *
-     * @param placeId the place id.
-     * @param title the title of the reminder.
-     * @param message the message of the reminder.
-     * @param objectId the id of the action reminder.
-     */
-    public Reminder(int notificationId, int placeId, String title, String message, int objectId){
-        mId = -1;
-        mNotificationId = notificationId;
-        mPlaceId = placeId;
-        mTitle = title;
-        mMessage = message;
-        mObjectId = objectId;
-        mUserMappingId = -1;
-        mSnoozed = true;
-
-        mActionType = TYPE_CUSTOM_ACTION_ID;
     }
 
     /**
@@ -197,23 +169,14 @@ public class Reminder implements Serializable{
     }
 
     /**
-     * Gets the object type id of the reminder.
-     *
-     * @return the object type id of the reminder.
-     */
-    public int getObjectTypeId(){
-        return mActionType;
-    }
-
-    /**
      * Gets the object type of the reminder.
      *
      * @return the object type of the reminder.
      */
     public String getObjectType(){
-        if (mActionType == TYPE_USER_ACTION_ID){
-            return TYPE_USER_ACTION;
+        if (mUserMappingId == -1){
+            return TYPE_CUSTOM_ACTION;
         }
-        return TYPE_CUSTOM_ACTION;
+        return TYPE_USER_ACTION;
     }
 }

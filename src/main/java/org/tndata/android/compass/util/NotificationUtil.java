@@ -111,9 +111,8 @@ public final class NotificationUtil{
      * @param actionId the id of the action enclosed in this notification.
      * @param actionMappingId the mapping id of the action for the user.
      */
-    public static void putActionNotification(Context context, String objectType, int notificationId,
-                                             String title, String message, int actionId,
-                                             int actionMappingId){
+    public static void putActionNotification(Context context, int notificationId, String title,
+                                             String message, int actionId, int actionMappingId){
 
         Reminder reminder = new Reminder(notificationId, -1, title, message, actionId, actionMappingId);
 

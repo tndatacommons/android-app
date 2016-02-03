@@ -160,12 +160,12 @@ public class ActionActivity
      * Retrieves an action from the API
      */
     private void fetchAction(){
-        if (mReminder.getObjectTypeId() == Reminder.TYPE_USER_ACTION_ID){
+        if (mReminder.getObjectType().equals(Reminder.TYPE_USER_ACTION)){
             int mappingId = mReminder.getUserMappingId();
             Log.d("ActionActivity", "Fetching UserAction: " + mappingId);
             NetworkRequest.get(this, this, API.getActionUrl(mappingId), mApplication.getToken());
         }
-        else if (mReminder.getObjectTypeId() == Reminder.TYPE_CUSTOM_ACTION_ID){
+        else if (mReminder.getObjectType().equals(Reminder.TYPE_CUSTOM_ACTION)){
             int customId = mReminder.getObjectId();
             Log.d("ActionActivity", "Fetching UserAction: " + customId);
             NetworkRequest.get(this, this, API.getCustomActionUrl(customId), mApplication.getToken());

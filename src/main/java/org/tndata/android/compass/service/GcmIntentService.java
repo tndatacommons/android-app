@@ -107,8 +107,8 @@ public class GcmIntentService extends IntentService{
             case MESSAGE_TYPE_ACTION:
             case MESSAGE_TYPE_CUSTOM_ACTION:
                 try{
-                    NotificationUtil.putActionNotification(this, objectType, Integer.valueOf(id),
-                            title, msg, Integer.valueOf(objectId), Integer.valueOf(mappingId));
+                    NotificationUtil.putActionNotification(this,Integer.valueOf(id), title, msg,
+                            Integer.valueOf(objectId), Integer.valueOf(mappingId));
                 }
                 catch (NumberFormatException nfx){
                     nfx.printStackTrace();

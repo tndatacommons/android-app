@@ -55,7 +55,7 @@ public class ActionReportService extends IntentService{
         if (reminder != null){
             actionId = reminder.getObjectId();
             url = API.getPostActionReportUrl(reminder);
-            if (reminder.getObjectTypeId() == Reminder.TYPE_USER_ACTION_ID){
+            if (reminder.getObjectType().equals(Reminder.TYPE_USER_ACTION)){
                 notificationTag = NotificationUtil.USER_ACTION_TAG;
             }
             else{
