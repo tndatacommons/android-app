@@ -41,6 +41,7 @@ import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapterListener;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.SearchResult;
@@ -624,6 +625,11 @@ public class MainActivity
             Intent goalActivityIntent = new Intent(this, GoalActivity.class)
                     .putExtra(GoalActivity.USER_GOAL_KEY, (UserGoal)goal);
             startActivityForResult(goalActivityIntent, GOAL_REQUEST_CODE);
+        }
+        else if (goal instanceof CustomGoal){
+            Intent editGoal = new Intent(this, CreateGoalActivity.class)
+                    .putExtra(CreateGoalActivity.CUSTOM_GOAL_KEY, (CustomGoal)goal);
+            startActivityForResult(editGoal, GOAL_REQUEST_CODE);
         }
     }
 

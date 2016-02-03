@@ -141,9 +141,9 @@ public class LocationNotificationService
 
             //If the pone is within the geofence a notification is created
             if (distance < GEOFENCE_RADIUS){
-                NotificationUtil.putActionNotification(this, reminder.getObjectType(),
-                        reminder.getNotificationId(), reminder.getTitle(), reminder.getMessage(),
-                        reminder.getObjectId(), reminder.getUserMappingId());
+                NotificationUtil.putActionNotification(this, reminder.getNotificationId(),
+                        reminder.getTitle(), reminder.getMessage(), reminder.getObjectId(),
+                        reminder.getUserMappingId());
 
                 //The reminder is removed from the database and added to the removal list
                 //NOTE: This is the case because all reminders in the database are snoozed

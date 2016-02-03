@@ -23,6 +23,7 @@ import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -39,6 +40,7 @@ public class CreateGoalActivity
                 ParserCallback,
                 CustomActionAdapter.CustomActionAdapterListener{
 
+    public static final String CUSTOM_GOAL_KEY = "org.tndata.compass.CreateGoal.Goal";
     public static final String CUSTOM_GOAL_TITLE_KEY = "org.tndata.compass.CreateGoal.GoalTitle";
 
 
@@ -65,18 +67,29 @@ public class CreateGoalActivity
         mGoalTitle = (EditText)findViewById(R.id.create_goal_title);
         mAddGoal = (Button)findViewById(R.id.create_goal_add_goal);
         mActionContainer = (LinearLayout)findViewById(R.id.create_goal_action_container);
-        RecyclerView actionList = (RecyclerView)findViewById(R.id.create_goal_action_list);
+        RecyclerView actionRecycerView = (RecyclerView)findViewById(R.id.create_goal_action_list);
 
         mAddGoal.setOnClickListener(this);
 
-        mAdapter = new CustomActionAdapter(this, this, new ArrayList<CustomAction>());
-        actionList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        actionList.setAdapter(mAdapter);
-
-        String title = getIntent().getStringExtra(CUSTOM_GOAL_TITLE_KEY);
-        if (title != null){
-            mGoalTitle.setText(title);
+        List<CustomAction> actionList;
+        mCustomGoal = (CustomGoal)getIntent().getSerializableExtra(CUSTOM_GOAL_KEY);
+        if (mCustomGoal != null){
+            mGoalTitle.setText(mCustomGoal.getTitle());
+            actionList = mCustomGoal.getActions();
+            mAddGoal.setEnabled(false);
+            mActionContainer.setVisibility(View.VISIBLE);
         }
+        else{
+            actionList = new ArrayList<>();
+            String title = getIntent().getStringExtra(CUSTOM_GOAL_TITLE_KEY);
+            if (title != null){
+                mGoalTitle.setText(title);
+            }
+        }
+
+        mAdapter = new CustomActionAdapter(this, this, actionList);
+        actionRecycerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        actionRecycerView.setAdapter(mAdapter);
     }
 
     @Override
