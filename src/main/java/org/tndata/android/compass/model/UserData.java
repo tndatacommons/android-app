@@ -480,7 +480,10 @@ public class UserData extends TDCBase{
 
     private void removeAction(CustomAction customAction){
         mCustomActions.remove(customAction.getContentId());
-        mCustomGoals.get(customAction.getCustomGoalId()).removeAction(customAction);
+        CustomGoal customGoal = mCustomGoals.get(customAction.getCustomGoalId());
+        if (customGoal != null){
+            customGoal.removeAction(customAction);
+        }
     }
 
 

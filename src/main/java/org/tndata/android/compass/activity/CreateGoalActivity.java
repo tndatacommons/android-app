@@ -151,6 +151,10 @@ public class CreateGoalActivity
                 break;
 
             case R.id.create_goal_delete:
+                mApplication.removeGoal(mCustomGoal);
+                NetworkRequest.delete(this, null, API.getDeleteGoalUrl(mCustomGoal),
+                        mApplication.getToken(), new JSONObject());
+                finish();
                 break;
         }
     }
@@ -186,6 +190,8 @@ public class CreateGoalActivity
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof CustomGoal){
             mCustomGoal = (CustomGoal)result;
+            mAddGoal.setVisibility(View.GONE);
+            mDeleteGoal.setVisibility(View.VISIBLE);
             mActionContainer.setVisibility(View.VISIBLE);
         }
         else if (result instanceof CustomAction){

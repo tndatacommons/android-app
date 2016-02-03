@@ -1,12 +1,10 @@
 package org.tndata.android.compass.adapter;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +15,9 @@ import android.widget.ImageView;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.CustomAction;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 
 /**
@@ -32,7 +30,7 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
     private Context mContext;
     private CustomActionAdapterListener mListener;
     private List<CustomAction> mCustomActions;
-    private Set<Long> mEditing;
+    private Map<Long, String> mEditing;
 
     private String mNewActionTitle;
 
@@ -42,7 +40,7 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
         mContext = context;
         mListener = listener;
         mCustomActions = customActions;
-        mEditing = new HashSet<>();
+        mEditing = new HashMap<>();
 
         mNewActionTitle = "";
     }
@@ -70,7 +68,7 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
     }
 
     public void customActionAdded(){
-        notifyItemInserted(mCustomActions.size() - 1);
+        notifyItemInserted(mCustomActions.size()-1);
         notifyItemChanged(mCustomActions.size());
     }
 
@@ -107,7 +105,8 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
                     break;
 
                 case R.id.custom_action_edit:
-                    mEditing.add(mCustomActions.get(getAdapterPosition()).getId());
+                    CustomAction customAction = mCustomActions.get(getAdapterPosition());
+                    mEditing.put(customAction.getId(), customAction.getTitle());
 
                     mTitle.setOnClickListener(null);
                     mTitle.setFocusable(true);
@@ -120,16 +119,17 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
 
                     mEditAction.setVisibility(View.GONE);
                     mSaveAction.setVisibility(View.VISIBLE);
+                    recordTitle(true);
                     break;
 
                 case R.id.custom_action_save:
                     String newTitle = mTitle.getText().toString().trim();
                     if (newTitle.length() > 0){
-                        CustomAction customAction = mCustomActions.get(getAdapterPosition());
-                        mEditing.remove(customAction.getId());
-                        if (!customAction.getTitle().equals(newTitle)){
-                            customAction.setTitle(newTitle);
-                            mListener.onSaveAction(customAction);
+                        CustomAction editedAction = mCustomActions.get(getAdapterPosition());
+                        mEditing.remove(editedAction.getId());
+                        if (!editedAction.getTitle().equals(newTitle)){
+                            editedAction.setTitle(newTitle);
+                            mListener.onSaveAction(editedAction);
                         }
                         InputMethodManager imm2 = (InputMethodManager)mContext
                                 .getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -140,6 +140,7 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
 
                         mEditAction.setVisibility(View.VISIBLE);
                         mSaveAction.setVisibility(View.GONE);
+                        recordTitle(false);
                     }
                     break;
 
@@ -154,9 +155,9 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
                     break;
 
                 case R.id.custom_action_delete:
-                    CustomAction customAction = mCustomActions.remove(getAdapterPosition());
+                    CustomAction deletedAction = mCustomActions.remove(getAdapterPosition());
                     notifyItemRemoved(getAdapterPosition());
-                    mListener.onRemoveClicked(customAction);
+                    mListener.onRemoveClicked(deletedAction);
                     break;
             }
         }
@@ -164,7 +165,9 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
         public void bind(@Nullable CustomAction customAction){
             if (customAction == null){
                 mTitle.setText(mNewActionTitle);
+                mTitle.setEnabled(true);
                 mTitle.setFocusable(true);
+                mTitle.setFocusableInTouchMode(true);
                 mTitle.setOnClickListener(null);
                 mTitle.setSelected(true);
                 mAddAction.setEnabled(true);
@@ -175,20 +178,26 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
                 recordTitle(true);
             }
             else{
-                mTitle.setText(customAction.getTitle());
-                mTitle.setFocusable(false);
-                mTitle.setOnClickListener(this);
-                if (mEditing.contains(customAction.getId())){
+                mTitle.setEnabled(true);
+                if (mEditing.containsKey(customAction.getId())){
+                    mTitle.setText(mEditing.get(customAction.getId()));
+                    mTitle.setFocusable(true);
+                    mTitle.setFocusableInTouchMode(true);
+                    mTitle.setOnClickListener(null);
                     mEditAction.setVisibility(View.GONE);
                     mSaveAction.setVisibility(View.VISIBLE);
+                    recordTitle(true);
                 }
                 else{
+                    recordTitle(false);
+                    mTitle.setText(customAction.getTitle());
+                    mTitle.setFocusable(false);
+                    mTitle.setOnClickListener(this);
                     mEditAction.setVisibility(View.VISIBLE);
                     mSaveAction.setVisibility(View.GONE);
                 }
                 mAddAction.setVisibility(View.GONE);
                 mDeleteAction.setVisibility(View.VISIBLE);
-                recordTitle(false);
             }
         }
 
@@ -206,7 +215,12 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count){
-            mNewActionTitle = s.toString();
+            if (getAdapterPosition() == mCustomActions.size()){
+                mNewActionTitle = s.toString();
+            }
+            else{
+                mEditing.put(mCustomActions.get(getAdapterPosition()).getId(), s.toString());
+            }
         }
 
         @Override
