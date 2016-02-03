@@ -19,6 +19,8 @@
 
     <color name="tour_color">#3fb3e6</color>
 
+    <color name="delete">#FF0000</color>
+
     <!-- List Rows -->
     <color name="list_row_selected_color">#FF4081</color>
     <color name="list_row_default_color">#FFFFFF</color>

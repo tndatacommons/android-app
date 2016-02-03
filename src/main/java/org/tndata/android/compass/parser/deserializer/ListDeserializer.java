@@ -7,7 +7,6 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.tndata.android.compass.model.TDCBase;
 import org.tndata.android.compass.parser.ParserMethods;
 import org.tndata.android.compass.util.CompassUtil;
 
@@ -40,6 +39,7 @@ public class ListDeserializer extends ParserMethods implements JsonDeserializer<
             //Parse all the elements of the array and add them to the list
             for (JsonElement element:item.getAsJsonArray()){
                 try{
+                    Log.d("ListDeserializer", element.toString());
                     String type = ((JsonObject)element).get("object_type").getAsString();
                     list.add((T)sGson.fromJson(element, CompassUtil.getTypeOf(type)));
                 }

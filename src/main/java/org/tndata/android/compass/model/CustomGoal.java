@@ -49,6 +49,10 @@ public class CustomGoal extends Goal implements Serializable, DisplayableGoal{
         }
     }
 
+    public void setTitle(String title){
+        mTitle = title;
+    }
+
     @Override
     public String getTitle(){
         return mTitle;

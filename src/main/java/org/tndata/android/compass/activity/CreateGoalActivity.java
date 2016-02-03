@@ -1,13 +1,15 @@
 package org.tndata.android.compass.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import org.json.JSONObject;
@@ -47,7 +49,10 @@ public class CreateGoalActivity
     private CompassApplication mApplication;
 
     private EditText mGoalTitle;
-    private Button mAddGoal;
+    private ImageView mEditGoal;
+    private ImageView mSaveGoal;
+    private ImageView mAddGoal;
+    private ImageView mDeleteGoal;
     private LinearLayout mActionContainer;
 
     private CustomGoal mCustomGoal;
@@ -65,18 +70,29 @@ public class CreateGoalActivity
         mApplication = (CompassApplication)getApplication();
 
         mGoalTitle = (EditText)findViewById(R.id.create_goal_title);
-        mAddGoal = (Button)findViewById(R.id.create_goal_add_goal);
+        mEditGoal = (ImageView)findViewById(R.id.create_goal_edit);
+        mSaveGoal = (ImageView)findViewById(R.id.create_goal_save);
+        mAddGoal = (ImageView)findViewById(R.id.create_goal_add);
+        mDeleteGoal = (ImageView)findViewById(R.id.create_goal_delete);
         mActionContainer = (LinearLayout)findViewById(R.id.create_goal_action_container);
-        RecyclerView actionRecycerView = (RecyclerView)findViewById(R.id.create_goal_action_list);
+        RecyclerView actionRecyclerView = (RecyclerView)findViewById(R.id.create_goal_action_list);
 
+        mEditGoal.setOnClickListener(this);
+        mSaveGoal.setOnClickListener(this);
         mAddGoal.setOnClickListener(this);
+        mDeleteGoal.setOnClickListener(this);
 
         List<CustomAction> actionList;
         mCustomGoal = (CustomGoal)getIntent().getSerializableExtra(CUSTOM_GOAL_KEY);
         if (mCustomGoal != null){
+            mCustomGoal = (CustomGoal)mApplication.getUserData().getGoal(mCustomGoal);
+
             mGoalTitle.setText(mCustomGoal.getTitle());
+            mGoalTitle.setFocusable(false);
             actionList = mCustomGoal.getActions();
-            mAddGoal.setEnabled(false);
+            mEditGoal.setVisibility(View.VISIBLE);
+            mAddGoal.setVisibility(View.GONE);
+            mDeleteGoal.setVisibility(View.VISIBLE);
             mActionContainer.setVisibility(View.VISIBLE);
         }
         else{
@@ -88,20 +104,53 @@ public class CreateGoalActivity
         }
 
         mAdapter = new CustomActionAdapter(this, this, actionList);
-        actionRecycerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        actionRecycerView.setAdapter(mAdapter);
+        actionRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        actionRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
     public void onClick(View v){
         switch (v.getId()){
-            case R.id.create_goal_add_goal:
+            case R.id.create_goal_edit:
+                mGoalTitle.setFocusable(true);
+                mGoalTitle.setFocusableInTouchMode(true);
+                mGoalTitle.requestFocus();
+                mGoalTitle.setSelection(mGoalTitle.getText().length());
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+
+                mEditGoal.setVisibility(View.GONE);
+                mSaveGoal.setVisibility(View.VISIBLE);
+                break;
+
+            case R.id.create_goal_save:
+                String newTitle = mGoalTitle.getText().toString().trim();
+                if (newTitle.length() > 0){
+                    if (!mCustomGoal.getTitle().equals(newTitle)){
+                        mCustomGoal.setTitle(newTitle);
+                        NetworkRequest.put(this, null, API.getPutCustomGoalUrl(mCustomGoal),
+                                mApplication.getToken(), API.getPostPutCustomGoalBody(mCustomGoal));
+                    }
+                    InputMethodManager imm2 = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm2.hideSoftInputFromWindow(mGoalTitle.getWindowToken(), 0);
+                    mGoalTitle.clearFocus();
+                    mGoalTitle.setFocusable(false);
+                    
+                    mEditGoal.setVisibility(View.VISIBLE);
+                    mSaveGoal.setVisibility(View.GONE);
+                }
+                break;
+
+            case R.id.create_goal_add:
                 String goalTitle = mGoalTitle.getText().toString().trim();
                 if (goalTitle.length() > 0){
                     mAddGoalRequestCode = NetworkRequest.post(this, this, API.getPostCustomGoalUrl(),
                             mApplication.getToken(), API.getPostPutCustomGoalBody(new CustomGoal(goalTitle)));
                     mAddGoal.setEnabled(false);
                 }
+                break;
+
+            case R.id.create_goal_delete:
                 break;
         }
     }
