@@ -234,6 +234,7 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void addBehavior(BehaviorContent behavior){
+        Log.d(TAG, "Add clicked: " + behavior);
         //Disable the 'I want this' button
         mAdapter.disableAddGoalButton();
 

@@ -1,5 +1,7 @@
 package org.tndata.android.compass.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 
@@ -15,6 +17,10 @@ public abstract class UserContent extends TDCBase implements Serializable{
     private static final long serialVersionUID = -8654445236984566619L;
 
 
+    @SerializedName("editable")
+    private boolean mEditable;
+
+
     /**
      * Gets the id of the actual piece of content for selected content or the id of the
      * object for custom content. In custom content, getContentId() === getId().
@@ -27,4 +33,12 @@ public abstract class UserContent extends TDCBase implements Serializable{
      * Method used to initialize the content's inner Lists.
      */
     public abstract void init();
+
+    public void setEditable(boolean editable){
+        this.mEditable = editable;
+    }
+
+    public boolean isEditable(){
+        return mEditable;
+    }
 }

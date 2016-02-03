@@ -194,6 +194,9 @@ public class ChooseBehaviorsAdapter
         BehaviorContent behavior = mBehaviors.get(holder.getAdapterPosition()-1);
         boolean isBehaviorSelected = mApplication.getBehaviors().containsKey(behavior.getId());
 
+        Log.d("ChooseBehaviors", "Editable: " + mIsEditable);
+        Log.d("ChooseBehaviors", "Selected: " + isBehaviorSelected);
+
         if (mIsEditable){
             //TODO could be nice to check if the piece of content is being removed or added
             if (isBehaviorSelected){

@@ -69,6 +69,11 @@ public class CustomGoal extends Goal implements Serializable, DisplayableGoal{
         return String.format("#%06X", 0xFFFFFF & context.getResources().getColor(R.color.grow_primary));
     }
 
+    @Override
+    public boolean isEditable(){
+        return true;
+    }
+
     public List<CustomAction> getActions(){
         return mActions;
     }

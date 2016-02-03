@@ -151,10 +151,6 @@ public class UserAction
         return TYPE;
     }
 
-    @Override
-    public boolean isEditable(){
-        return mAction.isEditable();
-    }
 
     /*---------*
      * UTILITY *

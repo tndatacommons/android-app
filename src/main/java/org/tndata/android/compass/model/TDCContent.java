@@ -24,8 +24,6 @@ public abstract class TDCContent extends TDCBase implements Serializable, Compar
     private String mHtmlDescription;
     @SerializedName("icon_url")
     private String mIconUrl;
-    @SerializedName("editable")
-    private boolean mEditable;
 
 
     /*---------*
@@ -48,10 +46,6 @@ public abstract class TDCContent extends TDCBase implements Serializable, Compar
         this.mIconUrl = iconUrl;
     }
 
-    public void setEditable(boolean editable){
-        this.mEditable = editable;
-    }
-
 
     /*---------*
      * GETTERS *
@@ -71,10 +65,6 @@ public abstract class TDCContent extends TDCBase implements Serializable, Compar
 
     public String getIconUrl(){
         return mIconUrl;
-    }
-
-    public boolean isEditable(){
-        return mEditable;
     }
 
 
