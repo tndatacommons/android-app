@@ -20,22 +20,22 @@ public class Survey extends TDCBase implements Serializable, Comparable<Survey>{
     private String response_url = "";
     private String input_type = "";
     private String response = "";
-    private List<SurveyOptions> options = null;
-    private SurveyOptions selectedOption = null;
+    private List<SurveyOption> options = null;
+    private SurveyOption selectedOption = null;
 
-    public SurveyOptions getSelectedOption() {
+    public SurveyOption getSelectedOption() {
         return selectedOption;
     }
 
-    public void setSelectedOption(SurveyOptions selectedOption) {
+    public void setSelectedOption(SurveyOption selectedOption) {
         this.selectedOption = selectedOption;
     }
 
-    public List<SurveyOptions> getOptions() {
+    public List<SurveyOption> getOptions() {
         return options;
     }
 
-    public void setOptions(List<SurveyOptions> options) {
+    public void setOptions(List<SurveyOption> options) {
         this.options = options;
     }
 

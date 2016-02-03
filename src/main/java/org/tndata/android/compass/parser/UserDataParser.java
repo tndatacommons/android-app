@@ -6,7 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.model.Survey;
-import org.tndata.android.compass.model.SurveyOptions;
+import org.tndata.android.compass.model.SurveyOption;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.util.Constants;
 
@@ -62,7 +62,7 @@ public final class UserDataParser extends ParserMethods{
                         || survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_LIKERT)
                         || survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_MULTICHOICE)){
 
-                    SurveyOptions options = new SurveyOptions();
+                    SurveyOption options = new SurveyOption();
                     options.setText(surveyObject.optString("selected_option_text"));
                     options.setId(surveyObject.optInt("selected_option"));
                     survey.setSelectedOption(options);

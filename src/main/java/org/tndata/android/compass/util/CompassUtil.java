@@ -7,7 +7,6 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.WindowManager;
@@ -24,6 +23,7 @@ import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.Instrument;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Survey;
+import org.tndata.android.compass.model.SurveyOption;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserCategory;
@@ -291,6 +291,9 @@ public final class CompassUtil{
         }
         else if (src.contains("likertquestion")){
             return Survey.class;
+        }
+        else if (src.contains("option")){
+            return SurveyOption.class;
         }
         //Second default to TDCBase; the API should NOT deliver anything that's not TDCBase
         else{
