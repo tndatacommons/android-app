@@ -6,10 +6,12 @@ import java.io.Serializable;
 import java.util.List;
 
 
-public class Survey implements Serializable, Comparable<Survey> {
-
+public class Survey extends TDCBase implements Serializable, Comparable<Survey>{
     private static final long serialVersionUID = 3345647844660418003L;
-    private int id = -1;
+
+    public static final String TYPE = "survey";
+
+
     private int order = 0;
     private String text = "";
     private boolean available = true;
@@ -69,12 +71,9 @@ public class Survey implements Serializable, Comparable<Survey> {
         this.response = response;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+    @Override
+    protected String getType(){
+        return TYPE;
     }
 
     public int getOrder() {
@@ -143,7 +142,7 @@ public class Survey implements Serializable, Comparable<Survey> {
 
     @Override
     public String toString(){
-        String result = id + " (";
+        String result = getId() + " (";
 
         switch (question_type){
             case Constants.SURVEY_BINARY:

@@ -21,7 +21,9 @@ import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.Instrument;
 import org.tndata.android.compass.model.Place;
+import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserCategory;
@@ -274,6 +276,21 @@ public final class CompassUtil{
         //UserData
         else if (src.contains("user")){
             return UserData.class;
+        }
+        else if (src.contains("instrument")){
+            return Instrument.class;
+        }
+        else if (src.contains("binaryquestion")){
+            return Survey.class;
+        }
+        else if (src.contains("multiplechoicequestion")){
+            return Survey.class;
+        }
+        else if (src.contains("openendedquestion")){
+            return Survey.class;
+        }
+        else if (src.contains("likertquestion")){
+            return Survey.class;
         }
         //Second default to TDCBase; the API should NOT deliver anything that's not TDCBase
         else{

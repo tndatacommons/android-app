@@ -13,18 +13,21 @@ import java.util.List;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class Instrument implements Serializable, ParserModels.ResultSet{
+public class Instrument extends TDCBase implements Serializable, ParserModels.ResultSet{
     private static final long serialVersionUID = 3492049583975743778L;
 
-    private int id;
+    public static final String TYPE = "instrument";
+
+
     private String title;
     private String description;
     private String instructions;
     private List<Survey> questions;
 
 
-    public int getId(){
-        return this.id;
+    @Override
+    protected String getType(){
+        return null;
     }
 
     public String getTitle(){
@@ -41,10 +44,6 @@ public class Instrument implements Serializable, ParserModels.ResultSet{
 
     public List<Survey> getQuestions(){
         return questions;
-    }
-
-    public void setId(int id){
-        this.id = id;
     }
 
     public void setTitle(String title){
