@@ -35,6 +35,10 @@ public class CustomAction extends Action implements Serializable{
         mNotificationText = title;
     }
 
+    public void setTitle(String title){
+        mTitle = title;
+    }
+
     @Override
     public long getContentId(){
         return getId();

@@ -135,7 +135,7 @@ public class CreateGoalActivity
                     imm2.hideSoftInputFromWindow(mGoalTitle.getWindowToken(), 0);
                     mGoalTitle.clearFocus();
                     mGoalTitle.setFocusable(false);
-                    
+
                     mEditGoal.setVisibility(View.VISIBLE);
                     mSaveGoal.setVisibility(View.GONE);
                 }
@@ -189,8 +189,14 @@ public class CreateGoalActivity
             mActionContainer.setVisibility(View.VISIBLE);
         }
         else if (result instanceof CustomAction){
-            mAdapter.addCustomAction((CustomAction)result);
+            mAdapter.customActionAdded();
         }
+    }
+
+    @Override
+    public void onSaveAction(CustomAction customAction){
+        NetworkRequest.put(this, null, API.getPutCustomActionUrl(customAction),
+                mApplication.getToken(), API.getPostPutCustomActionBody(customAction, mCustomGoal));
     }
 
     @Override
