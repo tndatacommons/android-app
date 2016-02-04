@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,9 @@ import java.util.Map;
  * @version 1.0.0
  */
 public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapter.ActionHolder>{
+    private static final String TAG = "CustomActionAdapter";
+
+
     private Context mContext;
     private CustomActionAdapterListener mListener;
     private List<CustomAction> mCustomActions;
@@ -50,6 +54,8 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
         mContext = context;
         mListener = listener;
         mCustomActions = customActions;
+
+        Log.d(TAG, "Number of CustomActions: " + mCustomActions.size());
 
         mEditing = new HashMap<>();
         mNewActionTitle = "";
@@ -135,17 +141,29 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
 
         @Override
         public void onClick(View v){
+            //First off, grab or create the custom action, it is needed in all cases
+            CustomAction customAction;
+            if (getAdapterPosition() != mCustomActions.size()){
+                customAction = mCustomActions.get(getAdapterPosition());
+            }
+            else{
+                customAction = new CustomAction(mTitle.getText().toString().trim());
+            }
+
             switch (v.getId()){
                 //When the user taps on the title (only if it isn't focusable)
                 case R.id.custom_action_title:
+                    Log.d(TAG, "Editing the trigger of " + customAction);
+
                     //Open the trigger editor
                     mListener.onEditTrigger(mCustomActions.get(getAdapterPosition()));
                     break;
 
                 //When the user enters edition mode
                 case R.id.custom_action_edit:
+                    Log.d(TAG, "Editing the title of " + customAction);
+
                     //Grab the action and put an entry in the map with its id and current title
-                    CustomAction customAction = mCustomActions.get(getAdapterPosition());
                     mEditing.put(customAction.getId(), customAction.getTitle());
 
                     //Set the title click listener to null to avoid going into the trigger editor
@@ -172,14 +190,15 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
                     //Grab the title and check it ain't empty
                     String newTitle = mTitle.getText().toString().trim();
                     if (newTitle.length() > 0){
+                        Log.d(TAG, "Saving the title of " + customAction);
+
                         //Remove the action from the title map
-                        CustomAction editedAction = mCustomActions.get(getAdapterPosition());
-                        mEditing.remove(editedAction.getId());
+                        mEditing.remove(customAction.getId());
 
                         //If the title has changed, set it and send an update to the backend
-                        if (!editedAction.getTitle().equals(newTitle)){
-                            editedAction.setTitle(newTitle);
-                            mListener.onSaveAction(editedAction);
+                        if (!customAction.getTitle().equals(newTitle)){
+                            customAction.setTitle(newTitle);
+                            mListener.onSaveAction(customAction);
                         }
 
                         //Hide the keyboard and make the title not focusable
@@ -204,10 +223,12 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
                 case R.id.custom_action_add:
                     //Grab the title and check that it ain't empty
                     if (mNewActionTitle.length() > 0){
+                        Log.d(TAG, "Adding " + customAction);
+
                         //Temporarily disable the add action button
                         mAddAction.setEnabled(false);
                         //Let the listener know
-                        mListener.onAddClicked(new CustomAction(mTitle.getText().toString().trim()));
+                        mListener.onAddClicked(customAction);
                         //Reset the new title holder
                         mNewActionTitle = "";
                         //Temporarily disable the action title input
@@ -219,6 +240,9 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
                 case R.id.custom_action_delete:
                     //Remove the action from the data set and notify the recycler view and listener
                     CustomAction deletedAction = mCustomActions.remove(getAdapterPosition());
+
+                    Log.d(TAG, "Deleting " + deletedAction);
+
                     notifyItemRemoved(getAdapterPosition());
                     mListener.onRemoveClicked(deletedAction);
                     break;

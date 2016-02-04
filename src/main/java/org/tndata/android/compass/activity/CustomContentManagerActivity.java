@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -41,6 +42,8 @@ public class CustomContentManagerActivity
                 NetworkRequest.RequestCallback,
                 ParserCallback,
                 CustomActionAdapter.CustomActionAdapterListener{
+
+    private static final String TAG = "CustomContentManager";
 
     public static final String CUSTOM_GOAL_KEY = "org.tndata.compass.CreateGoal.Goal";
     public static final String CUSTOM_GOAL_TITLE_KEY = "org.tndata.compass.CreateGoal.GoalTitle";
@@ -91,6 +94,8 @@ public class CustomContentManagerActivity
         List<CustomAction> actionList;
         mCustomGoal = (CustomGoal)getIntent().getSerializableExtra(CUSTOM_GOAL_KEY);
         if (mCustomGoal != null){
+            Log.d(TAG, "Edit goal mode");
+
             mCustomGoal = (CustomGoal)mApplication.getUserData().getGoal(mCustomGoal);
 
             mGoalTitle.setText(mCustomGoal.getTitle());
@@ -102,9 +107,12 @@ public class CustomContentManagerActivity
             mActionContainer.setVisibility(View.VISIBLE);
         }
         else{
+            Log.d(TAG, "New goal mode");
+
             actionList = new ArrayList<>();
             String title = getIntent().getStringExtra(CUSTOM_GOAL_TITLE_KEY);
             if (title != null){
+                Log.d(TAG, "Title provided: " + title);
                 mGoalTitle.setText(title);
             }
         }
