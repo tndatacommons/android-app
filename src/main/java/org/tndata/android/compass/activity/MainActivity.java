@@ -456,7 +456,7 @@ public class MainActivity
      * Called when the create goal FAB is clicked.
      */
     private void createCustomGoalClicked(){
-        startActivity(new Intent(this, CreateGoalActivity.class));
+        startActivity(new Intent(this, CustomContentManagerActivity.class));
     }
 
     /**
@@ -627,8 +627,8 @@ public class MainActivity
             startActivityForResult(goalActivityIntent, GOAL_REQUEST_CODE);
         }
         else if (goal instanceof CustomGoal){
-            Intent editGoal = new Intent(this, CreateGoalActivity.class)
-                    .putExtra(CreateGoalActivity.CUSTOM_GOAL_KEY, (CustomGoal)goal);
+            Intent editGoal = new Intent(this, CustomContentManagerActivity.class)
+                    .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, (CustomGoal)goal);
             startActivityForResult(editGoal, GOAL_REQUEST_CODE);
         }
     }

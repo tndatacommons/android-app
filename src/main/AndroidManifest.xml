@@ -74,7 +74,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".activity.CreateGoalActivity"
+            android:name=".activity.CustomContentManagerActivity"
             android:label="Create goal"
             android:screenOrientation="portrait" />
 

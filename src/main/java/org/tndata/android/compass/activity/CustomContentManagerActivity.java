@@ -29,12 +29,12 @@ import java.util.List;
 
 
 /**
- * Activity used to create, edit, and delete custom goals and activities.
+ * Activity used to create, edit, and delete custom goals and actions.
  *
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class CreateGoalActivity
+public class CustomContentManagerActivity
         extends AppCompatActivity
         implements
                 View.OnClickListener,
@@ -48,6 +48,7 @@ public class CreateGoalActivity
 
     private CompassApplication mApplication;
 
+    //UI components
     private EditText mGoalTitle;
     private ImageView mEditGoal;
     private ImageView mSaveGoal;
@@ -55,9 +56,11 @@ public class CreateGoalActivity
     private ImageView mDeleteGoal;
     private LinearLayout mActionContainer;
 
+    //Dataset and adapter
     private CustomGoal mCustomGoal;
     private CustomActionAdapter mAdapter;
 
+    //Request codes
     private int mAddGoalRequestCode;
     private int mAddActionRequestCode;
 
@@ -69,6 +72,7 @@ public class CreateGoalActivity
 
         mApplication = (CompassApplication)getApplication();
 
+        //Grab the UI stuff
         mGoalTitle = (EditText)findViewById(R.id.create_goal_title);
         mEditGoal = (ImageView)findViewById(R.id.create_goal_edit);
         mSaveGoal = (ImageView)findViewById(R.id.create_goal_save);
@@ -77,11 +81,13 @@ public class CreateGoalActivity
         mActionContainer = (LinearLayout)findViewById(R.id.create_goal_action_container);
         RecyclerView actionRecyclerView = (RecyclerView)findViewById(R.id.create_goal_action_list);
 
+        //Set the listeners
         mEditGoal.setOnClickListener(this);
         mSaveGoal.setOnClickListener(this);
         mAddGoal.setOnClickListener(this);
         mDeleteGoal.setOnClickListener(this);
 
+        //Retrieve the data set and populate the UI accordingly
         List<CustomAction> actionList;
         mCustomGoal = (CustomGoal)getIntent().getSerializableExtra(CUSTOM_GOAL_KEY);
         if (mCustomGoal != null){
@@ -103,54 +109,74 @@ public class CreateGoalActivity
             }
         }
 
+        //Set the adapter
         mAdapter = new CustomActionAdapter(this, this, actionList);
-        actionRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        actionRecyclerView.setLayoutManager(llm);
         actionRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
     public void onClick(View v){
         switch (v.getId()){
+            //When the user enters edition mode
             case R.id.create_goal_edit:
+                //Make the goal title focusable and focus it
                 mGoalTitle.setFocusable(true);
                 mGoalTitle.setFocusableInTouchMode(true);
                 mGoalTitle.requestFocus();
+                //Put the cursor at the end and open the keyboard
                 mGoalTitle.setSelection(mGoalTitle.getText().length());
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                InputMethodManager imm = (InputMethodManager)
+                        getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,
+                        InputMethodManager.HIDE_IMPLICIT_ONLY);
 
+                //Swap the edit button for the save button
                 mEditGoal.setVisibility(View.GONE);
                 mSaveGoal.setVisibility(View.VISIBLE);
                 break;
 
+            //When the user saves a currently existing goal (only from edition)
             case R.id.create_goal_save:
+                //Grab the title and check it ain't empty
                 String newTitle = mGoalTitle.getText().toString().trim();
                 if (newTitle.length() > 0){
+                    //If the title has changed, set it and send an update to the backend
                     if (!mCustomGoal.getTitle().equals(newTitle)){
                         mCustomGoal.setTitle(newTitle);
                         NetworkRequest.put(this, null, API.getPutCustomGoalUrl(mCustomGoal),
                                 mApplication.getToken(), API.getPostPutCustomGoalBody(mCustomGoal));
                     }
-                    InputMethodManager imm2 = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    //Hide the keyboard and make the title not focusable
+                    InputMethodManager imm2 = (InputMethodManager)
+                            getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm2.hideSoftInputFromWindow(mGoalTitle.getWindowToken(), 0);
                     mGoalTitle.clearFocus();
                     mGoalTitle.setFocusable(false);
 
+                    //Swap the save button for the edit button
                     mEditGoal.setVisibility(View.VISIBLE);
                     mSaveGoal.setVisibility(View.GONE);
                 }
                 break;
 
+            //When the user adds a goal
             case R.id.create_goal_add:
+                //Grab the title and check that it ain't empty
                 String goalTitle = mGoalTitle.getText().toString().trim();
                 if (goalTitle.length() > 0){
+                    //Send a request to the backend and disable the add button and the title field
                     mAddGoalRequestCode = NetworkRequest.post(this, this, API.getPostCustomGoalUrl(),
                             mApplication.getToken(), API.getPostPutCustomGoalBody(new CustomGoal(goalTitle)));
+                    mGoalTitle.setEnabled(false);
                     mAddGoal.setEnabled(false);
                 }
                 break;
 
+            //When the user deletes a goal
             case R.id.create_goal_delete:
+                //Remove it from the dataset, send a DELETE request, and exit the activity
                 mApplication.removeGoal(mCustomGoal);
                 NetworkRequest.delete(this, null, API.getDeleteGoalUrl(mCustomGoal),
                         mApplication.getToken(), new JSONObject());
@@ -190,7 +216,12 @@ public class CreateGoalActivity
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof CustomGoal){
             mCustomGoal = (CustomGoal)result;
+            mGoalTitle.setEnabled(true);
+            mGoalTitle.clearFocus();
+            mGoalTitle.setFocusable(false);
+
             mAddGoal.setVisibility(View.GONE);
+            mEditGoal.setVisibility(View.VISIBLE);
             mDeleteGoal.setVisibility(View.VISIBLE);
             mActionContainer.setVisibility(View.VISIBLE);
         }
