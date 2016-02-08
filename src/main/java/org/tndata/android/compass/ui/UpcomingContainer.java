@@ -4,6 +4,9 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,9 +20,11 @@ import java.util.List;
 /**
  * Created by isma on 2/4/16.
  */
-public class UpcomingContainer extends LinearLayout{
+public class UpcomingContainer extends LinearLayout implements Animation.AnimationListener{
     private List<ActionHolder> mDisplayedUpcoming;
     private UpcomingListener mListener;
+
+    private int mOutAnimation;
 
 
     public UpcomingContainer(Context context){
@@ -40,6 +45,7 @@ public class UpcomingContainer extends LinearLayout{
     private void init(){
         setOrientation(VERTICAL);
         mDisplayedUpcoming = new ArrayList<>();
+        mOutAnimation = -1;
     }
 
     public int getCount(){
@@ -56,10 +62,62 @@ public class UpcomingContainer extends LinearLayout{
     }
 
     public void removeAction(Action action){
-
+        for (int i = 0; i < mDisplayedUpcoming.size(); i++){
+            if (mDisplayedUpcoming.get(i).contains(action)){
+                outAnimation(i);
+                break;
+            }
+        }
     }
 
     public void removeFirstAction(){
+        outAnimation(0);
+    }
+
+    private void outAnimation(int position){
+        mOutAnimation = position;
+
+        final ViewGroup view = (ViewGroup)getChildAt(position);
+        final int initialHeight = view.getMeasuredHeight();
+
+        Animation animation = new Animation(){
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t){
+                if(interpolatedTime != 1){
+                    view.getLayoutParams().height = initialHeight-(int)(initialHeight*interpolatedTime);
+                    view.requestLayout();
+                }
+            }
+
+            @Override
+            public boolean willChangeBounds(){
+                return true;
+            }
+        };
+
+        //1dp/ms
+        int length = (int)(initialHeight/view.getContext().getResources().getDisplayMetrics().density);
+        animation.setDuration(length);
+        animation.setAnimationListener(this);
+        view.startAnimation(animation);
+    }
+
+    @Override
+    public void onAnimationStart(Animation animation){
+
+    }
+
+    @Override
+    public void onAnimationEnd(Animation animation){
+        if (mOutAnimation != -1){
+            mDisplayedUpcoming.remove(mOutAnimation);
+            removeViewAt(mOutAnimation);
+            mOutAnimation = -1;
+        }
+    }
+
+    @Override
+    public void onAnimationRepeat(Animation animation){
 
     }
 

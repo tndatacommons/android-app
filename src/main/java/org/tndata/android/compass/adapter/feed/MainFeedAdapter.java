@@ -315,6 +315,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             mDataHandler.didIt();
             mFeedUtil.didIt(mContext, mDataHandler.getUpNext());
             mDataHandler.replaceUpNext();
+            mUpcomingHolder.removeFirstAction();
         }
         else{
             mDataHandler.didIt();

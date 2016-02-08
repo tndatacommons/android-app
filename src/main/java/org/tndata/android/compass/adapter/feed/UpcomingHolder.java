@@ -49,6 +49,10 @@ class UpcomingHolder
         mUpcomingContainer.removeAction(action);
     }
 
+    void removeFirstAction(){
+        mUpcomingContainer.removeFirstAction();
+    }
+
     void hideFooter(){
         mMore.setVisibility(View.GONE);
     }
