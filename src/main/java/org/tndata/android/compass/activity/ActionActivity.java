@@ -145,6 +145,7 @@ public class ActionActivity
             fetchAction();
         }
         else{
+            mAction = mApplication.getUserData().getAction(mAction);
             mActionNeededFetching = false;
             timeOption.setText(R.string.action_reschedule);
             if (mAction instanceof UserAction){

@@ -51,11 +51,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
 
     private MainFeedPadding mMainFeedPadding;
 
-    private int mSelectedItem;
-    private Action mSelectedAction;
-
     private UpcomingHolder mUpcomingHolder;
     private GoalsHolder mGoalsHolder;
+
+    private Action mSelectedAction;
 
 
     /**
@@ -428,10 +427,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     /**
      * Updates the item marked as selected.
      */
-    public void updateSelectedItem(){
-        if (mSelectedItem != -1){
-            notifyItemChanged(mSelectedItem);
-            mSelectedItem = -1;
+    public void updateSelectedAction(){
+        if (mSelectedAction != null){
+            mUpcomingHolder.updateAction(mSelectedAction);
+            mSelectedAction = null;
         }
     }
 

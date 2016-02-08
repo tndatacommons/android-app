@@ -74,6 +74,14 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
         }
     }
 
+    public void updateAction(Action action){
+        for (ActionHolder holder:mDisplayedUpcoming){
+            if (holder.contains(action)){
+                holder.update();
+            }
+        }
+    }
+
     public void removeAction(Action action){
         for (int i = 0; i < mDisplayedUpcoming.size(); i++){
             if (mDisplayedUpcoming.get(i).contains(action)){
@@ -148,23 +156,32 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
     private class ActionHolder implements OnClickListener{
         private Action mAction;
 
+        private TextView mTitle;
+        private TextView mGoal;
+        private TextView mTime;
+
+
         public ActionHolder(Action action){
             mAction = action;
 
             LayoutInflater inflater = LayoutInflater.from(getContext());
             View rootView = inflater.inflate(R.layout.item_upcoming_action, UpcomingContainer.this, false);
 
-            TextView title = (TextView)rootView.findViewById(R.id.action_title);
-            TextView goal = (TextView)rootView.findViewById(R.id.action_goal);
-            TextView time = (TextView)rootView.findViewById(R.id.action_time);
+            mTitle = (TextView)rootView.findViewById(R.id.action_title);
+            mGoal = (TextView)rootView.findViewById(R.id.action_goal);
+            mTime = (TextView)rootView.findViewById(R.id.action_time);
 
-            title.setText(mAction.getTitle());
-            goal.setText(mAction.getGoalTitle());
-            time.setText(mAction.getNextReminderDisplay());
+            update();
 
             addView(rootView);
             rootView.setOnClickListener(this);
             rootView.findViewById(R.id.action_overflow_box).setOnClickListener(this);
+        }
+
+        private void update(){
+            mTitle.setText(mAction.getTitle());
+            mGoal.setText(mAction.getGoalTitle());
+            mTime.setText(mAction.getNextReminderDisplay());
         }
 
         @Override

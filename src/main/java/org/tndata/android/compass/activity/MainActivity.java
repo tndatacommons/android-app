@@ -682,11 +682,11 @@ public class MainActivity
                     mAdapter.didIt();
                 }
                 else{
-                    mAdapter.updateSelectedItem();
+                    mAdapter.updateSelectedAction();
                 }
             }
             else if (requestCode == TRIGGER_REQUEST_CODE){
-                mAdapter.updateSelectedItem();
+                mAdapter.updateSelectedAction();
             }
         }
         else if (resultCode == Constants.LOGGED_OUT_RESULT_CODE){

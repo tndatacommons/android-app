@@ -45,6 +45,10 @@ class UpcomingHolder
         mUpcomingContainer.addAction(action);
     }
 
+    void updateAction(Action action){
+        mUpcomingContainer.updateAction(action);
+    }
+
     void removeAction(Action action){
         mUpcomingContainer.removeAction(action);
     }
