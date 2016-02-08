@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -96,7 +95,7 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
         int targetHeight = view.getMeasuredHeight();
         view.getLayoutParams().height = 1;
 
-        Animation animation = new UpcomingAnimation(view, targetHeight, true);
+        Animation animation = new ExpandCollapseAnimation(view, targetHeight, true);
 
         //2ms/dp
         int length = (int)(2*targetHeight/getContext().getResources().getDisplayMetrics().density);
@@ -111,7 +110,7 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
         View view = getChildAt(position);
         int initialHeight = view.getMeasuredHeight();
 
-        Animation animation = new UpcomingAnimation(view, initialHeight, false);
+        Animation animation = new ExpandCollapseAnimation(view, initialHeight, false);
 
         //1dp/ms
         int length = (int)(initialHeight/getContext().getResources().getDisplayMetrics().density);
@@ -182,41 +181,6 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
 
         public boolean contains(Action action){
             return mAction.equals(action);
-        }
-    }
-
-
-    private class UpcomingAnimation extends Animation{
-        private View mView;
-        private int mHeight;
-        private boolean mAdd;
-
-
-        private UpcomingAnimation(View view, int height, boolean add){
-            mView = view;
-            mHeight = height;
-            mAdd = add;
-        }
-
-        @Override
-        protected void applyTransformation(float interpolatedTime, Transformation t){
-            if (mAdd){
-                mView.getLayoutParams().height = (interpolatedTime == 1)
-                        ? LayoutParams.WRAP_CONTENT
-                        : (int)(mHeight*interpolatedTime);
-                mView.requestLayout();
-            }
-            else{
-                if (interpolatedTime != 1){
-                    mView.getLayoutParams().height = mHeight - (int)(mHeight * interpolatedTime);
-                    mView.requestLayout();
-                }
-            }
-        }
-
-        @Override
-        public boolean willChangeBounds(){
-            return true;
         }
     }
 
