@@ -15,7 +15,7 @@ import org.tndata.android.compass.ui.GoalContainer;
  */
 class GoalsHolder
         extends MainFeedViewHolder
-        implements View.OnClickListener, GoalContainer.GoalListener{
+        implements View.OnClickListener, GoalContainer.GoalContainerListener{
 
     private TextView mHeader;
     private GoalContainer mGoalContainer;
