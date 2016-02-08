@@ -350,7 +350,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             mDataHandler.replaceUpNext();
         }
         else{
-            mDataHandler.removeUpcoming(action);
+            //mDataHandler.removeUpcoming(action);
             //removeActionFromFeed(position);
         }
         NetworkRequest.delete(mContext, null, API.getDeleteActionUrl(action),
@@ -450,7 +450,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }*/
 
     public void dataSetChanged(){
-        mDataHandler.reload();
+        //mDataHandler.reload();
         notifyDataSetChanged();
     }
 }
