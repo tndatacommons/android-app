@@ -61,6 +61,12 @@ class DataHandler{
         mFeedData.setProgressPercentage(percentage);
 
         mUserData.removeAction(action);
+        if (mFeedData.getNextAction().equals(action)){
+            replaceUpNext();
+        }
+        else{
+            mFeedData.getUpcomingActions().remove(action);
+        }
     }
 
     /**

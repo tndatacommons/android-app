@@ -345,14 +345,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      */
     void remove(Action action){
         mDataHandler.remove(action);
-        //TODO remove from container
-        if (mUserData.getFeedData().getNextAction().equals(action)){
-            mDataHandler.replaceUpNext();
-        }
-        else{
-            //mDataHandler.removeUpcoming(action);
-            //removeActionFromFeed(position);
-        }
+        mUpcomingHolder.removeAction(action);
         NetworkRequest.delete(mContext, null, API.getDeleteActionUrl(action),
                 ((CompassApplication)mContext.getApplicationContext()).getToken(), new JSONObject());
     }
