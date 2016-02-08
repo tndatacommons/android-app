@@ -1,7 +1,6 @@
 package org.tndata.android.compass.adapter.feed;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
@@ -11,16 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 
-import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.GoalContent;
-import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
-import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.List;
 
@@ -38,11 +33,9 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     private static final int TYPE_UP_NEXT = TYPE_WELCOME+1;
     private static final int TYPE_FEEDBACK = TYPE_UP_NEXT+1;
     private static final int TYPE_SUGGESTION = TYPE_FEEDBACK+1;
-    private static final int TYPE_HEADER = TYPE_SUGGESTION+1;
-    private static final int TYPE_ACTION = TYPE_HEADER+1;
-    private static final int TYPE_GOAL = TYPE_ACTION+1;
-    private static final int TYPE_FOOTER = TYPE_GOAL +1;
-    private static final int TYPE_OTHER = TYPE_FOOTER+1;
+    private static final int TYPE_UPCOMING = TYPE_SUGGESTION+1;
+    private static final int TYPE_GOALS = TYPE_UPCOMING +1;
+    private static final int TYPE_OTHER = TYPE_GOALS+1;
 
 
     final Context mContext;
@@ -56,6 +49,9 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     private MainFeedPadding mMainFeedPadding;
 
     private int mSelectedItem;
+
+    private UpcomingHolder mUpcomingHolder;
+    private GoalsHolder mGoalsHolder;
 
 
     /**
@@ -130,17 +126,11 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         if (CardTypes.isSuggestion(position)){
             return TYPE_SUGGESTION;
         }
-        if (CardTypes.isUpcomingHeader(position) || CardTypes.isMyGoalsHeader(position)){
-            return TYPE_HEADER;
+        if (CardTypes.isUpcoming(position)){
+            return TYPE_UPCOMING;
         }
-        if (CardTypes.isUpcomingAction(position)){
-            return TYPE_ACTION;
-        }
-        if (CardTypes.isGoal(position)){
-            return TYPE_GOAL;
-        }
-        if (CardTypes.isUpcomingFooter(position) || CardTypes.isMyGoalsFooter(position)){
-            return TYPE_FOOTER;
+        if (CardTypes.isGoals(position)){
+            return TYPE_GOALS;
         }
         return TYPE_OTHER;
     }
@@ -173,21 +163,21 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             LayoutInflater inflater = LayoutInflater.from(mContext);
             return new GoalSuggestionHolder(this, inflater.inflate(R.layout.card_goal_suggestion, parent, false));
         }
-        else if (viewType == TYPE_HEADER){
-            LayoutInflater inflater = LayoutInflater.from(mContext);
-            return new HeaderHolder(this, inflater.inflate(R.layout.card_header, parent, false));
+        else if (viewType == TYPE_UPCOMING){
+            if (mUpcomingHolder == null){
+                LayoutInflater inflater = LayoutInflater.from(mContext);
+                View rootView = inflater.inflate(R.layout.card_upcoming, parent, false);
+                mUpcomingHolder = new UpcomingHolder(this, rootView);
+            }
+            return mUpcomingHolder;
         }
-        else if (viewType == TYPE_ACTION){
-            LayoutInflater inflater = LayoutInflater.from(mContext);
-            return new ActionHolder(this, inflater.inflate(R.layout.card_action, parent, false));
-        }
-        else if (viewType == TYPE_GOAL){
-            LayoutInflater inflater = LayoutInflater.from(mContext);
-            return new GoalHolder(this, inflater.inflate(R.layout.card_goal, parent, false));
-        }
-        else if (viewType == TYPE_FOOTER){
-            LayoutInflater inflater = LayoutInflater.from(mContext);
-            return new FooterHolder(this, inflater.inflate(R.layout.card_footer, parent, false));
+        else if (viewType == TYPE_GOALS){
+            if (mGoalsHolder == null){
+                LayoutInflater inflater = LayoutInflater.from(mContext);
+                View rootView = inflater.inflate(R.layout.card_goals, parent, false);
+                mGoalsHolder = new GoalsHolder(this, rootView);
+            }
+            return mGoalsHolder;
         }
         else if (viewType == TYPE_OTHER){
             return new RecyclerView.ViewHolder(new CardView(mContext)){};
@@ -203,12 +193,6 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         //  the user data again. Bottomline, do not keep going
         if (mUserData.getFeedData() == null){
             return;
-        }
-
-        //Set the card parameters
-        ((CardView)rawHolder.itemView).setRadius(CompassUtil.getPixels(mContext, 2));
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
-            setPreLParameters((CardView)rawHolder.itemView);
         }
 
         //Blank space
@@ -231,40 +215,26 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             GoalSuggestionHolder holder = (GoalSuggestionHolder)rawHolder;
             holder.mTitle.setText(mSuggestion.getTitle());
         }
-        //Today's activities / upcoming header
-        else if (CardTypes.isUpcomingHeader(position)){
-            HeaderHolder holder = (HeaderHolder)rawHolder;
-            ((CardView)holder.itemView).setRadius(0);
-            holder.mTitle.setText(R.string.card_upcoming_header);
-        }
         //Today's activities / upcoming
-        else if (CardTypes.isUpcomingAction(position)){
-            ((CardView)rawHolder.itemView).setRadius(0);
-            ((ActionHolder)rawHolder).bind(mDataHandler.getUpcoming(getActionPosition(position)));
-        }
-        else if (CardTypes.isUpcomingFooter(position)){
-            ((CardView)rawHolder.itemView).setRadius(0);
-        }
-        //My goals / suggestions header
-        else if (CardTypes.isMyGoalsHeader(position)){
-            HeaderHolder holder = (HeaderHolder)rawHolder;
-            ((CardView)holder.itemView).setRadius(0);
-            if (mUserData.getGoals().isEmpty()){
-                holder.mTitle.setText(R.string.card_suggestions_header);
-            }
-            else{
-                holder.mTitle.setText(R.string.card_my_goals_header);
+        else if (CardTypes.isUpcoming(position)){
+            if (mUpcomingHolder.getItemCount() == 0){
+                moreActions();
             }
         }
         //My goals / suggestions
-        else if (CardTypes.isGoal(position)){
-            ((CardView)rawHolder.itemView).setRadius(0);
+        else if (CardTypes.isGoals(position)){
+            if (mGoalsHolder.getItemCount() == 0){
+                String title;
+                if (mUserData.getGoals().isEmpty()){
+                    title = mContext.getString(R.string.card_suggestions_header);
+                }
+                else{
+                    title = mContext.getString(R.string.card_my_goals_header);
+                }
+                ((GoalsHolder)rawHolder).bind(title);
 
-            int goalPosition = position - CardTypes.getMyGoalsHeaderPosition()-1;
-            ((GoalHolder)rawHolder).bind(mDataHandler.getGoals().get(goalPosition));
-        }
-        else if (CardTypes.isMyGoalsFooter(position)){
-            ((CardView)rawHolder.itemView).setRadius(0);
+                moreGoals();
+            }
         }
     }
 
@@ -277,17 +247,6 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     /*----------------------*
      * FEED ADAPTER METHODS *
      *----------------------*/
-
-    /**
-     * Sets the card parameters for pre L devices.
-     *
-     * @param view the card view whose parameters shall be set.
-     */
-    private void setPreLParameters(CardView view){
-        view.setMaxCardElevation(0);
-        view.setCardBackgroundColor(mContext.getResources().getColor(R.color.card_pre_l_background));
-    }
-
     DataHandler getDataHandler(){
         return mDataHandler;
     }
@@ -296,8 +255,8 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         mSelectedItem = selectedItem;
     }
 
-    public int getMyGoalsHeaderPosition(){
-        return CardTypes.getMyGoalsHeaderPosition();
+    public int getGoalsPosition(){
+        return CardTypes.getGoalsPosition();
     }
 
     /**
@@ -355,11 +314,12 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             mDataHandler.replaceUpNext();
             replaceUpNext();
         }
-        else if (CardTypes.isUpcomingAction(position)){
+        /*else if (CardTypes.isUpcoming(position)){
+            //TODO
             mDataHandler.didIt();
             mFeedUtil.didIt(mContext, mDataHandler.removeUpcoming(getActionPosition(position)));
             removeActionFromFeed(position);
-        }
+        }*/
     }
 
     /**
@@ -375,9 +335,9 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         if (CardTypes.isUpNext(position)){
             mListener.onTriggerSelected(getDataHandler().getUpNext());
         }
-        else if (CardTypes.isUpcomingAction(position)){
+        /*else if (CardTypes.isUpcomingAction(position)){ TODO
             mListener.onTriggerSelected(getDataHandler().getUpcoming().get(getActionPosition(position)));
-        }
+        }*/
         else{
             mSelectedItem = -1;
         }
@@ -399,13 +359,13 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             replaceUpNext();
         }
         else{
-            action = mDataHandler.getUpcoming().get(getActionPosition(position));
+            /*action = mDataHandler.getUpcoming().get(getActionPosition(position));
             mDataHandler.remove(action);
             mDataHandler.removeUpcoming(getActionPosition(position));
-            removeActionFromFeed(position);
+            removeActionFromFeed(position);*/
         }
-        NetworkRequest.delete(mContext, null, API.getDeleteActionUrl(action),
-                ((CompassApplication)mContext.getApplicationContext()).getToken(), new JSONObject());
+        /*NetworkRequest.delete(mContext, null, API.getDeleteActionUrl(action),
+                ((CompassApplication)mContext.getApplicationContext()).getToken(), new JSONObject());*/
     }
 
     /**
@@ -420,22 +380,12 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             action = mUserData.getFeedData().getNextAction();
         }
         else{
-            action = mUserData.getFeedData().getUpcomingActions().get(getActionPosition(position));
+            //action = mUserData.getFeedData().getUpcomingActions().get(getActionPosition(position));
         }
         //TODO this is another workaround
-        if (action.getGoal() != null){
+        /*if (action.getGoal() != null){
             mListener.onGoalSelected(mUserData.getGoal(action.getGoal()));
-        }
-    }
-
-    /**
-     * Calculates the position of an action given its position in the list,
-     *
-     * @param adapterPosition a position in the list.
-     * @return the position of the action in the backing array.
-     */
-    int getActionPosition(int adapterPosition){
-        return adapterPosition-(CardTypes.getUpcomingHeaderPosition()+1);
+        }*/
     }
 
     /**
@@ -443,12 +393,12 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      */
     void replaceUpNext(){
         if (mDataHandler.getUpNext() != null){
-            int headerPosition = CardTypes.getUpcomingHeaderPosition();
+            /*int headerPosition = CardTypes.getUpcomingHeaderPosition();
             if (!CardTypes.hasUpcoming()){
                 notifyItemRemoved(headerPosition);
             }
             notifyItemRemoved(headerPosition + 1);
-            notifyItemRangeChanged(headerPosition + 2, getItemCount() - (headerPosition + 2));
+            notifyItemRangeChanged(headerPosition + 2, getItemCount() - (headerPosition + 2));*/
         }
 
         //Update the up next card
@@ -500,28 +450,24 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * FOOTER RELATED METHODS *
      *------------------------*/
 
+    void moreActions(){
+        for (Action action:mDataHandler.loadMoreUpcoming()){
+            mUpcomingHolder.addAction(action);
+        }
+        if (!mDataHandler.canLoadMoreActions()){
+            mUpcomingHolder.hideFooter();
+        }
+    }
+
     /**
      * Makes the feed display more actions or goals, depending on which footer was tapped.
-     *
-     * @param position the adapter position of the tapped footer.
      */
-    void more(int position){
-        if (CardTypes.isUpcomingFooter(position)){
-            int footer = CardTypes.getUpcomingFooterPosition();
-            int count = mDataHandler.loadMoreUpcoming();
-            if (!CardTypes.hasUpcomingFooter()){
-                notifyItemRemoved(footer);
-            }
-            notifyItemRangeInserted(footer, count);
-            notifyItemRangeChanged(footer + count, getItemCount());
+    void moreGoals(){
+        for (DisplayableGoal goal:mDataHandler.loadMoreGoals()){
+            mGoalsHolder.addGoal(goal);
         }
-        else if (CardTypes.isMyGoalsFooter(position)){
-            int footer = CardTypes.getMyGoalsFooterPosition();
-            int count = mDataHandler.loadMoreGoals();
-            notifyItemRangeInserted(footer, count);
-            if (!CardTypes.hasMyGoalsFooter()){
-                notifyItemRemoved(footer+count+1);
-            }
+        if (!mDataHandler.canLoadMoreGoals()){
+            mGoalsHolder.hideFooter();
         }
     }
 
@@ -548,10 +494,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             mDataHandler.replaceUpNext();
             replaceUpNext();
         }
-        else if (CardTypes.isUpcomingAction(mSelectedItem)){
+        /*else if (CardTypes.isUpcomingAction(mSelectedItem)){
             mDataHandler.removeUpcoming(getActionPosition(mSelectedItem));
             removeActionFromFeed(mSelectedItem);
-        }
+        }*/
         mSelectedItem = -1;
     }
 

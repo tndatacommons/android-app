@@ -39,13 +39,13 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
         CompassPopupMenu popup = CompassPopupMenu.newInstance(mAdapter.mContext, anchor);
 
         //Get the action to determine which popup should be inflated
-        Action action;
+        Action action = null;
         if (position == CardTypes.getUpNextPosition()){
             action = mAdapter.getDataHandler().getUpNext();
         }
         else{
-            int actionPosition = mAdapter.getActionPosition(position);
-            action = mAdapter.getDataHandler().getUpcoming().get(actionPosition);
+            /*int actionPosition = mAdapter.getActionPosition(position);
+            action = mAdapter.getDataHandler().getUpcoming().get(actionPosition);*/
         }
 
         //If the category couldn't be found or it is packaged, exclude removal options.

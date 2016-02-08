@@ -47,7 +47,7 @@ class DataHandler{
         }
 
         mDisplayedUpcoming = new ArrayList<>();
-        loadMoreUpcoming();
+        //loadMoreUpcoming();
 
         mDisplayedGoals = new ArrayList<>();
         loadMoreGoals();
@@ -91,8 +91,8 @@ class DataHandler{
         return mFeedbackGoal;
     }
 
-    List<Action> getUpcoming(){
-        return mDisplayedUpcoming;
+    boolean hasUpcoming(){
+        return !mFeedData.getUpcomingActions().isEmpty();
     }
 
     Action getUpcoming(int position){
@@ -112,21 +112,23 @@ class DataHandler{
         return mDisplayedGoals;
     }
 
-    int loadMoreUpcoming(){
+    List<Action> loadMoreUpcoming(){
         int count = 0;
+        List<Action> newActions = new ArrayList<>();
         while (count < LOAD_MORE_COUNT && canLoadMoreActions()){
-            mDisplayedUpcoming.add(mFeedData.getUpcomingActions().get(mDisplayedUpcoming.size()));
+            Action action = mFeedData.getUpcomingActions().get(mDisplayedUpcoming.size());
+            mDisplayedUpcoming.add(action);
+            newActions.add(action);
             count++;
         }
-        return count;
+        return newActions;
     }
 
     boolean canLoadMoreActions(){
         return mDisplayedUpcoming.size() < mFeedData.getUpcomingActions().size();
     }
 
-    int loadMoreGoals(){
-        int count = 0;
+    List<DisplayableGoal> loadMoreGoals(){
         List<DisplayableGoal> src = new ArrayList<>();
         if (hasUserGoals()){
             src.addAll(mUserData.getGoals().values());
@@ -142,12 +144,16 @@ class DataHandler{
         else{
             src.addAll(mFeedData.getSuggestions());
         }
+        int count = 0;
+        List<DisplayableGoal> newGoals = new ArrayList<>();
         while (count < LOAD_MORE_COUNT && canLoadMoreGoals()){
-            mDisplayedGoals.add(src.get(mDisplayedGoals.size()));
-            Log.d("Adapter", "Loading: " + mDisplayedGoals.get(mDisplayedGoals.size() - 1).getTitle());
+            DisplayableGoal goal = src.get(mDisplayedGoals.size());
+            mDisplayedGoals.add(goal);
+            newGoals.add(goal);
+            Log.d("Adapter", "Loading: " + goal);
             count++;
         }
-        return count;
+        return newGoals;
     }
 
     boolean canLoadMoreGoals(){

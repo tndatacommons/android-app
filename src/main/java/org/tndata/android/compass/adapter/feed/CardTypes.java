@@ -111,7 +111,7 @@ final class CardTypes{
      * @return true if there are upcoming actions, false otherwise.
      */
     static boolean hasUpcoming(){
-        return !sDataHandler.getUpcoming().isEmpty();
+        return sDataHandler.hasUpcoming();
     }
 
     /**
@@ -119,7 +119,7 @@ final class CardTypes{
      *
      * @return the position of the upcoming header card.
      */
-    static int getUpcomingHeaderPosition(){
+    static int getUpcomingPosition(){
         //If there is up next, then there is feedback
         if (hasUpNextAction()){
             return getFeedbackPosition()+1;
@@ -137,42 +137,8 @@ final class CardTypes{
      * @param position the position to be checked.
      * @return true if it is the position of the upcoming header, false otherwise.
      */
-    static boolean isUpcomingHeader(int position){
-        return hasUpcoming() && getUpcomingHeaderPosition() == position;
-    }
-
-    static boolean hasUpcomingFooter(){
-        return sDataHandler.canLoadMoreActions();
-    }
-
-    /**
-     * Gets the position of the upcoming footer.
-     *
-     * @return the position of the upcoming footer.
-     */
-    static int getUpcomingFooterPosition(){
-        return getUpcomingHeaderPosition()+ sDataHandler.getUpcoming().size()+1;
-    }
-
-    /**
-     * Tells whether a position is that of the upcoming actions last item.
-     *
-     * @param position the position to be checked.
-     * @return true if the position id that of upcoming's last item, false otherwise.
-     */
-    static boolean isUpcomingFooter(int position){
-        return hasUpcoming() && hasUpcomingFooter() && position == getUpcomingFooterPosition();
-    }
-
-    /**
-     * Tells whether a position is that of an upcoming's inner item.
-     *
-     * @param position the position to be checked.
-     * @return true if the position is that of an upcoming's inner item, false otherwise.
-     */
-    static boolean isUpcomingAction(int position){
-        return hasUpcoming() &&
-                position > getUpcomingHeaderPosition() && position < getUpcomingFooterPosition();
+    static boolean isUpcoming(int position){
+        return hasUpcoming() && getUpcomingPosition() == position;
     }
 
     /**
@@ -180,18 +146,13 @@ final class CardTypes{
      *
      * @return true if the position id that of my goals header item, false otherwise.
      */
-    static int getMyGoalsHeaderPosition(){
+    static int getGoalsPosition(){
         //If there are upcoming actions then my goals are right after
         if (hasUpcoming()){
-            if (hasUpcomingFooter()){
-                return getUpcomingFooterPosition() + 1;
-            }
-            else{
-                return getUpcomingFooterPosition();
-            }
+            return getUpcomingPosition()+1;
         }
         //If there ain't upcoming actions then my goals takes its place
-        return getUpcomingHeaderPosition();
+        return getUpcomingPosition();
     }
 
     /**
@@ -200,94 +161,16 @@ final class CardTypes{
      * @param position the position to be checked.
      * @return true if it is the position of the my goals header, false otherwise.
      */
-    static boolean isMyGoalsHeader(int position){
-        return getMyGoalsHeaderPosition() == position;
-    }
-
-    static boolean hasMyGoalsFooter(){
-        return sDataHandler.canLoadMoreGoals();
+    static boolean isGoals(int position){
+        return getGoalsPosition() == position;
     }
 
     /**
-     * Gets the position of my goals footer.
+     * Gets the total number of cards in the feed.
      *
-     * @return the position of my goals footer.
+     * @return the number of cards in the feed.
      */
-    static int getMyGoalsFooterPosition(){
-        return getMyGoalsHeaderPosition() + sDataHandler.getGoals().size() + 1;
-    }
-
-    /**
-     * Tells whether the position is that of my goals footer.
-     *
-     * @param position the position to be checked.
-     * @return true if the position is that of my goals footer, false otherwise.
-     */
-    static boolean isMyGoalsFooter(int position){
-        return hasMyGoalsFooter() && getMyGoalsFooterPosition() == position;
-    }
-
-    /**
-     * Tells whether the position is that of a my goals or goal suggestions inner item.
-     *
-     * @param position the position to be checked.
-     * @return true if the position is that of a my goals inner item, false otherwise.
-     */
-    static boolean isGoal(int position){
-        return position > getMyGoalsHeaderPosition() && position < getMyGoalsFooterPosition();
-    }
-
     static int getItemCount(){
-        return getMyGoalsFooterPosition() + (hasMyGoalsFooter() ? 1 : 0);
-    }
-
-
-    /*-------------------------------------------*
-     * METHODS TO DISTINGUISH HIGHER LEVEL TYPES *
-     *-------------------------------------------*/
-
-    /**
-     * Tells whether the card is at the top of a combined stack.
-     *
-     * @param position the position to be checked.
-     * @return true if the position is that of a card at the top of a combined stack,
-     *         false otherwise.
-     */
-    static boolean isTopCard(int position){
-        return isUpcomingHeader(position) || isMyGoalsHeader(position);
-    }
-
-    /**
-     * Tells whether the card is in the middle of a combined stack.
-     *
-     * @param position the position to be checked.
-     * @return true if the position is that of a card in the middle of a combined stack,
-     *         false otherwise.
-     */
-    static boolean isMiddleCard(int position){
-        return isUpcomingAction(position) || isGoal(position);
-    }
-
-    /**
-     * Tells whether the card is at the bottom of a combined stack.
-     *
-     * @param position the position to be checked.
-     * @return true if the position is that of a card at the bottom of a combined stack,
-     *         false otherwise.
-     */
-    static boolean isBottomCard(int position){
-        if (isUpcomingFooter(position)){
-            return true;
-        }
-        else if (isMyGoalsFooter(position)){
-            return true;
-        }
-        else if (!hasUpcomingFooter() && position == getUpcomingFooterPosition()-1){
-            return true;
-        }
-        else if (!hasMyGoalsFooter() && position == getMyGoalsFooterPosition()-1){
-            return true;
-        }
-        return false;
+        return getGoalsPosition()+1;
     }
 }

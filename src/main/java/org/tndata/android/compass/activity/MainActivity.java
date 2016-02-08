@@ -594,7 +594,7 @@ public class MainActivity
 
     @Override
     public void onInstructionsSelected(){
-        ((LinearLayoutManager)mFeed.getLayoutManager()).scrollToPositionWithOffset(mAdapter.getMyGoalsHeaderPosition(), 10);
+        ((LinearLayoutManager)mFeed.getLayoutManager()).scrollToPositionWithOffset(mAdapter.getGoalsPosition(), 10);
     }
 
     @Override
