@@ -236,7 +236,6 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                     title = mContext.getString(R.string.card_my_goals_header);
                 }
                 ((GoalsHolder)rawHolder).bind(title);
-
                 moreGoals();
             }
         }
@@ -400,10 +399,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      *------------------------*/
 
     void moreActions(){
-        for (Action action:mDataHandler.loadMoreUpcoming()){
+        for (Action action:mDataHandler.loadMoreUpcoming(mUpcomingHolder.getItemCount())){
             mUpcomingHolder.addAction(action);
         }
-        if (!mDataHandler.canLoadMoreActions()){
+        if (!mDataHandler.canLoadMoreActions(mUpcomingHolder.getItemCount())){
             mUpcomingHolder.hideFooter();
         }
     }
@@ -412,10 +411,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * Makes the feed display more actions or goals, depending on which footer was tapped.
      */
     void moreGoals(){
-        for (DisplayableGoal goal:mDataHandler.loadMoreGoals()){
+        for (DisplayableGoal goal:mDataHandler.loadMoreGoals(mGoalsHolder.getItemCount())){
             mGoalsHolder.addGoal(goal);
         }
-        if (!mDataHandler.canLoadMoreGoals()){
+        if (!mDataHandler.canLoadMoreGoals(mGoalsHolder.getItemCount())){
             mGoalsHolder.hideFooter();
         }
     }

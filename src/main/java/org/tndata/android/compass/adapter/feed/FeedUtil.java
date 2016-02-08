@@ -20,8 +20,7 @@ import org.tndata.android.compass.ui.CompassPopupMenu;
  * @version 1.0.0
  */
 class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
-    MainFeedAdapter mAdapter;
-
+    private MainFeedAdapter mAdapter;
     private Action mSelectedAction;
 
 

@@ -29,7 +29,6 @@ class DataHandler{
 
     private Goal mFeedbackGoal;
 
-    private List<Action> mDisplayedUpcoming;
     private List<DisplayableGoal> mDisplayedGoals;
 
 
@@ -46,11 +45,7 @@ class DataHandler{
             mFeedbackGoal = mFeedData.getNextAction().getGoal();
         }
 
-        mDisplayedUpcoming = new ArrayList<>();
-        //loadMoreUpcoming();
-
         mDisplayedGoals = new ArrayList<>();
-        loadMoreGoals();
     }
 
     void didIt(){
@@ -80,10 +75,7 @@ class DataHandler{
             mFeedData.setNextAction(null);
         }
         else{
-            mFeedData.setNextAction(mDisplayedUpcoming.remove(0));
-            mFeedData.getUpcomingActions().remove(0);
-
-            checkActions();
+            mFeedData.setNextAction(mFeedData.getUpcomingActions().remove(0));
         }
     }
 
@@ -95,38 +87,27 @@ class DataHandler{
         return !mFeedData.getUpcomingActions().isEmpty();
     }
 
-    Action getUpcoming(int position){
-        return mDisplayedUpcoming.get(position);
-    }
-
     void removeUpcoming(Action action){
-        mDisplayedUpcoming.remove(action);
         mFeedData.getUpcomingActions().remove(action);
-
-        checkActions();
     }
 
     List<DisplayableGoal> getGoals(){
         return mDisplayedGoals;
     }
 
-    List<Action> loadMoreUpcoming(){
-        int count = 0;
+    List<Action> loadMoreUpcoming(int displayedActionCount){
         List<Action> newActions = new ArrayList<>();
-        while (count < LOAD_MORE_COUNT && canLoadMoreActions()){
-            Action action = mFeedData.getUpcomingActions().get(mDisplayedUpcoming.size());
-            mDisplayedUpcoming.add(action);
-            newActions.add(action);
-            count++;
+        while (newActions.size() < LOAD_MORE_COUNT && canLoadMoreActions(displayedActionCount+newActions.size())){
+            newActions.add(mFeedData.getUpcomingActions().get(displayedActionCount + newActions.size()));
         }
         return newActions;
     }
 
-    boolean canLoadMoreActions(){
-        return mDisplayedUpcoming.size() < mFeedData.getUpcomingActions().size();
+    boolean canLoadMoreActions(int displayedActionCount){
+        return displayedActionCount < mFeedData.getUpcomingActions().size();
     }
 
-    List<DisplayableGoal> loadMoreGoals(){
+    List<DisplayableGoal> loadMoreGoals(int displayedGoalCount){
         List<DisplayableGoal> src = new ArrayList<>();
         if (hasUserGoals()){
             src.addAll(mUserData.getGoals().values());
@@ -144,7 +125,7 @@ class DataHandler{
         }
         int count = 0;
         List<DisplayableGoal> newGoals = new ArrayList<>();
-        while (count < LOAD_MORE_COUNT && canLoadMoreGoals()){
+        while (count < LOAD_MORE_COUNT && canLoadMoreGoals(displayedGoalCount+count)){
             DisplayableGoal goal = src.get(mDisplayedGoals.size());
             mDisplayedGoals.add(goal);
             newGoals.add(goal);
@@ -154,18 +135,12 @@ class DataHandler{
         return newGoals;
     }
 
-    boolean canLoadMoreGoals(){
+    boolean canLoadMoreGoals(int displayedGoalCount){
         if (hasUserGoals()){
-            return mDisplayedGoals.size() < mUserData.getGoals().size() + mUserData.getCustomGoals().size();
+            return displayedGoalCount < mUserData.getGoals().size() + mUserData.getCustomGoals().size();
         }
         else{
-            return mDisplayedGoals.size() < mUserData.getFeedData().getSuggestions().size();
-        }
-    }
-
-    private void checkActions(){
-        if (mDisplayedUpcoming.size() < 3 && mFeedData.getUpcomingActions().size() > mDisplayedUpcoming.size()){
-            mDisplayedUpcoming.add(mFeedData.getUpcomingActions().get(mDisplayedUpcoming.size()));
+            return displayedGoalCount < mUserData.getFeedData().getSuggestions().size();
         }
     }
 
@@ -185,8 +160,8 @@ class DataHandler{
         int size = mDisplayedGoals.size();
         mDisplayedGoals.clear();
         List<UserGoal> userGoals = new ArrayList<>(mUserData.getGoals().values());
-        while (size > mDisplayedGoals.size() && canLoadMoreGoals()){
+        /*while (size > mDisplayedGoals.size() && canLoadMoreGoals()){
             mDisplayedGoals.add(userGoals.get(mDisplayedGoals.size()));
-        }
+        }*/
     }
 }
