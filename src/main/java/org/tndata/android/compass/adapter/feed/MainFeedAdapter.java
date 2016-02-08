@@ -10,12 +10,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 
+import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
+import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.List;
 
@@ -49,6 +52,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     private MainFeedPadding mMainFeedPadding;
 
     private int mSelectedItem;
+    private Action mSelectedAction;
 
     private UpcomingHolder mUpcomingHolder;
     private GoalsHolder mGoalsHolder;
@@ -251,8 +255,8 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         return mDataHandler;
     }
 
-    void setSelectedItem(int selectedItem){
-        mSelectedItem = selectedItem;
+    void setSelectedAction(Action selectedAction){
+        mSelectedAction = selectedAction;
     }
 
     public int getGoalsPosition(){
@@ -277,25 +281,25 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      *------------------------*/
 
     /**
-     * Display the popup menu for a specific goal.
+     * Display the popup menu for a specific action.
      *
      * @param anchor the view it should be anchored to.
-     * @param position the position of the view.
+     * @param action the action in question.
      */
-    void showActionPopup(View anchor, int position){
-        mFeedUtil.showActionPopup(anchor, position);
+    void showActionPopup(View anchor, Action action){
+        mFeedUtil.showActionPopup(anchor, action);
     }
 
     /**
      * Generic did it to be called when events are triggered outside the adapter. It
-     * uses the selected item set using the setSelectedItem(int) method. If no item
+     * uses the selected item set using the setSelectedAction(int) method. If no item
      * was set as selected prior to the call, it is ignored. The selected item is
      * reset when this method is called.
      */
     public void didIt(){
-        if (mSelectedItem != -1){
-            didIt(mSelectedItem);
-            mSelectedItem = -1;
+        if (mSelectedAction != null){
+            didIt(mSelectedAction);
+            mSelectedAction = null;
         }
     }
 
@@ -305,21 +309,19 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * api request, (2) update the data set, and (3) update the adapter to reflect
      * the changes in the data set.
      *
-     * @param position the adapter position of the item to be marked as done.
+     * @param action the action to be marked as done.
      */
-    void didIt(int position){
-        if (CardTypes.isUpNext(position)){
+    void didIt(Action action){
+        if (mUserData.getFeedData().getNextAction().equals(action)){
             mDataHandler.didIt();
             mFeedUtil.didIt(mContext, mDataHandler.getUpNext());
             mDataHandler.replaceUpNext();
-            replaceUpNext();
         }
-        /*else if (CardTypes.isUpcoming(position)){
-            //TODO
+        else{
             mDataHandler.didIt();
-            mFeedUtil.didIt(mContext, mDataHandler.removeUpcoming(getActionPosition(position)));
-            removeActionFromFeed(position);
-        }*/
+            mFeedUtil.didIt(mContext, action);
+            mUpcomingHolder.removeAction(action);
+        }
     }
 
     /**
@@ -328,19 +330,11 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * activity is finished the updateSelectedItem() method should be called to
      * make the change reflect in the UI.
      *
-     * @param position the adapter position of the item to be rescheduled.
+     * @param action the action to be rescheduled.
      */
-    void reschedule(int position){
-        mSelectedItem = position;
-        if (CardTypes.isUpNext(position)){
-            mListener.onTriggerSelected(getDataHandler().getUpNext());
-        }
-        /*else if (CardTypes.isUpcomingAction(position)){ TODO
-            mListener.onTriggerSelected(getDataHandler().getUpcoming().get(getActionPosition(position)));
-        }*/
-        else{
-            mSelectedItem = -1;
-        }
+    void reschedule(Action action){
+        mSelectedAction = action;
+        mListener.onTriggerSelected(mSelectedAction);
     }
 
     /**
@@ -348,75 +342,30 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * (1) the action is removed in the webapp through an api call, (2) the action is
      * removed in the local model, and (3) the adapter is updated to reflect the changes.
      *
-     * @param position the adapter position of the item to be removed.
+     * @param action the action to be removed.
      */
-    void remove(int position){
-        Action action;
-        if (CardTypes.isUpNext(position)){
-            action = mDataHandler.getUpNext();
-            mDataHandler.remove(action);
+    void remove(Action action){
+        mDataHandler.remove(action);
+        //TODO remove from container
+        if (mUserData.getFeedData().getNextAction().equals(action)){
             mDataHandler.replaceUpNext();
-            replaceUpNext();
         }
         else{
-            /*action = mDataHandler.getUpcoming().get(getActionPosition(position));
-            mDataHandler.remove(action);
-            mDataHandler.removeUpcoming(getActionPosition(position));
-            removeActionFromFeed(position);*/
+            mDataHandler.removeUpcoming(action);
+            //removeActionFromFeed(position);
         }
-        /*NetworkRequest.delete(mContext, null, API.getDeleteActionUrl(action),
-                ((CompassApplication)mContext.getApplicationContext()).getToken(), new JSONObject());*/
+        NetworkRequest.delete(mContext, null, API.getDeleteActionUrl(action),
+                ((CompassApplication)mContext.getApplicationContext()).getToken(), new JSONObject());
     }
 
     /**
-     * Lets the listener know that GoalActivity should be opened for the primary goal of
-     * the selected action, if the action has one.
+     * Called when any view goal action is triggered, either from my goals, upcoming,
+     * or suggestions.
      *
-     * @param position the adapter position of the action whose goal is to be viewed.
+     * @param goal the goal to view
      */
-    void viewGoal(int position){
-        Action action;
-        if (CardTypes.isUpNext(position)){
-            action = mUserData.getFeedData().getNextAction();
-        }
-        else{
-            //action = mUserData.getFeedData().getUpcomingActions().get(getActionPosition(position));
-        }
-        //TODO this is another workaround
-        /*if (action.getGoal() != null){
-            mListener.onGoalSelected(mUserData.getGoal(action.getGoal()));
-        }*/
-    }
-
-    /**
-     * Animates the replacement of the up next card.
-     */
-    void replaceUpNext(){
-        if (mDataHandler.getUpNext() != null){
-            /*int headerPosition = CardTypes.getUpcomingHeaderPosition();
-            if (!CardTypes.hasUpcoming()){
-                notifyItemRemoved(headerPosition);
-            }
-            notifyItemRemoved(headerPosition + 1);
-            notifyItemRangeChanged(headerPosition + 2, getItemCount() - (headerPosition + 2));*/
-        }
-
-        //Update the up next card
-        notifyItemChanged(CardTypes.getUpNextPosition());
-    }
-
-    /**
-     * Removes an action from the feed.
-     *
-     * @param position the position if the item in the feed.
-     */
-    void removeActionFromFeed(int position){
-        //Update the relevant action cards
-        if (!CardTypes.hasUpcoming()){
-            notifyItemRemoved(position - 1);
-        }
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position - 1, getItemCount() - (position - 1));
+    void viewGoal(DisplayableGoal goal){
+        mListener.onGoalSelected(goal);
     }
 
 
@@ -489,17 +438,17 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     /**
      * Deletes the item marked as selected.
      */
-    public void deleteSelectedItem(){
+    /*public void deleteSelectedItem(){
         if (CardTypes.isUpNext(mSelectedItem)){
             mDataHandler.replaceUpNext();
             replaceUpNext();
         }
-        /*else if (CardTypes.isUpcomingAction(mSelectedItem)){
+        else if (CardTypes.isUpcomingAction(mSelectedItem)){
             mDataHandler.removeUpcoming(getActionPosition(mSelectedItem));
             removeActionFromFeed(mSelectedItem);
-        }*/
+        }
         mSelectedItem = -1;
-    }
+    }*/
 
     public void dataSetChanged(){
         mDataHandler.reload();

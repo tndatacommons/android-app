@@ -8,6 +8,7 @@ import android.view.View;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.ui.CompassPopupMenu;
 
@@ -21,7 +22,7 @@ import org.tndata.android.compass.ui.CompassPopupMenu;
 class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
     MainFeedAdapter mAdapter;
 
-    private int mOpenPopup;
+    private Action mSelectedAction;
 
 
     FeedUtil(MainFeedAdapter adapter){
@@ -32,21 +33,11 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
      * Display the popup menu for a specific action.
      *
      * @param anchor the view it should be anchored to.
-     * @param position the position of the view.
+     * @param action the action in question.
      */
-    void showActionPopup(View anchor, int position){
-        mOpenPopup = position;
+    void showActionPopup(View anchor, Action action){
+        mSelectedAction = action;
         CompassPopupMenu popup = CompassPopupMenu.newInstance(mAdapter.mContext, anchor);
-
-        //Get the action to determine which popup should be inflated
-        Action action = null;
-        if (position == CardTypes.getUpNextPosition()){
-            action = mAdapter.getDataHandler().getUpNext();
-        }
-        else{
-            /*int actionPosition = mAdapter.getActionPosition(position);
-            action = mAdapter.getDataHandler().getUpcoming().get(actionPosition);*/
-        }
 
         //If the category couldn't be found or it is packaged, exclude removal options.
         if (!action.isEditable()){
@@ -83,19 +74,19 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
     public boolean onMenuItemClick(MenuItem item){
         switch (item.getItemId()){
             case R.id.popup_action_did_it:
-                mAdapter.didIt(mOpenPopup);
+                mAdapter.didIt(mSelectedAction);
                 break;
 
             case R.id.popup_action_reschedule:
-                mAdapter.reschedule(mOpenPopup);
+                mAdapter.reschedule(mSelectedAction);
                 break;
 
             case R.id.popup_action_remove:
-                mAdapter.remove(mOpenPopup);
+                mAdapter.remove(mSelectedAction);
                 break;
 
             case R.id.popup_action_view_goal:
-                mAdapter.viewGoal(mOpenPopup);
+                mAdapter.viewGoal((UserGoal)mSelectedAction.getGoal());
                 break;
 
             case R.id.popup_goal_suggestion_refresh:

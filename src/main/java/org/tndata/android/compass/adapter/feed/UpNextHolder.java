@@ -21,6 +21,9 @@ import at.grabner.circleprogress.TextMode;
  * @version 1.1.0
  */
 final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListener{
+    //The action bound to the holder
+    private Action mAction;
+
     //Header
     private TextView mHeader;
     private View mOverflow;
@@ -35,8 +38,8 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
 
     //Action content
     private View mContentContainer;
-    private TextView mAction;
-    private TextView mGoal;
+    private TextView mActionTitle;
+    private TextView mGoalTitle;
 
     //Footer
     private TextView mIndicatorCaption;
@@ -62,8 +65,8 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
         mNoActionsSubtitle = (TextView)rootView.findViewById(R.id.up_next_no_actions_subtitle);
 
         mContentContainer = rootView.findViewById(R.id.up_next_content);
-        mAction = (TextView)rootView.findViewById(R.id.up_next_action);
-        mGoal = (TextView)rootView.findViewById(R.id.up_next_goal);
+        mActionTitle = (TextView)rootView.findViewById(R.id.up_next_action);
+        mGoalTitle = (TextView)rootView.findViewById(R.id.up_next_goal);
 
         mIndicatorCaption = (TextView)rootView.findViewById(R.id.up_next_indicator_caption);
         mTime = (TextView)rootView.findViewById(R.id.up_next_time);
@@ -74,15 +77,15 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
 
     @Override
     public void onClick(View view){
-        mAdapter.setSelectedItem(getAdapterPosition());
         switch (view.getId()){
             case R.id.up_next_overflow_box:
-                mAdapter.showActionPopup(view, getAdapterPosition());
+                mAdapter.setSelectedAction(mAction);
+                mAdapter.showActionPopup(view, mAction);
                 break;
 
             default:
-                if (CardTypes.hasUpNextAction()){
-                    mAdapter.mListener.onActionSelected(mAdapter.getDataHandler().getUpNext());
+                if (mAction != null){
+                    mAdapter.mListener.onActionSelected(mAction);
                 }
         }
     }
@@ -93,6 +96,8 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
      * @param action the action to be bound to the holder.
      */
     void bind(@Nullable Action action){
+        mAction = action;
+
         if (action == null){
             mOverflow.setVisibility(View.GONE);
             mNoActionsContainer.setVisibility(View.VISIBLE);
@@ -116,10 +121,10 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
             mContentContainer.setVisibility(View.VISIBLE);
 
             mHeader.setText(R.string.card_up_next_header);
-            mAction.setText(action.getTitle());
+            mActionTitle.setText(action.getTitle());
             String goalTitle = action.getGoalTitle().substring(0, 1).toLowerCase();
             goalTitle += action.getGoalTitle().substring(1);
-            mGoal.setText(mAdapter.mContext.getString(R.string.card_up_next_goal_title, goalTitle));
+            mGoalTitle.setText(mAdapter.mContext.getString(R.string.card_up_next_goal_title, goalTitle));
             mTime.setText(action.getNextReminderDisplay());
         }
 

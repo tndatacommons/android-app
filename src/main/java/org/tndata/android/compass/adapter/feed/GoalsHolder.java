@@ -13,7 +13,10 @@ import org.tndata.android.compass.ui.GoalContainer;
  * @author Ismael Alonso
  * @version 1.1.0
  */
-class GoalsHolder extends MainFeedViewHolder implements View.OnClickListener{
+class GoalsHolder
+        extends MainFeedViewHolder
+        implements View.OnClickListener, GoalContainer.GoalListener{
+
     private TextView mHeader;
     private GoalContainer mGoalContainer;
     private View mMore;
@@ -29,6 +32,7 @@ class GoalsHolder extends MainFeedViewHolder implements View.OnClickListener{
 
         mHeader = (TextView)rootView.findViewById(R.id.card_goals_header);
         mGoalContainer = (GoalContainer)rootView.findViewById(R.id.card_goals_goal_container);
+        mGoalContainer.setGoalListener(this);
         mMore = rootView.findViewById(R.id.card_goals_more);
         mMore.setOnClickListener(this);
     }
@@ -55,5 +59,10 @@ class GoalsHolder extends MainFeedViewHolder implements View.OnClickListener{
 
     int getItemCount(){
         return mGoalContainer.getCount();
+    }
+
+    @Override
+    public void onGoalClick(DisplayableGoal goal){
+        mAdapter.viewGoal(goal);
     }
 }

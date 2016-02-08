@@ -13,7 +13,10 @@ import org.tndata.android.compass.ui.UpcomingContainer;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-class UpcomingHolder extends MainFeedViewHolder implements View.OnClickListener{
+class UpcomingHolder
+        extends MainFeedViewHolder
+        implements View.OnClickListener, UpcomingContainer.UpcomingListener{
+
     private UpcomingContainer mUpcomingContainer;
     private View mMore;
 
@@ -28,6 +31,7 @@ class UpcomingHolder extends MainFeedViewHolder implements View.OnClickListener{
         super(adapter, rootView);
 
         mUpcomingContainer = (UpcomingContainer)rootView.findViewById(R.id.card_upcoming_action_container);
+        mUpcomingContainer.setUpcomingListener(this);
         mMore = rootView.findViewById(R.id.card_upcoming_more);
         mMore.setOnClickListener(this);
     }
@@ -41,11 +45,25 @@ class UpcomingHolder extends MainFeedViewHolder implements View.OnClickListener{
         mUpcomingContainer.addAction(action);
     }
 
+    void removeAction(Action action){
+        mUpcomingContainer.removeAction(action);
+    }
+
     void hideFooter(){
         mMore.setVisibility(View.GONE);
     }
 
     int getItemCount(){
         return mUpcomingContainer.getCount();
+    }
+
+    @Override
+    public void onActionClick(Action action){
+        mAdapter.mListener.onActionSelected(action);
+    }
+
+    @Override
+    public void onActionOverflowClick(View view, Action action){
+        mAdapter.showActionPopup(view, action);
     }
 }

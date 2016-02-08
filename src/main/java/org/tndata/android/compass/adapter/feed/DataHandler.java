@@ -99,13 +99,11 @@ class DataHandler{
         return mDisplayedUpcoming.get(position);
     }
 
-    Action removeUpcoming(int position){
-        mDisplayedUpcoming.remove(position);
-        Action removed = mFeedData.getUpcomingActions().remove(position);
+    void removeUpcoming(Action action){
+        mDisplayedUpcoming.remove(action);
+        mFeedData.getUpcomingActions().remove(action);
 
         checkActions();
-
-        return removed;
     }
 
     List<DisplayableGoal> getGoals(){

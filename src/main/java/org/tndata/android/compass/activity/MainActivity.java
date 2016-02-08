@@ -628,6 +628,9 @@ public class MainActivity
                     .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, (CustomGoal)goal);
             startActivityForResult(editGoal, GOAL_REQUEST_CODE);
         }
+        else if (goal instanceof GoalContent){
+            //TODO suggestion
+        }
     }
 
     @Override

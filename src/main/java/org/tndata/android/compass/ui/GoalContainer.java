@@ -68,6 +68,7 @@ public class GoalContainer extends LinearLayout{
     private class GoalHolder implements OnClickListener{
         private DisplayableGoal mGoal;
 
+
         @SuppressWarnings("deprecation")
         public GoalHolder(DisplayableGoal goal){
             mGoal = goal;
