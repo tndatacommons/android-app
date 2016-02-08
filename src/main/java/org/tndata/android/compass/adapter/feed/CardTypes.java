@@ -94,7 +94,7 @@ final class CardTypes{
     }
 
     static boolean hasSuggestion(){
-        return sDisplaySuggestion && !sDataHandler.getGoals().isEmpty();
+        return sDisplaySuggestion && sDataHandler.hasUserGoals();
     }
 
     static int getSuggestionPosition(){

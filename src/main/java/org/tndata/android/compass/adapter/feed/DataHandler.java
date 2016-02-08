@@ -6,7 +6,6 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UserData;
-import org.tndata.android.compass.model.UserGoal;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,8 +28,6 @@ class DataHandler{
 
     private Goal mFeedbackGoal;
 
-    private List<DisplayableGoal> mDisplayedGoals;
-
 
     /**
      * Constructor.
@@ -44,8 +41,6 @@ class DataHandler{
         if (mFeedData.getNextAction() != null){
             mFeedbackGoal = mFeedData.getNextAction().getGoal();
         }
-
-        mDisplayedGoals = new ArrayList<>();
     }
 
     void didIt(){
@@ -91,10 +86,6 @@ class DataHandler{
         mFeedData.getUpcomingActions().remove(action);
     }
 
-    List<DisplayableGoal> getGoals(){
-        return mDisplayedGoals;
-    }
-
     List<Action> loadMoreUpcoming(int displayedActionCount){
         List<Action> newActions = new ArrayList<>();
         while (newActions.size() < LOAD_MORE_COUNT && canLoadMoreActions(displayedActionCount+newActions.size())){
@@ -123,14 +114,10 @@ class DataHandler{
         else{
             src.addAll(mFeedData.getSuggestions());
         }
-        int count = 0;
+
         List<DisplayableGoal> newGoals = new ArrayList<>();
-        while (count < LOAD_MORE_COUNT && canLoadMoreGoals(displayedGoalCount+count)){
-            DisplayableGoal goal = src.get(mDisplayedGoals.size());
-            mDisplayedGoals.add(goal);
-            newGoals.add(goal);
-            Log.d("Adapter", "Loading: " + goal);
-            count++;
+        while (newGoals.size() < LOAD_MORE_COUNT && canLoadMoreGoals(displayedGoalCount + newGoals.size())){
+            newGoals.add(src.get(displayedGoalCount + newGoals.size()));
         }
         return newGoals;
     }
@@ -157,7 +144,7 @@ class DataHandler{
     }
 
     void reload(){
-        int size = mDisplayedGoals.size();
+        /*int size = mDisplayedGoals.size();
         mDisplayedGoals.clear();
         List<UserGoal> userGoals = new ArrayList<>(mUserData.getGoals().values());
         /*while (size > mDisplayedGoals.size() && canLoadMoreGoals()){
