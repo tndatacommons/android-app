@@ -15,7 +15,7 @@ import org.tndata.android.compass.ui.UpcomingContainer;
  */
 class UpcomingHolder
         extends MainFeedViewHolder
-        implements View.OnClickListener, UpcomingContainer.UpcomingListener{
+        implements View.OnClickListener, UpcomingContainer.UpcomingContainerListener{
 
     private UpcomingContainer mUpcomingContainer;
     private View mMore;

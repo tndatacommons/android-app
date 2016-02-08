@@ -2,9 +2,9 @@ package org.tndata.android.compass.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.LinearLayout;
@@ -14,7 +14,9 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 
 /**
@@ -22,8 +24,9 @@ import java.util.List;
  */
 public class UpcomingContainer extends LinearLayout implements Animation.AnimationListener{
     private List<ActionHolder> mDisplayedUpcoming;
-    private UpcomingListener mListener;
+    private UpcomingContainerListener mListener;
 
+    private Queue<Action> mActionQueue;
     private int mOutAnimation;
 
 
@@ -45,20 +48,31 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
     private void init(){
         setOrientation(VERTICAL);
         mDisplayedUpcoming = new ArrayList<>();
+        mActionQueue = new LinkedList<>();
         mOutAnimation = -1;
     }
 
-    public int getCount(){
-        return mDisplayedUpcoming.size();
-    }
-
-    public void setUpcomingListener(UpcomingListener listener){
+    /**
+     * Sets the container listener.
+     *
+     * @param listener the container listener.
+     */
+    public void setUpcomingListener(UpcomingContainerListener listener){
         mListener = listener;
     }
 
+    public int getCount(){
+        //It is safe to assume that there will always be an animation running if the queue
+        // ain't empty, so we subtract one because it is already in the displayed list
+        return mDisplayedUpcoming.size() + (mActionQueue.isEmpty() ? 0 : mActionQueue.size()-1);
+    }
+
     public void addAction(Action action){
-        mDisplayedUpcoming.add(new ActionHolder(action));
-        //TODO animation
+        Log.d("UpcomingContainer", mDisplayedUpcoming.size() + ", " + mActionQueue.size());
+        mActionQueue.add(action);
+        if (mActionQueue.size() == 1){
+            inAnimation();
+        }
     }
 
     public void removeAction(Action action){
@@ -74,29 +88,33 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
         outAnimation(0);
     }
 
+    private void inAnimation(){
+        mDisplayedUpcoming.add(new ActionHolder(mActionQueue.peek()));
+
+        View view = getChildAt(getChildCount() - 1);
+        view.measure(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        int targetHeight = view.getMeasuredHeight();
+        view.getLayoutParams().height = 1;
+
+        Animation animation = new UpcomingAnimation(view, targetHeight, true);
+
+        //2ms/dp
+        int length = (int)(2*targetHeight/getContext().getResources().getDisplayMetrics().density);
+        animation.setDuration(length);
+        animation.setAnimationListener(this);
+        view.startAnimation(animation);
+    }
+
     private void outAnimation(int position){
         mOutAnimation = position;
 
-        final ViewGroup view = (ViewGroup)getChildAt(position);
-        final int initialHeight = view.getMeasuredHeight();
+        View view = getChildAt(position);
+        int initialHeight = view.getMeasuredHeight();
 
-        Animation animation = new Animation(){
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t){
-                if(interpolatedTime != 1){
-                    view.getLayoutParams().height = initialHeight-(int)(initialHeight*interpolatedTime);
-                    view.requestLayout();
-                }
-            }
-
-            @Override
-            public boolean willChangeBounds(){
-                return true;
-            }
-        };
+        Animation animation = new UpcomingAnimation(view, initialHeight, false);
 
         //1dp/ms
-        int length = (int)(initialHeight/view.getContext().getResources().getDisplayMetrics().density);
+        int length = (int)(initialHeight/getContext().getResources().getDisplayMetrics().density);
         animation.setDuration(length);
         animation.setAnimationListener(this);
         view.startAnimation(animation);
@@ -114,12 +132,19 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
             removeViewAt(mOutAnimation);
             mOutAnimation = -1;
         }
+        else{
+            mActionQueue.remove();
+            if (!mActionQueue.isEmpty()){
+                inAnimation();
+            }
+        }
     }
 
     @Override
     public void onAnimationRepeat(Animation animation){
 
     }
+
 
     private class ActionHolder implements OnClickListener{
         private Action mAction;
@@ -160,7 +185,43 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
         }
     }
 
-    public interface UpcomingListener{
+
+    private class UpcomingAnimation extends Animation{
+        private View mView;
+        private int mHeight;
+        private boolean mAdd;
+
+
+        private UpcomingAnimation(View view, int height, boolean add){
+            mView = view;
+            mHeight = height;
+            mAdd = add;
+        }
+
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t){
+            if (mAdd){
+                mView.getLayoutParams().height = (interpolatedTime == 1)
+                        ? LayoutParams.WRAP_CONTENT
+                        : (int)(mHeight*interpolatedTime);
+                mView.requestLayout();
+            }
+            else{
+                if (interpolatedTime != 1){
+                    mView.getLayoutParams().height = mHeight - (int)(mHeight * interpolatedTime);
+                    mView.requestLayout();
+                }
+            }
+        }
+
+        @Override
+        public boolean willChangeBounds(){
+            return true;
+        }
+    }
+
+
+    public interface UpcomingContainerListener{
         void onActionClick(Action action);
         void onActionOverflowClick(View view, Action action);
     }
