@@ -626,11 +626,10 @@ public class MainActivity
 
     @Override
     public void onFeedbackSelected(Goal goal){
-        //TODO feedback opens the picker, is this what we want?
         if (goal != null && goal instanceof UserGoal){
-            Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
-                    .putExtra(ChooseBehaviorsActivity.GOAL_KEY, ((UserGoal)goal).getGoal());
-            startActivity(chooseBehaviors);
+            Intent goalActivityIntent = new Intent(this, GoalActivity.class)
+                    .putExtra(GoalActivity.USER_GOAL_KEY, goal);
+            startActivityForResult(goalActivityIntent, GOAL_REQUEST_CODE);
         }
     }
 

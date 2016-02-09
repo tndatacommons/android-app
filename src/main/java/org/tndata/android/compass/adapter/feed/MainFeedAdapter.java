@@ -350,16 +350,6 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 ((CompassApplication)mContext.getApplicationContext()).getToken(), new JSONObject());
     }
 
-    /**
-     * Called when any view goal action is triggered, either from my goals, upcoming,
-     * or suggestions.
-     *
-     * @param action action whose view goal menu item was tapped.
-     */
-    void viewGoal(Action action){
-        mListener.onGoalSelected(action.getGoal());
-    }
-
 
     /*----------------------*
      * GOAL RELATED METHODS *
