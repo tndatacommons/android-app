@@ -6,8 +6,6 @@ import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UserData;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 
@@ -151,27 +149,10 @@ class DataHandler{
      * @return a list containing the new goals.
      */
     List<DisplayableGoal> loadMoreGoals(int displayedGoals){
-        //Select the source
-        List<DisplayableGoal> src = new ArrayList<>();
-        if (hasUserGoals()){
-            src.addAll(mUserData.getGoals().values());
-            src.addAll(mUserData.getCustomGoals().values());
-            //Sort by title
-            Collections.sort(src, new Comparator<DisplayableGoal>(){
-                @Override
-                public int compare(DisplayableGoal lhs, DisplayableGoal rhs){
-                    return lhs.getTitle().toLowerCase().compareTo(rhs.getTitle().toLowerCase());
-                }
-            });
-        }
-        else{
-            src.addAll(mFeedData.getSuggestions());
-        }
-
         //Populate the new list
         List<DisplayableGoal> goals = new ArrayList<>();
         while (goals.size() < LOAD_MORE_COUNT && canLoadMoreGoals(displayedGoals + goals.size())){
-            goals.add(src.get(displayedGoals + goals.size()));
+            goals.add(mFeedData.getGoals().get(displayedGoals + goals.size()));
         }
         return goals;
     }
@@ -183,12 +164,7 @@ class DataHandler{
      * @return true if there are more goals to load, false otherwise.
      */
     boolean canLoadMoreGoals(int displayedGoals){
-        if (hasUserGoals()){
-            return displayedGoals < mUserData.getGoals().size() + mUserData.getCustomGoals().size();
-        }
-        else{
-            return displayedGoals < mUserData.getFeedData().getSuggestions().size();
-        }
+        return displayedGoals < mFeedData.getGoals().size();
     }
 
     /**

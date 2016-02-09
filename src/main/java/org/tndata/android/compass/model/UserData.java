@@ -139,6 +139,7 @@ public class UserData extends TDCBase{
         //If the category ain't in the data set
         if (!contains(userCategory)){
             //Add it
+            userCategory.init();
             mCategories.put(userCategory.getContentId(), userCategory);
 
             //Link mGoals
@@ -258,14 +259,17 @@ public class UserData extends TDCBase{
                     mCategories.get(categoryId).addGoal(userGoal);
                 }
             }
+            userGoal.setPrimaryCategory(mCategories.get(userGoal.getPrimaryCategoryId()));
 
             //Link the goal with the relevant behaviors
-            for (UserBehavior userBehavior: mBehaviors.values()){
+            for (UserBehavior userBehavior:mBehaviors.values()){
                 if (userBehavior.getBehavior().getGoalIdSet().contains(userGoal.getContentId())){
                     userGoal.addBehavior(userBehavior);
                     userBehavior.addGoal(userGoal);
                 }
             }
+
+            mFeedData.addGoal(userGoal);
         }
     }
 
@@ -281,7 +285,7 @@ public class UserData extends TDCBase{
         UserGoal removedGoal = mGoals.remove(goal.getContentId());
 
         if (removedGoal != null){
-            //Remove the goal from its parent mCategories
+            //Remove the goal from its parent categories
             for (UserCategory category:removedGoal.getCategories()){
                 category.removeGoal(removedGoal);
             }
@@ -294,6 +298,8 @@ public class UserData extends TDCBase{
                     removeBehavior(behavior);
                 }
             }
+
+            mFeedData.removeGoal(removedGoal);
         }
     }
 
@@ -346,7 +352,7 @@ public class UserData extends TDCBase{
                 }
             }
 
-            for (UserAction userAction: mActions.values()){
+            for (UserAction userAction:mActions.values()){
                 if (userAction.getAction().getBehaviorId() == userBehavior.getContentId()){
                     userAction.setBehavior(userBehavior);
                     userBehavior.addAction(userAction);
@@ -422,6 +428,8 @@ public class UserData extends TDCBase{
                 behavior.addAction(userAction);
                 userAction.setBehavior(behavior);
             }
+            userAction.setPrimaryGoal(mGoals.get(userAction.getPrimaryGoalId()));
+            userAction.setPrimaryCategory(mCategories.get(userAction.getPrimaryCategoryId()));
         }
     }
 
@@ -450,11 +458,13 @@ public class UserData extends TDCBase{
     private void addGoal(CustomGoal customGoal){
         if (!mCustomGoals.containsKey(customGoal.getContentId())){
             mCustomGoals.put(customGoal.getContentId(), customGoal);
+            mFeedData.addGoal(customGoal);
         }
     }
 
     private void removeGoal(CustomGoal customGoal){
         mCustomGoals.remove(customGoal.getContentId());
+        mFeedData.removeGoal(customGoal);
 
         for (CustomAction customAction:customGoal.getActions()){
             if (mCustomActions.containsKey(customAction.getContentId())){

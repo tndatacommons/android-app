@@ -4,6 +4,7 @@ import android.view.View;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.ui.UpcomingContainer;
 
 
@@ -59,6 +60,10 @@ class UpcomingHolder
 
     void removeFirstAction(){
         mUpcomingContainer.removeFirstAction();
+    }
+
+    void checkActions(FeedData feedData){
+        mUpcomingContainer.checkActions(feedData);
     }
 
     void hideFooter(){

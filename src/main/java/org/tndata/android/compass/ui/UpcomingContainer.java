@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.FeedData;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -110,6 +111,18 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
 
     public void removeFirstAction(){
         outAnimation(0);
+    }
+
+    public void checkActions(FeedData feedData){
+        for (int i = 0; i < mDisplayedUpcoming.size(); i++){
+            while (!mDisplayedUpcoming.get(i).mAction.equals(feedData.getUpcomingActions().get(i))){
+                mDisplayedUpcoming.remove(i);
+                removeViewAt(i);
+                if (i == mDisplayedUpcoming.size()){
+                    break;
+                }
+            }
+        }
     }
 
     private void inAnimation(){

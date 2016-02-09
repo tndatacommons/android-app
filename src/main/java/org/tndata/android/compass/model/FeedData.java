@@ -1,12 +1,16 @@
 package org.tndata.android.compass.model;
 
 import android.support.annotation.DrawableRes;
+import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.adapter.feed.DisplayableGoal;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -38,6 +42,7 @@ public class FeedData extends TDCBase{
     //Fields set during post-processing
     private Action mNextAction;
     private List<Action> mUpcomingActions;
+    private List<DisplayableGoal> mGoals;
 
 
     @Override
@@ -211,13 +216,8 @@ public class FeedData extends TDCBase{
         return mUpcomingActions;
     }
 
-    /**
-     * Sets the list of suggestions.
-     *
-     * @param suggestions the list of suggestions.
-     */
-    public void setSuggestions(List<GoalContent> suggestions){
-        mSuggestions = suggestions;
+    public List<DisplayableGoal> getGoals(){
+        return mGoals;
     }
 
     /**
@@ -227,6 +227,37 @@ public class FeedData extends TDCBase{
      */
     public List<GoalContent> getSuggestions(){
         return mSuggestions;
+    }
+
+    public void addGoal(DisplayableGoal goal){
+        Log.d("FeedData", "addGoal() called: " + goal);
+        Log.d("FeedData", "Pre: " + mGoals);
+        //If the list contained suggestions, clear it and add the goal
+        if (mGoals.get(0) instanceof GoalContent){
+            mGoals.clear();
+            mGoals.add(goal);
+        }
+        //Otherwise, add the goal in the relevant position
+        else{
+            for (int i = 0; i < mGoals.size(); i++){
+                if (mGoals.get(i).getTitle().compareTo(goal.getTitle()) > 0){
+                    mGoals.add(i, goal);
+                    break;
+                }
+                else if (i == mGoals.size()-1){
+                    mGoals.add(goal);
+                    break;
+                }
+            }
+        }
+        Log.d("FeedData", "Post: " + mGoals);
+    }
+
+    public void removeGoal(DisplayableGoal goal){
+        Log.d("FeedData", "removeGoal() called: " + goal);
+        Log.d("FeedData", "Pre: " + mGoals);
+        mGoals.remove(goal);
+        Log.d("FeedData", "Post: " + mGoals);
     }
 
     /**
@@ -263,7 +294,7 @@ public class FeedData extends TDCBase{
 
         //Set the next Action of there is one
         if (!mUpcomingActions.isEmpty()){
-            mNextAction = mUpcomingActions.remove(0);;
+            mNextAction = mUpcomingActions.remove(0);
         }
 
         //Assign colors to suggestions
@@ -274,6 +305,23 @@ public class FeedData extends TDCBase{
                     break;
                 }
             }
+        }
+
+        //Select the source
+        mGoals = new ArrayList<>();
+        if (!userData.getGoals().isEmpty()){
+            mGoals.addAll(userData.getGoals().values());
+            mGoals.addAll(userData.getCustomGoals().values());
+            //Sort by title
+            Collections.sort(mGoals, new Comparator<DisplayableGoal>(){
+                @Override
+                public int compare(DisplayableGoal lhs, DisplayableGoal rhs){
+                    return lhs.getTitle().toLowerCase().compareTo(rhs.getTitle().toLowerCase());
+                }
+            });
+        }
+        else{
+            mGoals.addAll(mSuggestions);
         }
     }
 

@@ -439,14 +439,14 @@ public class MainActivity
      * Called when the choose Goals FAB is clicked.
      */
     private void chooseGoalsClicked(){
-        startActivity(new Intent(this, ChooseCategoryActivity.class));
+        startActivityForResult(new Intent(this, ChooseCategoryActivity.class), GOAL_REQUEST_CODE);
     }
 
     /**
      * Called when the create goal FAB is clicked.
      */
     private void createCustomGoalClicked(){
-        startActivity(new Intent(this, CustomContentManagerActivity.class));
+        startActivityForResult(new Intent(this, CustomContentManagerActivity.class), GOAL_REQUEST_CODE);
     }
 
     /**
@@ -654,14 +654,13 @@ public class MainActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (resultCode == RESULT_OK){
             if (requestCode == CATEGORIES_REQUEST_CODE){
-                //populateMenu();
                 mAdapter.notifyDataSetChanged();
             }
             else if (requestCode == GOAL_SUGGESTION_REQUEST_CODE){
                 mAdapter.dismissSuggestion();
             }
             else if (requestCode == GOAL_REQUEST_CODE){
-                mAdapter.dataSetChanged();
+                mAdapter.updateDataSet();
             }
             else if (requestCode == ACTION_REQUEST_CODE){
                 if (data.getBooleanExtra(ActionActivity.DID_IT_KEY, false)){

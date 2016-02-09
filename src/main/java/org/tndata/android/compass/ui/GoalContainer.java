@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.feed.DisplayableGoal;
+import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
@@ -81,6 +82,39 @@ public class GoalContainer extends LinearLayout implements Animation.AnimationLi
         }
         else{
             mDisplayedGoals.add(new GoalHolder(goal));
+        }
+    }
+
+    public void updateGoals(FeedData feedData){
+        //First off, find the stopping point in the updated list
+        DisplayableGoal stoppingPoint = null;
+        //Start searching from the end of the list, it is more likely that the goal will be there
+        for (int i = mDisplayedGoals.size()-1; i > 0; i--){
+            if (feedData.getGoals().contains(mDisplayedGoals.get(i).mGoal)){
+                stoppingPoint = mDisplayedGoals.get(i).mGoal;
+                break;
+            }
+        }
+
+        //Next, update the list of displayed goals
+        for (int i = 0; i < feedData.getGoals().size(); i++){
+            //Update the existing holder or create a new one according to needs
+            if (i < mDisplayedGoals.size()){
+                mDisplayedGoals.get(i).update(feedData.getGoals().get(i));
+            }
+            else{
+                mDisplayedGoals.add(new GoalHolder(feedData.getGoals().get(i)));
+            }
+            //If the stopping point has been reached
+            if (stoppingPoint != null && stoppingPoint.equals(mDisplayedGoals.get(i).mGoal)){
+                //Remove all the holders after it, if any
+                i++;
+                while (i < mDisplayedGoals.size()){
+                    mDisplayedGoals.remove(i);
+                    removeViewAt(i);
+                }
+                break;
+            }
         }
     }
 
@@ -160,37 +194,44 @@ public class GoalContainer extends LinearLayout implements Animation.AnimationLi
     private class GoalHolder implements OnClickListener{
         private DisplayableGoal mGoal;
 
+        private RelativeLayout mIconContainer;
+        private ImageView mIcon;
+        private TextView mTitle;
 
-        @SuppressWarnings("deprecation")
+
         public GoalHolder(DisplayableGoal goal){
-            mGoal = goal;
-
             LayoutInflater inflater = LayoutInflater.from(getContext());
             View rootView = inflater.inflate(R.layout.item_feed_goal, GoalContainer.this, false);
 
+            mIconContainer = (RelativeLayout)rootView.findViewById(R.id.goal_icon_container);
+            mIcon = (ImageView)rootView.findViewById(R.id.goal_icon);
+            mTitle = (TextView)rootView.findViewById(R.id.goal_title);
 
-            RelativeLayout iconContainer = (RelativeLayout)rootView.findViewById(R.id.goal_icon_container);
-            ImageView icon = (ImageView)rootView.findViewById(R.id.goal_icon);
-            TextView title = (TextView)rootView.findViewById(R.id.goal_title);
-
-            title.setText(mGoal.getTitle());
-
-            GradientDrawable gradientDrawable = (GradientDrawable)iconContainer.getBackground();
-            gradientDrawable.setColor(Color.parseColor(mGoal.getColor(getContext())));
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
-                iconContainer.setBackgroundDrawable(gradientDrawable);
-            }
-            else{
-                iconContainer.setBackground(gradientDrawable);
-            }
-
-            if (mGoal.getIconUrl() != null && !mGoal.getIconUrl().isEmpty()){
-                ImageLoader.loadBitmap(icon, mGoal.getIconUrl());
-            }
+            update(goal);
 
             addView(rootView);
             rootView.setOnClickListener(this);
+        }
+
+        @SuppressWarnings("deprecation")
+        private void update(DisplayableGoal goal){
+            mGoal = goal;
+
+            mTitle.setText(mGoal.getTitle());
+
+            GradientDrawable gradientDrawable = (GradientDrawable)mIconContainer.getBackground();
+            gradientDrawable.setColor(Color.parseColor(mGoal.getColor(getContext())));
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
+                mIcon.setBackgroundDrawable(gradientDrawable);
+            }
+            else{
+                mIconContainer.setBackground(gradientDrawable);
+            }
+
+            if (mGoal.getIconUrl() != null && !mGoal.getIconUrl().isEmpty()){
+                ImageLoader.loadBitmap(mIcon, mGoal.getIconUrl());
+            }
         }
 
         @Override

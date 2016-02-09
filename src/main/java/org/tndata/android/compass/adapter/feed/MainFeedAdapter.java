@@ -273,6 +273,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         return mMainFeedPadding;
     }
 
+    public void updateDataSet(){
+        mGoalsHolder.updateGoals(mUserData.getFeedData());
+    }
+
 
     /*------------------------*
      * ACTION RELATED METHODS *
@@ -430,25 +434,5 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             mUpcomingHolder.updateAction(mSelectedAction);
             mSelectedAction = null;
         }
-    }
-
-    /**
-     * Deletes the item marked as selected.
-     */
-    /*public void deleteSelectedItem(){
-        if (CardTypes.isUpNext(mSelectedItem)){
-            mDataHandler.replaceUpNext();
-            replaceUpNext();
-        }
-        else if (CardTypes.isUpcomingAction(mSelectedItem)){
-            mDataHandler.removeUpcoming(getActionPosition(mSelectedItem));
-            removeActionFromFeed(mSelectedItem);
-        }
-        mSelectedItem = -1;
-    }*/
-
-    public void dataSetChanged(){
-        //mDataHandler.reload();
-        notifyDataSetChanged();
     }
 }

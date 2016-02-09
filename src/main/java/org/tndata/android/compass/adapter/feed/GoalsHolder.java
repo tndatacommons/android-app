@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.ui.GoalContainer;
 
 
@@ -55,6 +56,10 @@ class GoalsHolder
 
     void addGoal(DisplayableGoal goal){
         mGoalContainer.addGoal(goal);
+    }
+
+    void updateGoals(FeedData feedData){
+        mGoalContainer.updateGoals(feedData);
     }
 
     void hideFooter(){
