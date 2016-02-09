@@ -41,6 +41,10 @@ class UpcomingHolder
         mAdapter.moreActions();
     }
 
+    public void setAnimationsEnabled(boolean enabled){
+        mUpcomingContainer.setAnimationsEnabled(enabled);
+    }
+
     void addAction(Action action){
         mUpcomingContainer.addAction(action);
     }

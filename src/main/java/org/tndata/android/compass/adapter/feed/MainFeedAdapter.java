@@ -27,7 +27,7 @@ import java.util.List;
  * Adapter for the main feed.
  *
  * @author Ismael Alonso
- * @version 1.1.0
+ * @version 2.0.0
  */
 public class MainFeedAdapter extends RecyclerView.Adapter{
     //Item view types
@@ -391,6 +391,9 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * FOOTER RELATED METHODS *
      *------------------------*/
 
+    /**
+     * Loads the next batch of actions into the feed.
+     */
     void moreActions(){
         for (Action action:mDataHandler.loadMoreUpcoming(mUpcomingHolder.getItemCount())){
             mUpcomingHolder.addAction(action);
@@ -398,10 +401,11 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         if (!mDataHandler.canLoadMoreActions(mUpcomingHolder.getItemCount())){
             mUpcomingHolder.hideFooter();
         }
+        mUpcomingHolder.setAnimationsEnabled(true);
     }
 
     /**
-     * Makes the feed display more actions or goals, depending on which footer was tapped.
+     * Loads the next batch of goals into the feed.
      */
     void moreGoals(){
         for (DisplayableGoal goal:mDataHandler.loadMoreGoals(mGoalsHolder.getItemCount())){

@@ -25,6 +25,7 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
     private List<ActionHolder> mDisplayedUpcoming;
     private UpcomingContainerListener mListener;
 
+    private boolean mAnimate;
     private Queue<Action> mActionQueue;
     private int mOutAnimation;
 
@@ -47,6 +48,7 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
     private void init(){
         setOrientation(VERTICAL);
         mDisplayedUpcoming = new ArrayList<>();
+        mAnimate = false;
         mActionQueue = new LinkedList<>();
         mOutAnimation = -1;
     }
@@ -60,6 +62,10 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
         mListener = listener;
     }
 
+    public void setAnimationsEnabled(boolean enabled){
+        mAnimate = enabled;
+    }
+
     public int getCount(){
         //It is safe to assume that there will always be an animation running if the queue
         // ain't empty, so we subtract one because it is already in the displayed list
@@ -67,10 +73,15 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
     }
 
     public void addAction(Action action){
-        Log.d("UpcomingContainer", mDisplayedUpcoming.size() + ", " + mActionQueue.size());
-        mActionQueue.add(action);
-        if (mActionQueue.size() == 1){
-            inAnimation();
+        if (mAnimate){
+            Log.d("UpcomingContainer", mDisplayedUpcoming.size() + ", " + mActionQueue.size());
+            mActionQueue.add(action);
+            if (mActionQueue.size() == 1){
+                inAnimation();
+            }
+        }
+        else{
+            mDisplayedUpcoming.add(new ActionHolder(action));
         }
     }
 
@@ -85,7 +96,13 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
     public void removeAction(Action action){
         for (int i = 0; i < mDisplayedUpcoming.size(); i++){
             if (mDisplayedUpcoming.get(i).contains(action)){
-                outAnimation(i);
+                if (mAnimate){
+                    outAnimation(i);
+                }
+                else{
+                    mDisplayedUpcoming.remove(i);
+                    removeViewAt(i);
+                }
                 break;
             }
         }

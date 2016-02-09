@@ -54,9 +54,9 @@ public class GoalContainer extends LinearLayout implements Animation.AnimationLi
     private void init(){
         setOrientation(VERTICAL);
         mDisplayedGoals = new ArrayList<>();
+        mAnimate = false;
         mGoalQueue = new LinkedList<>();
         mOutAnimation = -1;
-        mAnimate = false;
     }
 
     public void setGoalListener(GoalContainerListener listener){
