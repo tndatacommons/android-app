@@ -35,7 +35,6 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.SearchAdapter;
-import org.tndata.android.compass.adapter.feed.DisplayableGoal;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapterListener;
 import org.tndata.android.compass.model.Action;
@@ -44,6 +43,7 @@ import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.SearchResult;
+import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.MiscellaneousParser;
@@ -603,11 +603,12 @@ public class MainActivity
     }
 
     @Override
-    public void onSuggestionOpened(GoalContent goal){
+    public void onSuggestionSelected(GoalContent goal){
         CategoryContent category = null;
         for (Long categoryId:goal.getCategoryIdSet()){
             if (mApplication.getUserData().getCategories().containsKey(categoryId)){
                 category = mApplication.getCategories().get(categoryId).getCategory();
+                break;
             }
         }
         Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
@@ -617,31 +618,22 @@ public class MainActivity
     }
 
     @Override
-    public void onGoalSelected(DisplayableGoal goal){
+    public void onGoalSelected(Goal goal){
         if (goal instanceof UserGoal){
             Intent goalActivityIntent = new Intent(this, GoalActivity.class)
-                    .putExtra(GoalActivity.USER_GOAL_KEY, (UserGoal)goal);
+                    .putExtra(GoalActivity.USER_GOAL_KEY, goal);
             startActivityForResult(goalActivityIntent, GOAL_REQUEST_CODE);
         }
         else if (goal instanceof CustomGoal){
             Intent editGoal = new Intent(this, CustomContentManagerActivity.class)
-                    .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, (CustomGoal)goal);
+                    .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, goal);
             startActivityForResult(editGoal, GOAL_REQUEST_CODE);
         }
-        else if (goal instanceof GoalContent){
-            //TODO suggestion
-        }
-    }
-
-    @Override
-    public void onGoalSelected(Goal goal){
-        Intent goalActivityIntent = new Intent(this, GoalActivity.class)
-                .putExtra(GoalActivity.USER_GOAL_KEY, goal);
-        startActivityForResult(goalActivityIntent, GOAL_REQUEST_CODE);
     }
 
     @Override
     public void onFeedbackSelected(Goal goal){
+        //TODO feedback opens the picker, is this what we want?
         if (goal != null && goal instanceof UserGoal){
             Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
                     .putExtra(ChooseBehaviorsActivity.GOAL_KEY, ((UserGoal)goal).getGoal());
@@ -650,10 +642,12 @@ public class MainActivity
     }
 
     @Override
-    public void onActionSelected(Action userAction){
-        Intent actionIntent = new Intent(this, ActionActivity.class)
-                .putExtra(ActionActivity.ACTION_KEY, userAction);
-        startActivityForResult(actionIntent, ACTION_REQUEST_CODE);
+    public void onActionSelected(Action action){
+        if (action instanceof UserAction){
+            Intent actionIntent = new Intent(this, ActionActivity.class)
+                    .putExtra(ActionActivity.ACTION_KEY, action);
+            startActivityForResult(actionIntent, ACTION_REQUEST_CODE);
+        }
     }
 
     @Override

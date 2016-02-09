@@ -2,6 +2,8 @@ package org.tndata.android.compass.model;
 
 import android.content.Context;
 
+import org.tndata.android.compass.adapter.feed.DisplayableGoal;
+
 import java.io.Serializable;
 
 
@@ -11,7 +13,7 @@ import java.io.Serializable;
  * @author Ismael Alonso.
  * @version 1.0.0
  */
-public abstract class Goal extends UserContent implements Serializable{
+public abstract class Goal extends UserContent implements Serializable, DisplayableGoal{
     private static final long serialVersionUID = 6532189438426955496L;
 
     public abstract String getTitle();

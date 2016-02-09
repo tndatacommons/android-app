@@ -8,7 +8,6 @@ import android.view.View;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.ui.CompassPopupMenu;
 
@@ -85,7 +84,7 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
                 break;
 
             case R.id.popup_action_view_goal:
-                mAdapter.viewGoal((UserGoal)mSelectedAction.getGoal());
+                mAdapter.viewGoal(mSelectedAction.getGoal());
                 break;
 
             case R.id.popup_goal_suggestion_refresh:

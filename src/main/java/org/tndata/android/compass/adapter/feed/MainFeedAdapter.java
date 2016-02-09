@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.util.API;
@@ -189,7 +190,6 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
         //This is a possible fix to a crash where the application gets destroyed and the
         //  user data gets invalidated. In such a case, the app should restart and fetch
@@ -354,10 +354,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * Called when any view goal action is triggered, either from my goals, upcoming,
      * or suggestions.
      *
-     * @param goal the goal to view
+     * @param action action whose view goal menu item was tapped.
      */
-    void viewGoal(DisplayableGoal goal){
-        mListener.onGoalSelected(goal);
+    void viewGoal(Action action){
+        mListener.onGoalSelected(action.getGoal());
     }
 
 
@@ -365,7 +365,17 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * GOAL RELATED METHODS *
      *----------------------*/
 
+    void viewGoal(DisplayableGoal goal){
+        if (goal instanceof Goal){
+            mListener.onGoalSelected((Goal)goal);
+        }
+        else if (goal instanceof GoalContent){
+            mListener.onSuggestionSelected((GoalContent)goal);
+        }
+    }
+
     void showSuggestionPopup(View anchor){
+        //TODO I cannot test this yet
         mFeedUtil.showSuggestionPopup(anchor);
     }
 
@@ -383,7 +393,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     void viewSuggestion(){
-        mListener.onSuggestionOpened(mSuggestion);
+        mListener.onSuggestionSelected(mSuggestion);
     }
 
 

@@ -23,14 +23,13 @@ public interface MainFeedAdapterListener{
     void onInstructionsSelected();
 
     void onSuggestionDismissed();
-    void onSuggestionOpened(GoalContent goal);
 
     /**
      * Called when a goal from a goal list is selected.
      *
-     * @param goal the selected goal.
+     * @param suggestion the selected goal suggestion.
      */
-    void onGoalSelected(DisplayableGoal goal);
+    void onSuggestionSelected(GoalContent suggestion);
 
     void onGoalSelected(Goal goal);
 
