@@ -42,6 +42,10 @@ class GoalsHolder
         mAdapter.moreGoals();
     }
 
+    public void setAnimationsEnabled(boolean enabled){
+        mGoalContainer.setAnimationsEnabled(enabled);
+    }
+
     /**
      * Binds a displayable goal to this holder.
      */

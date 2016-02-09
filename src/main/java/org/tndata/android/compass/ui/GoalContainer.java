@@ -31,6 +31,7 @@ public class GoalContainer extends LinearLayout implements Animation.AnimationLi
     private List<GoalHolder> mDisplayedGoals;
     private GoalContainerListener mListener;
 
+    private boolean mAnimate;
     private Queue<DisplayableGoal> mGoalQueue;
     private int mOutAnimation;
 
@@ -55,10 +56,15 @@ public class GoalContainer extends LinearLayout implements Animation.AnimationLi
         mDisplayedGoals = new ArrayList<>();
         mGoalQueue = new LinkedList<>();
         mOutAnimation = -1;
+        mAnimate = false;
     }
 
     public void setGoalListener(GoalContainerListener listener){
         mListener = listener;
+    }
+
+    public void setAnimationsEnabled(boolean enabled){
+        mAnimate = enabled;
     }
 
     public int getCount(){
@@ -66,17 +72,28 @@ public class GoalContainer extends LinearLayout implements Animation.AnimationLi
     }
 
     public void addGoal(DisplayableGoal goal){
-        Log.d("GoalContainer", mDisplayedGoals.size() + ", " + mGoalQueue.size());
-        mGoalQueue.add(goal);
-        if (mGoalQueue.size() == 1){
-            inAnimation();
+        if (mAnimate){
+            Log.d("GoalContainer", mDisplayedGoals.size() + ", " + mGoalQueue.size());
+            mGoalQueue.add(goal);
+            if (mGoalQueue.size() == 1){
+                inAnimation();
+            }
+        }
+        else{
+            mDisplayedGoals.add(new GoalHolder(goal));
         }
     }
 
     public void removeGoal(DisplayableGoal goal){
         for (int i = 0; i < mDisplayedGoals.size(); i++){
             if (mDisplayedGoals.get(i).contains(goal)){
-                outAnimation(i);
+                if (mAnimate){
+                    outAnimation(i);
+                }
+                else{
+                    mDisplayedGoals.remove(i);
+                    removeViewAt(i);
+                }
                 break;
             }
         }

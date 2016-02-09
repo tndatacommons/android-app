@@ -410,6 +410,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         if (!mDataHandler.canLoadMoreGoals(mGoalsHolder.getItemCount())){
             mGoalsHolder.hideFooter();
         }
+        mGoalsHolder.setAnimationsEnabled(true);
     }
 
 
