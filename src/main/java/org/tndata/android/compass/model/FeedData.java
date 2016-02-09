@@ -1,7 +1,6 @@
 package org.tndata.android.compass.model;
 
 import android.support.annotation.DrawableRes;
-import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -230,8 +229,6 @@ public class FeedData extends TDCBase{
     }
 
     public void addGoal(DisplayableGoal goal){
-        Log.d("FeedData", "addGoal() called: " + goal);
-        Log.d("FeedData", "Pre: " + mGoals);
         //If the list contained suggestions, clear it and add the goal
         if (mGoals.get(0) instanceof GoalContent){
             mGoals.clear();
@@ -250,14 +247,28 @@ public class FeedData extends TDCBase{
                 }
             }
         }
-        Log.d("FeedData", "Post: " + mGoals);
     }
 
     public void removeGoal(DisplayableGoal goal){
-        Log.d("FeedData", "removeGoal() called: " + goal);
-        Log.d("FeedData", "Pre: " + mGoals);
         mGoals.remove(goal);
-        Log.d("FeedData", "Post: " + mGoals);
+    }
+
+    public void addAction(Action action){
+        //TODO check if the action is due today
+        for (int i = 0; i < mUpcomingActions.size(); i++){
+            if (mUpcomingActions.get(i).getNextReminderDate().compareTo(action.getNextReminderDate()) > 0){
+                mUpcomingActions.add(i, action);
+                break;
+            }
+            else if (i == mUpcomingActions.size()-1){
+                mUpcomingActions.add(action);
+                break;
+            }
+        }
+    }
+
+    public void removeAction(Action action){
+        mUpcomingActions.remove(action);
     }
 
     /**
