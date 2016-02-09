@@ -4,7 +4,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -152,12 +151,6 @@ public class MainActivity
         mSearchAdapter = new SearchAdapter(this, this);
         mSearchList.setAdapter(mSearchAdapter);
         mLastSearchRequestCode = SEARCH_REQUEST_CODE;
-
-        //If this is pre L a different color scheme is applied
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
-            int preLColor = getResources().getColor(R.color.feed_pre_l_background);
-            findViewById(R.id.main_container).setBackgroundColor(preLColor);
-        }
 
         //Set up the toolbar
         mToolbar = (Toolbar)findViewById(R.id.main_toolbar);

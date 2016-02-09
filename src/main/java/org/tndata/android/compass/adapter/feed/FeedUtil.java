@@ -23,6 +23,11 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
     private Action mSelectedAction;
 
 
+    /**
+     * Constructor.
+     *
+     * @param adapter a reference to the adapter.
+     */
     FeedUtil(MainFeedAdapter adapter){
         mAdapter = adapter;
     }
