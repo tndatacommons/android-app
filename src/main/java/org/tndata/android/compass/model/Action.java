@@ -44,12 +44,21 @@ public abstract class Action extends UserContent implements Serializable{
     }
 
     public Date getNextReminderDate(){
+        String month = mNextReminder.substring(0, mNextReminder.indexOf(":"));
+        String temp = mNextReminder.substring(mNextReminder.indexOf(":")+1);
+        String day = temp.substring(0, mNextReminder.indexOf(":"));
+        temp = temp.substring(temp.indexOf(":")+1);
+        String year = temp.substring(0, temp.indexOf("T"));
+
         String time = mNextReminder.substring(mNextReminder.indexOf('T')+1);
         String hour = time.substring(0, time.indexOf(':'));
         time = time.substring(time.indexOf(':')+1);
         String minute = time.substring(0, time.indexOf(':'));
 
         Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, Integer.valueOf(year));
+        calendar.set(Calendar.MONTH, Integer.valueOf(month));
+        calendar.set(Calendar.DAY_OF_MONTH, Integer.valueOf(day));
         calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(hour));
         calendar.set(Calendar.MINUTE, Integer.valueOf(minute));
         calendar.set(Calendar.SECOND, 0);

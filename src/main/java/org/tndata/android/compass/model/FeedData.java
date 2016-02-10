@@ -8,8 +8,10 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.feed.DisplayableGoal;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 
@@ -254,15 +256,33 @@ public class FeedData extends TDCBase{
     }
 
     public void addAction(Action action){
-        //TODO check if the action is due today
-        for (int i = 0; i < mUpcomingActions.size(); i++){
-            if (mUpcomingActions.get(i).getNextReminderDate().compareTo(action.getNextReminderDate()) > 0){
-                mUpcomingActions.add(i, action);
-                break;
-            }
-            else if (i == mUpcomingActions.size()-1){
-                mUpcomingActions.add(action);
-                break;
+        Calendar todayCalendar = Calendar.getInstance();
+        todayCalendar.set(Calendar.HOUR_OF_DAY, 0);
+        todayCalendar.set(Calendar.MINUTE, 0);
+        todayCalendar.set(Calendar.SECOND, 0);
+        todayCalendar.set(Calendar.MILLISECOND, 0);
+
+        Calendar tomorrowCalendar = Calendar.getInstance();
+        tomorrowCalendar.set(Calendar.DAY_OF_MONTH, todayCalendar.get(Calendar.DAY_OF_MONTH)+1);
+        tomorrowCalendar.set(Calendar.HOUR_OF_DAY, 0);
+        tomorrowCalendar.set(Calendar.MINUTE, 0);
+        tomorrowCalendar.set(Calendar.SECOND, 0);
+        tomorrowCalendar.set(Calendar.MILLISECOND, 0);
+
+        Date today = todayCalendar.getTime();
+        Date tomorrow = tomorrowCalendar.getTime();
+        Date actionDate = action.getNextReminderDate();
+
+        if (actionDate.after(today) && actionDate.before(tomorrow)){
+            for (int i = 0; i < mUpcomingActions.size(); i++){
+                if (mUpcomingActions.get(i).getNextReminderDate().compareTo(actionDate) > 0){
+                    mUpcomingActions.add(i, action);
+                    break;
+                }
+                else if (i == mUpcomingActions.size() - 1){
+                    mUpcomingActions.add(action);
+                    break;
+                }
             }
         }
     }
