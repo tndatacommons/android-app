@@ -1,7 +1,7 @@
 package org.tndata.android.compass.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,11 +19,15 @@ import com.doomonafireball.betterpickers.recurrencepicker.RecurrencePickerDialog
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.TriggerFragment;
+import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.CustomAction;
+import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
-import org.tndata.android.compass.model.UserGoal;
-import org.tndata.android.compass.parser.ContentParser;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
 
@@ -53,6 +57,7 @@ public class TriggerActivity
         extends AppCompatActivity
         implements
                 NetworkRequest.RequestCallback,
+                ParserCallback,
                 RecurrencePickerDialog.OnRecurrenceSetListener,
                 RadialTimePickerDialog.OnTimeSetListener,
                 CalendarDatePickerDialog.OnDateSetListener,
@@ -60,8 +65,8 @@ public class TriggerActivity
 
     //NOTE: These need to be user content. Once an action is added, the trigger can be
     //  edited. The trigger needs to be attached to an action when it is added
-    public static final String USER_ACTION_KEY = "org.tndata.compass.TriggerActivity.UserAction";
-    public static final String USER_GOAL_KEY = "org.tndata.compass.TriggerActivity.UserGoal";
+    public static final String ACTION_KEY = "org.tndata.compass.TriggerActivity.Action";
+    public static final String GOAL_KEY = "org.tndata.compass.TriggerActivity.Goal";
 
     private static final String TAG = "TriggerActivity";
     private static final String FRAG_TAG_RECUR_PICKER = "recurrencePickerDialogFragment";
@@ -71,7 +76,7 @@ public class TriggerActivity
 
     private TriggerFragment fragment;
 
-    private UserAction mUserAction;
+    private Action mAction;
 
     // An EventRecurrence instance gives us access to different representations
     // of the RRULE data.
@@ -123,16 +128,9 @@ public class TriggerActivity
 
         UserData userData = ((CompassApplication)getApplication()).getUserData();
 
-        //Retrieve the goal and the user action
-        UserGoal goal = (UserGoal)getIntent().getSerializableExtra(USER_GOAL_KEY);
-        mUserAction = (UserAction)getIntent().getSerializableExtra(USER_ACTION_KEY);
-
-        //Fetch the original copy of the user action
-        UserAction userAction = userData.getAction(mUserAction);
-        //This shouldn't happen, but just in case
-        if (userAction != null){
-            mUserAction = userAction;
-        }
+        //Retrieve the goal and the original user action
+        Goal goal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
+        mAction = userData.getAction((Action)getIntent().getSerializableExtra(ACTION_KEY));
 
         //TODO this is another workaround
         if (goal != null){
@@ -145,9 +143,9 @@ public class TriggerActivity
      * Calls the initialisation routine and brings in the TriggerFragment.
      */
     private void setAction(){
-        initializeReminders(mUserAction.getTrigger());
+        initializeReminders(mAction.getTrigger());
 
-        fragment = TriggerFragment.newInstance(mUserAction);
+        fragment = TriggerFragment.newInstance(mAction);
         if (fragment != null) {
             getSupportFragmentManager()
                     .beginTransaction()
@@ -161,37 +159,32 @@ public class TriggerActivity
      *
      * @param trigger the trigger from where the data is to be extracted.
      */
-    public void initializeReminders(Trigger trigger){
-        if (trigger != null){
-            //Initialize the Date object
-            try{
-                if (trigger.getRawDate().equals("")){
-                    if (!trigger.getRawTime().equals("")){
-                        mTimeSelected = true;
-                        mDateTime = trigger.getTime();
-                    }
+    public void initializeReminders(@NonNull Trigger trigger){
+        //Initialize the Date object
+        try{
+            if (trigger.getRawDate().equals("")){
+                if (!trigger.getRawTime().equals("")){
+                    mTimeSelected = true;
+                    mDateTime = trigger.getTime();
+                }
+            }
+            else{
+                mDateSelected = true;
+                if (!trigger.getRawTime().equals("")){
+                    mTimeSelected = true;
+                    String dateTime = trigger.getRawDate() + " " + trigger.getRawTime();
+                    mDateTime = mApiDateTimeFormat.parse(dateTime);
                 }
                 else{
-                    mDateSelected = true;
-                    if (!trigger.getRawTime().equals("")){
-                        mTimeSelected = true;
-                        String dateTime = trigger.getRawDate() + " " + trigger.getRawTime();
-                        mDateTime = mApiDateTimeFormat.parse(dateTime);
-                    }
-                    else{
-                        mDateTime = trigger.getDate();
-                    }
+                    mDateTime = trigger.getDate();
                 }
             }
-            catch (ParseException px){
-                px.printStackTrace();
-            }
+        }
+        catch (ParseException px){
+            px.printStackTrace();
+        }
 
-            setRRULE(trigger.getRRULE());
-        }
-        else{
-            setRRULE("");
-        }
+        setRRULE(trigger.getRRULE());
     }
 
     /**
@@ -349,11 +342,11 @@ public class TriggerActivity
 
     @Override
     public void onDisableTrigger(){
-        if (mUserAction.isEditable()){
+        if (mAction.isEditable()){
             mTimeSelected = false;
             mDateSelected = false;
             setRRULE(null);
-            saveActionTrigger(mUserAction);
+            saveActionTrigger(mAction);
         }
         else{
             finish();
@@ -362,7 +355,7 @@ public class TriggerActivity
 
     @Override
     public void onSaveTrigger(){
-        saveActionTrigger(mUserAction);
+        saveActionTrigger(mAction);
     }
 
     @Override
@@ -442,15 +435,15 @@ public class TriggerActivity
     /**
      * Use the selected Time/Date/Recurrence to update the given User's Action.
      *
-     * @param userAction the action to which the trigger belongs to.
+     * @param action the action to which the trigger belongs to.
      */
-    private void saveActionTrigger(UserAction userAction){
-        if (mUserAction.isEditable()){
+    private void saveActionTrigger(Action action){
+        if (mAction.isEditable()){
             String rrule = getRRULE();
             String date = getApiDate();
             String time = getApiTime();
 
-            Log.d(TAG, "saveActionTrigger, for Action: " + userAction.getTitle());
+            Log.d(TAG, "saveActionTrigger, for Action: " + action.getTitle());
             Log.d(TAG, "Time: " + time);
             Log.d(TAG, "Date: " + date);
             Log.d(TAG, "RRULE: " + rrule);
@@ -458,7 +451,7 @@ public class TriggerActivity
             //Time is required and one of date or rule is required
             //TODO: Fails when time/date/rrule is empty or null
             mPutTriggerRequestCode = NetworkRequest.put(this, this,
-                    API.getPutTriggerUrl(userAction),
+                    API.getPutTriggerUrl(action),
                     ((CompassApplication)getApplication()).getToken(),
                     API.getPutTriggerBody(time, rrule, date));
 
@@ -474,22 +467,12 @@ public class TriggerActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mPutTriggerRequestCode){
-            UserAction userAction = ContentParser.parseUserAction(result);
-            Log.d(TAG, "Updated Action: " + userAction.getTitle());
-            Log.d(TAG, "Updated Trigger: " + userAction.getTrigger());
-
-            mUserAction.setTrigger(userAction.getTrigger());
-            mUserAction.setNextReminderDate(userAction.getRawNextReminderDate());
-
-            // We'll return the updated Action to the parent activity (GoalDetailsActivity)
-            // but we also want to tell the Application about the updated version of the Action.
-            //((CompassApplication) getApplication()).updateAction(action);
-
-            Toast.makeText(this, getText(R.string.trigger_saved_confirmation_toast), Toast.LENGTH_SHORT).show();
-            Intent returnIntent = new Intent();
-            returnIntent.putExtra(USER_ACTION_KEY, mUserAction);
-            setResult(RESULT_OK, returnIntent);
-            finish();
+            if (mAction instanceof UserAction){
+                Parser.parse(result, UserAction.class, this);
+            }
+            else if (mAction instanceof CustomAction){
+                Parser.parse(result, CustomAction.class, this);
+            }
         }
     }
 
@@ -502,5 +485,25 @@ public class TriggerActivity
             }
             Toast.makeText(this, getText(R.string.reminder_failed), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof Action){
+            Action action = (Action)result;
+            Log.d(TAG, "Updated Action: " + action.getTitle());
+            Log.d(TAG, "Updated Trigger: " + action.getTrigger());
+
+            mAction.setTrigger(action.getTrigger());
+            mAction.setNextReminder(action.getNextReminder());
+            ((CompassApplication)getApplication()).getUserData().updateActionTrigger(mAction);
+        }
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        Toast.makeText(this, getText(R.string.trigger_saved_confirmation_toast), Toast.LENGTH_SHORT).show();
+        setResult(RESULT_OK);
+        finish();
     }
 }

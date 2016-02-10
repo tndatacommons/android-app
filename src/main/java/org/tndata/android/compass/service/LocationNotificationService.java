@@ -141,7 +141,7 @@ public class LocationNotificationService
 
             //If the pone is within the geofence a notification is created
             if (distance < GEOFENCE_RADIUS){
-                NotificationUtil.generateActionNotification(this, reminder.getNotificationId(),
+                NotificationUtil.putActionNotification(this, reminder.getNotificationId(),
                         reminder.getTitle(), reminder.getMessage(), reminder.getObjectId(),
                         reminder.getUserMappingId());
 

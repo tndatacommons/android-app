@@ -1,5 +1,7 @@
 package org.tndata.android.compass.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,24 +13,30 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserCategory extends UserContent implements Serializable{
+public class UserCategory extends UserContent implements Serializable, UserSelectedContent{
     private static final long serialVersionUID = 1751646542285854670L;
 
-    private Category category;
+    public static final String TYPE = "usercategory";
 
-    private List<UserGoal> userGoals = new ArrayList<>();
+
+    //API provided
+    @SerializedName("category")
+    private CategoryContent mCategory;
+
+    //Set during post-processing
+    private List<UserGoal> mUserGoals;
 
 
     /*---------*
      * SETTERS *
      *---------*/
 
-    public void setCategory(Category category){
-        this.category = category;
+    public void setCategory(CategoryContent category){
+        this.mCategory = category;
     }
 
     public void setGoals(List<UserGoal> userGoals){
-        this.userGoals = userGoals;
+        this.mUserGoals = userGoals;
     }
 
 
@@ -36,45 +44,50 @@ public class UserCategory extends UserContent implements Serializable{
      * GETTERS *
      *---------*/
 
-    public Category getCategory(){
-        return category;
+    public CategoryContent getCategory(){
+        return mCategory;
     }
 
     @Override
-    public int getObjectId(){
-        return category.getId();
+    public long getContentId(){
+        return mCategory.getId();
     }
 
     @Override
     public String getTitle(){
-        return category.getTitle();
+        return mCategory.getTitle();
     }
 
     @Override
     public String getDescription(){
-        return category.getDescription();
+        return mCategory.getDescription();
     }
 
     @Override
     public String getHTMLDescription(){
-        return category.getHTMLDescription();
+        return mCategory.getHTMLDescription();
     }
 
     @Override
     public String getIconUrl(){
-        return category.getIconUrl();
+        return mCategory.getIconUrl();
     }
 
     public boolean isPackagedContent(){
-        return category.isPackagedContent();
+        return mCategory.isPackagedContent();
     }
 
     public String getColor(){
-        return category.getColor();
+        return mCategory.getColor();
     }
 
     public List<UserGoal> getGoals(){
-        return userGoals;
+        return mUserGoals;
+    }
+
+    @Override
+    protected String getType(){
+        return TYPE;
     }
 
 
@@ -84,25 +97,25 @@ public class UserCategory extends UserContent implements Serializable{
 
     @Override
     public void init(){
-        if (userGoals == null){
-            userGoals = new ArrayList<>();
+        if (mUserGoals == null){
+            mUserGoals = new ArrayList<>();
         }
     }
 
     public void addGoal(UserGoal goal){
-        if (!userGoals.contains(goal)){
-            userGoals.add(goal);
+        if (!mUserGoals.contains(goal)){
+            mUserGoals.add(goal);
         }
     }
 
     public void removeGoal(UserGoal goal){
-        if (userGoals.contains(goal)){
-            userGoals.remove(goal);
+        if (mUserGoals.contains(goal)){
+            mUserGoals.remove(goal);
         }
     }
 
     @Override
     public String toString(){
-        return "UserCategory #" + getId() + " (" + category.toString() + ")";
+        return "UserCategory #" + getId() + " (" + mCategory.toString() + ")";
     }
 }

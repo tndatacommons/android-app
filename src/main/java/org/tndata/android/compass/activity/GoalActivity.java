@@ -22,7 +22,7 @@ import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.GoalAdapter;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.Progress;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserBehavior;
@@ -40,6 +40,8 @@ import at.grabner.circleprogress.CircleProgressView;
 
 /**
  * Displays the content hierarchy of a user goal with all the behaviors and actions.
+ *
+ * TODO this cass needs some fixin'
  *
  * @author Ismael Alonso
  * @version 1.0.0
@@ -208,7 +210,7 @@ public class GoalActivity
         //Since we are moving serializables around, the object that actually changes is not the
         //  one we are referencing. The Goal with the new list of behaviors needs to be pulled
         //  from the application's list
-        mUserGoal = mApplication.getUserData().getGoal(mUserGoal);
+        mUserGoal = (UserGoal)mApplication.getUserData().getGoal(mUserGoal);
 
         //Set the adapter with the fresh goal
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)mTitle.getLayoutParams();
@@ -232,6 +234,12 @@ public class GoalActivity
     }
 
     @Override
+    public void onBackPressed(){
+        setResult(RESULT_OK);
+        super.onBackPressed();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu){
         if (mUserGoal.isEditable()){
             getMenuInflater().inflate(R.menu.goal, menu);
@@ -244,7 +252,7 @@ public class GoalActivity
         if (item.getItemId() == R.id.goal_remove){
             NetworkRequest.delete(this, null, API.getDeleteGoalUrl(mUserGoal),
                     mApplication.getToken(), new JSONObject());
-            mApplication.getUserData().removeGoal(mUserGoal.getGoal());
+            mApplication.getUserData().removeGoal(mUserGoal);
             setResult(RESULT_OK);
             finish();
             return true;
@@ -259,7 +267,7 @@ public class GoalActivity
                 Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
                         .putExtra(ChooseBehaviorsActivity.GOAL_KEY, mUserGoal.getGoal());
                 if (mUserGoal.getPrimaryCategory() != null){
-                    Category category = mUserGoal.getPrimaryCategory().getCategory();
+                    CategoryContent category = mUserGoal.getPrimaryCategory().getCategory();
                     chooseBehaviors.putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, category);
                 }
                 startActivityForResult(chooseBehaviors, CHOOSE_BEHAVIORS_REQUEST_CODE);
@@ -293,8 +301,8 @@ public class GoalActivity
     @Override
     public void onActionSelected(UserBehavior userBehavior, UserAction userAction){
         Intent trigger = new Intent(this, TriggerActivity.class)
-                .putExtra(TriggerActivity.USER_ACTION_KEY, userAction)
-                .putExtra(TriggerActivity.USER_GOAL_KEY, mUserGoal);
+                .putExtra(TriggerActivity.ACTION_KEY, userAction)
+                .putExtra(TriggerActivity.GOAL_KEY, mUserGoal);
         startActivityForResult(trigger, TRIGGER_REQUEST_CODE);
     }
 }

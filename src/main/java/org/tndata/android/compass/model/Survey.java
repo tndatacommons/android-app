@@ -6,10 +6,12 @@ import java.io.Serializable;
 import java.util.List;
 
 
-public class Survey implements Serializable, Comparable<Survey> {
-
+public class Survey extends TDCBase implements Serializable, Comparable<Survey>{
     private static final long serialVersionUID = 3345647844660418003L;
-    private int id = -1;
+
+    public static final String TYPE = "survey";
+
+
     private int order = 0;
     private String text = "";
     private boolean available = true;
@@ -18,22 +20,22 @@ public class Survey implements Serializable, Comparable<Survey> {
     private String response_url = "";
     private String input_type = "";
     private String response = "";
-    private List<SurveyOptions> options = null;
-    private SurveyOptions selectedOption = null;
+    private List<SurveyOption> options = null;
+    private SurveyOption selectedOption = null;
 
-    public SurveyOptions getSelectedOption() {
+    public SurveyOption getSelectedOption() {
         return selectedOption;
     }
 
-    public void setSelectedOption(SurveyOptions selectedOption) {
+    public void setSelectedOption(SurveyOption selectedOption) {
         this.selectedOption = selectedOption;
     }
 
-    public List<SurveyOptions> getOptions() {
+    public List<SurveyOption> getOptions() {
         return options;
     }
 
-    public void setOptions(List<SurveyOptions> options) {
+    public void setOptions(List<SurveyOption> options) {
         this.options = options;
     }
 
@@ -69,12 +71,9 @@ public class Survey implements Serializable, Comparable<Survey> {
         this.response = response;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+    @Override
+    protected String getType(){
+        return TYPE;
     }
 
     public int getOrder() {
@@ -143,7 +142,7 @@ public class Survey implements Serializable, Comparable<Survey> {
 
     @Override
     public String toString(){
-        String result = id + " (";
+        String result = getId() + " (";
 
         switch (question_type){
             case Constants.SURVEY_BINARY:

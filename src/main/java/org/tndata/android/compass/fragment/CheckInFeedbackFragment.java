@@ -1,7 +1,6 @@
 package org.tndata.android.compass.fragment;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,7 +16,7 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.AutoSave;
 import org.tndata.android.compass.util.CompassUtil;
@@ -45,7 +44,7 @@ public class CheckInFeedbackFragment
     private TextView mDisplay;
 
     //Model components
-    private Goal mGoal;
+    private GoalContent mGoal;
 
     //Auto save
     private AutoSave mAutoSave;
@@ -63,7 +62,7 @@ public class CheckInFeedbackFragment
      * @param goal the goal to be displayed by the fragment.
      * @return an instance of the fragment.
      */
-    public static CheckInFeedbackFragment newInstance(int index, @NonNull Goal goal){
+    public static CheckInFeedbackFragment newInstance(int index, @NonNull GoalContent goal){
         //Create the argument bundle
         Bundle args = new Bundle();
         args.putInt(INDEX_KEY, index);
@@ -82,7 +81,7 @@ public class CheckInFeedbackFragment
         //Retrieve the arguments
         Bundle arguments = getArguments();
         mIndex = arguments.getInt(INDEX_KEY);
-        mGoal = (Goal)arguments.getSerializable(GOAL_KEY);
+        mGoal = (GoalContent)arguments.getSerializable(GOAL_KEY);
 
         mLastUpdate = -1;
     }

@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ImageHelper;
 
@@ -27,7 +27,7 @@ import java.util.List;
 public class ChooseCategoryAdapter extends RecyclerView.Adapter<ChooseCategoryAdapter.CategoryViewHolder>{
     private Context mContext;
     private ChooseCategoryAdapterListener mListener;
-    private List<Category> mCategories;
+    private List<CategoryContent> mCategories;
 
     private Bitmap[] mBitmaps;
 
@@ -38,14 +38,14 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter<ChooseCategoryAd
      * @param listener the listener.
      * @param categories the list of categories to choose from.
      */
-    public ChooseCategoryAdapter(Context context, ChooseCategoryAdapterListener listener, List<Category> categories){
+    public ChooseCategoryAdapter(Context context, ChooseCategoryAdapterListener listener, List<CategoryContent> categories){
         mContext = context;
         mListener = listener;
         mCategories = categories;
 
         mBitmaps = new Bitmap[categories.size()];
         for (int i = 0; i < mCategories.size(); i++){
-            Category category = mCategories.get(i);
+            CategoryContent category = mCategories.get(i);
             int imageResId = CompassUtil.getCategoryTileResId(category.getTitle());
             Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), imageResId);
             mBitmaps[i] = ImageHelper.getCircleBitmap(bitmap, CompassUtil.getPixels(mContext, 100));
@@ -116,6 +116,6 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter<ChooseCategoryAd
          *
          * @param category the selected category.
          */
-        void onCategorySelected(Category category);
+        void onCategorySelected(CategoryContent category);
     }
 }

@@ -1,7 +1,5 @@
 package org.tndata.android.compass.parser.deserializer;
 
-import android.util.Log;
-
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -30,8 +28,6 @@ public class SetDeserializer implements JsonDeserializer<Set<?>>{
 
     @SuppressWarnings("unchecked")
     public <T> Set<T> parse(JsonElement item, T type){
-        Log.d("SetDeserializer", "Deserializing: " + item.toString());
-
         //Create the set where the parsed objects will be put
         Set<T> set = new HashSet<>();
 

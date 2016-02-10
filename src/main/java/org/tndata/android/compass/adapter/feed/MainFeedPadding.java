@@ -21,49 +21,20 @@ public final class MainFeedPadding extends RecyclerView.ItemDecoration{
     /**
      * Constructor.
      *
-     * @param context the context.
+     * @param context a reference to the context.
      */
     MainFeedPadding(Context context){
         mMargin = CompassUtil.getPixels(context, 12);
     }
 
     @Override
-    public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
-                               RecyclerView.State state){
-
-        int position = parent.getChildLayoutPosition(view);
-
-        //Header: padding on top
-        if (CardTypes.isTopCard(position)){
-            //Log.d("MainFeedPadding", position + ": top");
-            outRect.top = mMargin / 2;
-            outRect.left = mMargin;
-            outRect.bottom = 0;
-            outRect.right = mMargin;
+    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state){
+        outRect.top = mMargin / 2;
+        outRect.left = mMargin;
+        outRect.bottom = mMargin;
+        if (parent.getChildLayoutPosition(view) != CardTypes.getItemCount()-1){
+            outRect.bottom /= 2;
         }
-        //Last item: padding on the bottom
-        else if (CardTypes.isBottomCard(position)){
-            //Log.d("MainFeedPadding", position + ": bottom");
-            outRect.top = 0;
-            outRect.left = mMargin;
-            outRect.bottom = mMargin/2;
-            outRect.right = mMargin;
-        }
-        //Inner item: no padding at either side
-        else if (CardTypes.isMiddleCard(position)){
-            //Log.d("MainFeedPadding", position + ": middle");
-            outRect.top = 0;
-            outRect.left = mMargin;
-            outRect.bottom = 0;
-            outRect.right = mMargin;
-        }
-        //Other cards: padding everywhere
-        else{
-            //Log.d("MainFeedPadding", position + ": free");
-            outRect.top = mMargin / 2;
-            outRect.left = mMargin;
-            outRect.bottom = mMargin / 2;
-            outRect.right = mMargin;
-        }
+        outRect.right = mMargin;
     }
 }

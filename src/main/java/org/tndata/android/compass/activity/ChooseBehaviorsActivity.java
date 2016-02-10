@@ -26,9 +26,9 @@ import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseBehaviorsAdapter;
-import org.tndata.android.compass.model.Behavior;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.BehaviorContent;
+import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.ContentParser;
@@ -80,8 +80,8 @@ public class ChooseBehaviorsActivity
     private MenuItem mSearchItem;
     private SearchView mSearchView;
 
-    private Category mCategory;
-    private Goal mGoal;
+    private CategoryContent mCategory;
+    private GoalContent mGoal;
     private ChooseBehaviorsAdapter mAdapter;
     private View mHeaderView;
     private RecyclerView mBehaviorList;
@@ -120,13 +120,13 @@ public class ChooseBehaviorsActivity
         mBehaviorList.setHasFixedSize(true);
 
         //Pull the goal
-        mGoal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
+        mGoal = (GoalContent)getIntent().getSerializableExtra(GOAL_KEY);
         if (mGoal == null){
             fetchGoal(getIntent().getIntExtra(GOAL_ID_KEY, -1));
         }
         else{
             mToolbar.setTitle(mGoal.getTitle());
-            mCategory = (Category)getIntent().getSerializableExtra(CATEGORY_KEY);
+            mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
             setAdapter();
             fetchBehaviors();
         }
@@ -233,7 +233,8 @@ public class ChooseBehaviorsActivity
     }
 
     @Override
-    public void addBehavior(Behavior behavior){
+    public void addBehavior(BehaviorContent behavior){
+        Log.d(TAG, "Add clicked: " + behavior);
         //Disable the 'I want this' button
         mAdapter.disableAddGoalButton();
 
@@ -247,16 +248,16 @@ public class ChooseBehaviorsActivity
     }
 
     @Override
-    public void deleteBehavior(Behavior behavior){
+    public void deleteBehavior(BehaviorContent behavior){
         UserBehavior userBehavior = mApplication.getUserData().getBehavior(behavior);
         if (userBehavior != null){
-            Log.e(TAG, "Deleting Behavior: " + userBehavior.toString());
+            Log.d(TAG, "Deleting Behavior: " + userBehavior.toString());
 
             mDeleteBehaviorRequestCode = NetworkRequest.delete(this, this,
                     API.getDeleteBehaviorUrl(userBehavior),
                     mApplication.getToken(), new JSONObject());
 
-            mApplication.removeBehavior(behavior);
+            mApplication.removeBehavior(userBehavior);
         }
         else{
             Log.d(TAG, "(Delete) behavior not found: " + behavior.toString());
@@ -264,7 +265,7 @@ public class ChooseBehaviorsActivity
     }
 
     @Override
-    public void selectActions(Behavior behavior){
+    public void selectActions(BehaviorContent behavior){
         //Launch the ChooseActionsActivity (where users choose actions for this Behavior)
         startActivity(new Intent(this, ChooseActionsActivity.class)
                 .putExtra(ChooseActionsActivity.CATEGORY_KEY, mCategory)
@@ -273,7 +274,7 @@ public class ChooseBehaviorsActivity
     }
 
     @Override
-    public void moreInfo(Behavior behavior){
+    public void moreInfo(BehaviorContent behavior){
         AlertDialog.Builder builder = new AlertDialog.Builder(ChooseBehaviorsActivity.this);
         if (!behavior.getHTMLMoreInfo().isEmpty()){
             builder.setMessage(Html.fromHtml(behavior.getHTMLMoreInfo(), null, new CompassTagHandler(this)));
@@ -293,7 +294,7 @@ public class ChooseBehaviorsActivity
     }
 
     @Override
-    public void doItNow(Behavior behavior){
+    public void doItNow(BehaviorContent behavior){
         CompassUtil.doItNow(this, behavior.getExternalResource());
     }
 
@@ -323,7 +324,7 @@ public class ChooseBehaviorsActivity
             //Parse the goal
             mGoal = ContentParser.parseGoal(result);
             mGetCategoryRequestCode = NetworkRequest.get(this, this,
-                    API.getCategoryUrl(mGoal.getCategories().iterator().next()), "");
+                    API.getCategoryUrl(mGoal.getCategoryIdSet().iterator().next()), "");
 
             //Set UI and fetch the behaviors
             mToolbar.setTitle(mGoal.getTitle());
@@ -342,7 +343,7 @@ public class ChooseBehaviorsActivity
             mApplication.getUserData().addGoal(userGoal);
         }
         else if (requestCode == mGetBehaviorsRequestCode){
-            List<Behavior> behaviorList = ContentParser.parseBehaviors(result);
+            List<BehaviorContent> behaviorList = ContentParser.parseBehaviors(result);
             if (behaviorList != null && !behaviorList.isEmpty()){
                 mAdapter.setBehaviors(behaviorList);
             }

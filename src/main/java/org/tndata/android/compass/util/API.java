@@ -131,7 +131,7 @@ public abstract class API{
         return BASE_URL + "categories/";
     }
 
-    public static String getCategoryUrl(int categoryId){
+    public static String getCategoryUrl(long categoryId){
         return BASE_URL + "categories/" + categoryId + "/";
     }
 
@@ -143,7 +143,7 @@ public abstract class API{
         return BASE_URL + "users/categories/";
     }
 
-    public static JSONObject getPostCategoryBody(@NonNull Category category){
+    public static JSONObject getPostCategoryBody(@NonNull CategoryContent category){
         JSONObject postCategoriesBody = new JSONObject();
         try{
             postCategoriesBody.put("category", category.getId());
@@ -156,11 +156,11 @@ public abstract class API{
 
 
     //Goals
-    public static String getGoalsUrl(@NonNull Category category){
+    public static String getGoalsUrl(@NonNull CategoryContent category){
         return BASE_URL + "goals/?category=" + category.getId();
     }
 
-    public static String getGoalUrl(int goalId){
+    public static String getGoalUrl(long goalId){
         return BASE_URL + "goals/" + goalId + "/";
     }
 
@@ -168,7 +168,7 @@ public abstract class API{
         return BASE_URL + "users/goals/";
     }
 
-    public static JSONObject getPostGoalBody(@NonNull Goal goal, @NonNull Category primaryCategory){
+    public static JSONObject getPostGoalBody(@NonNull GoalContent goal, @NonNull CategoryContent primaryCategory){
         JSONObject postGoalBody = new JSONObject();
         try{
             postGoalBody.put("goal", goal.getId())
@@ -180,17 +180,46 @@ public abstract class API{
         return postGoalBody;
     }
 
-    public static String getDeleteGoalUrl(@NonNull UserGoal userGoal){
-        return BASE_URL + "users/goals/" + userGoal.getId() + "/";
+    //Custom goals
+    public static String getPostCustomGoalUrl(){
+        return BASE_URL + "users/customgoals/";
+    }
+
+    public static String getPutCustomGoalUrl(@NonNull CustomGoal customGoal){
+        return BASE_URL + "users/customgoals/" + customGoal.getId() + "/";
+    }
+
+    public static JSONObject getPostPutCustomGoalBody(@NonNull CustomGoal customGoal){
+        JSONObject postPutCustomGoalBody = new JSONObject();
+        try{
+            postPutCustomGoalBody.put("title", customGoal.getTitle());
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return postPutCustomGoalBody;
+    }
+
+    //Goal generic getters
+    public static String getDeleteGoalUrl(@NonNull Goal goal){
+        if (goal instanceof UserGoal){
+            return BASE_URL + "users/goals/" + goal.getId() + "/";
+        }
+        else if (goal instanceof CustomGoal){
+            return BASE_URL + "users/customgoals/" + goal.getId() + "/";
+        }
+        else{
+            return "";
+        }
     }
 
 
     //Behaviors
-    public static String getBehaviorsUrl(@NonNull Goal goal){
+    public static String getBehaviorsUrl(@NonNull GoalContent goal){
         return BASE_URL + "behaviors/?goal=" + goal.getId();
     }
 
-    public static String getBehaviorUrl(int behaviorId){
+    public static String getBehaviorUrl(long behaviorId){
         return BASE_URL + "behaviors/" + behaviorId + "/";
     }
 
@@ -198,8 +227,8 @@ public abstract class API{
         return BASE_URL + "users/behaviors/";
     }
 
-    public static JSONObject getPostBehaviorBody(@NonNull Behavior behavior, @NonNull Goal goal,
-                                                 @NonNull Category category){
+    public static JSONObject getPostBehaviorBody(@NonNull BehaviorContent behavior, @NonNull GoalContent goal,
+                                                 @NonNull CategoryContent category){
         JSONObject postBehaviorBody = new JSONObject();
         try{
             postBehaviorBody.put("behavior", behavior.getId())
@@ -218,7 +247,7 @@ public abstract class API{
 
 
     //Actions
-    public static String getActionsUrl(@NonNull Behavior behavior){
+    public static String getActionsUrl(@NonNull BehaviorContent behavior){
         return BASE_URL + "actions/?behavior=" + behavior.getId();
     }
 
@@ -241,8 +270,8 @@ public abstract class API{
         return BASE_URL + "users/actions/";
     }
 
-    public static JSONObject getPostActionBody(@NonNull Action action, @NonNull Behavior behavior,
-                                               @NonNull Goal goal, @NonNull Category category){
+    public static JSONObject getPostActionBody(@NonNull ActionContent action, @NonNull BehaviorContent behavior,
+                                               @NonNull GoalContent goal, @NonNull CategoryContent category){
         JSONObject postActionBody = new JSONObject();
         try{
             postActionBody.put("action", action.getId())
@@ -256,14 +285,59 @@ public abstract class API{
         return postActionBody;
     }
 
-    public static String getDeleteActionUrl(@NonNull UserAction userAction){
-        return BASE_URL + "users/actions/" + userAction.getId() + "/";
+    //Custom actions
+    public static String getCustomActionUrl(int customActionId){
+        return BASE_URL + "users/customactions/" + customActionId + "/";
+    }
+
+    public static String getPostCustomActionUrl(){
+        return BASE_URL + "users/customactions/";
+    }
+
+    public static String getPutCustomActionUrl(@NonNull CustomAction customAction){
+        return BASE_URL + "users/customactions/" + customAction.getId() + "/";
+    }
+
+    public static JSONObject getPostPutCustomActionBody(@NonNull CustomAction customAction,
+                                                        @NonNull CustomGoal customGoal){
+
+        JSONObject postPutCustomActionBody = new JSONObject();
+        try{
+            postPutCustomActionBody.put("title", customAction.getTitle())
+                    .put("notification_text", customAction.getNotificationText())
+                    .put("customgoal", customGoal.getId());
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return postPutCustomActionBody;
+    }
+
+    //Generic action getters
+    public static String getDeleteActionUrl(@NonNull Action action){
+        if (action instanceof UserAction){
+            return BASE_URL + "users/actions/" + action.getId() + "/";
+        }
+        else if (action instanceof CustomAction){
+            return BASE_URL + "users/customactions/" + action.getId() + "/";
+        }
+        else{
+            return "";
+        }
     }
 
 
     //Triggers
-    public static String getPutTriggerUrl(@NonNull UserAction userAction){
-        return BASE_URL + "users/actions/" + userAction.getId() + "/";
+    public static String getPutTriggerUrl(@NonNull Action action){
+        if (action instanceof UserAction){
+            return BASE_URL + "users/actions/" + action.getId() + "/";
+        }
+        else if (action instanceof CustomAction){
+            return BASE_URL + "users/customactions/" + action.getId() + "/";
+        }
+        else{
+            return "";
+        }
     }
 
     public static JSONObject getPutTriggerBody(@NonNull String time, @NonNull String rrule,
@@ -294,7 +368,7 @@ public abstract class API{
     }
 
     //TODO
-    public static JSONObject getPostUserGoalProgressBody(@NonNull Goal goal, int progress){
+    public static JSONObject getPostUserGoalProgressBody(@NonNull GoalContent goal, int progress){
         JSONObject postUserGoalProgressBody = new JSONObject();
         try{
             postUserGoalProgressBody.put("goal", goal.getId())
@@ -331,12 +405,28 @@ public abstract class API{
         return putSnoozeBody;
     }
 
-    public static String getPostActionReportUrl(@NonNull UserAction userAction){
-        return BASE_URL + "users/actions/" + userAction.getId() + "/complete/";
+    public static String getPostActionReportUrl(@NonNull Action action){
+        if (action instanceof UserAction){
+            return BASE_URL + "users/actions/" + action.getId() + "/complete/";
+        }
+        else if (action instanceof CustomAction){
+            return BASE_URL + "users/customactions/" + action.getId() + "/complete/";
+        }
+        else{
+            return "";
+        }
     }
 
     public static String getPostActionReportUrl(@NonNull Reminder reminder){
-        return BASE_URL + "users/actions/" + reminder.getUserMappingId() + "/complete/";
+        if (reminder.getObjectType().equals(Reminder.TYPE_USER_ACTION)){
+            return BASE_URL + "users/actions/" + reminder.getUserMappingId() + "/complete/";
+        }
+        else if (reminder.getObjectType().equals(Reminder.TYPE_CUSTOM_ACTION)){
+            return BASE_URL + "users/customactions/" + reminder.getObjectId() + "/complete/";
+        }
+        else{
+            return "";
+        }
     }
 
     public static JSONObject getPostActionReportBody(@NonNull String state){

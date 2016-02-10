@@ -9,6 +9,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +21,8 @@ import android.widget.Toast;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.filter.GoalFilter;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.ui.button.TransitionButton;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
@@ -43,7 +44,7 @@ import java.util.Map;
  * @version 1.0.0
  */
 public class ChooseGoalsAdapter
-        extends ParallaxRecyclerAdapter<Goal>
+        extends ParallaxRecyclerAdapter<GoalContent>
         implements ParallaxRecyclerAdapter.OnClickEvent{
 
     private static final byte STATE_NOT_ADDED = 0;
@@ -58,8 +59,8 @@ public class ChooseGoalsAdapter
     private ChooseGoalsListener mListener;
     private CompassApplication mApplication;
     private RecyclerView mRecyclerView;
-    private Category mCategory;
-    private List<Goal> mGoals;
+    private CategoryContent mCategory;
+    private List<GoalContent> mGoals;
     private GoalFilter mFilter;
 
     private int mExpandedGoal;
@@ -76,8 +77,8 @@ public class ChooseGoalsAdapter
      */
     public ChooseGoalsAdapter(@NonNull Context context, @NonNull ChooseGoalsListener listener,
                               @NonNull CompassApplication app, @NonNull RecyclerView recyclerView,
-                              @NonNull Category category){
-        super(new ArrayList<Goal>());
+                              @NonNull CategoryContent category){
+        super(new ArrayList<GoalContent>());
 
         mContext = context;
         mListener = listener;
@@ -88,8 +89,9 @@ public class ChooseGoalsAdapter
         mFilter = null;
 
         //Create the header goal and add it to the list
-        Goal headerGoal = new Goal();
+        GoalContent headerGoal = new GoalContent();
         headerGoal.setDescription(mCategory.getDescription());
+        headerGoal.setHTMLDescription(mCategory.getHTMLDescription());
         headerGoal.setId(0);
         mGoals.add(headerGoal);
         setData(mGoals);
@@ -136,7 +138,7 @@ public class ChooseGoalsAdapter
     private void populateStateArray(){
         if (mGoals != null && mGoals.size() > 1){
             goalStates = new byte[mGoals.size()-1];
-            Map<Integer, UserGoal> userGoals = mApplication.getGoals();
+            Map<Long, UserGoal> userGoals = mApplication.getGoals();
             for (int i = 1; i < mGoals.size(); i++){
                 goalStates[i-1] = userGoals.containsKey(getItem(i).getId())
                         ? STATE_ADDED : STATE_NOT_ADDED;
@@ -149,11 +151,12 @@ public class ChooseGoalsAdapter
      *
      * @param goals the list of goals to be added.
      */
-    public void addGoals(List<Goal> goals){
+    public void addGoals(List<GoalContent> goals){
         mGoals.clear();
 
-        Goal headerGoal = new Goal();
+        GoalContent headerGoal = new GoalContent();
         headerGoal.setDescription(mCategory.getDescription());
+        headerGoal.setHTMLDescription(mCategory.getHTMLDescription());
         headerGoal.setId(0);
         mGoals.add(headerGoal);
 
@@ -172,7 +175,7 @@ public class ChooseGoalsAdapter
      * @param position the position of the goal in the backing array.
      * @return the goal requested.
      */
-    public Goal getItem(int position){
+    public GoalContent getItem(int position){
         return mGoals.get(position);
     }
 
@@ -181,7 +184,7 @@ public class ChooseGoalsAdapter
      *
      * @param goal the goal recently added.
      */
-    public void goalAdded(Goal goal){
+    public void goalAdded(GoalContent goal){
         int index = mGoals.indexOf(goal);
         goalStates[index-1] = STATE_ADDED;
         ChooseGoalsViewHolder holder = (ChooseGoalsViewHolder)mRecyclerView.findViewHolderForLayoutPosition(index+1);
@@ -196,7 +199,7 @@ public class ChooseGoalsAdapter
      *
      * @param goal the goal that was not added.
      */
-    public void goalNotAdded(Goal goal){
+    public void goalNotAdded(GoalContent goal){
         int index = mGoals.indexOf(goal);
         goalStates[index-1] = STATE_NOT_ADDED;
         ChooseGoalsViewHolder holder = (ChooseGoalsViewHolder)mRecyclerView.findViewHolderForLayoutPosition(index+1);
@@ -211,7 +214,7 @@ public class ChooseGoalsAdapter
      *
      * @param goal the goal that was deleted.
      */
-    public void goalDeleted(Goal goal){
+    public void goalDeleted(GoalContent goal){
         int index = mGoals.indexOf(goal);
         goalStates[index-1] = STATE_NOT_ADDED;
         ChooseGoalsViewHolder holder = (ChooseGoalsViewHolder)mRecyclerView.findViewHolderForLayoutPosition(index+1);
@@ -226,7 +229,7 @@ public class ChooseGoalsAdapter
      *
      * @param goal the goal that was not added.
      */
-    public void goalNotDeleted(Goal goal){
+    public void goalNotDeleted(GoalContent goal){
         int index = mGoals.indexOf(goal);
         goalStates[index-1] = STATE_ADDED;
         ChooseGoalsViewHolder holder = (ChooseGoalsViewHolder)mRecyclerView.findViewHolderForLayoutPosition(index+1);
@@ -278,7 +281,7 @@ public class ChooseGoalsAdapter
         @SuppressWarnings("deprecation")
         public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
             ChooseGoalsViewHolder holder = (ChooseGoalsViewHolder)rawHolder;
-            final Goal goal = getItem(position);
+            final GoalContent goal = getItem(position);
 
             //If the goal is the first item, display the header card
             if (position == 0 && goal.getId() == 0){
@@ -401,7 +404,7 @@ public class ChooseGoalsAdapter
         @Override
         public void onClick(View v){
             //Account for header only
-            Goal goal = getItem(getAdapterPosition() - 1);
+            GoalContent goal = getItem(getAdapterPosition() - 1);
 
             //Account for the header and the category description
             switch (goalStates[getAdapterPosition() - 2]){
@@ -446,14 +449,14 @@ public class ChooseGoalsAdapter
          *
          * @param goal the goal whose add was tapped.
          */
-        void onGoalAddClicked(Goal goal);
+        void onGoalAddClicked(GoalContent goal);
 
         /**
          * Called when the delete button is tapped.
          *
          * @param goal the goal whose delete was tapped.
          */
-        void onGoalDeleteClicked(Goal goal);
+        void onGoalDeleteClicked(GoalContent goal);
 
         /**
          * Called when the RecyclerView scrolls.

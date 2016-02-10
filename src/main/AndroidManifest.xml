@@ -69,8 +69,13 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="org.tndata.android.compass.activity.GoalActivity"
+            android:name=".activity.GoalActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activity.CustomContentManagerActivity"
+            android:label="Create goal"
             android:screenOrientation="portrait" />
 
         <activity

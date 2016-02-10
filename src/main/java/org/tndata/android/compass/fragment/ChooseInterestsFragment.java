@@ -18,7 +18,7 @@ import android.widget.Toast;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseInterestsAdapter;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
@@ -56,7 +56,7 @@ public class ChooseInterestsFragment
 
 
     /**
-     * Createsa new instance of this fragment.
+     * Creates a new instance of this fragment.
      *
      * @param onBoarding true if this was called from onboarding, false otherwise.
      * @return the new instance of the fragment.
@@ -125,7 +125,12 @@ public class ChooseInterestsFragment
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
         mApplication = (CompassApplication) getActivity().getApplication();
-        loadCategories();
+        if (mApplication.getPublicCategories() == null){
+            loadCategories();
+        }
+        else{
+            mAdapter.setCategories(mApplication.getPublicCategories(), mApplication.getCategories());
+        }
     }
 
     /**
@@ -137,20 +142,9 @@ public class ChooseInterestsFragment
     }
 
     @Override
-    public void onCategoriesSelected(List<Category> selection){
-        mDialog = new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.choose_categories_syncing_title)
-                .setCancelable(false)
-                .setView(getActivity().getLayoutInflater().inflate(R.layout.dialog_syncing, null))
-                .create();
-        mDialog.show();
-        mCallback.onCategoriesSelected(selection);
-    }
-
-    @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetCategoriesRequestCode){
-            List<Category> categories = ContentParser.parseCategories(result);
+            List<CategoryContent> categories = ContentParser.parseCategories(result);
             //TODO error reporting
             if (categories != null){
                 mAdapter.setCategories(categories, mApplication.getCategories());
@@ -171,8 +165,19 @@ public class ChooseInterestsFragment
      * @param resId the resource id of the string.
      */
     private void notifyError(@StringRes int resId){
-        mAdapter.hideProgressBar();
+        //mAdapter.hideProgressBar();
         Toast.makeText(getActivity(), resId, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onCategoriesSelected(List<CategoryContent> selection){
+        mDialog = new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.choose_categories_syncing_title)
+                .setCancelable(false)
+                .setView(getActivity().getLayoutInflater().inflate(R.layout.dialog_syncing, null))
+                .create();
+        mDialog.show();
+        mCallback.onCategoriesSelected(selection);
     }
 
 

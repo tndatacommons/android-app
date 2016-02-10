@@ -23,8 +23,8 @@ import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseGoalsAdapter;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
@@ -71,14 +71,14 @@ public class ChooseGoalsActivity
 
     private TextView mErrorTextView;
     private View mHeaderView;
-    private Category mCategory = null;
+    private CategoryContent mCategory = null;
 
     //Request codes
     private int mGetGoalsRequestCode;
     //The maps are necessary if the request fails, since the goal whose op
     //  failed needs to be indexed
-    private Map<Integer, Goal> mAddGoalRequestCodeMap;
-    private Map<Integer, Goal> mDeleteGoalRequestCodeMap;
+    private Map<Integer, GoalContent> mAddGoalRequestCodeMap;
+    private Map<Integer, GoalContent> mDeleteGoalRequestCodeMap;
 
 
     @Override
@@ -88,7 +88,7 @@ public class ChooseGoalsActivity
 
         mApplication = (CompassApplication)getApplication();
 
-        mCategory = (Category)getIntent().getSerializableExtra(CATEGORY_KEY);
+        mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
 
         mToolbar = (Toolbar)findViewById(R.id.choose_goals_toolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
@@ -188,7 +188,7 @@ public class ChooseGoalsActivity
     }
 
     @Override
-    public void onGoalAddClicked(Goal goal){
+    public void onGoalAddClicked(GoalContent goal){
         mApplication.getUserData().addGoal(goal.getId());
         int code = NetworkRequest.post(this, this, API.getPostGoalUrl(), mApplication.getToken(),
                 API.getPostGoalBody(goal, mCategory));
@@ -204,7 +204,7 @@ public class ChooseGoalsActivity
     }
 
     @Override
-    public void onGoalDeleteClicked(Goal goal){
+    public void onGoalDeleteClicked(GoalContent goal){
         UserGoal userGoal = mApplication.getUserData().getGoal(goal);
         if (userGoal != null){
             Log.d(TAG, "Deleting Goal: " + userGoal.toString());
@@ -213,7 +213,7 @@ public class ChooseGoalsActivity
                     mApplication.getToken(), new JSONObject());
             mDeleteGoalRequestCodeMap.put(code, goal);
 
-            mApplication.removeGoal(goal);
+            mApplication.removeGoal(userGoal);
         }
         else{
             Log.d(TAG, "(Delete) Goal not found: " + goal.toString());
@@ -233,7 +233,7 @@ public class ChooseGoalsActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetGoalsRequestCode){
-            List<Goal> goals = ContentParser.parseGoals(result);
+            List<GoalContent> goals = ContentParser.parseGoals(result);
             if (goals != null && !goals.isEmpty()){
                 mAdapter.addGoals(goals);
             }

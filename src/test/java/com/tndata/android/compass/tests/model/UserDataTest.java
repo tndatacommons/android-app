@@ -1,10 +1,10 @@
 package com.tndata.android.compass.tests.model;
 
 import org.junit.Test;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Behavior;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.ActionContent;
+import org.tndata.android.compass.model.BehaviorContent;
+import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserData;
 
 import java.lang.reflect.Field;
@@ -19,8 +19,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Action> actions = new ArrayList<>();
-        Action actionOne = new Action();
+        ArrayList<ActionContent> actions = new ArrayList<>();
+        ActionContent actionOne = new ActionContent();
         actionOne.setId(1);
         actions.add(actionOne);
 
@@ -36,8 +36,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Action> actions = new ArrayList<>();
-        Action actionOne = new Action();
+        ArrayList<ActionContent> actions = new ArrayList<>();
+        ActionContent actionOne = new ActionContent();
         actionOne.setId(1);
         actions.add(actionOne);
 
@@ -54,10 +54,10 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Action> actions = new ArrayList<>();
-        Action actionOne = new Action();
+        ArrayList<ActionContent> actions = new ArrayList<>();
+        ActionContent actionOne = new ActionContent();
         actionOne.setId(1);
-        Action actionTwo = new Action();
+        ActionContent actionTwo = new ActionContent();
         actionTwo.setId(2);
         actions.add(actionTwo);
 
@@ -84,8 +84,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Action> actions = new ArrayList<>();
-        Action actionOne = new Action();
+        ArrayList<ActionContent> actions = new ArrayList<>();
+        ActionContent actionOne = new ActionContent();
         actionOne.setId(1);
 
         userData.addAction(actionOne);
@@ -109,8 +109,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Action> actions = new ArrayList<>();
-        Action actionOne = new Action();
+        ArrayList<ActionContent> actions = new ArrayList<>();
+        ActionContent actionOne = new ActionContent();
         actionOne.setId(1);
         actionOne.setNotificationText("text");
 
@@ -130,8 +130,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Action> actions = new ArrayList<>();
-        Action actionOne = new Action();
+        ArrayList<ActionContent> actions = new ArrayList<>();
+        ActionContent actionOne = new ActionContent();
         actionOne.setId(1);
         actionOne.setNotificationText("text");
 
@@ -149,8 +149,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Behavior> behaviors = new ArrayList<>();
-        Behavior behaviorOne = new Behavior();
+        ArrayList<BehaviorContent> behaviors = new ArrayList<>();
+        BehaviorContent behaviorOne = new BehaviorContent();
         behaviorOne.setId(1);
         behaviors.add(behaviorOne);
 
@@ -166,8 +166,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Behavior> behaviors = new ArrayList<>();
-        Behavior behaviorOne = new Behavior();
+        ArrayList<BehaviorContent> behaviors = new ArrayList<>();
+        BehaviorContent behaviorOne = new BehaviorContent();
         behaviorOne.setId(1);
         behaviors.add(behaviorOne);
 
@@ -184,10 +184,10 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Behavior> behaviors = new ArrayList<>();
-        Behavior behaviorOne = new Behavior();
+        ArrayList<BehaviorContent> behaviors = new ArrayList<>();
+        BehaviorContent behaviorOne = new BehaviorContent();
         behaviorOne.setId(1);
-        Behavior behaviorTwo = new Behavior();
+        BehaviorContent behaviorTwo = new BehaviorContent();
         behaviorTwo.setId(2);
         behaviors.add(behaviorTwo);
 
@@ -214,8 +214,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Behavior> behaviors = new ArrayList<>();
-        Behavior behaviorOne = new Behavior();
+        ArrayList<BehaviorContent> behaviors = new ArrayList<>();
+        BehaviorContent behaviorOne = new BehaviorContent();
         behaviorOne.setId(1);
 
         userData.addBehavior(behaviorOne);
@@ -239,8 +239,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Goal> goals = new ArrayList<>();
-        Goal goalOne = new Goal();
+        ArrayList<GoalContent> goals = new ArrayList<>();
+        GoalContent goalOne = new GoalContent();
         goalOne.setId(1);
         goals.add(goalOne);
 
@@ -256,8 +256,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Goal> goals = new ArrayList<>();
-        Goal goalOne = new Goal();
+        ArrayList<GoalContent> goals = new ArrayList<>();
+        GoalContent goalOne = new GoalContent();
         goalOne.setId(1);
         goals.add(goalOne);
 
@@ -274,10 +274,10 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Goal> goals = new ArrayList<>();
-        Goal goalOne = new Goal();
+        ArrayList<GoalContent> goals = new ArrayList<>();
+        GoalContent goalOne = new GoalContent();
         goalOne.setId(1);
-        Goal goalTwo = new Goal();
+        GoalContent goalTwo = new GoalContent();
         goalTwo.setId(2);
         goals.add(goalTwo);
 
@@ -304,8 +304,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Goal> goals = new ArrayList<>();
-        Goal goalOne = new Goal();
+        ArrayList<GoalContent> goals = new ArrayList<>();
+        GoalContent goalOne = new GoalContent();
         goalOne.setId(1);
 
         userData.addGoal(goalOne);
@@ -329,8 +329,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Category> category = new ArrayList<>();
-        Category categoryOne = new Category();
+        ArrayList<CategoryContent> category = new ArrayList<>();
+        CategoryContent categoryOne = new CategoryContent();
         categoryOne.setId(1);
         category.add(categoryOne);
 
@@ -346,8 +346,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Category> category = new ArrayList<>();
-        Category categoryOne = new Category();
+        ArrayList<CategoryContent> category = new ArrayList<>();
+        CategoryContent categoryOne = new CategoryContent();
         categoryOne.setId(1);
         category.add(categoryOne);
 
@@ -364,10 +364,10 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Category> category = new ArrayList<>();
-        Category categoryOne = new Category();
+        ArrayList<CategoryContent> category = new ArrayList<>();
+        CategoryContent categoryOne = new CategoryContent();
         categoryOne.setId(1);
-        Category categoryTwo = new Category();
+        CategoryContent categoryTwo = new CategoryContent();
         categoryTwo.setId(2);
         category.add(categoryTwo);
 
@@ -394,8 +394,8 @@ public class UserDataTest {
 
         UserData userData = new UserData();
 
-        ArrayList<Category> category = new ArrayList<>();
-        Category categoryOne = new Category();
+        ArrayList<CategoryContent> category = new ArrayList<>();
+        CategoryContent categoryOne = new CategoryContent();
         categoryOne.setId(1);
 
         userData.addCategory(categoryOne);

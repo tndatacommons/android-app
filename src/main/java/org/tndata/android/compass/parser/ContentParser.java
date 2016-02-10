@@ -34,8 +34,8 @@ public final class ContentParser extends ParserMethods{
      * @param src the JSON string from which the category will be created.
      * @return a category.
      */
-    public static Category parseCategory(String src){
-        return sGson.fromJson(src, Category.class);
+    public static CategoryContent parseCategory(String src){
+        return sGson.fromJson(src, CategoryContent.class);
     }
 
     /**
@@ -54,7 +54,7 @@ public final class ContentParser extends ParserMethods{
      * @param src a JSON string containing a list of categories.
      * @return a map of categories.
      */
-    public static List<Category> parseCategoryArray(String src){
+    public static List<CategoryContent> parseCategoryArray(String src){
         JSONArray categoriesArray;
         try{
             categoriesArray = new JSONArray(src);
@@ -64,10 +64,10 @@ public final class ContentParser extends ParserMethods{
             return null;
         }
 
-        List<Category> categories = new ArrayList<>();
+        List<CategoryContent> categories = new ArrayList<>();
         for (int i = 0; i < categoriesArray.length(); i++){
             try{
-                Category category = parseCategory(categoriesArray.getString(i));
+                CategoryContent category = parseCategory(categoriesArray.getString(i));
                 if (category != null){
                     categories.add(category);
                 }
@@ -82,7 +82,7 @@ public final class ContentParser extends ParserMethods{
         return categories;
     }
 
-    public static List<Category> parseCategories(String src){
+    public static List<CategoryContent> parseCategories(String src){
         try{
             return parseCategoryArray(new JSONObject(src).getString("results"));
         }
@@ -98,7 +98,7 @@ public final class ContentParser extends ParserMethods{
      * @param src a JSON string containing a list of categories.
      * @return a map of categories.
      */
-    public static Map<Integer, UserCategory> parseUserCategoryArray(String src){
+    public static Map<Long, UserCategory> parseUserCategoryArray(String src){
         JSONArray categoriesArray;
         try{
             categoriesArray = new JSONArray(src);
@@ -108,7 +108,7 @@ public final class ContentParser extends ParserMethods{
             return null;
         }
 
-        Map<Integer, UserCategory> categories = new HashMap<>();
+        Map<Long, UserCategory> categories = new HashMap<>();
         for (int i = 0; i < categoriesArray.length(); i++){
             try{
                 UserCategory category = parseUserCategory(categoriesArray.getString(i));
@@ -126,7 +126,7 @@ public final class ContentParser extends ParserMethods{
         return categories;
     }
 
-    public static Map<Integer, UserCategory> parseUserCategories(String src){
+    public static Map<Long, UserCategory> parseUserCategories(String src){
         try{
             return parseUserCategoryArray(new JSONObject(src).getString("results"));
         }
@@ -153,15 +153,15 @@ public final class ContentParser extends ParserMethods{
      * GOALS *
      *-------*/
 
-    public static Goal parseGoal(String src){
-        return sGson.fromJson(src, Goal.class);
+    public static GoalContent parseGoal(String src){
+        return sGson.fromJson(src, GoalContent.class);
     }
 
     public static UserGoal parseUserGoal(String src){
         return sGson.fromJson(src, UserGoal.class);
     }
 
-    public static List<Goal> parseGoalArray(String src){
+    public static List<GoalContent> parseGoalArray(String src){
         JSONArray goalArray;
         try{
             goalArray = new JSONArray(src);
@@ -171,10 +171,10 @@ public final class ContentParser extends ParserMethods{
             return null;
         }
 
-        List<Goal> goals = new ArrayList<>();
+        List<GoalContent> goals = new ArrayList<>();
         for (int i = 0; i < goalArray.length(); i++){
             try{
-                Goal goal = parseGoal(goalArray.getString(i));
+                GoalContent goal = parseGoal(goalArray.getString(i));
                 if (goal != null){
                     goals.add(goal);
                 }
@@ -189,7 +189,7 @@ public final class ContentParser extends ParserMethods{
         return goals;
     }
 
-    public static List<Goal> parseGoals(String src){
+    public static List<GoalContent> parseGoals(String src){
         try{
             return parseGoalArray(new JSONObject(src).getString("results"));
         }
@@ -199,7 +199,7 @@ public final class ContentParser extends ParserMethods{
         }
     }
 
-    public static Map<Integer, UserGoal> parseUserGoalArray(String src){
+    public static Map<Long, UserGoal> parseUserGoalArray(String src){
         JSONArray goalArray;
         try{
             goalArray = new JSONArray(src);
@@ -209,7 +209,7 @@ public final class ContentParser extends ParserMethods{
             return null;
         }
 
-        Map<Integer, UserGoal> goals = new HashMap<>();
+        Map<Long, UserGoal> goals = new HashMap<>();
         for (int i = 0; i < goalArray.length(); i++){
             try{
                 UserGoal goal = parseUserGoal(goalArray.getString(i));
@@ -228,7 +228,7 @@ public final class ContentParser extends ParserMethods{
         return goals;
     }
 
-    public static Map<Integer, UserGoal> parseUserGoals(String src){
+    public static Map<Long, UserGoal> parseUserGoals(String src){
         try{
             return parseUserGoalArray(new JSONObject(src).getString("results"));
         }
@@ -243,15 +243,15 @@ public final class ContentParser extends ParserMethods{
      * BEHAVIORS *
      *-----------*/
 
-    public static Behavior parseBehavior(String src){
-        return sGson.fromJson(src, Behavior.class);
+    public static BehaviorContent parseBehavior(String src){
+        return sGson.fromJson(src, BehaviorContent.class);
     }
 
     public static UserBehavior parseUserBehavior(String src){
         return sGson.fromJson(src, UserBehavior.class);
     }
 
-    public static List<Behavior> parseBehaviorArray(String src){
+    public static List<BehaviorContent> parseBehaviorArray(String src){
         JSONArray behaviorArray;
         try{
             behaviorArray = new JSONArray(src);
@@ -261,10 +261,10 @@ public final class ContentParser extends ParserMethods{
             return null;
         }
 
-        List<Behavior> behaviors = new ArrayList<>();
+        List<BehaviorContent> behaviors = new ArrayList<>();
         for (int i = 0; i < behaviorArray.length(); i++){
             try{
-                Behavior behavior = parseBehavior(behaviorArray.getString(i));
+                BehaviorContent behavior = parseBehavior(behaviorArray.getString(i));
                 if (behavior != null){
                     behaviors.add(behavior);
                 }
@@ -276,7 +276,7 @@ public final class ContentParser extends ParserMethods{
         return behaviors;
     }
 
-    public static List<Behavior> parseBehaviors(String src){
+    public static List<BehaviorContent> parseBehaviors(String src){
         try{
             return parseBehaviorArray(new JSONObject(src).getString("results"));
         }
@@ -286,7 +286,7 @@ public final class ContentParser extends ParserMethods{
         }
     }
 
-    public static Map<Integer, UserBehavior> parseUserBehaviorArray(String src){
+    public static Map<Long, UserBehavior> parseUserBehaviorArray(String src){
         JSONArray behaviorArray;
         try{
             behaviorArray = new JSONArray(src);
@@ -296,7 +296,7 @@ public final class ContentParser extends ParserMethods{
             return null;
         }
 
-        Map<Integer, UserBehavior> behaviors = new HashMap<>();
+        Map<Long, UserBehavior> behaviors = new HashMap<>();
         for (int i = 0; i < behaviorArray.length(); i++){
             try{
                 UserBehavior behavior = parseUserBehavior(behaviorArray.getString(i));
@@ -311,7 +311,7 @@ public final class ContentParser extends ParserMethods{
         return behaviors;
     }
 
-    public static Map<Integer, UserBehavior> parseUserBehaviors(String src){
+    public static Map<Long, UserBehavior> parseUserBehaviors(String src){
         try{
             return parseUserBehaviorArray(new JSONObject(src).getString("results"));
         }
@@ -326,15 +326,15 @@ public final class ContentParser extends ParserMethods{
      * ACTIONS *
      *---------*/
 
-    public static Action parseAction(String src){
-        return sGson.fromJson(src, Action.class);
+    public static ActionContent parseAction(String src){
+        return sGson.fromJson(src, ActionContent.class);
     }
 
     public static UserAction parseUserAction(String src){
         return sGson.fromJson(src, UserAction.class);
     }
 
-    public static List<Action> parseActionArray(String src){
+    public static List<ActionContent> parseActionArray(String src){
         JSONArray actionArray;
         try{
             actionArray = new JSONArray(src);
@@ -344,11 +344,11 @@ public final class ContentParser extends ParserMethods{
             return null;
         }
 
-        List<Action> actions = new ArrayList<>();
+        List<ActionContent> actions = new ArrayList<>();
         //For each action in the array
         for (int i = 0; i < actionArray.length(); i++){
             try{
-                Action action = parseAction(actionArray.getString(i));
+                ActionContent action = parseAction(actionArray.getString(i));
                 if (action != null){
                     actions.add(action);
                 }
@@ -360,7 +360,7 @@ public final class ContentParser extends ParserMethods{
         return actions;
     }
 
-    public static Map<Integer, UserAction> parseUserActionArray(String src, @Nullable List<UserAction> target){
+    public static Map<Long, UserAction> parseUserActionArray(String src, @Nullable List<UserAction> target){
         JSONArray actionArray;
         try{
             actionArray = new JSONArray(src);
@@ -370,7 +370,7 @@ public final class ContentParser extends ParserMethods{
             return null;
         }
 
-        Map<Integer, UserAction> actions = new HashMap<>();
+        Map<Long, UserAction> actions = new HashMap<>();
         //For each action in the array
         for (int i = 0; i < actionArray.length(); i++){
             try{
@@ -389,7 +389,7 @@ public final class ContentParser extends ParserMethods{
         return actions;
     }
 
-    public static List<Action> parseActionsFromResultSet(String src){
+    public static List<ActionContent> parseActionsFromResultSet(String src){
         try{
             return parseActionArray(new JSONObject(src).getString("results"));
         }
@@ -399,11 +399,11 @@ public final class ContentParser extends ParserMethods{
         }
     }
 
-    public static Map<Integer, UserAction> parseUserActions(String src, @Nullable List<UserAction> target){
+    public static Map<Long, UserAction> parseUserActions(String src, @Nullable List<UserAction> target){
         return parseUserActionArray(src, target);
     }
 
-    public static Map<Integer, UserAction> parseUserActionsFromResultSet(String src, @Nullable List<UserAction> target){
+    public static Map<Long, UserAction> parseUserActionsFromResultSet(String src, @Nullable List<UserAction> target){
         try{
             return parseUserActionArray(new JSONObject(src).getString("results"), target);
         }

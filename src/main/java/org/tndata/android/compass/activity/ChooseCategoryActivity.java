@@ -6,11 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.CategoryContent;
 
 
 /**
@@ -24,6 +25,7 @@ public class ChooseCategoryActivity
         implements ChooseCategoryAdapter.ChooseCategoryAdapterListener{
 
     private Toolbar mToolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -48,9 +50,24 @@ public class ChooseCategoryActivity
     }
 
     @Override
-    public void onCategorySelected(Category category){
+    public void onCategorySelected(CategoryContent category){
         Intent chooseGoals = new Intent(this, ChooseGoalsActivity.class)
                 .putExtra(ChooseGoalsActivity.CATEGORY_KEY, category);
         startActivity(chooseGoals);
+    }
+
+    @Override
+    public void onBackPressed(){
+        setResult(RESULT_OK);
+        super.onBackPressed();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case android.R.id.home:
+                setResult(RESULT_OK);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

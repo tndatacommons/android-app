@@ -22,7 +22,7 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Survey;
-import org.tndata.android.compass.model.SurveyOptions;
+import org.tndata.android.compass.model.SurveyOption;
 import org.tndata.android.compass.util.Constants;
 
 import java.text.SimpleDateFormat;
@@ -155,11 +155,11 @@ public class SurveyDialogFragment extends DialogFragment {
                     .view_survey_multi_title_textview);
             title.setText(mSurvey.getText());
             final Spinner spinner = (Spinner) v.findViewById(R.id.view_survey_multi_spinner);
-            SurveyOptions defaultOption = new SurveyOptions();
+            SurveyOption defaultOption = new SurveyOption();
             defaultOption.setText(getString(R.string.survey_default_option));
-            List<SurveyOptions> optionsList = mSurvey.getOptions();
+            List<SurveyOption> optionsList = mSurvey.getOptions();
             optionsList.add(0, defaultOption);
-            ArrayAdapter<SurveyOptions> adapter = new ArrayAdapter<SurveyOptions>
+            ArrayAdapter<SurveyOption> adapter = new ArrayAdapter<SurveyOption>
                     (getActivity()
                             .getApplicationContext(), R.layout.list_item_simple_spinner,
                             mSurvey.getOptions());
@@ -178,7 +178,7 @@ public class SurveyDialogFragment extends DialogFragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position,
                                            long id) {
-                    SurveyOptions option = (SurveyOptions) spinner.getSelectedItem();
+                    SurveyOption option = (SurveyOption) spinner.getSelectedItem();
                     if (option.getId() == -1) {
                         return;
                     }
@@ -220,7 +220,7 @@ public class SurveyDialogFragment extends DialogFragment {
             final SeekBar seekBar = (SeekBar) v.findViewById(R.id.view_survey_likert_seekbar);
             seekBar.setMax(mSurvey.getOptions().size() - 1);
             if (mSurvey.getSelectedOption() != null) {
-                seekBar.setProgress(mSurvey.getSelectedOption().getId());
+                seekBar.setProgress((int)mSurvey.getSelectedOption().getId());
                 choiceTextView.setText(mSurvey.getSelectedOption().getText());
                 if (mCallback != null) {
                     mCallback.setNextButtonEnabled(true);
@@ -240,7 +240,7 @@ public class SurveyDialogFragment extends DialogFragment {
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     minTextView.setVisibility(View.GONE);
                     maxTextView.setVisibility(View.GONE);
-                    for (SurveyOptions option : mSurvey.getOptions()) {
+                    for (SurveyOption option : mSurvey.getOptions()) {
                         if ((option.getId() - 1) == progress) {
                             mSurvey.setSelectedOption(option);
                             choiceTextView.setText(option.getText());

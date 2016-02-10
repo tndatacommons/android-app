@@ -7,8 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.ui.CompassPopupMenu;
 
@@ -20,11 +19,15 @@ import org.tndata.android.compass.ui.CompassPopupMenu;
  * @version 1.0.0
  */
 class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
-    MainFeedAdapter mAdapter;
+    private MainFeedAdapter mAdapter;
+    private Action mSelectedAction;
 
-    private int mOpenPopup;
 
-
+    /**
+     * Constructor.
+     *
+     * @param adapter a reference to the adapter.
+     */
     FeedUtil(MainFeedAdapter adapter){
         mAdapter = adapter;
     }
@@ -33,28 +36,15 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
      * Display the popup menu for a specific action.
      *
      * @param anchor the view it should be anchored to.
-     * @param position the position of the view.
+     * @param action the action in question.
      */
-    void showActionPopup(View anchor, int position){
-        mOpenPopup = position;
+    void showActionPopup(View anchor, Action action){
+        mSelectedAction = action;
         CompassPopupMenu popup = CompassPopupMenu.newInstance(mAdapter.mContext, anchor);
 
-        //The category of the selected action needs to be retrieved to determine which menu
-        //  should be inflated.
-        UserAction userAction;
-        Category category;
-        if (position == CardTypes.getUpNextPosition()){
-            userAction = mAdapter.getDataHandler().getUpNext();
-        }
-        else{
-            int actionPosition = mAdapter.getActionPosition(position);
-            userAction = mAdapter.getDataHandler().getUpcoming().get(actionPosition);
-        }
-        category = mAdapter.getDataHandler().getActionCategory(userAction);
-
         //If the category couldn't be found or it is packaged, exclude removal options.
-        if (category == null || category.isPackagedContent()){
-            popup.getMenuInflater().inflate(R.menu.popup_action_packaged, popup.getMenu());
+        if (!action.isEditable()){
+            popup.getMenuInflater().inflate(R.menu.popup_action_non_editable, popup.getMenu());
         }
         else{
             popup.getMenuInflater().inflate(R.menu.popup_action, popup.getMenu());
@@ -87,19 +77,19 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
     public boolean onMenuItemClick(MenuItem item){
         switch (item.getItemId()){
             case R.id.popup_action_did_it:
-                mAdapter.didIt(mOpenPopup);
+                mAdapter.didIt(mSelectedAction);
                 break;
 
             case R.id.popup_action_reschedule:
-                mAdapter.reschedule(mOpenPopup);
+                mAdapter.reschedule(mSelectedAction);
                 break;
 
             case R.id.popup_action_remove:
-                mAdapter.remove(mOpenPopup);
+                mAdapter.remove(mSelectedAction);
                 break;
 
             case R.id.popup_action_view_goal:
-                mAdapter.viewGoal(mOpenPopup);
+                mAdapter.viewGoal(mSelectedAction.getGoal());
                 break;
 
             case R.id.popup_goal_suggestion_refresh:
@@ -113,12 +103,11 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
      * Sends a request to the API to mark an action as complete.
      *
      * @param context a reference to the context.
-     * @param userAction the action to be marked as complete.
+     * @param action the action to be marked as complete.
      */
-    void didIt(@NonNull Context context, @NonNull UserAction userAction){
-        Intent completeAction = new Intent(context, ActionReportService.class)
-                .putExtra(ActionReportService.USER_ACTION_KEY, userAction)
-                .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED);
-        context.startService(completeAction);
+    void didIt(@NonNull Context context, @NonNull Action action){
+        context.startService(new Intent(context, ActionReportService.class)
+                .putExtra(ActionReportService.ACTION_KEY, action)
+                .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
     }
 }

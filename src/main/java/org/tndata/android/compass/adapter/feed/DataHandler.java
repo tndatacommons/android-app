@@ -1,23 +1,19 @@
 package org.tndata.android.compass.adapter.feed;
 
-import android.util.Log;
-
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
-import org.tndata.android.compass.model.UserGoal;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 /**
- * Data handler for the main feed adapter. Keeps the model updated.
+ * Collection of methods that mutate or retrieve information from the model when needed.
  *
  * @author Ismael Alonso
- * @version 1.0.0
+ * @version 2.0.0
  */
 class DataHandler{
     private static final int LOAD_MORE_COUNT = 3;
@@ -28,177 +24,173 @@ class DataHandler{
 
     private Goal mFeedbackGoal;
 
-    private List<UserAction> mDisplayedUpcoming;
-    private List<UserGoal> mDisplayedUserGoals;
-    private List<Goal> mDisplayedGoalSuggestions;
-
 
     /**
      * Constructor.
      *
-     * @param userData the data bundle.
+     * @param userData the user data bundle.
      */
     DataHandler(UserData userData){
         mUserData = userData;
         mFeedData = userData.getFeedData();
 
-        if (mUserData.getFeedData().getNextAction() != null){
-            if (mUserData.getFeedData().getNextAction().getPrimaryGoal() != null){
-                mFeedbackGoal = mUserData.getFeedData().getNextAction().getPrimaryGoal().getGoal();
-            }
+        if (mFeedData.getNextAction() != null){
+            mFeedbackGoal = mFeedData.getNextAction().getGoal();
         }
-
-        mDisplayedUpcoming = new ArrayList<>();
-        loadMoreUpcoming();
-
-        mDisplayedUserGoals = new ArrayList<>();
-        mDisplayedGoalSuggestions = new ArrayList<>();
-        loadMoreGoals();
     }
 
+    /**
+     * Updates the progress indicator when a user taps I did it.
+     */
     void didIt(){
         mFeedData.setCompletedActions(mFeedData.getCompletedActions() + 1);
         int percentage = mFeedData.getCompletedActions() * 100 / mFeedData.getTotalActions();
         mFeedData.setProgressPercentage(percentage);
     }
 
-    void remove(UserAction action){
+    /**
+     * Removes an action from the user selection and updates the progress.
+     *
+     * @param action the action to be removed.
+     */
+    void remove(Action action){
         mFeedData.setTotalActions(mFeedData.getTotalActions() - 1);
         int percentage = mFeedData.getCompletedActions() * 100 / mFeedData.getTotalActions();
         mFeedData.setProgressPercentage(percentage);
 
-        mUserData.removeAction(action.getAction());
+        mUserData.removeAction(action);
+        if (mFeedData.getNextAction().equals(action)){
+            replaceUpNext();
+        }
+        else{
+            mFeedData.getUpcomingActions().remove(action);
+        }
     }
 
+    /**
+     * Tells whether the user has any upcoming actions left for the day.
+     *
+     * @return true if the user does, false otherwise.
+     */
+    boolean hasUpcoming(){
+        return !mFeedData.getUpcomingActions().isEmpty();
+    }
+
+    /**
+     * Tells whether the user has selected goals or not.
+     *
+     * @return true if the user has selected goals, false otherwise.
+     */
     boolean hasUserGoals(){
         return !mUserData.getGoals().isEmpty();
     }
 
-    UserAction getUpNext(){
+    /**
+     * Getter for the user's next action.
+     *
+     * @return the next action.
+     */
+    Action getUpNext(){
         return mFeedData.getNextAction();
     }
 
-    void replaceUpNext(){
+    /**
+     * Replaces the up next action with the one after.
+     *
+     * @return the new next action.
+     */
+    Action replaceUpNext(){
         if (mFeedData.getUpcomingActions().isEmpty()){
             mFeedData.setNextAction(null);
         }
         else{
-            mFeedData.setNextAction(mDisplayedUpcoming.remove(0));
-            mFeedData.getUpcomingActions().remove(0);
-
-            checkActions();
+            mFeedData.setNextAction(mFeedData.getUpcomingActions().remove(0));
         }
+        return mFeedData.getNextAction();
     }
 
+    /**
+     * Getter for the goal whose progress is being displayed in the feedback card.
+     *
+     * @return the goal displayed by the feedback card.
+     */
     Goal getFeedbackGoal(){
         return mFeedbackGoal;
     }
 
-    List<UserAction> getUpcoming(){
-        return mDisplayedUpcoming;
-    }
-
-    UserAction getUpcoming(int position){
-        return mDisplayedUpcoming.get(position);
-    }
-
-    UserAction removeUpcoming(int position){
-        mDisplayedUpcoming.remove(position);
-        UserAction removed = mFeedData.getUpcomingActions().remove(position);
-
-        checkActions();
-
-        return removed;
-    }
-
-    Category getActionCategory(UserAction action){
-        Category category = null;
-        if (action.getPrimaryGoal() != null){
-            //category = action.getPrimaryGoal().getPrimaryCategory();
-            if (category == null){
-                UserGoal goal = mUserData.getGoal(action.getPrimaryGoal());
-                if (goal.getCategories().size() > 0){
-                    category = goal.getCategories().get(0).getCategory();
-                }
-            }
+    /**
+     * Returns the next batch of actions to be displayed in the feed.
+     *
+     * @param displayedActions the number of actions already being displayed in the feed.
+     * @return a list containing the new actions.
+     */
+    List<Action> loadMoreUpcoming(int displayedActions){
+        List<Action> actions = new ArrayList<>();
+        while (actions.size() < LOAD_MORE_COUNT && canLoadMoreActions(displayedActions + actions.size())){
+            actions.add(mFeedData.getUpcomingActions().get(displayedActions + actions.size()));
         }
-        return category;
+        return actions;
     }
 
-    List<UserGoal> getUserGoals(){
-        return mDisplayedUserGoals;
+    /**
+     * Tells whether there are more actions to display.
+     *
+     * @param displayedActions the number of actions already being displayed in the feed.
+     * @return true if there are more actions to load, false otherwise.
+     */
+    boolean canLoadMoreActions(int displayedActions){
+        return displayedActions < mFeedData.getUpcomingActions().size();
     }
 
-    List<Goal> getSuggestions(){
-        return mDisplayedGoalSuggestions;
-    }
-
-    int loadMoreUpcoming(){
-        int count = 0;
-        while (count < LOAD_MORE_COUNT && canLoadMoreActions()){
-            mDisplayedUpcoming.add(mFeedData.getUpcomingActions().get(mDisplayedUpcoming.size()));
-            count++;
+    /**
+     * Returns the next batch of goals to be displayed in the feed.
+     *
+     * @param displayedGoals the number of goals already being displayed din the feed.
+     * @return a list containing the new goals.
+     */
+    List<DisplayableGoal> loadMoreGoals(int displayedGoals){
+        //Populate the new list
+        List<DisplayableGoal> goals = new ArrayList<>();
+        while (goals.size() < LOAD_MORE_COUNT && canLoadMoreGoals(displayedGoals + goals.size())){
+            goals.add(mFeedData.getGoals().get(displayedGoals + goals.size()));
         }
-        return count;
+        return goals;
     }
 
-    boolean canLoadMoreActions(){
-        return mDisplayedUpcoming.size() < mFeedData.getUpcomingActions().size();
+    /**
+     * Tells whether there are more goals to display.
+     *
+     * @param displayedGoals the number of goals already being displayed din the feed.
+     * @return true if there are more goals to load, false otherwise.
+     */
+    boolean canLoadMoreGoals(int displayedGoals){
+        return displayedGoals < mFeedData.getGoals().size();
     }
 
-    int loadMoreGoals(){
-        int count = 0;
-        if (hasUserGoals()){
-            List<UserGoal> userGoals = new ArrayList<>(mUserData.getGoals().values());
-            while (count < LOAD_MORE_COUNT && canLoadMoreGoals()){
-                mDisplayedUserGoals.add(userGoals.get(mDisplayedUserGoals.size()));
-                count++;
-            }
-        }
-        else{
-            Log.d("MainFeedAdapter", "Suggestions: " + mFeedData.getSuggestions().size());
-            while (count < LOAD_MORE_COUNT && canLoadMoreGoals()){
-                mDisplayedGoalSuggestions.add(mFeedData.getSuggestions().get(mDisplayedGoalSuggestions.size()));
-                count++;
-            }
-            Log.d("MainFeedAdapter", "Displayed suggestions: " + mDisplayedGoalSuggestions.size());
-        }
-        return count;
-    }
-
-    boolean canLoadMoreGoals(){
-        if (hasUserGoals()){
-            return mDisplayedUserGoals.size() < mUserData.getGoals().size();
-        }
-        else{
-            return mDisplayedGoalSuggestions.size() < mUserData.getFeedData().getSuggestions().size();
-        }
-    }
-
-    private void checkActions(){
-        if (mDisplayedUpcoming.size() < 3 && mFeedData.getUpcomingActions().size() > mDisplayedUpcoming.size()){
-            mDisplayedUpcoming.add(mFeedData.getUpcomingActions().get(mDisplayedUpcoming.size()));
-        }
-    }
-
+    /**
+     * Gets the total number of actions scheduled for today.
+     *
+     * @return the total number of actions scheduled for today.
+     */
     int getTotalActions(){
         return mFeedData.getTotalActions();
     }
 
+    /**
+     * Gets the number of actions completed today.
+     *
+     * @return the number of actions completed today.
+     */
     int getProgress(){
         return mFeedData.getProgress();
     }
 
+    /**
+     * Gets the fraction of actions completed out of the total scheduled today.
+     *
+     * @return the fraction of actions completed out of the total scheduled today.
+     */
     String getProgressFraction(){
         return mFeedData.getProgressFraction();
-    }
-
-    void reload(){
-        int size = mDisplayedUserGoals.size();
-        mDisplayedUserGoals.clear();
-        List<UserGoal> userGoals = new ArrayList<>(mUserData.getGoals().values());
-        while (size > mDisplayedUserGoals.size() && canLoadMoreGoals()){
-            mDisplayedUserGoals.add(userGoals.get(mDisplayedUserGoals.size()));
-        }
     }
 }

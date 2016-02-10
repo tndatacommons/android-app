@@ -41,7 +41,7 @@ public class SnoozeService extends IntentService{
 
         //Cancel the notification
         NotificationManager manager = ((NotificationManager)getSystemService(NOTIFICATION_SERVICE));
-        manager.cancel(NotificationUtil.NOTIFICATION_TYPE_ACTION_TAG, pushNotificationId);
+        manager.cancel(NotificationUtil.USER_ACTION_TAG, pushNotificationId);
 
         //If the notification id is not -1, create the request
         if (notificationId != -1){

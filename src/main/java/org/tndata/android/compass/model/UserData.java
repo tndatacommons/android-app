@@ -1,7 +1,8 @@
 package org.tndata.android.compass.model;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
+
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +19,8 @@ import java.util.Set;
  * - Goals
  * - Behaviors
  * - Actions
+ * - Custom Goals
+ * - Custom Actions
  * - Places
  *
  * It includes methods to set & get those values, and keeps a consistently updated
@@ -29,53 +32,60 @@ import java.util.Set;
  * @author Ismael Alonso
  * @version 2.0.0
  */
-public class UserData{
+public class UserData extends TDCBase{
     private static final String TAG = "UserData";
 
+    public static final String TYPE = "user_data";
 
-    //User selected content. id -> content maps
-    private Map<Integer, UserCategory> categories;
-    private Map<Integer, UserGoal> goals;
-    private Map<Integer, UserBehavior> behaviors;
-    private Map<Integer, UserAction> actions;
-    private Set<Integer> mRequestedGoals;
+
+    //User selected content: TDCContent.id -> UserSelectedContent maps
+    @SerializedName("user_categories")
+    private Map<Long, UserCategory> mCategories;
+    @SerializedName("user_goals")
+    private Map<Long, UserGoal> mGoals;
+    @SerializedName("user_behaviors")
+    private Map<Long, UserBehavior> mBehaviors;
+    @SerializedName("user_actions")
+    private Map<Long, UserAction> mActions;
+    private Set<Long> mRequestedGoals;
+
+    //Custom content: Custom(*).id -> Custom(*) maps
+    @SerializedName("customgoals")
+    private Map<Long, CustomGoal> mCustomGoals;
+    @SerializedName("customactions")
+    private Map<Long, CustomAction> mCustomActions;
 
     //User places
-    private List<UserPlace> places = new ArrayList<>();
+    @SerializedName("places")
+    private List<UserPlace> mPlaces = new ArrayList<>();
 
     //Data for the main feed
-    private FeedData feed_data;
+    @SerializedName("feed_data")
+    private FeedData mFeedData;
 
 
     /**
      * Constructor.
      */
     public UserData(){
-        categories = new HashMap<>();
-        goals = new HashMap<>();
-        behaviors = new HashMap<>();
-        actions = new HashMap<>();
+        mCategories = new HashMap<>();
+        mGoals = new HashMap<>();
+        mBehaviors = new HashMap<>();
+        mActions = new HashMap<>();
+
+        mCustomGoals = new HashMap<>();
+        mCustomActions = new HashMap<>();
     }
 
-
-    /*--------------------CONTENT SETTERS--------------------*
-     * These methods are meant to be used by the parser only *
-     *-------------------------------------------------------*/
-
-    public void setCategories(@NonNull Map<Integer, UserCategory> categories){
-        this.categories = categories;
+    @Override
+    protected String getType(){
+        return TYPE;
     }
 
-    public void setGoals(@NonNull Map<Integer, UserGoal> goals){
-        this.goals = goals;
-    }
-
-    public void setBehaviors(@NonNull Map<Integer, UserBehavior> behaviors){
-        this.behaviors = behaviors;
-    }
-
-    public void setActions(@NonNull Map<Integer, UserAction> actions){
-        this.actions = actions;
+    @Override
+    public long getId(){
+        //Not actual content, but a container
+        return -1;
     }
 
 
@@ -88,8 +98,8 @@ public class UserData{
      *
      * @return an ArrayList of Category objects
      */
-    public Map<Integer, UserCategory> getCategories(){
-        return categories;
+    public Map<Long, UserCategory> getCategories(){
+        return mCategories;
     }
 
     /**
@@ -98,8 +108,8 @@ public class UserData{
      * @param category the category whose original copy needs to be fetched.
      * @return the original copy of such category.
      */
-    public UserCategory getCategory(Category category){
-        return categories.get(category.getId());
+    public UserCategory getCategory(CategoryContent category){
+        return mCategories.get(category.getId());
     }
 
     public UserCategory getCategory(UserCategory userCategory){
@@ -107,15 +117,15 @@ public class UserData{
     }
 
     public boolean contains(UserCategory userCategory){
-        return categories.containsKey(userCategory.getCategory().getId());
+        return mCategories.containsKey(userCategory.getCategory().getId());
     }
 
     /**
-     * Returns all of the goals for a given Category. This is a wrapper for category.getGoals().
+     * Returns all of the mGoals for a given Category. This is a wrapper for category.getGoalIdSet().
      *
      * @return a List of Goal objects.
      */
-    public List<UserGoal> getCategoryGoals(Category category){
+    public List<UserGoal> getCategoryGoals(CategoryContent category){
         return getCategory(category).getGoals();
     }
 
@@ -129,11 +139,12 @@ public class UserData{
         //If the category ain't in the data set
         if (!contains(userCategory)){
             //Add it
-            categories.put(userCategory.getObjectId(), userCategory);
+            userCategory.init();
+            mCategories.put(userCategory.getContentId(), userCategory);
 
-            //Link goals
-            for (UserGoal userGoals:goals.values()){
-                if (userGoals.getGoal().getCategories().contains(userCategory.getObjectId())){
+            //Link mGoals
+            for (UserGoal userGoals: mGoals.values()){
+                if (userGoals.getGoal().getCategoryIdSet().contains(userCategory.getContentId())){
                     userGoals.addCategory(userCategory);
                     userCategory.addGoal(userGoals);
                 }
@@ -150,16 +161,16 @@ public class UserData{
      *
      * @param category the category to remove
      */
-    public void removeCategory(Category category){
-        /*UserCategory removedCategory = categories.remove(category.getId());
+    public void removeCategory(UserCategory category){
+        /*UserCategory removedCategory = mCategories.remove(category.getId());
 
         if (removedCategory != null){
             List<UserGoal> goalsToRemove = new ArrayList<>();
-            //Remove this category from any child goals
-            for (UserGoal goal : removedCategory.getGoals()){
+            //Remove this category from any child mGoals
+            for (UserGoal goal : removedCategory.getGoalIdSet()){
                 goal.removeCategory(removedCategory);
                 //Record all the Goals w/o parent Categories
-                if (goal.getCategories().isEmpty()){
+                if (goal.getCategoryIdSet().isEmpty()){
                     goalsToRemove.add(goal);
                 }
             }
@@ -180,8 +191,8 @@ public class UserData{
      *
      * @return a List of Goal objects.
      */
-    public Map<Integer, UserGoal> getGoals(){
-        return goals;
+    public Map<Long, UserGoal> getGoals(){
+        return mGoals;
     }
 
     /**
@@ -190,12 +201,8 @@ public class UserData{
      * @param goal the goal whose original copy needs to be fetched.
      * @return the original copy of such goal.
      */
-    public UserGoal getGoal(Goal goal){
-        return goals.get(goal.getId());
-    }
-
-    public UserGoal getGoal(UserGoal userGoal){
-        return getGoal(userGoal.getGoal());
+    public UserGoal getGoal(GoalContent goal){
+        return mGoals.get(goal.getId());
     }
 
     /**
@@ -205,7 +212,7 @@ public class UserData{
      * @return true if the goal is in the user's collection, false otherwise.
      */
     public boolean contains(UserGoal userGoal){
-        return goals.containsKey(userGoal.getGoal().getId());
+        return mGoals.containsKey(userGoal.getGoal().getId());
     }
 
     /**
@@ -215,8 +222,8 @@ public class UserData{
      * @param goal the goal to be checked.
      * @return true if it is, false otherwise.
      */
-    public boolean contains(Goal goal){
-        return goals.containsKey(goal.getId()) || mRequestedGoals.contains(goal.getId());
+    public boolean contains(GoalContent goal){
+        return mGoals.containsKey(goal.getId()) || mRequestedGoals.contains(goal.getId());
     }
 
     /**
@@ -224,7 +231,7 @@ public class UserData{
      *
      * @param id the id of the goal.
      */
-    public void addGoal(int id){
+    public void addGoal(long id){
         mRequestedGoals.add(id);
     }
 
@@ -236,30 +243,33 @@ public class UserData{
      *
      * @param userGoal the goal to be added to the user list.
      */
-    public void addGoal(UserGoal userGoal){
+    private void addGoal(UserGoal userGoal){
         //If the goal ain't in the data set
         if (!contains(userGoal)){
-            mRequestedGoals.remove(userGoal.getObjectId());
+            mRequestedGoals.remove(userGoal.getContentId());
 
             //Initialize the object and add it
             userGoal.init();
-            goals.put(userGoal.getObjectId(), userGoal);
+            mGoals.put(userGoal.getContentId(), userGoal);
 
             //Link the goal with the relevant categories
-            for (Integer categoryId:userGoal.getGoal().getCategories()){
-                if (categories.containsKey(categoryId)){
-                    userGoal.addCategory(categories.get(categoryId));
-                    categories.get(categoryId).addGoal(userGoal);
+            for (Long categoryId:userGoal.getGoal().getCategoryIdSet()){
+                if (mCategories.containsKey(categoryId)){
+                    userGoal.addCategory(mCategories.get(categoryId));
+                    mCategories.get(categoryId).addGoal(userGoal);
                 }
             }
+            userGoal.setPrimaryCategory(mCategories.get(userGoal.getPrimaryCategoryId()));
 
             //Link the goal with the relevant behaviors
-            for (UserBehavior userBehavior:behaviors.values()){
-                if (userBehavior.getBehavior().getGoals().contains(userGoal.getObjectId())){
+            for (UserBehavior userBehavior:mBehaviors.values()){
+                if (userBehavior.getBehavior().getGoalIdSet().contains(userGoal.getContentId())){
                     userGoal.addBehavior(userBehavior);
                     userBehavior.addGoal(userGoal);
                 }
             }
+
+            mFeedData.addGoal(userGoal);
         }
     }
 
@@ -269,11 +279,10 @@ public class UserData{
      * Removing a goal also removes its reference from the parent Categories
      * as well as the child Behaviors.
      *
-     * TODO Goal vs UserGoal?
      * @param goal the goal to be removed from the user list.
      */
-    public void removeGoal(Goal goal){
-        UserGoal removedGoal = goals.remove(goal.getId());
+    private void removeGoal(UserGoal goal){
+        UserGoal removedGoal = mGoals.remove(goal.getContentId());
 
         if (removedGoal != null){
             //Remove the goal from its parent categories
@@ -281,20 +290,16 @@ public class UserData{
                 category.removeGoal(removedGoal);
             }
 
-            //List<UserBehavior> behaviorsToRemove = new ArrayList<>();
             //Remove the goal from its child Behaviors
             for (UserBehavior behavior:removedGoal.getBehaviors()){
                 behavior.removeGoal(removedGoal);
                 //Record all the Behaviors w/o parent Goals
                 if (behavior.getGoals().isEmpty()){
-                    removeBehavior(behavior.getBehavior());
-                    //behaviorsToRemove.add(behavior);
+                    removeBehavior(behavior);
                 }
             }
-            //Remove Behaviors w/o parent Goals
-            /*for (UserBehavior behavior : behaviorsToRemove){
-                removeBehavior(behavior.getBehavior());
-            }*/
+
+            mFeedData.removeGoal(removedGoal);
         }
     }
 
@@ -308,8 +313,8 @@ public class UserData{
      *
      * @return an ArrayList of Behavior objects.
      */
-    public Map<Integer, UserBehavior> getBehaviors(){
-        return behaviors;
+    public Map<Long, UserBehavior> getBehaviors(){
+        return mBehaviors;
     }
 
     /**
@@ -318,8 +323,8 @@ public class UserData{
      * @param behavior the behavior whose original copy needs to be fetched.
      * @return the original copy of such behavior.
      */
-    public UserBehavior getBehavior(Behavior behavior){
-        return behaviors.get(behavior.getId());
+    public UserBehavior getBehavior(BehaviorContent behavior){
+        return mBehaviors.get(behavior.getId());
     }
 
     public UserBehavior getBehavior(UserBehavior userBehavior){
@@ -327,7 +332,7 @@ public class UserData{
     }
 
     public boolean contains(UserBehavior userBehavior){
-        return behaviors.containsKey(userBehavior.getBehavior().getId());
+        return mBehaviors.containsKey(userBehavior.getBehavior().getId());
     }
 
     /**
@@ -338,17 +343,17 @@ public class UserData{
     public void addBehavior(UserBehavior userBehavior){
         if (!contains(userBehavior)){
             userBehavior.init();
-            behaviors.put(userBehavior.getObjectId(), userBehavior);
+            mBehaviors.put(userBehavior.getContentId(), userBehavior);
 
-            for (Integer goalId:userBehavior.getBehavior().getGoals()){
-                if (goals.containsKey(goalId)){
-                    userBehavior.addGoal(goals.get(goalId));
-                    goals.get(goalId).addBehavior(userBehavior);
+            for (Long goalId:userBehavior.getBehavior().getGoalIdSet()){
+                if (mGoals.containsKey(goalId)){
+                    userBehavior.addGoal(mGoals.get(goalId));
+                    mGoals.get(goalId).addBehavior(userBehavior);
                 }
             }
 
-            for (UserAction userAction:actions.values()){
-                if (userAction.getAction().getBehavior() == userBehavior.getObjectId()){
+            for (UserAction userAction:mActions.values()){
+                if (userAction.getAction().getBehaviorId() == userBehavior.getContentId()){
                     userAction.setBehavior(userBehavior);
                     userBehavior.addAction(userAction);
                 }
@@ -363,8 +368,8 @@ public class UserData{
      *
      * @param behavior the Behavior instance to remove.
      */
-    public void removeBehavior(Behavior behavior){
-        UserBehavior removedBehavior = behaviors.remove(behavior.getId());
+    public void removeBehavior(UserBehavior behavior){
+        UserBehavior removedBehavior = mBehaviors.remove(behavior.getContentId());
 
         if (removedBehavior != null){
             //Remove the behavior from any parent Goals
@@ -374,7 +379,7 @@ public class UserData{
 
             //Remove the child Actions
             for (UserAction action:removedBehavior.getActions()){
-                actions.remove(action.getAction().getId());
+                mActions.remove(action.getAction().getId());
             }
         }
     }
@@ -389,8 +394,8 @@ public class UserData{
      *
      * @return an ArrayList of Action objects.
      */
-    public Map<Integer, UserAction> getActions(){
-        return actions;
+    public Map<Long, UserAction> getActions(){
+        return mActions;
     }
 
     /**
@@ -399,16 +404,12 @@ public class UserData{
      * @param action the action whose original copy needs to be fetched.
      * @return the original copy of such action.
      */
-    public UserAction getAction(Action action){
-        return actions.get(action.getId());
-    }
-
-    public UserAction getAction(UserAction userAction){
-        return getAction(userAction.getAction());
+    public UserAction getAction(ActionContent action){
+        return mActions.get(action.getId());
     }
 
     public boolean contains(UserAction userAction){
-        return actions.containsKey(userAction.getAction().getId());
+        return mActions.containsKey(userAction.getAction().getId());
     }
 
     /**
@@ -418,15 +419,19 @@ public class UserData{
      *
      * @param userAction the action to be added to the list.
      */
-    public void addAction(UserAction userAction){
+    private void addAction(UserAction userAction){
         if (!contains(userAction)){
-            actions.put(userAction.getAction().getId(), userAction);
+            mActions.put(userAction.getContentId(), userAction);
 
-            UserBehavior behavior = behaviors.get(userAction.getAction().getBehavior());
+            UserBehavior behavior = mBehaviors.get(userAction.getAction().getBehaviorId());
             if (behavior != null){
                 behavior.addAction(userAction);
                 userAction.setBehavior(behavior);
             }
+            userAction.setPrimaryGoal(mGoals.get(userAction.getPrimaryGoalId()));
+            userAction.setPrimaryCategory(mCategories.get(userAction.getPrimaryCategoryId()));
+
+            //mFeedData.addAction(userAction);
         }
     }
 
@@ -436,10 +441,134 @@ public class UserData{
      *
      * @param action the Action object to remove.
      */
-    public void removeAction(Action action){
-        UserAction removedAction = actions.remove(action.getId());
+    private void removeAction(UserAction action){
+        UserAction removedAction = mActions.remove(action.getContentId());
         if (removedAction != null && removedAction.getBehavior() != null){
             removedAction.getBehavior().removeAction(removedAction);
+
+            mFeedData.removeAction(action);
+        }
+    }
+
+
+    /*-----------------------------*
+     * CUSTOM GOAL RELATED METHODS *
+     *-----------------------------*/
+
+    public Map<Long, CustomGoal> getCustomGoals(){
+        return mCustomGoals;
+    }
+
+    private void addGoal(CustomGoal customGoal){
+        if (!mCustomGoals.containsKey(customGoal.getContentId())){
+            mCustomGoals.put(customGoal.getContentId(), customGoal);
+            mFeedData.addGoal(customGoal);
+        }
+    }
+
+    private void removeGoal(CustomGoal customGoal){
+        mCustomGoals.remove(customGoal.getContentId());
+        mFeedData.removeGoal(customGoal);
+
+        for (CustomAction customAction:customGoal.getActions()){
+            if (mCustomActions.containsKey(customAction.getContentId())){
+                removeAction(customAction);
+            }
+        }
+    }
+
+
+    /*-------------------------------*
+     * CUSTOM ACTION RELATED METHODS *
+     *-------------------------------*/
+
+    public Map<Long, CustomAction> getCustomActions(){
+        return mCustomActions;
+    }
+
+    private void addAction(CustomAction customAction){
+        mCustomActions.put(customAction.getContentId(), customAction);
+        customAction.setGoal(mCustomGoals.get(customAction.getCustomGoalId()));
+        customAction.getGoal().addAction(customAction);
+        //mFeedData.addAction(customAction);
+    }
+
+    private void removeAction(CustomAction customAction){
+        mCustomActions.remove(customAction.getContentId());
+        CustomGoal customGoal = mCustomGoals.get(customAction.getCustomGoalId());
+        if (customGoal != null){
+            customGoal.removeAction(customAction);
+        }
+        mFeedData.removeAction(customAction);
+    }
+
+
+    /*----------------------*
+     * GOAL GENERIC METHODS *
+     *----------------------*/
+
+    public Goal getGoal(Goal goal){
+        if (goal instanceof UserGoal){
+            return mGoals.get(goal.getContentId());
+        }
+        else{
+            return mCustomGoals.get(goal.getContentId());
+        }
+    }
+
+    public void addGoal(Goal goal){
+        if (goal instanceof UserGoal){
+            addGoal((UserGoal)goal);
+        }
+        else if (goal instanceof CustomGoal){
+            addGoal((CustomGoal)goal);
+        }
+    }
+
+    public void removeGoal(Goal goal){
+        if (goal instanceof UserGoal){
+            removeGoal((UserGoal)goal);
+        }
+        else if (goal instanceof CustomGoal){
+            removeGoal((CustomGoal)goal);
+        }
+    }
+
+
+    /*------------------------*
+     * ACTION GENERIC METHODS *
+     *------------------------*/
+
+    public Action getAction(Action action){
+        if (action instanceof UserAction){
+            return mActions.get(action.getContentId());
+        }
+        else{
+            return mCustomActions.get(action.getContentId());
+        }
+    }
+
+    public void addAction(Action action){
+        if (action instanceof UserAction){
+            addAction((UserAction)action);
+        }
+        else if (action instanceof CustomAction){
+            addAction((CustomAction)action);
+        }
+    }
+
+    public void updateActionTrigger(Action action){
+        if (action.getNextReminder() != null){
+            mFeedData.addAction(action);
+        }
+    }
+
+    public void removeAction(Action action){
+        if (action instanceof UserAction){
+            removeAction((UserAction)action);
+        }
+        else if (action instanceof CustomAction){
+            removeAction((CustomAction)action);
         }
     }
 
@@ -457,7 +586,8 @@ public class UserData{
         linkGoalsAndCategories();
         linkBehaviorsAndGoals();
         linkActions();
-        feed_data.sync(this);
+        linkCustomContent();
+        mFeedData.sync(this);
     }
 
     /**
@@ -465,15 +595,15 @@ public class UserData{
      */
     private void linkGoalsAndCategories(){
         //Add each goal to the correct category and vice versa
-        for (UserGoal userGoal: goals.values()){
-            for (Integer categoryId:userGoal.getGoal().getCategories()){
-                if (categories.containsKey(categoryId)){
-                    UserCategory userCategory = categories.get(categoryId);
+        for (UserGoal userGoal:mGoals.values()){
+            for (Long categoryId:userGoal.getGoal().getCategoryIdSet()){
+                if (mCategories.containsKey(categoryId)){
+                    UserCategory userCategory = mCategories.get(categoryId);
                     userCategory.addGoal(userGoal);
                     userGoal.addCategory(userCategory);
                 }
             }
-            userGoal.setPrimaryCategory(categories.get(userGoal.getPrimaryCategoryId()));
+            userGoal.setPrimaryCategory(mCategories.get(userGoal.getPrimaryCategoryId()));
         }
     }
 
@@ -481,11 +611,11 @@ public class UserData{
      * Generates the inner lists of parents and children for behaviors and goals, respectively.
      */
     private void linkBehaviorsAndGoals(){
-        //Look at all the selected goals
-        for (UserBehavior userBehavior: behaviors.values()){
-            for (Integer goalId:userBehavior.getBehavior().getGoals()){
-                if (goals.containsKey(goalId)){
-                    UserGoal userGoal = goals.get(goalId);
+        //Look at all the selected mGoals
+        for (UserBehavior userBehavior:mBehaviors.values()){
+            for (Long goalId:userBehavior.getBehavior().getGoalIdSet()){
+                if (mGoals.containsKey(goalId)){
+                    UserGoal userGoal = mGoals.get(goalId);
                     userGoal.addBehavior(userBehavior);
                     userBehavior.addGoal(userGoal);
                 }
@@ -494,15 +624,26 @@ public class UserData{
     }
 
     /**
-     * Generates the inner list of children for behaviors and sets the parents for actions.
+     * Generates the inner list of children for mBehaviors and sets the parents for actions.
      */
     public void linkActions(){
-        for (UserAction userAction:actions.values()){
-            UserBehavior userBehavior = behaviors.get(userAction.getAction().getBehavior());
+        for (UserAction userAction:mActions.values()){
+            UserBehavior userBehavior = mBehaviors.get(userAction.getAction().getBehaviorId());
             userBehavior.addAction(userAction);
             userAction.setBehavior(userBehavior);
-            userAction.setPrimaryGoal(goals.get(userAction.getPrimaryGoalId()));
-            userAction.setPrimaryCategory(categories.get(userAction.getPrimaryCategoryId()));
+            userAction.setPrimaryGoal(mGoals.get(userAction.getPrimaryGoalId()));
+            userAction.setPrimaryCategory(mCategories.get(userAction.getPrimaryCategoryId()));
+        }
+    }
+
+    /**
+     * Fills the CustomAction list of CustomGoals and sets the parent CustomGoals
+     * for CustomActions.
+     */
+    public void linkCustomContent(){
+        for (CustomAction customAction:mCustomActions.values()){
+            customAction.setGoal(mCustomGoals.get(customAction.getCustomGoalId()));
+            customAction.getGoal().addAction(customAction);
         }
     }
 
@@ -514,19 +655,19 @@ public class UserData{
     /**
      * Sets the list of user set places.
      *
-     * @param places the list of places set by the user.
+     * @param places the list of mPlaces set by the user.
      */
     public void setPlaces(List<UserPlace> places){
-        this.places = places;
+        this.mPlaces = places;
     }
 
     /**
      * Gets the list of user set places.
      *
-     * @return the list of places set by te user.
+     * @return the list of mPlaces set by te user.
      */
     public List<UserPlace> getPlaces(){
-        return places;
+        return mPlaces;
     }
 
     /**
@@ -535,7 +676,7 @@ public class UserData{
      * @param place the place to be added.
      */
     public void addPlace(UserPlace place){
-        places.add(place);
+        mPlaces.add(place);
     }
 
 
@@ -549,7 +690,7 @@ public class UserData{
      * @param feedData the object containing the information to be displayed in the feed.
      */
     public void setFeedData(FeedData feedData){
-        feed_data = feedData;
+        mFeedData = feedData;
     }
 
     /**
@@ -558,7 +699,7 @@ public class UserData{
      * @return the object containing the information to be displayed in the feed.
      */
     public FeedData getFeedData(){
-        return feed_data;
+        return mFeedData;
     }
 
 
@@ -570,29 +711,38 @@ public class UserData{
      * Log the value of individual private data members.
      */
     public void logData() {
-        Log.d(TAG, "Categories.");
-        for (UserCategory item:categories.values()){
-            Log.d(TAG, "- " + item.toString());
-            Log.d(TAG, "--> contains " + item.getGoals().size() + " goals");
+        Log.d(TAG, "Categories (" + mCategories.size() + "):");
+        for (UserCategory userCategory:mCategories.values()){
+            Log.d(TAG, "- " + userCategory);
+            Log.d(TAG, "--> contains " + userCategory.getGoals().size() + " goals");
         }
-        Log.d(TAG, "Goals.");
-        for (UserGoal item:goals.values()){
-            Log.d(TAG, "- " + item.toString());
-            Log.d(TAG, "--> contains " + item.getCategories().size() + " categories");
-            Log.d(TAG, "--> contains " + item.getBehaviors().size() + " behaviors");
+        Log.d(TAG, "Goals (" + mGoals.size() + "):");
+        for (UserGoal userGoal:mGoals.values()){
+            Log.d(TAG, "- " + userGoal);
+            Log.d(TAG, "--> parents: " + userGoal.getGoal().getCategoryIdSet());
+            Log.d(TAG, "--> contains " + userGoal.getBehaviors().size() + " behaviors");
         }
-        Log.d(TAG, "Behaviors.");
-        for (UserBehavior item:behaviors.values()){
-            Log.d(TAG, "- " + item.toString());
-            Log.d(TAG, "--> contains " + item.getGoals().size() + " goals");
-            Log.d(TAG, "--> contains " + item.getActions().size() + " actions");
+        Log.d(TAG, "Behaviors (" + mBehaviors.size() + "):");
+        for (UserBehavior userBehavior:mBehaviors.values()){
+            Log.d(TAG, "- " + userBehavior);
+            Log.d(TAG, "--> parents: " + userBehavior.getBehavior().getGoalIdSet());
+            Log.d(TAG, "--> contains " + userBehavior.getActions().size() + " actions");
         }
-        Log.d(TAG, "Actions.");
-        for (UserAction item:actions.values()){
-            Log.d(TAG, item.getAction().getBehavior()+"");
-            Log.d(TAG, behaviors.get(item.getAction().getBehavior()).getBehavior().toString());
-            Log.d(TAG, "- " + item.toString());
-            Log.d(TAG, "--> contains: " + item.getBehavior().toString());
+        Log.d(TAG, "Actions (" + mActions.size() + "):");
+        for (UserAction userAction:mActions.values()){
+            Log.d(TAG, "- " + userAction);
+            Log.d(TAG, "--> parent: " + userAction.getBehavior());
+        }
+
+        Log.d(TAG, "CustomGoals (" + mCustomGoals.size() + "):");
+        for (CustomGoal customGoal:mCustomGoals.values()){
+            Log.d(TAG, "- " + customGoal);
+            Log.d(TAG, "--> contains " + customGoal.getActions().size() + " actions");
+        }
+        Log.d(TAG, "CustomActions (" + mCustomActions.size() + "):");
+        for (CustomAction customAction:mCustomActions.values()){
+            Log.d(TAG, "- " + customAction);
+            Log.d(TAG, "--> parent: " + customAction.getGoal());
         }
     }
 
@@ -606,7 +756,7 @@ public class UserData{
         if (!userGoal.getCategories().isEmpty()){
             output = "";
             for (UserCategory userCategory:userGoal.getCategories()){
-                output += "(" + userCategory.getObjectId() + ") " + userCategory.getTitle() + ", ";
+                output += "(" + userCategory.getContentId() + ") " + userCategory.getTitle() + ", ";
             }
         }
         Log.d(TAG, "- (parents) -> " + output);
@@ -622,7 +772,7 @@ public class UserData{
         if (!userBehavior.getGoals().isEmpty()){
             output = "";
             for (UserGoal userGoal:userBehavior.getGoals()){
-                output += "(" + userGoal.getObjectId() + ") " + userGoal.getTitle() + ", ";
+                output += "(" + userGoal.getContentId() + ") " + userGoal.getTitle() + ", ";
             }
         }
         Log.d(TAG, "-- (parents) ->" + output);
@@ -637,7 +787,7 @@ public class UserData{
         String output = "NONE";
         UserBehavior userBehavior = userAction.getBehavior();
         if (userBehavior != null){
-            output = "(" + userBehavior.getObjectId() + ") " + userBehavior.getTitle();
+            output = "(" + userBehavior.getContentId() + ") " + userBehavior.getTitle();
         }
         Log.d(TAG, "--- (parent)-> " + output);
     }
@@ -667,7 +817,7 @@ public class UserData{
      * @param includeParents if true, will Log each item's parent objects.
      */
     public void logSelectedData(String title, boolean includeParents){
-        // Log user-selected categories, goals, behaviors, actions
+        // Log user-selected mCategories, mGoals, mBehaviors, mActions
         Log.d(TAG, "------------- " + title + " --------------- ");
         for (UserCategory userCategory:getCategories().values()){
             Log.d(TAG, "CATEGORY: " + userCategory.getTitle());

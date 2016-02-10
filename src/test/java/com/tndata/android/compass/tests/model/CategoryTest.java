@@ -1,8 +1,8 @@
 package com.tndata.android.compass.tests.model;
 
 import org.junit.Test;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.GoalContent;
 
 import java.lang.reflect.Field;
 
@@ -12,7 +12,7 @@ public class CategoryTest {
 
     @Test
     public void category_setter_color_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
-        Category category = new Category();
+        CategoryContent category = new CategoryContent();
         String value = new String("color");
         category.setColor(value);
         final Field field = category.getClass().getDeclaredField("color");
@@ -22,7 +22,7 @@ public class CategoryTest {
 
     @Test
     public void category_setter_secondary_color_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
-        Category category = new Category();
+        CategoryContent category = new CategoryContent();
         String value = new String("secondary_color");
         category.setSecondaryColor(value);
         final Field field = category.getClass().getDeclaredField("secondary_color");
@@ -32,7 +32,7 @@ public class CategoryTest {
 
     @Test
     public void category_setter_icon_url_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
-        Category category = new Category();
+        CategoryContent category = new CategoryContent();
         String value = new String("icon_url");
         category.setIconUrl(value);
         final Field field = category.getClass().getDeclaredField("icon_url");
@@ -42,7 +42,7 @@ public class CategoryTest {
 
     @Test
     public void category_setter_image_url_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
-        Category category = new Category();
+        CategoryContent category = new CategoryContent();
         String value = new String("image_url");
         category.setImageUrl(value);
         final Field field = category.getClass().getDeclaredField("image_url");
@@ -52,7 +52,7 @@ public class CategoryTest {
 
     @Test
     public void category_getter_order_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
-        Category category = new Category();
+        CategoryContent category = new CategoryContent();
         int value = (int) Math.random();
         final Field field = category.getClass().getDeclaredField("order");
         field.setAccessible(true);
@@ -63,7 +63,7 @@ public class CategoryTest {
 
     @Test
     public void category_getter_goals_count_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
-        Category category = new Category();
+        CategoryContent category = new CategoryContent();
         int value = (int) Math.random();
         final Field field = category.getClass().getDeclaredField("goals_count");
         field.setAccessible(true);
@@ -74,7 +74,7 @@ public class CategoryTest {
 
     @Test
     public void category_getter_progress_value_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
-        Category category = new Category();
+        CategoryContent category = new CategoryContent();
         double value = Math.random();
         final Field field = category.getClass().getDeclaredField("progress_value");
         field.setAccessible(true);
@@ -85,7 +85,7 @@ public class CategoryTest {
 
     @Test
     public void category_getter_color_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
-        Category category = new Category();
+        CategoryContent category = new CategoryContent();
         String value = new String("color");
         final Field field = category.getClass().getDeclaredField("color");
         field.setAccessible(true);
@@ -96,7 +96,7 @@ public class CategoryTest {
 
     @Test
     public void category_getter_secondary_color_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
-        Category category = new Category();
+        CategoryContent category = new CategoryContent();
         String value = new String("secondary_color");
         final Field field = category.getClass().getDeclaredField("secondary_color");
         field.setAccessible(true);
@@ -107,7 +107,7 @@ public class CategoryTest {
 
     @Test
     public void category_getter_icon_url_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
-        Category category = new Category();
+        CategoryContent category = new CategoryContent();
         String value = new String("icon_url");
         final Field field = category.getClass().getDeclaredField("icon_url");
         field.setAccessible(true);
@@ -118,7 +118,7 @@ public class CategoryTest {
 
     @Test
     public void category_getter_image_url_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
-        Category category = new Category();
+        CategoryContent category = new CategoryContent();
         String value = new String("image_url");
         final Field field = category.getClass().getDeclaredField("image_url");
         field.setAccessible(true);
@@ -129,17 +129,17 @@ public class CategoryTest {
 
     @Test
     public void category_getter_lists_ReturnsTrue() {
-        Category category = new Category();
+        CategoryContent category = new CategoryContent();
         assertEquals(0, category.getGoals().size());
     }
 
     @Test
     public void category_add_goals_operations_ReturnsTrue() {
-        Category category = new Category();
+        CategoryContent category = new CategoryContent();
 
         assertEquals(0, category.getGoals().size());
 
-        Goal goal1 = new Goal();
+        GoalContent goal1 = new GoalContent();
         goal1.setId(100);
         category.addGoal(goal1);
 
@@ -152,15 +152,15 @@ public class CategoryTest {
 
     @Test
     public void category_remove_goals_operations_ReturnsTrue() {
-        Category category = new Category();
+        CategoryContent category = new CategoryContent();
 
         assertEquals(0, category.getGoals().size());
 
-        Goal goal1 = new Goal();
+        GoalContent goal1 = new GoalContent();
         goal1.setId(100);
         category.addGoal(goal1);
 
-        Goal goal2 = new Goal();
+        GoalContent goal2 = new GoalContent();
         goal2.setId(200);
         category.addGoal(goal2);
 

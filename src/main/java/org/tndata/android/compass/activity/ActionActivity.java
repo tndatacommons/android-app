@@ -25,6 +25,8 @@ import android.widget.ViewSwitcher;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.ActionContent;
+import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.service.ActionReportService;
@@ -50,11 +52,11 @@ public class ActionActivity
                 View.OnClickListener,
                 NetworkRequest.RequestCallback{
 
-    public static final String USER_ACTION_KEY = "org.tndata.compass.ActionActivity.user_action";
-    public static final String ACTION_MAPPING_ID_KEY = "org.tndata.compass.ActionActivity.action_mapping_id";
-    public static final String REMINDER_KEY = "org.tndata.compass.ActionActivity.reminder";
+    public static final String ACTION_KEY = "org.tndata.compass.ActionActivity.Action";
+    public static final String ACTION_ID_KEY = "org.tndata.compass.ActionActivity.ActionId";
+    public static final String REMINDER_KEY = "org.tndata.compass.ActionActivity.Reminder";
 
-    public static final String DID_IT_KEY = "org.tndata.compass.ActionActivity.did_it";
+    public static final String DID_IT_KEY = "org.tndata.compass.ActionActivity.DidIt";
 
     private static final int SNOOZE_REQUEST_CODE = 61428;
     private static final int RESCHEDULE_REQUEST_CODE = 61429;
@@ -63,7 +65,7 @@ public class ActionActivity
     private CompassApplication mApplication;
 
     //The action in question and the associated reminder
-    private UserAction mUserAction;
+    private Action mAction;
     private Reminder mReminder;
 
     //UI components
@@ -91,7 +93,7 @@ public class ActionActivity
         mApplication = (CompassApplication)getApplication();
 
         //Retrieve the action and mark the reminder as nonexistent
-        mUserAction = (UserAction)getIntent().getSerializableExtra(USER_ACTION_KEY);
+        mAction = (UserAction)getIntent().getSerializableExtra(ACTION_KEY);
         mReminder = null;
 
         //Set up the toolbar
@@ -136,45 +138,57 @@ public class ActionActivity
         mActionUpdated = false;
 
         //If the action wasn't provided via the intent it needs to be fetched
-        if (mUserAction == null){
+        if (mAction == null){
             mActionNeededFetching = true;
             timeOption.setText(R.string.action_snooze);
             mReminder = (Reminder)getIntent().getSerializableExtra(REMINDER_KEY);
-            fetchAction(getIntent().getIntExtra(ACTION_MAPPING_ID_KEY, -1));
+            fetchAction();
         }
         else{
+            mAction = mApplication.getUserData().getAction(mAction);
             mActionNeededFetching = false;
             timeOption.setText(R.string.action_reschedule);
-            populateUI();
+            if (mAction instanceof UserAction){
+                populateUI((UserAction)mAction);
+            }
+            else if (mAction instanceof CustomAction){
+                populateUI((CustomAction)mAction);
+            }
         }
     }
 
     /**
-     * Retrieves an action from an id.
-     *
-     * @param mappingId the mapping id of the action to be fetched.
+     * Retrieves an action from the API
      */
-    private void fetchAction(int mappingId){
-        Log.d("ActionActivity", "fetching action: " + mappingId);
-        NetworkRequest.get(this, this, API.getActionUrl(mappingId), mApplication.getToken());
+    private void fetchAction(){
+        if (mReminder.getObjectType().equals(Reminder.TYPE_USER_ACTION)){
+            int mappingId = mReminder.getUserMappingId();
+            Log.d("ActionActivity", "Fetching UserAction: " + mappingId);
+            NetworkRequest.get(this, this, API.getActionUrl(mappingId), mApplication.getToken());
+        }
+        else if (mReminder.getObjectType().equals(Reminder.TYPE_CUSTOM_ACTION)){
+            int customId = mReminder.getObjectId();
+            Log.d("ActionActivity", "Fetching UserAction: " + customId);
+            NetworkRequest.get(this, this, API.getCustomActionUrl(customId), mApplication.getToken());
+        }
     }
 
     /**
      * Takes the action's parameters and populates the UI with them.
      */
-    private void populateUI(){
-        ImageLoader.loadBitmap(mActionImage, mUserAction.getIconUrl(), new ImageLoader.Options());
-        mActionTitle.setText(mUserAction.getTitle());
-        if (!mUserAction.getHTMLDescription().isEmpty()){
-            mActionDescription.setText(Html.fromHtml(mUserAction.getHTMLDescription(), null,
+    private void populateUI(UserAction userAction){
+        ImageLoader.loadBitmap(mActionImage, userAction.getIconUrl(), new ImageLoader.Options());
+        mActionTitle.setText(mAction.getTitle());
+        if (!userAction.getHTMLDescription().isEmpty()){
+            mActionDescription.setText(Html.fromHtml(userAction.getHTMLDescription(), null,
                     new CompassTagHandler(this)));
         }
         else{
-            mActionDescription.setText(mUserAction.getDescription());
+            mActionDescription.setText(userAction.getDescription());
         }
-        mActionDescription.setText(mUserAction.getDescription());
+        mActionDescription.setText(userAction.getDescription());
 
-        Action action = mUserAction.getAction();
+        ActionContent action = userAction.getAction();
         if (!action.getMoreInfo().isEmpty()){
             mMoreInfoHeader.setVisibility(View.VISIBLE);
             mMoreInfo.setVisibility(View.VISIBLE);
@@ -224,13 +238,17 @@ public class ActionActivity
         }
     }
 
+    private void populateUI(CustomAction customAction){
+        mActionTitle.setText(customAction.getTitle());
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         //We need to check for null action here because sometimes the action needs to
         //  be fetched from the backend. If the action has not been fetched yet, the
         //  overflow button doesn't make sense
-        if (mActionNeededFetching && mUserAction != null && mUserAction.isEditable()){
-            if (!mUserAction.hasTrigger() || mUserAction.getTrigger().isDisabled()){
+        if (mActionNeededFetching && mAction != null && mAction.isEditable()){
+            if (!mAction.hasTrigger() || mAction.getTrigger().isDisabled()){
                 getMenuInflater().inflate(R.menu.menu_action_disabled, menu);
             }
             else{
@@ -274,7 +292,7 @@ public class ActionActivity
                 break;
 
             case R.id.action_do_it_now:
-                CompassUtil.doItNow(this, mUserAction.getAction().getExternalResource());
+                CompassUtil.doItNow(this, ((UserAction)mAction).getAction().getExternalResource());
                 break;
         }
     }
@@ -283,7 +301,7 @@ public class ActionActivity
      * Snooze clicked. This opens the snooze menu.
      */
     private void snooze(){
-        if (mUserAction != null && !mActionUpdated){
+        if (mAction != null && !mActionUpdated){
             Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
                     .putExtra(NotificationUtil.REMINDER_KEY, mReminder);
             startActivityForResult(snoozeIntent, SNOOZE_REQUEST_CODE);
@@ -294,10 +312,10 @@ public class ActionActivity
      * Reschedule clicked. This opens the trigger picker.
      */
     private void reschedule(){
-        if (mUserAction != null && !mActionUpdated){
+        if (mAction != null && !mActionUpdated){
             Intent reschedule = new Intent(this, TriggerActivity.class)
-                    .putExtra(TriggerActivity.USER_ACTION_KEY, mUserAction)
-                    .putExtra(TriggerActivity.USER_GOAL_KEY, mUserAction.getPrimaryGoal());
+                    .putExtra(TriggerActivity.ACTION_KEY, mAction)
+                    .putExtra(TriggerActivity.GOAL_KEY, mAction.getGoal());
             startActivityForResult(reschedule, RESCHEDULE_REQUEST_CODE);
         }
     }
@@ -306,9 +324,9 @@ public class ActionActivity
      * Disables the current action's trigger.
      */
     private void disableTrigger(){
-        NetworkRequest.put(this, null, API.getPutTriggerUrl(mUserAction),
+        NetworkRequest.put(this, null, API.getPutTriggerUrl(mAction),
                 mApplication.getToken(), API.getPutTriggerBody("", "", ""));
-        mUserAction.setTrigger(null);
+        mAction.setTrigger(null);
         invalidateOptionsMenu();
     }
 
@@ -322,7 +340,7 @@ public class ActionActivity
                     //  dismissed
                     if (mActionNeededFetching){
                         ((NotificationManager)getSystemService(NOTIFICATION_SERVICE))
-                                .cancel(NotificationUtil.NOTIFICATION_TYPE_ACTION_TAG,
+                                .cancel(NotificationUtil.USER_ACTION_TAG,
                                         mReminder.getObjectId());
                     }
 
@@ -347,11 +365,11 @@ public class ActionActivity
      * I did it clicked.
      */
     private void didIt(){
-        if (mUserAction != null && !mActionUpdated){
+        if (mAction != null && !mActionUpdated){
             mActionUpdated = true;
 
             startService(new Intent(this, ActionReportService.class)
-                    .putExtra(ActionReportService.USER_ACTION_KEY, mUserAction)
+                    .putExtra(ActionReportService.ACTION_KEY, mAction)
                     .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
 
             //Display the check mark and finish the activity after one second
@@ -368,8 +386,8 @@ public class ActionActivity
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        mUserAction = ContentParser.parseUserAction(result);
-        populateUI();
+        mAction = ContentParser.parseUserAction(result);
+        populateUI((UserAction)mAction);
         invalidateOptionsMenu();
     }
 

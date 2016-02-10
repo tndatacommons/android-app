@@ -1,66 +1,96 @@
 package org.tndata.android.compass.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
 
 
 /**
- * Model class for actions.
+ * Model superclass for anything that can be classified as an action.
  *
- * @author Edited by Ismael Alonso
+ * @author Ismael Alonso
  * @version 1.0.0
  */
-public class Action extends TDCBase implements Serializable{
-    private static final long serialVersionUID = 2919447130236951923L;
-
-    private int sequence_order = -1;
-    private String more_info = "";
-    private String html_more_info = "";
-    private String external_resource = "";
-    private String external_resource_name = "";
-    private Trigger trigger;
-
-    private int behavior;
+public abstract class Action extends UserContent implements Serializable{
+    private static final long serialVersionUID = 2919447142568751923L;
 
 
-    /*---------*
-     * GETTERS *
-     *---------*/
+    @SerializedName("trigger")
+    private Trigger mTrigger;
+    @SerializedName("next_reminder")
+    private String mNextReminder;
 
-    public int getSequenceOrder(){
-        return sequence_order;
-    }
 
-    public String getMoreInfo(){
-        return more_info;
-    }
-
-    public String getHTMLMoreInfo(){
-        return html_more_info;
-    }
-
-    public String getExternalResource(){
-        return external_resource;
-    }
-
-    public String getExternalResourceName(){
-        return external_resource_name;
+    public void setTrigger(Trigger trigger){
+        mTrigger = trigger;
     }
 
     public Trigger getTrigger(){
-        return trigger != null ? trigger : new Trigger();
+        return mTrigger != null ? mTrigger : new Trigger();
     }
 
-    public int getBehavior(){
-        return behavior;
+    public boolean hasTrigger(){
+        return mTrigger != null;
     }
 
-
-    /*---------*
-     * UTILITY *
-     *---------*/
-
-    @Override
-    public String toString(){
-        return "Action #" + getId() + ": " + getTitle();
+    public void setNextReminder(String nextReminder){
+        mNextReminder = nextReminder;
     }
+
+    public String getNextReminder(){
+        return mNextReminder;
+    }
+
+    public Date getNextReminderDate(){
+        String year = mNextReminder.substring(0, mNextReminder.indexOf("-"));
+        String temp = mNextReminder.substring(mNextReminder.indexOf("-")+1);
+        String month = temp.substring(0, temp.indexOf("-"));
+        temp = temp.substring(temp.indexOf("-")+1);
+        String day = temp.substring(0, temp.indexOf("T"));
+
+        String time = mNextReminder.substring(mNextReminder.indexOf('T')+1);
+        String hour = time.substring(0, time.indexOf(':'));
+        time = time.substring(time.indexOf(':')+1);
+        String minute = time.substring(0, time.indexOf(':'));
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, Integer.valueOf(year));
+        calendar.set(Calendar.MONTH, Integer.valueOf(month)-1);
+        calendar.set(Calendar.DAY_OF_MONTH, Integer.valueOf(day));
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(hour));
+        calendar.set(Calendar.MINUTE, Integer.valueOf(minute));
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
+    }
+
+    public String getNextReminderDisplay(){
+        if (mNextReminder == null){
+            return "";
+        }
+
+        String time = mNextReminder.substring(mNextReminder.indexOf('T')+1);
+        String hourStr = time.substring(0, time.indexOf(':'));
+        time = time.substring(time.indexOf(':')+1);
+        try{
+            boolean am = true;
+            int hour = Integer.valueOf(hourStr);
+            if (hour > 12){
+                hour -= 12;
+                am = false;
+            }
+
+            return hour + ":" + time.substring(0, time.indexOf(":")) + (am ? " am" : " pm");
+        }
+        catch (NumberFormatException nfx){
+            nfx.printStackTrace();
+            return "";
+        }
+    }
+
+    public abstract String getTitle();
+    public abstract Goal getGoal();
+    public abstract String getGoalTitle();
 }

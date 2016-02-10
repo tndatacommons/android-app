@@ -9,7 +9,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseInterestsAdapter;
 import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.fragment.ChooseInterestsFragment;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.Parser;
@@ -37,7 +37,7 @@ public class ChooseInterestsActivity
 
     private CompassApplication mApplication;
 
-    private List<Category> mSelection;
+    private List<CategoryContent> mSelection;
 
     //Request codes
     private int mInitialPostCategoryRequestCode;
@@ -63,11 +63,11 @@ public class ChooseInterestsActivity
     }
 
     @Override
-    public void onCategoriesSelected(List<Category> selection){
+    public void onCategoriesSelected(List<CategoryContent> selection){
         mSelection = selection;
 
-        List<Category> toAdd = new ArrayList<>();
-        for (Category category:selection){
+        List<CategoryContent> toAdd = new ArrayList<>();
+        for (CategoryContent category:selection){
             if (!mApplication.getCategories().containsKey(category.getId())){
                 toAdd.add(category);
             }

@@ -40,9 +40,10 @@ import org.tndata.android.compass.util.NotificationUtil;
 public class GcmIntentService extends IntentService{
     private static final String TAG = "GcmIntentService";
 
-    private static final String MESSAGE_TYPE_ACTION = "action";
-    private static final String MESSAGE_TYPE_ENROLLMENT = "package enrollment";
-    private static final String MESSAGE_TYPE_CHECK_IN = "checkin";
+    public static final String MESSAGE_TYPE_ACTION = "action";
+    public static final String MESSAGE_TYPE_CUSTOM_ACTION = "customaction";
+    public static final String MESSAGE_TYPE_ENROLLMENT = "package enrollment";
+    public static final String MESSAGE_TYPE_CHECK_IN = "checkin";
 
 
     public GcmIntentService(){
@@ -104,8 +105,9 @@ public class GcmIntentService extends IntentService{
 
         switch (objectType.toLowerCase()){
             case MESSAGE_TYPE_ACTION:
+            case MESSAGE_TYPE_CUSTOM_ACTION:
                 try{
-                    NotificationUtil.generateActionNotification(this, Integer.valueOf(id), title, msg,
+                    NotificationUtil.putActionNotification(this,Integer.valueOf(id), title, msg,
                             Integer.valueOf(objectId), Integer.valueOf(mappingId));
                 }
                 catch (NumberFormatException nfx){
@@ -115,7 +117,7 @@ public class GcmIntentService extends IntentService{
 
             case MESSAGE_TYPE_ENROLLMENT:
                 try{
-                    NotificationUtil.generateEnrollmentNotification(this, Integer.valueOf(objectId),
+                    NotificationUtil.putEnrollmentNotification(this, Integer.valueOf(objectId),
                             title, msg);
                 }
                 catch (NumberFormatException nfx){
@@ -125,7 +127,7 @@ public class GcmIntentService extends IntentService{
 
             case MESSAGE_TYPE_CHECK_IN:
                 try{
-                    NotificationUtil.generateCheckInNotification(this,
+                    NotificationUtil.putCheckInNotification(this,
                             Integer.valueOf(objectId) == CheckInActivity.TYPE_REVIEW,
                             title, msg);
                 }

@@ -26,10 +26,10 @@ import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseActionsAdapter;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Behavior;
-import org.tndata.android.compass.model.Category;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.ActionContent;
+import org.tndata.android.compass.model.BehaviorContent;
+import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.parser.Parser;
@@ -77,9 +77,9 @@ public class ChooseActionsActivity
     private MenuItem mSearchItem;
     private SearchView mSearchView;
 
-    private Category mCategory;
-    private Goal mGoal;
-    private Behavior mBehavior;
+    private CategoryContent mCategory;
+    private GoalContent mGoal;
+    private BehaviorContent mBehavior;
     private ChooseActionsAdapter mAdapter;
     private View mHeaderView;
 
@@ -94,9 +94,9 @@ public class ChooseActionsActivity
         setContentView(R.layout.activity_choose_actions);
 
         mApplication = (CompassApplication)getApplication();
-        mCategory = (Category)getIntent().getSerializableExtra(CATEGORY_KEY);
-        mGoal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
-        mBehavior = (Behavior)getIntent().getSerializableExtra(BEHAVIOR_KEY);
+        mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
+        mGoal = (GoalContent)getIntent().getSerializableExtra(GOAL_KEY);
+        mBehavior = (BehaviorContent)getIntent().getSerializableExtra(BEHAVIOR_KEY);
 
         mToolbar = (Toolbar)findViewById(R.id.choose_actions_toolbar);
         mToolbar.setTitle(mBehavior.getTitle());
@@ -176,7 +176,7 @@ public class ChooseActionsActivity
     }
 
     @Override
-    public void moreInfo(Action action){
+    public void moreInfo(ActionContent action){
         AlertDialog.Builder builder = new AlertDialog.Builder(ChooseActionsActivity.this);
         if (!action.getHTMLMoreInfo().isEmpty()){
             builder.setMessage(Html.fromHtml(action.getHTMLMoreInfo(), null, new CompassTagHandler(this)));
@@ -196,19 +196,19 @@ public class ChooseActionsActivity
     }
 
     @Override
-    public void editReminder(Action action){
+    public void editReminder(ActionContent action){
         startTriggerActivity(mApplication.getUserData().getAction(action));
     }
 
     @Override
-    public void addAction(Action action){
+    public void addAction(ActionContent action){
         Toast.makeText(getApplicationContext(), getText(R.string.action_saving), Toast.LENGTH_SHORT).show();
         mPostActionRequestCode = NetworkRequest.post(this, this, API.getPostActionUrl(),
                 mApplication.getToken(), API.getPostActionBody(action, mBehavior, mGoal, mCategory));
     }
 
     @Override
-    public void deleteAction(Action action){
+    public void deleteAction(ActionContent action){
         //Make sure we find the user action.
         UserAction userAction = mApplication.getUserData().getAction(action);
         if (userAction != null){
@@ -218,7 +218,7 @@ public class ChooseActionsActivity
                     API.getDeleteActionUrl(userAction), mApplication.getToken(), new JSONObject());
 
             //Remove from the application's collection
-            mApplication.removeAction(action);
+            mApplication.removeAction(userAction);
             mAdapter.notifyDataSetChanged();
         }
         else{
@@ -227,7 +227,7 @@ public class ChooseActionsActivity
     }
 
     @Override
-    public void doItNow(Action action){
+    public void doItNow(ActionContent action){
         CompassUtil.doItNow(this, action.getExternalResource());
     }
 
@@ -254,11 +254,11 @@ public class ChooseActionsActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetActionsRequestCode){
-            List<Action> actionList = ContentParser.parseActionsFromResultSet(result);
+            List<ActionContent> actionList = ContentParser.parseActionsFromResultSet(result);
             if (actionList != null && !actionList.isEmpty()){
-                Collections.sort(actionList, new Comparator<Action>(){
+                Collections.sort(actionList, new Comparator<ActionContent>(){
                     @Override
-                    public int compare(Action act1, Action act2){
+                    public int compare(ActionContent act1, ActionContent act2){
                         return (act1.getSequenceOrder() < act2.getSequenceOrder()) ? 0 : 1;
                     }
                 });
@@ -308,7 +308,7 @@ public class ChooseActionsActivity
 
     private void startTriggerActivity(UserAction userAction){
         startActivity(new Intent(getApplicationContext(), TriggerActivity.class)
-                .putExtra(TriggerActivity.USER_GOAL_KEY, mApplication.getUserData().getGoal(mGoal))
-                .putExtra(TriggerActivity.USER_ACTION_KEY, userAction));
+                .putExtra(TriggerActivity.GOAL_KEY, mApplication.getUserData().getGoal(mGoal))
+                .putExtra(TriggerActivity.ACTION_KEY, userAction));
     }
 }

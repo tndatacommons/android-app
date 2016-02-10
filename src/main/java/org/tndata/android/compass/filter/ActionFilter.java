@@ -3,7 +3,7 @@ package org.tndata.android.compass.filter;
 import android.widget.Filter;
 
 import org.tndata.android.compass.adapter.ChooseActionsAdapter;
-import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.ActionContent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class ActionFilter extends Filter{
     private ChooseActionsAdapter mAdapter;
-    private List<Action> mList;
+    private List<ActionContent> mList;
 
 
     /**
@@ -26,7 +26,7 @@ public class ActionFilter extends Filter{
      * @param adapter the adapter to be filtered.
      * @param list the original list of the adapter.
      */
-    public ActionFilter(ChooseActionsAdapter adapter, List<Action> list){
+    public ActionFilter(ChooseActionsAdapter adapter, List<ActionContent> list){
         mAdapter = adapter;
         mList = list;
     }
@@ -35,10 +35,10 @@ public class ActionFilter extends Filter{
     protected FilterResults performFiltering(CharSequence constraint){
         //The constraint is split into words
         String constraintArray[] = constraint.toString().toLowerCase().split(" ");
-        List<Action> output = new ArrayList<>();
+        List<ActionContent> output = new ArrayList<>();
         int matchCount;
         //For each goal
-        for (Action action:mList){
+        for (ActionContent action:mList){
             //The match count is reset
             matchCount = 0;
             //For each item in the constraint array
@@ -73,14 +73,14 @@ public class ActionFilter extends Filter{
      * @version 1.0.0
      */
     private class BehaviorFilterResults extends FilterResults{
-        private final List<Action> mOutput;
+        private final List<ActionContent> mOutput;
 
         /**
          * Constructor.
          *
          * @param output the result of the filtering.
          */
-        BehaviorFilterResults(List<Action> output){
+        BehaviorFilterResults(List<ActionContent> output){
             mOutput = output;
         }
     }

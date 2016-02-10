@@ -8,7 +8,7 @@ import org.tndata.android.compass.fragment.CheckInFeedbackFragment;
 import org.tndata.android.compass.fragment.CheckInReviewEmptyFragment;
 import org.tndata.android.compass.fragment.CheckInReviewFragment;
 import org.tndata.android.compass.fragment.CheckInRewardFragment;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.UserAction;
 
@@ -24,7 +24,7 @@ import java.util.Map;
  * @version 1.0.0
  */
 public class CheckInPagerAdapter extends FragmentPagerAdapter{
-    private List<Goal> mGoals;
+    private List<GoalContent> mGoals;
     private List<List<UserAction>> mActionLists;
     private boolean mReview;
 
@@ -39,14 +39,14 @@ public class CheckInPagerAdapter extends FragmentPagerAdapter{
      * @param dataSet the data to be displayed by the adapter.
      * @param review true to display review, false to display feedback.
      */
-    public CheckInPagerAdapter(FragmentManager fm, Map<Goal, List<UserAction>> dataSet,
+    public CheckInPagerAdapter(FragmentManager fm, Map<GoalContent, List<UserAction>> dataSet,
                                Reward reward, boolean review){
         super(fm);
 
         //Populate the lists with the data in the set
         mGoals = new ArrayList<>();
         mActionLists = new ArrayList<>();
-        for (Map.Entry<Goal, List<UserAction>> entry:dataSet.entrySet()){
+        for (Map.Entry<GoalContent, List<UserAction>> entry:dataSet.entrySet()){
             mGoals.add(entry.getKey());
             mActionLists.add(entry.getValue());
         }

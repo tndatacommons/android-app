@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Survey;
-import org.tndata.android.compass.model.SurveyOptions;
+import org.tndata.android.compass.model.SurveyOption;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
 
@@ -168,13 +168,13 @@ public class SurveyView
                 mMultipleChoice.setLayoutParams(params);
 
                 //Add a default option to the list
-                SurveyOptions defaultOption = new SurveyOptions();
+                SurveyOption defaultOption = new SurveyOption();
                 defaultOption.setText(getContext().getString(R.string.survey_default_option));
-                List<SurveyOptions> optionsList = mSurvey.getOptions();
+                List<SurveyOption> optionsList = mSurvey.getOptions();
                 optionsList.add(0, defaultOption);
 
                 //Create and set the adapter
-                ArrayAdapter<SurveyOptions> adapter;
+                ArrayAdapter<SurveyOption> adapter;
                 adapter = new ArrayAdapter<>(getContext(), R.layout.list_item_simple_spinner, optionsList);
                 mMultipleChoice.setAdapter(adapter);
 
@@ -214,7 +214,7 @@ public class SurveyView
                 mLikertMax.setText(mSurvey.getOptions().get(mSurvey.getOptions().size() - 1).getText());
 
                 if (mSurvey.getSelectedOption() != null){
-                    mLikert.setProgress(mSurvey.getSelectedOption().getId());
+                    mLikert.setProgress((int)mSurvey.getSelectedOption().getId());
                     mLikertChoice.setText(mSurvey.getSelectedOption().getText());
                     if (mListener != null){
                         mListener.onInputReady(mSurvey);
@@ -327,7 +327,7 @@ public class SurveyView
         if (mSurvey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_LIKERT)){
             mLikertMin.setVisibility(View.GONE);
             mLikertMax.setVisibility(View.GONE);
-            for (SurveyOptions option:mSurvey.getOptions()){
+            for (SurveyOption option:mSurvey.getOptions()){
                 if ((option.getId()-1) == progress){
                     mSurvey.setSelectedOption(option);
                     mLikertChoice.setText(option.getText());
@@ -354,7 +354,7 @@ public class SurveyView
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
         switch (mSurvey.getQuestionType()){
             case Constants.SURVEY_MULTICHOICE:
-                SurveyOptions option = (SurveyOptions)mMultipleChoice.getSelectedItem();
+                SurveyOption option = (SurveyOption)mMultipleChoice.getSelectedItem();
                 if (option.getId() == -1){
                     if (mListener != null){
                         mListener.onInputCleared(mSurvey);

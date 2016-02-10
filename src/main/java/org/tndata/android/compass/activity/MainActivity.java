@@ -4,7 +4,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -15,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,8 +36,11 @@ import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.SearchAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapterListener;
-import org.tndata.android.compass.model.Category;
+import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
@@ -123,7 +124,7 @@ public class MainActivity
     private FloatingActionMenu mMenu;
 
     //The selected category from the FAB
-    private Category mSelectedCategory;
+    private CategoryContent mSelectedCategory;
 
     private boolean mSuggestionDismissed;
 
@@ -136,8 +137,6 @@ public class MainActivity
         setContentView(R.layout.activity_main);
 
         mApplication = (CompassApplication)getApplication();
-
-        Log.d("MainActivity", mApplication.getPublicCategories().size() + " public categories");
 
         //Update the timezone and register with GCM
         NetworkRequest.put(this, null, API.getPutUserProfileUrl(mApplication.getUser()),
@@ -152,12 +151,6 @@ public class MainActivity
         mSearchAdapter = new SearchAdapter(this, this);
         mSearchList.setAdapter(mSearchAdapter);
         mLastSearchRequestCode = SEARCH_REQUEST_CODE;
-
-        //If this is pre L a different color scheme is applied
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
-            int preLColor = getResources().getColor(R.color.feed_pre_l_background);
-            findViewById(R.id.main_container).setBackgroundColor(preLColor);
-        }
 
         //Set up the toolbar
         mToolbar = (Toolbar)findViewById(R.id.main_toolbar);
@@ -252,7 +245,7 @@ public class MainActivity
                 }
             }
         });
-        mFeed.setOnScrollListener(hub);
+        mFeed.addOnScrollListener(hub);
 
         mStopper = findViewById(R.id.main_stopper);
         mMenu = (FloatingActionMenu)findViewById(R.id.main_fab_menu);
@@ -446,14 +439,14 @@ public class MainActivity
      * Called when the choose Goals FAB is clicked.
      */
     private void chooseGoalsClicked(){
-        startActivity(new Intent(this, ChooseCategoryActivity.class));
+        startActivityForResult(new Intent(this, ChooseCategoryActivity.class), GOAL_REQUEST_CODE);
     }
 
     /**
      * Called when the create goal FAB is clicked.
      */
     private void createCustomGoalClicked(){
-
+        startActivityForResult(new Intent(this, CustomContentManagerActivity.class), GOAL_REQUEST_CODE);
     }
 
     /**
@@ -594,7 +587,7 @@ public class MainActivity
 
     @Override
     public void onInstructionsSelected(){
-        ((LinearLayoutManager)mFeed.getLayoutManager()).scrollToPositionWithOffset(mAdapter.getMyGoalsHeaderPosition(), 10);
+        ((LinearLayoutManager)mFeed.getLayoutManager()).scrollToPositionWithOffset(mAdapter.getGoalsPosition(), 10);
     }
 
     @Override
@@ -603,11 +596,12 @@ public class MainActivity
     }
 
     @Override
-    public void onSuggestionOpened(Goal goal){
-        Category category = null;
-        for (Integer categoryId:goal.getCategories()){
+    public void onSuggestionSelected(GoalContent goal){
+        CategoryContent category = null;
+        for (Long categoryId:goal.getCategoryIdSet()){
             if (mApplication.getUserData().getCategories().containsKey(categoryId)){
                 category = mApplication.getCategories().get(categoryId).getCategory();
+                break;
             }
         }
         Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
@@ -617,33 +611,42 @@ public class MainActivity
     }
 
     @Override
-    public void onGoalSelected(UserGoal goal){
-        Intent goalActivityIntent = new Intent(this, GoalActivity.class)
-                .putExtra(GoalActivity.USER_GOAL_KEY, goal);
-        startActivityForResult(goalActivityIntent, GOAL_REQUEST_CODE);
-    }
-
-    @Override
-    public void onFeedbackSelected(Goal goal){
-        if (goal != null){
-            Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
-                    .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal);
-            startActivity(chooseBehaviors);
+    public void onGoalSelected(Goal goal){
+        if (goal instanceof UserGoal){
+            Intent goalActivityIntent = new Intent(this, GoalActivity.class)
+                    .putExtra(GoalActivity.USER_GOAL_KEY, goal);
+            startActivityForResult(goalActivityIntent, GOAL_REQUEST_CODE);
+        }
+        else if (goal instanceof CustomGoal){
+            Intent editGoal = new Intent(this, CustomContentManagerActivity.class)
+                    .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, goal);
+            startActivityForResult(editGoal, GOAL_REQUEST_CODE);
         }
     }
 
     @Override
-    public void onActionSelected(UserAction userAction){
-        Intent actionIntent = new Intent(this, ActionActivity.class)
-                .putExtra(ActionActivity.USER_ACTION_KEY, userAction);
-        startActivityForResult(actionIntent, ACTION_REQUEST_CODE);
+    public void onFeedbackSelected(Goal goal){
+        if (goal != null && goal instanceof UserGoal){
+            Intent goalActivityIntent = new Intent(this, GoalActivity.class)
+                    .putExtra(GoalActivity.USER_GOAL_KEY, goal);
+            startActivityForResult(goalActivityIntent, GOAL_REQUEST_CODE);
+        }
     }
 
     @Override
-    public void onTriggerSelected(UserAction userAction){
+    public void onActionSelected(Action action){
+        if (action instanceof UserAction){
+            Intent actionIntent = new Intent(this, ActionActivity.class)
+                    .putExtra(ActionActivity.ACTION_KEY, action);
+            startActivityForResult(actionIntent, ACTION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onTriggerSelected(Action userAction){
         Intent triggerIntent = new Intent(this, TriggerActivity.class)
-                .putExtra(TriggerActivity.USER_ACTION_KEY, userAction)
-                .putExtra(TriggerActivity.USER_GOAL_KEY, userAction.getPrimaryGoal());
+                .putExtra(TriggerActivity.ACTION_KEY, userAction)
+                .putExtra(TriggerActivity.GOAL_KEY, userAction.getGoal());
         startActivityForResult(triggerIntent, TRIGGER_REQUEST_CODE);
     }
 
@@ -651,25 +654,24 @@ public class MainActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (resultCode == RESULT_OK){
             if (requestCode == CATEGORIES_REQUEST_CODE){
-                //populateMenu();
                 mAdapter.notifyDataSetChanged();
             }
             else if (requestCode == GOAL_SUGGESTION_REQUEST_CODE){
                 mAdapter.dismissSuggestion();
             }
             else if (requestCode == GOAL_REQUEST_CODE){
-                mAdapter.dataSetChanged();
+                mAdapter.updateDataSet();
             }
             else if (requestCode == ACTION_REQUEST_CODE){
                 if (data.getBooleanExtra(ActionActivity.DID_IT_KEY, false)){
                     mAdapter.didIt();
                 }
                 else{
-                    mAdapter.updateSelectedItem();
+                    mAdapter.updateSelectedAction();
                 }
             }
             else if (requestCode == TRIGGER_REQUEST_CODE){
-                mAdapter.updateSelectedItem();
+                mAdapter.updateSelectedAction();
             }
         }
         else if (resultCode == Constants.LOGGED_OUT_RESULT_CODE){

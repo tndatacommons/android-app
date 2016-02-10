@@ -14,8 +14,8 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.CheckInPagerAdapter;
 import org.tndata.android.compass.fragment.CheckInFeedbackFragment;
 import org.tndata.android.compass.fragment.CheckInRewardFragment;
-import org.tndata.android.compass.model.Behavior;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.BehaviorContent;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserBehavior;
@@ -70,7 +70,7 @@ public class CheckInActivity
 
     //Data
     private List<UserAction> mActions;
-    private Map<Goal, List<UserAction>> mDataSet;
+    private Map<GoalContent, List<UserAction>> mDataSet;
     private Set<Integer> mBehaviorRequestSet;
     private Reward mReward;
     private float mProgress;
@@ -111,7 +111,7 @@ public class CheckInActivity
             mActions = ContentParser.parseUserActions(result);
             mDataSet = new HashMap<>();
             mBehaviorRequestSet = new HashSet<>();
-            Set<Integer> goalRequestSet = new HashSet<>();
+            Set<Long> goalRequestSet = new HashSet<>();
             //For each action
             for (UserAction action:mActions){
                 if (!goalRequestSet.contains(action.getPrimaryGoalId())){
@@ -123,7 +123,7 @@ public class CheckInActivity
                 if (mType == TYPE_REVIEW){
                     mRequestCount++;
                     mBehaviorRequestSet.add(NetworkRequest.get(this, this,
-                            API.getBehaviorUrl(action.getAction().getBehavior()), ""));
+                            API.getBehaviorUrl(action.getAction().getBehaviorId()), ""));
                 }
             }
             mCurrentProgress = new int[goalRequestSet.size()];
@@ -141,15 +141,15 @@ public class CheckInActivity
             }
         }
         else if (mBehaviorRequestSet.contains(requestCode)){
-            Behavior behavior = ContentParser.parseBehavior(result);
+            BehaviorContent behavior = ContentParser.parseBehavior(result);
             for (UserAction action:mActions){
-                if (action.getAction().getBehavior() == behavior.getId()){
+                if (action.getAction().getBehaviorId() == behavior.getId()){
                     action.setBehavior(new UserBehavior(behavior));
                 }
             }
         }
         else /* Goals */{
-            Goal goal = ContentParser.parseGoal(result);
+            GoalContent goal = ContentParser.parseGoal(result);
             List<UserAction> goalActionList = new ArrayList<>();
             for (UserAction action:mActions){
                 if (action.getPrimaryGoalId() == goal.getId()){
