@@ -230,6 +230,11 @@ public class FeedData extends TDCBase{
         return mSuggestions;
     }
 
+    /**
+     * Adds a goal to the list of goals being displayed.
+     *
+     * @param goal the goal to be added.
+     */
     public void addGoal(DisplayableGoal goal){
         //If the list contained suggestions, clear it and add the goal
         if (mGoals.get(0) instanceof GoalContent){
@@ -251,10 +256,20 @@ public class FeedData extends TDCBase{
         }
     }
 
+    /**
+     * Removes a goal from the list of goals to be displayed.
+     *
+     * @param goal the goal to be removed.
+     */
     public void removeGoal(DisplayableGoal goal){
         mGoals.remove(goal);
     }
 
+    /**
+     * Adds an action to the upcoming list if the action is due today.
+     *
+     * @param action the action to be added.
+     */
     public void addAction(Action action){
         Calendar todayCalendar = Calendar.getInstance();
         todayCalendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -287,6 +302,11 @@ public class FeedData extends TDCBase{
         }
     }
 
+    /**
+     * Removes an action from the action list.
+     *
+     * @param action the action to be removed.
+     */
     public void removeAction(Action action){
         mUpcomingActions.remove(action);
     }
