@@ -4,8 +4,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -26,12 +26,17 @@ import java.util.Queue;
 
 
 /**
- * Created by isma on 2/4/16.
+ * UI component that displays goals as requested.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class GoalContainer extends LinearLayout implements Animation.AnimationListener{
+    //Goal list and listener
     private List<GoalHolder> mDisplayedGoals;
     private GoalContainerListener mListener;
 
+    //Animation stuff
     private boolean mAnimate;
     private Queue<DisplayableGoal> mGoalQueue;
     private int mOutAnimation;
@@ -52,6 +57,9 @@ public class GoalContainer extends LinearLayout implements Animation.AnimationLi
         init();
     }
 
+    /**
+     * Initializes the container.
+     */
     private void init(){
         setOrientation(VERTICAL);
         mDisplayedGoals = new ArrayList<>();
@@ -60,21 +68,40 @@ public class GoalContainer extends LinearLayout implements Animation.AnimationLi
         mOutAnimation = -1;
     }
 
-    public void setGoalListener(GoalContainerListener listener){
+    /**
+     * Sets the goal listener.
+     *
+     * @param listener the new listener.
+     */
+    public void setGoalListener(@NonNull GoalContainerListener listener){
         mListener = listener;
     }
 
+    /**
+     * Enables or disables animations.
+     *
+     * @param enabled true to enable animations, false to disable them.
+     */
     public void setAnimationsEnabled(boolean enabled){
         mAnimate = enabled;
     }
 
+    /**
+     * Gets the number of items either displayed or queued to be displayed.
+     *
+     * @return the number of goals added to this container.
+     */
     public int getCount(){
         return mDisplayedGoals.size() + (mGoalQueue.isEmpty() ? 0 : mGoalQueue.size()-1);
     }
 
-    public void addGoal(DisplayableGoal goal){
+    /**
+     * Adds a goal to the container.
+     *
+     * @param goal the goal to be added.
+     */
+    public void addGoal(@NonNull DisplayableGoal goal){
         if (mAnimate){
-            Log.d("GoalContainer", mDisplayedGoals.size() + ", " + mGoalQueue.size());
             mGoalQueue.add(goal);
             if (mGoalQueue.size() == 1){
                 inAnimation();
@@ -85,7 +112,14 @@ public class GoalContainer extends LinearLayout implements Animation.AnimationLi
         }
     }
 
-    public void updateGoals(FeedData feedData){
+    /**
+     * Refreshes the list of goals that are currently being displayed. Removes the goals
+     * that the user has removed, adds the goals that the user has added prior to the last
+     * goal being displayed, and updates the goals modified by the user.
+     *
+     * @param feedData a reference to the feed data bundle.
+     */
+    public void updateGoals(@NonNull FeedData feedData){
         //First off, find the stopping point in the updated list
         DisplayableGoal stoppingPoint = null;
         //Start searching from the end of the list, it is more likely that the goal will be there
@@ -118,7 +152,12 @@ public class GoalContainer extends LinearLayout implements Animation.AnimationLi
         }
     }
 
-    public void removeGoal(DisplayableGoal goal){
+    /**
+     * Removes a goal from the container.
+     *
+     * @param goal the goal to be removed.
+     */
+    public void removeGoal(@NonNull DisplayableGoal goal){
         for (int i = 0; i < mDisplayedGoals.size(); i++){
             if (mDisplayedGoals.get(i).contains(goal)){
                 if (mAnimate){
@@ -133,6 +172,9 @@ public class GoalContainer extends LinearLayout implements Animation.AnimationLi
         }
     }
 
+    /**
+     * Fires the in animation for the next goal in the queue and adds it to the container.
+     */
     private void inAnimation(){
         mDisplayedGoals.add(new GoalHolder(mGoalQueue.peek()));
 
@@ -149,7 +191,12 @@ public class GoalContainer extends LinearLayout implements Animation.AnimationLi
         animation.setAnimationListener(this);
         view.startAnimation(animation);
     }
-
+    /**
+     * Fires the out animation for a goal in the container. Removal is performed when
+     * the animation is done.
+     *
+     * @param position the position of the goal to be removed.
+     */
     private void outAnimation(int position){
         mOutAnimation = position;
 
@@ -167,7 +214,7 @@ public class GoalContainer extends LinearLayout implements Animation.AnimationLi
 
     @Override
     public void onAnimationStart(Animation animation){
-
+        //Unused
     }
 
     @Override
@@ -187,34 +234,57 @@ public class GoalContainer extends LinearLayout implements Animation.AnimationLi
 
     @Override
     public void onAnimationRepeat(Animation animation){
-
+        //Unused
     }
 
 
+    /**
+     * Holder for a goal being displayed in the container. The existence of this class
+     * facilitates operations on the data set and updating single elements.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     private class GoalHolder implements OnClickListener{
+        //The goal being displayed
         private DisplayableGoal mGoal;
 
+        //UI components
         private RelativeLayout mIconContainer;
         private ImageView mIcon;
         private TextView mTitle;
 
 
-        public GoalHolder(DisplayableGoal goal){
+        /**
+         * Constructor.
+         *
+         * @param goal the goal to be bound
+         */
+        public GoalHolder(@NonNull DisplayableGoal goal){
+            //Inflate the layout
             LayoutInflater inflater = LayoutInflater.from(getContext());
             View rootView = inflater.inflate(R.layout.item_feed_goal, GoalContainer.this, false);
 
+            //Grab the UI components
             mIconContainer = (RelativeLayout)rootView.findViewById(R.id.goal_icon_container);
             mIcon = (ImageView)rootView.findViewById(R.id.goal_icon);
             mTitle = (TextView)rootView.findViewById(R.id.goal_title);
 
+            //Update the goal
             update(goal);
 
+            //Add the view to the container and set listeners
             addView(rootView);
             rootView.setOnClickListener(this);
         }
 
+        /**
+         * Replace the goal contained by this holder.
+         *
+         * @param goal the new goal to be displayed.
+         */
         @SuppressWarnings("deprecation")
-        private void update(DisplayableGoal goal){
+        private void update(@NonNull DisplayableGoal goal){
             mGoal = goal;
 
             mTitle.setText(mGoal.getTitle());
@@ -239,13 +309,30 @@ public class GoalContainer extends LinearLayout implements Animation.AnimationLi
             mListener.onGoalClick(mGoal);
         }
 
-        public boolean contains(DisplayableGoal goal){
+        /**
+         * Checks if this holder contains a particular goal.
+         *
+         * @param goal the goal to be compared.
+         * @return true is the goals are the same, false otherwise.
+         */
+        public boolean contains(@NonNull DisplayableGoal goal){
             return mGoal.equals(goal);
         }
     }
 
 
+    /**
+     * Listener interface for GoalContainer.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface GoalContainerListener{
+        /**
+         * Called when a goal is selected.
+         *
+         * @param goal the selected goal.
+         */
         void onGoalClick(DisplayableGoal goal);
     }
 }

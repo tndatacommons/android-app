@@ -1,6 +1,7 @@
 package org.tndata.android.compass.ui;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,7 +67,7 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
      *
      * @param listener the container listener.
      */
-    public void setUpcomingListener(UpcomingContainerListener listener){
+    public void setUpcomingListener(@NonNull UpcomingContainerListener listener){
         mListener = listener;
     }
 
@@ -95,7 +96,7 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
      *
      * @param action the action to be added.
      */
-    public void addAction(Action action){
+    public void addAction(@NonNull Action action){
         if (mAnimate){
             mActionQueue.add(action);
             if (mActionQueue.size() == 1){
@@ -112,7 +113,7 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
      *
      * @param action the action to be updated.
      */
-    public void updateAction(Action action){
+    public void updateAction(@NonNull Action action){
         for (ActionHolder holder:mDisplayedUpcoming){
             if (holder.contains(action)){
                 holder.update();
@@ -127,7 +128,7 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
      *
      * @param feedData a reference to the feed data bundle.
      */
-    public void updateActions(FeedData feedData){
+    public void updateActions(@NonNull FeedData feedData){
         //First off, find the stopping point in the updated list
         Action stoppingPoint = null;
         //Start searching from the end of the list, it is more likely that the goal will be there
@@ -165,7 +166,7 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
      *
      * @param action the action to be removed.
      */
-    public void removeAction(Action action){
+    public void removeAction(@NonNull Action action){
         for (int i = 0; i < mDisplayedUpcoming.size(); i++){
             if (mDisplayedUpcoming.get(i).contains(action)){
                 if (mAnimate){
@@ -181,7 +182,7 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
     }
 
     /**
-     * Removes the first animation from the container.
+     * Removes the first action from the container.
      */
     public void removeFirstAction(){
         outAnimation(0);
@@ -276,7 +277,7 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
          *
          * @param action the action to be bound.
          */
-        public ActionHolder(Action action){
+        public ActionHolder(@NonNull Action action){
             //Inflate the layout
             LayoutInflater inflater = LayoutInflater.from(getContext());
             View rootView = inflater.inflate(R.layout.item_upcoming_action, UpcomingContainer.this, false);
@@ -300,7 +301,7 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
          *
          * @param action the new action to be displayed.
          */
-        private void update(Action action){
+        private void update(@NonNull Action action){
             mAction = action;
             update();
         }
@@ -332,14 +333,14 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
          * @param action the action to be compared.
          * @return true is the actions are the same, false otherwise.
          */
-        public boolean contains(Action action){
+        public boolean contains(@NonNull Action action){
             return mAction.equals(action);
         }
     }
 
 
     /**
-     * Interface for the UpcomingContainer.
+     * Listener interface for the UpcomingContainer.
      *
      * @author Ismael Alonso
      * @version 1.0.0
@@ -350,7 +351,7 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
          *
          * @param action the tapped action.
          */
-        void onActionClick(Action action);
+        void onActionClick(@NonNull Action action);
 
         /**
          * Called when an overflow menu has been tapped.
@@ -358,6 +359,6 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
          * @param view the view containing the overflow.
          * @param action the action whose overflow was tapped.
          */
-        void onActionOverflowClick(View view, Action action);
+        void onActionOverflowClick(@NonNull View view, @NonNull Action action);
     }
 }
