@@ -54,16 +54,16 @@ class UpcomingHolder
         mUpcomingContainer.updateAction(action);
     }
 
+    void updateActions(FeedData feedData){
+        mUpcomingContainer.updateActions(feedData);
+    }
+
     void removeAction(Action action){
         mUpcomingContainer.removeAction(action);
     }
 
     void removeFirstAction(){
         mUpcomingContainer.removeFirstAction();
-    }
-
-    void checkActions(FeedData feedData){
-        mUpcomingContainer.checkActions(feedData);
     }
 
     void hideFooter(){

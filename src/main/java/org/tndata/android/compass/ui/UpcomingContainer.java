@@ -94,6 +94,39 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
         }
     }
 
+    public void updateActions(FeedData feedData){
+        //First off, find the stopping point in the updated list
+        Action stoppingPoint = null;
+        //Start searching from the end of the list, it is more likely that the goal will be there
+        for (int i = mDisplayedUpcoming.size()-1; i > 0; i--){
+            if (feedData.getUpcomingActions().contains(mDisplayedUpcoming.get(i).mAction)){
+                stoppingPoint = mDisplayedUpcoming.get(i).mAction;
+                break;
+            }
+        }
+
+        //Next, update the list of displayed goals
+        for (int i = 0; i < feedData.getUpcomingActions().size(); i++){
+            //Update the existing holder or create a new one according to needs
+            if (i < mDisplayedUpcoming.size()){
+                mDisplayedUpcoming.get(i).update(feedData.getUpcomingActions().get(i));
+            }
+            else{
+                mDisplayedUpcoming.add(new ActionHolder(feedData.getUpcomingActions().get(i)));
+            }
+            //If the stopping point has been reached
+            if (stoppingPoint != null && stoppingPoint.equals(mDisplayedUpcoming.get(i).mAction)){
+                //Remove all the holders after it, if any
+                i++;
+                while (i < mDisplayedUpcoming.size()){
+                    mDisplayedUpcoming.remove(i);
+                    removeViewAt(i);
+                }
+                break;
+            }
+        }
+    }
+
     public void removeAction(Action action){
         for (int i = 0; i < mDisplayedUpcoming.size(); i++){
             if (mDisplayedUpcoming.get(i).contains(action)){
@@ -111,18 +144,6 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
 
     public void removeFirstAction(){
         outAnimation(0);
-    }
-
-    public void checkActions(FeedData feedData){
-        for (int i = 0; i < mDisplayedUpcoming.size(); i++){
-            while (!mDisplayedUpcoming.get(i).mAction.equals(feedData.getUpcomingActions().get(i))){
-                mDisplayedUpcoming.remove(i);
-                removeViewAt(i);
-                if (i == mDisplayedUpcoming.size()){
-                    break;
-                }
-            }
-        }
     }
 
     private void inAnimation(){
@@ -192,8 +213,6 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
 
 
         public ActionHolder(Action action){
-            mAction = action;
-
             LayoutInflater inflater = LayoutInflater.from(getContext());
             View rootView = inflater.inflate(R.layout.item_upcoming_action, UpcomingContainer.this, false);
 
@@ -201,11 +220,16 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
             mGoal = (TextView)rootView.findViewById(R.id.action_goal);
             mTime = (TextView)rootView.findViewById(R.id.action_time);
 
-            update();
+            update(action);
 
             addView(rootView);
             rootView.setOnClickListener(this);
             rootView.findViewById(R.id.action_overflow_box).setOnClickListener(this);
+        }
+
+        private void update(Action action){
+            mAction = action;
+            update();
         }
 
         private void update(){
