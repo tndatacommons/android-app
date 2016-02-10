@@ -1,5 +1,6 @@
 package org.tndata.android.compass.adapter.feed;
 
+import android.support.annotation.NonNull;
 import android.view.View;
 
 import org.tndata.android.compass.R;
@@ -9,10 +10,10 @@ import org.tndata.android.compass.ui.UpcomingContainer;
 
 
 /**
- * View holder for an action card.
+ * View holder for the upcoming card.
  *
  * @author Ismael Alonso
- * @version 1.0.0
+ * @version 2.0.0
  */
 class UpcomingHolder
         extends MainFeedViewHolder
@@ -28,7 +29,7 @@ class UpcomingHolder
      * @param adapter a reference to the adapter that will handle the holder.
      * @param rootView the root view held by the holder.
      */
-    UpcomingHolder(MainFeedAdapter adapter, View rootView){
+    UpcomingHolder(@NonNull MainFeedAdapter adapter, @NonNull View rootView){
         super(adapter, rootView);
 
         mUpcomingContainer = (UpcomingContainer)rootView.findViewById(R.id.card_upcoming_action_container);
@@ -42,45 +43,81 @@ class UpcomingHolder
         mAdapter.moreActions();
     }
 
+    /**
+     * Enables or disables animations.
+     *
+     * @param enabled true to enable animations, false to disable them.
+     */
     public void setAnimationsEnabled(boolean enabled){
         mUpcomingContainer.setAnimationsEnabled(enabled);
     }
 
-    void addAction(Action action){
+    /**
+     * Adds an action to the list,
+     *
+     * @param action the action to be added.
+     */
+    void addAction(@NonNull Action action){
         mUpcomingContainer.addAction(action);
     }
 
+    /**
+     * Updates a specific action in the list.
+     *
+     * @param action the action to be updated.
+     */
     void updateAction(Action action){
         mUpcomingContainer.updateAction(action);
     }
 
-    void updateActions(FeedData feedData){
+    /**
+     * Refreshes the list of actions to be updated.
+     *
+     * @param feedData a reference to the feed data. bundle.
+     */
+    void updateActions(@NonNull FeedData feedData){
         mUpcomingContainer.updateActions(feedData);
     }
 
-    void removeAction(Action action){
+    /**
+     * Removes an action from the list.
+     *
+     * @param action the action to be removed.
+     */
+    void removeAction(@NonNull Action action){
         mUpcomingContainer.removeAction(action);
     }
 
+    /**
+     * Removes the first action in the list.
+     */
     void removeFirstAction(){
         mUpcomingContainer.removeFirstAction();
     }
 
+    /**
+     * Hides the footer of the card.
+     */
     void hideFooter(){
         mMore.setVisibility(View.GONE);
     }
 
+    /**
+     * Gets the number of items in the list.
+     *
+     * @return the number of items in the list.
+     */
     int getItemCount(){
         return mUpcomingContainer.getCount();
     }
 
     @Override
-    public void onActionClick(Action action){
+    public void onActionClick(@NonNull Action action){
         mAdapter.mListener.onActionSelected(action);
     }
 
     @Override
-    public void onActionOverflowClick(View view, Action action){
+    public void onActionOverflowClick(@NonNull View view, @NonNull Action action){
         mAdapter.showActionPopup(view, action);
     }
 }

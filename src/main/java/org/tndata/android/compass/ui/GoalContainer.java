@@ -333,6 +333,6 @@ public class GoalContainer extends LinearLayout implements Animation.AnimationLi
          *
          * @param goal the selected goal.
          */
-        void onGoalClick(DisplayableGoal goal);
+        void onGoalClick(@NonNull DisplayableGoal goal);
     }
 }
