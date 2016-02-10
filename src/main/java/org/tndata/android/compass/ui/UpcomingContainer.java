@@ -2,7 +2,6 @@ package org.tndata.android.compass.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -20,12 +19,17 @@ import java.util.Queue;
 
 
 /**
- * Created by isma on 2/4/16.
+ * UI component that displays actions in the feed as requested.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class UpcomingContainer extends LinearLayout implements Animation.AnimationListener{
+    //List and listener
     private List<ActionHolder> mDisplayedUpcoming;
     private UpcomingContainerListener mListener;
 
+    //Animation stuff
     private boolean mAnimate;
     private Queue<Action> mActionQueue;
     private int mOutAnimation;
@@ -46,6 +50,9 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
         init();
     }
 
+    /**
+     * Initializes the container.
+     */
     private void init(){
         setOrientation(VERTICAL);
         mDisplayedUpcoming = new ArrayList<>();
@@ -63,19 +70,33 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
         mListener = listener;
     }
 
+    /**
+     * Enables or disables animations.
+     *
+     * @param enabled true to enable animations, false to disable them.
+     */
     public void setAnimationsEnabled(boolean enabled){
         mAnimate = enabled;
     }
 
+    /**
+     * Gets the number of items either displayed or queued to be displayed.
+     *
+     * @return the number of actions added to this container.
+     */
     public int getCount(){
         //It is safe to assume that there will always be an animation running if the queue
         // ain't empty, so we subtract one because it is already in the displayed list
         return mDisplayedUpcoming.size() + (mActionQueue.isEmpty() ? 0 : mActionQueue.size()-1);
     }
 
+    /**
+     * Adds an action to the container.
+     *
+     * @param action the action to be added.
+     */
     public void addAction(Action action){
         if (mAnimate){
-            Log.d("UpcomingContainer", mDisplayedUpcoming.size() + ", " + mActionQueue.size());
             mActionQueue.add(action);
             if (mActionQueue.size() == 1){
                 inAnimation();
@@ -86,6 +107,11 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
         }
     }
 
+    /**
+     * Updates a particular action in this container.
+     *
+     * @param action the action to be updated.
+     */
     public void updateAction(Action action){
         for (ActionHolder holder:mDisplayedUpcoming){
             if (holder.contains(action)){
@@ -94,6 +120,13 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
         }
     }
 
+    /**
+     * Refreshes the list of actions that are currently being displayed. Removes the actions
+     * that the user has removed, adds the actions that the user has added prior to the last
+     * action being displayed, and updates the actions modified by the user.
+     *
+     * @param feedData a reference to the feed data bundle.
+     */
     public void updateActions(FeedData feedData){
         //First off, find the stopping point in the updated list
         Action stoppingPoint = null;
@@ -127,6 +160,11 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
         }
     }
 
+    /**
+     * Removes an action from the container.
+     *
+     * @param action the action to be removed.
+     */
     public void removeAction(Action action){
         for (int i = 0; i < mDisplayedUpcoming.size(); i++){
             if (mDisplayedUpcoming.get(i).contains(action)){
@@ -142,10 +180,16 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
         }
     }
 
+    /**
+     * Removes the first animation from the container.
+     */
     public void removeFirstAction(){
         outAnimation(0);
     }
 
+    /**
+     * Fires the in animation for the next action in the queue and adds it to the container.
+     */
     private void inAnimation(){
         mDisplayedUpcoming.add(new ActionHolder(mActionQueue.peek()));
 
@@ -163,6 +207,12 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
         view.startAnimation(animation);
     }
 
+    /**
+     * Fires the out animation for an action in the container. Removal is performed when
+     * the animation is done.
+     *
+     * @param position the position of the action to be removed.
+     */
     private void outAnimation(int position){
         mOutAnimation = position;
 
@@ -180,7 +230,7 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
 
     @Override
     public void onAnimationStart(Animation animation){
-
+        //Unused
     }
 
     @Override
@@ -200,38 +250,64 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
 
     @Override
     public void onAnimationRepeat(Animation animation){
-
+        //Unused
     }
 
 
+    /**
+     * Holder for an action being displayed in the container. The existence of this class
+     * facilitates operations on the data set and updating single elements.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     private class ActionHolder implements OnClickListener{
+        //The action being displayed
         private Action mAction;
 
+        //UI components
         private TextView mTitle;
         private TextView mGoal;
         private TextView mTime;
 
 
+        /**
+         * Constructor.
+         *
+         * @param action the action to be bound.
+         */
         public ActionHolder(Action action){
+            //Inflate the layout
             LayoutInflater inflater = LayoutInflater.from(getContext());
             View rootView = inflater.inflate(R.layout.item_upcoming_action, UpcomingContainer.this, false);
 
+            //Grab the UI components
             mTitle = (TextView)rootView.findViewById(R.id.action_title);
             mGoal = (TextView)rootView.findViewById(R.id.action_goal);
             mTime = (TextView)rootView.findViewById(R.id.action_time);
 
+            //Update the action
             update(action);
 
+            //Add this view to the container and set listeners
             addView(rootView);
             rootView.setOnClickListener(this);
             rootView.findViewById(R.id.action_overflow_box).setOnClickListener(this);
         }
 
+        /**
+         * Replace the action contained by this holder.
+         *
+         * @param action the new action to be displayed.
+         */
         private void update(Action action){
             mAction = action;
             update();
         }
 
+        /**
+         * Updates the UI with changes the action currently contained may have experienced.
+         */
         private void update(){
             mTitle.setText(mAction.getTitle());
             mGoal.setText(mAction.getGoalTitle());
@@ -250,14 +326,38 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
             }
         }
 
+        /**
+         * Checks if this holder contains a particular action.
+         *
+         * @param action the action to be compared.
+         * @return true is the actions are the same, false otherwise.
+         */
         public boolean contains(Action action){
             return mAction.equals(action);
         }
     }
 
 
+    /**
+     * Interface for the UpcomingContainer.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface UpcomingContainerListener{
+        /**
+         * Called when an action is tapped.
+         *
+         * @param action the tapped action.
+         */
         void onActionClick(Action action);
+
+        /**
+         * Called when an overflow menu has been tapped.
+         *
+         * @param view the view containing the overflow.
+         * @param action the action whose overflow was tapped.
+         */
         void onActionOverflowClick(View view, Action action);
     }
 }
