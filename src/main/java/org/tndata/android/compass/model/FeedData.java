@@ -1,6 +1,7 @@
 package org.tndata.android.compass.model;
 
 import android.support.annotation.DrawableRes;
+import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -271,6 +272,8 @@ public class FeedData extends TDCBase{
      * @param action the action to be added.
      */
     public void addAction(Action action){
+        Log.d("FeedData", "addAction() called: " + action);
+
         Calendar todayCalendar = Calendar.getInstance();
         todayCalendar.set(Calendar.HOUR_OF_DAY, 0);
         todayCalendar.set(Calendar.MINUTE, 0);
@@ -288,13 +291,19 @@ public class FeedData extends TDCBase{
         Date tomorrow = tomorrowCalendar.getTime();
         Date actionDate = action.getNextReminderDate();
 
+        Log.d("FeedData", "Today: " + today);
+        Log.d("FeedData", "Action: " + actionDate);
+        Log.d("FeedData", "Tomorrow: " + tomorrow);
+
         if (actionDate.after(today) && actionDate.before(tomorrow)){
             for (int i = 0; i < mUpcomingActions.size(); i++){
                 if (mUpcomingActions.get(i).getNextReminderDate().compareTo(actionDate) > 0){
+                    Log.d("FeedData", "Added at: " + i);
                     mUpcomingActions.add(i, action);
                     break;
                 }
-                else if (i == mUpcomingActions.size() - 1){
+                else if (i == mUpcomingActions.size()-1){
+                    Log.d("FeedData", "Added at the end");
                     mUpcomingActions.add(action);
                     break;
                 }

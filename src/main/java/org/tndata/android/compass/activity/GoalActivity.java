@@ -41,6 +41,8 @@ import at.grabner.circleprogress.CircleProgressView;
 /**
  * Displays the content hierarchy of a user goal with all the behaviors and actions.
  *
+ * TODO this cass needs some fixin'
+ *
  * @author Ismael Alonso
  * @version 1.0.0
  */
@@ -229,6 +231,12 @@ public class GoalActivity
         else{
             mTitle.getViewTreeObserver().removeOnGlobalLayoutListener(this);
         }
+    }
+
+    @Override
+    public void onBackPressed(){
+        setResult(RESULT_OK);
+        super.onBackPressed();
     }
 
     @Override

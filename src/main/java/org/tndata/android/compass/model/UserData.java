@@ -431,7 +431,7 @@ public class UserData extends TDCBase{
             userAction.setPrimaryGoal(mGoals.get(userAction.getPrimaryGoalId()));
             userAction.setPrimaryCategory(mCategories.get(userAction.getPrimaryCategoryId()));
 
-            mFeedData.addAction(userAction);
+            //mFeedData.addAction(userAction);
         }
     }
 
@@ -490,7 +490,7 @@ public class UserData extends TDCBase{
         mCustomActions.put(customAction.getContentId(), customAction);
         customAction.setGoal(mCustomGoals.get(customAction.getCustomGoalId()));
         customAction.getGoal().addAction(customAction);
-        mFeedData.addAction(customAction);
+        //mFeedData.addAction(customAction);
     }
 
     private void removeAction(CustomAction customAction){
@@ -554,6 +554,12 @@ public class UserData extends TDCBase{
         }
         else if (action instanceof CustomAction){
             addAction((CustomAction)action);
+        }
+    }
+
+    public void updateActionTrigger(Action action){
+        if (action.getNextReminder() != null){
+            mFeedData.addAction(action);
         }
     }
 

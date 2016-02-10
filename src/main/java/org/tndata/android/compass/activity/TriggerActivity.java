@@ -496,6 +496,7 @@ public class TriggerActivity
 
             mAction.setTrigger(action.getTrigger());
             mAction.setNextReminder(action.getNextReminder());
+            ((CompassApplication)getApplication()).getUserData().updateActionTrigger(mAction);
         }
     }
 
