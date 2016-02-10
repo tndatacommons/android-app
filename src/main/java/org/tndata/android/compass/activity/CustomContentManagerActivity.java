@@ -58,6 +58,7 @@ public class CustomContentManagerActivity
     private ImageView mAddGoal;
     private ImageView mDeleteGoal;
     private LinearLayout mActionContainer;
+    private RecyclerView mRecyclerView;
 
     //Dataset and adapter
     private CustomGoal mCustomGoal;
@@ -82,7 +83,7 @@ public class CustomContentManagerActivity
         mAddGoal = (ImageView)findViewById(R.id.create_goal_add);
         mDeleteGoal = (ImageView)findViewById(R.id.create_goal_delete);
         mActionContainer = (LinearLayout)findViewById(R.id.create_goal_action_container);
-        RecyclerView actionRecyclerView = (RecyclerView)findViewById(R.id.create_goal_action_list);
+        mRecyclerView = (RecyclerView)findViewById(R.id.create_goal_action_list);
 
         //Set the listeners
         mEditGoal.setOnClickListener(this);
@@ -91,7 +92,6 @@ public class CustomContentManagerActivity
         mDeleteGoal.setOnClickListener(this);
 
         //Retrieve the data set and populate the UI accordingly
-        List<CustomAction> actionList;
         mCustomGoal = (CustomGoal)getIntent().getSerializableExtra(CUSTOM_GOAL_KEY);
         if (mCustomGoal != null){
             Log.d(TAG, "Edit goal mode");
@@ -100,28 +100,32 @@ public class CustomContentManagerActivity
 
             mGoalTitle.setText(mCustomGoal.getTitle());
             mGoalTitle.setFocusable(false);
-            actionList = mCustomGoal.getActions();
             mEditGoal.setVisibility(View.VISIBLE);
             mAddGoal.setVisibility(View.GONE);
             mDeleteGoal.setVisibility(View.VISIBLE);
             mActionContainer.setVisibility(View.VISIBLE);
+
+            //Set the adapter
+            mAdapter = new CustomActionAdapter(this, this, mCustomGoal.getActions());
+            LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            mRecyclerView.setLayoutManager(llm);
+            mRecyclerView.setAdapter(mAdapter);
         }
         else{
             Log.d(TAG, "New goal mode");
 
-            actionList = new ArrayList<>();
             String title = getIntent().getStringExtra(CUSTOM_GOAL_TITLE_KEY);
             if (title != null){
                 Log.d(TAG, "Title provided: " + title);
                 mGoalTitle.setText(title);
             }
         }
+    }
 
-        //Set the adapter
-        mAdapter = new CustomActionAdapter(this, this, actionList);
-        LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        actionRecyclerView.setLayoutManager(llm);
-        actionRecyclerView.setAdapter(mAdapter);
+    @Override
+    public void onBackPressed(){
+        setResult(RESULT_OK);
+        super.onBackPressed();
     }
 
     @Override
@@ -188,6 +192,7 @@ public class CustomContentManagerActivity
                 mApplication.removeGoal(mCustomGoal);
                 NetworkRequest.delete(this, null, API.getDeleteGoalUrl(mCustomGoal),
                         mApplication.getToken(), new JSONObject());
+                setResult(RESULT_OK);
                 finish();
                 break;
         }
@@ -232,6 +237,11 @@ public class CustomContentManagerActivity
             mEditGoal.setVisibility(View.VISIBLE);
             mDeleteGoal.setVisibility(View.VISIBLE);
             mActionContainer.setVisibility(View.VISIBLE);
+            
+            mAdapter = new CustomActionAdapter(this, this, mCustomGoal.getActions());
+            LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            mRecyclerView.setLayoutManager(llm);
+            mRecyclerView.setAdapter(mAdapter);
         }
         else if (result instanceof CustomAction){
             mAdapter.customActionAdded();
