@@ -274,8 +274,12 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     public void updateDataSet(){
-        mUpcomingHolder.updateActions(mUserData.getFeedData());
-        mGoalsHolder.updateGoals(mUserData.getFeedData());
+        if (mUpcomingHolder != null){
+            mUpcomingHolder.updateActions(mUserData.getFeedData());
+        }
+        if (mGoalsHolder != null){
+            mGoalsHolder.updateGoals(mUserData.getFeedData());
+        }
     }
 
 

@@ -25,9 +25,6 @@ import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 /**
  * Activity used to create, edit, and delete custom goals and actions.
@@ -237,7 +234,7 @@ public class CustomContentManagerActivity
             mEditGoal.setVisibility(View.VISIBLE);
             mDeleteGoal.setVisibility(View.VISIBLE);
             mActionContainer.setVisibility(View.VISIBLE);
-            
+
             mAdapter = new CustomActionAdapter(this, this, mCustomGoal.getActions());
             LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             mRecyclerView.setLayoutManager(llm);
