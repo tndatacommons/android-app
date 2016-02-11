@@ -27,6 +27,7 @@ import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.ContentParser;
+import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
@@ -236,13 +237,7 @@ public class ChooseGoalsActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetGoalsRequestCode){
-            List<GoalContent> goals = ContentParser.parseGoals(result);
-            if (goals != null && !goals.isEmpty()){
-                mAdapter.addGoals(goals);
-            }
-            else{
-                showError();
-            }
+            Parser.parse(result, ParserModels.GoalContentResultSet.class, this);
         }
         else if (mAddGoalRequestCodeMap.containsKey(requestCode)){
             UserGoal userGoal = ContentParser.parseUserGoal(result);
@@ -267,11 +262,18 @@ public class ChooseGoalsActivity
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-
+        if (result instanceof ParserModels.GoalContentResultSet){
+            List<GoalContent> goals = ((ParserModels.GoalContentResultSet)result).results;
+            if (goals != null && !goals.isEmpty()){
+                mAdapter.addGoals(goals);
+            }
+        }
     }
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-
+        if (result instanceof ParserModels.GoalContentResultSet){
+            mAdapter.update();
+        }
     }
 }

@@ -9,7 +9,6 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -162,11 +161,13 @@ public class ChooseGoalsAdapter
 
         mGoals.addAll(goals);
         populateStateArray();
-        notifyDataSetChanged();
+    }
 
+    public void update(){
         if (mFilter == null){
-            mFilter = new GoalFilter(this, goals);
+            mFilter = new GoalFilter(this, mGoals.subList(1, mGoals.size()));
         }
+        notifyDataSetChanged();
     }
 
     /**

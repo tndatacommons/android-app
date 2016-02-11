@@ -106,44 +106,6 @@ public final class ContentParser extends ParserMethods{
         return sGson.fromJson(src, UserGoal.class);
     }
 
-    public static List<GoalContent> parseGoalArray(String src){
-        JSONArray goalArray;
-        try{
-            goalArray = new JSONArray(src);
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-            return null;
-        }
-
-        List<GoalContent> goals = new ArrayList<>();
-        for (int i = 0; i < goalArray.length(); i++){
-            try{
-                GoalContent goal = parseGoal(goalArray.getString(i));
-                if (goal != null){
-                    goals.add(goal);
-                }
-                else{
-                    Log.d("GoalParser", "Goal #" + i + " is null.");
-                }
-            }
-            catch (JSONException jsonx){
-                jsonx.printStackTrace();
-            }
-        }
-        return goals;
-    }
-
-    public static List<GoalContent> parseGoals(String src){
-        try{
-            return parseGoalArray(new JSONObject(src).getString("results"));
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-            return null;
-        }
-    }
-
 
     /*-----------*
      * BEHAVIORS *

@@ -4,6 +4,7 @@ import org.tndata.android.compass.model.ActionContent;
 import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.FeedData;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.UserData;
 
@@ -36,12 +37,16 @@ public final class ParserModels{
         public List<Place> results;
     }
 
-    public final class ActionContentResultSet implements ResultSet{
-        public List<ActionContent> results;
+    public final class GoalContentResultSet implements ResultSet{
+        public List<GoalContent> results;
     }
 
     public final class BehaviorContentResultSet implements ResultSet{
         public List<BehaviorContent> results;
+    }
+
+    public final class ActionContentResultSet implements ResultSet{
+        public List<ActionContent> results;
     }
 
     private ParserModels(){
