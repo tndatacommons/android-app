@@ -17,7 +17,7 @@ import java.util.List;
  * @version 1.0.0
  */
 public final class ContentParser extends ParserMethods{
-    
+
     /*------------*
      * CATEGORIES *
      *------------*/
@@ -60,10 +60,6 @@ public final class ContentParser extends ParserMethods{
     /*---------*
      * ACTIONS *
      *---------*/
-
-    public static UserAction parseUserAction(String src){
-        return sGson.fromJson(src, UserAction.class);
-    }
 
 
     public static List<UserAction> parseUserActions(String src){
