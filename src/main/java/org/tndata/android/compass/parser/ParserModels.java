@@ -2,6 +2,7 @@ package org.tndata.android.compass.parser;
 
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.FeedData;
+import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.UserData;
 
 import java.util.List;
@@ -27,5 +28,9 @@ public final class ParserModels{
 
     public final class CategoriesResultSet implements ResultSet{
         public List<CategoryContent> results;
+    }
+
+    public static class PlaceResultSet implements ResultSet{
+        public List<Place> results;
     }
 }
