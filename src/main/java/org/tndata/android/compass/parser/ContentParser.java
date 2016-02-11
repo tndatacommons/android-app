@@ -1,6 +1,5 @@
 package org.tndata.android.compass.parser;
 
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -10,9 +9,7 @@ import org.tndata.android.compass.model.*;
 import org.tndata.android.compass.model.Package;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -38,16 +35,6 @@ public final class ContentParser extends ParserMethods{
      */
     public static CategoryContent parseCategory(String src){
         return sGson.fromJson(src, CategoryContent.class);
-    }
-
-    /**
-     * Parses a user category.
-     *
-     * @param src a JSON string containing a user category.
-     * @return a parsed user category.
-     */
-    public static UserCategory parseUserCategory(String src){
-        return sGson.fromJson(src, UserCategory.class);
     }
 
     /**
@@ -87,50 +74,6 @@ public final class ContentParser extends ParserMethods{
     public static List<CategoryContent> parseCategories(String src){
         try{
             return parseCategoryArray(new JSONObject(src).getString("results"));
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Parses a list of categories into an id -> Category map
-     *
-     * @param src a JSON string containing a list of categories.
-     * @return a map of categories.
-     */
-    public static Map<Long, UserCategory> parseUserCategoryArray(String src){
-        JSONArray categoriesArray;
-        try{
-            categoriesArray = new JSONArray(src);
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-            return null;
-        }
-
-        Map<Long, UserCategory> categories = new HashMap<>();
-        for (int i = 0; i < categoriesArray.length(); i++){
-            try{
-                UserCategory category = parseUserCategory(categoriesArray.getString(i));
-                if (category != null){
-                    categories.put(category.getId(), category);
-                }
-                else{
-                    Log.d("UserCategoryParser", "UserCategory #" + i + " is null.");
-                }
-            }
-            catch (JSONException jsonx){
-                jsonx.printStackTrace();
-            }
-        }
-        return categories;
-    }
-
-    public static Map<Long, UserCategory> parseUserCategories(String src){
-        try{
-            return parseUserCategoryArray(new JSONObject(src).getString("results"));
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
@@ -201,45 +144,6 @@ public final class ContentParser extends ParserMethods{
         }
     }
 
-    public static Map<Long, UserGoal> parseUserGoalArray(String src){
-        JSONArray goalArray;
-        try{
-            goalArray = new JSONArray(src);
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-            return null;
-        }
-
-        Map<Long, UserGoal> goals = new HashMap<>();
-        for (int i = 0; i < goalArray.length(); i++){
-            try{
-                UserGoal goal = parseUserGoal(goalArray.getString(i));
-                if (goal != null){
-                    Log.d("UserGoalParser", goal.toString());
-                    goals.put(goal.getId(), goal);
-                }
-                else{
-                    Log.d("UserGoalParser", "UserGoal #" + i + " is null.");
-                }
-            }
-            catch (JSONException jsonx){
-                jsonx.printStackTrace();
-            }
-        }
-        return goals;
-    }
-
-    public static Map<Long, UserGoal> parseUserGoals(String src){
-        try{
-            return parseUserGoalArray(new JSONObject(src).getString("results"));
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-            return null;
-        }
-    }
-
 
     /*-----------*
      * BEHAVIORS *
@@ -247,10 +151,6 @@ public final class ContentParser extends ParserMethods{
 
     public static BehaviorContent parseBehavior(String src){
         return sGson.fromJson(src, BehaviorContent.class);
-    }
-
-    public static UserBehavior parseUserBehavior(String src){
-        return sGson.fromJson(src, UserBehavior.class);
     }
 
     public static List<BehaviorContent> parseBehaviorArray(String src){
@@ -281,41 +181,6 @@ public final class ContentParser extends ParserMethods{
     public static List<BehaviorContent> parseBehaviors(String src){
         try{
             return parseBehaviorArray(new JSONObject(src).getString("results"));
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-            return null;
-        }
-    }
-
-    public static Map<Long, UserBehavior> parseUserBehaviorArray(String src){
-        JSONArray behaviorArray;
-        try{
-            behaviorArray = new JSONArray(src);
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-            return null;
-        }
-
-        Map<Long, UserBehavior> behaviors = new HashMap<>();
-        for (int i = 0; i < behaviorArray.length(); i++){
-            try{
-                UserBehavior behavior = parseUserBehavior(behaviorArray.getString(i));
-                if (behavior != null){
-                    behaviors.put(behavior.getId(), behavior);
-                }
-            }
-            catch (JSONException jsonx){
-                jsonx.printStackTrace();
-            }
-        }
-        return behaviors;
-    }
-
-    public static Map<Long, UserBehavior> parseUserBehaviors(String src){
-        try{
-            return parseUserBehaviorArray(new JSONObject(src).getString("results"));
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
@@ -362,52 +227,9 @@ public final class ContentParser extends ParserMethods{
         return actions;
     }
 
-    public static Map<Long, UserAction> parseUserActionArray(String src, @Nullable List<UserAction> target){
-        JSONArray actionArray;
-        try{
-            actionArray = new JSONArray(src);
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-            return null;
-        }
-
-        Map<Long, UserAction> actions = new HashMap<>();
-        //For each action in the array
-        for (int i = 0; i < actionArray.length(); i++){
-            try{
-                UserAction action = parseUserAction(actionArray.getString(i));
-                if (action != null){
-                    actions.put(action.getId(), action);
-                    if (target != null){
-                        target.add(action);
-                    }
-                }
-            }
-            catch (JSONException jsonx){
-                jsonx.printStackTrace();
-            }
-        }
-        return actions;
-    }
-
     public static List<ActionContent> parseActionsFromResultSet(String src){
         try{
             return parseActionArray(new JSONObject(src).getString("results"));
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-            return null;
-        }
-    }
-
-    public static Map<Long, UserAction> parseUserActions(String src, @Nullable List<UserAction> target){
-        return parseUserActionArray(src, target);
-    }
-
-    public static Map<Long, UserAction> parseUserActionsFromResultSet(String src, @Nullable List<UserAction> target){
-        try{
-            return parseUserActionArray(new JSONObject(src).getString("results"), target);
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
