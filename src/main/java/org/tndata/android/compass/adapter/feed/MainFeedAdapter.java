@@ -249,6 +249,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     /*----------------------*
      * FEED ADAPTER METHODS *
      *----------------------*/
+
     DataHandler getDataHandler(){
         return mDataHandler;
     }
@@ -374,7 +375,6 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     }
 
     void showSuggestionPopup(View anchor){
-        //TODO I cannot test this yet
         mFeedUtil.showSuggestionPopup(anchor);
     }
 
