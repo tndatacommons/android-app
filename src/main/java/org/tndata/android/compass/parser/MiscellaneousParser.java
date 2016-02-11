@@ -3,7 +3,6 @@ package org.tndata.android.compass.parser;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.tndata.android.compass.model.Instrument;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.Survey;

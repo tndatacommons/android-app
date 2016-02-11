@@ -18,6 +18,8 @@ import java.util.Map;
 /**
  * Parser for the classes that make up the core of the model (Category, Goal, Behavior, Action).
  *
+ * TODO try to kill this class at some point. After networking background parsing ain't no overhead.
+ *
  * @author Ismael Alonso
  * @version 1.0.0
  */

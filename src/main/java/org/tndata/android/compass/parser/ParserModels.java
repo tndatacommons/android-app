@@ -30,7 +30,11 @@ public final class ParserModels{
         public List<CategoryContent> results;
     }
 
-    public static class PlaceResultSet implements ResultSet{
+    public final class PlaceResultSet implements ResultSet{
         public List<Place> results;
+    }
+
+    private ParserModels(){
+
     }
 }
