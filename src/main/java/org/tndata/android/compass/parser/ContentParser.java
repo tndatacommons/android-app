@@ -193,48 +193,8 @@ public final class ContentParser extends ParserMethods{
      * ACTIONS *
      *---------*/
 
-    public static ActionContent parseAction(String src){
-        return sGson.fromJson(src, ActionContent.class);
-    }
-
     public static UserAction parseUserAction(String src){
         return sGson.fromJson(src, UserAction.class);
-    }
-
-    public static List<ActionContent> parseActionArray(String src){
-        JSONArray actionArray;
-        try{
-            actionArray = new JSONArray(src);
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-            return null;
-        }
-
-        List<ActionContent> actions = new ArrayList<>();
-        //For each action in the array
-        for (int i = 0; i < actionArray.length(); i++){
-            try{
-                ActionContent action = parseAction(actionArray.getString(i));
-                if (action != null){
-                    actions.add(action);
-                }
-            }
-            catch (JSONException jsonx){
-                jsonx.printStackTrace();
-            }
-        }
-        return actions;
-    }
-
-    public static List<ActionContent> parseActionsFromResultSet(String src){
-        try{
-            return parseActionArray(new JSONObject(src).getString("results"));
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-            return null;
-        }
     }
 
 

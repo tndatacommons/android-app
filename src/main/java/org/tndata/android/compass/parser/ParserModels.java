@@ -1,5 +1,6 @@
 package org.tndata.android.compass.parser;
 
+import org.tndata.android.compass.model.ActionContent;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Place;
@@ -32,6 +33,10 @@ public final class ParserModels{
 
     public final class PlaceResultSet implements ResultSet{
         public List<Place> results;
+    }
+
+    public final class ActionContentResultSet implements ResultSet{
+        public List<ActionContent> results;
     }
 
     private ParserModels(){

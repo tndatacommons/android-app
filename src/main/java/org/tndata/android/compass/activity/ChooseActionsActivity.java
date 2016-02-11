@@ -31,7 +31,6 @@ import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserAction;
-import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
@@ -245,7 +244,7 @@ public class ChooseActionsActivity
     public void onScroll(float percentage, float offset){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
             Drawable color = mToolbar.getBackground();
-            color.setAlpha(Math.round(percentage*255));
+            color.setAlpha(Math.round(percentage * 255));
             mToolbar.setBackground(color);
         }
         mHeaderView.setTranslationY(-offset * 0.5f);
@@ -254,17 +253,7 @@ public class ChooseActionsActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetActionsRequestCode){
-            List<ActionContent> actionList = ContentParser.parseActionsFromResultSet(result);
-            if (actionList != null && !actionList.isEmpty()){
-                Collections.sort(actionList, new Comparator<ActionContent>(){
-                    @Override
-                    public int compare(ActionContent act1, ActionContent act2){
-                        return (act1.getSequenceOrder() < act2.getSequenceOrder()) ? 0 : 1;
-                    }
-                });
-                mAdapter.setActions(actionList);
-            }
-            mAdapter.notifyDataSetChanged();
+            Parser.parse(result, ParserModels.ActionContentResultSet.class, this);
         }
         else if (requestCode == mPostActionRequestCode){
             Parser.parse(result, UserAction.class, this);
@@ -282,7 +271,19 @@ public class ChooseActionsActivity
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof UserAction){
+        if (result instanceof ParserModels.ActionContentResultSet){
+            List<ActionContent> actionList = ((ParserModels.ActionContentResultSet)result).results;
+            if (actionList != null && !actionList.isEmpty()){
+                Collections.sort(actionList, new Comparator<ActionContent>(){
+                    @Override
+                    public int compare(ActionContent act1, ActionContent act2){
+                        return (act1.getSequenceOrder() < act2.getSequenceOrder()) ? 0 : 1;
+                    }
+                });
+                mAdapter.setActions(actionList);
+            }
+        }
+        else if (result instanceof UserAction){
             UserAction userAction = (UserAction)result;
             Log.d(TAG, "(Post) " + userAction.toString());
 
@@ -295,7 +296,10 @@ public class ChooseActionsActivity
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof UserAction){
+        if (result instanceof ParserModels.ActionContentResultSet){
+            mAdapter.update();
+        }
+        else if (result instanceof UserAction){
             UserAction userAction = (UserAction)result;
 
             String toast = getString(R.string.action_added, userAction.getTitle());
