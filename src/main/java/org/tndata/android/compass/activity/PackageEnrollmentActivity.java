@@ -17,7 +17,7 @@ import android.widget.ViewSwitcher;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Package;
-import org.tndata.android.compass.parser.ContentParser;
+import org.tndata.android.compass.parser.MiscellaneousParser;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -94,7 +94,7 @@ public class PackageEnrollmentActivity
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetPackageRequestCode){
             mProgressBar.setVisibility(View.GONE);
-            mPackage = ContentParser.parsePackage(result);
+            mPackage = MiscellaneousParser.parsePackage(result);
             populateUI(mPackage);
         }
         else if (requestCode == mPutConsentRequestCode){

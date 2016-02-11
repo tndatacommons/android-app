@@ -3,8 +3,8 @@ package org.tndata.android.compass.parser;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.tndata.android.compass.model.SearchResult;
-import org.tndata.android.compass.model.Survey;
+import org.tndata.android.compass.model.*;
+import org.tndata.android.compass.model.Package;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,5 +33,17 @@ public final class MiscellaneousParser extends ParserMethods{
             jsonx.printStackTrace();
         }
         return results;
+    }
+
+    public static org.tndata.android.compass.model.Package parsePackage(String src){
+        try{
+            Package myPackage = sGson.fromJson(new JSONObject(src).getString("category"), Package.class);
+            myPackage.setId(new JSONObject(src).getInt("id"));
+            return myPackage;
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+            return null;
+        }
     }
 }

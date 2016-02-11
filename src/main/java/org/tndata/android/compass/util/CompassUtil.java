@@ -297,7 +297,7 @@ public final class CompassUtil{
             return SurveyOption.class;
         }
         //Miscellaneous
-        else if (src.contains("reward")){
+        else if (src.contains("funcontent")){
             return Reward.class;
         }
         //Second default to TDCBase; the API should NOT deliver anything that's not TDCBase

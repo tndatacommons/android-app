@@ -26,7 +26,6 @@ import org.tndata.android.compass.adapter.ChooseGoalsAdapter;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserGoal;
-import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
@@ -240,10 +239,7 @@ public class ChooseGoalsActivity
             Parser.parse(result, ParserModels.GoalContentResultSet.class, this);
         }
         else if (mAddGoalRequestCodeMap.containsKey(requestCode)){
-            UserGoal userGoal = ContentParser.parseUserGoal(result);
-            Log.d(TAG, "(Post) " + userGoal.toString());
-            mApplication.addGoal(userGoal);
-            mAdapter.goalAdded(userGoal.getGoal());
+            Parser.parse(result, UserGoal.class, this);
         }
         else if (mDeleteGoalRequestCodeMap.containsKey(requestCode)){
             mAdapter.goalDeleted(mDeleteGoalRequestCodeMap.remove(requestCode));
@@ -274,6 +270,12 @@ public class ChooseGoalsActivity
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof ParserModels.GoalContentResultSet){
             mAdapter.update();
+        }
+        else if (result instanceof UserGoal){
+            UserGoal userGoal = (UserGoal)result;
+            Log.d(TAG, "(Post) " + userGoal.toString());
+            mApplication.addGoal(userGoal);
+            mAdapter.goalAdded(userGoal.getGoal());
         }
     }
 }
