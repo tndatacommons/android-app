@@ -153,41 +153,6 @@ public final class ContentParser extends ParserMethods{
         return sGson.fromJson(src, BehaviorContent.class);
     }
 
-    public static List<BehaviorContent> parseBehaviorArray(String src){
-        JSONArray behaviorArray;
-        try{
-            behaviorArray = new JSONArray(src);
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-            return null;
-        }
-
-        List<BehaviorContent> behaviors = new ArrayList<>();
-        for (int i = 0; i < behaviorArray.length(); i++){
-            try{
-                BehaviorContent behavior = parseBehavior(behaviorArray.getString(i));
-                if (behavior != null){
-                    behaviors.add(behavior);
-                }
-            }
-            catch (JSONException jsonx){
-                jsonx.printStackTrace();
-            }
-        }
-        return behaviors;
-    }
-
-    public static List<BehaviorContent> parseBehaviors(String src){
-        try{
-            return parseBehaviorArray(new JSONObject(src).getString("results"));
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-            return null;
-        }
-    }
-
 
     /*---------*
      * ACTIONS *

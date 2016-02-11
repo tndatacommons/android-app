@@ -27,6 +27,8 @@ import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.ContentParser;
+import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.util.API;
@@ -47,6 +49,7 @@ public class ChooseGoalsActivity
         extends AppCompatActivity
         implements
                 NetworkRequest.RequestCallback,
+                ParserCallback,
                 ChooseGoalsAdapter.ChooseGoalsListener,
                 MenuItemCompat.OnActionExpandListener,
                 SearchView.OnQueryTextListener,
@@ -260,5 +263,15 @@ public class ChooseGoalsActivity
         else if (mDeleteGoalRequestCodeMap.containsKey(requestCode)){
             mAdapter.goalNotDeleted(mDeleteGoalRequestCodeMap.remove(requestCode));
         }
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+
     }
 }

@@ -343,11 +343,7 @@ public class ChooseBehaviorsActivity
             mApplication.getUserData().addGoal(userGoal);
         }
         else if (requestCode == mGetBehaviorsRequestCode){
-            List<BehaviorContent> behaviorList = ContentParser.parseBehaviors(result);
-            if (behaviorList != null && !behaviorList.isEmpty()){
-                mAdapter.setBehaviors(behaviorList);
-            }
-            mAdapter.notifyDataSetChanged();
+            Parser.parse(result, ParserModels.BehaviorContentResultSet.class, this);
         }
         else if (requestCode == mPostBehaviorRequestCode){
             Parser.parse(result, UserBehavior.class, this);
@@ -366,6 +362,12 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.BehaviorContentResultSet){
+            List<BehaviorContent> behaviorList = ((ParserModels.BehaviorContentResultSet)result).results;
+            if (behaviorList != null && !behaviorList.isEmpty()){
+                mAdapter.setBehaviors(behaviorList);
+            }
+        }
         if (result instanceof UserBehavior){
             UserBehavior userBehavior = (UserBehavior)result;
             Log.d(TAG, "(Post) " + userBehavior.toString());
@@ -378,6 +380,9 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.BehaviorContentResultSet){
+            mAdapter.update();
+        }
         if (result instanceof UserBehavior){
             mApplication.addBehavior((UserBehavior)result);
             mAdapter.notifyDataSetChanged();
