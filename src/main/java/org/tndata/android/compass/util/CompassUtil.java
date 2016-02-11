@@ -22,6 +22,7 @@ import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.Instrument;
 import org.tndata.android.compass.model.Place;
+import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.model.SurveyOption;
 import org.tndata.android.compass.model.UserAction;
@@ -294,6 +295,10 @@ public final class CompassUtil{
         }
         else if (src.contains("option")){
             return SurveyOption.class;
+        }
+        //Miscellaneous
+        else if (src.contains("reward")){
+            return Reward.class;
         }
         //Second default to TDCBase; the API should NOT deliver anything that's not TDCBase
         else{

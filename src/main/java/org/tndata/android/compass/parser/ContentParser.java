@@ -46,27 +46,4 @@ public final class ContentParser extends ParserMethods{
     public static UserGoal parseUserGoal(String src){
         return sGson.fromJson(src, UserGoal.class);
     }
-
-
-    /*-----------*
-     * BEHAVIORS *
-     *-----------*/
-
-    public static BehaviorContent parseBehavior(String src){
-        return sGson.fromJson(src, BehaviorContent.class);
-    }
-
-
-    /*---------*
-     * ACTIONS *
-     *---------*/
-
-
-    public static List<UserAction> parseUserActions(String src){
-        return sGson.fromJson(src, ActionList.class).results;
-    }
-
-    public static class ActionList{
-        private List<UserAction> results = null;
-    }
 }

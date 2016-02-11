@@ -15,7 +15,7 @@ import java.util.Date;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public abstract class Action extends UserContent implements Serializable, ParserModels.ResultSet{
+public abstract class Action extends UserContent implements Serializable{
     private static final long serialVersionUID = 2919447142568751923L;
 
 

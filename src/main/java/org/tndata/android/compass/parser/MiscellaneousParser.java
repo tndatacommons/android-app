@@ -3,7 +3,6 @@ package org.tndata.android.compass.parser;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.Survey;
 
@@ -34,25 +33,5 @@ public final class MiscellaneousParser extends ParserMethods{
             jsonx.printStackTrace();
         }
         return results;
-    }
-
-    /**
-     * Parses a list of rewards from a JSON string.
-     *
-     * @param src the source string in JSON format.
-     * @return a list of categories.
-     */
-    public static List<Reward> parseRewards(String src){
-        List<Reward> rewards = new ArrayList<>();
-        try{
-            JSONArray rewardArray = new JSONObject(src).getJSONArray("results");
-            for (int i = 0; i < rewardArray.length(); i++){
-                rewards.add(sGson.fromJson(rewardArray.getString(i), Reward.class));
-            }
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-        }
-        return rewards;
     }
 }
