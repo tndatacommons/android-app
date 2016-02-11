@@ -1,14 +1,10 @@
 package org.tndata.android.compass.parser;
 
-import android.util.Log;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.model.*;
 import org.tndata.android.compass.model.Package;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -21,65 +17,10 @@ import java.util.List;
  * @version 1.0.0
  */
 public final class ContentParser extends ParserMethods{
-
-
+    
     /*------------*
      * CATEGORIES *
      *------------*/
-
-    /**
-     * Populates a Category object with values from a JSON string.
-     *
-     * @param src the JSON string from which the category will be created.
-     * @return a category.
-     */
-    public static CategoryContent parseCategory(String src){
-        return sGson.fromJson(src, CategoryContent.class);
-    }
-
-    /**
-     * Parses a list of categories into an id -> Category map
-     *
-     * @param src a JSON string containing a list of categories.
-     * @return a map of categories.
-     */
-    public static List<CategoryContent> parseCategoryArray(String src){
-        JSONArray categoriesArray;
-        try{
-            categoriesArray = new JSONArray(src);
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-            return null;
-        }
-
-        List<CategoryContent> categories = new ArrayList<>();
-        for (int i = 0; i < categoriesArray.length(); i++){
-            try{
-                CategoryContent category = parseCategory(categoriesArray.getString(i));
-                if (category != null){
-                    categories.add(category);
-                }
-                else{
-                    Log.d("CategoryParser", "Category #" + i + " is null.");
-                }
-            }
-            catch (JSONException jsonx){
-                jsonx.printStackTrace();
-            }
-        }
-        return categories;
-    }
-
-    public static List<CategoryContent> parseCategories(String src){
-        try{
-            return parseCategoryArray(new JSONObject(src).getString("results"));
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-            return null;
-        }
-    }
 
     public static Package parsePackage(String src){
         try{

@@ -29,12 +29,12 @@ public final class ParserModels{
         public List<FeedData> results;
     }
 
-    public final class CategoriesResultSet implements ResultSet{
-        public List<CategoryContent> results;
-    }
-
     public final class PlaceResultSet implements ResultSet{
         public List<Place> results;
+    }
+
+    public final class CategoryContentResultSet implements ResultSet{
+        public List<CategoryContent> results;
     }
 
     public final class GoalContentResultSet implements ResultSet{
