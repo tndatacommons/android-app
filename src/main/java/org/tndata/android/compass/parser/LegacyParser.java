@@ -20,7 +20,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public final class UserDataParser extends ParserMethods{
+public final class LegacyParser extends ParserMethods{
     /**
      * Parses a user from a JSON string.
      *

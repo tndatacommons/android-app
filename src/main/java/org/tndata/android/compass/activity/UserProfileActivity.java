@@ -13,8 +13,10 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.UserProfileAdapter;
 import org.tndata.android.compass.fragment.SurveyDialogFragment;
 import org.tndata.android.compass.model.Survey;
-import org.tndata.android.compass.parser.MiscellaneousParser;
-import org.tndata.android.compass.parser.UserDataParser;
+import org.tndata.android.compass.parser.LegacyParser;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
 
@@ -28,12 +30,11 @@ public class UserProfileActivity
         implements
                 AdapterView.OnItemClickListener,
                 NetworkRequest.RequestCallback,
+                ParserCallback,
                 SurveyDialogFragment.SurveyDialogListener{
 
-    CompassApplication mApp;
+    private CompassApplication mApp;
 
-    private Toolbar mToolbar;
-    private ListView mListView;
     private ProgressBar mProgressBar;
     private List<Survey> mProfileSurveyItems = new ArrayList<>();
     private UserProfileAdapter mAdapter;
@@ -54,18 +55,20 @@ public class UserProfileActivity
 
         mApp = (CompassApplication)getApplication();
 
-        mToolbar = (Toolbar) findViewById(R.id.tool_bar);
-        mToolbar.setTitle(R.string.action_my_information);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        toolbar.setTitle(R.string.action_my_information);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
-        mListView = (ListView) findViewById(R.id.myself_listview);
+        ListView listView = (ListView) findViewById(R.id.myself_listview);
         mProgressBar = (ProgressBar) findViewById(R.id.myself_load_progress);
 
         mAdapter = new UserProfileAdapter(this, R.id.list_item_user_profile_question_textview,
                 mProfileSurveyItems);
-        mListView.setAdapter(mAdapter);
-        mListView.setOnItemClickListener(this);
+        listView.setAdapter(mAdapter);
+        listView.setOnItemClickListener(this);
 
         loadUserProfile();
     }
@@ -117,23 +120,14 @@ public class UserProfileActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetBioRequestCode){
-            List<Survey> surveys = UserDataParser.parseProfileBio(result);
+            List<Survey> surveys = LegacyParser.parseProfileBio(result);
             mProgressBar.setVisibility(View.GONE);
             mProfileSurveyItems.clear();
             mProfileSurveyItems.addAll(surveys);
             mAdapter.notifyDataSetChanged();
         }
         else if (requestCode == mGetSurveyRequestCode){
-            Survey survey = MiscellaneousParser.parseSurvey(result);
-            mSurveyLoading = false;
-            mProgressBar.setVisibility(View.GONE);
-            if (survey.getId() == mSelectedSurvey.getId()
-                    && survey.getQuestionType().equalsIgnoreCase(mSelectedSurvey.getQuestionType())){
-
-                survey.setSelectedOption(mSelectedSurvey.getSelectedOption());
-                survey.setResponse(mSelectedSurvey.getResponse());
-            }
-            showSurvey(survey);
+            Parser.parse(result, Survey.class, this);
         }
         else if (requestCode == mPostSurveyRequestCode){
             mAdapter.notifyDataSetChanged();
@@ -147,6 +141,28 @@ public class UserProfileActivity
         }
         else if (requestCode == mGetSurveyRequestCode){
             mProgressBar.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof Survey){
+            Survey survey = (Survey)result;
+            if (survey.getId() == mSelectedSurvey.getId()
+                    && survey.getQuestionType().equalsIgnoreCase(mSelectedSurvey.getQuestionType())){
+
+                survey.setSelectedOption(mSelectedSurvey.getSelectedOption());
+                survey.setResponse(mSelectedSurvey.getResponse());
+            }
+        }
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof Survey){
+            mSurveyLoading = false;
+            mProgressBar.setVisibility(View.GONE);
+            showSurvey((Survey)result);
         }
     }
 

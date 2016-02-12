@@ -4,7 +4,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.model.*;
-import org.tndata.android.compass.model.TDCPackage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +16,6 @@ import java.util.List;
  * @version 1.0.0
  */
 public final class MiscellaneousParser extends ParserMethods{
-    public static Survey parseSurvey(String src){
-        return sGson.fromJson(src, Survey.class);
-    }
-
     public static List<SearchResult> parseSearchResults(String src){
         List<SearchResult> results = new ArrayList<>();
         try{

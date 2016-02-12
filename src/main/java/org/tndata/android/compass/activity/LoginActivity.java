@@ -24,7 +24,7 @@ import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
-import org.tndata.android.compass.parser.UserDataParser;
+import org.tndata.android.compass.parser.LegacyParser;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -292,7 +292,7 @@ public class LoginActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mLogInRequestCode){
-            User user = UserDataParser.parseUser(result);
+            User user = LegacyParser.parseUser(result);
             Log.d("LogInError", user.getError());
             if (user.getError().isEmpty()){
                 mApplication.setToken(user.getToken());
