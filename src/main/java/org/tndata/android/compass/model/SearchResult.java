@@ -1,52 +1,63 @@
 package org.tndata.android.compass.model;
 
+import com.google.gson.annotations.SerializedName;
+
+
 /**
  * Data model for a search result.
  *
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class SearchResult{
-    private static final String CATEGORY_TYPE = "category";
-    private static final String GOAL_TYPE = "goal";
-    private static final String BEHAVIOR_TYPE = "behavior";
-    private static final String ACTION_TYPE = "action";
+public class SearchResult extends TDCBase{
+    private static final String CATEGORY_TYPE = "search-category";
+    private static final String GOAL_TYPE = "search-goal";
+    private static final String BEHAVIOR_TYPE = "search-behavior";
+    private static final String ACTION_TYPE = "search-action";
+
+    public static final String TYPE = "search_result";
 
 
-    private String object_type;
-    private int id;
-    private String title;
-    private String description;
-    private String highlighted;
-    private String text;
-    private String updated_on;
+    @SerializedName("text")
+    private String mText;
+    @SerializedName("description")
+    private String mDescription;
+    @SerializedName("title")
+    private String mTitle;
+    @SerializedName("highlighted")
+    private String mHighlighted;
+    @SerializedName("updated_on")
+    private String mUpdatedOn;
+    @SerializedName("object_type")
+    private String mObjectType;
 
+
+    @Override
+    protected String getType(){
+        return TYPE;
+    }
 
     public boolean isCategory(){
-        return object_type.equals(CATEGORY_TYPE);
+        return mObjectType.equals(CATEGORY_TYPE);
     }
 
     public boolean isGoal(){
-        return object_type.equals(GOAL_TYPE);
+        return mObjectType.equals(GOAL_TYPE);
     }
 
     public boolean isBehavior(){
-        return object_type.equals(BEHAVIOR_TYPE);
+        return mObjectType.equals(BEHAVIOR_TYPE);
     }
 
     public boolean isAction(){
-        return object_type.equals(ACTION_TYPE);
-    }
-
-    public int getId(){
-        return id;
+        return mObjectType.equals(ACTION_TYPE);
     }
 
     public String getTitle(){
-        return title;
+        return mTitle;
     }
 
     public String getHighlighted(){
-        return highlighted;
+        return mHighlighted;
     }
 }

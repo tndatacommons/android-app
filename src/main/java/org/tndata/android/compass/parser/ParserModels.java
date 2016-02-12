@@ -7,6 +7,7 @@ import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Reward;
+import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
 
@@ -57,6 +58,10 @@ public final class ParserModels{
 
     public final class RewardResultSet implements ResultSet{
         public List<Reward> results;
+    }
+
+    public final class SearchResultSet implements ResultSet{
+        public List<SearchResult> results;
     }
 
     private ParserModels(){

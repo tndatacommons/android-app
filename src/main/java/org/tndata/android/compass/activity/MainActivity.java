@@ -45,7 +45,6 @@ import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.model.UserGoal;
-import org.tndata.android.compass.parser.LegacyParser;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
@@ -369,8 +368,7 @@ public class MainActivity
             Parser.parse(result, ParserModels.UserDataResultSet.class, this);
         }
         else if (requestCode == mLastSearchRequestCode){
-            mSearchHeader.setVisibility(View.VISIBLE);
-            mSearchAdapter.updateDataSet(LegacyParser.parseSearchResults(result));
+            Parser.parse(result, ParserModels.SearchResultSet.class, this);
         }
     }
 
@@ -721,7 +719,11 @@ public class MainActivity
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.UserDataResultSet){
+        if (result instanceof ParserModels.SearchResultSet){
+            mSearchAdapter.updateDataSet(((ParserModels.SearchResultSet)result).results);
+            mSearchHeader.setVisibility(View.VISIBLE);
+        }
+        else if (result instanceof ParserModels.UserDataResultSet){
             UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
 
             mApplication.setUserData(userData);

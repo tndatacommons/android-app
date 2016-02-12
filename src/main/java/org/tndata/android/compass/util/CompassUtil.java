@@ -218,6 +218,10 @@ public final class CompassUtil{
         if (src == null){
             return Long.class;
         }
+        //Search
+        else if (src.contains("search")){
+            return SearchResult.class;
+        }
         //UserContent
         else if (src.contains("usercategory")){
             return UserCategory.class;
