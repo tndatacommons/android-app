@@ -7,7 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.model.*;
-import org.tndata.android.compass.model.Package;
+import org.tndata.android.compass.model.TDCPackage;
 
 import java.util.TimeZone;
 
@@ -556,7 +556,7 @@ public abstract class API{
         return BASE_URL + "users/packages/" + packageId + "/";
     }
 
-    public static String getPutConsentAcknowledgementUrl(@NonNull Package myPackage){
+    public static String getPutConsentAcknowledgementUrl(@NonNull TDCPackage myPackage){
         return BASE_URL + "users/packages/" + myPackage.getId() + "/";
     }
 
