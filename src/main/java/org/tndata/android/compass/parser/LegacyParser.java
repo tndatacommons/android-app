@@ -5,6 +5,7 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.model.SurveyOption;
 import org.tndata.android.compass.model.User;
@@ -78,5 +79,19 @@ public final class LegacyParser extends ParserMethods{
             jsonx.printStackTrace();
         }
         return surveys;
+    }
+
+    public static List<SearchResult> parseSearchResults(String src){
+        List<SearchResult> results = new ArrayList<>();
+        try{
+            JSONArray resultArray = new JSONObject(src).getJSONArray("results");
+            for (int i = 0; i < resultArray.length(); i++){
+                results.add(sGson.fromJson(resultArray.getString(i), SearchResult.class));
+            }
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return results;
     }
 }

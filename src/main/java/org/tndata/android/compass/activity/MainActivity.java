@@ -45,7 +45,7 @@ import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.model.UserGoal;
-import org.tndata.android.compass.parser.MiscellaneousParser;
+import org.tndata.android.compass.parser.LegacyParser;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
@@ -370,7 +370,7 @@ public class MainActivity
         }
         else if (requestCode == mLastSearchRequestCode){
             mSearchHeader.setVisibility(View.VISIBLE);
-            mSearchAdapter.updateDataSet(MiscellaneousParser.parseSearchResults(result));
+            mSearchAdapter.updateDataSet(LegacyParser.parseSearchResults(result));
         }
     }
 
