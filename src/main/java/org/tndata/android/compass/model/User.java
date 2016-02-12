@@ -1,116 +1,136 @@
 package org.tndata.android.compass.model;
 
+import android.support.annotation.NonNull;
+
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 
-public class User implements Serializable{
+/**
+ * Model class for a User.
+ *
+ * @author Edited by Ismael Alonso
+ * @version 1.1.0
+ */
+public class User extends TDCBase implements Serializable{
     private static final long serialVersionUID = 4582633283983173348L;
 
-    private String token = "";
-    private int id = -1;
-    private int userprofile_id = -1;
-    private String email = "";
-    private String password = "";
-    private String first_name = "";
-    private String last_name = "";
-    private String full_name = "";
-    private String date_joined = "";
-    private boolean needs_onboarding = true;
-
-    private String error = "";
+    public static final String TYPE = "user";
 
 
-    public int getId() {
-        return id;
+    @SerializedName("userprofile_id")
+    private int mUserProfileId;
+    @SerializedName("email")
+    private String mEmail;
+    //Password ain't ever sent from the API
+    private String mPassword;
+    @SerializedName("first_name")
+    private String mFirstName;
+    @SerializedName("last_name")
+    private String mLastName;
+    @SerializedName("full_name")
+    private String mFullName;
+    @SerializedName("token")
+    private String mToken;
+    @SerializedName("date_joined")
+    private String mDateJoined;
+    @SerializedName("needs_onboarding")
+    private boolean mNeedsOnboarding;
+
+
+    /**
+     * Constructor.
+     *
+     * @param email the email.
+     * @param password the password.
+     */
+    public User(@NonNull String email, @NonNull String password){
+        mEmail = email;
+        mPassword = password;
     }
 
-    public void setId(int id) {
-        this.id = id;
+
+    @Override
+    protected String getType(){
+        return TYPE;
     }
 
-    public String getFirstName() {
-        return first_name;
+    public void setUserprofileId(int userProfileId){
+        mUserProfileId = userProfileId;
     }
 
-    public void setFirstName(String first_name) {
-        this.first_name = first_name;
+    public int getUserprofileId(){
+        return mUserProfileId;
     }
 
-    public String getLastName() {
-        return last_name;
+    public void setEmail(String email){
+        mEmail = email;
     }
 
-    public void setLastName(String last_name) {
-        this.last_name = last_name;
-    }
-
-    public String getFullName() {
-        return full_name;
-    }
-
-    public void setFullName(String full_name) {
-        this.full_name = full_name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword(){
-        return password;
+    public String getEmail(){
+        return mEmail;
     }
 
     public void setPassword(String password){
-        this.password = password;
+        mPassword = password;
     }
 
-    public int getUserprofileId() {
-        return userprofile_id;
+    public String getPassword(){
+        return mPassword;
     }
 
-    public void setUserprofileId(int userprofile_id) {
-        this.userprofile_id = userprofile_id;
+    public void setFirstName(String firstName){
+        mFirstName = firstName;
     }
 
-    public String getDateJoined() {
-        return date_joined;
+    public String getFirstName(){
+        return mFirstName;
     }
 
-    public void setDateJoined(String date_joined) {
-        this.date_joined = date_joined;
+    public void setLastName(String lastName){
+        mLastName = lastName;
     }
 
-    public String getToken() {
-        return token;
+    public String getLastName(){
+        return mLastName;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setFullName(String fullName){
+        mFullName = fullName;
     }
 
-    public String getError() {
-        return error;
+    public String getFullName(){
+        return mFullName;
     }
 
-    public void setError(String error) {
-        this.error = error;
+    public void setToken(String token){
+        mToken = token;
+    }
+
+    public String getToken(){
+        return mToken;
+    }
+
+    public void setDateJoined(String dateJoined){
+        mDateJoined = dateJoined;
+    }
+
+    public String getDateJoined(){
+        return mDateJoined;
     }
 
     public void setOnBoardingComplete(){
-        needs_onboarding = false;
+        mNeedsOnboarding = false;
     }
 
     public boolean needsOnBoarding(){
-        return needs_onboarding;
+        return mNeedsOnboarding;
     }
 
     @Override
     public String toString(){
-        return full_name + " (uid: " + id + ", pid: " + userprofile_id + "), "
-                + email + ", needs onboarding: " + needs_onboarding;
+        return mFullName + " (uid: " + getId() + ", pid: " + mUserProfileId + "), " + mEmail + ", "
+                + (mNeedsOnboarding ? "needs onboarding" : " doesn't need onboarding");
     }
 }

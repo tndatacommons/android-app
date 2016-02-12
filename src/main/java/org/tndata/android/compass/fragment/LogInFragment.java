@@ -4,7 +4,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.User;
-import org.tndata.android.compass.parser.LegacyParser;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
 
@@ -29,7 +31,13 @@ import android.widget.TextView;
  * @author Edited and documented by Ismael Alonso
  * @version 1.0.0
  */
-public class LogInFragment extends Fragment implements NetworkRequest.RequestCallback, OnClickListener{
+public class LogInFragment
+        extends Fragment
+        implements
+                NetworkRequest.RequestCallback,
+                ParserCallback,
+                OnClickListener{
+
     //Listener interface.
     private LogInFragmentCallback mCallback;
 
@@ -158,15 +166,7 @@ public class LogInFragment extends Fragment implements NetworkRequest.RequestCal
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        User user = LegacyParser.parseUser(result);
-        if (user.getError().isEmpty()){
-            user.setPassword(mPassword.getText().toString().trim());
-            mCallback.onLoginSuccess(user);
-        }
-        else{
-            mErrorString = user.getError();
-            setFormEnabled(true);
-        }
+        Parser.parse(result, User.class, this);
     }
 
     @Override
@@ -186,6 +186,20 @@ public class LogInFragment extends Fragment implements NetworkRequest.RequestCal
             mErrorString = getActivity().getResources().getString(R.string.login_error);
         }
         setFormEnabled(true);
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof User){
+            User user = (User)result;
+            user.setPassword(mPassword.getText().toString().trim());
+            mCallback.onLoginSuccess(user);
+        }
     }
 
 

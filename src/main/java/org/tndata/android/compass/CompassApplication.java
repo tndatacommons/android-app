@@ -3,7 +3,9 @@ package org.tndata.android.compass;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -31,22 +33,16 @@ public class CompassApplication extends Application{
     private static final String TAG = "CompassApplication";
 
 
-    private String mToken;
     private User mUser; // The logged-in user
     private UserData mUserData = new UserData(); // The user's selected content.
     private List<CategoryContent> mPublicCategories;
 
 
-    public void setToken(String token) {
-        mToken = token;
-    }
-
     public String getToken(){
-        if (mToken != null && !mToken.isEmpty()){
-            return mToken;
+        if (mUser != null && mUser.getToken() != null && !mUser.getToken().isEmpty()){
+            return mUser.getToken();
         }
-        mToken = PreferenceManager.getDefaultSharedPreferences(this).getString("auth_token", "");
-        return mToken;
+        return PreferenceManager.getDefaultSharedPreferences(this).getString("auth_token", "");
     }
 
     public String getGcmRegistrationId(){
@@ -54,12 +50,29 @@ public class CompassApplication extends Application{
                 .getString(GcmRegistration.PROPERTY_REG_ID, "");
     }
 
-    public User getUser() {
+    public User getUser(){
+        if (mUser == null){
+            SharedPreferences loginInfo = PreferenceManager.getDefaultSharedPreferences(this);
+            return new User(loginInfo.getString("email", ""), loginInfo.getString("password", ""));
+        }
         return mUser;
     }
 
-    public void setUser(User user) {
+    public void setUser(User user, boolean setPreferences){
+        Log.d(TAG, "Setting user: " + user);
         mUser = user;
+
+        if (setPreferences){
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString("auth_token", mUser.getToken());
+            editor.putString("first_name", mUser.getFirstName());
+            editor.putString("last_name", mUser.getLastName());
+            editor.putString("email", mUser.getEmail());
+            editor.putString("password", mUser.getPassword());
+            editor.putLong("id", mUser.getId());
+            editor.apply();
+        }
     }
 
     public UserData getUserData() {
