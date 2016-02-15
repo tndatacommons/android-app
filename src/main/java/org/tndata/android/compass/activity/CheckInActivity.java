@@ -20,7 +20,6 @@ import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -45,7 +44,7 @@ public class CheckInActivity
         extends AppCompatActivity
         implements
                 NetworkRequest.RequestCallback,
-                ParserCallback,
+                Parser.ParserCallback,
                 CheckInRewardFragment.CheckInRewardListener,
                 CheckInFeedbackFragment.CheckInFeedbackListener{
 

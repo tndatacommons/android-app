@@ -5,7 +5,6 @@ import org.json.JSONObject;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -37,7 +36,7 @@ public class SignUpFragment
         implements
                 OnClickListener,
                 NetworkRequest.RequestCallback,
-                ParserCallback{
+        Parser.ParserCallback{
 
     //Listener interface
     private SignUpFragmentListener mListener;

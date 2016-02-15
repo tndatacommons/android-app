@@ -25,7 +25,6 @@ import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.UserPlace;
 import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -46,7 +45,7 @@ public class PlacesActivity
         implements
                 AdapterView.OnItemClickListener,
                 NetworkRequest.RequestCallback,
-                ParserCallback,
+                Parser.ParserCallback,
                 DialogInterface.OnClickListener,
                 DialogInterface.OnShowListener,
                 View.OnClickListener{

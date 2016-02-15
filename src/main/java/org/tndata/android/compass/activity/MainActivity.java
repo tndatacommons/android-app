@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,7 +47,6 @@ import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
@@ -81,7 +81,7 @@ public class MainActivity
                 RecyclerView.OnItemTouchListener,
                 SearchAdapter.SearchAdapterListener,
                 View.OnClickListener,
-                ParserCallback{
+                Parser.ParserCallback{
 
     //Activity request codes
     private static final int CATEGORIES_REQUEST_CODE = 4821;
@@ -398,7 +398,6 @@ public class MainActivity
             fab.setColorRippleResId(R.color.grow_accent);
             fab.setScaleType(ImageView.ScaleType.FIT_CENTER);
             fab.setImageResource(R.drawable.fab_add);
-            fab.setOnClickListener(this);
             if (i == 0){
                 fab.setId(R.id.fab_choose_goals);
                 fab.setLabelText(getString(R.string.fab_choose_goals));
@@ -411,12 +410,14 @@ public class MainActivity
                 fab.setId(R.id.fab_choose_interests);
                 fab.setLabelText(getString(R.string.fab_choose_interests));
             }
+            fab.setOnClickListener(this);
             mMenu.addMenuButton(fab);
         }
     }
 
     @Override
     public void onClick(View v){
+        Log.d("FAB onClick()", v.toString());
         mMenu.toggle(true);
         switch (v.getId()){
             case R.id.fab_choose_goals:

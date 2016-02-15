@@ -10,6 +10,7 @@ import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.model.UserProfile;
 
 import java.util.List;
 
@@ -62,6 +63,10 @@ public final class ParserModels{
 
     public final class SearchResultSet implements ResultSet{
         public List<SearchResult> results;
+    }
+
+    public final class UserProfileResultSet implements ResultSet{
+        public List<UserProfile> results;
     }
 
     private ParserModels(){

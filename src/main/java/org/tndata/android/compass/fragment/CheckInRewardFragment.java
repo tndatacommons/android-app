@@ -17,7 +17,6 @@ import android.widget.ViewSwitcher;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.ui.CompassPopupMenu;
 import org.tndata.android.compass.util.API;
@@ -36,7 +35,7 @@ public class CheckInRewardFragment
         implements
                 View.OnClickListener,
                 NetworkRequest.RequestCallback,
-                ParserCallback,
+        Parser.ParserCallback,
                 PopupMenu.OnMenuItemClickListener{
 
     public static final String REWARD_KEY = "org.tndata.compass.Reward.Reward";

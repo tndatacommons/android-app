@@ -26,7 +26,6 @@ import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -57,7 +56,7 @@ public class TriggerActivity
         extends AppCompatActivity
         implements
                 NetworkRequest.RequestCallback,
-                ParserCallback,
+                Parser.ParserCallback,
                 RecurrencePickerDialog.OnRecurrenceSetListener,
                 RadialTimePickerDialog.OnTimeSetListener,
                 CalendarDatePickerDialog.OnDateSetListener,

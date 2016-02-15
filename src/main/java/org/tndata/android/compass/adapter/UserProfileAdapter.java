@@ -1,80 +1,76 @@
 package org.tndata.android.compass.adapter;
 
-
-import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Survey;
-import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.model.UserProfile;
 
 import java.util.List;
 
 
-public class UserProfileAdapter extends ArrayAdapter<Survey>{
-    private List<Survey> mItems;
-    private Context mContext = null;
+public class UserProfileAdapter extends BaseAdapter{
+    private Context mContext;
+    private List<UserProfile.SurveyResponse> mSurveyResponses;
 
-    static class UserProfileViewHolder{
-        TextView questionTextView;
-        TextView responseTextView;
-    }
 
-    public UserProfileAdapter(Context context, int textViewResourceId, List<Survey> items){
-        super(context, textViewResourceId, items);
-        this.mItems = items;
-        this.mContext = context;
+    public UserProfileAdapter(@NonNull Context context, @NonNull List<UserProfile.SurveyResponse> surveyResponses){
+        mContext = context;
+        mSurveyResponses = surveyResponses;
     }
 
     @Override
-    public int getCount() {
-        return mItems.size();
+    public int getCount(){
+        return mSurveyResponses.size();
     }
 
-    @SuppressLint("InflateParams")
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        UserProfileViewHolder viewHolder;
-        if (convertView == null) {
-            LayoutInflater vi = (LayoutInflater) mContext
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = vi.inflate(R.layout.list_item_user_profile, null);
-            viewHolder = new UserProfileViewHolder();
-            viewHolder.questionTextView = (TextView) convertView.findViewById(R.id
-                    .list_item_user_profile_question_textview);
-            viewHolder.responseTextView = (TextView) convertView.findViewById(R.id
-                    .list_item_user_profile_response_textview);
-            convertView.setTag(viewHolder);
+    public UserProfile.SurveyResponse getItem(int position){
+        return mSurveyResponses.get(position);
+    }
 
-        } else {
-            viewHolder = (UserProfileViewHolder) convertView.getTag();
-        }
+    @Override
+    public long getItemId(int position){
+        return position;
+    }
 
-        final Survey survey = mItems.get(position);
-        String question = survey.getText();
-        String response = null;
-        if (survey.getQuestionType().equals(Constants.SURVEY_OPENENDED)){
-            response = survey.getResponse();
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent){
+        Holder holder;
+        if (convertView == null){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            convertView = inflater.inflate(R.layout.item_user_profile_question, parent, false);
+
+            holder = new Holder();
+            holder.mQuestion = (TextView)convertView.findViewById(R.id.user_profile_question);
+            holder.mResponse = (TextView)convertView.findViewById(R.id.user_profile_response);
+
+            convertView.setTag(holder);
         }
         else{
-            if (survey.getSelectedOption() != null && survey.getSelectedOption().getText() != null){
-                response = survey.getSelectedOption().getText();
-            }
+            holder = (Holder)convertView.getTag();
         }
 
-        if (question != null && !question.isEmpty()){
-            viewHolder.questionTextView.setText(question);
+        UserProfile.SurveyResponse surveyResponse = getItem(position);
+
+        holder.mQuestion.setText(surveyResponse.getQuestionText());
+        if (surveyResponse.isOpenEnded()){
+            holder.mResponse.setText(surveyResponse.getResponse());
         }
-        if (response != null && !response.isEmpty()){
-            viewHolder.responseTextView.setText(response);
+        else{
+            holder.mResponse.setText(surveyResponse.getSelectedOptionText());
         }
 
         return convertView;
+    }
 
+    private static class Holder{
+        TextView mQuestion;
+        TextView mResponse;
     }
 }

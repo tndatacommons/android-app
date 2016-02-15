@@ -18,7 +18,6 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Instrument;
 import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.ui.SurveyView;
 import org.tndata.android.compass.util.API;
@@ -40,7 +39,7 @@ public class InstrumentFragment
                 View.OnClickListener,
                 SurveyView.SurveyViewListener,
                 NetworkRequest.RequestCallback,
-                ParserCallback{
+        Parser.ParserCallback{
 
     private static final String TAG = "InstrumentFragment";
 

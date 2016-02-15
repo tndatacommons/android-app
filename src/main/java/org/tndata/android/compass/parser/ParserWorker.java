@@ -16,7 +16,7 @@ final class ParserWorker<T extends ResultSet> extends AsyncTask<Void, Void, Resu
     private int mRequestCode;
     private String mSrc;
     private Class<T> mType;
-    private ParserCallback mCallback;
+    private Parser.ParserCallback mCallback;
 
     /**
      * Constructor.
@@ -26,7 +26,7 @@ final class ParserWorker<T extends ResultSet> extends AsyncTask<Void, Void, Resu
      * @param type the type of the target object.
      * @param callback the callback object.
      */
-    ParserWorker(int requestCode, String src, Class<T> type, ParserCallback callback){
+    ParserWorker(int requestCode, String src, Class<T> type, Parser.ParserCallback callback){
         mRequestCode = requestCode;
         mSrc = src;
         mType = type;

@@ -27,7 +27,18 @@ public class Survey extends TDCBase implements Serializable, Comparable<Survey>{
         return selectedOption;
     }
 
-    public void setSelectedOption(SurveyOption selectedOption) {
+    public void setSelectedOption(long selectedOptionId){
+        if (options != null){
+            for (SurveyOption option:options){
+                if (option.getId() == selectedOptionId){
+                    selectedOption = option;
+                    break;
+                }
+            }
+        }
+    }
+
+    public void setSelectedOption(SurveyOption selectedOption){
         this.selectedOption = selectedOption;
     }
 

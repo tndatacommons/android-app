@@ -20,7 +20,6 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseInterestsAdapter;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
@@ -39,7 +38,7 @@ public class ChooseInterestsFragment
         extends Fragment
         implements
                 NetworkRequest.RequestCallback,
-                ParserCallback,
+        Parser.ParserCallback,
                 ChooseInterestsAdapter.OnCategoriesSelectedListener{
 
     public static final String ON_BOARDING_KEY = "org.tndata.compass.ChooseCategories.OnBoarding";

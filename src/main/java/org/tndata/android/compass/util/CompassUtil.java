@@ -266,6 +266,12 @@ public final class CompassUtil{
             return Place.class;
         }
         //UserData
+        else if (src.contains("userprofile")){
+            return UserProfile.class;
+        }
+        else if (src.contains("surveyresult")){
+            return UserProfile.SurveyResponse.class;
+        }
         else if (src.contains("user")){
             return UserData.class;
         }

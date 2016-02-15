@@ -29,7 +29,6 @@ import org.tndata.android.compass.model.ActionContent;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.model.Reminder;
@@ -53,7 +52,7 @@ public class ActionActivity
         implements
                 View.OnClickListener,
                 NetworkRequest.RequestCallback,
-                ParserCallback{
+                Parser.ParserCallback{
 
     public static final String ACTION_KEY = "org.tndata.compass.ActionActivity.Action";
     public static final String ACTION_ID_KEY = "org.tndata.compass.ActionActivity.ActionId";

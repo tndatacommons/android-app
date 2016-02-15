@@ -15,7 +15,6 @@ import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.Constants;
@@ -37,7 +36,7 @@ public class OnBoardingActivity
                 InstrumentFragment.InstrumentFragmentCallback,
                 ChooseInterestsAdapter.OnCategoriesSelectedListener,
                 NetworkRequest.RequestCallback,
-                ParserCallback{
+                Parser.ParserCallback{
 
     private static final int STAGE_PROFILE = 0;
     private static final int STAGE_CHOOSE_CATEGORIES = 1;
