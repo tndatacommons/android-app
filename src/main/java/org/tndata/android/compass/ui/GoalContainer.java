@@ -16,7 +16,9 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.feed.DisplayableGoal;
+import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.FeedData;
+import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
@@ -32,6 +34,9 @@ import java.util.Queue;
  * @version 1.0.0
  */
 public class GoalContainer extends LinearLayout implements Animation.AnimationListener{
+    private static int sCustomGoalCount = 0;
+
+
     //Goal list and listener
     private List<GoalHolder> mDisplayedGoals;
     private GoalContainerListener mListener;
@@ -290,17 +295,31 @@ public class GoalContainer extends LinearLayout implements Animation.AnimationLi
             mTitle.setText(mGoal.getTitle());
 
             GradientDrawable gradientDrawable = (GradientDrawable)mIconContainer.getBackground();
-            gradientDrawable.setColor(Color.parseColor(mGoal.getColor(getContext())));
+
+            if (goal instanceof CustomGoal){
+                gradientDrawable.setColor(Color.TRANSPARENT);
+                ((RelativeLayout.LayoutParams)mIcon.getLayoutParams()).setMargins(0, 0, 0, 0);
+                if (sCustomGoalCount++ % 2 == 0){
+                    mIcon.setImageResource(R.drawable.ic_lady);
+                }
+                else{
+                    mIcon.setImageResource(R.drawable.ic_guy);
+                }
+            }
+            else{
+                gradientDrawable.setColor(Color.parseColor(mGoal.getColor(getContext())));
+                int margin = CompassUtil.getPixels(getContext(), 20);
+                ((RelativeLayout.LayoutParams)mIcon.getLayoutParams()).setMargins(margin, margin, margin, margin);
+                if (mGoal.getIconUrl() != null && !mGoal.getIconUrl().isEmpty()){
+                    ImageLoader.loadBitmap(mIcon, mGoal.getIconUrl());
+                }
+            }
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
                 mIcon.setBackgroundDrawable(gradientDrawable);
             }
             else{
                 mIconContainer.setBackground(gradientDrawable);
-            }
-
-            if (mGoal.getIconUrl() != null && !mGoal.getIconUrl().isEmpty()){
-                ImageLoader.loadBitmap(mIcon, mGoal.getIconUrl());
             }
         }
 
