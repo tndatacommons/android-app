@@ -131,7 +131,7 @@ public class OnBoardingActivity
             Parser.parse(result, ParserModels.UserDataResultSet.class, this);
         }
         else if (requestCode == mGetCategoriesRequestCode){
-            Parser.parse(result, ParserModels.CategoriesResultSet.class, this);
+            Parser.parse(result, ParserModels.CategoryContentResultSet.class, this);
         }
     }
 
@@ -168,8 +168,8 @@ public class OnBoardingActivity
 
             mGetCategoriesRequestCode = NetworkRequest.get(this, this, API.getCategoriesUrl(), "");
         }
-        else if (result instanceof ParserModels.CategoriesResultSet){
-            mApplication.setPublicCategories(((ParserModels.CategoriesResultSet)result).results);
+        else if (result instanceof ParserModels.CategoryContentResultSet){
+            mApplication.setPublicCategories(((ParserModels.CategoryContentResultSet)result).results);
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
         }

@@ -3,6 +3,7 @@ package org.tndata.android.compass.parser;
 import android.os.AsyncTask;
 
 import org.tndata.android.compass.parser.ParserModels.ResultSet;
+import org.tndata.android.compass.util.CompassUtil;
 
 
 /**
@@ -43,7 +44,13 @@ final class ParserWorker<T extends ResultSet> extends AsyncTask<Void, Void, Resu
      * @param src the source object.
      */
     private ResultSet parse(String src){
-        ResultSet result = ParserMethods.sGson.fromJson(src, mType);
+        ResultSet result;
+        if (mType == null){
+            result = (ResultSet)ParserMethods.sGson.fromJson(src, CompassUtil.getTypeOf(src));
+        }
+        else{
+            result = ParserMethods.sGson.fromJson(src, mType);
+        }
         mCallback.onProcessResult(mRequestCode, result);
         return result;
     }

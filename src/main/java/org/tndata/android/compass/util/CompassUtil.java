@@ -14,22 +14,7 @@ import android.view.WindowManager;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.ActionContent;
-import org.tndata.android.compass.model.BehaviorContent;
-import org.tndata.android.compass.model.CategoryContent;
-import org.tndata.android.compass.model.CustomAction;
-import org.tndata.android.compass.model.CustomGoal;
-import org.tndata.android.compass.model.GoalContent;
-import org.tndata.android.compass.model.Instrument;
-import org.tndata.android.compass.model.Place;
-import org.tndata.android.compass.model.Survey;
-import org.tndata.android.compass.model.SurveyOption;
-import org.tndata.android.compass.model.UserAction;
-import org.tndata.android.compass.model.UserBehavior;
-import org.tndata.android.compass.model.UserCategory;
-import org.tndata.android.compass.model.UserData;
-import org.tndata.android.compass.model.UserGoal;
-import org.tndata.android.compass.model.UserPlace;
+import org.tndata.android.compass.model.*;
 
 
 /**
@@ -233,6 +218,10 @@ public final class CompassUtil{
         if (src == null){
             return Long.class;
         }
+        //Search
+        else if (src.contains("search")){
+            return SearchResult.class;
+        }
         //UserContent
         else if (src.contains("usercategory")){
             return UserCategory.class;
@@ -254,6 +243,9 @@ public final class CompassUtil{
             return CustomAction.class;
         }
         //TDCContent
+        else if (src.contains("packageenrollment")){
+            return TDCPackage.class;
+        }
         else if (src.contains("category")){
             return CategoryContent.class;
         }
@@ -294,6 +286,10 @@ public final class CompassUtil{
         }
         else if (src.contains("option")){
             return SurveyOption.class;
+        }
+        //Miscellaneous
+        else if (src.contains("funcontent")){
+            return Reward.class;
         }
         //Second default to TDCBase; the API should NOT deliver anything that's not TDCBase
         else{

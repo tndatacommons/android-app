@@ -24,9 +24,11 @@ import org.tndata.android.compass.adapter.PlacesAdapter;
 import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.UserPlace;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
-import org.tndata.android.compass.parser.PlaceParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +46,7 @@ public class PlacesActivity
         implements
                 AdapterView.OnItemClickListener,
                 NetworkRequest.RequestCallback,
+                ParserCallback,
                 DialogInterface.OnClickListener,
                 DialogInterface.OnShowListener,
                 View.OnClickListener{
@@ -108,12 +111,19 @@ public class PlacesActivity
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        //Parse the result
-        List<Place> primaryPlaces = PlaceParser.parsePrimaryPlaces(result);
-        Log.d(TAG, "Primary places: " + primaryPlaces.toString());
+        Parser.parse(result, ParserModels.PlaceResultSet.class, this);
+    }
 
-        //First off, the progress bar is hidden
-        mProgress.setVisibility(View.GONE);
+    @Override
+    public void onRequestFailed(int requestCode, String message){
+        //If the data couldn't be retrieved the user is notified
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        List<Place> primaryPlaces = ((ParserModels.PlaceResultSet)result).results;
+        Log.d(TAG, "Primary places: " + primaryPlaces.toString());
 
         //Two lists are used to sort the list
         List<UserPlace> places = new ArrayList<>();
@@ -153,18 +163,20 @@ public class PlacesActivity
         //The list of user places are added to the final list
         places.addAll(userPlaces);
 
-        //Finally, set the adapter and enable the add button.
+        //Finally, set the adapter
         mAdapter = new PlacesAdapter(this, places);
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        //Hide the progress bar
+        mProgress.setVisibility(View.GONE);
+
+        //Set the adapter and enable the add button
         mList.setAdapter(mAdapter);
         mList.setOnItemClickListener(this);
         mList.setVisibility(View.VISIBLE);
         mAdd.setEnabled(true);
-    }
-
-    @Override
-    public void onRequestFailed(int requestCode, String message){
-        //If the data couldn't be retrieved the user is notified
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

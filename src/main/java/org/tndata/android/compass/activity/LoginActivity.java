@@ -4,7 +4,6 @@ import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,7 +23,6 @@ import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
-import org.tndata.android.compass.parser.UserDataParser;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -94,11 +92,9 @@ public class LoginActivity
             editor.apply();
         }
 
-        SharedPreferences loginInfo = PreferenceManager.getDefaultSharedPreferences(this);
-        String email = loginInfo.getString("email", "");
-        String password = loginInfo.getString("password", "");
-        if (!email.isEmpty() && !password.isEmpty()){
-            logUserIn(email, password);
+        User user = mApplication.getUser();
+        if (!user.getEmail().isEmpty() && !user.getPassword().isEmpty()){
+            logUserIn(user.getEmail(), user.getPassword());
         }
     }
 
@@ -249,7 +245,7 @@ public class LoginActivity
 
     @Override
     public void onSignUpSuccess(@NonNull User user){
-        saveUserInfo(user);
+        setUser(user);
     }
 
     @Override
@@ -259,22 +255,11 @@ public class LoginActivity
 
     @Override
     public void onLoginSuccess(@NonNull User user){
-        saveUserInfo(user);
+        setUser(user);
     }
 
-    private void saveUserInfo(User user){
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString("auth_token", user.getToken());
-        editor.putString("first_name", user.getFirstName());
-        editor.putString("last_name", user.getLastName());
-        editor.putString("email", user.getEmail());
-        editor.putString("password", user.getPassword());
-        editor.putInt("id", user.getId());
-        editor.commit();
-
-        mApplication.setToken(user.getToken());
-        mApplication.setUser(user);
+    private void setUser(User user){
+        mApplication.setUser(user, true);
         if (user.needsOnBoarding()){
             transitionToOnBoarding();
         }
@@ -292,29 +277,18 @@ public class LoginActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mLogInRequestCode){
-            User user = UserDataParser.parseUser(result);
-            Log.d("LogInError", user.getError());
-            if (user.getError().isEmpty()){
-                mApplication.setToken(user.getToken());
-                mApplication.setUser(user);
-                if (user.needsOnBoarding()){
-                    transitionToOnBoarding();
-                }
-                else{
-                    Log.d("LogIn", "Fetching user data");
-                    mGetDataRequestCode = NetworkRequest.get(this, this, API.getUserDataUrl(),
-                            mApplication.getToken(), 60*1000);
-                }
+            if (result.contains("\"non_field_errors\"")){
+                swapFragments(LOGIN, true);
             }
             else{
-                swapFragments(LOGIN, true);
+                Parser.parse(result, User.class, this);
             }
         }
         else if (requestCode == mGetDataRequestCode){
             Parser.parse(result, ParserModels.UserDataResultSet.class, this);
         }
         else if (requestCode == mGetCategoriesRequestCode){
-            Parser.parse(result, ParserModels.CategoriesResultSet.class, this);
+            Parser.parse(result, ParserModels.CategoryContentResultSet.class, this);
         }
     }
 
@@ -352,12 +326,24 @@ public class LoginActivity
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof User){
+            User user = (User)result;
+            mApplication.setUser(user, false);
+            if (user.needsOnBoarding()){
+                transitionToOnBoarding();
+            }
+            else{
+                Log.d("LogIn", "Fetching user data");
+                mGetDataRequestCode = NetworkRequest.get(this, this, API.getUserDataUrl(),
+                        mApplication.getToken(), 60*1000);
+            }
+        }
         if (result instanceof ParserModels.UserDataResultSet){
             mApplication.setUserData(((ParserModels.UserDataResultSet)result).results.get(0));
             mGetCategoriesRequestCode = NetworkRequest.get(this, this, API.getCategoriesUrl(), "");
         }
-        else if (result instanceof ParserModels.CategoriesResultSet){
-            mApplication.setPublicCategories(((ParserModels.CategoriesResultSet)result).results);
+        else if (result instanceof ParserModels.CategoryContentResultSet){
+            mApplication.setPublicCategories(((ParserModels.CategoryContentResultSet)result).results);
             transitionToMain();
         }
     }

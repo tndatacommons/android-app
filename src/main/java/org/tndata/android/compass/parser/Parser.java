@@ -1,6 +1,7 @@
 package org.tndata.android.compass.parser;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 
 /**
@@ -39,7 +40,7 @@ public final class Parser{
      * @return a request code.
      */
     public static <T extends ParserModels.ResultSet> int parse(@NonNull String src,
-                                                               @NonNull Class<T> type,
+                                                               @Nullable Class<T> type,
                                                                @NonNull ParserCallback callback){
 
         int requestCode = generateRequestCode();

@@ -19,7 +19,9 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseInterestsAdapter;
 import org.tndata.android.compass.model.CategoryContent;
-import org.tndata.android.compass.parser.ContentParser;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -37,6 +39,7 @@ public class ChooseInterestsFragment
         extends Fragment
         implements
                 NetworkRequest.RequestCallback,
+                ParserCallback,
                 ChooseInterestsAdapter.OnCategoriesSelectedListener{
 
     public static final String ON_BOARDING_KEY = "org.tndata.compass.ChooseCategories.OnBoarding";
@@ -144,11 +147,7 @@ public class ChooseInterestsFragment
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetCategoriesRequestCode){
-            List<CategoryContent> categories = ContentParser.parseCategories(result);
-            //TODO error reporting
-            if (categories != null){
-                mAdapter.setCategories(categories, mApplication.getCategories());
-            }
+            Parser.parse(result, ParserModels.CategoryContentResultSet.class, this);
         }
     }
 
@@ -157,6 +156,21 @@ public class ChooseInterestsFragment
         if (requestCode == mGetCategoriesRequestCode){
             notifyError(R.string.choose_categories_error);
         }
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.CategoryContentResultSet){
+            List<CategoryContent> categories = ((ParserModels.CategoryContentResultSet)result).results;
+            if (categories != null){
+                mAdapter.setCategories(categories, mApplication.getCategories());
+            }
+        }
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        mAdapter.notifyDataSetChanged();
     }
 
     /**

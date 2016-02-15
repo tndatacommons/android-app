@@ -7,7 +7,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.model.SurveyOption;
-import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.util.Constants;
 
 import java.util.ArrayList;
@@ -20,30 +19,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public final class UserDataParser extends ParserMethods{
-    /**
-     * Parses a user from a JSON string.
-     *
-     * @param src the source string.
-     * @return the parsed User.
-     */
-    public static User parseUser(String src){
-        User user = sGson.fromJson(src, User.class);
-        try{
-            JSONObject userObject = new JSONObject(src);
-            Log.d("UserParser", userObject.toString(2));
-            user.setError("");
-            JSONArray errorArray = userObject.optJSONArray("non_field_errors");
-            if (errorArray != null){
-                user.setError(errorArray.optString(0));
-            }
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-        }
-        return user;
-    }
-
+public final class LegacyParser extends ParserMethods{
     public static List<Survey> parseProfileBio(String src){
         List<Survey> surveys = new ArrayList<>();
         try{

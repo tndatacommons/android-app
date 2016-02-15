@@ -26,7 +26,9 @@ import org.tndata.android.compass.adapter.ChooseGoalsAdapter;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserGoal;
-import org.tndata.android.compass.parser.ContentParser;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.util.API;
@@ -47,6 +49,7 @@ public class ChooseGoalsActivity
         extends AppCompatActivity
         implements
                 NetworkRequest.RequestCallback,
+                ParserCallback,
                 ChooseGoalsAdapter.ChooseGoalsListener,
                 MenuItemCompat.OnActionExpandListener,
                 SearchView.OnQueryTextListener,
@@ -233,19 +236,10 @@ public class ChooseGoalsActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetGoalsRequestCode){
-            List<GoalContent> goals = ContentParser.parseGoals(result);
-            if (goals != null && !goals.isEmpty()){
-                mAdapter.addGoals(goals);
-            }
-            else{
-                showError();
-            }
+            Parser.parse(result, ParserModels.GoalContentResultSet.class, this);
         }
         else if (mAddGoalRequestCodeMap.containsKey(requestCode)){
-            UserGoal userGoal = ContentParser.parseUserGoal(result);
-            Log.d(TAG, "(Post) " + userGoal.toString());
-            mApplication.addGoal(userGoal);
-            mAdapter.goalAdded(userGoal.getGoal());
+            Parser.parse(result, UserGoal.class, this);
         }
         else if (mDeleteGoalRequestCodeMap.containsKey(requestCode)){
             mAdapter.goalDeleted(mDeleteGoalRequestCodeMap.remove(requestCode));
@@ -259,6 +253,29 @@ public class ChooseGoalsActivity
         }
         else if (mDeleteGoalRequestCodeMap.containsKey(requestCode)){
             mAdapter.goalNotDeleted(mDeleteGoalRequestCodeMap.remove(requestCode));
+        }
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.GoalContentResultSet){
+            List<GoalContent> goals = ((ParserModels.GoalContentResultSet)result).results;
+            if (goals != null && !goals.isEmpty()){
+                mAdapter.addGoals(goals);
+            }
+        }
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.GoalContentResultSet){
+            mAdapter.update();
+        }
+        else if (result instanceof UserGoal){
+            UserGoal userGoal = (UserGoal)result;
+            Log.d(TAG, "(Post) " + userGoal.toString());
+            mApplication.addGoal(userGoal);
+            mAdapter.goalAdded(userGoal.getGoal());
         }
     }
 }

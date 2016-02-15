@@ -93,7 +93,6 @@ public class ChooseInterestsAdapter
         for (UserCategory userCategory:selected.values()){
             mSelectedCategories.add(userCategory.getCategory());
         }
-        notifyDataSetChanged();
     }
 
     /**

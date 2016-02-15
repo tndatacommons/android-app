@@ -28,7 +28,9 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.ActionContent;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.UserAction;
-import org.tndata.android.compass.parser.ContentParser;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.util.API;
@@ -50,7 +52,8 @@ public class ActionActivity
         extends AppCompatActivity
         implements
                 View.OnClickListener,
-                NetworkRequest.RequestCallback{
+                NetworkRequest.RequestCallback,
+                ParserCallback{
 
     public static final String ACTION_KEY = "org.tndata.compass.ActionActivity.Action";
     public static final String ACTION_ID_KEY = "org.tndata.compass.ActionActivity.ActionId";
@@ -386,13 +389,26 @@ public class ActionActivity
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        mAction = ContentParser.parseUserAction(result);
-        populateUI((UserAction)mAction);
-        invalidateOptionsMenu();
+        Parser.parse(result, null, this);
     }
 
     @Override
     public void onRequestFailed(int requestCode, String message){
         finish();
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof Action){
+            mAction = (Action)result;
+        }
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof Action){
+            populateUI((UserAction)mAction);
+            invalidateOptionsMenu();
+        }
     }
 }

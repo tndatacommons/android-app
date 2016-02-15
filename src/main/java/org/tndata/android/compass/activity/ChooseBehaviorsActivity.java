@@ -31,7 +31,6 @@ import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserGoal;
-import org.tndata.android.compass.parser.ContentParser;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
@@ -321,33 +320,16 @@ public class ChooseBehaviorsActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetGoalRequestCode){
-            //Parse the goal
-            mGoal = ContentParser.parseGoal(result);
-            mGetCategoryRequestCode = NetworkRequest.get(this, this,
-                    API.getCategoryUrl(mGoal.getCategoryIdSet().iterator().next()), "");
-
-            //Set UI and fetch the behaviors
-            mToolbar.setTitle(mGoal.getTitle());
+            Parser.parse(result, GoalContent.class, this);
         }
         else if (requestCode == mGetCategoryRequestCode){
-            //Set UI and fetch the behaviors
-            setAdapter();
-            fetchBehaviors();
-            if (mSearchItem != null){
-                mSearchItem.setVisible(true);
-            }
+            Parser.parse(result, CategoryContent.class, this);
         }
         else if (requestCode == mPostGoalRequestCode){
-            UserGoal userGoal = ContentParser.parseUserGoal(result);
-            Log.d(TAG, "(Post) " + userGoal.toString());
-            mApplication.getUserData().addGoal(userGoal);
+            Parser.parse(result, UserGoal.class, this);
         }
         else if (requestCode == mGetBehaviorsRequestCode){
-            List<BehaviorContent> behaviorList = ContentParser.parseBehaviors(result);
-            if (behaviorList != null && !behaviorList.isEmpty()){
-                mAdapter.setBehaviors(behaviorList);
-            }
-            mAdapter.notifyDataSetChanged();
+            Parser.parse(result, ParserModels.BehaviorContentResultSet.class, this);
         }
         else if (requestCode == mPostBehaviorRequestCode){
             Parser.parse(result, UserBehavior.class, this);
@@ -366,7 +348,23 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof UserBehavior){
+        if (result instanceof GoalContent){
+            mGoal = (GoalContent)result;
+            mGetCategoryRequestCode = NetworkRequest.get(this, this,
+                    API.getCategoryUrl(mGoal.getCategoryIdSet().iterator().next()), "");
+        }
+        else if (result instanceof UserGoal){
+            UserGoal userGoal = (UserGoal)result;
+            Log.d(TAG, "(Post) " + userGoal.toString());
+            mApplication.getUserData().addGoal(userGoal);
+        }
+        else if (result instanceof ParserModels.BehaviorContentResultSet){
+            List<BehaviorContent> behaviorList = ((ParserModels.BehaviorContentResultSet)result).results;
+            if (behaviorList != null && !behaviorList.isEmpty()){
+                mAdapter.setBehaviors(behaviorList);
+            }
+        }
+        else if (result instanceof UserBehavior){
             UserBehavior userBehavior = (UserBehavior)result;
             Log.d(TAG, "(Post) " + userBehavior.toString());
 
@@ -378,7 +376,27 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof UserBehavior){
+        if (result instanceof GoalContent){
+            //Set UI and fetch the behaviors
+            mToolbar.setTitle(mGoal.getTitle());
+        }
+        if (result instanceof CategoryContent){
+            mCategory = (CategoryContent)result;
+
+            Log.d(TAG, mCategory.toString());
+
+            //Set UI and fetch the behaviors
+            setAdapter();
+            fetchBehaviors();
+        }
+        else if (result instanceof ParserModels.BehaviorContentResultSet){
+            mAdapter.update();
+
+            if (mSearchItem != null){
+                mSearchItem.setVisible(true);
+            }
+        }
+        else if (result instanceof UserBehavior){
             mApplication.addBehavior((UserBehavior)result);
             mAdapter.notifyDataSetChanged();
         }

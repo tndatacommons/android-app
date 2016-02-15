@@ -19,8 +19,9 @@ import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserBehavior;
-import org.tndata.android.compass.parser.ContentParser;
-import org.tndata.android.compass.parser.MiscellaneousParser;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
 
@@ -44,6 +45,7 @@ public class CheckInActivity
         extends AppCompatActivity
         implements
                 NetworkRequest.RequestCallback,
+                ParserCallback,
                 CheckInRewardFragment.CheckInRewardListener,
                 CheckInFeedbackFragment.CheckInFeedbackListener{
 
@@ -108,7 +110,41 @@ public class CheckInActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetActionsRequestCode){
-            mActions = ContentParser.parseUserActions(result);
+            Parser.parse(result, ParserModels.UserActionResultSet.class, this);
+        }
+        else if (requestCode == mGetRewardRequestCode){
+            Parser.parse(result, ParserModels.RewardResultSet.class, this);
+        }
+        else if (requestCode == mGetProgressRequestCode){
+            try{
+                mProgress = (float)new JSONObject(result).getDouble("weekly_checkin_avg");
+            }
+            catch (JSONException jsonx){
+                mProgress = 0;
+                jsonx.printStackTrace();
+            }
+
+            if (++mCompletedRequests == mRequestCount){
+                setAdapter();
+            }
+        }
+        else if (mBehaviorRequestSet.contains(requestCode)){
+            Parser.parse(result, BehaviorContent.class, this);
+        }
+        else /* Goals */{
+            Parser.parse(result, GoalContent.class, this);
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode, String message){
+        finish();
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.UserActionResultSet){
+            mActions = ((ParserModels.UserActionResultSet)result).results;
             mDataSet = new HashMap<>();
             mBehaviorRequestSet = new HashSet<>();
             Set<Long> goalRequestSet = new HashSet<>();
@@ -128,28 +164,8 @@ public class CheckInActivity
             }
             mCurrentProgress = new int[goalRequestSet.size()];
         }
-        else if (requestCode == mGetRewardRequestCode){
-            mReward = MiscellaneousParser.parseRewards(result).get(0);
-        }
-        else if (requestCode == mGetProgressRequestCode){
-            try{
-                mProgress = (float)new JSONObject(result).getDouble("weekly_checkin_avg");
-            }
-            catch (JSONException jsonx){
-                mProgress = 0;
-                jsonx.printStackTrace();
-            }
-        }
-        else if (mBehaviorRequestSet.contains(requestCode)){
-            BehaviorContent behavior = ContentParser.parseBehavior(result);
-            for (UserAction action:mActions){
-                if (action.getAction().getBehaviorId() == behavior.getId()){
-                    action.setBehavior(new UserBehavior(behavior));
-                }
-            }
-        }
-        else /* Goals */{
-            GoalContent goal = ContentParser.parseGoal(result);
+        else if (result instanceof GoalContent){
+            GoalContent goal = (GoalContent)result;
             List<UserAction> goalActionList = new ArrayList<>();
             for (UserAction action:mActions){
                 if (action.getPrimaryGoalId() == goal.getId()){
@@ -158,15 +174,24 @@ public class CheckInActivity
             }
             mDataSet.put(goal, goalActionList);
         }
-
-        if (++mCompletedRequests == mRequestCount){
-            setAdapter();
+        else if (result instanceof ParserModels.RewardResultSet){
+            mReward = ((ParserModels.RewardResultSet)result).results.get(0);
+        }
+        else if (result instanceof BehaviorContent){
+            BehaviorContent behavior = (BehaviorContent)result;
+            for (UserAction action:mActions){
+                if (action.getAction().getBehaviorId() == behavior.getId()){
+                    action.setBehavior(new UserBehavior(behavior));
+                }
+            }
         }
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
-        finish();
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (++mCompletedRequests == mRequestCount){
+            setAdapter();
+        }
     }
 
     private void setAdapter(){

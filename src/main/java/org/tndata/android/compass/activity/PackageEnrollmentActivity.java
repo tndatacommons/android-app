@@ -16,8 +16,10 @@ import android.widget.ViewSwitcher;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Package;
-import org.tndata.android.compass.parser.ContentParser;
+import org.tndata.android.compass.model.TDCPackage;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -35,12 +37,13 @@ public class PackageEnrollmentActivity
         extends AppCompatActivity
         implements
                 View.OnClickListener,
-                NetworkRequest.RequestCallback{
+                NetworkRequest.RequestCallback,
+                ParserCallback{
 
     //Keys
     public static final String PACKAGE_ID_KEY = "org.tndata.compass.PackageId";
 
-    private Package mPackage;
+    private TDCPackage mPackage;
 
     //A reference to the application class
     private CompassApplication mApplication;
@@ -93,14 +96,12 @@ public class PackageEnrollmentActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetPackageRequestCode){
-            mProgressBar.setVisibility(View.GONE);
-            mPackage = ContentParser.parsePackage(result);
-            populateUI(mPackage);
+            Parser.parse(result, TDCPackage.class, this);
         }
         else if (requestCode == mPutConsentRequestCode){
             //If the acknowledgement was successful, dismiss the notification and kill the activity
             ((NotificationManager)getSystemService(NOTIFICATION_SERVICE))
-                    .cancel(NotificationUtil.ENROLLMENT_TAG, mPackage.getId());
+                    .cancel(NotificationUtil.ENROLLMENT_TAG, (int)mPackage.getId());
             finish();
         }
     }
@@ -124,7 +125,20 @@ public class PackageEnrollmentActivity
         }
     }
 
-    private void populateUI(Package myPackage){
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof TDCPackage){
+            mPackage = (TDCPackage)result;
+        }
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        populateUI(mPackage);
+        mProgressBar.setVisibility(View.GONE);
+    }
+
+    private void populateUI(TDCPackage myPackage){
         mContent.setVisibility(View.VISIBLE);
         CompassTagHandler tagHandler = new CompassTagHandler(this);
         mTitle.setText(myPackage.getTitle());

@@ -7,7 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.model.*;
-import org.tndata.android.compass.model.Package;
+import org.tndata.android.compass.model.TDCPackage;
 
 import java.util.TimeZone;
 
@@ -25,6 +25,8 @@ public abstract class API{
     private static final String TNDATA_BASE_URL = "https://app.tndata.org/api/";
     private static final String TNDATA_STAGING_URL = "http://staging.tndata.org/api/";
     private static final String NGROK_TUNNEL_URL = "https://tndata.ngrok.io/api/";
+    //This yields a warning, but flipping the boolean above is the easiest
+    //  way of switching base urls
     private static final String BASE_URL =
             USE_NGROK_TUNNEL ?
                     NGROK_TUNNEL_URL
@@ -554,7 +556,7 @@ public abstract class API{
         return BASE_URL + "users/packages/" + packageId + "/";
     }
 
-    public static String getPutConsentAcknowledgementUrl(@NonNull Package myPackage){
+    public static String getPutConsentAcknowledgementUrl(@NonNull TDCPackage myPackage){
         return BASE_URL + "users/packages/" + myPackage.getId() + "/";
     }
 

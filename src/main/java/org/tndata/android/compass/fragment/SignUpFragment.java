@@ -4,7 +4,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.User;
-import org.tndata.android.compass.parser.UserDataParser;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
 
@@ -34,7 +36,8 @@ public class SignUpFragment
         extends Fragment
         implements
                 OnClickListener,
-                NetworkRequest.RequestCallback{
+                NetworkRequest.RequestCallback,
+                ParserCallback{
 
     //Listener interface
     private SignUpFragmentListener mListener;
@@ -233,9 +236,7 @@ public class SignUpFragment
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mSignUpRequestCode){
-            User user = UserDataParser.parseUser(result);
-            user.setPassword(mPassword.getText().toString().trim());
-            mListener.onSignUpSuccess(user);
+            Parser.parse(result, User.class, this);
         }
     }
 
@@ -256,6 +257,20 @@ public class SignUpFragment
             mErrorString = getActivity().getResources().getString(R.string.signup_error);
         }
         setFormEnabled(true);
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof User){
+            User user = (User)result;
+            user.setPassword(mPassword.getText().toString().trim());
+            mListener.onSignUpSuccess(user);
+        }
     }
 
 

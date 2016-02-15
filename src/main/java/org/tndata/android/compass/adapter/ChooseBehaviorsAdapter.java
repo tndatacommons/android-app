@@ -167,11 +167,13 @@ public class ChooseBehaviorsAdapter
         mBehaviors.add(headerBehavior);
 
         mBehaviors.addAll(behaviors);
-        notifyDataSetChanged();
+    }
 
+    public void update(){
         if (mFilter == null){
-            mFilter = new BehaviorFilter(this, behaviors);
+            mFilter = new BehaviorFilter(this, mBehaviors.subList(1, mBehaviors.size()));
         }
+        notifyDataSetChanged();
     }
 
     public void filter(CharSequence constraint){

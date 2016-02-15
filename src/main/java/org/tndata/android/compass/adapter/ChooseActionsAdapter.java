@@ -135,10 +135,12 @@ public class ChooseActionsAdapter
         mActions.add(headerAction);
 
         mActions.addAll(actions);
-        notifyDataSetChanged();
+    }
 
+    public void update(){
+        notifyDataSetChanged();
         if (mFilter == null){
-            mFilter = new ActionFilter(this, actions);
+            mFilter = new ActionFilter(this, mActions.subList(1, mActions.size()));
         }
     }
 

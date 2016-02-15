@@ -16,7 +16,9 @@ import android.widget.ViewSwitcher;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Reward;
-import org.tndata.android.compass.parser.MiscellaneousParser;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserCallback;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.ui.CompassPopupMenu;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
@@ -34,6 +36,7 @@ public class CheckInRewardFragment
         implements
                 View.OnClickListener,
                 NetworkRequest.RequestCallback,
+                ParserCallback,
                 PopupMenu.OnMenuItemClickListener{
 
     public static final String REWARD_KEY = "org.tndata.compass.Reward.Reward";
@@ -219,15 +222,27 @@ public class CheckInRewardFragment
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        mReward = MiscellaneousParser.parseRewards(result).get(0);
-        populateUI();
-        mMoreSwitcher.showPrevious();
+        Parser.parse(result, ParserModels.RewardResultSet.class, this);
     }
 
     @Override
     public void onRequestFailed(int requestCode, String message){
         Toast.makeText(getActivity(), "Couldn't load a new item", Toast.LENGTH_SHORT).show();
         mMoreSwitcher.showPrevious();
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.RewardResultSet){
+            mReward = ((ParserModels.RewardResultSet)result).results.get(0);
+            populateUI();
+            mMoreSwitcher.showPrevious();
+        }
     }
 
 
