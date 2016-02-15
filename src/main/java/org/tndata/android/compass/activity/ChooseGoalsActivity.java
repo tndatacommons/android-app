@@ -27,7 +27,6 @@ import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.ui.SpacingItemDecoration;
 import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
@@ -49,7 +48,7 @@ public class ChooseGoalsActivity
         extends AppCompatActivity
         implements
                 NetworkRequest.RequestCallback,
-                ParserCallback,
+                Parser.ParserCallback,
                 ChooseGoalsAdapter.ChooseGoalsListener,
                 MenuItemCompat.OnActionExpandListener,
                 SearchView.OnQueryTextListener,

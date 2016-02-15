@@ -21,7 +21,6 @@ import org.tndata.android.compass.fragment.WebFragment;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.Constants;
@@ -39,7 +38,7 @@ public class LoginActivity
                 LogInFragment.LogInFragmentCallback,
                 TourFragment.TourFragmentCallback,
                 NetworkRequest.RequestCallback,
-                ParserCallback{
+                Parser.ParserCallback{
 
 
     //Fragment ids

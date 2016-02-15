@@ -15,7 +15,6 @@ import org.tndata.android.compass.fragment.SurveyDialogFragment;
 import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.model.UserProfile;
 import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -27,7 +26,7 @@ public class UserProfileActivity
         implements
                 AdapterView.OnItemClickListener,
                 NetworkRequest.RequestCallback,
-                ParserCallback,
+                Parser.ParserCallback,
                 SurveyDialogFragment.SurveyDialogListener{
 
     private CompassApplication mApp;

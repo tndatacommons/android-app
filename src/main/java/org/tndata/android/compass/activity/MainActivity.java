@@ -46,7 +46,6 @@ import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
@@ -81,7 +80,7 @@ public class MainActivity
                 RecyclerView.OnItemTouchListener,
                 SearchAdapter.SearchAdapterListener,
                 View.OnClickListener,
-                ParserCallback{
+                Parser.ParserCallback{
 
     //Activity request codes
     private static final int CATEGORIES_REQUEST_CODE = 4821;

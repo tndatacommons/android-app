@@ -20,7 +20,6 @@ import org.tndata.android.compass.adapter.CustomActionAdapter;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -37,7 +36,7 @@ public class CustomContentManagerActivity
         implements
                 View.OnClickListener,
                 NetworkRequest.RequestCallback,
-                ParserCallback,
+                Parser.ParserCallback,
                 CustomActionAdapter.CustomActionAdapterListener{
 
     private static final String TAG = "CustomContentManager";

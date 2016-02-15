@@ -13,7 +13,6 @@ import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -33,7 +32,7 @@ public class ChooseInterestsActivity
         implements
                 ChooseInterestsAdapter.OnCategoriesSelectedListener,
                 NetworkRequest.RequestCallback,
-                ParserCallback{
+                Parser.ParserCallback{
 
     private CompassApplication mApplication;
 

@@ -18,7 +18,6 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.TDCPackage;
 import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserCallback;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassTagHandler;
@@ -38,7 +37,7 @@ public class PackageEnrollmentActivity
         implements
                 View.OnClickListener,
                 NetworkRequest.RequestCallback,
-                ParserCallback{
+                Parser.ParserCallback{
 
     //Keys
     public static final String PACKAGE_ID_KEY = "org.tndata.compass.PackageId";
