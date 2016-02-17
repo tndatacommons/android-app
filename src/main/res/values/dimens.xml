@@ -19,7 +19,7 @@
     <dimen name="action_item_bullet_size">15dp</dimen> <!-- size of the bullet next to Actions -->
     <dimen name="action_item_offset">26dp</dimen> <!-- L/R margin for bullet; indents beneath behavior icon  -->
     <dimen name="behavior_fragments_top_padding">100dp</dimen>
-    <dimen name="cardview_corner_radius">2dp</dimen>
+    <dimen name="card_view_corner_radius">2dp</dimen>
     <dimen name="login_header_size">175dp</dimen>
     <dimen name="material_header_size">235dp</dimen>
     <dimen name="material_header_padding">170dp</dimen>

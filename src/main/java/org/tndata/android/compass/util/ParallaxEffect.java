@@ -181,4 +181,8 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
             return mParallaxEffect.mParallaxView;
         }
     }
+
+    public interface ScrollListener{
+        void onScroll(float percentage);
+    }
 }
