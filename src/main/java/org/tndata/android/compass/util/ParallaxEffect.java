@@ -32,6 +32,8 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
     //The decoration specification, to calculate margins
     private RecyclerView.ItemDecoration mItemDecoration;
 
+    private ScrollListener mScrollListener;
+
     //A stack of heights needs to be kept
     private Stack<Integer> mHeightStack;
     private Stack<Integer> mTopMarginStack;
@@ -86,6 +88,10 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
 
     public void setItemDecoration(@Nullable RecyclerView.ItemDecoration itemDecoration){
         mItemDecoration = itemDecoration;
+    }
+
+    public void setScrollListener(@NonNull ScrollListener listener){
+        mScrollListener = listener;
     }
 
     @Override
@@ -146,6 +152,17 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
             }
         }
         mParallaxView.setLayoutParams(params);
+
+        if (mScrollListener != null){
+            int offset = -getParallaxViewOffset();
+            if (offset/mParallaxFactor > mParallaxView.getHeight()){
+                mScrollListener.onScroll(1);
+            }
+            else{
+                float percentage = (offset/mParallaxFactor)/mParallaxView.getHeight();
+                mScrollListener.onScroll(percentage);
+            }
+        }
     }
 
     private int getParallaxViewOffset(){

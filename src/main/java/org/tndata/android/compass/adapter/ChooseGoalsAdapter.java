@@ -60,8 +60,9 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
         mContext = context;
         mListener = listener;
         mCategory = category;
+
         mGoals = new ArrayList<>();
-        mFilter = null;
+        mFilter = new GoalFilter(this);
     }
 
     @Override
@@ -117,7 +118,7 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
 
     @Override
     public int getItemCount(){
-        return mGoals.size();
+        return mGoals.size()+2;
     }
 
     /**
@@ -130,16 +131,12 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
     }
 
     public void update(){
-        if (mFilter == null){
-            mFilter = new GoalFilter(this, mGoals.subList(1, mGoals.size()));
-        }
+        mFilter.setGoalList(mGoals);
         notifyDataSetChanged();
     }
 
-    public void filter(CharSequence constraint){
-        if (mFilter != null){
-            mFilter.filter(constraint);
-        }
+    public GoalFilter getFilter(){
+        return mFilter;
     }
 
 

@@ -76,6 +76,7 @@ public class ChooseGoalsActivity
 
         mAdapter = new ChooseGoalsAdapter(this, this, mCategory);
         setAdapter(mAdapter);
+        setFilter(mAdapter.getFilter());
 
         if (mCategory != null && !mCategory.getColor().isEmpty()){
             setColor(Color.parseColor(mCategory.getColor()));

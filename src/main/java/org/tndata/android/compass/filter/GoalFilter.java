@@ -6,7 +6,6 @@ import org.tndata.android.compass.adapter.ChooseGoalsAdapter;
 import org.tndata.android.compass.model.GoalContent;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 
@@ -18,18 +17,21 @@ import java.util.List;
  */
 public class GoalFilter extends Filter{
     private ChooseGoalsAdapter mAdapter;
-    private Collection<GoalContent> mList;
+    private List<GoalContent> mGoalList;
 
 
     /**
      * Constructor.
      *
      * @param adapter the adapter to be filtered.
-     * @param list the original list of the adapter.
      */
-    public GoalFilter(ChooseGoalsAdapter adapter, Collection<GoalContent> list){
+    public GoalFilter(ChooseGoalsAdapter adapter){
         mAdapter = adapter;
-        mList = list;
+        mGoalList = new ArrayList<>();
+    }
+
+    public void setGoalList(List<GoalContent> goalList){
+        mGoalList = goalList;
     }
 
     @Override
@@ -39,7 +41,7 @@ public class GoalFilter extends Filter{
         List<GoalContent> output = new ArrayList<>();
         int matchCount;
         //For each goal
-        for (GoalContent goal:mList){
+        for (GoalContent goal: mGoalList){
             //The match count is reset
             matchCount = 0;
             //For each item in the constraint array

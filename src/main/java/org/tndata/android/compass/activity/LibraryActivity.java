@@ -1,6 +1,8 @@
 package org.tndata.android.compass.activity;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v4.view.MenuItemCompat;
@@ -33,14 +35,14 @@ public abstract class LibraryActivity
         implements
                 MenuItemCompat.OnActionExpandListener,
                 SearchView.OnQueryTextListener,
-                SearchView.OnCloseListener{
+                SearchView.OnCloseListener,
+                ParallaxEffect.ScrollListener{
 
     private Toolbar mToolbar;
     private MenuItem mSearchItem;
     private SearchView mSearchView;
     private Filter mFilter;
 
-    private ParallaxEffect mParallax;
     private FrameLayout mHeaderContainer;
     private RecyclerView mRecyclerView;
 
@@ -57,12 +59,13 @@ public abstract class LibraryActivity
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
-        mToolbar.setAlpha(0);
 
         mHeaderContainer = (FrameLayout)findViewById(R.id.library_header_container);
         mRecyclerView = (RecyclerView)findViewById(R.id.library_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.addOnScrollListener(new ParallaxEffect(mHeaderContainer, 0.5f));
+        ParallaxEffect parallaxEffect = new ParallaxEffect(mHeaderContainer, 0.5f);
+        parallaxEffect.setScrollListener(this);
+        mRecyclerView.addOnScrollListener(parallaxEffect);
     }
 
     @Override
@@ -111,6 +114,15 @@ public abstract class LibraryActivity
         Log.d("Search", newText);
         mFilter.filter(newText);
         return false;
+    }
+
+    @Override
+    public void onScroll(float percentage){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+            Drawable color = mToolbar.getBackground();
+            color.setAlpha(Math.round(percentage * 255));
+            mToolbar.setBackground(color);
+        }
     }
 
     protected final void setColor(int color){
