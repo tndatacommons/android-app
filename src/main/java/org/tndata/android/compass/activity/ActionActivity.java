@@ -1,6 +1,5 @@
 package org.tndata.android.compass.activity;
 
-import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -55,7 +54,6 @@ public class ActionActivity
                 Parser.ParserCallback{
 
     public static final String ACTION_KEY = "org.tndata.compass.ActionActivity.Action";
-    public static final String ACTION_ID_KEY = "org.tndata.compass.ActionActivity.ActionId";
     public static final String REMINDER_KEY = "org.tndata.compass.ActionActivity.Reminder";
 
     public static final String DID_IT_KEY = "org.tndata.compass.ActionActivity.DidIt";
@@ -82,7 +80,6 @@ public class ActionActivity
     private ViewSwitcher mTickSwitcher;
 
     //Firewall
-    private boolean mActionNeededFetching;
     private boolean mActionUpdated;
 
 
@@ -141,14 +138,12 @@ public class ActionActivity
 
         //If the action wasn't provided via the intent it needs to be fetched
         if (mAction == null){
-            mActionNeededFetching = true;
             timeOption.setText(R.string.action_snooze);
             mReminder = (Reminder)getIntent().getSerializableExtra(REMINDER_KEY);
             fetchAction();
         }
         else{
             mAction = mApplication.getUserData().getAction(mAction);
-            mActionNeededFetching = false;
             timeOption.setText(R.string.action_reschedule);
             if (mAction instanceof UserAction){
                 populateUI((UserAction)mAction);
@@ -163,15 +158,49 @@ public class ActionActivity
      * Retrieves an action from the API
      */
     private void fetchAction(){
-        if (mReminder.getObjectType().equals(Reminder.TYPE_USER_ACTION)){
+        if (mReminder.isUserAction()){
             int mappingId = mReminder.getUserMappingId();
             Log.d("ActionActivity", "Fetching UserAction: " + mappingId);
             NetworkRequest.get(this, this, API.getActionUrl(mappingId), mApplication.getToken());
         }
-        else if (mReminder.getObjectType().equals(Reminder.TYPE_CUSTOM_ACTION)){
+        else if (mReminder.isCustomAction()){
             int customId = mReminder.getObjectId();
             Log.d("ActionActivity", "Fetching UserAction: " + customId);
             NetworkRequest.get(this, this, API.getCustomActionUrl(customId), mApplication.getToken());
+        }
+    }
+
+    @Override
+    public void onRequestComplete(int requestCode, String result){
+        if (mReminder.isUserAction()){
+            Parser.parse(result, UserAction.class, this);
+        }
+        else if (mReminder.isCustomAction()){
+            Parser.parse(result, CustomAction.class, this);
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode, String message){
+        finish();
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof Action){
+            mAction = (Action)result;
+        }
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof UserAction){
+            populateUI((UserAction)mAction);
+            invalidateOptionsMenu();
+        }
+        else if (result instanceof CustomAction){
+            populateUI((CustomAction)mAction);
+            invalidateOptionsMenu();
         }
     }
 
@@ -215,7 +244,7 @@ public class ActionActivity
             }
         }
         else{
-            if (mActionNeededFetching){
+            if (mReminder != null){
                 ViewGroup.LayoutParams params = mDoItNow.getLayoutParams();
                 params.width = mDidIt.getWidth();
                 mDoItNow.setLayoutParams(params);
@@ -249,7 +278,7 @@ public class ActionActivity
         //We need to check for null action here because sometimes the action needs to
         //  be fetched from the backend. If the action has not been fetched yet, the
         //  overflow button doesn't make sense
-        if (mActionNeededFetching && mAction != null && mAction.isEditable()){
+        if (mAction != null && mAction.isEditable()){
             if (!mAction.hasTrigger() || mAction.getTrigger().isDisabled()){
                 getMenuInflater().inflate(R.menu.menu_action_disabled, menu);
             }
@@ -336,15 +365,14 @@ public class ActionActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (resultCode == RESULT_OK){
             switch (requestCode){
-                case RESCHEDULE_REQUEST_CODE:
-                    //If the activity was was fired from an action notification and the
-                    //  associated action was rescheduled, the notification needs to be
-                    //  dismissed
-                    if (mActionNeededFetching){
-                        ((NotificationManager)getSystemService(NOTIFICATION_SERVICE))
-                                .cancel(NotificationUtil.USER_ACTION_TAG,
-                                        mReminder.getObjectId());
-                    }
+                case RESCHEDULE_REQUEST_CODE:if (mReminder.isUserAction()){
+                    NotificationUtil.cancel(this, NotificationUtil.USER_ACTION_TAG,
+                            mReminder.getUserMappingId());
+                }
+                else if (mReminder.isCustomAction()){
+                    NotificationUtil.cancel(this, NotificationUtil.CUSTOM_ACTION_TAG,
+                            mReminder.getObjectId());
+                }
 
                 //In either case, the activity should finish after a second
                 case SNOOZE_REQUEST_CODE:
@@ -383,31 +411,6 @@ public class ActionActivity
                     finish();
                 }
             }, 1000);
-        }
-    }
-
-    @Override
-    public void onRequestComplete(int requestCode, String result){
-        Parser.parse(result, null, this);
-    }
-
-    @Override
-    public void onRequestFailed(int requestCode, String message){
-        finish();
-    }
-
-    @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof Action){
-            mAction = (Action)result;
-        }
-    }
-
-    @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof Action){
-            populateUI((UserAction)mAction);
-            invalidateOptionsMenu();
         }
     }
 }

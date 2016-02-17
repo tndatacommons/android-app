@@ -1,7 +1,5 @@
 package org.tndata.android.compass.model;
 
-import org.tndata.android.compass.service.GcmIntentService;
-
 import java.io.Serializable;
 
 
@@ -14,9 +12,6 @@ import java.io.Serializable;
  */
 public class Reminder implements Serializable{
     static final long serialVersionUID = 94124918239L;
-
-    public static final String TYPE_USER_ACTION = GcmIntentService.MESSAGE_TYPE_ACTION;
-    public static final String TYPE_CUSTOM_ACTION = GcmIntentService.MESSAGE_TYPE_CUSTOM_ACTION;
 
 
     private int mId;
@@ -168,15 +163,11 @@ public class Reminder implements Serializable{
         return mLastDelivered;
     }
 
-    /**
-     * Gets the object type of the reminder.
-     *
-     * @return the object type of the reminder.
-     */
-    public String getObjectType(){
-        if (mUserMappingId == -1){
-            return TYPE_CUSTOM_ACTION;
-        }
-        return TYPE_USER_ACTION;
+    public boolean isUserAction(){
+        return mUserMappingId != -1;
+    }
+
+    public boolean isCustomAction(){
+        return mUserMappingId == -1;
     }
 }

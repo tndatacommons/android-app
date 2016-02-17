@@ -118,7 +118,6 @@ public final class NotificationUtil{
 
         //Action intent; what happens when the user taps the notification
         Intent intent = new Intent(context, ActionActivity.class)
-                .putExtra(ActionActivity.ACTION_ID_KEY, actionMappingId)
                 .putExtra(ActionActivity.REMINDER_KEY, reminder);
 
         PendingIntent contentIntent = PendingIntent.getActivity(context,
@@ -173,8 +172,15 @@ public final class NotificationUtil{
         if (!BuildConfig.DEBUG){
             notification.flags |= Notification.FLAG_ONGOING_EVENT;
         }
-        ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
-                .notify(USER_ACTION_TAG, actionId, notification);
+
+        if (actionMappingId != -1){
+            ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
+                    .notify(USER_ACTION_TAG, actionMappingId, notification);
+        }
+        else{
+            ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
+                    .notify(CUSTOM_ACTION_TAG, actionId, notification);
+        }
     }
 
     /**

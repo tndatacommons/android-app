@@ -420,10 +420,10 @@ public abstract class API{
     }
 
     public static String getPostActionReportUrl(@NonNull Reminder reminder){
-        if (reminder.getObjectType().equals(Reminder.TYPE_USER_ACTION)){
+        if (reminder.isUserAction()){
             return BASE_URL + "users/actions/" + reminder.getUserMappingId() + "/complete/";
         }
-        else if (reminder.getObjectType().equals(Reminder.TYPE_CUSTOM_ACTION)){
+        else if (reminder.isCustomAction()){
             return BASE_URL + "users/customactions/" + reminder.getObjectId() + "/complete/";
         }
         else{

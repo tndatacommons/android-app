@@ -86,14 +86,6 @@ public class ChooseGoalsActivity
     }
 
     /**
-     * Displays an error.
-     */
-    private void showError() {
-        /*mRecyclerView.setVisibility(View.GONE);
-        mErrorTextView.setVisibility(View.VISIBLE);*/
-    }
-
-    /**
      * Fires the goal loader task.
      */
     private void loadGoals(){
