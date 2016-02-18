@@ -16,7 +16,7 @@
         android:orientation="horizontal" >
 
         <RelativeLayout
-            android:id="@+id/library_content_icon_container"
+            android:id="@+id/library_goal_icon_container"
             android:layout_width="@dimen/goal_icon_image_size"
             android:layout_height="@dimen/goal_icon_image_size"
             android:layout_marginTop="10dp"
@@ -27,7 +27,7 @@
             android:padding="10dp" >
 
             <ImageView
-                android:id="@+id/library_content_icon"
+                android:id="@+id/library_goal_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -37,7 +37,7 @@
         </RelativeLayout>
 
         <TextView
-            android:id="@+id/library_content_title"
+            android:id="@+id/library_goal_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"

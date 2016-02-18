@@ -90,7 +90,7 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
         }
         else{
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            View rootView = inflater.inflate(R.layout.card_library_content, parent, false);
+            View rootView = inflater.inflate(R.layout.card_library_goal, parent, false);
             return new GoalViewHolder(rootView);
         }
     }
@@ -205,9 +205,9 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
             super(rootView);
 
             //Fetch UI components
-            mIconContainer = (RelativeLayout)rootView.findViewById(R.id.library_content_icon_container);
-            mIcon = (ImageView)rootView.findViewById(R.id.library_content_icon);
-            mTitle = (TextView)rootView.findViewById(R.id.library_content_title);
+            mIconContainer = (RelativeLayout)rootView.findViewById(R.id.library_goal_icon_container);
+            mIcon = (ImageView)rootView.findViewById(R.id.library_goal_icon);
+            mTitle = (TextView)rootView.findViewById(R.id.library_goal_title);
 
             //Listeners
             itemView.setOnClickListener(this);

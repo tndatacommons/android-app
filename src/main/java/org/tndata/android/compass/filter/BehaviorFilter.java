@@ -6,7 +6,6 @@ import org.tndata.android.compass.adapter.ChooseBehaviorsAdapter;
 import org.tndata.android.compass.model.BehaviorContent;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 
@@ -18,18 +17,21 @@ import java.util.List;
  */
 public class BehaviorFilter extends Filter{
     private ChooseBehaviorsAdapter mAdapter;
-    private Collection<BehaviorContent> mList;
+    private List<BehaviorContent> mBehaviorList;
 
 
     /**
      * Constructor.
      *
      * @param adapter the adapter to be filtered.
-     * @param list the original list of the adapter.
      */
-    public BehaviorFilter(ChooseBehaviorsAdapter adapter, Collection<BehaviorContent> list){
+    public BehaviorFilter(ChooseBehaviorsAdapter adapter){
         mAdapter = adapter;
-        mList = list;
+        mBehaviorList = new ArrayList<>();
+    }
+
+    public void setBehaviorList(List<BehaviorContent> behaviorList){
+        mBehaviorList = behaviorList;
     }
 
     @Override
@@ -39,7 +41,7 @@ public class BehaviorFilter extends Filter{
         List<BehaviorContent> output = new ArrayList<>();
         int matchCount;
         //For each goal
-        for (BehaviorContent behavior:mList){
+        for (BehaviorContent behavior: mBehaviorList){
             //The match count is reset
             matchCount = 0;
             //For each item in the constraint array

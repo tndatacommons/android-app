@@ -1,35 +1,25 @@
 package org.tndata.android.compass.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.filter.BehaviorFilter;
 import org.tndata.android.compass.model.BehaviorContent;
-import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
-import org.tndata.android.compass.model.UserGoal;
-import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
-import org.tndata.android.compass.ui.parallaxrecyclerview.ParallaxRecyclerAdapter;
 import org.tndata.android.compass.util.CompassTagHandler;
+import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 
@@ -37,28 +27,20 @@ import java.util.List;
  * Adapter for the behavior picker.
  *
  * @author Ismael Alonso
- * @version 1.0.0
+ * @version 2.0.0
  */
-public class ChooseBehaviorsAdapter
-        extends ParallaxRecyclerAdapter<BehaviorContent>
-        implements ParallaxRecyclerAdapter.OnClickEvent{
+public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
+    public static final int TYPE_BLANK = 0;
+    public static final int TYPE_DESCRIPTION = TYPE_BLANK+1;
+    public static final int TYPE_BEHAVIOR = TYPE_DESCRIPTION+1;
+
 
     private Context mContext;
-    private CompassApplication mApplication;
     private ChooseBehaviorsListener mListener;
-    private RecyclerView mRecyclerView;
     private GoalContent mGoal;
     private BehaviorFilter mFilter;
 
-    private CompassTagHandler mTagHandler;
-
     private List<BehaviorContent> mBehaviors;
-    private int mExpandedBehavior;
-
-    private TextView mAddGoalCurrentButton;
-    private boolean mIsGoalAdded;
-
-    private boolean mIsEditable;
 
 
     /**
@@ -66,90 +48,73 @@ public class ChooseBehaviorsAdapter
      *
      * @param context the context.
      * @param listener an implementation of the listener to act upon events.
-     * @param app a reference to the application class.
-     * @param recyclerView the view that will contain this adapter.
-     * @param category the parent category of this goal.
      * @param goal the goal whose behaviors are to be listed.
-     * @param isGoalAdded whether the provided goal is in the user's list.
      */
     public ChooseBehaviorsAdapter(@NonNull Context context, @NonNull ChooseBehaviorsListener listener,
-                                  @NonNull CompassApplication app, @NonNull RecyclerView recyclerView,
-                                  @NonNull CategoryContent category, @NonNull GoalContent goal, boolean isGoalAdded){
-        super(new ArrayList<BehaviorContent>());
+                                  @NonNull GoalContent goal){
 
         //Assign the references
         mContext = context;
-        mApplication = app;
         mListener = listener;
-        mRecyclerView = recyclerView;
         mGoal = goal;
-        mIsGoalAdded = isGoalAdded;
-        mFilter = null;
+        mFilter = new BehaviorFilter(this);
 
-        //The tag handler is used in a couple of places, so previous instantiation and
-        //  reuse might help performance.
-        mTagHandler = new CompassTagHandler(mContext);
-
-        //Create an empty list and "nullify" the expanded behavior.
+        //Create an empty list
         mBehaviors = new ArrayList<>();
-        mExpandedBehavior = -1;
-
-        mIsEditable = true;
-        UserGoal userGoal = mApplication.getUserData().getGoal(goal);
-        if (userGoal != null){
-            mIsEditable = userGoal.isEditable();
-        }
-
-        //Create and set the headers
-        BehaviorContent headerBehavior = new BehaviorContent();
-        headerBehavior.setDescription(mGoal.getDescription());
-        headerBehavior.setHTMLDescription(mGoal.getHTMLDescription());
-        headerBehavior.setId(0);
-        mBehaviors.add(headerBehavior);
-        setHeader(category);
-
-        //Add listeners and interfaces
-        implementRecyclerAdapterMethods(new ChooseBehaviorsAdapterMethods());
-        setOnClickEvent(this);
     }
 
-    /**
-     * Creates the parallax header view containing the goal's icon and sets it in the list.
-     *
-     * @param category the parent category of the goal whose behaviors are to be listed.
-     */
-    @SuppressWarnings("deprecation")
-    private void setHeader(CategoryContent category){
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        View header = inflater.inflate(R.layout.header_choose_behaviors, mRecyclerView, false);
-
-        ImageView headerIcon = (ImageView)header.findViewById(R.id.header_choose_behaviors_icon);
-        mGoal.loadIconIntoView(headerIcon);
-
-        RelativeLayout circleView = (RelativeLayout)header.findViewById(R.id.header_choose_behaviors_circle_view);
-        GradientDrawable gradientDrawable = (GradientDrawable) circleView.getBackground();
-        if (category != null && !category.getSecondaryColor().isEmpty()){
-            gradientDrawable.setColor(Color.parseColor(category.getSecondaryColor()));
+    @Override
+    public int getItemViewType(int position){
+        if (position == 0){
+            return TYPE_BLANK;
+        }
+        else if (position == 1){
+            return TYPE_DESCRIPTION;
         }
         else{
-            gradientDrawable.setColor(mContext.getResources().getColor(R.color.grow_accent));
+            return TYPE_BEHAVIOR;
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-            circleView.setBackground(gradientDrawable);
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        if (viewType == TYPE_BLANK){
+            return new RecyclerView.ViewHolder(new CardView(mContext)){};
+        }
+        else if (viewType == TYPE_DESCRIPTION){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            View rootView = inflater.inflate(R.layout.card_library_description, parent, false);
+            return new DescriptionViewHolder(mContext, rootView);
         }
         else{
-            circleView.setBackgroundDrawable(gradientDrawable);
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            View rootView = inflater.inflate(R.layout.card_library_behavior, parent, false);
+            return new BehaviorViewHolder(rootView);
         }
+    }
 
-        ((HeaderLayoutManagerFixed)mRecyclerView.getLayoutManager()).setHeaderIncrementFixer(header);
-        setShouldClipView(false);
-        setParallaxHeader(header, mRecyclerView);
-        setOnParallaxScroll(new ParallaxRecyclerAdapter.OnParallaxScroll(){
-            @Override
-            public void onParallaxScroll(float percentage, float offset, View parallax){
-                mListener.onScroll(percentage, offset);
-            }
-        });
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
+        if (position == 0){
+            int width = CompassUtil.getScreenWidth(mContext);
+            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    (int)((width*2/3)*0.8)
+            );
+            rawHolder.itemView.setLayoutParams(params);
+            rawHolder.itemView.setVisibility(View.INVISIBLE);
+        }
+        else if (position == 1){
+            ((DescriptionViewHolder)rawHolder).bind(mGoal);
+        }
+        else{
+            ((BehaviorViewHolder)rawHolder).bind(mBehaviors.get(position - 2));
+        }
+    }
+
+    @Override
+    public int getItemCount(){
+        return mBehaviors.size()+2;
     }
 
     /**
@@ -157,218 +122,63 @@ public class ChooseBehaviorsAdapter
      *
      * @param behaviors the list of behaviors to be set.
      */
-    public void setBehaviors(Collection<BehaviorContent> behaviors){
-        mBehaviors.clear();
-
-        BehaviorContent headerBehavior = new BehaviorContent();
-        headerBehavior.setDescription(mGoal.getDescription());
-        headerBehavior.setHTMLDescription(mGoal.getHTMLDescription());
-        headerBehavior.setId(0);
-        mBehaviors.add(headerBehavior);
-
-        mBehaviors.addAll(behaviors);
+    public void setBehaviors(List<BehaviorContent> behaviors){
+        mBehaviors = behaviors;
     }
 
     public void update(){
-        if (mFilter == null){
-            mFilter = new BehaviorFilter(this, mBehaviors.subList(1, mBehaviors.size()));
-        }
+        mFilter.setBehaviorList(mBehaviors);
         notifyDataSetChanged();
     }
 
-    public void filter(CharSequence constraint){
-        if (mFilter != null){
-            mFilter.filter(constraint);
-        }
+    public BehaviorFilter getFilter(){
+        return mFilter;
     }
 
-    private void addGoalClicked(){
-        mIsGoalAdded = true;
-        mListener.addGoal();
-    }
 
     /**
-     * Called when the select button is clicked.
-     *
-     * @param holder the view holder containing the behavior.
-     */
-    private void selectBehaviorClicked(BehaviorViewHolder holder){
-        if (mIsEditable){
-            BehaviorContent behavior = mBehaviors.get(holder.getAdapterPosition()-1);
-            boolean isBehaviorSelected = mApplication.getBehaviors().containsKey(behavior.getId());
-
-            //TODO could be nice to check if the piece of content is being removed or added
-            if (isBehaviorSelected){
-                //Tapping this again should remove the behavior
-                Log.d("ChooseBehaviorsAdapter", "Trying to remove behavior: " + behavior.getTitle());
-                mListener.deleteBehavior(behavior);
-                holder.mSelectBehavior.setImageResource(R.drawable.ic_blue_plus_circle);
-            }
-            else{
-                //We need to add the behavior to the user's selections.
-                mListener.addBehavior(behavior);
-                holder.mSelectBehavior.setImageResource(R.drawable.ic_blue_check_circle);
-            }
-        }
-    }
-
-    /**
-     * Called when the select actions button is clicked.
-     *
-     * @param position the position of the containing behavior.
-     */
-    private void selectActionsClicked(int position){
-        mListener.selectActions(mBehaviors.get(position));
-    }
-
-    /**
-     * Called when the more info button is clicked.
-     *
-     * @param position the position of the containing behavior.
-     */
-    private void moreInfoClicked(int position){
-        mListener.moreInfo(mBehaviors.get(position));
-    }
-
-    /**
-     * Called when the do it now button is clicked.
-     *
-     * @param position the position of the containing behavior.
-     */
-    private void doItNowClicked(int position){
-        mListener.doItNow(mBehaviors.get(position));
-    }
-
-    @Override
-    public void onClick(View view, int position){
-        if (position > 0){
-            int lastExpanded = mExpandedBehavior;
-
-            //Add one to the position to account for the header
-            if (mExpandedBehavior == position+1){
-                mExpandedBehavior = -1;
-                notifyItemChanged(lastExpanded);
-            }
-            else{
-                mExpandedBehavior = position+1;
-                notifyItemChanged(mExpandedBehavior);
-                //Let us redraw the item that has changed, this forces the RecyclerView to
-                //  respect the layout of each item, and none will overlap
-                if (lastExpanded != -1){
-                    notifyItemChanged(lastExpanded);
-                }
-                mRecyclerView.scrollToPosition(mExpandedBehavior);
-            }
-        }
-    }
-
-    public void disableAddGoalButton(){
-        mIsGoalAdded = true;
-        if (mAddGoalCurrentButton != null){
-            mAddGoalCurrentButton.setVisibility(View.GONE);
-        }
-    }
-
-    /**
-     * Implementation of the RecyclerAdapterMethods interface.
+     * View holder for a description card.
      *
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    private class ChooseBehaviorsAdapterMethods implements ParallaxRecyclerAdapter.RecyclerAdapterMethods{
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int position){
-            LayoutInflater inflater = LayoutInflater.from(mContext);
-            View rootView = inflater.inflate(R.layout.item_choose_behavior, viewGroup, false);
-            return new BehaviorViewHolder(rootView);
+    static class DescriptionViewHolder extends RecyclerView.ViewHolder{
+        private Context mContext;
+        private TextView mCategoryTitle;
+        private TextView mCategoryDescription;
+
+
+        /**
+         * Constructor.
+         *
+         * @param context a reference to the context.
+         * @param rootView the view to be drawn.
+         */
+        public DescriptionViewHolder(@NonNull Context context, @NonNull View rootView){
+            super(rootView);
+
+            mContext = context;
+            mCategoryTitle = (TextView)rootView.findViewById(R.id.library_description_title);
+            mCategoryDescription = (TextView)rootView.findViewById(R.id.library_description_content);
         }
 
-        @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
-            BehaviorViewHolder holder = (BehaviorViewHolder)rawHolder;
-            BehaviorContent behavior = mBehaviors.get(position);
-
-            boolean isBehaviorSelected = mApplication.getBehaviors().containsKey(behavior.getId());
-
-            if (position == 0 && behavior.getId() == 0){
-                //Display the header card
-                if (!behavior.getHTMLDescription().isEmpty()){
-                    holder.mHeader.setText(Html.fromHtml(behavior.getHTMLDescription(), null, mTagHandler));
-                }
-                else{
-                    holder.mHeader.setText(behavior.getDescription());
-                }
-
-                holder.mHeaderWrapper.setVisibility(View.VISIBLE);
-                mAddGoalCurrentButton = holder.mAddGoal;
-                if (!mIsGoalAdded){
-                    holder.mAddGoal.setVisibility(View.VISIBLE);
-                }
-                holder.mIcon.setVisibility(View.GONE);
-                holder.mDescription.setVisibility(View.GONE);
-                holder.mTitle.setVisibility(View.GONE);
-                holder.mActionWrapper.setVisibility(View.GONE);
+        /**
+         * Binds a goal to the holder.
+         *
+         * @param goal the goal whose description is to be drawn.
+         */
+        public void bind(@NonNull GoalContent goal){
+            mCategoryTitle.setText(goal.getTitle());
+            if (!goal.getHTMLDescription().isEmpty()){
+                mCategoryDescription.setText(Html.fromHtml(goal.getHTMLDescription(), null,
+                        new CompassTagHandler(mContext)));
             }
             else{
-                //Handle all other cards
-                holder.mHeaderWrapper.setVisibility(View.GONE);
-
-                holder.mTitle.setText(behavior.getTitle());
-                if (!behavior.getHTMLDescription().isEmpty()){
-                    holder.mDescription.setText(Html.fromHtml(behavior.getHTMLDescription(), null, mTagHandler));
-                }
-                else{
-                    holder.mDescription.setText(behavior.getDescription());
-                }
-
-                if (mExpandedBehavior == position+1){
-                    holder.mDescription.setVisibility(View.VISIBLE);
-                    holder.mActionWrapper.setVisibility(View.VISIBLE);
-                    holder.mIcon.setVisibility(View.GONE);
-                }
-                else{
-                    holder.mDescription.setVisibility(View.GONE);
-                    holder.mActionWrapper.setVisibility(View.GONE);
-                    holder.mIcon.setVisibility(View.VISIBLE);
-                }
-
-                if (behavior.getIconUrl() != null && !behavior.getIconUrl().isEmpty()){
-                    ImageLoader.loadBitmap(holder.mIcon, behavior.getIconUrl(), new ImageLoader.Options());
-                }
-
-                if (isBehaviorSelected){
-                    //If the user has already selected the behavior, update the icon
-                    holder.mSelectBehavior.setImageResource(R.drawable.ic_blue_check_circle);
-                }
-
-                if (behavior.getMoreInfo().equals("")){
-                    holder.mMoreInfo.setVisibility(View.GONE);
-                }
-                else{
-                    holder.mMoreInfo.setVisibility(View.VISIBLE);
-                }
-
-                if (behavior.getActionCount() == 0){
-                    holder.mSelectActions.setVisibility(View.GONE);
-                }
-                else{
-                    holder.mSelectActions.setVisibility(View.VISIBLE);
-                }
-
-                if (behavior.getExternalResource().isEmpty()){
-                    holder.mDoItNow.setVisibility(View.GONE);
-                }
-                else{
-                    holder.mDoItNow.setVisibility(View.VISIBLE);
-                }
+                mCategoryDescription.setText(goal.getDescription());
             }
         }
-
-        @Override
-        public int getItemCount(){
-            return mBehaviors.size();
-        }
     }
+
 
     /**
      * View holder for a list item.
@@ -376,22 +186,9 @@ public class ChooseBehaviorsAdapter
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    private class BehaviorViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        //These are the views for the header-type card
-        private View mHeaderWrapper;
-        private TextView mHeader;
-        private TextView mAddGoal;
-
-        //These are the views for the behavior-type card
+    class BehaviorViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private ImageView mIcon;
         private TextView mTitle;
-        private TextView mDescription;
-
-        private LinearLayout mActionWrapper;
-        private ImageView mMoreInfo;
-        private ImageView mSelectActions;
-        private ImageView mSelectBehavior;
-        private TextView mDoItNow;
 
 
         /**
@@ -402,51 +199,27 @@ public class ChooseBehaviorsAdapter
         public BehaviorViewHolder(View rootView){
             super(rootView);
 
-            mHeaderWrapper = rootView.findViewById(R.id.choose_behavior_header_wrapper);
-            mHeader = (TextView)rootView.findViewById(R.id.choose_behavior_header);
-            mAddGoal = (TextView)rootView.findViewById(R.id.choose_behavior_add_goal);
+            mIcon = (ImageView)rootView.findViewById(R.id.library_behavior_icon);
+            mTitle = (TextView)rootView.findViewById(R.id.library_behavior_title);
 
-            mIcon = (ImageView)rootView.findViewById(R.id.choose_behavior_icon);
-            mTitle = (TextView)rootView.findViewById(R.id.choose_behavior_title);
-            mDescription = (TextView)rootView.findViewById(R.id.choose_behavior_description);
+            rootView.setOnClickListener(this);
+        }
 
-            mActionWrapper = (LinearLayout)rootView.findViewById(R.id.choose_behavior_action_wrapper);
-            mSelectBehavior = (ImageView)rootView.findViewById(R.id.choose_behavior_select);
-            mSelectActions = (ImageView)rootView.findViewById(R.id.choose_behavior_select_actions);
-            mMoreInfo = (ImageView)rootView.findViewById(R.id.choose_behavior_more_info);
-            mDoItNow = (TextView)rootView.findViewById(R.id.choose_behavior_do_it_now);
-
-            mAddGoal.setOnClickListener(this);
-            mSelectBehavior.setOnClickListener(this);
-            mSelectActions.setOnClickListener(this);
-            mMoreInfo.setOnClickListener(this);
-            mDoItNow.setOnClickListener(this);
+        /**
+         * Binds a behavior to the holder.
+         *
+         * @param behavior the behavior to display.
+         */
+        public void bind(BehaviorContent behavior){
+            if (behavior.getIconUrl() != null && !behavior.getIconUrl().isEmpty()){
+                ImageLoader.loadBitmap(mIcon, behavior.getIconUrl(), new ImageLoader.Options());
+            }
+            mTitle.setText(behavior.getTitle());
         }
 
         @Override
         public void onClick(View view){
-            switch (view.getId()){
-                case R.id.choose_behavior_add_goal:
-                    mAddGoal.setVisibility(View.GONE);
-                    addGoalClicked();
-                    break;
-
-                case R.id.choose_behavior_select:
-                    selectBehaviorClicked(this);
-                    break;
-
-                case R.id.choose_behavior_select_actions:
-                    selectActionsClicked(getAdapterPosition()-1);
-                    break;
-
-                case R.id.choose_behavior_more_info:
-                    moreInfoClicked(getAdapterPosition()-1);
-                    break;
-
-                case R.id.choose_behavior_do_it_now:
-                    doItNowClicked(getAdapterPosition()-1);
-                    break;
-            }
+            mListener.onBehaviorSelected(mBehaviors.get(getAdapterPosition() - 2));
         }
     }
 
@@ -458,51 +231,10 @@ public class ChooseBehaviorsAdapter
      */
     public interface ChooseBehaviorsListener{
         /**
-         * Called when the add goal button is clicked.
-         */
-        void addGoal();
-
-        /**
-         * Called when the add behavior button is clicked.
+         * Called when a behavior is selected.
          *
-         * @param behavior the containing behavior.
+         * @param behavior the selected behavior.
          */
-        void addBehavior(BehaviorContent behavior);
-
-        /**
-         * Called when the delete behavior button is clicked.
-         *
-         * @param behavior the containing behavior.
-         */
-        void deleteBehavior(BehaviorContent behavior);
-
-        /**
-         * Called when the select actions button is clicked.
-         *
-         * @param behavior the containing behavior.
-         */
-        void selectActions(BehaviorContent behavior);
-
-        /**
-         * Called when the more info button is clicked.
-         *
-         * @param behavior the containing behavior.
-         */
-        void moreInfo(BehaviorContent behavior);
-
-        /**
-         * Called when the do it now button is clicked.
-         *
-         * @param behavior the containing behavior.
-         */
-        void doItNow(BehaviorContent behavior);
-
-        /**
-         * Called when the RecyclerView scrolls.
-         *
-         * @param percentage the scroll percentage.
-         * @param offset the scroll offset.
-         */
-        void onScroll(float percentage, float offset);
+        void onBehaviorSelected(BehaviorContent behavior);
     }
 }

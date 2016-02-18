@@ -5,7 +5,7 @@
     android:layout_height="@dimen/material_header_content_size" >
 
     <ImageView
-        android:id="@+id/choose_goals_header_tile"
+        android:id="@+id/choose_goals_tile"
         android:layout_width="@dimen/header_category_icon_image_size"
         android:layout_height="@dimen/header_category_icon_image_size"
         android:layout_gravity="center"

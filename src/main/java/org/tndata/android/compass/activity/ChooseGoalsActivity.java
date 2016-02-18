@@ -66,7 +66,7 @@ public class ChooseGoalsActivity
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)header.getLayoutParams();
         params.height = CompassUtil.getScreenWidth(this)/3*2;
         header.setLayoutParams(params);
-        ImageView tile = (ImageView)header.findViewById(R.id.choose_goals_header_tile);
+        ImageView tile = (ImageView)header.findViewById(R.id.choose_goals_tile);
 
         int id = CompassUtil.getCategoryTileResId(mCategory.getTitle());
         Bitmap image = BitmapFactory.decodeResource(getResources(), id);

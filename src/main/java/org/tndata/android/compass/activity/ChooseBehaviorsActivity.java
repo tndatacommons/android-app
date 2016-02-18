@@ -1,28 +1,15 @@
 package org.tndata.android.compass.activity;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.SearchView;
-import android.widget.Toast;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
-import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseBehaviorsAdapter;
@@ -30,13 +17,9 @@ import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserBehavior;
-import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
-import org.tndata.android.compass.ui.SpacingItemDecoration;
-import org.tndata.android.compass.ui.parallaxrecyclerview.HeaderLayoutManagerFixed;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.NetworkRequest;
 
@@ -50,14 +33,11 @@ import java.util.List;
  * @version 2.0.0
  */
 public class ChooseBehaviorsActivity
-        extends AppCompatActivity
+        extends LibraryActivity
         implements
                 NetworkRequest.RequestCallback,
                 Parser.ParserCallback,
-                ChooseBehaviorsAdapter.ChooseBehaviorsListener,
-                MenuItemCompat.OnActionExpandListener,
-                SearchView.OnQueryTextListener,
-                SearchView.OnCloseListener{
+                ChooseBehaviorsAdapter.ChooseBehaviorsListener{
 
     //Bundle keys
     //NOTE: These need to be regular content because a user may dive down the library
@@ -74,48 +54,21 @@ public class ChooseBehaviorsActivity
 
     public CompassApplication mApplication;
 
-    private Toolbar mToolbar;
-    private MenuItem mSearchItem;
-    private SearchView mSearchView;
-
     private CategoryContent mCategory;
     private GoalContent mGoal;
     private ChooseBehaviorsAdapter mAdapter;
-    private View mHeaderView;
-    private RecyclerView mBehaviorList;
 
     //Request codes
     private int mGetGoalRequestCode;
     private int mGetCategoryRequestCode;
-    private int mPostGoalRequestCode;
     private int mGetBehaviorsRequestCode;
     private int mPostBehaviorRequestCode;
-    private int mDeleteBehaviorRequestCode;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_choose_behaviors);
         mApplication = (CompassApplication)getApplication();
-
-        //Get and set the toolbar
-        mToolbar = (Toolbar)findViewById(R.id.choose_behaviors_toolbar);
-        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
-        setSupportActionBar(mToolbar);
-        if (getSupportActionBar() != null){
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
-
-        mHeaderView = findViewById(R.id.choose_behaviors_material_view);
-
-        //Set the recycler view
-        mBehaviorList = (RecyclerView)findViewById(R.id.choose_behaviors_list);
-        HeaderLayoutManagerFixed manager = new HeaderLayoutManagerFixed(this);
-        manager.setOrientation(LinearLayoutManager.VERTICAL);
-        mBehaviorList.addItemDecoration(new SpacingItemDecoration(this, 10));
-        mBehaviorList.setLayoutManager(manager);
-        mBehaviorList.setHasFixedSize(true);
 
         //Pull the goal
         mGoal = (GoalContent)getIntent().getSerializableExtra(GOAL_KEY);
@@ -123,20 +76,50 @@ public class ChooseBehaviorsActivity
             fetchGoal(getIntent().getIntExtra(GOAL_ID_KEY, -1));
         }
         else{
-            mToolbar.setTitle(mGoal.getTitle());
             mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
-            setAdapter();
+            mAdapter = new ChooseBehaviorsAdapter(this, this, mGoal);
+
+            setHeader();
+            setAdapter(mAdapter);
+            setFilter(mAdapter.getFilter());
+
+            if (mCategory != null && !mCategory.getColor().isEmpty()){
+                setColor(Color.parseColor(mCategory.getColor()));
+            }
+
             fetchBehaviors();
         }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void setHeader(){
+        FrameLayout header = (FrameLayout)inflateHeader(R.layout.header_choose_behaviors);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)header.getLayoutParams();
+        params.height = CompassUtil.getScreenWidth(this)/3*2;
+        header.setLayoutParams(params);
+        RelativeLayout circle = (RelativeLayout)header.findViewById(R.id.choose_behaviors_circle);
+        ImageView icon = (ImageView)header.findViewById(R.id.choose_behaviors_icon);
+
+        GradientDrawable gradientDrawable = (GradientDrawable) circle.getBackground();
+        if (mCategory != null && !mCategory.getSecondaryColor().isEmpty()){
+            gradientDrawable.setColor(Color.parseColor(mCategory.getSecondaryColor()));
+        }
+        else{
+            gradientDrawable.setColor(getResources().getColor(R.color.grow_accent));
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+            circle.setBackground(gradientDrawable);
+        }
+        else{
+            circle.setBackgroundDrawable(gradientDrawable);
+        }
+        mGoal.loadIconIntoView(icon);
     }
 
     @Override
     protected void onResume(){
         super.onResume();
         if (mAdapter != null){
-            if (isGoalSelected()){
-                mAdapter.disableAddGoalButton();
-            }
             mAdapter.notifyDataSetChanged();
         }
     }
@@ -158,152 +141,16 @@ public class ChooseBehaviorsActivity
         mGetBehaviorsRequestCode = NetworkRequest.get(this, this, API.getBehaviorsUrl(mGoal), "");
     }
 
-    /**
-     * Sets the adapter once everything else is in place.
-     */
-    private void setAdapter(){
-        mAdapter = new ChooseBehaviorsAdapter(this, this, mApplication, mBehaviorList, mCategory, mGoal, isGoalSelected());
-        mBehaviorList.setAdapter(mAdapter);
-        if (mCategory != null && !mCategory.getColor().isEmpty()){
-            mHeaderView.setBackgroundColor(Color.parseColor(mCategory.getColor()));
-            mToolbar.setBackgroundColor(Color.parseColor(mCategory.getColor()));
-        }
-    }
-
-    private boolean isGoalSelected(){
-        return mApplication.getUserData().contains(mGoal);
-    }
-
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.menu_filter, menu);
-        mSearchItem = menu.findItem(R.id.filter);
-        mSearchItem.setVisible(false);
-        MenuItemCompat.setOnActionExpandListener(mSearchItem, this);
-
-        mSearchView = (SearchView)mSearchItem.getActionView();
-        mSearchView.setIconified(false);
-        mSearchView.setOnCloseListener(this);
-        mSearchView.setOnQueryTextListener(this);
-        mSearchView.clearFocus();
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onMenuItemActionExpand(MenuItem item){
-        mSearchView.requestFocus();
-        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-        return true;
-    }
-
-    @Override
-    public boolean onMenuItemActionCollapse(MenuItem item){
-        mSearchView.setQuery("", false);
-        mSearchView.clearFocus();
-        return true;
-    }
-
-    @Override
-    public boolean onClose(){
-        mSearchItem.collapseActionView();
-        return true;
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query){
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText){
-        Log.d("Search", newText);
-        mAdapter.filter(newText);
-        return false;
-    }
-
-    @Override
-    public void addGoal(){
-        mPostGoalRequestCode = NetworkRequest.post(this, this, API.getPostGoalUrl(),
-                mApplication.getToken(), API.getPostGoalBody(mGoal, mCategory));
-        setResult(RESULT_OK);
-    }
-
-    @Override
-    public void addBehavior(BehaviorContent behavior){
-        Log.d(TAG, "Add clicked: " + behavior);
-        //Disable the 'I want this' button
-        mAdapter.disableAddGoalButton();
-
+    public void onBehaviorSelected(BehaviorContent behavior){
+        Log.d(TAG, "Behavior selected: " + behavior);
         //Then select the behavior
-        mPostBehaviorRequestCode = NetworkRequest.post(this, this, API.getPostBehaviorUrl(),
+        /*mPostBehaviorRequestCode = NetworkRequest.post(this, this, API.getPostBehaviorUrl(),
                 mApplication.getToken(), API.getPostBehaviorBody(behavior, mGoal, mCategory));
 
         if (behavior.getActionCount() > 0){
             selectActions(behavior);
-        }
-    }
-
-    @Override
-    public void deleteBehavior(BehaviorContent behavior){
-        UserBehavior userBehavior = mApplication.getUserData().getBehavior(behavior);
-        if (userBehavior != null){
-            Log.d(TAG, "Deleting Behavior: " + userBehavior.toString());
-
-            mDeleteBehaviorRequestCode = NetworkRequest.delete(this, this,
-                    API.getDeleteBehaviorUrl(userBehavior),
-                    mApplication.getToken(), new JSONObject());
-
-            mApplication.removeBehavior(userBehavior);
-        }
-        else{
-            Log.d(TAG, "(Delete) behavior not found: " + behavior.toString());
-        }
-    }
-
-    @Override
-    public void selectActions(BehaviorContent behavior){
-        //Launch the ChooseActionsActivity (where users choose actions for this Behavior)
-        startActivity(new Intent(this, ChooseActionsActivity.class)
-                .putExtra(ChooseActionsActivity.CATEGORY_KEY, mCategory)
-                .putExtra(ChooseActionsActivity.GOAL_KEY, mGoal)
-                .putExtra(ChooseActionsActivity.BEHAVIOR_KEY, behavior));
-    }
-
-    @Override
-    public void moreInfo(BehaviorContent behavior){
-        AlertDialog.Builder builder = new AlertDialog.Builder(ChooseBehaviorsActivity.this);
-        if (!behavior.getHTMLMoreInfo().isEmpty()){
-            builder.setMessage(Html.fromHtml(behavior.getHTMLMoreInfo(), null, new CompassTagHandler(this)));
-        }
-        else{
-            builder.setMessage(behavior.getMoreInfo());
-        }
-        builder.setTitle(behavior.getTitle());
-        builder.setPositiveButton(android.R.string.ok,
-                new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog, int id){
-                        dialog.dismiss();
-                    }
-                });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-    @Override
-    public void doItNow(BehaviorContent behavior){
-        CompassUtil.doItNow(this, behavior.getExternalResource());
-    }
-
-    @Override
-    public void onScroll(float percentage, float offset){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-            Drawable color = mToolbar.getBackground();
-            color.setAlpha(Math.round(percentage * 255));
-            mToolbar.setBackground(color);
-        }
-        mHeaderView.setTranslationY(-offset * 0.5f);
+        }*/
     }
 
     @Override
@@ -324,19 +171,11 @@ public class ChooseBehaviorsActivity
         else if (requestCode == mGetCategoryRequestCode){
             Parser.parse(result, CategoryContent.class, this);
         }
-        else if (requestCode == mPostGoalRequestCode){
-            Parser.parse(result, UserGoal.class, this);
-        }
         else if (requestCode == mGetBehaviorsRequestCode){
             Parser.parse(result, ParserModels.BehaviorContentResultSet.class, this);
         }
         else if (requestCode == mPostBehaviorRequestCode){
             Parser.parse(result, UserBehavior.class, this);
-        }
-        else if (requestCode == mDeleteBehaviorRequestCode){
-            String toast = getString(R.string.choose_behaviors_behavior_removed);
-            Toast.makeText(this, toast, Toast.LENGTH_SHORT).show();
-            mAdapter.notifyDataSetChanged();
         }
     }
 
@@ -349,13 +188,11 @@ public class ChooseBehaviorsActivity
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
         if (result instanceof GoalContent){
             mGoal = (GoalContent)result;
-            mGetCategoryRequestCode = NetworkRequest.get(this, this,
-                    API.getCategoryUrl(mGoal.getCategoryIdSet().iterator().next()), "");
+            Log.d(TAG, "Goal fetched: " + mGoal);
         }
-        else if (result instanceof UserGoal){
-            UserGoal userGoal = (UserGoal)result;
-            Log.d(TAG, "(Post) " + userGoal.toString());
-            mApplication.getUserData().addGoal(userGoal);
+        else if (result instanceof CategoryContent){
+            mCategory = (CategoryContent)result;
+            Log.d(TAG, "Category fetched: " + mCategory);
         }
         else if (result instanceof ParserModels.BehaviorContentResultSet){
             List<BehaviorContent> behaviorList = ((ParserModels.BehaviorContentResultSet)result).results;
@@ -376,24 +213,24 @@ public class ChooseBehaviorsActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof GoalContent){
-            //Set UI and fetch the behaviors
-            mToolbar.setTitle(mGoal.getTitle());
+            mGetCategoryRequestCode = NetworkRequest.get(this, this,
+                    API.getCategoryUrl(mGoal.getCategoryIdSet().iterator().next()), "");
         }
         if (result instanceof CategoryContent){
-            mCategory = (CategoryContent)result;
+            mAdapter = new ChooseBehaviorsAdapter(this, this, mGoal);
 
-            Log.d(TAG, mCategory.toString());
+            setHeader();
+            setAdapter(mAdapter);
+            setFilter(mAdapter.getFilter());
 
-            //Set UI and fetch the behaviors
-            setAdapter();
+            if (mCategory != null && !mCategory.getColor().isEmpty()){
+                setColor(Color.parseColor(mCategory.getColor()));
+            }
+
             fetchBehaviors();
         }
         else if (result instanceof ParserModels.BehaviorContentResultSet){
             mAdapter.update();
-
-            if (mSearchItem != null){
-                mSearchItem.setVisible(true);
-            }
         }
         else if (result instanceof UserBehavior){
             mApplication.addBehavior((UserBehavior)result);
