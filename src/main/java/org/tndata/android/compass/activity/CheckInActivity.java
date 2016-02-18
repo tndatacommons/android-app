@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -47,6 +48,8 @@ public class CheckInActivity
                 Parser.ParserCallback,
                 CheckInRewardFragment.CheckInRewardListener,
                 CheckInFeedbackFragment.CheckInFeedbackListener{
+
+    private static final String TAG = "CheckInActivity";
 
     public static final String TYPE_KEY = "org.tndata.compass.CheckIn.Type";
 
@@ -109,12 +112,15 @@ public class CheckInActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetActionsRequestCode){
+            Log.d(TAG, "Actions fetched");
             Parser.parse(result, ParserModels.UserActionResultSet.class, this);
         }
         else if (requestCode == mGetRewardRequestCode){
+            Log.d(TAG, "Reward fetched");
             Parser.parse(result, ParserModels.RewardResultSet.class, this);
         }
         else if (requestCode == mGetProgressRequestCode){
+            Log.d(TAG, "Progress fetched");
             try{
                 mProgress = (float)new JSONObject(result).getDouble("weekly_checkin_avg");
             }
@@ -128,15 +134,18 @@ public class CheckInActivity
             }
         }
         else if (mBehaviorRequestSet.contains(requestCode)){
+            Log.d(TAG, "Behavior fetched");
             Parser.parse(result, BehaviorContent.class, this);
         }
         else /* Goals */{
+            Log.d(TAG, "Goal fetched");
             Parser.parse(result, GoalContent.class, this);
         }
     }
 
     @Override
     public void onRequestFailed(int requestCode, String message){
+        Log.d(TAG, "Request " + requestCode + " failed");
         finish();
     }
 

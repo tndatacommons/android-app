@@ -81,8 +81,8 @@ class DataHandler{
      *
      * @return true if the user has selected goals, false otherwise.
      */
-    boolean hasUserGoals(){
-        return !mUserData.getGoals().isEmpty();
+    boolean hasGoals(){
+        return !mFeedData.getGoals().isEmpty();
     }
 
     /**
@@ -116,6 +116,10 @@ class DataHandler{
      */
     Goal getFeedbackGoal(){
         return mFeedbackGoal;
+    }
+
+    boolean hasFeedback(){
+        return mFeedData.hasFeedback();
     }
 
     /**

@@ -77,6 +77,10 @@ public class FeedData extends TDCBase{
         return mNextAction;
     }
 
+    public boolean hasFeedback(){
+        return mActionFeedback != null;
+    }
+
     /**
      * Sets the feedback title.
      *
@@ -369,7 +373,7 @@ public class FeedData extends TDCBase{
 
         //Select the source
         mGoals = new ArrayList<>();
-        if (!userData.getGoals().isEmpty()){
+        if (!userData.getGoals().isEmpty() || !userData.getCustomGoals().isEmpty()){
             mGoals.addAll(userData.getGoals().values());
             mGoals.addAll(userData.getCustomGoals().values());
             //Sort by title
