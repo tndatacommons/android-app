@@ -14,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -248,6 +247,7 @@ public class MainActivity
 
         mStopper = findViewById(R.id.main_stopper);
         mMenu = (FloatingActionMenu)findViewById(R.id.main_fab_menu);
+        mMenu.setIconAnimated(false);
         mMenu.setClosedOnTouchOutside(true);
         mMenu.setOnMenuButtonClickListener(new View.OnClickListener(){
             @Override
@@ -397,18 +397,20 @@ public class MainActivity
             fab.setColorPressedResId(R.color.grow_accent);
             fab.setColorRippleResId(R.color.grow_accent);
             fab.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            fab.setImageResource(R.drawable.fab_add);
             if (i == 0){
-                fab.setId(R.id.fab_choose_goals);
-                fab.setLabelText(getString(R.string.fab_choose_goals));
+                fab.setId(R.id.fab_search_goals);
+                fab.setLabelText(getString(R.string.fab_search_goals));
+                fab.setImageResource(R.drawable.ic_search);
             }
             else if (i == 1){
-                fab.setId(R.id.fab_create_goal);
-                fab.setLabelText(getString(R.string.fab_create_goal));
+                fab.setId(R.id.fab_browse_goals);
+                fab.setLabelText(getString(R.string.fab_browse_goals));
+                fab.setImageResource(R.drawable.ic_list_white_24dp);
             }
             else if (i == 2){
-                fab.setId(R.id.fab_choose_interests);
-                fab.setLabelText(getString(R.string.fab_choose_interests));
+                fab.setId(R.id.fab_create_goal);
+                fab.setLabelText(getString(R.string.fab_create_goal));
+                fab.setImageResource(R.drawable.fab_add);
             }
             fab.setOnClickListener(this);
             mMenu.addMenuButton(fab);
@@ -417,27 +419,33 @@ public class MainActivity
 
     @Override
     public void onClick(View v){
-        Log.d("FAB onClick()", v.toString());
         mMenu.toggle(true);
         switch (v.getId()){
-            case R.id.fab_choose_goals:
-                chooseGoalsClicked();
+            case R.id.fab_search_goals:
+                searchGoalsClicked();
+                break;
+
+            case R.id.fab_browse_goals:
+                browseGoalsClicked();
                 break;
 
             case R.id.fab_create_goal:
                 createCustomGoalClicked();
                 break;
-
-            case R.id.fab_choose_interests:
-                chooseInterestsClicked();
-                break;
         }
     }
 
     /**
-     * Called when the choose Goals FAB is clicked.
+     * Called when the search goals FAB is clicked.
      */
-    private void chooseGoalsClicked(){
+    private void searchGoalsClicked(){
+
+    }
+
+    /**
+     * Called when the browse Goals FAB is clicked.
+     */
+    private void browseGoalsClicked(){
         startActivityForResult(new Intent(this, ChooseCategoryActivity.class), GOAL_REQUEST_CODE);
     }
 
@@ -446,14 +454,6 @@ public class MainActivity
      */
     private void createCustomGoalClicked(){
         startActivityForResult(new Intent(this, CustomContentManagerActivity.class), GOAL_REQUEST_CODE);
-    }
-
-    /**
-     * Called when the choose interests FAB is clicked.
-    */
-    private void chooseInterestsClicked(){
-        startActivityForResult(new Intent(this, ChooseInterestsActivity.class),
-                CATEGORIES_REQUEST_CODE);
     }
 
     /**

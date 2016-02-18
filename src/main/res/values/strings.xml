@@ -19,9 +19,9 @@
     <string name="nav_drawer_action">Compass</string>
     <string name="main_tab_title">My Journey</string>
     <string name="category_card_title">My %1$s goals</string>
-    <string name="fab_choose_goals">Choose goals</string>
+    <string name="fab_search_goals">Search goals</string>
+    <string name="fab_browse_goals">Browse goals</string>
     <string name="fab_create_goal">Create goal</string>
-    <string name="fab_choose_interests">Choose interests</string>
 
     <!-- ChooseCategoryActivity -->
     <string name="choose_category_title">What interests you?</string>
