@@ -11,18 +11,15 @@
     card_view:cardCornerRadius="@dimen/card_view_corner_radius" >
 
     <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:layout_height="wrap_content" >
 
         <RelativeLayout
             android:id="@+id/library_goal_icon_container"
             android:layout_width="@dimen/goal_icon_image_size"
             android:layout_height="@dimen/goal_icon_image_size"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_margin="10dp"
             android:background="@drawable/circle"
             android:padding="10dp" >
 
