@@ -150,7 +150,6 @@ public class ChooseBehaviorsActivity
         Log.d(TAG, "Behavior selected: " + behavior);
         startActivityForResult(new Intent(this, BehaviorActivity.class)
                 .putExtra(BehaviorActivity.CATEGORY_KEY, mCategory)
-                .putExtra(BehaviorActivity.GOAL_KEY, mGoal)
                 .putExtra(BehaviorActivity.BEHAVIOR_KEY, behavior), BEHAVIOR_ACTIVITY_RQ);
     }
 
