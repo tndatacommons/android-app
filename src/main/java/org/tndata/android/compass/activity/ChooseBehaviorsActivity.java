@@ -1,5 +1,6 @@
 package org.tndata.android.compass.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
@@ -51,6 +52,9 @@ public class ChooseBehaviorsActivity
     //Activity tag
     private static final String TAG = "ChooseBehaviorsActivity";
 
+    //Activity request codes
+    private static final int BEHAVIOR_ACTIVITY_RQ = 5469;
+
 
     public CompassApplication mApplication;
 
@@ -58,7 +62,7 @@ public class ChooseBehaviorsActivity
     private GoalContent mGoal;
     private ChooseBehaviorsAdapter mAdapter;
 
-    //Request codes
+    //Network request codes
     private int mGetGoalRequestCode;
     private int mGetCategoryRequestCode;
     private int mGetBehaviorsRequestCode;
@@ -144,13 +148,10 @@ public class ChooseBehaviorsActivity
     @Override
     public void onBehaviorSelected(BehaviorContent behavior){
         Log.d(TAG, "Behavior selected: " + behavior);
-        //Then select the behavior
-        /*mPostBehaviorRequestCode = NetworkRequest.post(this, this, API.getPostBehaviorUrl(),
-                mApplication.getToken(), API.getPostBehaviorBody(behavior, mGoal, mCategory));
-
-        if (behavior.getActionCount() > 0){
-            selectActions(behavior);
-        }*/
+        startActivityForResult(new Intent(this, BehaviorActivity.class)
+                .putExtra(BehaviorActivity.CATEGORY_KEY, mCategory)
+                .putExtra(BehaviorActivity.GOAL_KEY, mGoal)
+                .putExtra(BehaviorActivity.BEHAVIOR_KEY, behavior), BEHAVIOR_ACTIVITY_RQ);
     }
 
     @Override

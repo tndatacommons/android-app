@@ -89,7 +89,7 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
         else{
             LayoutInflater inflater = LayoutInflater.from(mContext);
             View rootView = inflater.inflate(R.layout.card_library_behavior, parent, false);
-            return new BehaviorViewHolder(rootView);
+            return new BehaviorViewHolder(this, rootView);
         }
     }
 
@@ -186,7 +186,9 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    class BehaviorViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    static class BehaviorViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private ChooseBehaviorsAdapter mAdapter;
+
         private ImageView mIcon;
         private TextView mTitle;
 
@@ -196,8 +198,10 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
          *
          * @param rootView a view inflated from R.layout.item_choose_behavior
          */
-        public BehaviorViewHolder(View rootView){
+        public BehaviorViewHolder(@NonNull ChooseBehaviorsAdapter adapter, @NonNull View rootView){
             super(rootView);
+
+            mAdapter = adapter;
 
             mIcon = (ImageView)rootView.findViewById(R.id.library_behavior_icon);
             mTitle = (TextView)rootView.findViewById(R.id.library_behavior_title);
@@ -219,7 +223,7 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
 
         @Override
         public void onClick(View view){
-            mListener.onBehaviorSelected(mBehaviors.get(getAdapterPosition() - 2));
+            mAdapter.mListener.onBehaviorSelected(mAdapter.mBehaviors.get(getAdapterPosition() - 2));
         }
     }
 

@@ -134,6 +134,13 @@
     <string name="menu_popup_edit">Edit notification</string>
     <string name="behavior_title_placeholder">My selected priority</string>
 
+    <!-- Library -->
+    <string name="behavior_title">I want to %1$s</string>
+    <string name="behavior_yes">Yes, I\'m in</string>
+    <string name="behavior_no">Not now</string>
+    <string name="behavior_detail_header">Here is why</string>
+    <string name="behavior_detail_more_info">More info</string>
+
     <!-- ChooseGoalsActivity -->
     <string name="goal_selected">Goal selected</string>
 

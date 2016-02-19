@@ -59,6 +59,7 @@ public abstract class LibraryActivity
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
+        mFilter = null;
 
         mHeaderContainer = (FrameLayout)findViewById(R.id.library_header_container);
         mRecyclerView = (RecyclerView)findViewById(R.id.library_list);
@@ -70,16 +71,17 @@ public abstract class LibraryActivity
 
     @Override
     public final boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.menu_filter, menu);
-        mSearchItem = menu.findItem(R.id.filter);
-        MenuItemCompat.setOnActionExpandListener(mSearchItem, this);
+        if (mFilter != null){
+            getMenuInflater().inflate(R.menu.menu_filter, menu);
+            mSearchItem = menu.findItem(R.id.filter);
+            MenuItemCompat.setOnActionExpandListener(mSearchItem, this);
 
-        mSearchView = (SearchView)mSearchItem.getActionView();
-        mSearchView.setIconified(false);
-        mSearchView.setOnCloseListener(this);
-        mSearchView.setOnQueryTextListener(this);
-        mSearchView.clearFocus();
-
+            mSearchView = (SearchView)mSearchItem.getActionView();
+            mSearchView.setIconified(false);
+            mSearchView.setOnCloseListener(this);
+            mSearchView.setOnQueryTextListener(this);
+            mSearchView.clearFocus();
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -136,6 +138,8 @@ public abstract class LibraryActivity
 
     protected final void setFilter(Filter filter){
         mFilter = filter;
+        //If a filter is set the menu needs to be refreshed
+        invalidateOptionsMenu();
     }
 
     protected final View inflateHeader(@LayoutRes int layoutResId){
