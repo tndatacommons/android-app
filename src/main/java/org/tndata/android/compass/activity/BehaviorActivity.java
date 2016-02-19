@@ -12,7 +12,6 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.BehaviorAdapter;
 import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.CategoryContent;
-import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.util.CompassUtil;
 
 
@@ -25,12 +24,10 @@ import org.tndata.android.compass.util.CompassUtil;
 public class BehaviorActivity extends LibraryActivity implements BehaviorAdapter.BehaviorListener{
     //Argument keys
     public static final String CATEGORY_KEY = "org.tndata.compass.Behavior.Category";
-    public static final String GOAL_KEY = "org.tndata.compass.Behavior.Goal";
     public static final String BEHAVIOR_KEY = "org.tndata.compass.Behavior.Behavior";
 
 
     private CategoryContent mCategory;
-    private GoalContent mGoal;
     private BehaviorContent mBehavior;
 
 
@@ -39,7 +36,6 @@ public class BehaviorActivity extends LibraryActivity implements BehaviorAdapter
         super.onCreate(savedInstanceState);
 
         mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
-        mGoal = (GoalContent)getIntent().getSerializableExtra(GOAL_KEY);
         mBehavior = (BehaviorContent)getIntent().getSerializableExtra(BEHAVIOR_KEY);
 
         setHeader();
@@ -74,12 +70,14 @@ public class BehaviorActivity extends LibraryActivity implements BehaviorAdapter
 
     @Override
     public void dismissBehavior(){
+        setResult(RESULT_CANCELED);
         finish();
     }
 
     @Override
     public void acceptBehavior(){
-        //TODO Request to add the hierarchy. add to library.
+        //Set the result as OK and let ChooseBehaviorsActivity handle the networking
+        //  and addition to the library
         setResult(RESULT_OK);
         finish();
     }
