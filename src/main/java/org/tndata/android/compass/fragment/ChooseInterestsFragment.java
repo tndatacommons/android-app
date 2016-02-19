@@ -38,7 +38,7 @@ public class ChooseInterestsFragment
         extends Fragment
         implements
                 NetworkRequest.RequestCallback,
-        Parser.ParserCallback,
+                Parser.ParserCallback,
                 ChooseInterestsAdapter.OnCategoriesSelectedListener{
 
     public static final String ON_BOARDING_KEY = "org.tndata.compass.ChooseCategories.OnBoarding";

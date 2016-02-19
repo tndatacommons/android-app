@@ -1,12 +1,16 @@
 package org.tndata.android.compass.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -36,6 +40,8 @@ import java.util.List;
 public class ChooseBehaviorsActivity
         extends LibraryActivity
         implements
+                View.OnClickListener,
+                DialogInterface.OnCancelListener,
                 NetworkRequest.RequestCallback,
                 Parser.ParserCallback,
                 ChooseBehaviorsAdapter.ChooseBehaviorsListener{
@@ -60,7 +66,10 @@ public class ChooseBehaviorsActivity
 
     private CategoryContent mCategory;
     private GoalContent mGoal;
+    private BehaviorContent mSelectedBehavior;
     private ChooseBehaviorsAdapter mAdapter;
+
+    private AlertDialog mShareDialog;
 
     //Network request codes
     private int mGetGoalRequestCode;
@@ -93,6 +102,8 @@ public class ChooseBehaviorsActivity
 
             fetchBehaviors();
         }
+
+        mSelectedBehavior = null;
     }
 
     @SuppressWarnings("deprecation")
@@ -128,6 +139,16 @@ public class ChooseBehaviorsActivity
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     /**
      * Retrieves a goal from the database.
      *
@@ -147,20 +168,74 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void onBehaviorSelected(BehaviorContent behavior){
-        Log.d(TAG, "Behavior selected: " + behavior);
-        startActivityForResult(new Intent(this, BehaviorActivity.class)
-                .putExtra(BehaviorActivity.CATEGORY_KEY, mCategory)
-                .putExtra(BehaviorActivity.BEHAVIOR_KEY, behavior), BEHAVIOR_ACTIVITY_RQ);
+        if (mSelectedBehavior == null){
+            Log.d(TAG, "Selected behavior: " + behavior);
+            mSelectedBehavior = behavior;
+            startActivityForResult(new Intent(this, BehaviorActivity.class)
+                    .putExtra(BehaviorActivity.CATEGORY_KEY, mCategory)
+                    .putExtra(BehaviorActivity.BEHAVIOR_KEY, behavior), BEHAVIOR_ACTIVITY_RQ);
+        }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
-            case android.R.id.home:
-                finish();
-                return true;
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (requestCode == BEHAVIOR_ACTIVITY_RQ && resultCode == RESULT_OK){
+            mPostBehaviorRequestCode = NetworkRequest.post(this, this,
+                    API.getPostBehaviorUrl(), mApplication.getToken(),
+                    API.getPostBehaviorBody(mSelectedBehavior, mGoal, mCategory));
+
+            LayoutInflater inflater = LayoutInflater.from(this);
+            View mDialogRootView = inflater.inflate(R.layout.dialog_library_share, null);
+            mDialogRootView.findViewById(R.id.share_done).setOnClickListener(this);
+            mDialogRootView.findViewById(R.id.share_share_container).setOnClickListener(this);
+
+            mShareDialog = new AlertDialog.Builder(this)
+                    .setCancelable(true)
+                    .setView(mDialogRootView)
+                    .setOnCancelListener(this)
+                    .create();
+            mShareDialog.show();
         }
-        return super.onOptionsItemSelected(item);
+        else if (resultCode == RESULT_CANCELED){
+            mSelectedBehavior = null;
+        }
+    }
+
+    @Override
+    public void onClick(View v){
+        switch (v.getId()){
+            case R.id.share_share_container:
+                share();
+            case R.id.share_done:
+                dismissAll();
+                break;
+        }
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog){
+        dismissAll();
+    }
+
+    private void share(){
+        //Build the content string
+        String content = "Whatever";
+
+        //Send the intent
+        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, content);
+        startActivity(Intent.createChooser(shareIntent, "Share via"));
+    }
+
+    private void dismissAll(){
+        if (mShareDialog != null){
+            mShareDialog.cancel();
+            mShareDialog = null;
+        }
+
+        mAdapter.removeBehavior(mSelectedBehavior);
+        mSelectedBehavior = null;
     }
 
     @Override
@@ -231,10 +306,6 @@ public class ChooseBehaviorsActivity
         }
         else if (result instanceof ParserModels.BehaviorContentResultSet){
             mAdapter.update();
-        }
-        else if (result instanceof UserBehavior){
-            mApplication.addBehavior((UserBehavior)result);
-            mAdapter.notifyDataSetChanged();
         }
     }
 }

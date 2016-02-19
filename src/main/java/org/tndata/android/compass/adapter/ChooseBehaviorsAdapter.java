@@ -126,6 +126,14 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
         mBehaviors = behaviors;
     }
 
+    public void removeBehavior(BehaviorContent behavior){
+        int index = mBehaviors.indexOf(behavior);
+        if (index != -1){
+            mBehaviors.remove(index);
+            notifyItemRemoved(index+2);
+        }
+    }
+
     public void update(){
         mFilter.setBehaviorList(mBehaviors);
         notifyDataSetChanged();
