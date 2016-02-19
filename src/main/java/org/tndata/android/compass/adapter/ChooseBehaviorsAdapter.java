@@ -144,8 +144,8 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
      */
     static class DescriptionViewHolder extends RecyclerView.ViewHolder{
         private Context mContext;
-        private TextView mCategoryTitle;
-        private TextView mCategoryDescription;
+        private TextView mGoalTitle;
+        private TextView mGoalDescription;
 
 
         /**
@@ -158,8 +158,8 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
             super(rootView);
 
             mContext = context;
-            mCategoryTitle = (TextView)rootView.findViewById(R.id.library_description_title);
-            mCategoryDescription = (TextView)rootView.findViewById(R.id.library_description_content);
+            mGoalTitle = (TextView)rootView.findViewById(R.id.library_description_title);
+            mGoalDescription = (TextView)rootView.findViewById(R.id.library_description_content);
         }
 
         /**
@@ -168,13 +168,13 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
          * @param goal the goal whose description is to be drawn.
          */
         public void bind(@NonNull GoalContent goal){
-            mCategoryTitle.setText(goal.getTitle());
+            mGoalTitle.setText(mContext.getString(R.string.goal_title, goal.getTitle()));
             if (!goal.getHTMLDescription().isEmpty()){
-                mCategoryDescription.setText(Html.fromHtml(goal.getHTMLDescription(), null,
+                mGoalDescription.setText(Html.fromHtml(goal.getHTMLDescription(), null,
                         new CompassTagHandler(mContext)));
             }
             else{
-                mCategoryDescription.setText(goal.getDescription());
+                mGoalDescription.setText(goal.getDescription());
             }
         }
     }

@@ -118,8 +118,8 @@ public class BehaviorAdapter extends RecyclerView.Adapter{
     static class DescriptionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private Context mContext;
         private BehaviorAdapter mAdapter;
-        private TextView mCategoryTitle;
-        private TextView mCategoryDescription;
+        private TextView mBehaviorTitle;
+        private TextView mBehaviorDescription;
 
 
         /**
@@ -135,8 +135,8 @@ public class BehaviorAdapter extends RecyclerView.Adapter{
 
             mContext = context;
             mAdapter = adapter;
-            mCategoryTitle = (TextView)rootView.findViewById(R.id.library_description_title);
-            mCategoryDescription = (TextView)rootView.findViewById(R.id.library_description_content);
+            mBehaviorTitle = (TextView)rootView.findViewById(R.id.library_description_title);
+            mBehaviorDescription = (TextView)rootView.findViewById(R.id.library_description_content);
 
             rootView.findViewById(R.id.library_description_button_container).setVisibility(View.VISIBLE);
             rootView.findViewById(R.id.library_description_no).setOnClickListener(this);
@@ -149,13 +149,13 @@ public class BehaviorAdapter extends RecyclerView.Adapter{
          * @param behavior the behavior whose description is to be drawn.
          */
         public void bind(@NonNull BehaviorContent behavior){
-            mCategoryTitle.setText(behavior.getTitle());
+            mBehaviorTitle.setText(mContext.getString(R.string.behavior_title, behavior.getTitle()));
             if (!behavior.getHTMLDescription().isEmpty()){
-                mCategoryDescription.setText(Html.fromHtml(behavior.getHTMLDescription(), null,
+                mBehaviorDescription.setText(Html.fromHtml(behavior.getHTMLDescription(), null,
                         new CompassTagHandler(mContext)));
             }
             else{
-                mCategoryDescription.setText(behavior.getDescription());
+                mBehaviorDescription.setText(behavior.getDescription());
             }
         }
 
