@@ -1,10 +1,8 @@
 package com.tndata.android.compass.tests.service;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,14 +11,10 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
-import org.robolectric.shadows.ShadowNotification;
-import org.robolectric.shadows.ShadowNotificationManager;
 import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.service.GcmIntentService;
-import org.tndata.android.compass.util.NotificationUtil;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 
 
 @RunWith(RobolectricTestRunner.class)

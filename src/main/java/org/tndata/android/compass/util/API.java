@@ -7,7 +7,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.model.*;
-import org.tndata.android.compass.model.TDCPackage;
 
 import java.util.TimeZone;
 

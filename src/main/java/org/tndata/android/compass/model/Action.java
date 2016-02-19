@@ -2,8 +2,6 @@ package org.tndata.android.compass.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.tndata.android.compass.parser.ParserModels;
-
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
