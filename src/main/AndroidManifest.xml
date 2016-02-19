@@ -182,20 +182,6 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="org.tndata.android.compass.activity.ChooseActionsActivity"
-            android:parentActivityName=".activity.MainActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.MainActivity" />
-        </activity>
-
-        <activity
             android:name=".activity.MyPrioritiesActivity"
             android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait">

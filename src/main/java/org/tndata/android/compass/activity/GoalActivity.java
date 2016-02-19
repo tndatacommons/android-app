@@ -291,11 +291,12 @@ public class GoalActivity
 
     @Override
     public void onBehaviorSelected(UserBehavior userBehavior){
-        Intent actionPicker = new Intent(this, ChooseActionsActivity.class)
+        //TODO what here?
+        /*Intent actionPicker = new Intent(this, ChooseActionsActivity.class)
                 .putExtra(ChooseActionsActivity.CATEGORY_KEY, mUserGoal.getPrimaryCategory().getCategory())
                 .putExtra(ChooseActionsActivity.GOAL_KEY, mUserGoal.getGoal())
                 .putExtra(ChooseActionsActivity.BEHAVIOR_KEY, userBehavior.getBehavior());
-        startActivityForResult(actionPicker, CHOOSE_ACTIONS_REQUEST_CODE);
+        startActivityForResult(actionPicker, CHOOSE_ACTIONS_REQUEST_CODE);*/
     }
 
     @Override

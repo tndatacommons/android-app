@@ -169,11 +169,12 @@ public class MyPrioritiesActivity
 
     @Override
     public void onBehaviorClick(UserCategory userCategory, UserGoal userGoal, UserBehavior userBehavior){
-        Intent behaviorIntent = new Intent(this, ChooseActionsActivity.class);
+        //TODO what here?
+        /*Intent behaviorIntent = new Intent(this, ChooseActionsActivity.class);
         behaviorIntent.putExtra(ChooseActionsActivity.CATEGORY_KEY, userCategory.getCategory());
         behaviorIntent.putExtra(ChooseActionsActivity.GOAL_KEY, userGoal.getGoal());
         behaviorIntent.putExtra(ChooseActionsActivity.BEHAVIOR_KEY, userBehavior.getBehavior());
-        startActivityForResult(behaviorIntent, 1);
+        startActivityForResult(behaviorIntent, 1);*/
     }
 
     @Override
