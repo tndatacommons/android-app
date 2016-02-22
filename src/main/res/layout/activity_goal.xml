@@ -20,7 +20,7 @@
 
     <!-- The title on top of the hero, serving as the background for the title bar -->
     <TextView
-        android:id="@+id/content_title"
+        android:id="@+id/goal_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="15dp"
