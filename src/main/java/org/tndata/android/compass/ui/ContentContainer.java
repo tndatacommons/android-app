@@ -26,7 +26,7 @@ import java.util.Queue;
 
 
 /**
- * UI component that displays goals and behaviors as requested.
+ * UI component that displays content as requested.
  *
  * @author Ismael Alonso
  * @version 1.0.0
@@ -38,7 +38,7 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
     private static int sCustomGoalCount = 0;
 
 
-    //Goal list and listener
+    //Content list and listener
     private List<ContentHolder> mDisplayedContent;
     private ContentContainerListener<T> mListener;
 
@@ -75,7 +75,7 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
     }
 
     /**
-     * Sets the goal listener.
+     * Sets the content container listener.
      *
      * @param listener the new listener.
      */
@@ -128,7 +128,8 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
     public void updateContent(@NonNull List<T> dataSet){
         //First off, find the stopping point in the updated list
         T stoppingPoint = null;
-        //Start searching from the end of the list, it is more likely that the goal will be there
+        //Start searching from the end of the list, it is more likely that the piece
+        //  of content will be there
         for (int i = mDisplayedContent.size()-1; i > 0; i--){
             if (dataSet.contains(mDisplayedContent.get(i).mContent)){
                 stoppingPoint = mDisplayedContent.get(i).mContent;
@@ -136,7 +137,7 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
             }
         }
 
-        //Next, update the list of displayed goals
+        //Next, update the list of displayed content
         for (int i = 0; i < dataSet.size(); i++){
             //Update the existing holder or create a new one according to needs
             if (i < mDisplayedContent.size()){
@@ -179,7 +180,8 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
     }
 
     /**
-     * Fires the in animation for the next goal in the queue and adds it to the container.
+     * Fires the in animation for the next piece of content in the queue and adds
+     * it to the container.
      */
     private void inAnimation(){
         mDisplayedContent.add(new ContentHolder(mContentQueue.peek()));
@@ -199,8 +201,8 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
     }
 
     /**
-     * Fires the out animation for a goal in the container. Removal is performed when
-     * the animation is done.
+     * Fires the out animation for a piece of content in the container. Removal is
+     * performed when the animation is done.
      *
      * @param position the position of the goal to be removed.
      */
@@ -246,8 +248,8 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
 
 
     /**
-     * Holder for a goal being displayed in the container. The existence of this class
-     * facilitates operations on the data set and updating single elements.
+     * Holder for a piece of content being displayed in the container. The existence of
+     * this class facilitates operations on the data set and updating single elements.
      *
      * @author Ismael Alonso
      * @version 1.0.0
@@ -270,12 +272,13 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
         public ContentHolder(@NonNull T content){
             //Inflate the layout
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            View rootView = inflater.inflate(R.layout.item_feed_goal, ContentContainer.this, false);
+            int layoutResId = R.layout.item_container_content;
+            View rootView = inflater.inflate(layoutResId, ContentContainer.this, false);
 
             //Grab the UI components
-            mIconContainer = (RelativeLayout)rootView.findViewById(R.id.goal_icon_container);
-            mIcon = (ImageView)rootView.findViewById(R.id.goal_icon);
-            mTitle = (TextView)rootView.findViewById(R.id.goal_title);
+            mIconContainer = (RelativeLayout)rootView.findViewById(R.id.content_icon_container);
+            mIcon = (ImageView)rootView.findViewById(R.id.content_icon);
+            mTitle = (TextView)rootView.findViewById(R.id.content_title);
 
             //Update the goal
             update(content);
@@ -286,9 +289,9 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
         }
 
         /**
-         * Replace the goal contained by this holder.
+         * Replace the piece of content contained by this holder.
          *
-         * @param content the new goal to be displayed.
+         * @param content the new piece of content to be displayed.
          */
         @SuppressWarnings("deprecation")
         private void update(@NonNull T content){
@@ -338,13 +341,13 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
         }
 
         /**
-         * Checks if this holder contains a particular goal.
+         * Checks if this holder contains a particular piece of content.
          *
-         * @param goal the goal to be compared.
-         * @return true is the goals are the same, false otherwise.
+         * @param content the piece of content to be compared.
+         * @return true is the pieces of content are the same, false otherwise.
          */
-        public boolean contains(@NonNull ContainerDisplayable goal){
-            return mContent.equals(goal);
+        public boolean contains(@NonNull T content){
+            return mContent.equals(content);
         }
     }
 
@@ -363,14 +366,14 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
         /**
          * Getter for titles.
          *
-         * @return the title of the goal.
+         * @return the title of the piece of content.
          */
         String getTitle();
 
         /**
          * Getter for the icon url.
          *
-         * @return the icon url of the goal or the empty string if a default icon is to be used.
+         * @return the icon url of the piece of content.
          */
         String getIconUrl();
     }

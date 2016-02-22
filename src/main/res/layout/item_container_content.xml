@@ -13,7 +13,7 @@
         android:layout_height="wrap_content" >
 
         <RelativeLayout
-            android:id="@+id/goal_icon_container"
+            android:id="@+id/content_icon_container"
             android:layout_width="@dimen/goal_icon_image_size"
             android:layout_height="@dimen/goal_icon_image_size"
             android:layout_margin="10dp"
@@ -23,7 +23,7 @@
             android:background="@drawable/circle" >
 
             <ImageView
-                android:id="@+id/goal_icon"
+                android:id="@+id/content_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"/>
@@ -31,7 +31,7 @@
         </RelativeLayout>
 
         <TextView
-            android:id="@+id/goal_title"
+            android:id="@+id/content_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
