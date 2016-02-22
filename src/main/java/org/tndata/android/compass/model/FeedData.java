@@ -44,7 +44,7 @@ public class FeedData extends TDCBase{
     //Fields set during post-processing
     private Action mNextAction;
     private List<Action> mUpcomingActions;
-    private List<ContentContainer.ContainerDisplayable> mGoals;
+    private List<ContentContainer.ContainerGoal> mGoals;
 
 
     @Override
@@ -222,7 +222,7 @@ public class FeedData extends TDCBase{
         return mUpcomingActions;
     }
 
-    public List<ContentContainer.ContainerDisplayable> getGoals(){
+    public List<ContentContainer.ContainerGoal> getGoals(){
         return mGoals;
     }
 
@@ -240,7 +240,7 @@ public class FeedData extends TDCBase{
      *
      * @param goal the goal to be added.
      */
-    public void addGoal(ContentContainer.ContainerDisplayable goal){
+    public void addGoal(ContentContainer.ContainerGoal goal){
         //If the list contained suggestions, clear it and add the goal
         if (mGoals.get(0) instanceof GoalContent){
             mGoals.clear();
@@ -266,7 +266,7 @@ public class FeedData extends TDCBase{
      *
      * @param goal the goal to be removed.
      */
-    public void removeGoal(ContentContainer.ContainerDisplayable goal){
+    public void removeGoal(ContentContainer.ContainerGoal goal){
         mGoals.remove(goal);
     }
 
@@ -377,9 +377,9 @@ public class FeedData extends TDCBase{
             mGoals.addAll(userData.getGoals().values());
             mGoals.addAll(userData.getCustomGoals().values());
             //Sort by title
-            Collections.sort(mGoals, new Comparator<ContentContainer.ContainerDisplayable>(){
+            Collections.sort(mGoals, new Comparator<ContentContainer.ContainerGoal>(){
                 @Override
-                public int compare(ContentContainer.ContainerDisplayable lhs, ContentContainer.ContainerDisplayable rhs){
+                public int compare(ContentContainer.ContainerGoal lhs, ContentContainer.ContainerGoal rhs){
                     return lhs.getTitle().toLowerCase().compareTo(rhs.getTitle().toLowerCase());
                 }
             });

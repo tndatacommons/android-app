@@ -5,8 +5,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.ui.ContentContainer;
+
+import java.util.List;
 
 
 /**
@@ -17,10 +18,12 @@ import org.tndata.android.compass.ui.ContentContainer;
  */
 class GoalsHolder
         extends MainFeedViewHolder
-        implements View.OnClickListener, ContentContainer.ContentContainerListener{
+        implements
+                View.OnClickListener,
+                ContentContainer.ContentContainerListener<ContentContainer.ContainerGoal>{
 
     private TextView mHeader;
-    private ContentContainer mContentContainer;
+    private ContentContainer<ContentContainer.ContainerGoal> mContentContainer;
     private View mMore;
 
 
@@ -30,12 +33,14 @@ class GoalsHolder
      * @param adapter a reference to the adapter that will handle the holder.
      * @param rootView the root view held by this holder.
      */
+    @SuppressWarnings("unchecked")
     GoalsHolder(@NonNull MainFeedAdapter adapter, @NonNull View rootView){
         super(adapter, rootView);
 
         mHeader = (TextView)rootView.findViewById(R.id.card_goals_header);
-        mContentContainer = (ContentContainer)rootView.findViewById(R.id.card_goals_goal_container);
-        mContentContainer.setGoalListener(this);
+        mContentContainer = (ContentContainer<ContentContainer.ContainerGoal>)
+                rootView.findViewById(R.id.card_goals_goal_container);
+        mContentContainer.setListener(this);
         mMore = rootView.findViewById(R.id.card_goals_more);
         mMore.setOnClickListener(this);
     }
@@ -68,17 +73,17 @@ class GoalsHolder
      *
      * @param goal the goal to be added.
      */
-    void addGoal(@NonNull ContentContainer.ContainerDisplayable goal){
-        mContentContainer.addGoal(goal);
+    void addGoal(@NonNull ContentContainer.ContainerGoal goal){
+        mContentContainer.addContent(goal);
     }
 
     /**
      * Refreshes the list from the feed data bundle.
      *
-     * @param feedData a reference to the geed data bundle.
+     * @param dataSet the new data set.
      */
-    void updateGoals(@NonNull FeedData feedData){
-        mContentContainer.updateContent(feedData);
+    void updateGoals(@NonNull List<ContentContainer.ContainerGoal> dataSet){
+        mContentContainer.updateContent(dataSet);
     }
 
     /**
@@ -98,7 +103,7 @@ class GoalsHolder
     }
 
     @Override
-    public void onContentClick(@NonNull ContentContainer.ContainerDisplayable goal){
+    public void onContentClick(@NonNull ContentContainer.ContainerGoal goal){
         mAdapter.viewGoal(goal);
     }
 }

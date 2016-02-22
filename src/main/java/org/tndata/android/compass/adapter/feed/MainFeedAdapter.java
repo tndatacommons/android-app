@@ -280,7 +280,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             mUpcomingHolder.updateActions(mUserData.getFeedData());
         }
         if (mGoalsHolder != null){
-            mGoalsHolder.updateGoals(mUserData.getFeedData());
+            mGoalsHolder.updateGoals(mUserData.getFeedData().getGoals());
         }
     }
 
@@ -366,7 +366,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * GOAL RELATED METHODS *
      *----------------------*/
 
-    void viewGoal(ContentContainer.ContainerDisplayable goal){
+    void viewGoal(ContentContainer.ContainerGoal goal){
         if (goal instanceof Goal){
             mListener.onGoalSelected((Goal)goal);
         }
@@ -418,7 +418,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * Loads the next batch of goals into the feed.
      */
     void moreGoals(){
-        for (ContentContainer.ContainerDisplayable goal:mDataHandler.loadMoreGoals(mGoalsHolder.getItemCount())){
+        for (ContentContainer.ContainerGoal goal:mDataHandler.loadMoreGoals(mGoalsHolder.getItemCount())){
             mGoalsHolder.addGoal(goal);
         }
         if (!mDataHandler.canLoadMoreGoals(mGoalsHolder.getItemCount())){

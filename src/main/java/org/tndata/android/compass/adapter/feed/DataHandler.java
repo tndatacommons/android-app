@@ -153,9 +153,9 @@ class DataHandler{
      * @param displayedGoals the number of goals already being displayed din the feed.
      * @return a list containing the new goals.
      */
-    List<ContentContainer.ContainerDisplayable> loadMoreGoals(int displayedGoals){
+    List<ContentContainer.ContainerGoal> loadMoreGoals(int displayedGoals){
         //Populate the new list
-        List<ContentContainer.ContainerDisplayable> goals = new ArrayList<>();
+        List<ContentContainer.ContainerGoal> goals = new ArrayList<>();
         while (goals.size() < LOAD_MORE_COUNT && canLoadMoreGoals(displayedGoals + goals.size())){
             goals.add(mFeedData.getGoals().get(displayedGoals + goals.size()));
         }

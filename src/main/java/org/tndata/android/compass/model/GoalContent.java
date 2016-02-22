@@ -19,7 +19,7 @@ import java.util.Set;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class GoalContent extends TDCContent implements Serializable, ContentContainer.ContainerDisplayable{
+public class GoalContent extends TDCContent implements Serializable, ContentContainer.ContainerGoal{
     private static final long serialVersionUID = 7109406671934150671L;
 
     public static final String TYPE = "goal";

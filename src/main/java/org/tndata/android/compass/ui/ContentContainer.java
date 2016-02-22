@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.CustomGoal;
-import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ImageLoader;
 
@@ -32,17 +31,20 @@ import java.util.Queue;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class ContentContainer extends LinearLayout implements Animation.AnimationListener{
+public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
+        extends LinearLayout
+        implements Animation.AnimationListener{
+
     private static int sCustomGoalCount = 0;
 
 
     //Goal list and listener
     private List<ContentHolder> mDisplayedContent;
-    private ContentContainerListener mListener;
+    private ContentContainerListener<T> mListener;
 
     //Animation stuff
     private boolean mAnimate;
-    private Queue<ContainerDisplayable> mContentQueue;
+    private Queue<T> mContentQueue;
     private int mOutAnimation;
 
 
@@ -77,7 +79,7 @@ public class ContentContainer extends LinearLayout implements Animation.Animatio
      *
      * @param listener the new listener.
      */
-    public void setGoalListener(@NonNull ContentContainerListener listener){
+    public void setListener(@NonNull ContentContainerListener<T> listener){
         mListener = listener;
     }
 
@@ -100,11 +102,11 @@ public class ContentContainer extends LinearLayout implements Animation.Animatio
     }
 
     /**
-     * Adds a goal to the container.
+     * Adds a piece of content to the container.
      *
-     * @param content the goal to be added.
+     * @param content the piece of content to be added.
      */
-    public void addGoal(@NonNull ContainerDisplayable content){
+    public void addContent(@NonNull T content){
         if (mAnimate){
             mContentQueue.add(content);
             if (mContentQueue.size() == 1){
@@ -117,31 +119,31 @@ public class ContentContainer extends LinearLayout implements Animation.Animatio
     }
 
     /**
-     * Refreshes the list of goals that are currently being displayed. Removes the goals
-     * that the user has removed, adds the goals that the user has added prior to the last
-     * goal being displayed, and updates the goals modified by the user.
+     * Refreshes the content list currently being displayed. Removes the content removed by
+     * the user, adds the content added by the user prior to the last displayed piece of
+     * content, and updates the content modified by the user.
      *
-     * @param feedData a reference to the feed data bundle.
+     * @param dataSet the new data set.
      */
-    public void updateContent(@NonNull FeedData feedData){
+    public void updateContent(@NonNull List<T> dataSet){
         //First off, find the stopping point in the updated list
-        ContainerDisplayable stoppingPoint = null;
+        T stoppingPoint = null;
         //Start searching from the end of the list, it is more likely that the goal will be there
         for (int i = mDisplayedContent.size()-1; i > 0; i--){
-            if (feedData.getGoals().contains(mDisplayedContent.get(i).mContent)){
+            if (dataSet.contains(mDisplayedContent.get(i).mContent)){
                 stoppingPoint = mDisplayedContent.get(i).mContent;
                 break;
             }
         }
 
         //Next, update the list of displayed goals
-        for (int i = 0; i < feedData.getGoals().size(); i++){
+        for (int i = 0; i < dataSet.size(); i++){
             //Update the existing holder or create a new one according to needs
             if (i < mDisplayedContent.size()){
-                mDisplayedContent.get(i).update(feedData.getGoals().get(i));
+                mDisplayedContent.get(i).update(dataSet.get(i));
             }
             else{
-                mDisplayedContent.add(new ContentHolder(feedData.getGoals().get(i)));
+                mDisplayedContent.add(new ContentHolder(dataSet.get(i)));
             }
             //If the stopping point has been reached
             if (stoppingPoint != null && stoppingPoint.equals(mDisplayedContent.get(i).mContent)){
@@ -157,13 +159,13 @@ public class ContentContainer extends LinearLayout implements Animation.Animatio
     }
 
     /**
-     * Removes a goal from the container.
+     * Removes a piece of content from the container.
      *
-     * @param goal the goal to be removed.
+     * @param content the piece of content to be removed.
      */
-    public void removeGoal(@NonNull ContainerDisplayable goal){
+    public void removeContent(@NonNull T content){
         for (int i = 0; i < mDisplayedContent.size(); i++){
-            if (mDisplayedContent.get(i).contains(goal)){
+            if (mDisplayedContent.get(i).contains(content)){
                 if (mAnimate){
                     outAnimation(i);
                 }
@@ -252,7 +254,7 @@ public class ContentContainer extends LinearLayout implements Animation.Animatio
      */
     private class ContentHolder implements OnClickListener{
         //The goal being displayed
-        private ContainerDisplayable mContent;
+        private T mContent;
 
         //UI components
         private RelativeLayout mIconContainer;
@@ -263,9 +265,9 @@ public class ContentContainer extends LinearLayout implements Animation.Animatio
         /**
          * Constructor.
          *
-         * @param goal the goal to be bound
+         * @param content the piece of content to be bound.
          */
-        public ContentHolder(@NonNull ContainerDisplayable goal){
+        public ContentHolder(@NonNull T content){
             //Inflate the layout
             LayoutInflater inflater = LayoutInflater.from(getContext());
             View rootView = inflater.inflate(R.layout.item_feed_goal, ContentContainer.this, false);
@@ -276,7 +278,7 @@ public class ContentContainer extends LinearLayout implements Animation.Animatio
             mTitle = (TextView)rootView.findViewById(R.id.goal_title);
 
             //Update the goal
-            update(goal);
+            update(content);
 
             //Add the view to the container and set listeners
             addView(rootView);
@@ -286,17 +288,17 @@ public class ContentContainer extends LinearLayout implements Animation.Animatio
         /**
          * Replace the goal contained by this holder.
          *
-         * @param goal the new goal to be displayed.
+         * @param content the new goal to be displayed.
          */
         @SuppressWarnings("deprecation")
-        private void update(@NonNull ContainerDisplayable goal){
-            mContent = goal;
+        private void update(@NonNull T content){
+            mContent = content;
 
             mTitle.setText(mContent.getTitle());
 
             GradientDrawable gradientDrawable = (GradientDrawable)mIconContainer.getBackground();
 
-            if (goal instanceof CustomGoal){
+            if (content instanceof CustomGoal){
                 gradientDrawable.setColor(Color.TRANSPARENT);
                 ((RelativeLayout.LayoutParams)mIcon.getLayoutParams()).setMargins(0, 0, 0, 0);
                 if (sCustomGoalCount++ % 2 == 0){
@@ -307,9 +309,16 @@ public class ContentContainer extends LinearLayout implements Animation.Animatio
                 }
             }
             else{
-                gradientDrawable.setColor(Color.parseColor(mContent.getColor(getContext())));
+                if (content instanceof ContainerGoal){
+                    ContainerGoal cg = (ContainerGoal)mContent;
+                    gradientDrawable.setColor(Color.parseColor(cg.getColor(getContext())));
+                }
+                else{
+                    gradientDrawable.setColor(Color.TRANSPARENT);
+                }
                 int margin = CompassUtil.getPixels(getContext(), 20);
-                ((RelativeLayout.LayoutParams)mIcon.getLayoutParams()).setMargins(margin, margin, margin, margin);
+                ((RelativeLayout.LayoutParams)mIcon.getLayoutParams())
+                        .setMargins(margin, margin, margin, margin);
                 if (mContent.getIconUrl() != null && !mContent.getIconUrl().isEmpty()){
                     ImageLoader.loadBitmap(mIcon, mContent.getIconUrl());
                 }
@@ -341,13 +350,16 @@ public class ContentContainer extends LinearLayout implements Animation.Animatio
 
 
     /**
-     * Allows the retrieval of data from different kinds of content objects
-     * in an homogeneous way to be displayed in a container.
+     * Allows the retrieval of data from different kinds of content objects. The access
+     * modifier is package protected because the compiler won't allow private access,
+     * however, this interface is not to be extended anywhere outside this class in
+     * order to avoid inherently different kinds of model objects to be put in the same
+     * list.
      *
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    public interface ContainerDisplayable{
+    interface ContainerDisplayable{
         /**
          * Getter for titles.
          *
@@ -361,7 +373,16 @@ public class ContentContainer extends LinearLayout implements Animation.Animatio
          * @return the icon url of the goal or the empty string if a default icon is to be used.
          */
         String getIconUrl();
+    }
 
+
+    /**
+     * Used to display any kind of goal in a container.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    public interface ContainerGoal extends ContainerDisplayable{
         /**
          * Returns the background color of the icon container for the goal.
          *
@@ -373,17 +394,29 @@ public class ContentContainer extends LinearLayout implements Animation.Animatio
 
 
     /**
+     * Used to display behaviors in a container. Even though it is an empty interface,
+     * it is essential to prevent merging inherently different types in a list.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    public interface ContainerBehavior extends ContainerDisplayable{
+
+    }
+
+
+    /**
      * Listener interface for ContentContainer.
      *
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    public interface ContentContainerListener{
+    public interface ContentContainerListener<T>{
         /**
          * Called when a piece of content is selected.
          *
          * @param content the selected piece of content.
          */
-        void onContentClick(@NonNull ContainerDisplayable content);
+        void onContentClick(@NonNull T content);
     }
 }
