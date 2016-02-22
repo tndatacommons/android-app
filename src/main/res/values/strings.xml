@@ -173,10 +173,10 @@
 
     <!-- TourFragment -->
     <string name="tour_action_skip">SKIP</string>
-    <string name="tour_page_1_information">Tell Compass where you want to go.</string>
-    <string name="tour_page_2_information">Compass helps you stay on course.</string>
-    <string name="tour_page_3_information">Browse activities that can help ease your way.</string>
-    <string name="tour_page_4_information">Check in daily to keep yourself on course.</string>
+    <string name="tour_page_1_caption">Tell Compass where you want to go.</string>
+    <string name="tour_page_2_caption">Compass helps you stay on course.</string>
+    <string name="tour_page_3_caption">Browse activities that can help ease your way.</string>
+    <string name="tour_page_4_caption">Check in daily to keep yourself on course.</string>
 
     <!-- Category chooser -->
     <string name="choose_categories_error">Uh Oh! There seems to have been an issue finding choices.</string>

@@ -6,7 +6,7 @@ import android.widget.ImageView;
 import com.google.gson.annotations.SerializedName;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.adapter.feed.DisplayableGoal;
+import org.tndata.android.compass.ui.ContentContainer;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.io.Serializable;
@@ -19,7 +19,7 @@ import java.util.Set;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class GoalContent extends TDCContent implements Serializable, DisplayableGoal{
+public class GoalContent extends TDCContent implements Serializable, ContentContainer.ContainerDisplayable{
     private static final long serialVersionUID = 7109406671934150671L;
 
     public static final String TYPE = "goal";

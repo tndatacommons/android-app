@@ -4,6 +4,7 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.ui.ContentContainer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -152,9 +153,9 @@ class DataHandler{
      * @param displayedGoals the number of goals already being displayed din the feed.
      * @return a list containing the new goals.
      */
-    List<DisplayableGoal> loadMoreGoals(int displayedGoals){
+    List<ContentContainer.ContainerDisplayable> loadMoreGoals(int displayedGoals){
         //Populate the new list
-        List<DisplayableGoal> goals = new ArrayList<>();
+        List<ContentContainer.ContainerDisplayable> goals = new ArrayList<>();
         while (goals.size() < LOAD_MORE_COUNT && canLoadMoreGoals(displayedGoals + goals.size())){
             goals.add(mFeedData.getGoals().get(displayedGoals + goals.size()));
         }

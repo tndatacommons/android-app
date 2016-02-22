@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.FeedData;
-import org.tndata.android.compass.ui.GoalContainer;
+import org.tndata.android.compass.ui.ContentContainer;
 
 
 /**
@@ -17,10 +17,10 @@ import org.tndata.android.compass.ui.GoalContainer;
  */
 class GoalsHolder
         extends MainFeedViewHolder
-        implements View.OnClickListener, GoalContainer.GoalContainerListener{
+        implements View.OnClickListener, ContentContainer.ContentContainerListener{
 
     private TextView mHeader;
-    private GoalContainer mGoalContainer;
+    private ContentContainer mContentContainer;
     private View mMore;
 
 
@@ -34,8 +34,8 @@ class GoalsHolder
         super(adapter, rootView);
 
         mHeader = (TextView)rootView.findViewById(R.id.card_goals_header);
-        mGoalContainer = (GoalContainer)rootView.findViewById(R.id.card_goals_goal_container);
-        mGoalContainer.setGoalListener(this);
+        mContentContainer = (ContentContainer)rootView.findViewById(R.id.card_goals_goal_container);
+        mContentContainer.setGoalListener(this);
         mMore = rootView.findViewById(R.id.card_goals_more);
         mMore.setOnClickListener(this);
     }
@@ -51,7 +51,7 @@ class GoalsHolder
      * @param enabled true to enable animations, false to disable them.
      */
     public void setAnimationsEnabled(boolean enabled){
-        mGoalContainer.setAnimationsEnabled(enabled);
+        mContentContainer.setAnimationsEnabled(enabled);
     }
 
     /**
@@ -68,8 +68,8 @@ class GoalsHolder
      *
      * @param goal the goal to be added.
      */
-    void addGoal(@NonNull DisplayableGoal goal){
-        mGoalContainer.addGoal(goal);
+    void addGoal(@NonNull ContentContainer.ContainerDisplayable goal){
+        mContentContainer.addGoal(goal);
     }
 
     /**
@@ -78,7 +78,7 @@ class GoalsHolder
      * @param feedData a reference to the geed data bundle.
      */
     void updateGoals(@NonNull FeedData feedData){
-        mGoalContainer.updateGoals(feedData);
+        mContentContainer.updateContent(feedData);
     }
 
     /**
@@ -94,11 +94,11 @@ class GoalsHolder
      * @return the number of items in the list.
      */
     int getItemCount(){
-        return mGoalContainer.getCount();
+        return mContentContainer.getCount();
     }
 
     @Override
-    public void onGoalClick(@NonNull DisplayableGoal goal){
+    public void onContentClick(@NonNull ContentContainer.ContainerDisplayable goal){
         mAdapter.viewGoal(goal);
     }
 }

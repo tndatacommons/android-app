@@ -17,6 +17,7 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.ui.ContentContainer;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -365,7 +366,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * GOAL RELATED METHODS *
      *----------------------*/
 
-    void viewGoal(DisplayableGoal goal){
+    void viewGoal(ContentContainer.ContainerDisplayable goal){
         if (goal instanceof Goal){
             mListener.onGoalSelected((Goal)goal);
         }
@@ -417,7 +418,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * Loads the next batch of goals into the feed.
      */
     void moreGoals(){
-        for (DisplayableGoal goal:mDataHandler.loadMoreGoals(mGoalsHolder.getItemCount())){
+        for (ContentContainer.ContainerDisplayable goal:mDataHandler.loadMoreGoals(mGoalsHolder.getItemCount())){
             mGoalsHolder.addGoal(goal);
         }
         if (!mDataHandler.canLoadMoreGoals(mGoalsHolder.getItemCount())){

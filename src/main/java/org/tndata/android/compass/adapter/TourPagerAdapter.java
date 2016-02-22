@@ -20,10 +20,10 @@ public class TourPagerAdapter extends PagerAdapter{
             R.drawable.tour4
     };
     int[] captionArray = new int[]{
-            R.string.tour_page_1_information,
-            R.string.tour_page_2_information,
-            R.string.tour_page_3_information,
-            R.string.tour_page_4_information
+            R.string.tour_page_1_caption,
+            R.string.tour_page_2_caption,
+            R.string.tour_page_3_caption,
+            R.string.tour_page_4_caption
     };
 
 
