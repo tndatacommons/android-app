@@ -138,7 +138,8 @@
             android:name="org.tndata.android.compass.activity.ChooseCategoryActivity"
             android:label="@string/choose_category_title"
             android:parentActivityName=".activity.MainActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:noHistory="true" >
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
                 <category android:name="android.intent.category.DEFAULT" />

@@ -115,7 +115,7 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
             if (mGoalsHolder == null){
                 View rootView = inflater.inflate(R.layout.card_library_content, parent, false);
                 mGoalsHolder = new GoalsViewHolder(this, rootView);
-                mGoalsHolder.addGoals(mGoals);
+                mGoalsHolder.add(mGoals);
                 mGoalsHolder.mGoalContainer.setAnimationsEnabled(true);
             }
             return mGoalsHolder;
@@ -190,7 +190,7 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
      * @param goals the list of goals to be added.
      * @param showLoading whether the load switch should be kept or removed.
      */
-    public void addGoals(@NonNull List<GoalContent> goals, boolean showLoading){
+    public void add(@NonNull List<GoalContent> goals, boolean showLoading){
         //If there are no goals, insert the goals card
         if (mGoals.isEmpty()){
             notifyItemInserted(TYPE_GOALS);
@@ -222,8 +222,13 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
         //If the holder has been created already
         if (mGoalsHolder != null){
             //Add the goals
-            mGoalsHolder.addGoals(goals);
+            mGoalsHolder.add(goals);
         }
+    }
+
+    public void remove(GoalContent goal){
+        mGoals.remove(goal);
+        mGoalsHolder.remove(goal);
     }
 
     /**
@@ -338,10 +343,14 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
          *
          * @param goals the list of goals to be added.
          */
-        public void addGoals(List<GoalContent> goals){
+        public void add(List<GoalContent> goals){
             for (GoalContent goal:goals){
                 mGoalContainer.addContent(goal);
             }
+        }
+
+        public void remove(GoalContent goal){
+            mGoalContainer.removeContent(goal);
         }
 
         @Override

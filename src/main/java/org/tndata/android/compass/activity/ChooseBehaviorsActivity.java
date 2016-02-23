@@ -149,7 +149,7 @@ public class ChooseBehaviorsActivity
 
             ViewGroup rootView = (ViewGroup)findViewById(android.R.id.content);
             LayoutInflater inflater = LayoutInflater.from(this);
-            View mDialogRootView = inflater.inflate(R.layout.dialog_library_share, rootView);
+            View mDialogRootView = inflater.inflate(R.layout.dialog_library_share, rootView, false);
             mDialogRootView.findViewById(R.id.share_done).setOnClickListener(this);
             mDialogRootView.findViewById(R.id.share_share_container).setOnClickListener(this);
 
@@ -200,7 +200,7 @@ public class ChooseBehaviorsActivity
 
         mAdapter.removeBehavior(mSelectedBehavior);
         mSelectedBehavior = null;
-        if (mAdapter.hasBehaviors()){
+        if (!mAdapter.hasBehaviors()){
             setResult(RESULT_OK);
             finish();
         }
