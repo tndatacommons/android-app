@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 
+import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseGoalsAdapter;
 import org.tndata.android.compass.model.CategoryContent;
@@ -52,8 +53,9 @@ public class ChooseGoalsActivity
     private CategoryContent mCategory;
     private ChooseGoalsAdapter mAdapter;
 
-    //Request codes
+    //Request codes and urls
     private int mGetGoalsRequestCode;
+    private String mGetGoalsNextUrl;
 
 
     @Override
@@ -82,7 +84,7 @@ public class ChooseGoalsActivity
             setColor(Color.parseColor(mCategory.getColor()));
         }
 
-        loadGoals();
+        mGetGoalsNextUrl = API.getGoalsUrl(mCategory);
     }
 
     /**
@@ -102,6 +104,14 @@ public class ChooseGoalsActivity
     }
 
     @Override
+    public void loadMore(){
+        if (BuildConfig.DEBUG && mGetGoalsNextUrl.startsWith("https")){
+            mGetGoalsNextUrl = mGetGoalsNextUrl.replaceFirst("s", "");
+        }
+        mGetGoalsRequestCode = NetworkRequest.get(this, this, mGetGoalsNextUrl, "");
+    }
+
+    @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetGoalsRequestCode){
             Parser.parse(result, ParserModels.GoalContentResultSet.class, this);
@@ -118,7 +128,7 @@ public class ChooseGoalsActivity
         if (result instanceof ParserModels.GoalContentResultSet){
             List<GoalContent> goals = ((ParserModels.GoalContentResultSet)result).results;
             if (goals != null && !goals.isEmpty()){
-                mAdapter.addGoals(goals);
+                //mAdapter.addGoals(goals);
             }
         }
     }
@@ -126,6 +136,12 @@ public class ChooseGoalsActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof ParserModels.GoalContentResultSet){
+            ParserModels.GoalContentResultSet set = (ParserModels.GoalContentResultSet)result;
+            List<GoalContent> goals = set.results;
+            mGetGoalsNextUrl = set.next;
+            if (goals != null && !goals.isEmpty()){
+                mAdapter.addGoals(goals, mGetGoalsNextUrl != null);
+            }
             mAdapter.update();
         }
     }

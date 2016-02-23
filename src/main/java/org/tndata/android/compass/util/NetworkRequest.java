@@ -275,11 +275,13 @@ public final class NetworkRequest{
         init(context);
         final int requestCode = generateRequestCode();
 
-        if (url.contains("?")){
-            url += "&version=2";
-        }
-        else{
-            url += "?version=2";
+        if (!url.contains("?version=2") && !url.contains("&version=2")){
+            if (url.contains("?")){
+                url += "&version=2";
+            }
+            else{
+                url += "?version=2";
+            }
         }
 
         //Create the request object and put it in the map

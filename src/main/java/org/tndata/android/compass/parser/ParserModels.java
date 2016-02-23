@@ -25,6 +25,12 @@ import java.util.List;
 public final class ParserModels{
     public interface ResultSet{}
 
+    private class ListResultSet implements ResultSet{
+        public int count;
+        public String previous;
+        public String next;
+    }
+
     public final class UserDataResultSet implements ResultSet{
         public List<UserData> results;
     }
@@ -41,7 +47,7 @@ public final class ParserModels{
         public List<CategoryContent> results;
     }
 
-    public final class GoalContentResultSet implements ResultSet{
+    public final class GoalContentResultSet extends ListResultSet{
         public List<GoalContent> results;
     }
 

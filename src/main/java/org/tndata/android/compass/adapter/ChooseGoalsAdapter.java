@@ -2,26 +2,24 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.filter.GoalFilter;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.ui.ContentContainer;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,15 +34,20 @@ import java.util.List;
 public class ChooseGoalsAdapter extends RecyclerView.Adapter{
     private static final int TYPE_BLANK = 0;
     private static final int TYPE_DESCRIPTION = TYPE_BLANK+1;
-    private static final int TYPE_GOAL = TYPE_DESCRIPTION+1;
+    private static final int TYPE_GOALS = TYPE_DESCRIPTION+1;
+    private static final int TYPE_LOAD = TYPE_GOALS+1;
+    private static final int ITEM_COUNT = TYPE_LOAD+1;
 
 
     private Context mContext;
     private ChooseGoalsListener mListener;
     private CategoryContent mCategory;
 
+    private GoalsViewHolder mGoalsHolder;
     private List<GoalContent> mGoals;
     private GoalFilter mFilter;
+
+    private boolean mShowLoading;
 
 
     /**
@@ -63,42 +66,74 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
 
         mGoals = new ArrayList<>();
         mFilter = new GoalFilter(this);
+
+        mShowLoading = true;
+    }
+
+    @Override
+    public int getItemCount(){
+        int count = ITEM_COUNT;
+        if (!mShowLoading){
+            count--;
+        }
+        if (mGoals.isEmpty()){
+            count--;
+        }
+        return count;
     }
 
     @Override
     public int getItemViewType(int position){
-        if (position == 0){
-            return TYPE_BLANK;
+        if (position < 2){
+            //The two initial items are always the same, a blank space and the description
+            return position;
         }
-        else if (position == 1){
-            return TYPE_DESCRIPTION;
+        else if (position == 2){
+            //The third position can be either the progress bar or the goal container
+            if (mGoals.isEmpty()){
+                if (mShowLoading){
+                    return TYPE_LOAD;
+                }
+            }
+            else{
+                return TYPE_GOALS;
+            }
         }
-        else{
-            return TYPE_GOAL;
-        }
+        //If there is a fourth element, that would be loading
+        return TYPE_LOAD;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+
         if (viewType == TYPE_BLANK){
             return new RecyclerView.ViewHolder(new CardView(mContext)){};
         }
         else if (viewType == TYPE_DESCRIPTION){
-            LayoutInflater inflater = LayoutInflater.from(mContext);
             View rootView = inflater.inflate(R.layout.card_library_description, parent, false);
             return new DescriptionViewHolder(mContext, rootView);
         }
+        else if (viewType == TYPE_GOALS){
+            if (mGoalsHolder == null){
+                View rootView = inflater.inflate(R.layout.card_library_goals, parent, false);
+                mGoalsHolder = new GoalsViewHolder(this, rootView);
+                mGoalsHolder.addGoals(mGoals);
+                mGoalsHolder.mGoalContainer.setAnimationsEnabled(true);
+            }
+            return mGoalsHolder;
+        }
         else{
-            LayoutInflater inflater = LayoutInflater.from(mContext);
-            View rootView = inflater.inflate(R.layout.card_library_goal, parent, false);
-            return new GoalViewHolder(rootView);
+            View rootView = inflater.inflate(R.layout.item_progress, parent, false);
+            return new RecyclerView.ViewHolder(rootView){};
         }
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
+        Log.d("ChooseGoalsAdapter", "bind: " + position);
         //Blank space
-        if (position == 0){
+        if (position == TYPE_BLANK){
             int width = CompassUtil.getScreenWidth(mContext);
             ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -108,17 +143,22 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
             rawHolder.itemView.setVisibility(View.INVISIBLE);
         }
         //Otherwise, handle all other cards
-        else if (position == 1){
+        else if (position == TYPE_DESCRIPTION){
             ((DescriptionViewHolder)rawHolder).bind(mCategory);
         }
-        else{
-            ((GoalViewHolder)rawHolder).bind(mGoals.get(position-2));
+        else if (position == 2){
+            if (mGoals.isEmpty()){
+                if (mShowLoading){
+                    mListener.loadMore();
+                }
+            }
+            else{
+                ((GoalsViewHolder)rawHolder).bind(mCategory);
+            }
         }
-    }
-
-    @Override
-    public int getItemCount(){
-        return mGoals.size()+2;
+        else if (position == TYPE_LOAD){
+            mListener.loadMore();
+        }
     }
 
     /**
@@ -126,17 +166,46 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
      *
      * @param goals the list of goals to be added.
      */
-    public void addGoals(@NonNull List<GoalContent> goals){
-        mGoals = goals;
+    public void addGoals(@NonNull List<GoalContent> goals, boolean showLoading){
+        mShowLoading = showLoading;
+        if (mGoals.isEmpty()){
+            notifyItemInserted(TYPE_GOALS);
+        }
+        if (!mShowLoading){
+            notifyItemRemoved(TYPE_LOAD);
+        }
+        else{
+            new Handler().postDelayed(new Runnable(){
+                @Override
+                public void run(){
+                    notifyItemChanged(TYPE_LOAD);
+                }
+            }, 500);
+        }
+
+        mGoals.addAll(goals);
+        for (GoalContent goal:goals){
+            goal.setColor(mCategory.getColor());
+        }
+        if (mGoalsHolder != null){
+            mGoalsHolder.addGoals(goals);
+            mGoalsHolder.mGoalContainer.setAnimationsEnabled(true);
+            mGoalsHolder.mGoalContainer.displayCount();
+        }
     }
 
     public void update(){
         mFilter.setGoalList(mGoals);
-        notifyDataSetChanged();
+        //notifyDataSetChanged();
     }
 
     public GoalFilter getFilter(){
         return mFilter;
+    }
+
+    public void hideProgressBar(){
+        mShowLoading = false;
+        notifyItemRemoved(TYPE_LOAD);
     }
 
 
@@ -190,10 +259,14 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    class GoalViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        private RelativeLayout mIconContainer;
-        private ImageView mIcon;
+    static class GoalsViewHolder
+            extends RecyclerView.ViewHolder
+            implements ContentContainer.ContentContainerListener<GoalContent>{
+
+        private ChooseGoalsAdapter mAdapter;
+
         private TextView mTitle;
+        private ContentContainer<GoalContent> mGoalContainer;
 
 
         /**
@@ -201,41 +274,36 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
          *
          * @param rootView the root view held by this view holder.
          */
-        public GoalViewHolder(View rootView){
+        @SuppressWarnings("unchecked")
+        public GoalsViewHolder(ChooseGoalsAdapter adapter, View rootView){
             super(rootView);
 
-            //Fetch UI components
-            mIconContainer = (RelativeLayout)rootView.findViewById(R.id.library_goal_icon_container);
-            mIcon = (ImageView)rootView.findViewById(R.id.library_goal_icon);
-            mTitle = (TextView)rootView.findViewById(R.id.library_goal_title);
+            mAdapter = adapter;
 
-            //Listeners
-            itemView.setOnClickListener(this);
+            //Fetch UI components
+            mTitle = (TextView)rootView.findViewById(R.id.card_library_goals_header);
+            mGoalContainer = (ContentContainer<GoalContent>)rootView
+                    .findViewById(R.id.card_library_goals_container);
+            mGoalContainer.setListener(this);
         }
 
         @SuppressWarnings("deprecation")
-        public void bind(@NonNull GoalContent goal){
-            String colorString = mCategory.getColor();
+        public void bind(@NonNull CategoryContent category){
+            String colorString = category.getSecondaryColor();
             if (colorString != null && !colorString.isEmpty()){
-                GradientDrawable gradientDrawable = (GradientDrawable)mIconContainer.getBackground();
-                gradientDrawable.setColor(Color.parseColor(colorString));
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-                    mIconContainer.setBackground(gradientDrawable);
-                }
-                else{
-                    mIconContainer.setBackgroundDrawable(gradientDrawable);
-                }
+                mTitle.setBackgroundColor(Color.parseColor(colorString));
             }
-            if (goal.getIconUrl() != null && !goal.getIconUrl().isEmpty()){
-                ImageLoader.loadBitmap(mIcon, goal.getIconUrl());
-            }
+        }
 
-            mTitle.setText(goal.getTitle());
+        public void addGoals(List<GoalContent> goals){
+            for (GoalContent goal:goals){
+                mGoalContainer.addContent(goal);
+            }
         }
 
         @Override
-        public void onClick(View v){
-            mListener.onGoalSelected(mGoals.get(getAdapterPosition()-2));
+        public void onContentClick(@NonNull GoalContent content){
+            mAdapter.mListener.onGoalSelected(content);
         }
     }
 
@@ -253,5 +321,7 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
          * @param goal the goal whose add was tapped.
          */
         void onGoalSelected(@NonNull GoalContent goal);
+
+        void loadMore();
     }
 }

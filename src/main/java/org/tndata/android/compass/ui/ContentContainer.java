@@ -6,6 +6,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -99,6 +100,11 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
      */
     public int getCount(){
         return mDisplayedContent.size() + (mContentQueue.isEmpty() ? 0 : mContentQueue.size()-1);
+    }
+
+    public void displayCount(){
+        Log.d("ContentContainer", "Added: " + mDisplayedContent.size());
+        Log.d("ContentContainer", "Queued: " + mContentQueue.size());
     }
 
     /**
@@ -198,6 +204,9 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
         animation.setDuration(length);
         animation.setAnimationListener(this);
         view.startAnimation(animation);
+
+        Log.d("ContentContainer", "Target height: " + targetHeight);
+        Log.d("ContentContainer", "Length: " + length);
     }
 
     /**
@@ -337,7 +346,9 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
 
         @Override
         public void onClick(View v){
-            mListener.onContentClick(mContent);
+            if (mListener != null){
+                mListener.onContentClick(mContent);
+            }
         }
 
         /**

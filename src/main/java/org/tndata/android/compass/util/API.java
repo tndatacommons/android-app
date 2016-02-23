@@ -30,7 +30,7 @@ public abstract class API{
             USE_NGROK_TUNNEL ?
                     NGROK_TUNNEL_URL
                     :
-                    !BuildConfig.DEBUG ?
+                    BuildConfig.DEBUG ?
                             TNDATA_STAGING_URL
                             :
                             TNDATA_BASE_URL;
@@ -163,22 +163,6 @@ public abstract class API{
 
     public static String getGoalUrl(long goalId){
         return BASE_URL + "goals/" + goalId + "/";
-    }
-
-    public static String getPostGoalUrl(){
-        return BASE_URL + "users/goals/";
-    }
-
-    public static JSONObject getPostGoalBody(@NonNull GoalContent goal, @NonNull CategoryContent primaryCategory){
-        JSONObject postGoalBody = new JSONObject();
-        try{
-            postGoalBody.put("goal", goal.getId())
-                    .put("primary_category", primaryCategory.getId());
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-        }
-        return postGoalBody;
     }
 
     //Custom goals
