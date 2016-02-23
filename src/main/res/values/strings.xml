@@ -121,7 +121,9 @@
     <string name="trigger_finished_label">DONE</string>
 
     <!-- Library -->
+    <string name="library_goals_content_header">Compass can help me&#8230;</string>
     <string name="goal_title">I want to %1$s</string>
+    <string name="library_behaviors_content_header">You can do it!</string>
     <string name="behavior_title">I want to %1$s</string>
     <string name="behavior_yes">Yes, I\'m in</string>
     <string name="behavior_no">Not now</string>

@@ -118,7 +118,7 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
         }
         else if (viewType == TYPE_GOALS){
             if (mGoalsHolder == null){
-                View rootView = inflater.inflate(R.layout.card_library_goals, parent, false);
+                View rootView = inflater.inflate(R.layout.card_library_content, parent, false);
                 mGoalsHolder = new GoalsViewHolder(this, rootView);
                 mGoalsHolder.addGoals(mGoals);
                 mGoalsHolder.mGoalContainer.setAnimationsEnabled(true);
@@ -126,7 +126,7 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
             return mGoalsHolder;
         }
         else{
-            View rootView = inflater.inflate(R.layout.item_progress, parent, false);
+            View rootView = inflater.inflate(R.layout.item_library_progress, parent, false);
             return new RecyclerView.ViewHolder(rootView){};
         }
     }
@@ -156,8 +156,8 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
                         mListener.loadMore();
                     }
                     else{
-                        rawHolder.itemView.findViewById(R.id.progress_progress).setVisibility(View.GONE);
-                        TextView error = (TextView)rawHolder.itemView.findViewById(R.id.progress_error);
+                        rawHolder.itemView.findViewById(R.id.library_progress_progress).setVisibility(View.GONE);
+                        TextView error = (TextView)rawHolder.itemView.findViewById(R.id.library_progress_error);
                         error.setVisibility(View.VISIBLE);
                         error.setText(mLoadError);
                     }
@@ -173,8 +173,8 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
                 mListener.loadMore();
             }
             else{
-                rawHolder.itemView.findViewById(R.id.progress_progress).setVisibility(View.GONE);
-                TextView error = (TextView)rawHolder.itemView.findViewById(R.id.progress_error);
+                rawHolder.itemView.findViewById(R.id.library_progress_progress).setVisibility(View.GONE);
+                TextView error = (TextView)rawHolder.itemView.findViewById(R.id.library_progress_error);
                 error.setVisibility(View.VISIBLE);
                 error.setText(mLoadError);
             }
@@ -321,9 +321,9 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
             mAdapter = adapter;
 
             //Fetch UI components
-            mTitle = (TextView)rootView.findViewById(R.id.card_library_goals_header);
+            mTitle = (TextView)rootView.findViewById(R.id.card_library_content_header);
             mGoalContainer = (ContentContainer<GoalContent>)rootView
-                    .findViewById(R.id.card_library_goals_container);
+                    .findViewById(R.id.card_library_content_container);
             mGoalContainer.setListener(this);
         }
 
@@ -333,6 +333,7 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
          * @param category the category from which the color should be extracted.
          */
         public void bind(@NonNull CategoryContent category){
+            mTitle.setText(R.string.library_goals_content_header);
             String colorString = category.getSecondaryColor();
             if (colorString != null && !colorString.isEmpty()){
                 mTitle.setBackgroundColor(Color.parseColor(colorString));
