@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.filter.GoalFilter;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.ui.ContentContainer;
@@ -44,7 +43,6 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
 
     private GoalsViewHolder mGoalsHolder;
     private List<GoalContent> mGoals;
-    private GoalFilter mFilter;
 
     private boolean mShowLoading;
     private String mLoadError;
@@ -65,8 +63,6 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
         mCategory = category;
 
         mGoals = new ArrayList<>();
-        mFilter = new GoalFilter(this);
-
         mShowLoading = true;
         mLoadError = "";
     }
@@ -180,6 +176,15 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
     }
 
     /**
+     * Tells whether the adapter is displaying goals or not.
+     *
+     * @return true if there are displayed goals, false otherwise.
+     */
+    public boolean hasGoals(){
+        return !mGoals.isEmpty();
+    }
+
+    /**
      * Adds a set of goals to the backing list.
      *
      * @param goals the list of goals to be added.
@@ -208,9 +213,8 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
             }, 500);
         }
 
-        //Insert all the goals in the goal list and set the filter
+        //Add all the goals in the goal list
         mGoals.addAll(goals);
-        mFilter.setGoalList(mGoals);
         //Set the icon colors
         for (GoalContent goal:goals){
             goal.setColor(mCategory.getColor());
@@ -220,15 +224,6 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
             //Add the goals
             mGoalsHolder.addGoals(goals);
         }
-    }
-
-    /**
-     * Gets the filter.
-     *
-     * @return the goal filter.
-     */
-    public GoalFilter getFilter(){
-        return mFilter;
     }
 
     /**

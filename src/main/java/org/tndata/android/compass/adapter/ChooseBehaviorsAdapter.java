@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.filter.BehaviorFilter;
 import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
@@ -46,7 +45,6 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
 
     private BehaviorsViewHolder mBehaviorsHolder;
     private List<BehaviorContent> mBehaviors;
-    private BehaviorFilter mFilter;
 
     private boolean mShowLoading;
     private String mLoadError;
@@ -70,8 +68,6 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
         mGoal = goal;
 
         mBehaviors = new ArrayList<>();
-        mFilter = new BehaviorFilter(this);
-
         mShowLoading = true;
         mLoadError = "";
     }
@@ -212,9 +208,8 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
             }, 500);
         }
 
-        //Insert all the behaviors in the behavior list and set the filter
+        //Add all the behaviors in the behavior list
         mBehaviors.addAll(behaviors);
-        mFilter.setBehaviorList(mBehaviors);
 
         //If the holder has been created already
         if (mBehaviorsHolder != null){
@@ -223,13 +218,14 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
         }
     }
 
+    /**
+     * Removes a behavior from the list.
+     *
+     * @param behavior the behavior to be removed.
+     */
     public void removeBehavior(BehaviorContent behavior){
         mBehaviors.remove(behavior);
         mBehaviorsHolder.removeBehavior(behavior);
-    }
-
-    public BehaviorFilter getFilter(){
-        return mFilter;
     }
 
     /**
@@ -350,6 +346,11 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
             }
         }
 
+        /**
+         * Removes a behavior from the list.
+         *
+         * @param behavior the behavior to be removed.
+         */
         public void removeBehavior(BehaviorContent behavior){
             mBehaviorContainer.removeContent(behavior);
         }
@@ -374,6 +375,9 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
          */
         void onBehaviorSelected(BehaviorContent behavior);
 
+        /**
+         * Called when the user scrolls to the bottom of the page.
+         */
         void loadMore();
     }
 }

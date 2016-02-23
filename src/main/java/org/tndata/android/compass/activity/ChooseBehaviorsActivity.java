@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -97,7 +96,6 @@ public class ChooseBehaviorsActivity
 
             setHeader();
             setAdapter(mAdapter);
-            setFilter(mAdapter.getFilter());
 
             if (mCategory != null && !mCategory.getColor().isEmpty()){
                 setColor(Color.parseColor(mCategory.getColor()));
@@ -130,16 +128,6 @@ public class ChooseBehaviorsActivity
             circle.setBackgroundDrawable(gradientDrawable);
         }
         mGoal.loadIconIntoView(icon);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
-            case android.R.id.home:
-                finish();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -284,7 +272,6 @@ public class ChooseBehaviorsActivity
 
             setHeader();
             setAdapter(mAdapter);
-            setFilter(mAdapter.getFilter());
 
             if (mCategory != null && !mCategory.getColor().isEmpty()){
                 setColor(Color.parseColor(mCategory.getColor()));

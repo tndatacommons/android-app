@@ -1,24 +1,18 @@
 package org.tndata.android.compass.activity;
 
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Filter;
 import android.widget.FrameLayout;
-import android.widget.SearchView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.util.ParallaxEffect;
@@ -32,16 +26,9 @@ import org.tndata.android.compass.util.ParallaxEffect;
  */
 public abstract class LibraryActivity
         extends AppCompatActivity
-        implements
-                MenuItemCompat.OnActionExpandListener,
-                SearchView.OnQueryTextListener,
-                SearchView.OnCloseListener,
-                ParallaxEffect.ScrollListener{
+        implements ParallaxEffect.ScrollListener{
 
     private Toolbar mToolbar;
-    private MenuItem mSearchItem;
-    private SearchView mSearchView;
-    private Filter mFilter;
 
     private FrameLayout mHeaderContainer;
     private RecyclerView mRecyclerView;
@@ -59,7 +46,6 @@ public abstract class LibraryActivity
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
-        mFilter = null;
 
         mHeaderContainer = (FrameLayout)findViewById(R.id.library_header_container);
         mRecyclerView = (RecyclerView)findViewById(R.id.library_list);
@@ -71,51 +57,24 @@ public abstract class LibraryActivity
 
     @Override
     public final boolean onCreateOptionsMenu(Menu menu){
-        if (mFilter != null){
-            getMenuInflater().inflate(R.menu.menu_filter, menu);
-            mSearchItem = menu.findItem(R.id.filter);
-            MenuItemCompat.setOnActionExpandListener(mSearchItem, this);
-
-            mSearchView = (SearchView)mSearchItem.getActionView();
-            mSearchView.setIconified(false);
-            mSearchView.setOnCloseListener(this);
-            mSearchView.setOnQueryTextListener(this);
-            mSearchView.clearFocus();
-        }
+        getMenuInflater().inflate(R.menu.menu_search, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public final boolean onMenuItemActionExpand(MenuItem item){
-        mSearchView.requestFocus();
-        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-        return true;
-    }
+    public final boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+                return true;
 
-    @Override
-    public final boolean onMenuItemActionCollapse(MenuItem item){
-        mSearchView.setQuery("", false);
-        mSearchView.clearFocus();
-        return true;
-    }
+            case R.id.search:
+                //Start search
+                return true;
 
-    @Override
-    public final boolean onClose(){
-        mSearchItem.collapseActionView();
-        return true;
-    }
-
-    @Override
-    public final boolean onQueryTextSubmit(String query){
-        return false;
-    }
-
-    @Override
-    public final boolean onQueryTextChange(String newText){
-        Log.d("Search", newText);
-        mFilter.filter(newText);
-        return false;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -134,12 +93,6 @@ public abstract class LibraryActivity
 
     protected final void setAdapter(RecyclerView.Adapter adapter){
         mRecyclerView.setAdapter(adapter);
-    }
-
-    protected final void setFilter(Filter filter){
-        mFilter = filter;
-        //If a filter is set the menu needs to be refreshed
-        invalidateOptionsMenu();
     }
 
     protected final View inflateHeader(@LayoutRes int layoutResId){

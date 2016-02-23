@@ -102,6 +102,15 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
     }
 
     /**
+     * Tells whether this container is empty.
+     *
+     * @return true if it's empty, false otherwise.
+     */
+    public boolean isEmpty(){
+        return mDisplayedContent.isEmpty() && mContentQueue.isEmpty();
+    }
+
+    /**
      * Adds a piece of content to the container.
      *
      * @param content the piece of content to be added.
