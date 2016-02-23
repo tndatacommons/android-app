@@ -179,6 +179,10 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
         }
     }
 
+    public boolean hasBehaviors(){
+        return !mBehaviors.isEmpty();
+    }
+
     /**
      * Adds a set of behaviors to the backing list.
      *

@@ -10,7 +10,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseGoalsAdapter;
 import org.tndata.android.compass.model.CategoryContent;
@@ -91,7 +90,7 @@ public class ChooseGoalsActivity
 
     @Override
     public void loadMore(){
-        if (BuildConfig.DEBUG && mGetGoalsNextUrl.startsWith("https")){
+        if (API.STAGING && mGetGoalsNextUrl.startsWith("https")){
             mGetGoalsNextUrl = mGetGoalsNextUrl.replaceFirst("s", "");
         }
         mGetGoalsRequestCode = NetworkRequest.get(this, this, mGetGoalsNextUrl, "");

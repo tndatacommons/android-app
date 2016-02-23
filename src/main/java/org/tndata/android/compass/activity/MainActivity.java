@@ -702,9 +702,9 @@ public class MainActivity
     @Override
     public void onSearchResultSelected(SearchResult result){
         if (result.isGoal()){
-            Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
+            /*Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
                     .putExtra(ChooseBehaviorsActivity.GOAL_ID_KEY, result.getId());
-            startActivity(chooseBehaviors);
+            startActivity(chooseBehaviors);*/
         }
     }
 

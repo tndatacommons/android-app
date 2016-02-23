@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -51,8 +52,6 @@ public class ChooseBehaviorsActivity
     //  if it exists it can be retrieved from the UserData bundle
     public static final String CATEGORY_KEY = "org.tndata.compass.ChooseBehaviors.Category";
     public static final String GOAL_KEY = "org.tndata.compass.ChooseBehaviors.Goal";
-    //This one is to load search results, which don't deliver the whole object
-    public static final String GOAL_ID_KEY = "org.tndata.compass.ChooseBehaviors.GoalId";
 
     //Activity tag
     private static final String TAG = "ChooseBehaviorsActivity";
@@ -71,8 +70,6 @@ public class ChooseBehaviorsActivity
     private AlertDialog mShareDialog;
 
     //Network request codes and urls
-    private int mGetGoalRequestCode;
-    private int mGetCategoryRequestCode;
     private int mGetBehaviorsRequestCode;
     private int mPostBehaviorRequestCode;
     private String mGetBehaviorsNextUrl;
@@ -85,21 +82,15 @@ public class ChooseBehaviorsActivity
 
         //Pull the goal
         mGoal = (GoalContent)getIntent().getSerializableExtra(GOAL_KEY);
-        if (mGoal == null){
-            fetchGoal(getIntent().getIntExtra(GOAL_ID_KEY, -1));
-        }
-        else{
-            mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
+        mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
 
-            mGetBehaviorsNextUrl = API.getBehaviorsUrl(mGoal);
-            mAdapter = new ChooseBehaviorsAdapter(this, this, mCategory, mGoal);
+        mGetBehaviorsNextUrl = API.getBehaviorsUrl(mGoal);
+        mAdapter = new ChooseBehaviorsAdapter(this, this, mCategory, mGoal);
 
-            setHeader();
-            setAdapter(mAdapter);
-
-            if (mCategory != null && !mCategory.getColor().isEmpty()){
-                setColor(Color.parseColor(mCategory.getColor()));
-            }
+        setHeader();
+        setAdapter(mAdapter);
+        if (mCategory != null && !mCategory.getColor().isEmpty()){
+            setColor(Color.parseColor(mCategory.getColor()));
         }
 
         mSelectedBehavior = null;
@@ -130,16 +121,6 @@ public class ChooseBehaviorsActivity
         mGoal.loadIconIntoView(icon);
     }
 
-    /**
-     * Retrieves a goal from the database.
-     *
-     * @param goalId the id of the goal to be fetched.
-     */
-    private void fetchGoal(int goalId){
-        Log.d(TAG, "Fetching goal: " + goalId);
-        mGetGoalRequestCode = NetworkRequest.get(this, this, API.getGoalUrl(goalId), "");
-    }
-
     @Override
     public void onBehaviorSelected(BehaviorContent behavior){
         if (mSelectedBehavior == null){
@@ -153,6 +134,9 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void loadMore(){
+        if (API.STAGING && mGetBehaviorsNextUrl.startsWith("https")){
+            mGetBehaviorsNextUrl = mGetBehaviorsNextUrl.replaceFirst("s", "");
+        }
         mGetBehaviorsRequestCode = NetworkRequest.get(this, this, mGetBehaviorsNextUrl, "");
     }
 
@@ -163,8 +147,9 @@ public class ChooseBehaviorsActivity
                     API.getPostBehaviorUrl(), mApplication.getToken(),
                     API.getPostBehaviorBody(mSelectedBehavior, mGoal, mCategory));
 
+            ViewGroup rootView = (ViewGroup)findViewById(android.R.id.content);
             LayoutInflater inflater = LayoutInflater.from(this);
-            View mDialogRootView = inflater.inflate(R.layout.dialog_library_share, null);
+            View mDialogRootView = inflater.inflate(R.layout.dialog_library_share, rootView);
             mDialogRootView.findViewById(R.id.share_done).setOnClickListener(this);
             mDialogRootView.findViewById(R.id.share_share_container).setOnClickListener(this);
 
@@ -215,17 +200,15 @@ public class ChooseBehaviorsActivity
 
         mAdapter.removeBehavior(mSelectedBehavior);
         mSelectedBehavior = null;
+        if (mAdapter.hasBehaviors()){
+            setResult(RESULT_OK);
+            finish();
+        }
     }
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mGetGoalRequestCode){
-            Parser.parse(result, GoalContent.class, this);
-        }
-        else if (requestCode == mGetCategoryRequestCode){
-            Parser.parse(result, CategoryContent.class, this);
-        }
-        else if (requestCode == mGetBehaviorsRequestCode){
+        if (requestCode == mGetBehaviorsRequestCode){
             Parser.parse(result, ParserModels.BehaviorContentResultSet.class, this);
         }
         else if (requestCode == mPostBehaviorRequestCode){
@@ -262,22 +245,7 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof GoalContent){
-            mGetCategoryRequestCode = NetworkRequest.get(this, this,
-                    API.getCategoryUrl(mGoal.getCategoryIdSet().iterator().next()), "");
-        }
-        if (result instanceof CategoryContent){
-            mGetBehaviorsNextUrl = API.getBehaviorsUrl(mGoal);
-            mAdapter = new ChooseBehaviorsAdapter(this, this, mCategory, mGoal);
-
-            setHeader();
-            setAdapter(mAdapter);
-
-            if (mCategory != null && !mCategory.getColor().isEmpty()){
-                setColor(Color.parseColor(mCategory.getColor()));
-            }
-        }
-        else if (result instanceof ParserModels.BehaviorContentResultSet){
+        if (result instanceof ParserModels.BehaviorContentResultSet){
             ParserModels.BehaviorContentResultSet set = (ParserModels.BehaviorContentResultSet)result;
             mGetBehaviorsNextUrl = set.next;
             List<BehaviorContent> behaviorList = set.results;
