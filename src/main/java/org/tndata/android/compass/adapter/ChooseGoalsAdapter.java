@@ -152,7 +152,15 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
         else if (position == 2){
             if (mGoals.isEmpty()){
                 if (mShowLoading){
-                    mListener.loadMore();
+                    if (mLoadError.isEmpty()){
+                        mListener.loadMore();
+                    }
+                    else{
+                        rawHolder.itemView.findViewById(R.id.progress_progress).setVisibility(View.GONE);
+                        TextView error = (TextView)rawHolder.itemView.findViewById(R.id.progress_error);
+                        error.setVisibility(View.VISIBLE);
+                        error.setText(mLoadError);
+                    }
                 }
             }
             else{
