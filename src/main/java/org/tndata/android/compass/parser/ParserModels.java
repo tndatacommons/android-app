@@ -51,7 +51,7 @@ public final class ParserModels{
         public List<GoalContent> results;
     }
 
-    public final class BehaviorContentResultSet implements ResultSet{
+    public final class BehaviorContentResultSet extends ListResultSet{
         public List<BehaviorContent> results;
     }
 

@@ -70,15 +70,15 @@ public class ChooseGoalsActivity
         tile.setImageBitmap(circle);
         image.recycle();
 
+        mGetGoalsNextUrl = API.getGoalsUrl(mCategory);
+
         mAdapter = new ChooseGoalsAdapter(this, this, mCategory);
         setAdapter(mAdapter);
         setFilter(mAdapter.getFilter());
 
-        if (mCategory != null && !mCategory.getColor().isEmpty()){
+        if (!mCategory.getColor().isEmpty()){
             setColor(Color.parseColor(mCategory.getColor()));
         }
-
-        mGetGoalsNextUrl = API.getGoalsUrl(mCategory);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class ChooseGoalsActivity
 
     @Override
     public void onRequestFailed(int requestCode, String message){
-        mAdapter.displayError("Couldn't retrieve goals");
+        mAdapter.displayError("Couldn't load goals");
     }
 
     @Override

@@ -1,6 +1,8 @@
 package org.tndata.android.compass.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -8,16 +10,16 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.filter.BehaviorFilter;
 import org.tndata.android.compass.model.BehaviorContent;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.ui.ContentContainer;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,15 +34,22 @@ import java.util.List;
 public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
     public static final int TYPE_BLANK = 0;
     public static final int TYPE_DESCRIPTION = TYPE_BLANK+1;
-    public static final int TYPE_BEHAVIOR = TYPE_DESCRIPTION+1;
+    public static final int TYPE_BEHAVIORS = TYPE_DESCRIPTION+1;
+    public static final int TYPE_LOAD = TYPE_BEHAVIORS+1;
+    public static final int ITEM_COUNT = TYPE_LOAD+1;
 
 
     private Context mContext;
     private ChooseBehaviorsListener mListener;
+    private CategoryContent mCategory;
     private GoalContent mGoal;
+
+    private BehaviorsViewHolder mBehaviorsHolder;
+    private List<BehaviorContent> mBehaviors;
     private BehaviorFilter mFilter;
 
-    private List<BehaviorContent> mBehaviors;
+    private boolean mShowLoading;
+    private String mLoadError;
 
 
     /**
@@ -48,53 +57,86 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
      *
      * @param context the context.
      * @param listener an implementation of the listener to act upon events.
+     * @param category the parent category of the goal whose behaviors are to be listed.
      * @param goal the goal whose behaviors are to be listed.
      */
     public ChooseBehaviorsAdapter(@NonNull Context context, @NonNull ChooseBehaviorsListener listener,
-                                  @NonNull GoalContent goal){
+                                  @NonNull CategoryContent category, @NonNull GoalContent goal){
 
         //Assign the references
         mContext = context;
         mListener = listener;
+        mCategory = category;
         mGoal = goal;
+
+        mBehaviors = new ArrayList<>();
         mFilter = new BehaviorFilter(this);
 
-        //Create an empty list
-        mBehaviors = new ArrayList<>();
+        mShowLoading = true;
+        mLoadError = "";
+    }
+
+    @Override
+    public int getItemCount(){
+        int count = ITEM_COUNT;
+        if (!mShowLoading){
+            count--;
+        }
+        if (mBehaviors.isEmpty()){
+            count--;
+        }
+        return count;
     }
 
     @Override
     public int getItemViewType(int position){
-        if (position == 0){
-            return TYPE_BLANK;
+        if (position < 2){
+            return position;
         }
-        else if (position == 1){
-            return TYPE_DESCRIPTION;
+        else if (position == 2){
+        //The third position can be either the progress bar or the behavior container
+            if (mBehaviors.isEmpty()){
+                if (mShowLoading){
+                    return TYPE_LOAD;
+                }
+            }
+            else{
+                return TYPE_BEHAVIORS;
+            }
         }
-        else{
-            return TYPE_BEHAVIOR;
-        }
+        //If there is a fourth element, that would be loading
+        return TYPE_LOAD;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+
         if (viewType == TYPE_BLANK){
             return new RecyclerView.ViewHolder(new CardView(mContext)){};
         }
         else if (viewType == TYPE_DESCRIPTION){
-            LayoutInflater inflater = LayoutInflater.from(mContext);
             View rootView = inflater.inflate(R.layout.card_library_description, parent, false);
             return new DescriptionViewHolder(mContext, rootView);
         }
+        else if (viewType == TYPE_BEHAVIORS){
+            if (mBehaviorsHolder == null){
+                View rootView = inflater.inflate(R.layout.card_library_content, parent, false);
+                mBehaviorsHolder = new BehaviorsViewHolder(this, rootView);
+                mBehaviorsHolder.addBehaviors(mBehaviors);
+                mBehaviorsHolder.mBehaviorContainer.setAnimationsEnabled(true);
+            }
+            return mBehaviorsHolder;
+        }
         else{
-            LayoutInflater inflater = LayoutInflater.from(mContext);
-            View rootView = inflater.inflate(R.layout.card_library_behavior, parent, false);
-            return new BehaviorViewHolder(this, rootView);
+            View rootView = inflater.inflate(R.layout.item_library_progress, parent, false);
+            return new RecyclerView.ViewHolder(rootView){};
         }
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
+        //Blank space
         if (position == 0){
             int width = CompassUtil.getScreenWidth(mContext);
             ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
@@ -104,43 +146,105 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
             rawHolder.itemView.setLayoutParams(params);
             rawHolder.itemView.setVisibility(View.INVISIBLE);
         }
+        //Description
         else if (position == 1){
             ((DescriptionViewHolder)rawHolder).bind(mGoal);
         }
-        else{
-            ((BehaviorViewHolder)rawHolder).bind(mBehaviors.get(position - 2));
+        //Behaviors or load switch
+        else if (position == 2){
+            if (mBehaviors.isEmpty()){
+                if (mShowLoading){
+                    if (mLoadError.isEmpty()){
+                        mListener.loadMore();
+                    }
+                    else{
+                        rawHolder.itemView.findViewById(R.id.library_progress_progress).setVisibility(View.GONE);
+                        TextView error = (TextView)rawHolder.itemView.findViewById(R.id.library_progress_error);
+                        error.setVisibility(View.VISIBLE);
+                        error.setText(mLoadError);
+                    }
+                }
+            }
+            else{
+                ((BehaviorsViewHolder)rawHolder).bind(mCategory);
+            }
         }
-    }
-
-    @Override
-    public int getItemCount(){
-        return mBehaviors.size()+2;
+        //Load switch, maybe
+        else if (position == TYPE_LOAD){
+            if (mLoadError.isEmpty()){
+                mListener.loadMore();
+            }
+            else{
+                rawHolder.itemView.findViewById(R.id.library_progress_progress).setVisibility(View.GONE);
+                TextView error = (TextView)rawHolder.itemView.findViewById(R.id.library_progress_error);
+                error.setVisibility(View.VISIBLE);
+                error.setText(mLoadError);
+            }
+        }
     }
 
     /**
-     * Sets the list of behaviors. and notifies the adapter.
+     * Adds a set of behaviors to the backing list.
      *
-     * @param behaviors the list of behaviors to be set.
+     * @param behaviors the list of behaviors to be added.
+     * @param showLoading whether the load switch should be kept or removed.
      */
-    public void setBehaviors(List<BehaviorContent> behaviors){
-        mBehaviors = behaviors;
-    }
+    public void addBehaviors(@NonNull List<BehaviorContent> behaviors, boolean showLoading){
+        //If there are no goals, insert the goals card
+        if (mBehaviors.isEmpty()){
+            notifyItemInserted(TYPE_BEHAVIORS);
+        }
 
-    public void removeBehavior(BehaviorContent behavior){
-        int index = mBehaviors.indexOf(behavior);
-        if (index != -1){
-            mBehaviors.remove(index);
-            notifyItemRemoved(index+2);
+        //Set the new loading state
+        mShowLoading = showLoading;
+        //If we should no longer load, remove the load switch
+        if (!mShowLoading){
+            notifyItemRemoved(TYPE_LOAD);
+        }
+        //Otherwise, schedule an item refresh for the load switch half a second from now
+        //  to avoid the load callback getting called twice
+        else{
+            new Handler().postDelayed(new Runnable(){
+                @Override
+                public void run(){
+                    notifyItemChanged(TYPE_LOAD);
+                }
+            }, 500);
+        }
+
+        //Insert all the behaviors in the behavior list and set the filter
+        mBehaviors.addAll(behaviors);
+        mFilter.setBehaviorList(mBehaviors);
+
+        //If the holder has been created already
+        if (mBehaviorsHolder != null){
+            //Add the goals
+            mBehaviorsHolder.addBehaviors(behaviors);
         }
     }
 
-    public void update(){
-        mFilter.setBehaviorList(mBehaviors);
-        notifyDataSetChanged();
+    public void removeBehavior(BehaviorContent behavior){
+        mBehaviors.remove(behavior);
+        mBehaviorsHolder.removeBehavior(behavior);
     }
 
     public BehaviorFilter getFilter(){
         return mFilter;
+    }
+
+    /**
+     * Displays an error in place of the load switch.
+     *
+     * @param error the error to be displayed.
+     */
+    public void displayError(String error){
+        mLoadError = error;
+        if (mBehaviors.isEmpty()){
+            notifyItemChanged(TYPE_LOAD-1);
+        }
+        else if (mShowLoading){
+            notifyItemChanged(TYPE_LOAD);
+        }
     }
 
 
@@ -194,11 +298,14 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    static class BehaviorViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    static class BehaviorsViewHolder
+            extends RecyclerView.ViewHolder
+            implements ContentContainer.ContentContainerListener<BehaviorContent>{
+
         private ChooseBehaviorsAdapter mAdapter;
 
-        private ImageView mIcon;
         private TextView mTitle;
+        private ContentContainer<BehaviorContent> mBehaviorContainer;
 
 
         /**
@@ -206,32 +313,50 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
          *
          * @param rootView a view inflated from R.layout.item_choose_behavior
          */
-        public BehaviorViewHolder(@NonNull ChooseBehaviorsAdapter adapter, @NonNull View rootView){
+        @SuppressWarnings("unchecked")
+        public BehaviorsViewHolder(@NonNull ChooseBehaviorsAdapter adapter, @NonNull View rootView){
             super(rootView);
 
             mAdapter = adapter;
 
-            mIcon = (ImageView)rootView.findViewById(R.id.library_behavior_icon);
-            mTitle = (TextView)rootView.findViewById(R.id.library_behavior_title);
-
-            rootView.setOnClickListener(this);
+            //Fetch UI components
+            mTitle = (TextView)rootView.findViewById(R.id.card_library_content_header);
+            mBehaviorContainer = (ContentContainer<BehaviorContent>)rootView
+                    .findViewById(R.id.card_library_content_container);
+            mBehaviorContainer.setListener(this);
         }
 
         /**
-         * Binds a behavior to the holder.
+         * Binds a a category to the holder.
          *
-         * @param behavior the behavior to display.
+         * @param category the category to be bound.
          */
-        public void bind(BehaviorContent behavior){
-            if (behavior.getIconUrl() != null && !behavior.getIconUrl().isEmpty()){
-                ImageLoader.loadBitmap(mIcon, behavior.getIconUrl(), new ImageLoader.Options());
+        public void bind(CategoryContent category){
+            mTitle.setText(R.string.library_behaviors_content_header);
+            String colorString = category.getSecondaryColor();
+            if (colorString != null && !colorString.isEmpty()){
+                mTitle.setBackgroundColor(Color.parseColor(colorString));
             }
-            mTitle.setText(behavior.getTitle());
+        }
+
+        /**
+         * Adds a list of behaviors to the container.
+         *
+         * @param behaviors the list of behaviors to be added.
+         */
+        public void addBehaviors(List<BehaviorContent> behaviors){
+            for (BehaviorContent behavior:behaviors){
+                mBehaviorContainer.addContent(behavior);
+            }
+        }
+
+        public void removeBehavior(BehaviorContent behavior){
+            mBehaviorContainer.removeContent(behavior);
         }
 
         @Override
-        public void onClick(View view){
-            mAdapter.mListener.onBehaviorSelected(mAdapter.mBehaviors.get(getAdapterPosition() - 2));
+        public void onContentClick(@NonNull BehaviorContent content){
+            mAdapter.mListener.onBehaviorSelected(content);
         }
     }
 
@@ -239,7 +364,7 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
      * Listener interface for the adapter.
      *
      * @author Ismael Alonso
-     * @version 1.0.1
+     * @version 1.1.0
      */
     public interface ChooseBehaviorsListener{
         /**
@@ -248,5 +373,7 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
          * @param behavior the selected behavior.
          */
         void onBehaviorSelected(BehaviorContent behavior);
+
+        void loadMore();
     }
 }

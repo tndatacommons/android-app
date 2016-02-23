@@ -71,11 +71,12 @@ public class ChooseBehaviorsActivity
 
     private AlertDialog mShareDialog;
 
-    //Network request codes
+    //Network request codes and urls
     private int mGetGoalRequestCode;
     private int mGetCategoryRequestCode;
     private int mGetBehaviorsRequestCode;
     private int mPostBehaviorRequestCode;
+    private String mGetBehaviorsNextUrl;
 
 
     @Override
@@ -90,7 +91,9 @@ public class ChooseBehaviorsActivity
         }
         else{
             mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
-            mAdapter = new ChooseBehaviorsAdapter(this, this, mGoal);
+
+            mGetBehaviorsNextUrl = API.getBehaviorsUrl(mGoal);
+            mAdapter = new ChooseBehaviorsAdapter(this, this, mCategory, mGoal);
 
             setHeader();
             setAdapter(mAdapter);
@@ -99,8 +102,6 @@ public class ChooseBehaviorsActivity
             if (mCategory != null && !mCategory.getColor().isEmpty()){
                 setColor(Color.parseColor(mCategory.getColor()));
             }
-
-            fetchBehaviors();
         }
 
         mSelectedBehavior = null;
@@ -132,14 +133,6 @@ public class ChooseBehaviorsActivity
     }
 
     @Override
-    protected void onResume(){
-        super.onResume();
-        if (mAdapter != null){
-            mAdapter.notifyDataSetChanged();
-        }
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case android.R.id.home:
@@ -159,13 +152,6 @@ public class ChooseBehaviorsActivity
         mGetGoalRequestCode = NetworkRequest.get(this, this, API.getGoalUrl(goalId), "");
     }
 
-    /**
-     * Retrieves the behaviors of the current goal
-     */
-    private void fetchBehaviors(){
-        mGetBehaviorsRequestCode = NetworkRequest.get(this, this, API.getBehaviorsUrl(mGoal), "");
-    }
-
     @Override
     public void onBehaviorSelected(BehaviorContent behavior){
         if (mSelectedBehavior == null){
@@ -175,6 +161,11 @@ public class ChooseBehaviorsActivity
                     .putExtra(BehaviorActivity.CATEGORY_KEY, mCategory)
                     .putExtra(BehaviorActivity.BEHAVIOR_KEY, behavior), BEHAVIOR_ACTIVITY_RQ);
         }
+    }
+
+    @Override
+    public void loadMore(){
+        mGetBehaviorsRequestCode = NetworkRequest.get(this, this, mGetBehaviorsNextUrl, "");
     }
 
     @Override
@@ -256,7 +247,9 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void onRequestFailed(int requestCode, String message){
-        //TODO user feedback
+        if (requestCode == mGetBehaviorsRequestCode){
+            mAdapter.displayError("Couldn't load behaviors");
+        }
     }
 
     @Override
@@ -268,12 +261,6 @@ public class ChooseBehaviorsActivity
         else if (result instanceof CategoryContent){
             mCategory = (CategoryContent)result;
             Log.d(TAG, "Category fetched: " + mCategory);
-        }
-        else if (result instanceof ParserModels.BehaviorContentResultSet){
-            List<BehaviorContent> behaviorList = ((ParserModels.BehaviorContentResultSet)result).results;
-            if (behaviorList != null && !behaviorList.isEmpty()){
-                mAdapter.setBehaviors(behaviorList);
-            }
         }
         else if (result instanceof UserBehavior){
             UserBehavior userBehavior = (UserBehavior)result;
@@ -292,7 +279,8 @@ public class ChooseBehaviorsActivity
                     API.getCategoryUrl(mGoal.getCategoryIdSet().iterator().next()), "");
         }
         if (result instanceof CategoryContent){
-            mAdapter = new ChooseBehaviorsAdapter(this, this, mGoal);
+            mGetBehaviorsNextUrl = API.getBehaviorsUrl(mGoal);
+            mAdapter = new ChooseBehaviorsAdapter(this, this, mCategory, mGoal);
 
             setHeader();
             setAdapter(mAdapter);
@@ -301,11 +289,14 @@ public class ChooseBehaviorsActivity
             if (mCategory != null && !mCategory.getColor().isEmpty()){
                 setColor(Color.parseColor(mCategory.getColor()));
             }
-
-            fetchBehaviors();
         }
         else if (result instanceof ParserModels.BehaviorContentResultSet){
-            mAdapter.update();
+            ParserModels.BehaviorContentResultSet set = (ParserModels.BehaviorContentResultSet)result;
+            mGetBehaviorsNextUrl = set.next;
+            List<BehaviorContent> behaviorList = set.results;
+            if (behaviorList != null && !behaviorList.isEmpty()){
+                mAdapter.addBehaviors(behaviorList, mGetBehaviorsNextUrl != null);
+            }
         }
     }
 }

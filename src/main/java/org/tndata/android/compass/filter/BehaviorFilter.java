@@ -64,7 +64,7 @@ public class BehaviorFilter extends Filter{
     @Override
     protected void publishResults(CharSequence constraint, FilterResults results){
         if (results instanceof BehaviorFilterResults){
-            mAdapter.setBehaviors(((BehaviorFilterResults)results).mOutput);
+            //mAdapter.setBehaviors(((BehaviorFilterResults)results).mOutput);
         }
     }
 

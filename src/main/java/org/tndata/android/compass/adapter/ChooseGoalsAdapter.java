@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -133,7 +132,6 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
-        Log.d("ChooseGoalsAdapter", "bind: " + position);
         //Blank space
         if (position == TYPE_BLANK){
             int width = CompassUtil.getScreenWidth(mContext);
