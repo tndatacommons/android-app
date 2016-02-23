@@ -327,7 +327,7 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
          */
         public void bind(@NonNull CategoryContent category){
             mTitle.setText(R.string.library_goals_content_header);
-            String colorString = category.getSecondaryColor();
+            String colorString = category.getColor();
             if (colorString != null && !colorString.isEmpty()){
                 mTitle.setBackgroundColor(Color.parseColor(colorString));
             }

@@ -333,7 +333,7 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
          */
         public void bind(CategoryContent category){
             mTitle.setText(R.string.library_behaviors_content_header);
-            String colorString = category.getSecondaryColor();
+            String colorString = category.getColor();
             if (colorString != null && !colorString.isEmpty()){
                 mTitle.setBackgroundColor(Color.parseColor(colorString));
             }
