@@ -29,7 +29,7 @@ import java.util.List;
  * Adapter for the goal picker.
  *
  * @author Ismael Alonso
- * @version 1.0.0
+ * @version 2.0.0
  */
 public class ChooseGoalsAdapter extends RecyclerView.Adapter{
     private static final int TYPE_BLANK = 0;
@@ -48,6 +48,7 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
     private GoalFilter mFilter;
 
     private boolean mShowLoading;
+    private String mLoadError;
 
 
     /**
@@ -68,6 +69,7 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
         mFilter = new GoalFilter(this);
 
         mShowLoading = true;
+        mLoadError = "";
     }
 
     @Override
@@ -142,10 +144,11 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
             rawHolder.itemView.setLayoutParams(params);
             rawHolder.itemView.setVisibility(View.INVISIBLE);
         }
-        //Otherwise, handle all other cards
+        //Description
         else if (position == TYPE_DESCRIPTION){
             ((DescriptionViewHolder)rawHolder).bind(mCategory);
         }
+        //Goals or load switch
         else if (position == 2){
             if (mGoals.isEmpty()){
                 if (mShowLoading){
@@ -156,24 +159,40 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
                 ((GoalsViewHolder)rawHolder).bind(mCategory);
             }
         }
+        //Load switch, maybe
         else if (position == TYPE_LOAD){
-            mListener.loadMore();
+            if (mLoadError.isEmpty()){
+                mListener.loadMore();
+            }
+            else{
+                rawHolder.itemView.findViewById(R.id.progress_progress).setVisibility(View.GONE);
+                TextView error = (TextView)rawHolder.itemView.findViewById(R.id.progress_error);
+                error.setVisibility(View.VISIBLE);
+                error.setText(mLoadError);
+            }
         }
     }
 
     /**
-     * Adds the goals in the list to the backing array.
+     * Adds a set of goals to the backing list.
      *
      * @param goals the list of goals to be added.
+     * @param showLoading whether the load switch should be kept or removed.
      */
     public void addGoals(@NonNull List<GoalContent> goals, boolean showLoading){
-        mShowLoading = showLoading;
+        //If there are no goals, insert the goals card
         if (mGoals.isEmpty()){
             notifyItemInserted(TYPE_GOALS);
         }
+
+        //Set the new loading state
+        mShowLoading = showLoading;
+        //If we should no longer load, remove the load switch
         if (!mShowLoading){
             notifyItemRemoved(TYPE_LOAD);
         }
+        //Otherwise, schedule an item refresh for the load switch half a second from now
+        //  to avoid the load callback getting called twice
         else{
             new Handler().postDelayed(new Runnable(){
                 @Override
@@ -183,29 +202,42 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
             }, 500);
         }
 
+        //Insert all the goals in the goal list and set the filter
         mGoals.addAll(goals);
+        mFilter.setGoalList(mGoals);
+        //Set the icon colors
         for (GoalContent goal:goals){
             goal.setColor(mCategory.getColor());
         }
+        //If the holder has been created already
         if (mGoalsHolder != null){
+            //Add the goals
             mGoalsHolder.addGoals(goals);
-            mGoalsHolder.mGoalContainer.setAnimationsEnabled(true);
-            mGoalsHolder.mGoalContainer.displayCount();
         }
     }
 
-    public void update(){
-        mFilter.setGoalList(mGoals);
-        //notifyDataSetChanged();
-    }
-
+    /**
+     * Gets the filter.
+     *
+     * @return the goal filter.
+     */
     public GoalFilter getFilter(){
         return mFilter;
     }
 
-    public void hideProgressBar(){
-        mShowLoading = false;
-        notifyItemRemoved(TYPE_LOAD);
+    /**
+     * Displays an error in place of the load switch.
+     *
+     * @param error the error to be displayed.
+     */
+    public void displayError(String error){
+        mLoadError = error;
+        if (mGoals.isEmpty()){
+            notifyItemChanged(TYPE_LOAD-1);
+        }
+        else if (mShowLoading){
+            notifyItemChanged(TYPE_LOAD);
+        }
     }
 
 
@@ -287,7 +319,11 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
             mGoalContainer.setListener(this);
         }
 
-        @SuppressWarnings("deprecation")
+        /**
+         * Binds a category to the holder.
+         *
+         * @param category the category from which the color should be extracted.
+         */
         public void bind(@NonNull CategoryContent category){
             String colorString = category.getSecondaryColor();
             if (colorString != null && !colorString.isEmpty()){
@@ -295,6 +331,11 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
             }
         }
 
+        /**
+         * Adds a list of goals to the container.
+         *
+         * @param goals the list of goals to be added.
+         */
         public void addGoals(List<GoalContent> goals){
             for (GoalContent goal:goals){
                 mGoalContainer.addContent(goal);
@@ -312,7 +353,7 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
      * Listener interface for the adapter.
      *
      * @author Ismael Alonso
-     * @version 1.0.1
+     * @version 1.1.0
      */
     public interface ChooseGoalsListener{
         /**
@@ -322,6 +363,9 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
          */
         void onGoalSelected(@NonNull GoalContent goal);
 
+        /**
+         * Called when the user scrolls to the bottom of the page.
+         */
         void loadMore();
     }
 }
