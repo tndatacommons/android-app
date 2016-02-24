@@ -62,6 +62,8 @@ public class ReviewActionsAdapter extends RecyclerView.Adapter{
         mListener = listener;
 
         mActions = new ArrayList<>();
+        mShowLoading = true;
+        mLoadError = "";
     }
 
     @Override

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.ViewSwitcher;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -149,9 +150,9 @@ public class ChooseBehaviorsActivity
 
             ViewGroup rootView = (ViewGroup)findViewById(android.R.id.content);
             LayoutInflater inflater = LayoutInflater.from(this);
-            View mDialogRootView = inflater.inflate(R.layout.dialog_library_share, rootView, false);
-            mDialogRootView.findViewById(R.id.share_done).setOnClickListener(this);
-            mDialogRootView.findViewById(R.id.share_share_container).setOnClickListener(this);
+            View mDialogRootView = inflater.inflate(R.layout.dialog_library_behavior, rootView, false);
+            mDialogRootView.findViewById(R.id.dialog_behavior_activities).setOnClickListener(this);
+            mDialogRootView.findViewById(R.id.dialog_behavior_ok).setOnClickListener(this);
 
             mShareDialog = new AlertDialog.Builder(this)
                     .setCancelable(true)
@@ -168,9 +169,9 @@ public class ChooseBehaviorsActivity
     @Override
     public void onClick(View v){
         switch (v.getId()){
-            case R.id.share_share_container:
-                share();
-            case R.id.share_done:
+            case R.id.dialog_behavior_activities:
+                showActivities();
+            case R.id.dialog_behavior_ok:
                 dismissAll();
                 break;
         }
@@ -181,15 +182,9 @@ public class ChooseBehaviorsActivity
         dismissAll();
     }
 
-    private void share(){
-        //Build the content string
-        String content = "Whatever";
-
-        //Send the intent
-        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, content);
-        startActivity(Intent.createChooser(shareIntent, "Share via"));
+    private void showActivities(){
+        startActivity(new Intent(this, ReviewActionsActivity.class)
+                .putExtra(ReviewActionsActivity.USER_BEHAVIOR_KEY, mApplication.getUserData().getBehavior(mSelectedBehavior)));
     }
 
     private void dismissAll(){
@@ -225,15 +220,7 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof GoalContent){
-            mGoal = (GoalContent)result;
-            Log.d(TAG, "Goal fetched: " + mGoal);
-        }
-        else if (result instanceof CategoryContent){
-            mCategory = (CategoryContent)result;
-            Log.d(TAG, "Category fetched: " + mCategory);
-        }
-        else if (result instanceof UserBehavior){
+        if (result instanceof UserBehavior){
             UserBehavior userBehavior = (UserBehavior)result;
             Log.d(TAG, "(Post) " + userBehavior.toString());
 
@@ -245,7 +232,12 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.BehaviorContentResultSet){
+        if (result instanceof UserBehavior){
+            if (mShareDialog != null){
+                ((ViewSwitcher)mShareDialog.findViewById(R.id.dialog_behavior_switcher)).showNext();
+            }
+        }
+        else if (result instanceof ParserModels.BehaviorContentResultSet){
             ParserModels.BehaviorContentResultSet set = (ParserModels.BehaviorContentResultSet)result;
             mGetBehaviorsNextUrl = set.next;
             List<BehaviorContent> behaviorList = set.results;
