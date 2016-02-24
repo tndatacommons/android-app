@@ -37,6 +37,11 @@ public abstract class API{
                             TNDATA_BASE_URL;
 
 
+    private API(){
+
+    }
+
+
     /*----------------*
      * AUTHENTICATION *
      *----------------*/

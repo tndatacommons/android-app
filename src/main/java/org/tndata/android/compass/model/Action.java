@@ -2,6 +2,8 @@ package org.tndata.android.compass.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.tndata.android.compass.ui.ContentContainer;
+
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
@@ -13,7 +15,7 @@ import java.util.Date;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public abstract class Action extends UserContent implements Serializable{
+public abstract class Action extends UserContent implements Serializable, ContentContainer.ContainerAction{
     private static final long serialVersionUID = 2919447142568751923L;
 
 
@@ -33,6 +35,12 @@ public abstract class Action extends UserContent implements Serializable{
 
     public boolean hasTrigger(){
         return mTrigger != null;
+    }
+
+    @Override
+    public boolean isTriggerEnabled(){
+        //TODO
+        return true;
     }
 
     public void setNextReminder(String nextReminder){

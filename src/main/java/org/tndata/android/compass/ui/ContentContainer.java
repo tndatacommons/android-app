@@ -324,15 +324,27 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
                 if (content instanceof ContainerGoal){
                     ContainerGoal cg = (ContainerGoal)mContent;
                     gradientDrawable.setColor(Color.parseColor(cg.getColor(getContext())));
+
+                    int margin = CompassUtil.getPixels(getContext(), 20);
+                    ((RelativeLayout.LayoutParams)mIcon.getLayoutParams())
+                            .setMargins(margin, margin, margin, margin);
+                    if (cg.getIconUrl() != null && !cg.getIconUrl().isEmpty()){
+                        ImageLoader.loadBitmap(mIcon, cg.getIconUrl());
+                    }
                 }
                 else{
                     gradientDrawable.setColor(Color.TRANSPARENT);
-                }
-                int margin = CompassUtil.getPixels(getContext(), 20);
-                ((RelativeLayout.LayoutParams)mIcon.getLayoutParams())
-                        .setMargins(margin, margin, margin, margin);
-                if (mContent.getIconUrl() != null && !mContent.getIconUrl().isEmpty()){
-                    ImageLoader.loadBitmap(mIcon, mContent.getIconUrl());
+                    ((RelativeLayout.LayoutParams)mIcon.getLayoutParams()).setMargins(0, 0, 0, 0);
+
+                    if (content instanceof ContainerBehavior){
+                        ContainerBehavior cb = (ContainerBehavior)mContent;
+                        if (cb.getIconUrl() != null && !cb.getIconUrl().isEmpty()){
+                            ImageLoader.loadBitmap(mIcon, cb.getIconUrl());
+                        }
+                    }
+                    else if (content instanceof ContainerAction){
+                        ContainerAction ca = (ContainerAction)mContent;
+                    }
                 }
             }
 
@@ -380,13 +392,6 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
          * @return the title of the piece of content.
          */
         String getTitle();
-
-        /**
-         * Getter for the icon url.
-         *
-         * @return the icon url of the piece of content.
-         */
-        String getIconUrl();
     }
 
 
@@ -404,18 +409,45 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
          * @return a background color as a hex value string.
          */
         String getColor(Context context);
+
+        /**
+         * Getter for the icon url.
+         *
+         * @return the icon url of the piece of content.
+         */
+        String getIconUrl();
     }
 
 
     /**
-     * Used to display behaviors in a container. Even though it is an empty interface,
-     * it is essential to prevent merging inherently different types in a list.
+     * Used to display behaviors in a container.
      *
      * @author Ismael Alonso
      * @version 1.0.0
      */
     public interface ContainerBehavior extends ContainerDisplayable{
+        /**
+         * Getter for the icon url.
+         *
+         * @return the icon url of the piece of content.
+         */
+        String getIconUrl();
+    }
 
+
+    /**
+     * Used to display actions in a container.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    public interface ContainerAction extends ContainerDisplayable{
+        /**
+         * Tells whether the trigger of a particular action is enabled.
+         *
+         * @return true if the trigger is enabled.
+         */
+        boolean isTriggerEnabled();
     }
 
 
