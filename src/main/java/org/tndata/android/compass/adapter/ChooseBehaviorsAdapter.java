@@ -190,7 +190,7 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
      * @param showLoading whether the load switch should be kept or removed.
      */
     public void addBehaviors(@NonNull List<BehaviorContent> behaviors, boolean showLoading){
-        //If there are no goals, insert the goals card
+        //If there are no goals, insert the behaviors card
         if (mBehaviors.isEmpty()){
             notifyItemInserted(TYPE_BEHAVIORS);
         }
@@ -217,7 +217,7 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
 
         //If the holder has been created already
         if (mBehaviorsHolder != null){
-            //Add the goals
+            //Add the behaviors
             mBehaviorsHolder.addBehaviors(behaviors);
         }
     }
@@ -316,7 +316,6 @@ public class ChooseBehaviorsAdapter extends RecyclerView.Adapter{
         @SuppressWarnings("unchecked")
         public BehaviorsViewHolder(@NonNull ChooseBehaviorsAdapter adapter, @NonNull View rootView){
             super(rootView);
-
             mAdapter = adapter;
 
             //Fetch UI components

@@ -133,6 +133,7 @@
     <string name="dialog_share_content">Winners take action, so I\'m a winner!</string>
     <string name="dialog_share_done">Done</string>
     <string name="dialog_share_share">Share</string>
+    <string name="library_review_action_header">Ways I can %1$s</string>
 
     <!-- SettingsActivity -->
     <string name="settings_general_title">General</string>
@@ -199,7 +200,6 @@
     <!-- Search -->
     <string name="search">Search</string>
     <string name="search_header">These goals are relevant to your search:</string>
-    <string name="search_filter">Filter</string>
 
     <!-- Action notification -->
     <string name="action_notification_yes">Yes</string>
