@@ -322,14 +322,14 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
             }
             else{
                 if (content instanceof ContainerGoal){
-                    ContainerGoal cg = (ContainerGoal)mContent;
-                    gradientDrawable.setColor(Color.parseColor(cg.getColor(getContext())));
+                    ContainerGoal containerGoal = (ContainerGoal)mContent;
+                    gradientDrawable.setColor(Color.parseColor(containerGoal.getColor(getContext())));
 
                     int margin = CompassUtil.getPixels(getContext(), 20);
                     ((RelativeLayout.LayoutParams)mIcon.getLayoutParams())
                             .setMargins(margin, margin, margin, margin);
-                    if (cg.getIconUrl() != null && !cg.getIconUrl().isEmpty()){
-                        ImageLoader.loadBitmap(mIcon, cg.getIconUrl());
+                    if (containerGoal.getIconUrl() != null && !containerGoal.getIconUrl().isEmpty()){
+                        ImageLoader.loadBitmap(mIcon, containerGoal.getIconUrl());
                     }
                 }
                 else{
@@ -337,13 +337,19 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
                     ((RelativeLayout.LayoutParams)mIcon.getLayoutParams()).setMargins(0, 0, 0, 0);
 
                     if (content instanceof ContainerBehavior){
-                        ContainerBehavior cb = (ContainerBehavior)mContent;
-                        if (cb.getIconUrl() != null && !cb.getIconUrl().isEmpty()){
-                            ImageLoader.loadBitmap(mIcon, cb.getIconUrl());
+                        ContainerBehavior containerBehavior = (ContainerBehavior)mContent;
+                        if (containerBehavior.getIconUrl() != null && !containerBehavior.getIconUrl().isEmpty()){
+                            ImageLoader.loadBitmap(mIcon, containerBehavior.getIconUrl());
                         }
                     }
                     else if (content instanceof ContainerAction){
-                        ContainerAction ca = (ContainerAction)mContent;
+                        ContainerAction containerAction = (ContainerAction)mContent;
+                        if (containerAction.isTriggerEnabled()){
+                            mIcon.setImageResource(R.drawable.ic_enabled_black_36dp);
+                        }
+                        else{
+                            mIcon.setImageResource(R.drawable.ic_disabled_black_36dp);
+                        }
                     }
                 }
             }

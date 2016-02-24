@@ -39,8 +39,7 @@ public abstract class Action extends UserContent implements Serializable, Conten
 
     @Override
     public boolean isTriggerEnabled(){
-        //TODO
-        return true;
+        return !mTrigger.isDisabled();
     }
 
     public void setNextReminder(String nextReminder){
