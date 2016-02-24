@@ -2,6 +2,8 @@ package org.tndata.android.compass.model;
 
 import android.support.annotation.NonNull;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -13,21 +15,20 @@ import java.util.Locale;
 /**
  * An action trigger.
  *
+ * //TODO yo, future Izzy, fix this mess. Seriously.
+ *
  * @author Edited by Ismael Alonso
  * @version 2.0.0
  */
-public class Trigger implements Serializable, Comparable<Trigger>{
+public class Trigger extends TDCBase implements Serializable{
     private static final long serialVersionUID = 7914473023695112323L;
 
-    public static long getSerialVersionUID(){
-        return serialVersionUID;
-    }
+    public static final String TYPE = "trigger";
 
 
     // A default RRULE value for the recurrence picker (NOTE: no RRULE prefix)
     public static final String DEFAULT_RRULE = "FREQ=DAILY";
 
-    private int id = -1;
     private String recurrences_display = "";
     private String location = "";
     private String name = "";
@@ -38,30 +39,15 @@ public class Trigger implements Serializable, Comparable<Trigger>{
     private String time = "";
     private String trigger_date = "";
 
+    @SerializedName("disabled")
+    private boolean mDisabled;
+
 
     /**
      * Constructor.
      */
     public Trigger(){
 
-    }
-
-    /**
-     * Id getter.
-     *
-     * @return the id.
-     */
-    public int getId(){
-        return id;
-    }
-
-    /**
-     * Id setter.
-     *
-     * @param id the id.
-     */
-    public void setId(int id){
-        this.id = id;
     }
 
     /**
@@ -102,7 +88,7 @@ public class Trigger implements Serializable, Comparable<Trigger>{
      *
      * @param recurrences the recurrences.
      */
-    public void setRecurrences(String recurrences) {
+    public void setRecurrences(String recurrences){
         this.recurrences = recurrences;
     }
 
@@ -201,37 +187,8 @@ public class Trigger implements Serializable, Comparable<Trigger>{
     }
 
     @Override
-    public boolean equals(Object object){
-        if (object == null){
-            return false;
-        }
-        else if (object == this){
-            return true;
-        }
-        else if (object instanceof Trigger){
-            return (this.getId() == ((Trigger)object).getId());
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode(){
-        int hash = 3;
-        hash = 7*hash + this.getName().hashCode();
-        return hash;
-    }
-
-    @Override
-    public int compareTo(@NonNull Trigger another){
-        if (getId() == another.getId()){
-            return 0;
-        }
-        else if (getId() < another.getId()){
-            return -1;
-        }
-        else{
-            return 1;
-        }
+    protected String getType(){
+        return TYPE;
     }
 
     /**
@@ -333,7 +290,15 @@ public class Trigger implements Serializable, Comparable<Trigger>{
         //If the user disabled the trigger, then the Trigger object will exist
         //  with details like a name, but all of the time/trigger_date/recurrence
         //  information will be null (or empty)
-        return name != null && !getName().isEmpty() && getRawDate().isEmpty() &&
-                getRawTime().isEmpty() && getRecurrences().isEmpty();
+        return mDisabled;
+    }
+
+    /**
+     * Enables or disables the trigger.
+     *
+     * @param enabled true if the trigger should be enabled, false otherwise.
+     */
+    public void setEnabled(boolean enabled){
+        mDisabled = !enabled;
     }
 }
