@@ -102,6 +102,10 @@
         </activity>
 
         <activity
+            android:name=".activity.SearchActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".activity.SourcesActivity"
             android:parentActivityName=".activity.SettingsActivity"
             android:screenOrientation="portrait" />

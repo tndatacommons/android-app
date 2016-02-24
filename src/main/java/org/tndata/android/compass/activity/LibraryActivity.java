@@ -1,5 +1,6 @@
 package org.tndata.android.compass.activity;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -69,7 +70,7 @@ public abstract class LibraryActivity
                 return true;
 
             case R.id.search:
-                //Start search
+                startActivity(new Intent(this, SearchActivity.class));
                 return true;
 
             default:

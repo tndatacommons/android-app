@@ -20,7 +20,7 @@ import java.util.TimeZone;
  */
 public abstract class API{
     //Api urls and app configuration
-    public static final boolean STAGING = !BuildConfig.DEBUG;
+    public static final boolean STAGING = BuildConfig.DEBUG;
     private static final boolean USE_NGROK_TUNNEL = false;
     private static final String TNDATA_BASE_URL = "https://app.tndata.org/api/";
     private static final String TNDATA_STAGING_URL = "http://staging.tndata.org/api/";
@@ -131,10 +131,6 @@ public abstract class API{
     //Categories
     public static String getCategoriesUrl(){
         return BASE_URL + "categories/";
-    }
-
-    public static String getCategoryUrl(long categoryId){
-        return BASE_URL + "categories/" + categoryId + "/";
     }
 
     public static String getDeleteCategoryUrl(@NonNull UserCategory userCategory){
