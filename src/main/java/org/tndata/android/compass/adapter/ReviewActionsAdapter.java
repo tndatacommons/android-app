@@ -44,21 +44,22 @@ public class ReviewActionsAdapter extends RecyclerView.Adapter{
 
 
     public ReviewActionsAdapter(Context context, ReviewActionsListener listener, UserGoal userGoal){
-        mContext = context;
-        mListener = listener;
+        init(context, listener);
         mUserGoal = userGoal;
         mUserBehavior = null;
-
-        mActions = new ArrayList<>();
     }
 
     public ReviewActionsAdapter(Context context, ReviewActionsListener listener,
                                 UserBehavior userBehavior){
 
-        mContext = context;
-        mListener = listener;
+        init(context, listener);
         mUserGoal = null;
         mUserBehavior = userBehavior;
+    }
+
+    private void init(Context context, ReviewActionsListener listener){
+        mContext = context;
+        mListener = listener;
 
         mActions = new ArrayList<>();
     }
