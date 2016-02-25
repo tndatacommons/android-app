@@ -1,4 +1,4 @@
-package org.tndata.android.compass.ui.button;
+package org.tndata.android.compass.ui;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;

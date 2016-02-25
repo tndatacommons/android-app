@@ -48,12 +48,13 @@
         progress:unitColor="#009688" />
 
     <!-- On top of everything, the FAB -->
-    <org.tndata.android.compass.ui.button.FloatingActionButton
+    <com.github.clans.fab.FloatingActionButton
         android:id="@+id/goal_fab"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_marginRight="28dp"
         android:layout_alignParentRight="true"
+        android:padding="0dp"
         android:src="@drawable/ic_add_white_24dp" />
 
     <include

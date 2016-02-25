@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.github.clans.fab.FloatingActionButton;
+
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -27,7 +29,6 @@ import org.tndata.android.compass.model.Progress;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserGoal;
-import org.tndata.android.compass.ui.button.FloatingActionButton;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ImageLoader;
@@ -113,7 +114,7 @@ public class GoalActivity
         //Set up the FAB
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.goal_fab);
         params = (RelativeLayout.LayoutParams)fab.getLayoutParams();
-        params.topMargin = heroHeight-params.height/2;
+        params.topMargin = heroHeight-params.height/2-12;
         fab.setLayoutParams(params);
         fab.setOnClickListener(this);
         //TODO this is a workaround

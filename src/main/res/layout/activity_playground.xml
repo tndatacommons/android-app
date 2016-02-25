@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:gravity="center" >
 
-    <org.tndata.android.compass.ui.button.TransitionButton
+    <org.tndata.android.compass.ui.TransitionButton
         android:id="@+id/playground_button"
         android:layout_width="50dp"
         android:layout_height="50dp"

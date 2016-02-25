@@ -6,7 +6,7 @@ import android.view.View;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.service.LocationNotificationService;
-import org.tndata.android.compass.ui.button.TransitionButton;
+import org.tndata.android.compass.ui.TransitionButton;
 
 import at.grabner.circleprogress.CircleProgressView;
 
