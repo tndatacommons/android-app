@@ -27,7 +27,6 @@ public class BehaviorActivity extends LibraryActivity implements BehaviorAdapter
     public static final String BEHAVIOR_KEY = "org.tndata.compass.Behavior.Behavior";
 
 
-    private CategoryContent mCategory;
     private BehaviorContent mBehavior;
 
 
@@ -35,27 +34,22 @@ public class BehaviorActivity extends LibraryActivity implements BehaviorAdapter
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
+        CategoryContent category = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
         mBehavior = (BehaviorContent)getIntent().getSerializableExtra(BEHAVIOR_KEY);
 
         setHeader();
-        setAdapter(new BehaviorAdapter(this, this, mCategory, mBehavior));
-        setColor(Color.parseColor(mCategory.getColor()));
+        setAdapter(new BehaviorAdapter(this, this, category, mBehavior));
+        setColor(Color.parseColor(category.getColor()));
     }
 
     @SuppressWarnings("deprecation")
     private void setHeader(){
         View header = inflateHeader(R.layout.header_icon);
-        RelativeLayout circle = (RelativeLayout)header.findViewById(R.id.choose_behaviors_circle);
-        ImageView icon = (ImageView)header.findViewById(R.id.choose_behaviors_icon);
+        RelativeLayout circle = (RelativeLayout)header.findViewById(R.id.header_icon_circle);
+        ImageView icon = (ImageView)header.findViewById(R.id.header_icon_icon);
 
         GradientDrawable gradientDrawable = (GradientDrawable) circle.getBackground();
-        if (mCategory != null && !mCategory.getSecondaryColor().isEmpty()){
-            gradientDrawable.setColor(Color.WHITE);
-        }
-        else{
-            gradientDrawable.setColor(Color.WHITE);
-        }
+        gradientDrawable.setColor(Color.WHITE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
             circle.setBackground(gradientDrawable);
         }

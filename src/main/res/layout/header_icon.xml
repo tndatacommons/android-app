@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/choose_behaviors_circle"
+    android:id="@+id/header_icon_circle"
     android:layout_width="@dimen/header_goal_icon_image_size"
     android:layout_height="@dimen/header_goal_icon_image_size"
     android:gravity="center"
@@ -10,7 +10,7 @@
     android:background="@drawable/circle_gray" >
 
     <ImageView
-        android:id="@+id/choose_behaviors_icon"
+        android:id="@+id/header_icon_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"

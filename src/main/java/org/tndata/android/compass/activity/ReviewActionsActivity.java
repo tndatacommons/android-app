@@ -58,8 +58,8 @@ public class ReviewActionsActivity extends LibraryActivity implements ReviewActi
     @SuppressWarnings("deprecation")
     private void setHeader(){
         View header = inflateHeader(R.layout.header_icon);
-        RelativeLayout circle = (RelativeLayout)header.findViewById(R.id.review_actions_circle);
-        ImageView icon = (ImageView)header.findViewById(R.id.review_actions_icon);
+        RelativeLayout circle = (RelativeLayout)header.findViewById(R.id.header_icon_circle);
+        ImageView icon = (ImageView)header.findViewById(R.id.header_icon_icon);
 
         GradientDrawable gradientDrawable = (GradientDrawable) circle.getBackground();
         gradientDrawable.setColor(Color.parseColor(mUserGoal.getPrimaryCategory().getColor()));

@@ -99,8 +99,8 @@ public class ChooseBehaviorsActivity
     @SuppressWarnings("deprecation")
     private void setHeader(){
         View header = inflateHeader(R.layout.header_icon);
-        RelativeLayout circle = (RelativeLayout)header.findViewById(R.id.choose_behaviors_circle);
-        ImageView icon = (ImageView)header.findViewById(R.id.choose_behaviors_icon);
+        RelativeLayout circle = (RelativeLayout)header.findViewById(R.id.header_icon_circle);
+        ImageView icon = (ImageView)header.findViewById(R.id.header_icon_icon);
 
         GradientDrawable gradientDrawable = (GradientDrawable) circle.getBackground();
         if (mCategory != null && !mCategory.getSecondaryColor().isEmpty()){

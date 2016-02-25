@@ -5,34 +5,24 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ActionAdapter;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.ActionContent;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.UserAction;
-import org.tndata.android.compass.model.UserContent;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ImageLoader;
 import org.tndata.android.compass.util.NetworkRequest;
@@ -70,17 +60,6 @@ public class ActionActivity
 
     private ActionAdapter mAdapter;
 
-    //UI components
-    private ImageView mActionImage;
-    private TextView mActionTitle;
-    private TextView mActionDescription;
-    private TextView mMoreInfoHeader;
-    private TextView mMoreInfo;
-    private View mButtonWrapper;
-    private TextView mDidIt;
-    private TextView mDoItNow;
-    private ViewSwitcher mTickSwitcher;
-
     //Firewall
     private boolean mActionUpdated;
 
@@ -107,41 +86,6 @@ public class ActionActivity
 
         setAdapter(mAdapter);
 
-        //Fetch UI components
-        /*FrameLayout heroContainer = (FrameLayout)findViewById(R.id.action_hero_container);
-        RelativeLayout circleView = (RelativeLayout)findViewById(R.id.action_circle_view);
-        mActionImage = (ImageView)findViewById(R.id.action_image);*/
-
-        /*mActionTitle = (TextView)findViewById(R.id.action_title);
-        mActionDescription = (TextView)findViewById(R.id.action_description);
-        mMoreInfoHeader = (TextView)findViewById(R.id.action_more_info_header);
-        mMoreInfo = (TextView)findViewById(R.id.action_more_info);
-        TextView timeOption = (TextView)findViewById(R.id.action_time_option);
-        mTickSwitcher = (ViewSwitcher)findViewById(R.id.action_tick_switcher);
-        mButtonWrapper = findViewById(R.id.action_button_wrapper);
-        mDidIt = (TextView)findViewById(R.id.action_did_it);
-        mDoItNow = (TextView)findViewById(R.id.action_do_it_now);
-
-        heroContainer.getLayoutParams().height = CompassUtil.getScreenWidth(this)*2/3;
-
-        //Animate the switcher.
-        mTickSwitcher.setInAnimation(this, R.anim.action_switcher_fade_in);
-        mTickSwitcher.setOutAnimation(this, R.anim.action_switcher_fade_out);
-
-        //Listeners
-        timeOption.setOnClickListener(this);
-        mDidIt.setOnClickListener(this);*/
-
-        //Circle view
-        /*GradientDrawable gradientDrawable = (GradientDrawable)circleView.getBackground();
-        gradientDrawable.setColor(Color.WHITE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-            circleView.setBackground(gradientDrawable);
-        }
-        else{
-            circleView.setBackgroundDrawable(gradientDrawable);
-        }*/
-
         mActionUpdated = false;
 
         //If the action wasn't provided via the intent it needs to be fetched
@@ -158,6 +102,7 @@ public class ActionActivity
             else{
                 setColor(getResources().getColor(R.color.grow_primary));
             }
+            setHeader();
             //timeOption.setText(R.string.action_reschedule);
             /*if (mAction instanceof UserAction){
                 populateUI((UserAction)mAction);
@@ -165,6 +110,26 @@ public class ActionActivity
             else if (mAction instanceof CustomAction){
                 populateUI((CustomAction)mAction);
             }*/
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void setHeader(){
+        View header = inflateHeader(R.layout.header_icon);
+        RelativeLayout circle = (RelativeLayout)header.findViewById(R.id.header_icon_circle);
+        ImageView icon = (ImageView)header.findViewById(R.id.header_icon_icon);
+
+        GradientDrawable gradientDrawable = (GradientDrawable) circle.getBackground();
+        gradientDrawable.setColor(Color.WHITE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+            circle.setBackground(gradientDrawable);
+        }
+        else{
+            circle.setBackgroundDrawable(gradientDrawable);
+        }
+
+        if (mAction instanceof UserAction){
+            ImageLoader.loadBitmap(icon, ((UserAction)mAction).getIconUrl());
         }
     }
 
@@ -210,78 +175,10 @@ public class ActionActivity
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof UserAction || result instanceof CustomAction){
             mAction = (Action)result;
+            setHeader();
             mAdapter.setAction(mAction);
             invalidateOptionsMenu();
         }
-    }
-
-    /**
-     * Takes the action's parameters and populates the UI with them.
-     */
-    private void populateUI(UserAction userAction){
-        ImageLoader.loadBitmap(mActionImage, userAction.getIconUrl(), new ImageLoader.Options());
-        mActionTitle.setText(mAction.getTitle());
-        if (!userAction.getHTMLDescription().isEmpty()){
-            mActionDescription.setText(Html.fromHtml(userAction.getHTMLDescription(), null,
-                    new CompassTagHandler(this)));
-        }
-        else{
-            mActionDescription.setText(userAction.getDescription());
-        }
-        mActionDescription.setText(userAction.getDescription());
-
-        ActionContent action = userAction.getAction();
-        if (!action.getMoreInfo().isEmpty()){
-            mMoreInfoHeader.setVisibility(View.VISIBLE);
-            mMoreInfo.setVisibility(View.VISIBLE);
-            if (!action.getHTMLMoreInfo().isEmpty()){
-                mMoreInfo.setText(Html.fromHtml(action.getHTMLMoreInfo(), null,
-                        new CompassTagHandler(this)));
-            }
-            else{
-                mMoreInfo.setText(action.getMoreInfo());
-            }
-        }
-
-        mButtonWrapper.setVisibility(View.VISIBLE);
-        if (!action.getExternalResource().isEmpty()){
-            mDoItNow.setOnClickListener(this);
-            if (action.getExternalResourceName().isEmpty() ||
-                    action.getExternalResourceName().length() > 12){
-                mDoItNow.setText(R.string.action_do_it_now);
-            }
-            else{
-                mDoItNow.setText(action.getExternalResourceName());
-            }
-        }
-        else{
-            if (mReminder != null){
-                ViewGroup.LayoutParams params = mDoItNow.getLayoutParams();
-                params.width = mDidIt.getWidth();
-                mDoItNow.setLayoutParams(params);
-            }
-            else{
-                mDidIt.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
-                    @Override
-                    @SuppressWarnings("deprecation")
-                    public void onGlobalLayout(){
-                        ViewGroup.LayoutParams params = mDoItNow.getLayoutParams();
-                        params.width = mDidIt.getWidth();
-                        mDoItNow.setLayoutParams(params);
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
-                            mDidIt.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                        }
-                        else{
-                            mDidIt.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        }
-                    }
-                });
-            }
-        }
-    }
-
-    private void populateUI(CustomAction customAction){
-        mActionTitle.setText(customAction.getTitle());
     }
 
     @Override
@@ -388,16 +285,8 @@ public class ActionActivity
                 //In either case, the activity should finish after a second
                 case SNOOZE_REQUEST_CODE:
                     mActionUpdated = true;
-
-                    //Display the check mark and finish the activity after one second
-                    mTickSwitcher.showNext();
-                    new Handler().postDelayed(new Runnable(){
-                        @Override
-                        public void run(){
-                            setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, false));
-                            finish();
-                        }
-                    }, 1000);
+                    setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, false));
+                    finish();
             }
         }
     }
@@ -413,15 +302,8 @@ public class ActionActivity
                     .putExtra(ActionReportService.ACTION_KEY, mAction)
                     .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
 
-            //Display the check mark and finish the activity after one second
-            mTickSwitcher.showNext();
-            new Handler().postDelayed(new Runnable(){
-                @Override
-                public void run(){
-                    setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, true));
-                    finish();
-                }
-            }, 1000);
+            setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, true));
+            finish();
         }
     }
 }
