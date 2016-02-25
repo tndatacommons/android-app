@@ -203,9 +203,11 @@ public class MainActivity
         });
         mFeed.addOnScrollListener(hub);
 
-        Animation hideAnimation = new ScaleAnimation(1, 0, 1, 0);
+        Animation hideAnimation = new ScaleAnimation(1, 0, 1, 0, Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
         hideAnimation.setDuration(200);
-        Animation showAnimation = new ScaleAnimation(0, 1, 0, 1);
+        Animation showAnimation = new ScaleAnimation(0, 1, 0, 1, Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
         showAnimation.setDuration(200);
 
         mStopper = findViewById(R.id.main_stopper);

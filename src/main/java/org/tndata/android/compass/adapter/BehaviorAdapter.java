@@ -79,7 +79,7 @@ public class BehaviorAdapter extends RecyclerView.Adapter{
         }
         else{
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            View rootView = inflater.inflate(R.layout.card_library_behavior_detail, parent, false);
+            View rootView = inflater.inflate(R.layout.card_library_detail, parent, false);
             return new BehaviorViewHolder(mContext, rootView);
         }
     }
@@ -138,8 +138,6 @@ public class BehaviorAdapter extends RecyclerView.Adapter{
             mBehaviorTitle = (TextView)rootView.findViewById(R.id.library_description_title);
             mBehaviorDescription = (TextView)rootView.findViewById(R.id.library_description_content);
 
-            rootView.findViewById(R.id.library_description_button_container).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.library_description_no).setOnClickListener(this);
             rootView.findViewById(R.id.library_description_yes).setOnClickListener(this);
         }
 
@@ -162,9 +160,9 @@ public class BehaviorAdapter extends RecyclerView.Adapter{
         @Override
         public void onClick(View v){
             switch (v.getId()){
-                case R.id.library_description_no:
+                /*case R.id.library_description_no:
                     mAdapter.mListener.dismissBehavior();
-                    break;
+                    break;*/
 
                 case R.id.library_description_yes:
                     mAdapter.mListener.acceptBehavior();
@@ -201,11 +199,11 @@ public class BehaviorAdapter extends RecyclerView.Adapter{
 
             mContext = context;
 
-            mHeader = (TextView)rootView.findViewById(R.id.behavior_detail_header);
+            /*mHeader = (TextView)rootView.findViewById(R.id.behavior_detail_header);
             mDescription = (TextView)rootView.findViewById(R.id.behavior_detail_description);
             mSeparator = rootView.findViewById(R.id.behavior_detail_separator);
             mMoreInfoTitle = (TextView)rootView.findViewById(R.id.behavior_detail_more_into_title);
-            mMoreInfo = (TextView)rootView.findViewById(R.id.behavior_detail_more_info);
+            mMoreInfo = (TextView)rootView.findViewById(R.id.behavior_detail_more_info);*/
         }
 
         /**

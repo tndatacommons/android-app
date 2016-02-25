@@ -2,9 +2,7 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -17,7 +15,6 @@ import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.ui.ContentContainer;
 import org.tndata.android.compass.util.CompassTagHandler;
-import org.tndata.android.compass.util.CompassUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,23 +26,13 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 2.0.0
  */
-public class ChooseGoalsAdapter extends RecyclerView.Adapter{
-    private static final int TYPE_BLANK = 0;
-    private static final int TYPE_DESCRIPTION = TYPE_BLANK+1;
-    private static final int TYPE_GOALS = TYPE_DESCRIPTION+1;
-    private static final int TYPE_LOAD = TYPE_GOALS+1;
-    private static final int ITEM_COUNT = TYPE_LOAD+1;
-
-
+public class ChooseGoalsAdapter extends LibraryAdapter{
     private Context mContext;
     private ChooseGoalsListener mListener;
     private CategoryContent mCategory;
 
     private GoalsViewHolder mGoalsHolder;
     private List<GoalContent> mGoals;
-
-    private boolean mShowLoading;
-    private String mLoadError;
 
 
     /**
@@ -58,121 +45,47 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
     public ChooseGoalsAdapter(@NonNull Context context, @NonNull ChooseGoalsListener listener,
                               @NonNull CategoryContent category){
 
+        super(context, ContentType.LIST);
+
         mContext = context;
         mListener = listener;
         mCategory = category;
 
         mGoals = new ArrayList<>();
-        mShowLoading = true;
-        mLoadError = "";
     }
 
     @Override
-    public int getItemCount(){
-        int count = ITEM_COUNT;
-        if (!mShowLoading){
-            count--;
-        }
-        if (mGoals.isEmpty()){
-            count--;
-        }
-        return count;
+    protected boolean isEmpty(){
+        return mGoals.isEmpty();
     }
 
     @Override
-    public int getItemViewType(int position){
-        if (position < 2){
-            //The two initial items are always the same, a blank space and the description
-            return position;
+    protected RecyclerView.ViewHolder getListHolder(ViewGroup parent){
+        if (mGoalsHolder == null){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            View rootView = inflater.inflate(R.layout.card_library_content, parent, false);
+            mGoalsHolder = new GoalsViewHolder(this, rootView);
+            mGoalsHolder.add(mGoals);
+            mGoalsHolder.mGoalContainer.setAnimationsEnabled(true);
         }
-        else if (position == 2){
-            //The third position can be either the progress bar or the goal container
-            if (mGoals.isEmpty()){
-                if (mShowLoading){
-                    return TYPE_LOAD;
-                }
-            }
-            else{
-                return TYPE_GOALS;
-            }
-        }
-        //If there is a fourth element, that would be loading
-        return TYPE_LOAD;
+        return mGoalsHolder;
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-
-        if (viewType == TYPE_BLANK){
-            return new RecyclerView.ViewHolder(new CardView(mContext)){};
-        }
-        else if (viewType == TYPE_DESCRIPTION){
-            View rootView = inflater.inflate(R.layout.card_library_description, parent, false);
-            return new DescriptionViewHolder(mContext, rootView);
-        }
-        else if (viewType == TYPE_GOALS){
-            if (mGoalsHolder == null){
-                View rootView = inflater.inflate(R.layout.card_library_content, parent, false);
-                mGoalsHolder = new GoalsViewHolder(this, rootView);
-                mGoalsHolder.add(mGoals);
-                mGoalsHolder.mGoalContainer.setAnimationsEnabled(true);
-            }
-            return mGoalsHolder;
+    protected void bindDescriptionHolder(LibraryAdapter.DescriptionViewHolder holder){
+        holder.setTitle(mCategory.getTitle());
+        if (!mCategory.getHTMLDescription().isEmpty()){
+            holder.setDescription(Html.fromHtml(mCategory.getHTMLDescription(), null,
+                    new CompassTagHandler(mContext)));
         }
         else{
-            View rootView = inflater.inflate(R.layout.item_library_progress, parent, false);
-            return new RecyclerView.ViewHolder(rootView){};
+            holder.setDescription(mCategory.getDescription());
         }
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
-        //Blank space
-        if (position == TYPE_BLANK){
-            int width = CompassUtil.getScreenWidth(mContext);
-            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    (int)((width*2/3)*0.8)
-            );
-            rawHolder.itemView.setLayoutParams(params);
-            rawHolder.itemView.setVisibility(View.INVISIBLE);
-        }
-        //Description
-        else if (position == TYPE_DESCRIPTION){
-            ((DescriptionViewHolder)rawHolder).bind(mCategory);
-        }
-        //Goals or load switch
-        else if (position == 2){
-            if (mGoals.isEmpty()){
-                if (mShowLoading){
-                    if (mLoadError.isEmpty()){
-                        mListener.loadMore();
-                    }
-                    else{
-                        rawHolder.itemView.findViewById(R.id.library_progress_progress).setVisibility(View.GONE);
-                        TextView error = (TextView)rawHolder.itemView.findViewById(R.id.library_progress_error);
-                        error.setVisibility(View.VISIBLE);
-                        error.setText(mLoadError);
-                    }
-                }
-            }
-            else{
-                ((GoalsViewHolder)rawHolder).bind(mCategory);
-            }
-        }
-        //Load switch, maybe
-        else if (position == TYPE_LOAD){
-            if (mLoadError.isEmpty()){
-                mListener.loadMore();
-            }
-            else{
-                rawHolder.itemView.findViewById(R.id.library_progress_progress).setVisibility(View.GONE);
-                TextView error = (TextView)rawHolder.itemView.findViewById(R.id.library_progress_error);
-                error.setVisibility(View.VISIBLE);
-                error.setText(mLoadError);
-            }
-        }
+    protected void bindListHolder(RecyclerView.ViewHolder rawHolder){
+        ((GoalsViewHolder)rawHolder).bind(mCategory);
     }
 
     /**
@@ -193,25 +106,10 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
     public void add(@NonNull List<GoalContent> goals, boolean showLoading){
         //If there are no goals, insert the goals card
         if (mGoals.isEmpty()){
-            notifyItemInserted(TYPE_GOALS);
+            notifyListInserted();
         }
-
-        //Set the new loading state
-        mShowLoading = showLoading;
-        //If we should no longer load, remove the load switch
-        if (!mShowLoading){
-            notifyItemRemoved(TYPE_LOAD);
-        }
-        //Otherwise, schedule an item refresh for the load switch half a second from now
-        //  to avoid the load callback getting called twice
-        else{
-            new Handler().postDelayed(new Runnable(){
-                @Override
-                public void run(){
-                    notifyItemChanged(TYPE_LOAD);
-                }
-            }, 500);
-        }
+        //Update the load switch
+        updateLoading(showLoading);
 
         //Add all the goals in the goal list
         mGoals.addAll(goals);
@@ -226,70 +124,20 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
         }
     }
 
+    /**
+     * Removes a goal from the adapter.
+     *
+     * @param goal the goal to be removed.
+     */
     public void remove(GoalContent goal){
         mGoals.remove(goal);
         mGoalsHolder.remove(goal);
     }
 
-    /**
-     * Displays an error in place of the load switch.
-     *
-     * @param error the error to be displayed.
-     */
-    public void displayError(String error){
-        mLoadError = error;
-        if (mGoals.isEmpty()){
-            notifyItemChanged(TYPE_LOAD-1);
-        }
-        else if (mShowLoading){
-            notifyItemChanged(TYPE_LOAD);
-        }
+    @Override
+    protected void loadMore(){
+        mListener.loadMore();
     }
-
-
-    /**
-     * View holder for a description card.
-     *
-     * @author Ismael Alonso
-     * @version 1.0.0
-     */
-    static class DescriptionViewHolder extends RecyclerView.ViewHolder{
-        private Context mContext;
-        private TextView mCategoryTitle;
-        private TextView mCategoryDescription;
-
-
-        /**
-         * Constructor.
-         *
-         * @param context a reference to the context.
-         * @param rootView the view to be drawn.
-         */
-        public DescriptionViewHolder(@NonNull Context context, @NonNull View rootView){
-            super(rootView);
-
-            mContext = context;
-            mCategoryTitle = (TextView)rootView.findViewById(R.id.library_description_title);
-            mCategoryDescription = (TextView)rootView.findViewById(R.id.library_description_content);
-        }
-
-        /**
-         * Binds a category to the holder.
-         *
-         * @param category the category whose description is to be drawn.
-         */
-        public void bind(@NonNull CategoryContent category){
-            mCategoryTitle.setText(category.getTitle());
-            if (!category.getHTMLDescription().isEmpty()){
-                mCategoryDescription.setText(Html.fromHtml(category.getHTMLDescription(), null,
-                        new CompassTagHandler(mContext)));
-            }
-            else{
-                mCategoryDescription.setText(category.getDescription());
-            }
-        }
-    }
-
 
     /**
      * The ViewHolder for a goal.
@@ -349,6 +197,11 @@ public class ChooseGoalsAdapter extends RecyclerView.Adapter{
             }
         }
 
+        /**
+         * Removes a goal from the container.
+         *
+         * @param goal the goal to be removed.
+         */
         public void remove(GoalContent goal){
             mGoalContainer.removeContent(goal);
         }
