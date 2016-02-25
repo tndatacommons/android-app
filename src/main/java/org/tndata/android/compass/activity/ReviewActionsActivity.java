@@ -5,7 +5,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.FrameLayout;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -14,7 +14,6 @@ import org.tndata.android.compass.adapter.ReviewActionsAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserGoal;
-import org.tndata.android.compass.util.CompassUtil;
 
 
 /**
@@ -58,10 +57,7 @@ public class ReviewActionsActivity extends LibraryActivity implements ReviewActi
 
     @SuppressWarnings("deprecation")
     private void setHeader(){
-        FrameLayout header = (FrameLayout)inflateHeader(R.layout.header_review_actions);
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)header.getLayoutParams();
-        params.height = CompassUtil.getScreenWidth(this)/3*2;
-        header.setLayoutParams(params);
+        View header = inflateHeader(R.layout.header_icon);
         RelativeLayout circle = (RelativeLayout)header.findViewById(R.id.review_actions_circle);
         ImageView icon = (ImageView)header.findViewById(R.id.review_actions_icon);
 

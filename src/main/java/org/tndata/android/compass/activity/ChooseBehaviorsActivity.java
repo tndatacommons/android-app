@@ -98,7 +98,7 @@ public class ChooseBehaviorsActivity
 
     @SuppressWarnings("deprecation")
     private void setHeader(){
-        View header = inflateHeader(R.layout.header_choose_behaviors);
+        View header = inflateHeader(R.layout.header_icon);
         RelativeLayout circle = (RelativeLayout)header.findViewById(R.id.choose_behaviors_circle);
         ImageView icon = (ImageView)header.findViewById(R.id.choose_behaviors_icon);
 
