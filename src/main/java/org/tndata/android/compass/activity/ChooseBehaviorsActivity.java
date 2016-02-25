@@ -187,9 +187,9 @@ public class ChooseBehaviorsActivity
     private void showActivities(){
         UserBehavior userBehavior = mApplication.getUserData().getBehavior(mSelectedBehavior);
         UserGoal userGoal = mApplication.getUserData().getGoal(mGoal);
-        startActivity(new Intent(this, ReviewActionsActivity.class)
+        /*startActivity(new Intent(this, ReviewActionsActivity.class)
                 .putExtra(ReviewActionsActivity.USER_GOAL_KEY, userGoal)
-                .putExtra(ReviewActionsActivity.USER_BEHAVIOR_KEY, userBehavior));
+                .putExtra(ReviewActionsActivity.USER_BEHAVIOR_KEY, userBehavior));*/
     }
 
     private void dismissAll(){
