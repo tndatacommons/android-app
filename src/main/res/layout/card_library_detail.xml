@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="15dp"
-            android:text="@string/behavior_detail_header"
+            android:text="@string/library_detail_header"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textAllCaps="true"
             android:textColor="@color/white" />
@@ -47,7 +47,7 @@
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:layout_marginTop="20dp"
-            android:text="@string/behavior_detail_more_info"
+            android:text="@string/library_detail_more_info"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textAllCaps="true"
             android:visibility="gone" />

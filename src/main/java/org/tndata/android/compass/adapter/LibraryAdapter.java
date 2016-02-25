@@ -39,41 +39,38 @@ public abstract class LibraryAdapter extends RecyclerView.Adapter{
 
     private Context mContext;
     private ContentType mContentType;
-
     private boolean mShowLoading;
     private String mLoadingError;
 
 
-    protected LibraryAdapter(Context context, ContentType contentType){
+    /**
+     * Constructor.
+     *
+     * @param context a reference to the context.
+     * @param contentType the type of adapter, list or detail.
+     * @param showLoading whether the loading widget should be shown by default.
+     */
+    protected LibraryAdapter(Context context, ContentType contentType, boolean showLoading){
         mContext = context;
         mContentType = contentType;
-
-        mShowLoading = true;
+        mShowLoading = showLoading;
         mLoadingError = "";
     }
 
-    protected void updateLoading(boolean showLoading){
-        mShowLoading = showLoading;
-        //If we are no longer loading, remove the switch
-        if (!mShowLoading){
-            notifyItemRemoved(getItemCount());
-        }
-        //Otherwise, schedule an item refresh for the load switch half a second from now
-        //  to avoid the load callback getting called twice
-        else{
-            new Handler().postDelayed(new Runnable(){
-                @Override
-                public void run(){
-                    notifyItemChanged(getItemCount()-1);
-                }
-            }, 500);
-        }
-    }
-
+    /**
+     * Method to override if showing a description card is conditional or other than default.
+     *
+     * @return true as a default value.
+     */
     protected boolean hasDescription(){
         return true;
     }
 
+    /**
+     * Method to override to determine if the backing data set in a listing adapter is empty.
+     *
+     * @return true as a default value.
+     */
     protected boolean isEmpty(){
         return true;
     }
@@ -172,8 +169,8 @@ public abstract class LibraryAdapter extends RecyclerView.Adapter{
 
     @Override
     public final void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
-        //The items in this list are unique, none of them is displayed more
-        //  than once, so the view type will do.
+        //The items in this list are unique, none of them is displayed more than
+        //  once, so the view type will do to determine which method to call
         int viewType = getItemViewType(position);
         if (viewType == TYPE_BLANK){
             int width = CompassUtil.getScreenWidth(mContext);
@@ -206,26 +203,61 @@ public abstract class LibraryAdapter extends RecyclerView.Adapter{
         }
     }
 
+    /**
+     * Method to get the holder for the listing section of the adapter. If the adapter is a
+     * listing adapter this method must be overriden and it must return an actual view
+     * holder. Returning null will cause the adapter to throw an IllegalStateException,
+     * since the main purpose of a listing adapter is to display a list of items. The
+     * implementee is responsible for creating the view holder in this case because there
+     * is no reasonable way to maintain a generic list with my model and my container
+     * implementations.
+     *
+     * @param parent the view group parent to the view that will be contained by the adapter.
+     * @return an adapter to (preferably) display a list of elements.
+     */
     protected RecyclerView.ViewHolder getListHolder(ViewGroup parent){
         return null;
     }
 
+    /**
+     * Called for the implementee to bind the description holder.
+     *
+     * @param holder the description holder.
+     */
     protected void bindDescriptionHolder(DescriptionViewHolder holder){
 
     }
 
+    /**
+     * Called for the implementee to bind the list holder.
+     *
+     * @param rawHolder a generic reference to the holder returned
+     *                  by {@code LibraryAdapter.getListHolder()}
+     */
     protected void bindListHolder(RecyclerView.ViewHolder rawHolder){
 
     }
 
+    /**
+     * Called for the implementee to bind the detail holder.
+     *
+     * @param holder the detail holder.
+     */
     protected void bindDetailHolder(DetailViewHolder holder){
 
     }
 
+    /**
+     * Called when the loading widget is reached.
+     */
     protected void loadMore(){
 
     }
 
+    /**
+     * Lets the adapter know that the backing list is not empty any more and, therefore,
+     * the view holder should be created and the view inserted in the recycler view.
+     */
     protected final void notifyListInserted(){
         if (mContentType != ContentType.LIST){
             Log.e(TAG, "Can't insert list in a non listing adapter");
@@ -242,6 +274,32 @@ public abstract class LibraryAdapter extends RecyclerView.Adapter{
     }
 
     /**
+     * Updates the state of the loading widget, but only if it is displayed.
+     *
+     * @param showLoading whether the loading widget should be shown or updated.
+     */
+    protected void updateLoading(boolean showLoading){
+        //The loader can only be updated if it is showing
+        if (mShowLoading){
+            mShowLoading = showLoading;
+            //If we are no longer loading, remove the switch
+            if (!mShowLoading){
+                notifyItemRemoved(getItemCount());
+            }
+            //Otherwise, schedule an item refresh for the load switch half a second from now
+            //  to avoid the load callback getting called twice
+            else{
+                new Handler().postDelayed(new Runnable(){
+                    @Override
+                    public void run(){
+                        notifyItemChanged(getItemCount() - 1);
+                    }
+                }, 500);
+            }
+        }
+    }
+
+    /**
      * Displays an error in place of the load switch.
      *
      * @param error the error to be displayed.
@@ -252,6 +310,12 @@ public abstract class LibraryAdapter extends RecyclerView.Adapter{
     }
 
 
+    /**
+     * Enumeration to establish the kinds of adapters that there are.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public enum ContentType{
         LIST(TYPE_LISTED_CONTENT),
         DETAIL(TYPE_DETAIL_CONTENT);
@@ -259,10 +323,21 @@ public abstract class LibraryAdapter extends RecyclerView.Adapter{
 
         private int mType;
 
+
+        /**
+         * Constructor.
+         *
+         * @param type the type of adapter in an adapter-understandable way.
+         */
         ContentType(int type){
             mType = type;
         }
 
+        /**
+         * Gets the type of adapter.
+         *
+         * @return the type of adapter in an adapter-understandable way.
+         */
         private int getType(){
             return mType;
         }
@@ -270,7 +345,7 @@ public abstract class LibraryAdapter extends RecyclerView.Adapter{
 
 
     /**
-     * View holder for a description card.
+     * View holder for the description card.
      *
      * @author Ismael Alonso
      * @version 1.0.0
@@ -294,27 +369,54 @@ public abstract class LibraryAdapter extends RecyclerView.Adapter{
             mButton = (TextView)rootView.findViewById(R.id.library_description_yes);
         }
 
+        /**
+         * Binds a title to the holder.
+         *
+         * @param title the title to be displayed in the card.
+         */
         public void setTitle(CharSequence title){
             mDescriptionTitle.setText(title);
         }
 
+        /**
+         * Binds a description to the holder.
+         *
+         * @param description the description to be displayed in the card.
+         */
         public void setDescription(CharSequence description){
             mDescriptionContent.setText(description);
         }
 
-        public void setButton(CharSequence text, View.OnClickListener onClickListener){
-            mButton.setText(text);
+        /**
+         * Sets up the button of the holder. Calling this method will make the button appear,
+         * which is hidden by default.
+         *
+         * @param caption the caption of the button.
+         * @param onClickListener the click listener for the button.
+         */
+        public void setButton(CharSequence caption, View.OnClickListener onClickListener){
+            mButton.setText(caption);
             mButton.setVisibility(View.VISIBLE);
             mButton.setOnClickListener(onClickListener);
         }
 
-        @IdRes
-        public int getButtonId(){
+        /**
+         * Gets the id of the button.
+         *
+         * @return the id of the button.
+         */
+        public @IdRes int getButtonId(){
             return mButton.getId();
         }
     }
 
 
+    /**
+     * View holder for the detail card.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     protected static class DetailViewHolder extends RecyclerView.ViewHolder{
         private TextView mHeader;
         private TextView mDescription;
@@ -338,14 +440,30 @@ public abstract class LibraryAdapter extends RecyclerView.Adapter{
             mMoreInfo = (TextView)rootView.findViewById(R.id.library_detail_more_info);
         }
 
+        /**
+         * Binds a color to the header title.
+         *
+         * @param color the color to be set as the background of the header.
+         */
         public void setHeaderColor(int color){
             mHeader.setBackgroundColor(color);
         }
 
+        /**
+         * Binds a description to the card.
+         *
+         * @param description the description to be displayed.
+         */
         public void setDescription(CharSequence description){
             mDescription.setText(description);
         }
 
+        /**
+         * Binds a more info section to the card. By default more info is hidden, but calling
+         * this method will make it show.
+         *
+         * @param moreInfo the more info text to be displayed.
+         */
         public void setMoreInfo(CharSequence moreInfo){
             mSeparator.setVisibility(View.VISIBLE);
             mMoreInfoTitle.setVisibility(View.VISIBLE);

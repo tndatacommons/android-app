@@ -70,12 +70,6 @@ public class BehaviorActivity extends LibraryActivity implements BehaviorAdapter
     }
 
     @Override
-    public void dismissBehavior(){
-        setResult(RESULT_CANCELED);
-        finish();
-    }
-
-    @Override
     public void acceptBehavior(){
         //Set the result as OK and let ChooseBehaviorsActivity handle the networking
         //  and addition to the library

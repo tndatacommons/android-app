@@ -122,13 +122,12 @@
 
     <!-- Library -->
     <string name="library_goals_content_header">Compass can help me&#8230;</string>
-    <string name="goal_title">I want to %1$s</string>
+    <string name="library_goal_title">I want to %1$s</string>
     <string name="library_behaviors_content_header">You can do it!</string>
-    <string name="behavior_title">I want to %1$s</string>
-    <string name="behavior_yes">Yes, I\'m in</string>
-    <string name="behavior_no">Not now</string>
-    <string name="behavior_detail_header">Here is why</string>
-    <string name="behavior_detail_more_info">More info</string>
+    <string name="library_behavior_title">I want to %1$s</string>
+    <string name="library_behavior_yes">Yes, I\'m in</string>
+    <string name="library_detail_header">Here is why</string>
+    <string name="library_detail_more_info">More info</string>
     <string name="dialog_behavior_title">I\'m awesome</string>
     <string name="dialog_behavior_content">Compass will check back in occasionally with activities that can help you reach your goal.</string>
     <string name="dialog_behavior_activities">Activities</string>

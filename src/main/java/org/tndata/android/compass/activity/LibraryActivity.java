@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.adapter.LibraryAdapter;
 import org.tndata.android.compass.util.ParallaxEffect;
 
 
@@ -92,7 +93,7 @@ public abstract class LibraryActivity
         mHeaderContainer.setBackgroundColor(color);
     }
 
-    protected final void setAdapter(RecyclerView.Adapter adapter){
+    protected final void setAdapter(LibraryAdapter adapter){
         mRecyclerView.setAdapter(adapter);
     }
 

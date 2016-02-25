@@ -50,7 +50,7 @@ public class ReviewActionsActivity extends LibraryActivity implements ReviewActi
 
         Log.d("ReviewActionsActivity", mUserGoal.getPrimaryCategory().getColor());
         setHeader();
-        setAdapter(mAdapter);
+        //setAdapter(mAdapter);
         setColor(Color.parseColor(mUserGoal.getPrimaryCategory().getColor()));
 
         mSelectedAction = null;

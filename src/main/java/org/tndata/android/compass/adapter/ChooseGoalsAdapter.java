@@ -45,7 +45,7 @@ public class ChooseGoalsAdapter extends LibraryAdapter{
     public ChooseGoalsAdapter(@NonNull Context context, @NonNull ChooseGoalsListener listener,
                               @NonNull CategoryContent category){
 
-        super(context, ContentType.LIST);
+        super(context, ContentType.LIST, true);
 
         mContext = context;
         mListener = listener;
@@ -105,7 +105,7 @@ public class ChooseGoalsAdapter extends LibraryAdapter{
      */
     public void add(@NonNull List<GoalContent> goals, boolean showLoading){
         //If there are no goals, insert the goals card
-        if (mGoals.isEmpty()){
+        if (isEmpty()){
             notifyListInserted();
         }
         //Update the load switch
@@ -138,6 +138,7 @@ public class ChooseGoalsAdapter extends LibraryAdapter{
     protected void loadMore(){
         mListener.loadMore();
     }
+
 
     /**
      * The ViewHolder for a goal.

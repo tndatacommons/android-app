@@ -198,7 +198,7 @@ public class ChooseBehaviorsActivity
             mShareDialog = null;
         }
 
-        mAdapter.removeBehavior(mSelectedBehavior);
+        mAdapter.remove(mSelectedBehavior);
         mSelectedBehavior = null;
         if (!mAdapter.hasBehaviors()){
             setResult(RESULT_OK);
@@ -244,7 +244,7 @@ public class ChooseBehaviorsActivity
             //If the list isn't empty
             if (!behaviorList.isEmpty()){
                 //Add the behaviors to the adapter
-                mAdapter.addBehaviors(behaviorList, mGetBehaviorsNextUrl != null);
+                mAdapter.add(behaviorList, mGetBehaviorsNextUrl != null);
             }
             else{
                 //If the list is empty AND the adapter has no behaviors, then the
