@@ -75,6 +75,15 @@ public abstract class LibraryAdapter extends RecyclerView.Adapter{
         return true;
     }
 
+    /**
+     * Method to override if showing a details card is optional or other than default.
+     *
+     * @return true as a default value.
+     */
+    protected boolean hasDetails(){
+        return true;
+    }
+
     @Override
     public final int getItemCount(){
         //Blank space
@@ -84,11 +93,13 @@ public abstract class LibraryAdapter extends RecyclerView.Adapter{
             count++;
         }
         //Content
-        if (mContentType.getType() == TYPE_DETAIL_CONTENT){
-            count++;
-        }
-        else if (mContentType.getType() == TYPE_LISTED_CONTENT){
+        if (mContentType.getType() == TYPE_LISTED_CONTENT){
             if (!isEmpty()){
+                count++;
+            }
+        }
+        else if (mContentType.getType() == TYPE_DETAIL_CONTENT){
+            if (hasDetails()){
                 count++;
             }
         }
@@ -112,12 +123,14 @@ public abstract class LibraryAdapter extends RecyclerView.Adapter{
             }
             else{
                 //But if there is no description, the next block is shown: content
-                if (mContentType.getType() == TYPE_DETAIL_CONTENT){
-                    return TYPE_DETAIL_CONTENT;
-                }
-                else{
+                if (mContentType.getType() == TYPE_LISTED_CONTENT){
                     if (!isEmpty()){
                         return TYPE_LISTED_CONTENT;
+                    }
+                }
+                else if (mContentType.getType() == TYPE_DETAIL_CONTENT){
+                    if (hasDetails()){
+                        return TYPE_DETAIL_CONTENT;
                     }
                 }
             }
@@ -255,6 +268,13 @@ public abstract class LibraryAdapter extends RecyclerView.Adapter{
     }
 
     /**
+     * Lets the adapter know that a description item has been added.
+     */
+    protected final void notifyDescriptionInserted(){
+        notifyItemInserted(1);
+    }
+
+    /**
      * Lets the adapter know that the backing list is not empty any more and, therefore,
      * the view holder should be created and the view inserted in the recycler view.
      */
@@ -263,13 +283,31 @@ public abstract class LibraryAdapter extends RecyclerView.Adapter{
             Log.e(TAG, "Can't insert list in a non listing adapter");
         }
         else{
+            insertContent();
+        }
+    }
 
-            if (hasDescription()){
-                notifyItemInserted(2);
-            }
-            else{
-                notifyItemInserted(1);
-            }
+    /**
+     * Lets the adapter know that a details item has been inserted.
+     */
+    protected final void notifyDetailsInserted(){
+        if (mContentType != ContentType.DETAIL){
+            Log.e(TAG, "Can't insert a detail in a non detail adapter");
+        }
+        else{
+            insertContent();
+        }
+    }
+
+    /**
+     * Lets the adapter know that a content item has been inserted.
+     */
+    private void insertContent(){
+        if (hasDescription()){
+            notifyItemInserted(2);
+        }
+        else{
+            notifyItemInserted(1);
         }
     }
 
