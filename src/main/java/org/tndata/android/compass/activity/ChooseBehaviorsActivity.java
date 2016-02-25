@@ -23,6 +23,7 @@ import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserBehavior;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
@@ -138,7 +139,8 @@ public class ChooseBehaviorsActivity
         if (API.STAGING && mGetBehaviorsNextUrl.startsWith("https")){
             mGetBehaviorsNextUrl = mGetBehaviorsNextUrl.replaceFirst("s", "");
         }
-        mGetBehaviorsRequestCode = NetworkRequest.get(this, this, mGetBehaviorsNextUrl, "");
+        mGetBehaviorsRequestCode = NetworkRequest.get(this, this, mGetBehaviorsNextUrl,
+                mApplication.getToken());
     }
 
     @Override
@@ -183,8 +185,11 @@ public class ChooseBehaviorsActivity
     }
 
     private void showActivities(){
+        UserBehavior userBehavior = mApplication.getUserData().getBehavior(mSelectedBehavior);
+        UserGoal userGoal = mApplication.getUserData().getGoal(mGoal);
         startActivity(new Intent(this, ReviewActionsActivity.class)
-                .putExtra(ReviewActionsActivity.USER_BEHAVIOR_KEY, mApplication.getUserData().getBehavior(mSelectedBehavior)));
+                .putExtra(ReviewActionsActivity.USER_GOAL_KEY, userGoal)
+                .putExtra(ReviewActionsActivity.USER_BEHAVIOR_KEY, userBehavior));
     }
 
     private void dismissAll(){
@@ -232,17 +237,27 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof UserBehavior){
-            if (mShareDialog != null){
-                ((ViewSwitcher)mShareDialog.findViewById(R.id.dialog_behavior_switcher)).showNext();
-            }
-        }
-        else if (result instanceof ParserModels.BehaviorContentResultSet){
+        if (result instanceof ParserModels.BehaviorContentResultSet){
             ParserModels.BehaviorContentResultSet set = (ParserModels.BehaviorContentResultSet)result;
             mGetBehaviorsNextUrl = set.next;
             List<BehaviorContent> behaviorList = set.results;
-            if (behaviorList != null && !behaviorList.isEmpty()){
+            //If the list isn't empty
+            if (!behaviorList.isEmpty()){
+                //Add the behaviors to the adapter
                 mAdapter.addBehaviors(behaviorList, mGetBehaviorsNextUrl != null);
+            }
+            else{
+                //If the list is empty AND the adapter has no behaviors, then the
+                //  user has already selected all of the behaviors; let him know
+                //  through the error channel
+                if (!mAdapter.hasBehaviors()){
+                    mAdapter.displayError("You have already selected all behaviors");
+                }
+            }
+        }
+        else if (result instanceof UserBehavior){
+            if (mShareDialog != null){
+                ((ViewSwitcher)mShareDialog.findViewById(R.id.dialog_behavior_switcher)).showNext();
             }
         }
     }

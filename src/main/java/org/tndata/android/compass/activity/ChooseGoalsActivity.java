@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseGoalsAdapter;
 import org.tndata.android.compass.model.CategoryContent;
@@ -46,6 +47,8 @@ public class ChooseGoalsActivity
     private static final int CHOOSE_BEHAVIORS_RQ = 4528;
 
 
+    public CompassApplication mApplication;
+
     private CategoryContent mCategory;
     private ChooseGoalsAdapter mAdapter;
     private GoalContent mSelectedGoal;
@@ -58,6 +61,7 @@ public class ChooseGoalsActivity
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        mApplication = (CompassApplication)getApplication();
 
         mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
 
@@ -112,7 +116,8 @@ public class ChooseGoalsActivity
         if (API.STAGING && mGetGoalsNextUrl.startsWith("https")){
             mGetGoalsNextUrl = mGetGoalsNextUrl.replaceFirst("s", "");
         }
-        mGetGoalsRequestCode = NetworkRequest.get(this, this, mGetGoalsNextUrl, "");
+        mGetGoalsRequestCode = NetworkRequest.get(this, this, mGetGoalsNextUrl,
+                mApplication.getToken());
     }
 
     @Override

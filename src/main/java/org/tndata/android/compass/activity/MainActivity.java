@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -90,9 +91,6 @@ public class MainActivity
     //Floating action menu components
     private View mStopper;
     private FloatingActionMenu mMenu;
-
-    //The selected category from the FAB
-    private CategoryContent mSelectedCategory;
 
     private boolean mSuggestionDismissed;
 
@@ -169,7 +167,7 @@ public class MainActivity
         toolbarEffect.setParallaxCondition(new ParallaxEffect.ParallaxCondition(){
             @Override
             protected boolean doParallax(){
-                int height = (int)((CompassUtil.getScreenWidth(MainActivity.this)*2/3)*0.6);
+                int height = (int)((CompassUtil.getScreenWidth(MainActivity.this) * 2 / 3) * 0.6);
                 return -getRecyclerViewOffset() > height;
             }
 
@@ -180,8 +178,8 @@ public class MainActivity
 
             @Override
             protected int getParallaxViewOffset(){
-                int height = (int)((CompassUtil.getScreenWidth(MainActivity.this)*2/3)*0.6);
-                return  height + getFixedState() + getRecyclerViewOffset();
+                int height = (int)((CompassUtil.getScreenWidth(MainActivity.this) * 2 / 3) * 0.6);
+                return height + getFixedState() + getRecyclerViewOffset();
             }
         });
         hub.addOnScrollListener(toolbarEffect);
@@ -205,15 +203,21 @@ public class MainActivity
         });
         mFeed.addOnScrollListener(hub);
 
+        Animation hideAnimation = new ScaleAnimation(1, 0, 1, 0);
+        hideAnimation.setDuration(200);
+        Animation showAnimation = new ScaleAnimation(0, 1, 0, 1);
+        showAnimation.setDuration(200);
+
         mStopper = findViewById(R.id.main_stopper);
         mMenu = (FloatingActionMenu)findViewById(R.id.main_fab_menu);
+        mMenu.setMenuButtonHideAnimation(hideAnimation);
+        mMenu.setMenuButtonShowAnimation(showAnimation);
         mMenu.setIconAnimated(false);
         mMenu.setClosedOnTouchOutside(true);
         mMenu.setOnMenuButtonClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 if (!mMenu.isOpened()){
-                    mSelectedCategory = null;
                     animateBackground(true);
                 }
                 mMenu.toggle(true);
@@ -376,11 +380,6 @@ public class MainActivity
             public void onAnimationEnd(Animation animation){
                 if (!opening){
                     mStopper.setVisibility(View.GONE);
-                }
-                if (mSelectedCategory != null){
-                    Intent intent = new Intent(MainActivity.this, ChooseGoalsActivity.class);
-                    intent.putExtra(ChooseGoalsActivity.CATEGORY_KEY, mSelectedCategory);
-                    startActivityForResult(intent, Constants.CHOOSE_GOALS_REQUEST_CODE);
                 }
             }
 

@@ -1,11 +1,20 @@
 package org.tndata.android.compass.activity;
 
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
+import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ReviewActionsAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserGoal;
+import org.tndata.android.compass.util.CompassUtil;
 
 
 /**
@@ -31,20 +40,41 @@ public class ReviewActionsActivity extends LibraryActivity implements ReviewActi
         super.onCreate(savedInstanceState);
 
         mUserGoal = (UserGoal)getIntent().getSerializableExtra(USER_GOAL_KEY);
-        if (mUserGoal != null){
+        mUserBehavior = (UserBehavior)getIntent().getSerializableExtra(USER_BEHAVIOR_KEY);
+        if (mUserBehavior == null){
             mAdapter = new ReviewActionsAdapter(this, this, mUserGoal);
         }
         else{
-            mUserBehavior = (UserBehavior)getIntent().getSerializableExtra(USER_BEHAVIOR_KEY);
-            if (mUserBehavior == null){
-                finish();
-            }
             mAdapter = new ReviewActionsAdapter(this, this, mUserBehavior);
         }
 
+        Log.d("ReviewActionsActivity", mUserGoal.getPrimaryCategory().getColor());
+        setHeader();
         setAdapter(mAdapter);
+        setColor(Color.parseColor(mUserGoal.getPrimaryCategory().getColor()));
 
         mSelectedAction = null;
+    }
+
+    @SuppressWarnings("deprecation")
+    private void setHeader(){
+        FrameLayout header = (FrameLayout)inflateHeader(R.layout.header_review_actions);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)header.getLayoutParams();
+        params.height = CompassUtil.getScreenWidth(this)/3*2;
+        header.setLayoutParams(params);
+        RelativeLayout circle = (RelativeLayout)header.findViewById(R.id.review_actions_circle);
+        ImageView icon = (ImageView)header.findViewById(R.id.review_actions_icon);
+
+        GradientDrawable gradientDrawable = (GradientDrawable) circle.getBackground();
+        gradientDrawable.setColor(Color.parseColor(mUserGoal.getPrimaryCategory().getColor()));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+            circle.setBackground(gradientDrawable);
+        }
+        else{
+            circle.setBackgroundDrawable(gradientDrawable);
+        }
+
+        mUserBehavior.getBehavior().loadIconIntoView(icon);
     }
 
     @Override
