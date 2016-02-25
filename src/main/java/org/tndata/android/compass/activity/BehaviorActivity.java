@@ -4,7 +4,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.widget.FrameLayout;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -12,7 +12,6 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.BehaviorAdapter;
 import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.CategoryContent;
-import org.tndata.android.compass.util.CompassUtil;
 
 
 /**
@@ -46,10 +45,7 @@ public class BehaviorActivity extends LibraryActivity implements BehaviorAdapter
 
     @SuppressWarnings("deprecation")
     private void setHeader(){
-        FrameLayout header = (FrameLayout)inflateHeader(R.layout.header_choose_behaviors);
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)header.getLayoutParams();
-        params.height = CompassUtil.getScreenWidth(this)/3*2;
-        header.setLayoutParams(params);
+        View header = inflateHeader(R.layout.header_choose_behaviors);
         RelativeLayout circle = (RelativeLayout)header.findViewById(R.id.choose_behaviors_circle);
         ImageView icon = (ImageView)header.findViewById(R.id.choose_behaviors_icon);
 

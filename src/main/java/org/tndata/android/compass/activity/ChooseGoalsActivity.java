@@ -6,9 +6,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.widget.FrameLayout;
+import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -65,10 +64,7 @@ public class ChooseGoalsActivity
 
         mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
 
-        FrameLayout header = (FrameLayout)inflateHeader(R.layout.header_choose_goals);
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)header.getLayoutParams();
-        params.height = CompassUtil.getScreenWidth(this)/3*2;
-        header.setLayoutParams(params);
+        View header = inflateHeader(R.layout.header_choose_goals);
         ImageView tile = (ImageView)header.findViewById(R.id.choose_goals_tile);
 
         int id = CompassUtil.getCategoryTileResId(mCategory.getTitle());

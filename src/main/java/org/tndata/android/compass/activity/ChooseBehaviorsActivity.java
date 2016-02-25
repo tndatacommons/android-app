@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ViewSwitcher;
@@ -27,7 +26,6 @@ import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.List;
@@ -100,10 +98,7 @@ public class ChooseBehaviorsActivity
 
     @SuppressWarnings("deprecation")
     private void setHeader(){
-        FrameLayout header = (FrameLayout)inflateHeader(R.layout.header_choose_behaviors);
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)header.getLayoutParams();
-        params.height = CompassUtil.getScreenWidth(this)/3*2;
-        header.setLayoutParams(params);
+        View header = inflateHeader(R.layout.header_choose_behaviors);
         RelativeLayout circle = (RelativeLayout)header.findViewById(R.id.choose_behaviors_circle);
         ImageView icon = (ImageView)header.findViewById(R.id.choose_behaviors_icon);
 

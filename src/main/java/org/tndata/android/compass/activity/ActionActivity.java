@@ -6,8 +6,6 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
@@ -23,10 +21,12 @@ import android.widget.ViewSwitcher;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.adapter.ActionAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.ActionContent;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserContent;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.service.ActionReportService;
@@ -47,7 +47,7 @@ import org.tndata.android.compass.util.NotificationUtil;
  * @version 1.2.1
  */
 public class ActionActivity
-        extends AppCompatActivity
+        extends LibraryActivity
         implements
                 View.OnClickListener,
                 NetworkRequest.RequestCallback,
@@ -68,6 +68,8 @@ public class ActionActivity
     private Action mAction;
     private Reminder mReminder;
 
+    private ActionAdapter mAdapter;
+
     //UI components
     private ImageView mActionImage;
     private TextView mActionTitle;
@@ -87,7 +89,6 @@ public class ActionActivity
     @SuppressWarnings("deprecation")
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_action);
 
         mApplication = (CompassApplication)getApplication();
 
@@ -95,16 +96,23 @@ public class ActionActivity
         mAction = (UserAction)getIntent().getSerializableExtra(ACTION_KEY);
         mReminder = null;
 
-        //Set up the toolbar
-        Toolbar toolbar = (Toolbar)findViewById(R.id.action_toolbar);
-        toolbar.setTitle("");
-        setSupportActionBar(toolbar);
+        if (mAction != null){
+            Action temp = mApplication.getUserData().getAction(mAction);
+            if (temp != null){
+                mAction = temp;
+            }
+        }
+
+        mAdapter = new ActionAdapter(this, mAction);
+
+        setAdapter(mAdapter);
 
         //Fetch UI components
-        FrameLayout heroContainer = (FrameLayout)findViewById(R.id.action_hero_container);
+        /*FrameLayout heroContainer = (FrameLayout)findViewById(R.id.action_hero_container);
         RelativeLayout circleView = (RelativeLayout)findViewById(R.id.action_circle_view);
-        mActionImage = (ImageView)findViewById(R.id.action_image);
-        mActionTitle = (TextView)findViewById(R.id.action_title);
+        mActionImage = (ImageView)findViewById(R.id.action_image);*/
+
+        /*mActionTitle = (TextView)findViewById(R.id.action_title);
         mActionDescription = (TextView)findViewById(R.id.action_description);
         mMoreInfoHeader = (TextView)findViewById(R.id.action_more_info_header);
         mMoreInfo = (TextView)findViewById(R.id.action_more_info);
@@ -122,35 +130,41 @@ public class ActionActivity
 
         //Listeners
         timeOption.setOnClickListener(this);
-        mDidIt.setOnClickListener(this);
+        mDidIt.setOnClickListener(this);*/
 
         //Circle view
-        GradientDrawable gradientDrawable = (GradientDrawable)circleView.getBackground();
+        /*GradientDrawable gradientDrawable = (GradientDrawable)circleView.getBackground();
         gradientDrawable.setColor(Color.WHITE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
             circleView.setBackground(gradientDrawable);
         }
         else{
             circleView.setBackgroundDrawable(gradientDrawable);
-        }
+        }*/
 
         mActionUpdated = false;
 
         //If the action wasn't provided via the intent it needs to be fetched
         if (mAction == null){
-            timeOption.setText(R.string.action_snooze);
+            //timeOption.setText(R.string.action_snooze);
             mReminder = (Reminder)getIntent().getSerializableExtra(REMINDER_KEY);
             fetchAction();
         }
         else{
             mAction = mApplication.getUserData().getAction(mAction);
-            timeOption.setText(R.string.action_reschedule);
             if (mAction instanceof UserAction){
+                setColor(Color.parseColor(((UserAction)mAction).getPrimaryCategory().getColor()));
+            }
+            else{
+                setColor(getResources().getColor(R.color.grow_primary));
+            }
+            //timeOption.setText(R.string.action_reschedule);
+            /*if (mAction instanceof UserAction){
                 populateUI((UserAction)mAction);
             }
             else if (mAction instanceof CustomAction){
                 populateUI((CustomAction)mAction);
-            }
+            }*/
         }
     }
 
@@ -182,7 +196,7 @@ public class ActionActivity
 
     @Override
     public void onRequestFailed(int requestCode, String message){
-        finish();
+        mAdapter.displayError("Couldn't retrieve information");
     }
 
     @Override
@@ -194,12 +208,9 @@ public class ActionActivity
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof UserAction){
-            populateUI((UserAction)mAction);
-            invalidateOptionsMenu();
-        }
-        else if (result instanceof CustomAction){
-            populateUI((CustomAction)mAction);
+        if (result instanceof UserAction || result instanceof CustomAction){
+            mAction = (Action)result;
+            mAdapter.setAction(mAction);
             invalidateOptionsMenu();
         }
     }
@@ -290,7 +301,7 @@ public class ActionActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
+    public boolean menuItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.action_trigger:
                 reschedule();

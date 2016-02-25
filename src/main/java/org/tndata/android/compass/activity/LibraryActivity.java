@@ -14,9 +14,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.LibraryAdapter;
+import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ParallaxEffect;
 
 
@@ -41,6 +43,7 @@ public abstract class LibraryActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library);
 
+        //Set up the toolbar
         mToolbar = (Toolbar)findViewById(R.id.library_toolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
         setSupportActionBar(mToolbar);
@@ -49,18 +52,26 @@ public abstract class LibraryActivity
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
+        //Fetch UI components
         mHeaderContainer = (FrameLayout)findViewById(R.id.library_header_container);
         mRecyclerView = (RecyclerView)findViewById(R.id.library_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        //Make the header the right size
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)mHeaderContainer.getLayoutParams();
+        params.height = CompassUtil.getScreenWidth(this)/3*2;
+        mHeaderContainer.setLayoutParams(params);
+
+        //Add the parallax effect to the header
         ParallaxEffect parallaxEffect = new ParallaxEffect(mHeaderContainer, 0.5f);
         parallaxEffect.setScrollListener(this);
         mRecyclerView.addOnScrollListener(parallaxEffect);
     }
 
     @Override
-    public final boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     @Override
@@ -75,8 +86,12 @@ public abstract class LibraryActivity
                 return true;
 
             default:
-                return super.onOptionsItemSelected(item);
+                return menuItemSelected(item) || super.onOptionsItemSelected(item);
         }
+    }
+
+    protected boolean menuItemSelected(MenuItem item){
+        return false;
     }
 
     @Override
