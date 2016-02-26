@@ -60,7 +60,7 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
     }
 
     @Override
-    protected RecyclerView.ViewHolder getListHolder(ViewGroup parent){
+    protected @NonNull RecyclerView.ViewHolder getListHolder(ViewGroup parent){
         if (mGoalsHolder == null){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             View rootView = inflater.inflate(R.layout.card_material_content, parent, false);

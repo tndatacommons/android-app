@@ -154,30 +154,65 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
 
     @Override
     public final RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-
         if (viewType == TYPE_BLANK){
             return new RecyclerView.ViewHolder(new CardView(mContext)){};
         }
         else if (viewType == TYPE_DESCRIPTION){
-            View rootView = inflater.inflate(R.layout.card_material_header, parent, false);
-            return new DescriptionViewHolder(rootView);
+            return getDescriptionHolder(parent);
         }
         else if (viewType == TYPE_LISTED_CONTENT){
-            RecyclerView.ViewHolder holder = getListHolder(parent);
-            if (holder == null){
-                throw new IllegalStateException("Adapter needs to override getListHolder()");
-            }
-            return holder;
+            return getListHolder(parent);
         }
         else if (viewType == TYPE_DETAIL_CONTENT){
-            View rootView = inflater.inflate(R.layout.card_material_detail, parent, false);
-            return new DetailViewHolder(rootView);
+            return getDetailsHolder(parent);
         }
         else /*if (viewType == TYPE_LOAD)*/{
+            LayoutInflater inflater = LayoutInflater.from(mContext);
             View rootView = inflater.inflate(R.layout.item_material_progress, parent, false);
             return new RecyclerView.ViewHolder(rootView){};
         }
+    }
+
+    /**
+     * Creates the default holder for the header card. The implementee is free to override this
+     * method to set his own holder with the desired layout.
+     *
+     * @param parent the view group parent to the view that will be contained by the adapter.
+     * @return an adapter to act as a header.
+     */
+    protected @NonNull RecyclerView.ViewHolder getDescriptionHolder(ViewGroup parent){
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        View rootView = inflater.inflate(R.layout.card_material_header, parent, false);
+        return new DescriptionViewHolder(rootView);
+    }
+
+    /**
+     * Method to get the holder for the listing section of the adapter. If the adapter is a
+     * listing adapter this method must be overriden and it must return an actual view
+     * holder. Returning null will cause the adapter to throw an IllegalStateException,
+     * since the main purpose of a listing adapter is to display a list of items. The
+     * implementee is responsible for creating the view holder in this case because there
+     * is no reasonable way to maintain a generic list with my model and my container
+     * implementations.
+     *
+     * @param parent the view group parent to the view that will be contained by the adapter.
+     * @return an adapter to (preferably) display a list of elements.
+     */
+    protected @NonNull RecyclerView.ViewHolder getListHolder(ViewGroup parent){
+        throw new IllegalStateException("Implementee needs to override getListHolder()");
+    }
+
+    /**
+     * Creates the default holder for the details card. The implementee is free to override this
+     * method to set his own holder with the desired layout.
+     *
+     * @param parent the view group parent to the view that will be contained by the adapter.
+     * @return an adapter to act as a details view.
+     */
+    protected @NonNull RecyclerView.ViewHolder getDetailsHolder(ViewGroup parent){
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        View rootView = inflater.inflate(R.layout.card_material_detail, parent, false);
+        return new DetailViewHolder(rootView);
     }
 
     @Override
@@ -214,22 +249,6 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
                 error.setText(mLoadingError);
             }
         }
-    }
-
-    /**
-     * Method to get the holder for the listing section of the adapter. If the adapter is a
-     * listing adapter this method must be overriden and it must return an actual view
-     * holder. Returning null will cause the adapter to throw an IllegalStateException,
-     * since the main purpose of a listing adapter is to display a list of items. The
-     * implementee is responsible for creating the view holder in this case because there
-     * is no reasonable way to maintain a generic list with my model and my container
-     * implementations.
-     *
-     * @param parent the view group parent to the view that will be contained by the adapter.
-     * @return an adapter to (preferably) display a list of elements.
-     */
-    protected RecyclerView.ViewHolder getListHolder(ViewGroup parent){
-        return null;
     }
 
     /**

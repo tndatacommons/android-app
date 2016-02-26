@@ -64,7 +64,7 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
     }
 
     @Override
-    protected RecyclerView.ViewHolder getListHolder(ViewGroup parent){
+    protected @NonNull RecyclerView.ViewHolder getListHolder(ViewGroup parent){
         if (mBehaviorsHolder == null){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             View rootView = inflater.inflate(R.layout.card_material_content, parent, false);
