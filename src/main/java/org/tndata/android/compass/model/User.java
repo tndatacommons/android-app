@@ -31,6 +31,8 @@ public class User extends TDCBase implements Serializable{
     private String mLastName;
     @SerializedName("full_name")
     private String mFullName;
+    @SerializedName("gender")
+    private String mGender;
     @SerializedName("token")
     private String mToken;
     @SerializedName("date_joined")
