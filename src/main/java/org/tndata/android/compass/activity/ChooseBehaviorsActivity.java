@@ -216,6 +216,11 @@ public class ChooseBehaviorsActivity
         if (requestCode == mGetBehaviorsRequestCode){
             mAdapter.displayError("Couldn't load behaviors");
         }
+        else if (requestCode == mPostBehaviorRequestCode){
+            if (mShareDialog != null){
+                ((ViewSwitcher)mShareDialog.findViewById(R.id.dialog_behavior_switcher)).showNext();
+            }
+        }
     }
 
     @Override
