@@ -48,7 +48,7 @@ public class BehaviorAdapter extends MaterialAdapter implements View.OnClickList
     }
 
     @Override
-    protected void bindDescriptionHolder(MaterialAdapter.DescriptionViewHolder holder){
+    protected void bindHeaderHolder(HeaderViewHolder holder){
         holder.setTitle(mContext.getString(R.string.library_behavior_title, mBehavior.getTitle()));
         if (!mBehavior.getHTMLDescription().isEmpty()){
             holder.setDescription(Html.fromHtml(mBehavior.getHTMLDescription(), null,

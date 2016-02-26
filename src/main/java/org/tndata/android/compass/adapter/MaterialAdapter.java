@@ -31,8 +31,8 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
     private static final String TAG = "LibraryAdapter";
 
     private static final int TYPE_BLANK = 0;
-    private static final int TYPE_DESCRIPTION = TYPE_BLANK+1;
-    private static final int TYPE_LISTED_CONTENT = TYPE_DESCRIPTION+1;      //Either
+    private static final int TYPE_HEADER = TYPE_BLANK+1;
+    private static final int TYPE_LISTED_CONTENT = TYPE_HEADER +1;      //Either
     private static final int TYPE_DETAIL_CONTENT = TYPE_LISTED_CONTENT+1;   //Or
     private static final int TYPE_LOAD = TYPE_DETAIL_CONTENT+1;
 
@@ -58,11 +58,11 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
     }
 
     /**
-     * Method to override if showing a description card is conditional or other than default.
+     * Method to override if showing a header card is conditional or other than default.
      *
      * @return true as a default value.
      */
-    protected boolean hasDescription(){
+    protected boolean hasHeader(){
         return true;
     }
 
@@ -89,7 +89,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
         //Blank space
         int count = 1;
         //Description
-        if (hasDescription()){
+        if (hasHeader()){
             count++;
         }
         //Content
@@ -118,8 +118,8 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
         }
         //Item at position 1 is generally a description
         if (position == 1){
-            if (hasDescription()){
-                return TYPE_DESCRIPTION;
+            if (hasHeader()){
+                return TYPE_HEADER;
             }
             else{
                 //But if there is no description, the next block is shown: content
@@ -137,7 +137,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
         }
         //Item at position 2 is generally the content, if there is a description block
         if (position == 2){
-            if (hasDescription()){
+            if (hasHeader()){
                 if (mContentType.getType() == TYPE_DETAIL_CONTENT){
                     return TYPE_DETAIL_CONTENT;
                 }
@@ -157,8 +157,8 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
         if (viewType == TYPE_BLANK){
             return new RecyclerView.ViewHolder(new CardView(mContext)){};
         }
-        else if (viewType == TYPE_DESCRIPTION){
-            return getDescriptionHolder(parent);
+        else if (viewType == TYPE_HEADER){
+            return getHeaderHolder(parent);
         }
         else if (viewType == TYPE_LISTED_CONTENT){
             return getListHolder(parent);
@@ -180,10 +180,10 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
      * @param parent the view group parent to the view that will be contained by the adapter.
      * @return an adapter to act as a header.
      */
-    protected @NonNull RecyclerView.ViewHolder getDescriptionHolder(ViewGroup parent){
+    protected @NonNull RecyclerView.ViewHolder getHeaderHolder(ViewGroup parent){
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View rootView = inflater.inflate(R.layout.card_material_header, parent, false);
-        return new DescriptionViewHolder(rootView);
+        return new HeaderViewHolder(rootView);
     }
 
     /**
@@ -229,8 +229,8 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
             rawHolder.itemView.setLayoutParams(params);
             rawHolder.itemView.setVisibility(View.INVISIBLE);
         }
-        else if (viewType == TYPE_DESCRIPTION){
-            bindDescriptionHolder((DescriptionViewHolder)rawHolder);
+        else if (viewType == TYPE_HEADER){
+            bindHeaderHolder((HeaderViewHolder)rawHolder);
         }
         else if (viewType == TYPE_LISTED_CONTENT){
             bindListHolder(rawHolder);
@@ -256,7 +256,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
      *
      * @param holder the description holder.
      */
-    protected void bindDescriptionHolder(DescriptionViewHolder holder){
+    protected void bindHeaderHolder(HeaderViewHolder holder){
 
     }
 
@@ -287,9 +287,9 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
     }
 
     /**
-     * Lets the adapter know that a description item has been added.
+     * Lets the adapter know that a header item has been added.
      */
-    protected final void notifyDescriptionInserted(){
+    protected final void notifyHeaderInserted(){
         notifyItemInserted(1);
     }
 
@@ -322,7 +322,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
      * Lets the adapter know that a content item has been inserted.
      */
     private void insertContent(){
-        if (hasDescription()){
+        if (hasHeader()){
             notifyItemInserted(2);
         }
         else{
@@ -402,14 +402,14 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
 
 
     /**
-     * View holder for the description card.
+     * View holder for the header card.
      *
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    protected static class DescriptionViewHolder extends RecyclerView.ViewHolder{
-        private TextView mDescriptionTitle;
-        private TextView mDescriptionContent;
+    protected static class HeaderViewHolder extends RecyclerView.ViewHolder{
+        private TextView mHeaderTitle;
+        private TextView mHeaderContent;
         private TextView mButton;
 
 
@@ -418,12 +418,12 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
          *
          * @param rootView the view to be drawn.
          */
-        public DescriptionViewHolder(@NonNull View rootView){
+        public HeaderViewHolder(@NonNull View rootView){
             super(rootView);
 
-            mDescriptionTitle = (TextView)rootView.findViewById(R.id.material_description_title);
-            mDescriptionContent = (TextView)rootView.findViewById(R.id.material_description_content);
-            mButton = (TextView)rootView.findViewById(R.id.material_description_button);
+            mHeaderTitle = (TextView)rootView.findViewById(R.id.material_header_title);
+            mHeaderContent = (TextView)rootView.findViewById(R.id.material_header_content);
+            mButton = (TextView)rootView.findViewById(R.id.material_header_button);
         }
 
         /**
@@ -432,7 +432,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
          * @param title the title to be displayed in the card.
          */
         public void setTitle(CharSequence title){
-            mDescriptionTitle.setText(title);
+            mHeaderTitle.setText(title);
         }
 
         /**
@@ -441,7 +441,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
          * @param description the description to be displayed in the card.
          */
         public void setDescription(CharSequence description){
-            mDescriptionContent.setText(description);
+            mHeaderContent.setText(description);
         }
 
         /**

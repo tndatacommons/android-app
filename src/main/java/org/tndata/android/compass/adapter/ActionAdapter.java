@@ -37,7 +37,7 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
 
     public void setAction(@NonNull Action action){
         mAction = action;
-        notifyDescriptionInserted();
+        notifyHeaderInserted();
         if (mAction instanceof UserAction){
             notifyDetailsInserted();
         }
@@ -45,7 +45,7 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
     }
 
     @Override
-    protected boolean hasDescription(){
+    protected boolean hasHeader(){
         return mAction != null;
     }
 
@@ -55,7 +55,7 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
     }
 
     @Override
-    protected void bindDescriptionHolder(DescriptionViewHolder holder){
+    protected void bindHeaderHolder(HeaderViewHolder holder){
         holder.setTitle(mAction.getTitle());
         if (mAction instanceof UserAction){
             UserAction userAction = (UserAction)mAction;
