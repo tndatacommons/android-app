@@ -17,6 +17,7 @@ import android.widget.TextView;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.AutoSave;
 import org.tndata.android.compass.util.CompassUtil;
@@ -62,7 +63,7 @@ public class CheckInFeedbackFragment
      * @param goal the goal to be displayed by the fragment.
      * @return an instance of the fragment.
      */
-    public static CheckInFeedbackFragment newInstance(int index, @NonNull GoalContent goal){
+    public static CheckInFeedbackFragment newInstance(int index, @NonNull UserGoal goal){
         //Create the argument bundle
         Bundle args = new Bundle();
         args.putInt(INDEX_KEY, index);

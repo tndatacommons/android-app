@@ -163,6 +163,10 @@ public abstract class API{
         return BASE_URL + "goals/?category=" + category.getId();
     }
 
+    public static String getTodaysGoalsUrl(){
+        return BASE_URL + "users/goals/?today=1";
+    }
+
     public static String getGoalUrl(long goalId){
         return BASE_URL + "goals/" + goalId + "/";
     }

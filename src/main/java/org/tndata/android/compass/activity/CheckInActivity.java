@@ -15,20 +15,14 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.CheckInPagerAdapter;
 import org.tndata.android.compass.fragment.CheckInFeedbackFragment;
 import org.tndata.android.compass.fragment.CheckInRewardFragment;
-import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.Reward;
-import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NetworkRequest;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import me.relex.circleindicator.CircleIndicator;
 
@@ -50,7 +44,7 @@ public class CheckInActivity
     private static final String TAG = "CheckInActivity";
 
     //Magic numbers!! This is the total amount of requests performed by this activity
-    public int mRequestCount = 3;
+    public static final int REQUEST_COUNT = 3;
 
 
     private CompassApplication mApplication;
@@ -64,13 +58,12 @@ public class CheckInActivity
     private CheckInPagerAdapter mAdapter;
 
     //Data
-    private List<UserAction> mActions;
-    private Map<GoalContent, List<UserAction>> mDataSet;
+    private List<UserGoal> mGoals;
     private Reward mReward;
     private float mProgress;
     private int mCurrentProgress[];
 
-    private int mGetActionsRequestCode;
+    private int mGetGoalsRequestCode;
     private int mGetRewardRequestCode;
     private int mGetProgressRequestCode;
     private int mCompletedRequests;
@@ -90,7 +83,7 @@ public class CheckInActivity
 
         //API requests
         mCompletedRequests = 0;
-        mGetActionsRequestCode = NetworkRequest.get(this, this, API.getTodaysActionsUrl(),
+        mGetGoalsRequestCode = NetworkRequest.get(this, this, API.getTodaysGoalsUrl(),
                 mApplication.getToken());
         mGetRewardRequestCode = NetworkRequest.get(this, this, API.getRandomRewardUrl(), "");
         mGetProgressRequestCode = NetworkRequest.get(this, this, API.getUserGoalProgressUrl(),
@@ -99,9 +92,9 @@ public class CheckInActivity
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mGetActionsRequestCode){
-            Log.d(TAG, "Actions fetched");
-            Parser.parse(result, ParserModels.UserActionResultSet.class, this);
+        if (requestCode == mGetGoalsRequestCode){
+            Log.d(TAG, "Goals fetched");
+            Parser.parse(result, ParserModels.UserGoalResultSet.class, this);
         }
         else if (requestCode == mGetRewardRequestCode){
             Log.d(TAG, "Reward fetched");
@@ -117,13 +110,9 @@ public class CheckInActivity
                 jsonx.printStackTrace();
             }
 
-            if (++mCompletedRequests == mRequestCount){
+            if (++mCompletedRequests == REQUEST_COUNT){
                 setAdapter();
             }
-        }
-        else /* Goals */{
-            Log.d(TAG, "Goal fetched");
-            Parser.parse(result, GoalContent.class, this);
         }
     }
 
@@ -135,30 +124,9 @@ public class CheckInActivity
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.UserActionResultSet){
-            mActions = ((ParserModels.UserActionResultSet)result).results;
-            mDataSet = new HashMap<>();
-            Set<Long> goalRequestSet = new HashSet<>();
-            //For each action
-            for (UserAction action:mActions){
-                if (!goalRequestSet.contains(action.getPrimaryGoalId())){
-                    //For each goal we need to add one request to the count
-                    mRequestCount++;
-                    goalRequestSet.add(action.getPrimaryGoalId());
-                    NetworkRequest.get(this, this, API.getGoalUrl(action.getPrimaryGoalId()), "");
-                }
-            }
-            mCurrentProgress = new int[goalRequestSet.size()];
-        }
-        else if (result instanceof GoalContent){
-            GoalContent goal = (GoalContent)result;
-            List<UserAction> goalActionList = new ArrayList<>();
-            for (UserAction action:mActions){
-                if (action.getPrimaryGoalId() == goal.getId()){
-                    goalActionList.add(action);
-                }
-            }
-            mDataSet.put(goal, goalActionList);
+        if (result instanceof ParserModels.UserGoalResultSet){
+            mGoals = ((ParserModels.UserGoalResultSet)result).results;
+            mCurrentProgress = new int[mGoals.size()];
         }
         else if (result instanceof ParserModels.RewardResultSet){
             mReward = ((ParserModels.RewardResultSet)result).results.get(0);
@@ -167,13 +135,13 @@ public class CheckInActivity
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (++mCompletedRequests == mRequestCount){
+        if (++mCompletedRequests == REQUEST_COUNT){
             setAdapter();
         }
     }
 
     private void setAdapter(){
-        mAdapter = new CheckInPagerAdapter(getSupportFragmentManager(), mDataSet, mReward);
+        mAdapter = new CheckInPagerAdapter(getSupportFragmentManager(), mGoals, mReward);
         mPager.setAdapter(mAdapter);
         mIndicator.setViewPager(mPager);
         mLoading.setVisibility(View.GONE);
