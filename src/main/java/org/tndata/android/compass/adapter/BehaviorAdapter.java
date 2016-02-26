@@ -51,11 +51,11 @@ public class BehaviorAdapter extends MaterialAdapter implements View.OnClickList
     protected void bindHeaderHolder(HeaderViewHolder holder){
         holder.setTitle(mContext.getString(R.string.library_behavior_title, mBehavior.getTitle()));
         if (!mBehavior.getHTMLDescription().isEmpty()){
-            holder.setDescription(Html.fromHtml(mBehavior.getHTMLDescription(), null,
+            holder.setContent(Html.fromHtml(mBehavior.getHTMLDescription(), null,
                     new CompassTagHandler(mContext)));
         }
         else{
-            holder.setDescription(mBehavior.getDescription());
+            holder.setContent(mBehavior.getDescription());
         }
         holder.setButton(mContext.getString(R.string.library_behavior_yes), this);
         mButtonId = holder.getButtonId();

@@ -32,7 +32,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
 
     private static final int TYPE_BLANK = 0;
     private static final int TYPE_HEADER = TYPE_BLANK+1;
-    private static final int TYPE_LISTED_CONTENT = TYPE_HEADER +1;      //Either
+    private static final int TYPE_LISTED_CONTENT = TYPE_HEADER +1;          //Either
     private static final int TYPE_DETAIL_CONTENT = TYPE_LISTED_CONTENT+1;   //Or
     private static final int TYPE_LOAD = TYPE_DETAIL_CONTENT+1;
 
@@ -436,12 +436,12 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
         }
 
         /**
-         * Binds a description to the holder.
+         * Binds a content to the holder.
          *
-         * @param description the description to be displayed in the card.
+         * @param content the description to be displayed in the card.
          */
-        public void setDescription(CharSequence description){
-            mHeaderContent.setText(description);
+        public void setContent(CharSequence content){
+            mHeaderContent.setText(content);
         }
 
         /**

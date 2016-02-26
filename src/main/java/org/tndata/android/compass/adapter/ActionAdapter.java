@@ -59,7 +59,7 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
         holder.setTitle(mAction.getTitle());
         if (mAction instanceof UserAction){
             UserAction userAction = (UserAction)mAction;
-            holder.setDescription(userAction.getDescription());
+            holder.setContent(userAction.getDescription());
             holder.setButton("Edit", this);
             mButtonId = holder.getButtonId();
         }

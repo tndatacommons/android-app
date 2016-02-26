@@ -75,11 +75,11 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
     protected void bindHeaderHolder(HeaderViewHolder holder){
         holder.setTitle(mCategory.getTitle());
         if (!mCategory.getHTMLDescription().isEmpty()){
-            holder.setDescription(Html.fromHtml(mCategory.getHTMLDescription(), null,
+            holder.setContent(Html.fromHtml(mCategory.getHTMLDescription(), null,
                     new CompassTagHandler(mContext)));
         }
         else{
-            holder.setDescription(mCategory.getDescription());
+            holder.setContent(mCategory.getDescription());
         }
     }
 

@@ -79,11 +79,11 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
     protected void bindHeaderHolder(HeaderViewHolder holder){
         holder.setTitle(mGoal.getTitle());
         if (!mGoal.getHTMLDescription().isEmpty()){
-            holder.setDescription(Html.fromHtml(mGoal.getHTMLDescription(), null,
+            holder.setContent(Html.fromHtml(mGoal.getHTMLDescription(), null,
                     new CompassTagHandler(mContext)));
         }
         else{
-            holder.setDescription(mGoal.getDescription());
+            holder.setContent(mGoal.getDescription());
         }
     }
 
