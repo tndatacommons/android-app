@@ -20,7 +20,7 @@ import org.tndata.android.compass.model.CategoryContent;
  * @author Ismael Alonso.
  * @version 1.0.0
  */
-public class BehaviorActivity extends LibraryActivity implements BehaviorAdapter.BehaviorListener{
+public class BehaviorActivity extends MaterialActivity implements BehaviorAdapter.BehaviorListener{
     //Argument keys; since this activity does NOT handle the addition ops, only
     //  the category and the behavior need to be passed
     public static final String CATEGORY_KEY = "org.tndata.compass.Behavior.Category";

@@ -27,7 +27,7 @@ import org.tndata.android.compass.util.CompassUtil;
  * @author Ismael Alonso.
  * @version 1.0.0
  */
-public abstract class LibraryAdapter extends RecyclerView.Adapter{
+public abstract class MaterialAdapter extends RecyclerView.Adapter{
     private static final String TAG = "LibraryAdapter";
 
     private static final int TYPE_BLANK = 0;
@@ -50,7 +50,7 @@ public abstract class LibraryAdapter extends RecyclerView.Adapter{
      * @param contentType the type of adapter, list or detail.
      * @param showLoading whether the loading widget should be shown by default.
      */
-    protected LibraryAdapter(Context context, ContentType contentType, boolean showLoading){
+    protected MaterialAdapter(Context context, ContentType contentType, boolean showLoading){
         mContext = context;
         mContentType = contentType;
         mShowLoading = showLoading;
@@ -160,7 +160,7 @@ public abstract class LibraryAdapter extends RecyclerView.Adapter{
             return new RecyclerView.ViewHolder(new CardView(mContext)){};
         }
         else if (viewType == TYPE_DESCRIPTION){
-            View rootView = inflater.inflate(R.layout.card_library_description, parent, false);
+            View rootView = inflater.inflate(R.layout.card_material_header, parent, false);
             return new DescriptionViewHolder(rootView);
         }
         else if (viewType == TYPE_LISTED_CONTENT){
@@ -171,11 +171,11 @@ public abstract class LibraryAdapter extends RecyclerView.Adapter{
             return holder;
         }
         else if (viewType == TYPE_DETAIL_CONTENT){
-            View rootView = inflater.inflate(R.layout.card_library_detail, parent, false);
+            View rootView = inflater.inflate(R.layout.card_material_detail, parent, false);
             return new DetailViewHolder(rootView);
         }
         else /*if (viewType == TYPE_LOAD)*/{
-            View rootView = inflater.inflate(R.layout.item_library_progress, parent, false);
+            View rootView = inflater.inflate(R.layout.item_material_progress, parent, false);
             return new RecyclerView.ViewHolder(rootView){};
         }
     }
@@ -208,8 +208,8 @@ public abstract class LibraryAdapter extends RecyclerView.Adapter{
                 loadMore();
             }
             else{
-                rawHolder.itemView.findViewById(R.id.library_progress_progress).setVisibility(View.GONE);
-                TextView error = (TextView)rawHolder.itemView.findViewById(R.id.library_progress_error);
+                rawHolder.itemView.findViewById(R.id.material_progress_progress).setVisibility(View.GONE);
+                TextView error = (TextView)rawHolder.itemView.findViewById(R.id.material_progress_error);
                 error.setVisibility(View.VISIBLE);
                 error.setText(mLoadingError);
             }
@@ -402,9 +402,9 @@ public abstract class LibraryAdapter extends RecyclerView.Adapter{
         public DescriptionViewHolder(@NonNull View rootView){
             super(rootView);
 
-            mDescriptionTitle = (TextView)rootView.findViewById(R.id.library_description_title);
-            mDescriptionContent = (TextView)rootView.findViewById(R.id.library_description_content);
-            mButton = (TextView)rootView.findViewById(R.id.library_description_yes);
+            mDescriptionTitle = (TextView)rootView.findViewById(R.id.material_description_title);
+            mDescriptionContent = (TextView)rootView.findViewById(R.id.material_description_content);
+            mButton = (TextView)rootView.findViewById(R.id.material_description_button);
         }
 
         /**
@@ -471,11 +471,11 @@ public abstract class LibraryAdapter extends RecyclerView.Adapter{
         public DetailViewHolder(@NonNull View rootView){
             super(rootView);
 
-            mHeader = (TextView)rootView.findViewById(R.id.library_detail_header);
-            mDescription = (TextView)rootView.findViewById(R.id.library_detail_description);
-            mSeparator = rootView.findViewById(R.id.library_detail_separator);
-            mMoreInfoTitle = (TextView)rootView.findViewById(R.id.library_detail_more_into_title);
-            mMoreInfo = (TextView)rootView.findViewById(R.id.library_detail_more_info);
+            mHeader = (TextView)rootView.findViewById(R.id.material_detail_header);
+            mDescription = (TextView)rootView.findViewById(R.id.material_detail_description);
+            mSeparator = rootView.findViewById(R.id.material_detail_separator);
+            mMoreInfoTitle = (TextView)rootView.findViewById(R.id.material_detail_more_info_title);
+            mMoreInfo = (TextView)rootView.findViewById(R.id.material_detail_more_info);
         }
 
         /**

@@ -23,7 +23,6 @@ import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ImageLoader;
 import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.NotificationUtil;
@@ -37,7 +36,7 @@ import org.tndata.android.compass.util.NotificationUtil;
  * @version 1.2.1
  */
 public class ActionActivity
-        extends LibraryActivity
+        extends MaterialActivity
         implements
                 View.OnClickListener,
                 NetworkRequest.RequestCallback,

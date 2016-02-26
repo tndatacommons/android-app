@@ -17,7 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.adapter.LibraryAdapter;
+import org.tndata.android.compass.adapter.MaterialAdapter;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ParallaxEffect;
 
@@ -28,7 +28,7 @@ import org.tndata.android.compass.util.ParallaxEffect;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public abstract class LibraryActivity
+public abstract class MaterialActivity
         extends AppCompatActivity
         implements ParallaxEffect.ScrollListener{
 
@@ -41,7 +41,7 @@ public abstract class LibraryActivity
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_library);
+        setContentView(R.layout.activity_material);
 
         //Set up the toolbar
         mToolbar = (Toolbar)findViewById(R.id.library_toolbar);
@@ -108,7 +108,7 @@ public abstract class LibraryActivity
         mHeaderContainer.setBackgroundColor(color);
     }
 
-    protected final void setAdapter(LibraryAdapter adapter){
+    protected final void setAdapter(MaterialAdapter adapter){
         mRecyclerView.setAdapter(adapter);
     }
 

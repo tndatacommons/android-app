@@ -13,7 +13,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/library_detail_header"
+            android:id="@+id/material_detail_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="15dp"
@@ -23,7 +23,7 @@
             android:textColor="@color/white" />
 
         <TextView
-            android:id="@+id/library_detail_description"
+            android:id="@+id/material_detail_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
@@ -32,7 +32,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <ImageView
-            android:id="@+id/library_detail_separator"
+            android:id="@+id/material_detail_separator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginLeft="5dp"
@@ -41,7 +41,7 @@
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/library_detail_more_into_title"
+            android:id="@+id/material_detail_more_info_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
@@ -53,7 +53,29 @@
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/library_detail_more_info"
+            android:id="@+id/material_detail_more_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="5dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/material_detail_resource_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/library_detail_more_info"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAllCaps="true"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/material_detail_resource"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"

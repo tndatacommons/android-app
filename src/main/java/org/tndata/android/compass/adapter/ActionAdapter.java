@@ -16,7 +16,7 @@ import org.tndata.android.compass.util.CompassTagHandler;
 /**
  * Created by isma on 2/25/16.
  */
-public class ActionAdapter extends LibraryAdapter implements View.OnClickListener{
+public class ActionAdapter extends MaterialAdapter implements View.OnClickListener{
     private Context mContext;
     private Action mAction;
 

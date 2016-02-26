@@ -38,7 +38,7 @@ import java.util.List;
  * @version 2.0.0
  */
 public class ChooseBehaviorsActivity
-        extends LibraryActivity
+        extends MaterialActivity
         implements
                 View.OnClickListener,
                 DialogInterface.OnCancelListener,

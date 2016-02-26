@@ -31,7 +31,7 @@ import java.util.List;
  * @version 2.0.0
  */
 public class ChooseGoalsActivity
-        extends LibraryActivity
+        extends MaterialActivity
         implements
                 NetworkRequest.RequestCallback,
                 Parser.ParserCallback,

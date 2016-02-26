@@ -19,7 +19,7 @@ import org.tndata.android.compass.model.UserGoal;
 /**
  * Created by isma on 2/24/16.
  */
-public class ReviewActionsActivity extends LibraryActivity implements ReviewActionsAdapter.ReviewActionsListener{
+public class ReviewActionsActivity extends MaterialActivity implements ReviewActionsAdapter.ReviewActionsListener{
     public static final String USER_GOAL_KEY = "org.tndata.compass.ReviewActions.Goal";
     public static final String USER_BEHAVIOR_KEY = "org.tndata.compass.ReviewActions.Behavior";
 

@@ -8,13 +8,13 @@
     android:layout_marginRight="15dp" >
 
     <ProgressBar
-        android:id="@+id/library_progress_progress"
+        android:id="@+id/material_progress_progress"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_gravity="center" />
 
     <TextView
-        android:id="@+id/library_progress_error"
+        android:id="@+id/material_progress_error"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"

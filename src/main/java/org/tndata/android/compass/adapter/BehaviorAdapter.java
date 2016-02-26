@@ -19,7 +19,7 @@ import org.tndata.android.compass.util.CompassTagHandler;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class BehaviorAdapter extends LibraryAdapter implements View.OnClickListener{
+public class BehaviorAdapter extends MaterialAdapter implements View.OnClickListener{
     private Context mContext;
     private BehaviorListener mListener;
     private CategoryContent mCategory;
@@ -48,7 +48,7 @@ public class BehaviorAdapter extends LibraryAdapter implements View.OnClickListe
     }
 
     @Override
-    protected void bindDescriptionHolder(LibraryAdapter.DescriptionViewHolder holder){
+    protected void bindDescriptionHolder(MaterialAdapter.DescriptionViewHolder holder){
         holder.setTitle(mContext.getString(R.string.library_behavior_title, mBehavior.getTitle()));
         if (!mBehavior.getHTMLDescription().isEmpty()){
             holder.setDescription(Html.fromHtml(mBehavior.getHTMLDescription(), null,

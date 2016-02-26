@@ -16,7 +16,7 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            android:id="@+id/card_library_content_header"
+            android:id="@+id/material_content_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="20dp"
@@ -25,7 +25,7 @@
             android:textColor="@color/white" />
 
         <org.tndata.android.compass.ui.ContentContainer
-            android:id="@+id/card_library_content_container"
+            android:id="@+id/material_content_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"

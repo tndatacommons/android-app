@@ -101,7 +101,7 @@ public class ReviewActionsAdapter extends RecyclerView.Adapter{
         }
         else if (viewType == TYPE_CONTENT){
             if (mActionsHolder == null){
-                View rootView = inflater.inflate(R.layout.card_library_content, parent, false);
+                View rootView = inflater.inflate(R.layout.card_material_content, parent, false);
                 mActionsHolder = new ActionsViewHolder(this, rootView);
                 mActionsHolder.addActions(mActions);
                 mActionsHolder.mActionContainer.setAnimationsEnabled(true);
@@ -109,7 +109,7 @@ public class ReviewActionsAdapter extends RecyclerView.Adapter{
             return mActionsHolder;
         }
         else{
-            View rootView = inflater.inflate(R.layout.item_library_progress, parent, false);
+            View rootView = inflater.inflate(R.layout.item_material_progress, parent, false);
             return new RecyclerView.ViewHolder(rootView){};
         }
     }
@@ -134,8 +134,8 @@ public class ReviewActionsAdapter extends RecyclerView.Adapter{
                         mListener.loadMore();
                     }
                     else{
-                        rawHolder.itemView.findViewById(R.id.library_progress_progress).setVisibility(View.GONE);
-                        TextView error = (TextView)rawHolder.itemView.findViewById(R.id.library_progress_error);
+                        rawHolder.itemView.findViewById(R.id.material_progress_progress).setVisibility(View.GONE);
+                        TextView error = (TextView)rawHolder.itemView.findViewById(R.id.material_progress_error);
                         error.setVisibility(View.VISIBLE);
                         error.setText(mLoadError);
                     }
@@ -217,9 +217,9 @@ public class ReviewActionsAdapter extends RecyclerView.Adapter{
             mAdapter = adapter;
 
             //Fetch UI components
-            mTitle = (TextView)rootView.findViewById(R.id.card_library_content_header);
+            mTitle = (TextView)rootView.findViewById(R.id.material_content_header);
             mActionContainer = (ContentContainer<Action>)rootView
-                    .findViewById(R.id.card_library_content_container);
+                    .findViewById(R.id.material_content_container);
 
             mTitle.setTextColor(mAdapter.mContext.getResources().getColor(R.color.secondary_text_color));
             mActionContainer.setListener(this);

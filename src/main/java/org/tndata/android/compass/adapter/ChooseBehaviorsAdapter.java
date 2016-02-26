@@ -27,7 +27,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 2.0.0
  */
-public class ChooseBehaviorsAdapter extends LibraryAdapter{
+public class ChooseBehaviorsAdapter extends MaterialAdapter{
     private Context mContext;
     private ChooseBehaviorsListener mListener;
     private CategoryContent mCategory;
@@ -67,7 +67,7 @@ public class ChooseBehaviorsAdapter extends LibraryAdapter{
     protected RecyclerView.ViewHolder getListHolder(ViewGroup parent){
         if (mBehaviorsHolder == null){
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            View rootView = inflater.inflate(R.layout.card_library_content, parent, false);
+            View rootView = inflater.inflate(R.layout.card_material_content, parent, false);
             mBehaviorsHolder = new BehaviorsViewHolder(this, rootView);
             mBehaviorsHolder.addBehaviors(mBehaviors);
             mBehaviorsHolder.mBehaviorContainer.setAnimationsEnabled(true);
@@ -76,7 +76,7 @@ public class ChooseBehaviorsAdapter extends LibraryAdapter{
     }
 
     @Override
-    protected void bindDescriptionHolder(LibraryAdapter.DescriptionViewHolder holder){
+    protected void bindDescriptionHolder(MaterialAdapter.DescriptionViewHolder holder){
         holder.setTitle(mGoal.getTitle());
         if (!mGoal.getHTMLDescription().isEmpty()){
             holder.setDescription(Html.fromHtml(mGoal.getHTMLDescription(), null,
@@ -163,9 +163,9 @@ public class ChooseBehaviorsAdapter extends LibraryAdapter{
             mAdapter = adapter;
 
             //Fetch UI components
-            mTitle = (TextView)rootView.findViewById(R.id.card_library_content_header);
+            mTitle = (TextView)rootView.findViewById(R.id.material_content_header);
             mBehaviorContainer = (ContentContainer<BehaviorContent>)rootView
-                    .findViewById(R.id.card_library_content_container);
+                    .findViewById(R.id.material_content_container);
             mBehaviorContainer.setListener(this);
         }
 
