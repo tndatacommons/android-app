@@ -76,7 +76,8 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
     }
 
     @Override
-    protected void bindHeaderHolder(HeaderViewHolder holder){
+    protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
+        HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
         holder.setTitle(mGoal.getTitle());
         if (!mGoal.getHTMLDescription().isEmpty()){
             holder.setContent(Html.fromHtml(mGoal.getHTMLDescription(), null,

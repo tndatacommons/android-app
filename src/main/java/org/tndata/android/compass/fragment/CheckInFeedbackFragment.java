@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.AutoSave;
@@ -37,7 +36,7 @@ public class CheckInFeedbackFragment
                 SeekBar.OnSeekBarChangeListener{
 
     private static final String INDEX_KEY = "org.tndata.compass.CheckInFeedback.Index";
-    private static final String GOAL_KEY = "org.tndata.compass.CheckInFeedback.Goal";
+    private static final String USER_GOAL_KEY = "org.tndata.compass.CheckInFeedback.Goal";
 
 
     //UI components
@@ -45,7 +44,7 @@ public class CheckInFeedbackFragment
     private TextView mDisplay;
 
     //Model components
-    private GoalContent mGoal;
+    private UserGoal mUserGoal;
 
     //Auto save
     private AutoSave mAutoSave;
@@ -60,14 +59,14 @@ public class CheckInFeedbackFragment
      * Creates an instance of the fragment and delivers the provided data.
      *
      * @param index the index on this fragment within the containing adapter.
-     * @param goal the goal to be displayed by the fragment.
+     * @param userGoal the goal to be displayed by the fragment.
      * @return an instance of the fragment.
      */
-    public static CheckInFeedbackFragment newInstance(int index, @NonNull UserGoal goal){
+    public static CheckInFeedbackFragment newInstance(int index, @NonNull UserGoal userGoal){
         //Create the argument bundle
         Bundle args = new Bundle();
         args.putInt(INDEX_KEY, index);
-        args.putSerializable(GOAL_KEY, goal);
+        args.putSerializable(USER_GOAL_KEY, userGoal);
 
         //Create the fragment and deliver the arguments
         CheckInFeedbackFragment fragment = new CheckInFeedbackFragment();
@@ -82,7 +81,7 @@ public class CheckInFeedbackFragment
         //Retrieve the arguments
         Bundle arguments = getArguments();
         mIndex = arguments.getInt(INDEX_KEY);
-        mGoal = (GoalContent)arguments.getSerializable(GOAL_KEY);
+        mUserGoal = (UserGoal)arguments.getSerializable(USER_GOAL_KEY);
 
         mLastUpdate = -1;
     }
@@ -128,7 +127,7 @@ public class CheckInFeedbackFragment
         }*/
 
         //Header title
-        String title = mGoal.getTitle().substring(0, 1).toLowerCase() + mGoal.getTitle().substring(1);
+        String title = mUserGoal.getTitle().substring(0, 1).toLowerCase() + mUserGoal.getTitle().substring(1);
         goalTitle.setText(getResources().getString(R.string.check_in_feedback_goal, title));
 
         mBar.setOnSeekBarChangeListener(this);
@@ -155,7 +154,7 @@ public class CheckInFeedbackFragment
     public void save(){
         NetworkRequest.post(getActivity(), null, API.getPostUserGoalProgressUrl(),
                 ((CompassApplication)getActivity().getApplication()).getToken(),
-                API.getPostUserGoalProgressBody(mGoal, mBar.getProgress()+1));
+                API.getPostUserGoalProgressBody(mUserGoal, mBar.getProgress()+1));
         mLastUpdate = -1;
         Log.d("Feedback", "Saving");
     }

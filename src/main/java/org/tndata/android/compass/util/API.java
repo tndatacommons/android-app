@@ -359,10 +359,10 @@ public abstract class API{
     }
 
     //TODO
-    public static JSONObject getPostUserGoalProgressBody(@NonNull GoalContent goal, int progress){
+    public static JSONObject getPostUserGoalProgressBody(@NonNull UserGoal userGoal, int progress){
         JSONObject postUserGoalProgressBody = new JSONObject();
         try{
-            postUserGoalProgressBody.put("goal", goal.getId())
+            postUserGoalProgressBody.put("goal", userGoal.getContentId())
                     .put("daily_checkin", progress);
         }
         catch (JSONException jsonx){

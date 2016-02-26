@@ -1,6 +1,7 @@
 package org.tndata.android.compass.adapter;
 
 import android.content.Context;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -13,9 +14,11 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.CustomAction;
+import org.tndata.android.compass.model.CustomGoal;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,11 +31,12 @@ import java.util.Map;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapter.ActionHolder>{
+public class CustomContentManagerAdapter extends MaterialAdapter implements View.OnClickListener{
     private static final String TAG = "CustomActionAdapter";
 
 
     private Context mContext;
+    private CustomGoal mCustomGoal;
     private CustomActionAdapterListener mListener;
     private List<CustomAction> mCustomActions;
 
@@ -46,23 +50,47 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
      * Constructor.
      *
      * @param context a reference to the context.
+     * @param customGoal the custom goal to be managed or {@code null} if this is a new goal
      * @param listener a listener.
-     * @param customActions the list of custom actions to display.
      */
-    public CustomActionAdapter(@NonNull Context context, @NonNull CustomActionAdapterListener listener,
-                               @NonNull List<CustomAction> customActions){
-        mContext = context;
-        mListener = listener;
-        mCustomActions = customActions;
+    public CustomContentManagerAdapter(@NonNull Context context, @Nullable CustomGoal customGoal,
+                                       @NonNull CustomActionAdapterListener listener){
 
-        Log.d(TAG, "Number of CustomActions: " + mCustomActions.size());
+        super(context, ContentType.LIST, true);
+
+        mContext = context;
+        mCustomGoal = customGoal;
+        mListener = listener;
 
         mEditing = new HashMap<>();
         mNewActionTitle = "";
     }
 
+    @Override
+    protected boolean isEmpty(){
+        return true;
+    }
 
     @Override
+    protected @NonNull RecyclerView.ViewHolder getHeaderHolder(ViewGroup parent){
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        View rootView = inflater.inflate(R.layout.card_create_goal, parent, false);
+        return new CustomGoalHolder(rootView);
+    }
+
+    @Override
+    protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
+        CustomGoalHolder holder = (CustomGoalHolder)rawHolder;
+        if (mCustomGoal == null){
+            holder.setButton("Create", this);
+        }
+        else{
+            holder.setGoalTitle(mCustomGoal.getTitle());
+            holder.setButton("Edit", this);
+        }
+    }
+
+    /*@Override
     public ActionHolder onCreateViewHolder(ViewGroup parent, int viewType){
         LayoutInflater inflater = LayoutInflater.from(mContext);
         return new ActionHolder(inflater.inflate(R.layout.item_custom_action, parent, false));
@@ -78,13 +106,7 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
             //If it isn't, pass the relevant custom action
             holder.bind(mCustomActions.get(position));
         }
-    }
-
-    @Override
-    public int getItemCount(){
-        //The number of current custom actions and the new action card
-        return mCustomActions.size()+1;
-    }
+    }*/
 
     /**
      * Called when the process of adding a custom action to the user's dataset has been
@@ -99,6 +121,41 @@ public class CustomActionAdapter extends RecyclerView.Adapter<CustomActionAdapte
         //  I am personally leaning to promote that behavior throughout the application.
         notifyItemInserted(mCustomActions.size()-1);
         notifyItemChanged(mCustomActions.size());
+    }
+
+    @Override
+    public void onClick(View v){
+
+    }
+
+    private static class CustomGoalHolder extends RecyclerView.ViewHolder{
+        private EditText mGoalTitle;
+        private TextView mButton;
+
+
+        public CustomGoalHolder(View rootView){
+            super(rootView);
+            mGoalTitle = (EditText)rootView.findViewById(R.id.create_goal_title);
+            mButton = (TextView)rootView.findViewById(R.id.create_goal_button);
+        }
+
+        public void setGoalTitle(String title){
+            mGoalTitle.setText(title);
+        }
+
+        public void setButton(String caption, View.OnClickListener onClickListener){
+            mButton.setText(caption);
+            mButton.setOnClickListener(onClickListener);
+        }
+
+        public void setEnabled(boolean enabled){
+            mGoalTitle.setEnabled(enabled);
+            mButton.setEnabled(enabled);
+        }
+
+        public @IdRes int getButtonId(){
+            return mButton.getId();
+        }
     }
 
 

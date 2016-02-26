@@ -72,7 +72,8 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
     }
 
     @Override
-    protected void bindHeaderHolder(HeaderViewHolder holder){
+    protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
+        HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
         holder.setTitle(mCategory.getTitle());
         if (!mCategory.getHTMLDescription().isEmpty()){
             holder.setContent(Html.fromHtml(mCategory.getHTMLDescription(), null,

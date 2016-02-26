@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.View;
 
@@ -55,7 +56,8 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
     }
 
     @Override
-    protected void bindHeaderHolder(HeaderViewHolder holder){
+    protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
+        HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
         holder.setTitle(mAction.getTitle());
         if (mAction instanceof UserAction){
             UserAction userAction = (UserAction)mAction;

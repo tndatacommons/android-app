@@ -58,6 +58,15 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
     }
 
     /**
+     * Getter for the context.
+     *
+     * @return a reference to the context.
+     */
+    protected Context getContext(){
+        return mContext;
+    }
+
+    /**
      * Method to override if showing a header card is conditional or other than default.
      *
      * @return true as a default value.
@@ -230,7 +239,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
             rawHolder.itemView.setVisibility(View.INVISIBLE);
         }
         else if (viewType == TYPE_HEADER){
-            bindHeaderHolder((HeaderViewHolder)rawHolder);
+            bindHeaderHolder(rawHolder);
         }
         else if (viewType == TYPE_LISTED_CONTENT){
             bindListHolder(rawHolder);
@@ -252,11 +261,11 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
     }
 
     /**
-     * Called for the implementee to bind the description holder.
+     * Called for the implementee to bind the header holder.
      *
-     * @param holder the description holder.
+     * @param rawHolder the header holder.
      */
-    protected void bindHeaderHolder(HeaderViewHolder holder){
+    protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
 
     }
 

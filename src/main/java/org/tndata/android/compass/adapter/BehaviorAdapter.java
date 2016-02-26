@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.View;
 
@@ -48,7 +49,8 @@ public class BehaviorAdapter extends MaterialAdapter implements View.OnClickList
     }
 
     @Override
-    protected void bindHeaderHolder(HeaderViewHolder holder){
+    protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
+        HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
         holder.setTitle(mContext.getString(R.string.library_behavior_title, mBehavior.getTitle()));
         if (!mBehavior.getHTMLDescription().isEmpty()){
             holder.setContent(Html.fromHtml(mBehavior.getHTMLDescription(), null,

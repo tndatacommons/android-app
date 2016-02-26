@@ -1,22 +1,14 @@
 package org.tndata.android.compass.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.adapter.CustomActionAdapter;
+import org.tndata.android.compass.adapter.CustomContentManagerAdapter;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.parser.Parser;
@@ -32,12 +24,12 @@ import org.tndata.android.compass.util.NetworkRequest;
  * @version 1.0.0
  */
 public class CustomContentManagerActivity
-        extends AppCompatActivity
+        extends MaterialActivity
         implements
                 View.OnClickListener,
                 NetworkRequest.RequestCallback,
                 Parser.ParserCallback,
-                CustomActionAdapter.CustomActionAdapterListener{
+                CustomContentManagerAdapter.CustomActionAdapterListener{
 
     private static final String TAG = "CustomContentManager";
 
@@ -47,18 +39,9 @@ public class CustomContentManagerActivity
 
     private CompassApplication mApplication;
 
-    //UI components
-    private EditText mGoalTitle;
-    private ImageView mEditGoal;
-    private ImageView mSaveGoal;
-    private ImageView mAddGoal;
-    private ImageView mDeleteGoal;
-    private LinearLayout mActionContainer;
-    private RecyclerView mRecyclerView;
-
     //Dataset and adapter
     private CustomGoal mCustomGoal;
-    private CustomActionAdapter mAdapter;
+    private CustomContentManagerAdapter mAdapter;
 
     //Request codes
     private int mAddGoalRequestCode;
@@ -68,24 +51,8 @@ public class CustomContentManagerActivity
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_goal);
 
         mApplication = (CompassApplication)getApplication();
-
-        //Grab the UI stuff
-        mGoalTitle = (EditText)findViewById(R.id.create_goal_title);
-        mEditGoal = (ImageView)findViewById(R.id.create_goal_edit);
-        mSaveGoal = (ImageView)findViewById(R.id.create_goal_save);
-        mAddGoal = (ImageView)findViewById(R.id.create_goal_add);
-        mDeleteGoal = (ImageView)findViewById(R.id.create_goal_delete);
-        mActionContainer = (LinearLayout)findViewById(R.id.create_goal_action_container);
-        mRecyclerView = (RecyclerView)findViewById(R.id.create_goal_action_list);
-
-        //Set the listeners
-        mEditGoal.setOnClickListener(this);
-        mSaveGoal.setOnClickListener(this);
-        mAddGoal.setOnClickListener(this);
-        mDeleteGoal.setOnClickListener(this);
 
         //Retrieve the data set and populate the UI accordingly
         mCustomGoal = (CustomGoal)getIntent().getSerializableExtra(CUSTOM_GOAL_KEY);
@@ -94,28 +61,16 @@ public class CustomContentManagerActivity
 
             mCustomGoal = (CustomGoal)mApplication.getUserData().getGoal(mCustomGoal);
 
-            mGoalTitle.setText(mCustomGoal.getTitle());
-            mGoalTitle.setFocusable(false);
-            mEditGoal.setVisibility(View.VISIBLE);
-            mAddGoal.setVisibility(View.GONE);
-            mDeleteGoal.setVisibility(View.VISIBLE);
-            mActionContainer.setVisibility(View.VISIBLE);
-
             //Set the adapter
-            mAdapter = new CustomActionAdapter(this, this, mCustomGoal.getActions());
-            LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-            mRecyclerView.setLayoutManager(llm);
-            mRecyclerView.setAdapter(mAdapter);
+            mAdapter = new CustomContentManagerAdapter(this, mCustomGoal, this);
         }
         else{
             Log.d(TAG, "New goal mode");
 
-            String title = getIntent().getStringExtra(CUSTOM_GOAL_TITLE_KEY);
-            if (title != null){
-                Log.d(TAG, "Title provided: " + title);
-                mGoalTitle.setText(title);
-            }
+            mAdapter = new CustomContentManagerAdapter(this, null, this);
         }
+        setAdapter(mAdapter);
+        setColor(getResources().getColor(R.color.grow_primary));
     }
 
     @Override
@@ -126,7 +81,7 @@ public class CustomContentManagerActivity
 
     @Override
     public void onClick(View v){
-        switch (v.getId()){
+        /*switch (v.getId()){
             //When the user enters edition mode
             case R.id.create_goal_edit:
                 //Make the goal title focusable and focus it
@@ -191,7 +146,7 @@ public class CustomContentManagerActivity
                 setResult(RESULT_OK);
                 finish();
                 break;
-        }
+        }*/
     }
 
     @Override
@@ -224,7 +179,7 @@ public class CustomContentManagerActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof CustomGoal){
-            mCustomGoal = (CustomGoal)result;
+            /*mCustomGoal = (CustomGoal)result;
             mGoalTitle.setEnabled(true);
             mGoalTitle.clearFocus();
             mGoalTitle.setFocusable(false);
@@ -234,13 +189,13 @@ public class CustomContentManagerActivity
             mDeleteGoal.setVisibility(View.VISIBLE);
             mActionContainer.setVisibility(View.VISIBLE);
 
-            mAdapter = new CustomActionAdapter(this, this, mCustomGoal.getActions());
+            mAdapter = new CustomContentManagerAdapter(this, this, mCustomGoal.getActions());
             LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             mRecyclerView.setLayoutManager(llm);
             mRecyclerView.setAdapter(mAdapter);
         }
         else if (result instanceof CustomAction){
-            mAdapter.customActionAdded();
+            mAdapter.customActionAdded();*/
         }
     }
 
