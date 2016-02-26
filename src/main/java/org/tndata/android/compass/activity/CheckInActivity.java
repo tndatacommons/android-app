@@ -15,11 +15,9 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.CheckInPagerAdapter;
 import org.tndata.android.compass.fragment.CheckInFeedbackFragment;
 import org.tndata.android.compass.fragment.CheckInRewardFragment;
-import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.UserAction;
-import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
@@ -51,13 +49,6 @@ public class CheckInActivity
 
     private static final String TAG = "CheckInActivity";
 
-    public static final String TYPE_KEY = "org.tndata.compass.CheckIn.Type";
-
-    public static final int TYPE_REVIEW = 1;
-    public static final int TYPE_FEEDBACK = 2;
-
-    private int mType;
-
     //Magic numbers!! This is the total amount of requests performed by this activity
     public int mRequestCount = 3;
 
@@ -75,7 +66,6 @@ public class CheckInActivity
     //Data
     private List<UserAction> mActions;
     private Map<GoalContent, List<UserAction>> mDataSet;
-    private Set<Integer> mBehaviorRequestSet;
     private Reward mReward;
     private float mProgress;
     private int mCurrentProgress[];
@@ -92,8 +82,6 @@ public class CheckInActivity
         setContentView(R.layout.activity_check_in);
 
         mApplication = (CompassApplication)getApplication();
-
-        mType = getIntent().getIntExtra(TYPE_KEY, TYPE_REVIEW);
 
         mLoading = (ProgressBar)findViewById(R.id.check_in_loading);
         mContent = findViewById(R.id.check_in_content);
@@ -133,10 +121,6 @@ public class CheckInActivity
                 setAdapter();
             }
         }
-        else if (mBehaviorRequestSet.contains(requestCode)){
-            Log.d(TAG, "Behavior fetched");
-            Parser.parse(result, BehaviorContent.class, this);
-        }
         else /* Goals */{
             Log.d(TAG, "Goal fetched");
             Parser.parse(result, GoalContent.class, this);
@@ -154,7 +138,6 @@ public class CheckInActivity
         if (result instanceof ParserModels.UserActionResultSet){
             mActions = ((ParserModels.UserActionResultSet)result).results;
             mDataSet = new HashMap<>();
-            mBehaviorRequestSet = new HashSet<>();
             Set<Long> goalRequestSet = new HashSet<>();
             //For each action
             for (UserAction action:mActions){
@@ -163,11 +146,6 @@ public class CheckInActivity
                     mRequestCount++;
                     goalRequestSet.add(action.getPrimaryGoalId());
                     NetworkRequest.get(this, this, API.getGoalUrl(action.getPrimaryGoalId()), "");
-                }
-                if (mType == TYPE_REVIEW){
-                    mRequestCount++;
-                    mBehaviorRequestSet.add(NetworkRequest.get(this, this,
-                            API.getBehaviorUrl(action.getAction().getBehaviorId()), ""));
                 }
             }
             mCurrentProgress = new int[goalRequestSet.size()];
@@ -185,14 +163,6 @@ public class CheckInActivity
         else if (result instanceof ParserModels.RewardResultSet){
             mReward = ((ParserModels.RewardResultSet)result).results.get(0);
         }
-        else if (result instanceof BehaviorContent){
-            BehaviorContent behavior = (BehaviorContent)result;
-            for (UserAction action:mActions){
-                if (action.getAction().getBehaviorId() == behavior.getId()){
-                    action.setBehavior(new UserBehavior(behavior));
-                }
-            }
-        }
     }
 
     @Override
@@ -203,8 +173,7 @@ public class CheckInActivity
     }
 
     private void setAdapter(){
-        mAdapter = new CheckInPagerAdapter(getSupportFragmentManager(),
-                mDataSet, mReward, mType == TYPE_REVIEW);
+        mAdapter = new CheckInPagerAdapter(getSupportFragmentManager(), mDataSet, mReward);
         mPager.setAdapter(mAdapter);
         mIndicator.setViewPager(mPager);
         mLoading.setVisibility(View.GONE);

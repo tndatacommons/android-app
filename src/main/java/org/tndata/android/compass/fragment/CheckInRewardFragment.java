@@ -35,16 +35,14 @@ public class CheckInRewardFragment
         implements
                 View.OnClickListener,
                 NetworkRequest.RequestCallback,
-        Parser.ParserCallback,
+                Parser.ParserCallback,
                 PopupMenu.OnMenuItemClickListener{
 
     public static final String REWARD_KEY = "org.tndata.compass.Reward.Reward";
-    public static final String FEEDBACK_KEY = "org.tndata.compass.Reward.Feedback";
 
 
     private CheckInRewardListener mListener;
     private Reward mReward;
-    private boolean mFeedback;
     private boolean mBetter;
 
     private TextView mHeader;
@@ -58,13 +56,11 @@ public class CheckInRewardFragment
      * Creates an instance of the fragment.
      *
      * @param reward the initial reward to be displayed.
-     * @param feedback true if this fragment is to be inserted after feedback fragments.
      * @return an instance of the fragment.
      */
-    public static CheckInRewardFragment newInstance(Reward reward, boolean feedback){
+    public static CheckInRewardFragment newInstance(Reward reward){
         Bundle args = new Bundle();
         args.putSerializable(REWARD_KEY, reward);
-        args.putBoolean(FEEDBACK_KEY, feedback);
 
         CheckInRewardFragment fragment = new CheckInRewardFragment();
         fragment.setArguments(args);
@@ -76,7 +72,6 @@ public class CheckInRewardFragment
     public void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         mReward = (Reward)getArguments().getSerializable(REWARD_KEY);
-        mFeedback = getArguments().getBoolean(FEEDBACK_KEY);
         mBetter = false;
     }
 
@@ -125,14 +120,13 @@ public class CheckInRewardFragment
      * Populates the UI with the available reward.
      */
     private void populateUI(){
-        if (mFeedback){
-            if (mBetter){
-                mHeader.setText(R.string.check_in_reward_better);
-            }
-            else{
-                mHeader.setText(R.string.check_in_reward_worse);
-            }
+        if (mBetter){
+            mHeader.setText(R.string.check_in_reward_better);
         }
+        else{
+            mHeader.setText(R.string.check_in_reward_worse);
+        }
+
         mContent.setText(mReward.getMessage());
         if (mReward.isQuote()){
             mAuthor.setVisibility(View.VISIBLE);

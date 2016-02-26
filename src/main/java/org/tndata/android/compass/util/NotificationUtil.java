@@ -44,10 +44,6 @@ public final class NotificationUtil{
     public static final String ENROLLMENT_TAG = "org.tndata.compass.Notification.Enrollment";
     public static final String CHECK_IN_TAG = "org.tndata.compass.Notification.CheckIn";
 
-    //Notification ids for notification tags with more than one type
-    public static final int CHECK_IN_REVIEW_ID = 1;
-    public static final int CHECK_IN_FEEDBACK_ID = 2;
-
 
     /**
      * Constructor. Should never be called. Period.
@@ -213,23 +209,11 @@ public final class NotificationUtil{
      * Creates a check in notification.
      *
      * @param context an instance of the context.
-     * @param review true if this is a review notification, false if this is a
-     *               feedback notification.
      * @param title the title of the notification.
      * @param message the message of the notification.
      */
-    public static void putCheckInNotification(Context context, boolean review, String title,
-                                              String message){
+    public static void putCheckInNotification(Context context, String title, String message){
         Intent intent = new Intent(context, CheckInActivity.class);
-        int notificationId;
-        if (review){
-            intent.putExtra(CheckInActivity.TYPE_KEY, CheckInActivity.TYPE_REVIEW);
-            notificationId = CHECK_IN_REVIEW_ID;
-        }
-        else{
-            intent.putExtra(CheckInActivity.TYPE_KEY, CheckInActivity.TYPE_FEEDBACK);
-            notificationId = CHECK_IN_FEEDBACK_ID;
-        }
         PendingIntent contentIntent = PendingIntent.getActivity(context,
                 (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -239,7 +223,7 @@ public final class NotificationUtil{
                 .build();
 
         ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
-                .notify(CHECK_IN_TAG, notificationId, notification);
+                .notify(CHECK_IN_TAG, 1, notification);
     }
 
     public static void cancel(Context context, String tag, long id){
