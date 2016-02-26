@@ -103,13 +103,6 @@ public class ActionActivity
                 setColor(getResources().getColor(R.color.grow_primary));
             }
             setHeader();
-            //timeOption.setText(R.string.action_reschedule);
-            /*if (mAction instanceof UserAction){
-                populateUI((UserAction)mAction);
-            }
-            else if (mAction instanceof CustomAction){
-                populateUI((CustomAction)mAction);
-            }*/
         }
     }
 
@@ -216,7 +209,7 @@ public class ActionActivity
 
     @Override
     public void onClick(View view){
-        switch (view.getId()){
+        /*switch (view.getId()){
             case R.id.action_time_option:
                 if (mReminder != null){
                     snooze();
@@ -233,7 +226,7 @@ public class ActionActivity
             case R.id.action_do_it_now:
                 CompassUtil.doItNow(this, ((UserAction)mAction).getAction().getExternalResource());
                 break;
-        }
+        }*/
     }
 
     /**
