@@ -19,9 +19,9 @@
     <string name="nav_drawer_action">Compass</string>
     <string name="main_tab_title">My Journey</string>
     <string name="category_card_title">My %1$s goals</string>
-    <string name="fab_choose_goals">Choose goals</string>
+    <string name="fab_search_goals">Search goals</string>
+    <string name="fab_browse_goals">Browse goals</string>
     <string name="fab_create_goal">Create goal</string>
-    <string name="fab_choose_interests">Choose interests</string>
 
     <!-- ChooseCategoryActivity -->
     <string name="choose_category_title">What interests you?</string>
@@ -120,35 +120,31 @@
     <string name="trigger_recurrence_picker_label">Select repeat options</string>
     <string name="trigger_finished_label">DONE</string>
 
-    <!-- BehaviorActivity -->
-    <string name="learn_more_no_thanks">NO THANKS</string>
-    <string name="learn_more_title_label">Learn more</string>
-    <string name="behavior_no_thanks">NO THANKS</string>
-    <string name="behavior_learn_more">LEARN MORE</string>
-    <string name="behavior_add_to_priorities_label">Add this to my priorities</string>
-    <string name="behavior_keep_in_mind">Keep this in mind each day</string>
-    <string name="behavior_take_action">Take action</string>
-    <string name="action_image_description">Take action</string>
-    <string name="action_i_want_this_label">I want this</string>
-    <string name="menu_popup_remove">Remove</string>
-    <string name="menu_popup_edit">Edit notification</string>
-    <string name="behavior_title_placeholder">My selected priority</string>
+    <!-- Library -->
+    <string name="library_goals_content_header">Compass can help me&#8230;</string>
+    <string name="library_goal_title">I want to %1$s</string>
+    <string name="library_behaviors_content_header">You can do it!</string>
+    <string name="library_behavior_title">I want to %1$s</string>
+    <string name="library_behavior_yes">Yes, I\'m in</string>
+    <string name="library_detail_header">Here is why</string>
+    <string name="library_detail_more_info">More info</string>
+    <string name="dialog_behavior_title">I\'m awesome</string>
+    <string name="dialog_behavior_content">Compass will check back in occasionally with activities that can help you reach your goal.</string>
+    <string name="dialog_behavior_activities">Activities</string>
+    <string name="dialog_behavior_ok">Got it</string>
+    <string name="library_review_action_header">Ways I can %1$s</string>
 
-    <!-- ChooseGoalsActivity -->
-    <string name="goal_selected">Goal selected</string>
-
-    <!-- ChooseBehaviorsActivity -->
-    <string name="choose_behaviors_try_these">TRY THESE</string>
-    <string name="choose_behaviors_try_it">SHOW ME HOW</string>
-    <string name="choose_behaviors_behavior_added">Priority selected</string>
-    <string name="choose_behaviors_behavior_removed">Priority removed</string>
-    <string name="choose_behaviors_do_it_now">Do it now</string>
-
-    <!-- ChooseActionsActivity -->
-    <string name="behavior_image_description">Priority</string>
-    <string name="action_added">Added %1$s</string>
-    <string name="action_deleted">Action removed</string>
-    <string name="action_saving">Saving action</string>
+    <!-- CustomContentManagerActivity -->
+    <string name="custom_goal_header">I want to&#8230;</string>
+    <string name="custom_goal_create">Create</string>
+    <string name="custom_goal_edit">Edit</string>
+    <string name="custom_goal_save">Save</string>
+    <string name="custom_action_list_header">Here\'s how I\'ll reach my goal</string>
+    <string name="custom_action_list_sub_header">I will&#8230;</string>
+    <string name="custom_action_list_create">Create</string>
+    <string name="custom_action_trigger_cd">Enter trigger edition mode</string>
+    <string name="custom_action_edit_cd">Enter action edition mode</string>
+    <string name="custom_action_save_cd">Save the title of an action in edition mode</string>
 
     <!-- SettingsActivity -->
     <string name="settings_general_title">General</string>
@@ -191,10 +187,10 @@
 
     <!-- TourFragment -->
     <string name="tour_action_skip">SKIP</string>
-    <string name="tour_page_1_information">Tell Compass where you want to go.</string>
-    <string name="tour_page_2_information">Compass helps you stay on course.</string>
-    <string name="tour_page_3_information">Browse activities that can help ease your way.</string>
-    <string name="tour_page_4_information">Check in daily to keep yourself on course.</string>
+    <string name="tour_page_1_caption">Tell Compass where you want to go.</string>
+    <string name="tour_page_2_caption">Compass helps you stay on course.</string>
+    <string name="tour_page_3_caption">Browse activities that can help ease your way.</string>
+    <string name="tour_page_4_caption">Check in daily to keep yourself on course.</string>
 
     <!-- Category chooser -->
     <string name="choose_categories_error">Uh Oh! There seems to have been an issue finding choices.</string>
@@ -215,7 +211,6 @@
     <!-- Search -->
     <string name="search">Search</string>
     <string name="search_header">These goals are relevant to your search:</string>
-    <string name="search_filter">Filter</string>
 
     <!-- Action notification -->
     <string name="action_notification_yes">Yes</string>
@@ -327,5 +322,8 @@
     <string name="check_in_reward_more">One more</string>
     <string name="check_in_reward_review">My goals</string>
     <string name="check_in_reward_share">Share</string>
+
+    <!-- Menus and popups -->
+    <string name="menu_popup_remove">Remove</string>
 
 </resources>

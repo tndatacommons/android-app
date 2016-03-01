@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 
+import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.database.CompassDbHelper;
@@ -280,6 +281,12 @@ public class LoginActivity
                 swapFragments(LOGIN, true);
             }
             else{
+                try{
+                    Log.d("LogIn", new JSONObject(result).toString(2));
+                }
+                catch (Exception x){
+                    x.printStackTrace();
+                }
                 Parser.parse(result, User.class, this);
             }
         }

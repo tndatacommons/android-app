@@ -67,6 +67,9 @@ public class TriggerActivity
     public static final String ACTION_KEY = "org.tndata.compass.TriggerActivity.Action";
     public static final String GOAL_KEY = "org.tndata.compass.TriggerActivity.Goal";
 
+    public static final String CUSTOM_GOAL_KEY = "org.tndata.compass.Trigger.CustomGoal";
+    public static final String CUSTOM_ACTION_KEY = "org.tndata.compass.Trigger.CustomAction";
+
     private static final String TAG = "TriggerActivity";
     private static final String FRAG_TAG_RECUR_PICKER = "recurrencePickerDialogFragment";
     private static final String FRAG_TAG_DATE_PICKER = "datePickerDialogFragment";
@@ -130,6 +133,12 @@ public class TriggerActivity
         //Retrieve the goal and the original user action
         Goal goal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
         mAction = userData.getAction((Action)getIntent().getSerializableExtra(ACTION_KEY));
+
+        //TODO until parcelable is widely implemented
+        if (mAction == null){
+            goal = getIntent().getParcelableExtra(CUSTOM_GOAL_KEY);
+            mAction = getIntent().getParcelableExtra(CUSTOM_ACTION_KEY);
+        }
 
         //TODO this is another workaround
         if (goal != null){

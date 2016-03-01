@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.support.annotation.DrawableRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +14,6 @@ import android.widget.TextView;
 import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.DrawerItem;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.util.CompassUtil;
 
@@ -28,8 +28,8 @@ import java.util.List;
  * @version 2.0.0
  */
 public class DrawerAdapter extends RecyclerView.Adapter{
-    private static final int VIEW_TYPE_HEADER = 1;
-    private static final int VIEW_TYPE_ITEM = 2;
+    private static final int TYPE_HEADER = 1;
+    private static final int TYPE_ITEM = 2;
 
     public static final int MY_PRIORITIES = 0;
     public static final int MYSELF = MY_PRIORITIES+1;
@@ -77,21 +77,23 @@ public class DrawerAdapter extends RecyclerView.Adapter{
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
         LayoutInflater inflater = LayoutInflater.from(mContext);
 
-        if (viewType == VIEW_TYPE_HEADER){
-            return new HeaderViewHolder(inflater.inflate(R.layout.item_drawer_header, parent, false));
+        if (viewType == TYPE_HEADER){
+            View rootView = inflater.inflate(R.layout.item_drawer_header, parent, false);
+            return new HeaderViewHolder(mContext, rootView);
         }
+        else{
+            View rootView = inflater.inflate(R.layout.item_drawer_item, parent, false);
+            ItemViewHolder holder = new ItemViewHolder(this, rootView);
 
-        View root = inflater.inflate(R.layout.item_drawer_item, parent, false);
-        ItemViewHolder holder = new ItemViewHolder((TextView)root);
+            holder.mItem.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Medium.ttf"));
 
-        holder.mItem.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Medium.ttf"));
-
-        return holder;
+            return holder;
+        }
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
-        if (getItemViewType(position) == VIEW_TYPE_HEADER){
+        if (getItemViewType(position) == TYPE_HEADER){
             User user = ((CompassApplication)((Activity)mContext).getApplication()).getUser();
 
             HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
@@ -121,9 +123,11 @@ public class DrawerAdapter extends RecyclerView.Adapter{
     @Override
     public int getItemViewType(int position){
         if (position == 0){
-            return VIEW_TYPE_HEADER;
+            return TYPE_HEADER;
         }
-        return VIEW_TYPE_ITEM;
+        else{
+            return TYPE_ITEM;
+        }
     }
 
     /**
@@ -185,7 +189,7 @@ public class DrawerAdapter extends RecyclerView.Adapter{
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    private class HeaderViewHolder extends RecyclerView.ViewHolder{
+    static class HeaderViewHolder extends RecyclerView.ViewHolder{
         private TextView mName;
         private TextView mAddress;
 
@@ -195,13 +199,14 @@ public class DrawerAdapter extends RecyclerView.Adapter{
          *
          * @param itemView the header view.
          */
-        public HeaderViewHolder(View itemView){
+        public HeaderViewHolder(Context context, View itemView){
             super(itemView);
 
             mName = (TextView)itemView.findViewById(R.id.drawer_header_name);
             mAddress = (TextView)itemView.findViewById(R.id.drawer_header_address);
 
-            mName.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Medium.ttf"));
+            mName.setTypeface(Typeface.createFromAsset(context.getAssets(),
+                    "fonts/Roboto-Medium.ttf"));
         }
     }
 
@@ -212,24 +217,27 @@ public class DrawerAdapter extends RecyclerView.Adapter{
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    private class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    static class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private DrawerAdapter mAdapter;
         private TextView mItem;
 
 
         /**
          * Constructor.
          *
+         * @param adapter a reference to the containing adapter.
          * @param itemView the item view.
          */
-        public ItemViewHolder(TextView itemView){
+        public ItemViewHolder(DrawerAdapter adapter, View itemView){
             super(itemView);
-            mItem = itemView;
+            mAdapter = adapter;
+            mItem = (TextView)itemView;
             mItem.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v){
-            mListener.onItemClick(getLayoutPosition()-1);
+            mAdapter.mListener.onItemClick(getLayoutPosition() - 1);
         }
     }
 
@@ -262,6 +270,58 @@ public class DrawerAdapter extends RecyclerView.Adapter{
             else{
                 outRect.top = 0;
             }
+        }
+    }
+
+
+    /**
+     * Data model for drawer items.
+     *
+     * @author Edited by Ismael Alonso
+     * @version 2.0.0
+     */
+    static class DrawerItem{
+        private String mCaption;
+        private int mIconResId;
+
+
+        /**
+         * Constructor. Text only items.
+         *
+         * @param caption the caption of the item.
+         */
+        public DrawerItem(String caption){
+            mCaption = caption;
+            mIconResId = 0;
+        }
+
+        /**
+         * Constructor. Text and icon.
+         *
+         * @param caption the caption of the item.
+         * @param iconResId the resource id of the icon.
+         */
+        public DrawerItem(String caption, @DrawableRes int iconResId){
+            mCaption = caption;
+            mIconResId = iconResId;
+        }
+
+        /**
+         * Caption getter.
+         *
+         * @return the item caption.
+         */
+        public String getCaption(){
+            return mCaption;
+        }
+
+        /**
+         * Icon resource id getter.
+         *
+         * @return the icon resource id.
+         */
+        public int getIconResId(){
+            return mIconResId;
         }
     }
 

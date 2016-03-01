@@ -5,16 +5,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import org.tndata.android.compass.fragment.CheckInFeedbackFragment;
-import org.tndata.android.compass.fragment.CheckInReviewEmptyFragment;
-import org.tndata.android.compass.fragment.CheckInReviewFragment;
 import org.tndata.android.compass.fragment.CheckInRewardFragment;
-import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.Reward;
-import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserGoal;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -24,9 +20,7 @@ import java.util.Map;
  * @version 1.0.0
  */
 public class CheckInPagerAdapter extends FragmentPagerAdapter{
-    private List<GoalContent> mGoals;
-    private List<List<UserAction>> mActionLists;
-    private boolean mReview;
+    private List<UserGoal> mGoals;
 
     private CheckInRewardFragment mRewardFragment;
     private List<Fragment> mFragments;
@@ -36,23 +30,16 @@ public class CheckInPagerAdapter extends FragmentPagerAdapter{
      * Constructor.
      *
      * @param fm the fragment manager.
-     * @param dataSet the data to be displayed by the adapter.
-     * @param review true to display review, false to display feedback.
+     * @param goals the data to be displayed by the adapter.
+     * @param reward the reward to be displayed in its fragment.
      */
-    public CheckInPagerAdapter(FragmentManager fm, Map<GoalContent, List<UserAction>> dataSet,
-                               Reward reward, boolean review){
+    public CheckInPagerAdapter(FragmentManager fm, List<UserGoal> goals, Reward reward){
         super(fm);
 
         //Populate the lists with the data in the set
-        mGoals = new ArrayList<>();
-        mActionLists = new ArrayList<>();
-        for (Map.Entry<GoalContent, List<UserAction>> entry:dataSet.entrySet()){
-            mGoals.add(entry.getKey());
-            mActionLists.add(entry.getValue());
-        }
-        mReview = review;
+        mGoals = goals;
 
-        mRewardFragment = CheckInRewardFragment.newInstance(reward, !review);
+        mRewardFragment = CheckInRewardFragment.newInstance(reward);
         mFragments = new ArrayList<>();
     }
 
@@ -64,18 +51,7 @@ public class CheckInPagerAdapter extends FragmentPagerAdapter{
                 mFragments.add(mRewardFragment);
             }
             else{
-                if (mReview){
-                    if (mGoals.isEmpty()){
-                        mFragments.add(new CheckInReviewEmptyFragment());
-                    }
-                    else{
-                        mFragments.add(CheckInReviewFragment.newInstance(mGoals.get(position),
-                                mActionLists.get(position)));
-                    }
-                }
-                else{
-                    mFragments.add(CheckInFeedbackFragment.newInstance(position, mGoals.get(position)));
-                }
+                mFragments.add(CheckInFeedbackFragment.newInstance(position, mGoals.get(position)));
             }
         }
         return mFragments.get(position);

@@ -40,7 +40,7 @@ final class CardTypes{
      * @return true if there is a welcome card, false otherwise.
      */
     static boolean hasWelcomeCard(){
-        return !sDataHandler.hasUserGoals();
+        return !sDataHandler.hasGoals();
     }
 
     /**
@@ -71,6 +71,10 @@ final class CardTypes{
         return getUpNextPosition() == position;
     }
 
+    static boolean hasFeedback(){
+        return hasUpNextAction() && sDataHandler.hasFeedback();
+    }
+
     /**
      * Gets the position of the feedback card.
      *
@@ -90,17 +94,33 @@ final class CardTypes{
      * @return true if it is the position of the feedback, false otherwise.
      */
     static boolean isFeedback(int position){
-        return hasUpNextAction() && getFeedbackPosition() == position;
+        return hasFeedback() && getFeedbackPosition() == position;
     }
 
+    /**
+     * Tells whether the feed has a single suggestion.
+     *
+     * @return true if the feed should display a suggestion.
+     */
     static boolean hasSuggestion(){
-        return sDisplaySuggestion && sDataHandler.hasUserGoals();
+        return sDisplaySuggestion && sDataHandler.hasGoals();
     }
 
+    /**
+     * Gets the position of the suggestion in the feed.
+     *
+     * @return the position of the suggestion in the feed.
+     */
     static int getSuggestionPosition(){
         return getUpNextPosition()+1;
     }
 
+    /**
+     * Tells whether the position provided belongs to a suggestion.
+     *
+     * @param position the position to be checked.
+     * @return true if it is a single suggestion card.
+     */
     static boolean isSuggestion(int position){
         return hasSuggestion() && position == getSuggestionPosition();
     }
@@ -120,12 +140,15 @@ final class CardTypes{
      * @return the position of the upcoming header card.
      */
     static int getUpcomingPosition(){
-        //If there is up next, then there is feedback
-        if (hasUpNextAction()){
+        //TEMP: There might be up-next but no feedback
+        if (hasFeedback()){
             return getFeedbackPosition()+1;
         }
         if (hasSuggestion()){
             return getSuggestionPosition()+1;
+        }
+        if (hasUpNextAction()){
+            return getUpNextPosition()+1;
         }
         //If there ain't up next, then there is no feedback and up next displays something else
         return getUpNextPosition()+1;

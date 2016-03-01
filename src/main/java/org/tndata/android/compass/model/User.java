@@ -31,6 +31,8 @@ public class User extends TDCBase implements Serializable{
     private String mLastName;
     @SerializedName("full_name")
     private String mFullName;
+    @SerializedName("gender")
+    private String mGender;
     @SerializedName("token")
     private String mToken;
     @SerializedName("date_joined")
@@ -126,6 +128,10 @@ public class User extends TDCBase implements Serializable{
 
     public boolean needsOnBoarding(){
         return mNeedsOnboarding;
+    }
+
+    public boolean isMale(){
+        return mGender == null || mGender.equals("male");
     }
 
     @Override

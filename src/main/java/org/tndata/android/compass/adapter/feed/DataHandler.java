@@ -4,6 +4,7 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.ui.ContentContainer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,8 +82,8 @@ class DataHandler{
      *
      * @return true if the user has selected goals, false otherwise.
      */
-    boolean hasUserGoals(){
-        return !mUserData.getGoals().isEmpty();
+    boolean hasGoals(){
+        return !mFeedData.getGoals().isEmpty();
     }
 
     /**
@@ -118,6 +119,10 @@ class DataHandler{
         return mFeedbackGoal;
     }
 
+    boolean hasFeedback(){
+        return mFeedData.hasFeedback();
+    }
+
     /**
      * Returns the next batch of actions to be displayed in the feed.
      *
@@ -148,9 +153,9 @@ class DataHandler{
      * @param displayedGoals the number of goals already being displayed din the feed.
      * @return a list containing the new goals.
      */
-    List<DisplayableGoal> loadMoreGoals(int displayedGoals){
+    List<ContentContainer.ContainerGoal> loadMoreGoals(int displayedGoals){
         //Populate the new list
-        List<DisplayableGoal> goals = new ArrayList<>();
+        List<ContentContainer.ContainerGoal> goals = new ArrayList<>();
         while (goals.size() < LOAD_MORE_COUNT && canLoadMoreGoals(displayedGoals + goals.size())){
             goals.add(mFeedData.getGoals().get(displayedGoals + goals.size()));
         }

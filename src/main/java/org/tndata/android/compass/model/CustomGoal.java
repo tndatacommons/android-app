@@ -1,12 +1,13 @@
 package org.tndata.android.compass.model;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
 import org.tndata.android.compass.R;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +18,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class CustomGoal extends Goal implements Serializable{
-    private static final long serialVersionUID = 3564217130245211923L;
-
+public class CustomGoal extends Goal implements Parcelable{
     public static final String TYPE = "customgoal";
 
 
@@ -77,11 +76,19 @@ public class CustomGoal extends Goal implements Serializable{
         return true;
     }
 
+    public void setActions(List<CustomAction> actions){
+        mActions = actions;
+        for (CustomAction action:mActions){
+            action.setGoal(this);
+        }
+    }
+
     public List<CustomAction> getActions(){
         return mActions;
     }
 
     public void addAction(CustomAction action){
+        action.setGoal(this);
         mActions.add(action);
     }
 
@@ -92,5 +99,50 @@ public class CustomGoal extends Goal implements Serializable{
     @Override
     public String toString(){
         return "CustomGoal #" + getId() + ": " + mTitle;
+    }
+
+
+    /*------------*
+     * PARCELABLE *
+     *------------*/
+
+    @Override
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags){
+        dest.writeLong(getId());
+        dest.writeString(mTitle);
+        dest.writeTypedList(mActions);
+    }
+
+    public static final Parcelable.Creator<CustomGoal> CREATOR = new Parcelable.Creator<CustomGoal>(){
+        @Override
+        public CustomGoal createFromParcel(Parcel in){
+            return new CustomGoal(in);
+        }
+
+        @Override
+        public CustomGoal[] newArray(int size){
+            return new CustomGoal[size];
+        }
+    };
+
+    /**
+     * Constructor to create from parcel.
+     *
+     * @param in the parcel where the object is stored.
+     */
+    private CustomGoal(Parcel in){
+        setId(in.readLong());
+        mTitle = in.readString();
+        //Retrieve the actions as an array list and assign the parent goal
+        mActions = new ArrayList<>();
+        in.readTypedList(mActions, CustomAction.CREATOR);
+        for (CustomAction action:mActions){
+            action.setGoal(this);
+        }
     }
 }

@@ -1,12 +1,11 @@
 package org.tndata.android.compass.activity;
 
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -14,18 +13,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.inputmethod.InputMethodManager;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
-import android.widget.SearchView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -34,7 +29,6 @@ import com.github.clans.fab.FloatingActionMenu;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
-import org.tndata.android.compass.adapter.SearchAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapterListener;
 import org.tndata.android.compass.model.Action;
@@ -42,7 +36,6 @@ import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.GoalContent;
-import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.model.UserGoal;
@@ -55,8 +48,6 @@ import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.OnScrollListenerHub;
 import org.tndata.android.compass.util.ParallaxEffect;
-
-import java.util.ArrayList;
 
 
 /**
@@ -75,39 +66,20 @@ public class MainActivity
                 NetworkRequest.RequestCallback,
                 DrawerAdapter.OnItemClickListener,
                 MainFeedAdapterListener,
-                MenuItemCompat.OnActionExpandListener,
-                SearchView.OnQueryTextListener,
-                SearchView.OnCloseListener,
-                RecyclerView.OnItemTouchListener,
-                SearchAdapter.SearchAdapterListener,
                 View.OnClickListener,
                 Parser.ParserCallback{
 
     //Activity request codes
     private static final int CATEGORIES_REQUEST_CODE = 4821;
     private static final int GOAL_REQUEST_CODE = 3486;
+    private static final int CUSTOM_GOAL_RC = 3475;
     private static final int GOAL_SUGGESTION_REQUEST_CODE = 8962;
     private static final int ACTION_REQUEST_CODE = 4582;
     private static final int TRIGGER_REQUEST_CODE = 7631;
 
-    //Task request codes
-    private static final int SEARCH_REQUEST_CODE = 1;
-
 
     //A reference to the application class
     private CompassApplication mApplication;
-
-    private Toolbar mToolbar;
-
-    //Search components
-    private MenuItem mSearchItem;
-    private SearchView mSearchView;
-    private View mSearchDim;
-    private View mSearchWrapper;
-    private TextView mSearchHeader;
-    private RecyclerView mSearchList;
-    private SearchAdapter mSearchAdapter;
-    private int mLastSearchRequestCode;
 
     //Drawer components
     private DrawerLayout mDrawerLayout;
@@ -121,9 +93,6 @@ public class MainActivity
     //Floating action menu components
     private View mStopper;
     private FloatingActionMenu mMenu;
-
-    //The selected category from the FAB
-    private CategoryContent mSelectedCategory;
 
     private boolean mSuggestionDismissed;
 
@@ -142,19 +111,10 @@ public class MainActivity
                 mApplication.getToken(), API.getPutUserProfileBody(mApplication.getUser()));
         new GcmRegistration(this);
 
-        mSearchDim = findViewById(R.id.main_search_dim);
-        mSearchWrapper = findViewById(R.id.main_search_wrapper);
-        mSearchHeader = (TextView)findViewById(R.id.main_search_header);
-        mSearchList = (RecyclerView)findViewById(R.id.main_search_list);
-        mSearchList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mSearchAdapter = new SearchAdapter(this, this);
-        mSearchList.setAdapter(mSearchAdapter);
-        mLastSearchRequestCode = SEARCH_REQUEST_CODE;
-
         //Set up the toolbar
-        mToolbar = (Toolbar)findViewById(R.id.main_toolbar);
-        mToolbar.setTitle("");
-        setSupportActionBar(mToolbar);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.main_toolbar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -175,8 +135,7 @@ public class MainActivity
                 invalidateOptionsMenu();
             }
         };
-        //mDrawerToggle
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
 
         RecyclerView drawerList = (RecyclerView)findViewById(R.id.main_drawer);
         drawerList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -205,12 +164,12 @@ public class MainActivity
         parallax.setItemDecoration(((MainFeedAdapter)mFeed.getAdapter()).getMainFeedPadding());
         hub.addOnScrollListener(parallax);
 
-        ParallaxEffect toolbarEffect = new ParallaxEffect(mToolbar, 1);
+        ParallaxEffect toolbarEffect = new ParallaxEffect(toolbar, 1);
         toolbarEffect.setItemDecoration(mAdapter.getMainFeedPadding());
         toolbarEffect.setParallaxCondition(new ParallaxEffect.ParallaxCondition(){
             @Override
             protected boolean doParallax(){
-                int height = (int)((CompassUtil.getScreenWidth(MainActivity.this)*2/3)*0.6);
+                int height = (int)((CompassUtil.getScreenWidth(MainActivity.this) * 2 / 3) * 0.6);
                 return -getRecyclerViewOffset() > height;
             }
 
@@ -221,8 +180,8 @@ public class MainActivity
 
             @Override
             protected int getParallaxViewOffset(){
-                int height = (int)((CompassUtil.getScreenWidth(MainActivity.this)*2/3)*0.6);
-                return  height + getFixedState() + getRecyclerViewOffset();
+                int height = (int)((CompassUtil.getScreenWidth(MainActivity.this) * 2 / 3) * 0.6);
+                return height + getFixedState() + getRecyclerViewOffset();
             }
         });
         hub.addOnScrollListener(toolbarEffect);
@@ -246,14 +205,23 @@ public class MainActivity
         });
         mFeed.addOnScrollListener(hub);
 
+        Animation hideAnimation = new ScaleAnimation(1, 0, 1, 0, Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
+        hideAnimation.setDuration(200);
+        Animation showAnimation = new ScaleAnimation(0, 1, 0, 1, Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
+        showAnimation.setDuration(200);
+
         mStopper = findViewById(R.id.main_stopper);
         mMenu = (FloatingActionMenu)findViewById(R.id.main_fab_menu);
+        mMenu.setMenuButtonHideAnimation(hideAnimation);
+        mMenu.setMenuButtonShowAnimation(showAnimation);
+        mMenu.setIconAnimated(false);
         mMenu.setClosedOnTouchOutside(true);
         mMenu.setOnMenuButtonClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 if (!mMenu.isOpened()){
-                    mSelectedCategory = null;
                     animateBackground(true);
                 }
                 mMenu.toggle(true);
@@ -277,98 +245,33 @@ public class MainActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        mSearchItem = menu.findItem(R.id.search);
+        MenuItem searchItem = menu.findItem(R.id.search);
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)){
-            mSearchItem.setVisible(false);
+            searchItem.setVisible(false);
         }
-        MenuItemCompat.setOnActionExpandListener(mSearchItem, this);
-
-        mSearchView = (SearchView)mSearchItem.getActionView();
-        mSearchView.setIconified(false);
-        mSearchView.setOnCloseListener(this);
-        mSearchView.setOnQueryTextListener(this);
-        mSearchView.clearFocus();
-
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public boolean onMenuItemActionExpand(MenuItem item){
-        mSearchView.requestFocus();
-        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        mFeed.addOnItemTouchListener(this);
-        mRefresh.setEnabled(false);
-        mSearchAdapter.updateDataSet(new ArrayList<SearchResult>());
-        mSearchHeader.setVisibility(View.INVISIBLE);
-        mSearchDim.setVisibility(View.VISIBLE);
-        mSearchWrapper.setVisibility(View.VISIBLE);
-        mToolbar.setBackgroundColor(getResources().getColor(R.color.main_toolbar_background_focused));
-        return true;
-    }
 
     @Override
-    public boolean onMenuItemActionCollapse(MenuItem item){
-        mSearchView.setQuery("", false);
-        mSearchView.clearFocus();
-        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-        mFeed.removeOnItemTouchListener(this);
-        if (mFeed.canScrollVertically(-1)){
-            mRefresh.setEnabled(false);
+    public final boolean onOptionsItemSelected(MenuItem item){
+        if (mDrawerToggle.onOptionsItemSelected(item)){
+            return true;
         }
-        else{
-            mRefresh.setEnabled(true);
-        }
-        mSearchDim.setVisibility(View.GONE);
-        mSearchWrapper.setVisibility(View.GONE);
-        mToolbar.setBackgroundColor(getResources().getColor(R.color.main_toolbar_background_inactive));
-        return true;
-    }
+        switch (item.getItemId()){
+            case R.id.search:
+                startActivity(new Intent(this, SearchActivity.class));
+                return true;
 
-    @Override
-    public boolean onClose(){
-        mSearchItem.collapseActionView();
-        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-        mFeed.removeOnItemTouchListener(this);
-        if (mFeed.canScrollVertically(-1)){
-            mRefresh.setEnabled(false);
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        else{
-            mRefresh.setEnabled(true);
-        }
-        mSearchDim.setVisibility(View.GONE);
-        mSearchWrapper.setVisibility(View.GONE);
-        mToolbar.setBackgroundColor(getResources().getColor(R.color.main_toolbar_background_inactive));
-        return true;
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query){
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText){
-        if (newText.equals("")){
-            mSearchHeader.setVisibility(View.INVISIBLE);
-            mSearchAdapter.updateDataSet(new ArrayList<SearchResult>());
-            mLastSearchRequestCode++;
-        }
-        else{
-            mLastSearchRequestCode = NetworkRequest.get(this, this, API.getSearchUrl(newText),
-                    mApplication.getToken());
-        }
-        return false;
     }
 
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetUserDataRequestCode){
             Parser.parse(result, ParserModels.UserDataResultSet.class, this);
-        }
-        else if (requestCode == mLastSearchRequestCode){
-            Parser.parse(result, ParserModels.SearchResultSet.class, this);
         }
     }
 
@@ -397,18 +300,20 @@ public class MainActivity
             fab.setColorPressedResId(R.color.grow_accent);
             fab.setColorRippleResId(R.color.grow_accent);
             fab.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            fab.setImageResource(R.drawable.fab_add);
             if (i == 0){
-                fab.setId(R.id.fab_choose_goals);
-                fab.setLabelText(getString(R.string.fab_choose_goals));
+                fab.setId(R.id.fab_search_goals);
+                fab.setLabelText(getString(R.string.fab_search_goals));
+                fab.setImageResource(R.drawable.ic_search);
             }
             else if (i == 1){
-                fab.setId(R.id.fab_create_goal);
-                fab.setLabelText(getString(R.string.fab_create_goal));
+                fab.setId(R.id.fab_browse_goals);
+                fab.setLabelText(getString(R.string.fab_browse_goals));
+                fab.setImageResource(R.drawable.ic_list_white_24dp);
             }
             else if (i == 2){
-                fab.setId(R.id.fab_choose_interests);
-                fab.setLabelText(getString(R.string.fab_choose_interests));
+                fab.setId(R.id.fab_create_goal);
+                fab.setLabelText(getString(R.string.fab_create_goal));
+                fab.setImageResource(R.drawable.fab_add);
             }
             fab.setOnClickListener(this);
             mMenu.addMenuButton(fab);
@@ -417,27 +322,33 @@ public class MainActivity
 
     @Override
     public void onClick(View v){
-        Log.d("FAB onClick()", v.toString());
         mMenu.toggle(true);
         switch (v.getId()){
-            case R.id.fab_choose_goals:
-                chooseGoalsClicked();
+            case R.id.fab_search_goals:
+                searchGoalsClicked();
+                break;
+
+            case R.id.fab_browse_goals:
+                browseGoalsClicked();
                 break;
 
             case R.id.fab_create_goal:
                 createCustomGoalClicked();
                 break;
-
-            case R.id.fab_choose_interests:
-                chooseInterestsClicked();
-                break;
         }
     }
 
     /**
-     * Called when the choose Goals FAB is clicked.
+     * Called when the search goals FAB is clicked.
      */
-    private void chooseGoalsClicked(){
+    private void searchGoalsClicked(){
+
+    }
+
+    /**
+     * Called when the browse Goals FAB is clicked.
+     */
+    private void browseGoalsClicked(){
         startActivityForResult(new Intent(this, ChooseCategoryActivity.class), GOAL_REQUEST_CODE);
     }
 
@@ -446,14 +357,6 @@ public class MainActivity
      */
     private void createCustomGoalClicked(){
         startActivityForResult(new Intent(this, CustomContentManagerActivity.class), GOAL_REQUEST_CODE);
-    }
-
-    /**
-     * Called when the choose interests FAB is clicked.
-    */
-    private void chooseInterestsClicked(){
-        startActivityForResult(new Intent(this, ChooseInterestsActivity.class),
-                CATEGORIES_REQUEST_CODE);
     }
 
     /**
@@ -482,11 +385,6 @@ public class MainActivity
                 if (!opening){
                     mStopper.setVisibility(View.GONE);
                 }
-                if (mSelectedCategory != null){
-                    Intent intent = new Intent(MainActivity.this, ChooseGoalsActivity.class);
-                    intent.putExtra(ChooseGoalsActivity.CATEGORY_KEY, mSelectedCategory);
-                    startActivityForResult(intent, Constants.CHOOSE_GOALS_REQUEST_CODE);
-                }
             }
 
             @Override
@@ -495,11 +393,6 @@ public class MainActivity
             }
         });
         mStopper.startAnimation(animation);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -572,7 +465,7 @@ public class MainActivity
 
             case DrawerAdapter.DRAWER_COUNT:
                 //Debug button
-                startActivity(new Intent(this, CheckInActivity.class).putExtra(CheckInActivity.TYPE_KEY, 2));
+                startActivity(new Intent(this, CheckInActivity.class));
                 break;
         }
         mDrawerLayout.closeDrawers();
@@ -617,9 +510,10 @@ public class MainActivity
             startActivityForResult(goalActivityIntent, GOAL_REQUEST_CODE);
         }
         else if (goal instanceof CustomGoal){
+            Parcelable customGoal = (CustomGoal)goal;
             Intent editGoal = new Intent(this, CustomContentManagerActivity.class)
-                    .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, goal);
-            startActivityForResult(editGoal, GOAL_REQUEST_CODE);
+                    .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, customGoal);
+            startActivityForResult(editGoal, CUSTOM_GOAL_RC);
         }
     }
 
@@ -685,30 +579,6 @@ public class MainActivity
     }
 
     @Override
-    public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e){
-        return true;
-    }
-
-    @Override
-    public void onTouchEvent(RecyclerView rv, MotionEvent e){
-
-    }
-
-    @Override
-    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept){
-
-    }
-
-    @Override
-    public void onSearchResultSelected(SearchResult result){
-        if (result.isGoal()){
-            Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
-                    .putExtra(ChooseBehaviorsActivity.GOAL_ID_KEY, result.getId());
-            startActivity(chooseBehaviors);
-        }
-    }
-
-    @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
         if (result instanceof ParserModels.UserDataResultSet){
             UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
@@ -720,11 +590,7 @@ public class MainActivity
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.SearchResultSet){
-            mSearchAdapter.updateDataSet(((ParserModels.SearchResultSet)result).results);
-            mSearchHeader.setVisibility(View.VISIBLE);
-        }
-        else if (result instanceof ParserModels.UserDataResultSet){
+        if (result instanceof ParserModels.UserDataResultSet){
             UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
 
             mApplication.setUserData(userData);

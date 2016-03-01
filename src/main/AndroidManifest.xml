@@ -102,6 +102,10 @@
         </activity>
 
         <activity
+            android:name=".activity.SearchActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".activity.SourcesActivity"
             android:parentActivityName=".activity.SettingsActivity"
             android:screenOrientation="portrait" />
@@ -138,7 +142,8 @@
             android:name="org.tndata.android.compass.activity.ChooseCategoryActivity"
             android:label="@string/choose_category_title"
             android:parentActivityName=".activity.MainActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:noHistory="true" >
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -178,18 +183,12 @@
         </activity>
 
         <activity
-            android:name="org.tndata.android.compass.activity.ChooseActionsActivity"
-            android:parentActivityName=".activity.MainActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+            android:name=".activity.BehaviorActivity"
+            android:screenOrientation="portrait" />
 
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.MainActivity" />
-        </activity>
+        <activity
+            android:name=".activity.ReviewActionsActivity"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".activity.MyPrioritiesActivity"

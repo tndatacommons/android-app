@@ -5,7 +5,7 @@
 
     <item name="quiet_toggle_tag" type="id" />
 
-    <item name="fab_choose_goals" type="id" />
-    <item name="fab_choose_interests" type="id" />
+    <item name="fab_search_goals" type="id" />
+    <item name="fab_browse_goals" type="id" />
     <item name="fab_create_goal" type="id" />
 </resources>

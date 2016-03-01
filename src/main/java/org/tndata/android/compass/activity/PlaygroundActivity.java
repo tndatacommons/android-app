@@ -1,13 +1,12 @@
 package org.tndata.android.compass.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.service.LocationNotificationService;
-import org.tndata.android.compass.ui.button.TransitionButton;
+import org.tndata.android.compass.ui.TransitionButton;
 
 import at.grabner.circleprogress.CircleProgressView;
 

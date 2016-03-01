@@ -11,7 +11,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
-        android:text="@string/tour_page_1_information"
+        android:text="@string/tour_page_1_caption"
         android:textSize="28dp"
         android:textColor="@color/white" />
 
@@ -37,7 +37,7 @@
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
         android:textSize="28dp"
-        android:text="@string/tour_page_2_information"
+        android:text="@string/tour_page_2_caption"
         android:textColor="@color/white" />
 
 </RelativeLayout>

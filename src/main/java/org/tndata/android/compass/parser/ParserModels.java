@@ -3,6 +3,7 @@ package org.tndata.android.compass.parser;
 import org.tndata.android.compass.model.ActionContent;
 import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.Place;
@@ -10,6 +11,7 @@ import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.model.UserProfile;
 
 import java.util.List;
@@ -24,6 +26,12 @@ import java.util.List;
  */
 public final class ParserModels{
     public interface ResultSet{}
+
+    private class ListResultSet implements ResultSet{
+        public int count;
+        public String previous;
+        public String next;
+    }
 
     public final class UserDataResultSet implements ResultSet{
         public List<UserData> results;
@@ -41,11 +49,11 @@ public final class ParserModels{
         public List<CategoryContent> results;
     }
 
-    public final class GoalContentResultSet implements ResultSet{
+    public final class GoalContentResultSet extends ListResultSet{
         public List<GoalContent> results;
     }
 
-    public final class BehaviorContentResultSet implements ResultSet{
+    public final class BehaviorContentResultSet extends ListResultSet{
         public List<BehaviorContent> results;
     }
 
@@ -55,6 +63,14 @@ public final class ParserModels{
 
     public final class UserActionResultSet implements ResultSet{
         public List<UserAction> results;
+    }
+
+    public final class CustomActionResultSet implements ResultSet{
+        public List<CustomAction> results;
+    }
+
+    public final class UserGoalResultSet implements ResultSet{
+        public List<UserGoal> results;
     }
 
     public final class RewardResultSet implements ResultSet{

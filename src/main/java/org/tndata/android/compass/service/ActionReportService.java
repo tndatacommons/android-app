@@ -53,13 +53,14 @@ public class ActionReportService extends IntentService{
         long actionId;
         String url;
         if (reminder != null){
-            actionId = reminder.getObjectId();
             url = API.getPostActionReportUrl(reminder);
-            if (reminder.getObjectType().equals(Reminder.TYPE_USER_ACTION)){
+            if (reminder.isUserAction()){
                 notificationTag = NotificationUtil.USER_ACTION_TAG;
+                actionId = reminder.getUserMappingId();
             }
             else{
                 notificationTag = NotificationUtil.CUSTOM_ACTION_TAG;
+                actionId = reminder.getObjectId();
             }
         }
         else{

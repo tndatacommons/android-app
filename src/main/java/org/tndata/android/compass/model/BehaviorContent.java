@@ -4,6 +4,7 @@ import android.widget.ImageView;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.tndata.android.compass.ui.ContentContainer;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.io.Serializable;
@@ -16,7 +17,7 @@ import java.util.Set;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class BehaviorContent extends TDCContent implements Serializable{
+public class BehaviorContent extends TDCContent implements Serializable, ContentContainer.ContainerBehavior{
     private static final long serialVersionUID = 7747989797893422842L;
 
     public static final String TYPE = "behavior";
@@ -35,6 +36,9 @@ public class BehaviorContent extends TDCContent implements Serializable{
     private Set<Long> mGoalIdSet;
     @SerializedName("actions_count")
     private int mActionCount = 0;
+
+
+    private String mColor;
 
 
     /*---------*
@@ -68,6 +72,15 @@ public class BehaviorContent extends TDCContent implements Serializable{
     @Override
     protected String getType(){
         return TYPE;
+    }
+
+
+    /*---------*
+     * SETTERS *
+     *---------*/
+
+    public void setColor(String color){
+        mColor = color;
     }
 
 

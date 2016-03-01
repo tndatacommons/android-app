@@ -104,6 +104,22 @@ public class UserAction
         return mAction.getHTMLDescription();
     }
 
+    public String getMoreInfo(){
+        return mAction.getMoreInfo();
+    }
+
+    public String getHTMLMoreInfo(){
+        return mAction.getHTMLMoreInfo();
+    }
+
+    public String getExternalResource(){
+        return mAction.getExternalResource();
+    }
+
+    public String getExternalResourceName(){
+        return mAction.getExternalResourceName();
+    }
+
     @Override
     public String getIconUrl(){
         return mAction.getIconUrl();

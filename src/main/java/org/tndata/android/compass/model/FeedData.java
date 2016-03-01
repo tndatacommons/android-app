@@ -6,7 +6,7 @@ import android.util.Log;
 import com.google.gson.annotations.SerializedName;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.adapter.feed.DisplayableGoal;
+import org.tndata.android.compass.ui.ContentContainer;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,7 +44,7 @@ public class FeedData extends TDCBase{
     //Fields set during post-processing
     private Action mNextAction;
     private List<Action> mUpcomingActions;
-    private List<DisplayableGoal> mGoals;
+    private List<ContentContainer.ContainerGoal> mGoals;
 
 
     @Override
@@ -75,6 +75,10 @@ public class FeedData extends TDCBase{
      */
     public Action getNextAction(){
         return mNextAction;
+    }
+
+    public boolean hasFeedback(){
+        return mActionFeedback != null;
     }
 
     /**
@@ -218,7 +222,7 @@ public class FeedData extends TDCBase{
         return mUpcomingActions;
     }
 
-    public List<DisplayableGoal> getGoals(){
+    public List<ContentContainer.ContainerGoal> getGoals(){
         return mGoals;
     }
 
@@ -236,7 +240,7 @@ public class FeedData extends TDCBase{
      *
      * @param goal the goal to be added.
      */
-    public void addGoal(DisplayableGoal goal){
+    public void addGoal(ContentContainer.ContainerGoal goal){
         //If the list contained suggestions, clear it and add the goal
         if (mGoals.get(0) instanceof GoalContent){
             mGoals.clear();
@@ -262,7 +266,7 @@ public class FeedData extends TDCBase{
      *
      * @param goal the goal to be removed.
      */
-    public void removeGoal(DisplayableGoal goal){
+    public void removeGoal(ContentContainer.ContainerGoal goal){
         mGoals.remove(goal);
     }
 
@@ -369,13 +373,13 @@ public class FeedData extends TDCBase{
 
         //Select the source
         mGoals = new ArrayList<>();
-        if (!userData.getGoals().isEmpty()){
+        if (!userData.getGoals().isEmpty() || !userData.getCustomGoals().isEmpty()){
             mGoals.addAll(userData.getGoals().values());
             mGoals.addAll(userData.getCustomGoals().values());
             //Sort by title
-            Collections.sort(mGoals, new Comparator<DisplayableGoal>(){
+            Collections.sort(mGoals, new Comparator<ContentContainer.ContainerGoal>(){
                 @Override
-                public int compare(DisplayableGoal lhs, DisplayableGoal rhs){
+                public int compare(ContentContainer.ContainerGoal lhs, ContentContainer.ContainerGoal rhs){
                     return lhs.getTitle().toLowerCase().compareTo(rhs.getTitle().toLowerCase());
                 }
             });

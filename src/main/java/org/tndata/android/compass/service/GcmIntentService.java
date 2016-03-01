@@ -10,7 +10,6 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
-import org.tndata.android.compass.activity.CheckInActivity;
 import org.tndata.android.compass.util.NotificationUtil;
 
 
@@ -127,9 +126,7 @@ public class GcmIntentService extends IntentService{
 
             case MESSAGE_TYPE_CHECK_IN:
                 try{
-                    NotificationUtil.putCheckInNotification(this,
-                            Integer.valueOf(objectId) == CheckInActivity.TYPE_REVIEW,
-                            title, msg);
+                    NotificationUtil.putCheckInNotification(this, title, msg);
                 }
                 catch (NumberFormatException nfx){
                     nfx.printStackTrace();

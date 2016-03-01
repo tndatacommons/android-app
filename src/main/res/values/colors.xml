@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <color name="black">#000</color>
+
     <color name="grow_primary">#2196F3</color>
     <color name="grow_primary_dark">#1976D2</color>
     <color name="grow_accent">#4A9E94</color>

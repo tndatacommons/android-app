@@ -7,7 +7,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.model.*;
-import org.tndata.android.compass.model.TDCPackage;
 
 import java.util.TimeZone;
 
@@ -21,6 +20,7 @@ import java.util.TimeZone;
  */
 public abstract class API{
     //Api urls and app configuration
+    public static final boolean STAGING = BuildConfig.DEBUG;
     private static final boolean USE_NGROK_TUNNEL = false;
     private static final String TNDATA_BASE_URL = "https://app.tndata.org/api/";
     private static final String TNDATA_STAGING_URL = "http://staging.tndata.org/api/";
@@ -31,10 +31,15 @@ public abstract class API{
             USE_NGROK_TUNNEL ?
                     NGROK_TUNNEL_URL
                     :
-                    BuildConfig.DEBUG ?
+                    STAGING ?
                             TNDATA_STAGING_URL
                             :
                             TNDATA_BASE_URL;
+
+
+    private API(){
+
+    }
 
 
     /*----------------*
@@ -133,10 +138,6 @@ public abstract class API{
         return BASE_URL + "categories/";
     }
 
-    public static String getCategoryUrl(long categoryId){
-        return BASE_URL + "categories/" + categoryId + "/";
-    }
-
     public static String getDeleteCategoryUrl(@NonNull UserCategory userCategory){
         return BASE_URL + "users/categories/" + userCategory.getId() + "/";
     }
@@ -162,24 +163,12 @@ public abstract class API{
         return BASE_URL + "goals/?category=" + category.getId();
     }
 
+    public static String getTodaysGoalsUrl(){
+        return BASE_URL + "users/goals/?today=1";
+    }
+
     public static String getGoalUrl(long goalId){
         return BASE_URL + "goals/" + goalId + "/";
-    }
-
-    public static String getPostGoalUrl(){
-        return BASE_URL + "users/goals/";
-    }
-
-    public static JSONObject getPostGoalBody(@NonNull GoalContent goal, @NonNull CategoryContent primaryCategory){
-        JSONObject postGoalBody = new JSONObject();
-        try{
-            postGoalBody.put("goal", goal.getId())
-                    .put("primary_category", primaryCategory.getId());
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-        }
-        return postGoalBody;
     }
 
     //Custom goals
@@ -288,6 +277,10 @@ public abstract class API{
     }
 
     //Custom actions
+    public static String getCustomActionsUrl(@NonNull CustomGoal customGoal){
+        return BASE_URL + "users/customactions/?customgoal=" + customGoal.getId();
+    }
+
     public static String getCustomActionUrl(int customActionId){
         return BASE_URL + "users/customactions/" + customActionId + "/";
     }
@@ -370,10 +363,10 @@ public abstract class API{
     }
 
     //TODO
-    public static JSONObject getPostUserGoalProgressBody(@NonNull GoalContent goal, int progress){
+    public static JSONObject getPostUserGoalProgressBody(@NonNull UserGoal userGoal, int progress){
         JSONObject postUserGoalProgressBody = new JSONObject();
         try{
-            postUserGoalProgressBody.put("goal", goal.getId())
+            postUserGoalProgressBody.put("goal", userGoal.getContentId())
                     .put("daily_checkin", progress);
         }
         catch (JSONException jsonx){
@@ -420,10 +413,10 @@ public abstract class API{
     }
 
     public static String getPostActionReportUrl(@NonNull Reminder reminder){
-        if (reminder.getObjectType().equals(Reminder.TYPE_USER_ACTION)){
+        if (reminder.isUserAction()){
             return BASE_URL + "users/actions/" + reminder.getUserMappingId() + "/complete/";
         }
-        else if (reminder.getObjectType().equals(Reminder.TYPE_CUSTOM_ACTION)){
+        else if (reminder.isCustomAction()){
             return BASE_URL + "users/customactions/" + reminder.getObjectId() + "/complete/";
         }
         else{
