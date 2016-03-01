@@ -3,7 +3,6 @@ package org.tndata.android.compass.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
@@ -37,9 +36,6 @@ public class CustomContentManagerActivity
 
 
     private CompassApplication mApplication;
-
-    //Dataset and adapter
-    private CustomGoal mCustomGoal;
     private CustomContentManagerAdapter mAdapter;
 
     //Request codes
@@ -53,23 +49,28 @@ public class CustomContentManagerActivity
 
         mApplication = (CompassApplication)getApplication();
 
-        //Retrieve the data set and populate the UI accordingly
-        mCustomGoal = (CustomGoal)getIntent().getSerializableExtra(CUSTOM_GOAL_KEY);
-        if (mCustomGoal != null){
-            Log.d(TAG, "Edit goal mode");
-
-            mCustomGoal = (CustomGoal)mApplication.getUserData().getGoal(mCustomGoal);
-
-            //Set the adapter
-            mAdapter = new CustomContentManagerAdapter(this, mCustomGoal, this);
+        CustomGoal customGoal;
+        String goalTitle = getIntent().getStringExtra(CUSTOM_GOAL_TITLE_KEY);
+        if (goalTitle != null){
+            customGoal = new CustomGoal(goalTitle);
+            onCreateGoal(customGoal);
         }
         else{
-            Log.d(TAG, "New goal mode");
-
-            mAdapter = new CustomContentManagerAdapter(this, null, this);
+            customGoal = (CustomGoal)getIntent().getSerializableExtra(CUSTOM_GOAL_KEY);
+            if (customGoal != null){
+                fetchActions();
+            }
         }
+        mAdapter = new CustomContentManagerAdapter(this, customGoal, this);
         setAdapter(mAdapter);
         setColor(getResources().getColor(R.color.grow_primary));
+    }
+
+    /**
+     * Retrieves the actions of a particular goal.
+     */
+    private void fetchActions(){
+        //TODO
     }
 
     @Override
@@ -77,17 +78,6 @@ public class CustomContentManagerActivity
         setResult(RESULT_OK);
         super.onBackPressed();
     }
-
-    //Keep this snippet around just in case
-    //When the user deletes a goal
-    /*case R.id.create_goal_delete:
-        //Remove it from the dataset, send a DELETE request, and exit the activity
-        mApplication.removeGoal(mCustomGoal);
-        NetworkRequest.delete(this, null, API.getDeleteGoalUrl(mCustomGoal),
-                mApplication.getToken(), new JSONObject());
-        setResult(RESULT_OK);
-        finish();
-        break;*/
 
     @Override
     public void onRequestComplete(int requestCode, String result){
@@ -123,42 +113,50 @@ public class CustomContentManagerActivity
             mAdapter.customGoalAdded((CustomGoal)result);
         }
         else if (result instanceof CustomAction){
-            mAdapter.customActionAdded((CustomAction)result);
+            mAdapter.customActionAdded();
         }
     }
 
     @Override
-    public void createGoal(@NonNull CustomGoal customGoal){
+    public void onCreateGoal(@NonNull CustomGoal customGoal){
         mAddGoalRequestCode = NetworkRequest.post(this, this, API.getPostCustomGoalUrl(),
                 mApplication.getToken(), API.getPostPutCustomGoalBody(customGoal));
     }
 
     @Override
-    public void saveGoal(@NonNull CustomGoal customGoal){
+    public void onSaveGoal(@NonNull CustomGoal customGoal){
         NetworkRequest.put(this, null, API.getPutCustomGoalUrl(customGoal),
                 mApplication.getToken(), API.getPostPutCustomGoalBody(customGoal));
     }
 
+    public void deleteGoal(@NonNull CustomGoal customGoal){
+        mApplication.removeGoal(customGoal);
+        NetworkRequest.delete(this, null, API.getDeleteGoalUrl(customGoal),
+                mApplication.getToken(), new JSONObject());
+        setResult(RESULT_OK);
+        finish();
+    }
+
     @Override
-    public void createAction(@NonNull CustomAction customAction){
+    public void onCreateAction(@NonNull CustomAction customAction){
         mAddActionRequestCode = NetworkRequest.post(this, this, API.getPostCustomActionUrl(),
                 mApplication.getToken(), API.getPostPutCustomActionBody(customAction, customAction.getGoal()));
     }
 
     @Override
-    public void saveAction(@NonNull CustomAction customAction){
+    public void onSaveAction(@NonNull CustomAction customAction){
         NetworkRequest.put(this, null, API.getPutCustomActionUrl(customAction),
                 mApplication.getToken(), API.getPostPutCustomActionBody(customAction, customAction.getGoal()));
     }
 
     @Override
-    public void editTrigger(@NonNull CustomAction customAction){
+    public void onEditTrigger(@NonNull CustomAction customAction){
         startActivity(new Intent(this, TriggerActivity.class)
                 .putExtra(TriggerActivity.GOAL_KEY, customAction.getGoal())
                 .putExtra(TriggerActivity.ACTION_KEY, customAction));
     }
 
-    public void onRemoveClicked(CustomAction customAction){
+    public void onRemoveClicked(@NonNull CustomAction customAction){
         NetworkRequest.delete(this, this, API.getDeleteActionUrl(customAction),
                 mApplication.getToken(), new JSONObject());
         mApplication.getUserData().removeAction(customAction);

@@ -136,9 +136,15 @@
 
     <!-- CustomContentManagerActivity -->
     <string name="custom_goal_header">I want to&#8230;</string>
+    <string name="custom_goal_create">Create</string>
+    <string name="custom_goal_edit">Edit</string>
+    <string name="custom_goal_save">Save</string>
     <string name="custom_action_list_header">Here\'s how I\'ll reach my goal</string>
     <string name="custom_action_list_sub_header">I will&#8230;</string>
     <string name="custom_action_list_create">Create</string>
+    <string name="custom_action_trigger_cd">Enter trigger edition mode</string>
+    <string name="custom_action_edit_cd">Enter action edition mode</string>
+    <string name="custom_action_save_cd">Save the title of an action in edition mode</string>
 
     <!-- SettingsActivity -->
     <string name="settings_general_title">General</string>
