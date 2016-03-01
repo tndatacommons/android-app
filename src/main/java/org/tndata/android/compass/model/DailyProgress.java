@@ -26,14 +26,23 @@ public class DailyProgress extends TDCBase{
 
 
     public float getCompletedFraction(){
+        if (mTotalActions == 0){
+            return 0;
+        }
         return (float)mCompletedActions/mTotalActions;
     }
 
     public float getSnoozedFraction(){
+        if (mTotalActions == 0){
+            return 0;
+        }
         return (float)mSnoozedActions/mTotalActions;
     }
 
     public float getDismissedFraction(){
+        if (mTotalActions == 0){
+            return 0;
+        }
         return (float)mDismissedActions/mTotalActions;
     }
 

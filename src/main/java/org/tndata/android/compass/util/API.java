@@ -359,16 +359,15 @@ public abstract class API{
      * PROGRESS REPORTING *
      *--------------------*/
 
-    public static String getUserGoalProgressUrl(){
-        return BASE_URL + "users/goals/progress/average/";
+    public static String getUserProgressUrl(){
+        return BASE_URL + "users/progress/";
     }
 
-    public static String getPostUserGoalProgressUrl(){
-        return BASE_URL + "users/goals/progress/";
+    public static String getPostUserProgressUrl(){
+        return BASE_URL + "users/progress/checkin/";
     }
 
-    //TODO
-    public static JSONObject getPostUserGoalProgressBody(@NonNull UserGoal userGoal, int progress){
+    public static JSONObject getPostUserProgressBody(@NonNull UserGoal userGoal, int progress){
         JSONObject postUserGoalProgressBody = new JSONObject();
         try{
             postUserGoalProgressBody.put("goal", userGoal.getContentId())
