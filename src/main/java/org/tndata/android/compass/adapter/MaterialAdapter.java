@@ -148,7 +148,9 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
         if (position == 2){
             if (hasHeader()){
                 if (mContentType.getType() == TYPE_DETAIL_CONTENT){
-                    return TYPE_DETAIL_CONTENT;
+                    if (hasDetails()){
+                        return TYPE_DETAIL_CONTENT;
+                    }
                 }
                 else{
                     if (!isEmpty()){
@@ -340,16 +342,15 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
     }
 
     /**
-     * Updates the state of the loading widget, but only if it is displayed.
+     * Updates the state of the loading widget.
      *
      * @param showLoading whether the loading widget should be shown or updated.
      */
     protected void updateLoading(boolean showLoading){
-        //The loader can only be updated if it is showing
         if (mShowLoading){
-            mShowLoading = showLoading;
             //If we are no longer loading, remove the switch
-            if (!mShowLoading){
+            if (!showLoading){
+                mShowLoading = false;
                 notifyItemRemoved(getItemCount());
             }
             //Otherwise, schedule an item refresh for the load switch half a second from now
@@ -358,9 +359,15 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
                 new Handler().postDelayed(new Runnable(){
                     @Override
                     public void run(){
-                        notifyItemChanged(getItemCount() - 1);
+                        notifyItemChanged(getItemCount()-1);
                     }
                 }, 500);
+            }
+        }
+        else{
+            if (showLoading){
+                mShowLoading = true;
+                notifyItemInserted(getItemCount()-1);
             }
         }
     }

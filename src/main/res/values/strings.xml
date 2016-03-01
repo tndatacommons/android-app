@@ -136,6 +136,9 @@
 
     <!-- CustomContentManagerActivity -->
     <string name="custom_goal_header">I want to&#8230;</string>
+    <string name="custom_action_list_header">Here\'s how I\'ll reach my goal</string>
+    <string name="custom_action_list_sub_header">I will&#8230;</string>
+    <string name="custom_action_list_create">Create</string>
 
     <!-- SettingsActivity -->
     <string name="settings_general_title">General</string>

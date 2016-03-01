@@ -30,9 +30,10 @@ public class CustomAction extends Action implements Serializable{
     private CustomGoal mGoal;
 
 
-    public CustomAction(String title){
+    public CustomAction(String title, CustomGoal goal){
         mTitle = title;
         mNotificationText = title;
+        mGoal = goal;
     }
 
     public void setTitle(String title){
