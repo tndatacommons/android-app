@@ -34,7 +34,7 @@ public class LogInFragment
         extends Fragment
         implements
                 NetworkRequest.RequestCallback,
-        Parser.ParserCallback,
+                Parser.ParserCallback,
                 OnClickListener{
 
     //Listener interface.

@@ -36,7 +36,7 @@ public class SignUpFragment
         implements
                 OnClickListener,
                 NetworkRequest.RequestCallback,
-        Parser.ParserCallback{
+                Parser.ParserCallback{
 
     //Listener interface
     private SignUpFragmentListener mListener;

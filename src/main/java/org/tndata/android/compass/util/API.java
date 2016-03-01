@@ -125,6 +125,11 @@ public abstract class API{
         return BASE_URL + "users/";
     }
 
+    //Feed data
+    public static String getFeedDataUrl(){
+        return BASE_URL + "users/feed/";
+    }
+
 
     //Search
     public static String getSearchUrl(@NonNull String query){
