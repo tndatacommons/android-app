@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.view.View;
+import android.widget.ImageView;
 
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
@@ -66,6 +68,15 @@ public class CustomContentManagerActivity
         mAdapter = new CustomContentManagerAdapter(this, mCustomGoal, this);
         setAdapter(mAdapter);
         setColor(getResources().getColor(R.color.grow_primary));
+
+        View header = inflateHeader(R.layout.header_tile);
+        ImageView tile = (ImageView)header.findViewById(R.id.header_tile);
+        if (mApplication.getUser().isMale()){
+            tile.setImageResource(R.drawable.ic_guy);
+        }
+        else{
+            tile.setImageResource(R.drawable.ic_lady);
+        }
     }
 
     /**

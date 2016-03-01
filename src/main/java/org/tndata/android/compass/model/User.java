@@ -130,6 +130,10 @@ public class User extends TDCBase implements Serializable{
         return mNeedsOnboarding;
     }
 
+    public boolean isMale(){
+        return mGender == null || mGender.equals("male");
+    }
+
     @Override
     public String toString(){
         return mFullName + " (uid: " + getId() + ", pid: " + mUserProfileId + "), " + mEmail + ", "

@@ -65,7 +65,7 @@ public class ChooseGoalsActivity
         mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
 
         View header = inflateHeader(R.layout.header_tile);
-        ImageView tile = (ImageView)header.findViewById(R.id.choose_goals_tile);
+        ImageView tile = (ImageView)header.findViewById(R.id.header_tile);
 
         int id = CompassUtil.getCategoryTileResId(mCategory.getTitle());
         Bitmap image = BitmapFactory.decodeResource(getResources(), id);
