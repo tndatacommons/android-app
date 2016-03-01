@@ -1,8 +1,9 @@
 package org.tndata.android.compass.model;
 
-import com.google.gson.annotations.SerializedName;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import java.io.Serializable;
+import com.google.gson.annotations.SerializedName;
 
 
 /**
@@ -11,9 +12,7 @@ import java.io.Serializable;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class CustomAction extends Action implements Serializable{
-    private static final long serialVersionUID = 291946133239951923L;
-
+public class CustomAction extends Action implements Parcelable{
     public static final String TYPE = "custom_action";
 
 
@@ -89,5 +88,47 @@ public class CustomAction extends Action implements Serializable{
     @Override
     public String toString(){
         return "CustomAction #" + getId() + ": " + mTitle;
+    }
+
+
+    /*------------*
+     * PARCELABLE *
+     *------------*/
+
+    @Override
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags){
+        dest.writeLong(getId());
+        dest.writeString(mTitle);
+        dest.writeString(mNotificationText);
+        dest.writeParcelable(mGoal, flags);
+    }
+
+    public static final Parcelable.Creator<CustomAction> CREATOR = new Parcelable.Creator<CustomAction>(){
+        @Override
+        public CustomAction createFromParcel(Parcel in){
+            return new CustomAction(in);
+        }
+
+        @Override
+        public CustomAction[] newArray(int size){
+            return new CustomAction[size];
+        }
+    };
+
+    /**
+     * Constructor to create from parcel.
+     *
+     * @param in the parcel where the object is stored.
+     */
+    private CustomAction(Parcel in){
+        setId(in.readLong());
+        mTitle = in.readString();
+        mNotificationText = in.readString();
+        mGoal = in.readParcelable(CustomGoal.class.getClassLoader());
     }
 }
