@@ -1,6 +1,7 @@
 package org.tndata.android.compass.model;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -77,11 +78,19 @@ public class CustomGoal extends Goal implements Serializable{
         return true;
     }
 
+    public void setActions(List<CustomAction> actions){
+        mActions = actions;
+        for (CustomAction action:mActions){
+            action.setGoal(this);
+        }
+    }
+
     public List<CustomAction> getActions(){
         return mActions;
     }
 
     public void addAction(CustomAction action){
+        action.setGoal(this);
         mActions.add(action);
     }
 

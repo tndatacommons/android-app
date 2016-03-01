@@ -21,7 +21,6 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.CustomGoal;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -58,19 +57,13 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
 
         mContext = context;
         mCustomGoal = customGoal;
-        if (mCustomGoal == null){
-            //Placeholder to avoid NPXs
-            mCustomActions = new ArrayList<>();
-        }
-        else{
-            mCustomActions = mCustomGoal.getActions();
-        }
+        mCustomActions = null;
         mListener = listener;
     }
 
     @Override
     protected boolean isEmpty(){
-        return mCustomGoal == null;
+        return mCustomGoal == null || mCustomActions == null;
     }
 
     @Override
@@ -114,12 +107,23 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
     }
 
     /**
+     * Lets the adapter know that the list of actions has been fetched.
+     */
+    public void customActionsFetched(){
+        mCustomActions = mCustomGoal.getActions();
+        mCustomGoalHolder.mButton.setText(mContext.getString(R.string.custom_goal_edit));
+        setButtonEnabled(mCustomGoalHolder.mButton, true);
+        notifyListInserted();
+        updateLoading(false);
+    }
+
+    /**
      * Called when the process of adding a custom action to the user's dataset has been
      * completed. Notifies the recycler view of the insertion of a new element to trigger
      * the proper animation.
      */
     public void customActionAdded(){
-        mActionListHolder.mAdapter.notifyItemInserted(mCustomActions.size() - 1);
+        mActionListHolder.mAdapter.notifyItemInserted(mCustomActions.size()-1);
         mActionListHolder.mAdapter.notifyItemChanged(mCustomActions.size());
         mActionListHolder.mSwitcher.showPrevious();
     }
@@ -191,6 +195,8 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
             else{
                 //Otherwise, set the title, enable the button, and set edit as the label.
                 mTitle.setText(customGoal.getTitle());
+                mTitle.clearFocus();
+                mTitle.setFocusable(false);
                 mButton.setText(mContext.getString(R.string.custom_goal_edit));
                 setButtonEnabled(mButton, true);
             }
@@ -331,6 +337,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
      */
     private class CustomActionAdapter extends RecyclerView.Adapter<CustomActionHolder>{
         private CustomActionHolder mNewActionHolder;
+
 
         @Override
         public int getItemCount(){

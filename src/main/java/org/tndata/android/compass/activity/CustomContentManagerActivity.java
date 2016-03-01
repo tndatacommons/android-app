@@ -36,10 +36,12 @@ public class CustomContentManagerActivity
 
 
     private CompassApplication mApplication;
+    private CustomGoal mCustomGoal;
     private CustomContentManagerAdapter mAdapter;
 
     //Request codes
     private int mAddGoalRequestCode;
+    private int mGetActionsRequestCode;
     private int mAddActionRequestCode;
 
 
@@ -49,28 +51,30 @@ public class CustomContentManagerActivity
 
         mApplication = (CompassApplication)getApplication();
 
-        CustomGoal customGoal;
         String goalTitle = getIntent().getStringExtra(CUSTOM_GOAL_TITLE_KEY);
         if (goalTitle != null){
-            customGoal = new CustomGoal(goalTitle);
-            onCreateGoal(customGoal);
+            mCustomGoal = new CustomGoal(goalTitle);
+            onCreateGoal(mCustomGoal);
         }
         else{
-            customGoal = (CustomGoal)getIntent().getSerializableExtra(CUSTOM_GOAL_KEY);
-            if (customGoal != null){
-                fetchActions();
+            mCustomGoal = (CustomGoal)getIntent().getSerializableExtra(CUSTOM_GOAL_KEY);
+            if (mCustomGoal != null){
+                fetchActions(mCustomGoal);
             }
         }
-        mAdapter = new CustomContentManagerAdapter(this, customGoal, this);
+        mAdapter = new CustomContentManagerAdapter(this, mCustomGoal, this);
         setAdapter(mAdapter);
         setColor(getResources().getColor(R.color.grow_primary));
     }
 
     /**
      * Retrieves the actions of a particular goal.
+     *
+     * @param customGoal the goal whose actions are to be fetched.
      */
-    private void fetchActions(){
-        //TODO
+    private void fetchActions(@NonNull CustomGoal customGoal){
+        mGetActionsRequestCode = NetworkRequest.get(this, this, API.getCustomActionsUrl(customGoal),
+                mApplication.getToken());
     }
 
     @Override
@@ -83,6 +87,9 @@ public class CustomContentManagerActivity
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mAddGoalRequestCode){
             Parser.parse(result, CustomGoal.class, this);
+        }
+        else if (requestCode == mGetActionsRequestCode){
+            Parser.parse(result, ParserModels.CustomActionResultSet.class, this);
         }
         else if (requestCode == mAddActionRequestCode){
             Parser.parse(result, CustomAction.class, this);
@@ -97,13 +104,16 @@ public class CustomContentManagerActivity
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
         if (result instanceof CustomGoal){
-            CustomGoal customGoal = (CustomGoal)result;
-            customGoal.init();
-            mApplication.getUserData().addGoal(customGoal);
+            mCustomGoal = (CustomGoal)result;
+            mCustomGoal.init();
+            mApplication.getUserData().addGoal(mCustomGoal);
+        }
+        else if (result instanceof ParserModels.CustomActionResultSet){
+            mCustomGoal.setActions(((ParserModels.CustomActionResultSet)result).results);
         }
         else if (result instanceof CustomAction){
-            ((CustomAction)result).init();
             mApplication.getUserData().addAction((CustomAction)result);
+            mCustomGoal.addAction((CustomAction)result);
         }
     }
 
@@ -111,6 +121,9 @@ public class CustomContentManagerActivity
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof CustomGoal){
             mAdapter.customGoalAdded((CustomGoal)result);
+        }
+        else if (result instanceof ParserModels.CustomActionResultSet){
+            mAdapter.customActionsFetched();
         }
         else if (result instanceof CustomAction){
             mAdapter.customActionAdded();

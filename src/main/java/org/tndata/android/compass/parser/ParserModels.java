@@ -3,6 +3,7 @@ package org.tndata.android.compass.parser;
 import org.tndata.android.compass.model.ActionContent;
 import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.Place;
@@ -62,6 +63,10 @@ public final class ParserModels{
 
     public final class UserActionResultSet implements ResultSet{
         public List<UserAction> results;
+    }
+
+    public final class CustomActionResultSet implements ResultSet{
+        public List<CustomAction> results;
     }
 
     public final class UserGoalResultSet implements ResultSet{
