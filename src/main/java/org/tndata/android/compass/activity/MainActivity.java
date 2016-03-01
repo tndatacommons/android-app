@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -71,6 +72,7 @@ public class MainActivity
     //Activity request codes
     private static final int CATEGORIES_REQUEST_CODE = 4821;
     private static final int GOAL_REQUEST_CODE = 3486;
+    private static final int CUSTOM_GOAL_RC = 3475;
     private static final int GOAL_SUGGESTION_REQUEST_CODE = 8962;
     private static final int ACTION_REQUEST_CODE = 4582;
     private static final int TRIGGER_REQUEST_CODE = 7631;
@@ -133,7 +135,7 @@ public class MainActivity
                 invalidateOptionsMenu();
             }
         };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
 
         RecyclerView drawerList = (RecyclerView)findViewById(R.id.main_drawer);
         drawerList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -508,9 +510,10 @@ public class MainActivity
             startActivityForResult(goalActivityIntent, GOAL_REQUEST_CODE);
         }
         else if (goal instanceof CustomGoal){
+            Parcelable customGoal = (CustomGoal)goal;
             Intent editGoal = new Intent(this, CustomContentManagerActivity.class)
-                    .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, goal);
-            startActivityForResult(editGoal, GOAL_REQUEST_CODE);
+                    .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, customGoal);
+            startActivityForResult(editGoal, CUSTOM_GOAL_RC);
         }
     }
 

@@ -78,6 +78,7 @@ public abstract class MaterialActivity
     public final boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case android.R.id.home:
+                onHomeTapped();
                 finish();
                 return true;
 
@@ -89,6 +90,8 @@ public abstract class MaterialActivity
                 return menuItemSelected(item) || super.onOptionsItemSelected(item);
         }
     }
+
+    protected void onHomeTapped(){}
 
     protected boolean menuItemSelected(MenuItem item){
         return false;

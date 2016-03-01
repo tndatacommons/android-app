@@ -2,6 +2,7 @@ package org.tndata.android.compass.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import org.json.JSONObject;
@@ -57,7 +58,7 @@ public class CustomContentManagerActivity
             onCreateGoal(mCustomGoal);
         }
         else{
-            mCustomGoal = (CustomGoal)getIntent().getSerializableExtra(CUSTOM_GOAL_KEY);
+            mCustomGoal = getIntent().getParcelableExtra(CUSTOM_GOAL_KEY);
             if (mCustomGoal != null){
                 fetchActions(mCustomGoal);
             }
@@ -78,9 +79,19 @@ public class CustomContentManagerActivity
     }
 
     @Override
+    protected void onHomeTapped(){
+        deliverResults();
+    }
+
+    @Override
     public void onBackPressed(){
-        setResult(RESULT_OK);
+        deliverResults();
         super.onBackPressed();
+    }
+
+    private void deliverResults(){
+        setResult(RESULT_OK);
+        setIntent(new Intent().putExtra(CUSTOM_GOAL_KEY, (Parcelable)mCustomGoal));
     }
 
     @Override
@@ -165,8 +176,8 @@ public class CustomContentManagerActivity
     @Override
     public void onEditTrigger(@NonNull CustomAction customAction){
         startActivity(new Intent(this, TriggerActivity.class)
-                .putExtra(TriggerActivity.GOAL_KEY, customAction.getGoal())
-                .putExtra(TriggerActivity.ACTION_KEY, customAction));
+                .putExtra(TriggerActivity.GOAL_KEY, (Parcelable)customAction.getGoal())
+                .putExtra(TriggerActivity.ACTION_KEY, (Parcelable)customAction));
     }
 
     public void onRemoveClicked(@NonNull CustomAction customAction){

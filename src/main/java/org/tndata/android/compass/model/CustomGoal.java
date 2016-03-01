@@ -138,7 +138,11 @@ public class CustomGoal extends Goal implements Parcelable{
     private CustomGoal(Parcel in){
         setId(in.readLong());
         mTitle = in.readString();
+        //Retrieve the actions as an array list and assign the parent goal
         mActions = new ArrayList<>();
         in.readTypedList(mActions, CustomAction.CREATOR);
+        for (CustomAction action:mActions){
+            action.setGoal(this);
+        }
     }
 }

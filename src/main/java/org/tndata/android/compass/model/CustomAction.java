@@ -104,8 +104,8 @@ public class CustomAction extends Action implements Parcelable{
     public void writeToParcel(Parcel dest, int flags){
         dest.writeLong(getId());
         dest.writeString(mTitle);
+        dest.writeLong(mCustomGoalId);
         dest.writeString(mNotificationText);
-        dest.writeParcelable(mGoal, flags);
     }
 
     public static final Parcelable.Creator<CustomAction> CREATOR = new Parcelable.Creator<CustomAction>(){
@@ -128,7 +128,7 @@ public class CustomAction extends Action implements Parcelable{
     private CustomAction(Parcel in){
         setId(in.readLong());
         mTitle = in.readString();
+        mCustomGoalId = in.readLong();
         mNotificationText = in.readString();
-        mGoal = in.readParcelable(CustomGoal.class.getClassLoader());
     }
 }
