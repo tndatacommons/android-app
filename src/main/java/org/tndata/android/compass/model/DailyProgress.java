@@ -24,26 +24,38 @@ public class DailyProgress extends TDCBase{
     @SerializedName("actions_dismissed")
     private int mDismissedActions;
 
+    @SerializedName("customactions_total")
+    private int mTotalCustomActions;
+    @SerializedName("customactions_completed")
+    private int mCompletedCustomActions;
+    @SerializedName("customactions_snoozed")
+    private int mSnoozedCustomActions;
+    @SerializedName("customactions_dismissed")
+    private int mDismissedCustomActions;
+
 
     public float getCompletedFraction(){
-        if (mTotalActions == 0){
+        int total = mTotalActions + mTotalCustomActions;
+        if (total == 0){
             return 0;
         }
-        return (float)mCompletedActions/mTotalActions;
+        return (float)(mCompletedActions+mSnoozedCustomActions)/total;
     }
 
     public float getSnoozedFraction(){
-        if (mTotalActions == 0){
+        int total = mTotalActions + mTotalCustomActions;
+        if (total == 0){
             return 0;
         }
-        return (float)mSnoozedActions/mTotalActions;
+        return (float)(mSnoozedActions+mSnoozedCustomActions)/total;
     }
 
     public float getDismissedFraction(){
-        if (mTotalActions == 0){
+        int total = mTotalActions + mTotalCustomActions;
+        if (total == 0){
             return 0;
         }
-        return (float)mDismissedActions/mTotalActions;
+        return (float)(mDismissedActions+mDismissedCustomActions)/total;
     }
 
     @Override
