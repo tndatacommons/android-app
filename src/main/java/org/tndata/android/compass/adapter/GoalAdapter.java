@@ -21,15 +21,10 @@ import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.ui.CompassPopupMenu;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.NetworkRequest;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.Stack;
-
-import at.grabner.circleprogress.CircleProgressView;
-import at.grabner.circleprogress.TextMode;
 
 
 /**
@@ -112,23 +107,9 @@ public class GoalAdapter extends RecyclerView.Adapter{
             rawHolder.itemView.setVisibility(View.INVISIBLE);
         }
         else if (getItemViewType(position) == TYPE_BEHAVIOR){
-            Calendar calendar = Calendar.getInstance();
-            String month = CompassUtil.getMonthString(calendar.get(Calendar.MONTH) + 1);
-
             UserBehavior userBehavior = mUserGoal.getBehaviors().get(position / 2);
             BehaviorHolder holder = (BehaviorHolder)rawHolder;
             holder.mTitle.setText(userBehavior.getTitle());
-            holder.mIndicator.setValue(0);
-            holder.mIndicator.setAutoTextSize(true);
-            holder.mIndicator.setShowUnit(false);
-            holder.mIndicator.setText(month);
-            holder.mIndicator.setTextMode(TextMode.TEXT);
-
-            if (userBehavior.getProgress() != null){
-                holder.mIndicator.setValue(userBehavior.getProgress().getDailyActionsProgressPercent());
-                holder.mIndicatorCaption.setText(mContext.getString(R.string.goal_indicator_caption,
-                        userBehavior.getProgress().getDailyActionsProgressPercent()));
-            }
             populate(holder, userBehavior);
         }
     }
@@ -291,8 +272,6 @@ public class GoalAdapter extends RecyclerView.Adapter{
      * @version 1.0.0
      */
     private class BehaviorHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        private CircleProgressView mIndicator;
-        private TextView mIndicatorCaption;
         private TextView mTitle;
         private LinearLayout mActionContainer;
 
@@ -305,8 +284,6 @@ public class GoalAdapter extends RecyclerView.Adapter{
         public BehaviorHolder(View itemView){
             super(itemView);
 
-            mIndicator = (CircleProgressView)itemView.findViewById(R.id.behavior_indicator);
-            mIndicatorCaption = (TextView)itemView.findViewById(R.id.behavior_indicator_caption);
             mTitle = (TextView)itemView.findViewById(R.id.behavior_title);
             mActionContainer = (LinearLayout)itemView.findViewById(R.id.behavior_actions);
 
