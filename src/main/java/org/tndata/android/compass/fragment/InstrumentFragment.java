@@ -39,7 +39,7 @@ public class InstrumentFragment
                 View.OnClickListener,
                 SurveyView.SurveyViewListener,
                 NetworkRequest.RequestCallback,
-        Parser.ParserCallback{
+                Parser.ParserCallback{
 
     private static final String TAG = "InstrumentFragment";
 
