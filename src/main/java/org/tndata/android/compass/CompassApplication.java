@@ -25,6 +25,7 @@ import org.tndata.android.compass.util.ImageLoader;
 import java.util.List;
 import java.util.Map;
 
+import es.sandwatch.httprequests.HttpRequest;
 import io.fabric.sdk.android.Fabric;
 
 
@@ -61,6 +62,9 @@ public class CompassApplication extends Application{
     public void setUser(User user, boolean setPreferences){
         Log.d(TAG, "Setting user: " + user);
         mUser = user;
+
+        //Add the authorization header with the user's token to the requests library
+        HttpRequest.addHeader("Authorization", "Token " + getToken());
 
         if (setPreferences){
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -156,6 +160,14 @@ public class CompassApplication extends Application{
         //if(!BuildConfig.DEBUG){
             Fabric.with(this, new Crashlytics());
         //}
+
+        //Init the HttpRequest library
+        HttpRequest.init(getApplicationContext());
+        //Add the authorization header with the user's token
+        HttpRequest.addHeader("Authorization", "Token " + getToken());
+        //Add a constant url parameter vir API versioning
+        HttpRequest.addUrlParameter("version", "2");
+
         startService(new Intent(this, LocationNotificationService.class));
         ImageLoader.initialize(getApplicationContext());
     }

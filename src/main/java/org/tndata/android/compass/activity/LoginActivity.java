@@ -25,10 +25,12 @@ import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.Constants;
-import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 public class LoginActivity
@@ -38,7 +40,7 @@ public class LoginActivity
                 SignUpFragment.SignUpFragmentListener,
                 LogInFragment.LogInFragmentCallback,
                 TourFragment.TourFragmentCallback,
-                NetworkRequest.RequestCallback,
+                HttpRequest.RequestCallback,
                 Parser.ParserCallback{
 
 
@@ -63,9 +65,9 @@ public class LoginActivity
     private CompassApplication mApplication;
 
     //Request codes
-    private int mLogInRequestCode;
-    private int mGetDataRequestCode;
-    private int mGetCategoriesRequestCode;
+    private int mLogInRC;
+    private int mGetDataRC;
+    private int mGetCategoriesRC;
 
 
     @Override
@@ -171,8 +173,8 @@ public class LoginActivity
         }
 
         if (mFragmentStack.isEmpty()){
-            NetworkRequest.cancel(mLogInRequestCode);
-            NetworkRequest.cancel(mGetDataRequestCode);
+            HttpRequest.cancel(mLogInRC);
+            HttpRequest.cancel(mGetDataRC);
             finish();
         }
         else{
@@ -180,7 +182,7 @@ public class LoginActivity
 
             int index = DEFAULT;
             if (fragment instanceof LauncherFragment){
-                NetworkRequest.cancel(mGetDataRequestCode);
+                HttpRequest.cancel(mGetDataRC);
                 ((LauncherFragment)fragment).showProgress(false);
             }
             else if (fragment instanceof LogInFragment){
@@ -224,8 +226,7 @@ public class LoginActivity
             }
         }
 
-        mLogInRequestCode = NetworkRequest.post(this, this, API.getLogInUrl(), "",
-                API.getLogInBody(email, password));
+        mLogInRC = HttpRequest.post(this, API.getLogInUrl(), API.getLogInBody(email, password));
     }
 
     @Override
@@ -264,8 +265,7 @@ public class LoginActivity
             transitionToOnBoarding();
         }
         else{
-            mGetDataRequestCode = NetworkRequest.get(this, this, API.getUserDataUrl(),
-                    mApplication.getToken(), 60*1000);
+            mGetDataRC = HttpRequest.get(this, API.getUserDataUrl(), 60*1000);
         }
     }
 
@@ -276,7 +276,7 @@ public class LoginActivity
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mLogInRequestCode){
+        if (requestCode == mLogInRC){
             if (result.contains("\"non_field_errors\"")){
                 swapFragments(LOGIN, true);
             }
@@ -290,24 +290,24 @@ public class LoginActivity
                 Parser.parse(result, User.class, this);
             }
         }
-        else if (requestCode == mGetDataRequestCode){
+        else if (requestCode == mGetDataRC){
             Parser.parse(result, ParserModels.UserDataResultSet.class, this);
         }
-        else if (requestCode == mGetCategoriesRequestCode){
+        else if (requestCode == mGetCategoriesRC){
             Parser.parse(result, ParserModels.CategoryContentResultSet.class, this);
         }
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
-        if (requestCode == mLogInRequestCode){
+    public void onRequestFailed(int requestCode, HttpRequestError error){
+        if (requestCode == mLogInRC){
             Log.d("LogIn", "Login request failed");
             swapFragments(LOGIN, true);
         }
-        else if (requestCode == mGetDataRequestCode){
+        else if (requestCode == mGetDataRC){
             Log.d("LogIn", "Get data failed");
         }
-        else if (requestCode == mGetCategoriesRequestCode){
+        else if (requestCode == mGetCategoriesRC){
             Log.d("LogIn", "Get categories failed");
         }
     }
@@ -340,13 +340,12 @@ public class LoginActivity
             }
             else{
                 Log.d("LogIn", "Fetching user data");
-                mGetDataRequestCode = NetworkRequest.get(this, this, API.getUserDataUrl(),
-                        mApplication.getToken(), 60*1000);
+                mGetDataRC = HttpRequest.get(this, API.getUserDataUrl(), 60*1000);
             }
         }
         if (result instanceof ParserModels.UserDataResultSet){
             mApplication.setUserData(((ParserModels.UserDataResultSet)result).results.get(0));
-            mGetCategoriesRequestCode = NetworkRequest.get(this, this, API.getCategoriesUrl(), "");
+            mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
         }
         else if (result instanceof ParserModels.CategoryContentResultSet){
             mApplication.setPublicCategories(((ParserModels.CategoryContentResultSet)result).results);

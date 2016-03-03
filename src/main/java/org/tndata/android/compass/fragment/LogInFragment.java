@@ -7,7 +7,6 @@ import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.NetworkRequest;
 
 import android.support.v4.app.Fragment;
 import android.content.Context;
@@ -23,6 +22,9 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
+
 
 /**
  * Fragment that displays a log in screen.
@@ -33,7 +35,7 @@ import android.widget.TextView;
 public class LogInFragment
         extends Fragment
         implements
-                NetworkRequest.RequestCallback,
+                HttpRequest.RequestCallback,
                 Parser.ParserCallback,
                 OnClickListener{
 
@@ -49,7 +51,7 @@ public class LogInFragment
 
     //Attributes
     private String mErrorString = "";
-    private int mLogInRequestCode;
+    private int mLogInRC;
 
 
     @Override
@@ -69,7 +71,7 @@ public class LogInFragment
     @Override
     public void onDetach(){
         super.onDetach();
-        NetworkRequest.cancel(mLogInRequestCode);
+        HttpRequest.cancel(mLogInRC);
         mCallback = null;
     }
 
@@ -105,8 +107,7 @@ public class LogInFragment
         if (isValidEmail(email) && isValidPassword(password)){
             setFormEnabled(false);
 
-            mLogInRequestCode = NetworkRequest.post(getActivity(), this, API.getLogInUrl(), "",
-                    API.getLogInBody(email, password));
+            mLogInRC = HttpRequest.post(this, API.getLogInUrl(), API.getLogInBody(email, password));
         }
         else{
             setFormEnabled(true);
@@ -169,19 +170,19 @@ public class LogInFragment
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
-        if (message.contains("non_field_errors")){
-            try{
-                mErrorString = new JSONObject(message).getJSONArray("non_field_errors").getString(0);
-            }
-            catch (JSONException jsonx){
-                jsonx.printStackTrace();
+    public void onRequestFailed(int requestCode, HttpRequestError error){
+        if (error.isServerError()){
+            if (error.getMessage().contains("non_field_errors")){
+                try{
+                    mErrorString = new JSONObject(error.getMessage())
+                            .getJSONArray("non_field_errors").getString(0);
+                }
+                catch (JSONException jsonx){
+                    jsonx.printStackTrace();
+                }
             }
         }
         else{
-            mErrorString = message;
-        }
-        if (mErrorString.equals("")){
             mErrorString = getActivity().getResources().getString(R.string.login_error);
         }
         setFormEnabled(true);

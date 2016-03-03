@@ -7,7 +7,6 @@ import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.NetworkRequest;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
@@ -24,6 +23,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
+
 
 /**
  * Fragment that handles the sign up process.
@@ -35,7 +37,7 @@ public class SignUpFragment
         extends Fragment
         implements
                 OnClickListener,
-                NetworkRequest.RequestCallback,
+                HttpRequest.RequestCallback,
                 Parser.ParserCallback{
 
     //Listener interface
@@ -54,7 +56,7 @@ public class SignUpFragment
 
     //Attributes
     private String mErrorString;
-    private int mSignUpRequestCode;
+    private int mSignUpRC;
 
 
     @Override
@@ -74,7 +76,7 @@ public class SignUpFragment
     @Override
     public void onDetach(){
         super.onDetach();
-        NetworkRequest.cancel(mSignUpRequestCode);
+        HttpRequest.cancel(mSignUpRC);
         mListener = null;
     }
 
@@ -133,8 +135,8 @@ public class SignUpFragment
             mErrorString = "";
             setFormEnabled(false);
 
-            mSignUpRequestCode = NetworkRequest.post(getActivity(), this, API.getSignUpUrl(), "",
-                    API.getSignUpBody(emailAddress, password, firstName, lastName));
+            JSONObject body = API.getSignUpBody(emailAddress, password, firstName, lastName);
+            mSignUpRC = HttpRequest.post(this, API.getSignUpUrl(), body);
         }
         else{
             setFormEnabled(true);
@@ -234,25 +236,25 @@ public class SignUpFragment
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mSignUpRequestCode){
+        if (requestCode == mSignUpRC){
             Parser.parse(result, User.class, this);
         }
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
-        if (message.contains("email")){
-            try{
-                mErrorString = new JSONObject(message).getJSONArray("email").getString(0);
-            }
-            catch (JSONException jsonx){
-                jsonx.printStackTrace();
+    public void onRequestFailed(int requestCode, HttpRequestError error){
+        if (error.isServerError()){
+            if (error.getMessage().contains("email")){
+                try{
+                    mErrorString = new JSONObject(error.getMessage()).
+                            getJSONArray("email").getString(0);
+                }
+                catch (JSONException jsonx){
+                    jsonx.printStackTrace();
+                }
             }
         }
         else{
-            mErrorString = message;
-        }
-        if (mErrorString.equals("")){
             mErrorString = getActivity().getResources().getString(R.string.signup_error);
         }
         setFormEnabled(true);
