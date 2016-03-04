@@ -51,22 +51,29 @@ public class CompassApplication extends Application{
                 .getString(GcmRegistration.PROPERTY_REG_ID, "");
     }
 
+    public User getUserLoginInfo(){
+        SharedPreferences loginInfo = PreferenceManager.getDefaultSharedPreferences(this);
+        return new User(loginInfo.getString("email", ""), loginInfo.getString("password", ""));
+    }
+
     public User getUser(){
-        if (mUser == null){
-            SharedPreferences loginInfo = PreferenceManager.getDefaultSharedPreferences(this);
-            return new User(loginInfo.getString("email", ""), loginInfo.getString("password", ""));
-        }
         return mUser;
     }
 
     public void setUser(User user, boolean setPreferences){
         Log.d(TAG, "Setting user: " + user);
+        Log.d(TAG, "Set preferences: " + setPreferences);
         mUser = user;
 
         //Add the authorization header with the user's token to the requests library
         HttpRequest.addHeader("Authorization", "Token " + getToken());
 
         if (setPreferences){
+            Log.d(TAG, "Password: " + user.getPassword());
+            if (user.getPassword() == null){
+                Log.d(TAG, "Password is null");
+                Thread.dumpStack();
+            }
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
             SharedPreferences.Editor editor = settings.edit();
             editor.putString("auth_token", mUser.getToken());
@@ -163,8 +170,14 @@ public class CompassApplication extends Application{
 
         //Init the HttpRequest library
         HttpRequest.init(getApplicationContext());
-        //Add the authorization header with the user's token
-        HttpRequest.addHeader("Authorization", "Token " + getToken());
+        //Add or remove the authorization header with the user's token
+        String token = getToken();
+        if (token != null && !token.isEmpty()){
+            HttpRequest.addHeader("Authorization", "Token " + getToken());
+        }
+        else{
+            HttpRequest.removeHeader("Authorization");
+        }
         //Add a constant url parameter vir API versioning
         HttpRequest.addUrlParameter("version", "2");
 

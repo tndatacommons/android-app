@@ -140,7 +140,7 @@ public abstract class API{
 
     //Categories
     public static String getCategoriesUrl(){
-        return BASE_URL + "categories/";
+        return BASE_URL + "categories/?page_size=999999";
     }
 
     public static String getDeleteCategoryUrl(@NonNull UserCategory userCategory){
@@ -148,7 +148,7 @@ public abstract class API{
     }
 
     public static String getUserCategoriesUrl(){
-        return BASE_URL + "users/categories/";
+        return BASE_URL + "users/categories/?page_size=999999";
     }
 
     public static JSONObject getPostCategoryBody(@NonNull CategoryContent category){
@@ -243,6 +243,10 @@ public abstract class API{
 
 
     //Actions
+    public static String getActionsUrl(@NonNull GoalContent goal){
+        return BASE_URL + "actions/?goal=" + goal.getId();
+    }
+
     public static String getActionsUrl(@NonNull BehaviorContent behavior){
         return BASE_URL + "actions/?behavior=" + behavior.getId();
     }

@@ -94,7 +94,7 @@ public class LoginActivity
             editor.apply();
         }
 
-        User user = mApplication.getUser();
+        User user = mApplication.getUserLoginInfo();
         if (!user.getEmail().isEmpty() && !user.getPassword().isEmpty()){
             logUserIn(user.getEmail(), user.getPassword());
         }
@@ -261,12 +261,7 @@ public class LoginActivity
 
     private void setUser(User user){
         mApplication.setUser(user, true);
-        if (user.needsOnBoarding()){
-            transitionToOnBoarding();
-        }
-        else{
-            mGetDataRC = HttpRequest.get(this, API.getUserDataUrl(), 60*1000);
-        }
+        mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
     }
 
     @Override
@@ -314,7 +309,10 @@ public class LoginActivity
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.UserDataResultSet){
+        if (result instanceof User){
+            mApplication.setUser((User)result, false);
+        }
+        else if (result instanceof ParserModels.UserDataResultSet){
             UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
 
             userData.sync();
@@ -333,9 +331,12 @@ public class LoginActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof User){
-            User user = (User)result;
-            mApplication.setUser(user, false);
-            if (user.needsOnBoarding()){
+            mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
+
+        }
+        else if (result instanceof ParserModels.CategoryContentResultSet){
+            mApplication.setPublicCategories(((ParserModels.CategoryContentResultSet)result).results);
+            if (mApplication.getUser().needsOnBoarding()){
                 transitionToOnBoarding();
             }
             else{
@@ -343,12 +344,8 @@ public class LoginActivity
                 mGetDataRC = HttpRequest.get(this, API.getUserDataUrl(), 60*1000);
             }
         }
-        if (result instanceof ParserModels.UserDataResultSet){
+        else if (result instanceof ParserModels.UserDataResultSet){
             mApplication.setUserData(((ParserModels.UserDataResultSet)result).results.get(0));
-            mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
-        }
-        else if (result instanceof ParserModels.CategoryContentResultSet){
-            mApplication.setPublicCategories(((ParserModels.CategoryContentResultSet)result).results);
             transitionToMain();
         }
     }

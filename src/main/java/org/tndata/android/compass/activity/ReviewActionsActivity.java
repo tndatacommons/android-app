@@ -14,6 +14,7 @@ import org.tndata.android.compass.adapter.ReviewActionsAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserGoal;
+import org.tndata.android.compass.util.API;
 
 
 /**
@@ -34,7 +35,7 @@ public class ReviewActionsActivity
     private ReviewActionsAdapter mAdapter;
 
     //Network request codes and urls
-    private int mGetActionsRequestCode;
+    private int mGetActionsRC;
     private String mGetActionsNextUrl;
 
 
@@ -46,9 +47,11 @@ public class ReviewActionsActivity
         mUserBehavior = (UserBehavior)getIntent().getSerializableExtra(USER_BEHAVIOR_KEY);
         if (mUserBehavior == null){
             mAdapter = new ReviewActionsAdapter(this, this, mUserGoal);
+            mGetActionsNextUrl = API.getActionsUrl(mUserGoal.getGoal());
         }
         else{
             mAdapter = new ReviewActionsAdapter(this, this, mUserBehavior);
+            mGetActionsNextUrl = API.getActionsUrl(mUserBehavior.getBehavior());
         }
 
         Log.d("ReviewActionsActivity", mUserGoal.getPrimaryCategory().getColor());
