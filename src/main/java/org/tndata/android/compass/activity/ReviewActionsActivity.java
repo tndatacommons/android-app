@@ -14,7 +14,12 @@ import org.tndata.android.compass.adapter.ReviewActionsAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserGoal;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -22,7 +27,10 @@ import org.tndata.android.compass.util.API;
  */
 public class ReviewActionsActivity
         extends MaterialActivity
-        implements ReviewActionsAdapter.ReviewActionsListener{
+        implements
+                ReviewActionsAdapter.ReviewActionsListener,
+                HttpRequest.RequestCallback,
+                Parser.ParserCallback{
 
     public static final String USER_GOAL_KEY = "org.tndata.compass.ReviewActions.Goal";
     public static final String USER_BEHAVIOR_KEY = "org.tndata.compass.ReviewActions.Behavior";
@@ -87,6 +95,26 @@ public class ReviewActionsActivity
 
     @Override
     public void loadMore(){
+        mGetActionsRC = HttpRequest.get(this, mGetActionsNextUrl);
+    }
+
+    @Override
+    public void onRequestComplete(int requestCode, String result){
+        Parser.parse(result, ParserModels.ActionContentResultSet.class, this);
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode, HttpRequestError error){
+
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
 
     }
 }

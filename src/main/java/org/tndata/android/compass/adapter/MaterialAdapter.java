@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -198,19 +199,16 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
     }
 
     /**
-     * Method to get the holder for the listing section of the adapter. If the adapter is a
-     * listing adapter this method must be overriden and it must return an actual view
-     * holder. Returning null will cause the adapter to throw an IllegalStateException,
-     * since the main purpose of a listing adapter is to display a list of items. The
-     * implementee is responsible for creating the view holder in this case because there
-     * is no reasonable way to maintain a generic list with my model and my container
-     * implementations.
+     * Creates the default holder for the list card. The implementee is free to override this
+     * method to set his own holder with the desired layout.
      *
      * @param parent the view group parent to the view that will be contained by the adapter.
      * @return an adapter to (preferably) display a list of elements.
      */
     protected @NonNull RecyclerView.ViewHolder getListHolder(ViewGroup parent){
-        throw new IllegalStateException("Implementee needs to override getListHolder()");
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        View rootView = inflater.inflate(R.layout.card_material_list, parent, false);
+        return new ListViewHolder(mContext, rootView);
     }
 
     /**
@@ -218,7 +216,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
      * method to set his own holder with the desired layout.
      *
      * @param parent the view group parent to the view that will be contained by the adapter.
-     * @return an adapter to act as a details view.
+     * @return the default details view holder.
      */
     protected @NonNull RecyclerView.ViewHolder getDetailsHolder(ViewGroup parent){
         LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -485,7 +483,70 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
 
 
     /**
-     * View holder for the detail card.
+     * Default view holder for a listing card.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    protected static class ListViewHolder extends RecyclerView.ViewHolder{
+        private TextView mHeader;
+        private RecyclerView mList;
+
+
+        /**
+         * Constructor.
+         *
+         * @param context a reference to the context.
+         * @param rootView the root view of the holder.
+         */
+        public ListViewHolder(@NonNull Context context, @NonNull View rootView){
+            super(rootView);
+
+            mHeader = (TextView)rootView.findViewById(R.id.material_list_header);
+            mList = (RecyclerView)rootView.findViewById(R.id.material_list_list);
+            mList.setLayoutManager(new LinearLayoutManager(context));
+        }
+
+        /**
+         * Sets the background color of the header.
+         *
+         * @param color the color to be set as the background of the header.
+         */
+        public void setHeaderColor(int color){
+            mHeader.setBackgroundColor(color);
+        }
+
+        /**
+         * Sets the title in the header.
+         *
+         * @param title the new title.
+         */
+        public void setTitle(@NonNull String title){
+            mHeader.setText(title);
+        }
+
+        /**
+         * Sets a layout manager to the list. It defaults to a vertical linear layout manager.
+         *
+         * @param layoutManager the new layout manager.
+         */
+        public void setLayoutManager(RecyclerView.LayoutManager layoutManager){
+            mList.setLayoutManager(layoutManager);
+        }
+
+        /**
+         * Sets the adapter to the list.
+         *
+         * @param adapter the new adapter.
+         */
+        public void setAdapter(RecyclerView.Adapter adapter){
+            mList.setAdapter(adapter);
+        }
+    }
+
+
+    /**
+     * Default view holder for the detail card.
      *
      * @author Ismael Alonso
      * @version 1.0.0

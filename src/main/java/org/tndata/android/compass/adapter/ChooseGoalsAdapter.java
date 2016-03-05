@@ -169,7 +169,7 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
             mAdapter = adapter;
 
             //Fetch UI components
-            mTitle = (TextView)rootView.findViewById(R.id.material_content_header);
+            mTitle = (TextView)rootView.findViewById(R.id.material_list_header);
             mGoalContainer = (ContentContainer<GoalContent>)rootView
                     .findViewById(R.id.material_content_container);
             mGoalContainer.setListener(this);

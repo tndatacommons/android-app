@@ -62,7 +62,7 @@ public final class ParserModels{
         public List<BehaviorContent> results;
     }
 
-    public final class ActionContentResultSet implements ResultSet{
+    public final class ActionContentResultSet extends ListResultSet{
         public List<ActionContent> results;
     }
 

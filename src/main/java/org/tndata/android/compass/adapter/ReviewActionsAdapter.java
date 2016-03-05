@@ -3,7 +3,6 @@ package org.tndata.android.compass.adapter;
 import android.content.Context;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,19 +23,11 @@ import java.util.List;
 /**
  * Created by isma on 2/24/16.
  */
-public class ReviewActionsAdapter extends RecyclerView.Adapter{
-    private static final int TYPE_BLANK = 0;
-    private static final int TYPE_CONTENT = TYPE_BLANK+1;
-    private static final int TYPE_LOAD = TYPE_CONTENT+1;
-    private static final int ITEM_COUNT = TYPE_LOAD+1;
-
-
-    private Context mContext;
+public class ReviewActionsAdapter extends MaterialAdapter{
     private ReviewActionsListener mListener;
     private UserGoal mUserGoal;
     private UserBehavior mUserBehavior;
 
-    private ActionsViewHolder mActionsHolder;
     private List<Action> mActions;
 
     private boolean mShowLoading;
@@ -44,7 +35,8 @@ public class ReviewActionsAdapter extends RecyclerView.Adapter{
 
 
     public ReviewActionsAdapter(Context context, ReviewActionsListener listener, UserGoal userGoal){
-        init(context, listener);
+        super(context, ContentType.LIST, true);
+        init(listener);
         mUserGoal = userGoal;
         mUserBehavior = null;
     }
@@ -52,13 +44,13 @@ public class ReviewActionsAdapter extends RecyclerView.Adapter{
     public ReviewActionsAdapter(Context context, ReviewActionsListener listener,
                                 UserBehavior userBehavior){
 
-        init(context, listener);
+        super(context, ContentType.LIST, true);
+        init(listener);
         mUserGoal = null;
         mUserBehavior = userBehavior;
     }
 
-    private void init(Context context, ReviewActionsListener listener){
-        mContext = context;
+    private void init(ReviewActionsListener listener){
         mListener = listener;
 
         mActions = new ArrayList<>();
@@ -67,54 +59,27 @@ public class ReviewActionsAdapter extends RecyclerView.Adapter{
     }
 
     @Override
-    public int getItemViewType(int position){
-        if (position == 0){
-            return TYPE_BLANK;
-        }
-        else if (position == 1){
-            if (mActions.isEmpty()){
-                return TYPE_LOAD;
-            }
-            return TYPE_CONTENT;
-        }
-        return TYPE_LOAD;
+    protected boolean hasHeader(){
+        return false;
     }
 
     @Override
-    public int getItemCount(){
-        int count = ITEM_COUNT;
-        if (mActions.isEmpty()){
-            count--;
-        }
-        if (!mShowLoading){
-            count--;
-        }
-        return count;
+    protected boolean isEmpty(){
+        return mActions.isEmpty();
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-
-        if (viewType == TYPE_BLANK){
-            return new RecyclerView.ViewHolder(new CardView(mContext)){};
-        }
-        else if (viewType == TYPE_CONTENT){
-            if (mActionsHolder == null){
-                View rootView = inflater.inflate(R.layout.card_material_content, parent, false);
-                mActionsHolder = new ActionsViewHolder(this, rootView);
-                mActionsHolder.addActions(mActions);
-                mActionsHolder.mActionContainer.setAnimationsEnabled(true);
-            }
-            return mActionsHolder;
+    protected void bindListHolder(RecyclerView.ViewHolder rawHolder){
+        ListViewHolder holder = (ListViewHolder)rawHolder;
+        if (mUserBehavior != null){
+            holder.setTitle(mUserBehavior.getTitle());
         }
         else{
-            View rootView = inflater.inflate(R.layout.item_material_progress, parent, false);
-            return new RecyclerView.ViewHolder(rootView){};
+            holder.setTitle(mUserGoal.getTitle());
         }
     }
 
-    @Override
+    /*@Override
     public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
         //Blank space
         if (position == 0){
@@ -183,67 +148,20 @@ public class ReviewActionsAdapter extends RecyclerView.Adapter{
             //Add the actions
             mActionsHolder.addActions(actions);
         }
-    }
-
-    /**
-     * Displays an error in place of the load switch.
-     *
-     * @param error the error to be displayed.
-     */
-    public void displayError(String error){
-        mLoadError = error;
-        if (mActions.isEmpty()){
-            notifyItemChanged(TYPE_LOAD-1);
-        }
-        else if (mShowLoading){
-            notifyItemChanged(TYPE_LOAD);
-        }
-    }
+    }*/
 
 
-    private static class ActionsViewHolder
+    private class ActionViewHolder
             extends RecyclerView.ViewHolder
-            implements ContentContainer.ContentContainerListener<Action>{
+            implements View.OnClickListener{
 
-        private ReviewActionsAdapter mAdapter;
-
-        private TextView mTitle;
-        private ContentContainer<Action> mActionContainer;
-
-
-        @SuppressWarnings("unchecked")
-        public ActionsViewHolder(ReviewActionsAdapter adapter, View rootView){
+        public ActionViewHolder(@NonNull View rootView){
             super(rootView);
-            mAdapter = adapter;
-
-            //Fetch UI components
-            mTitle = (TextView)rootView.findViewById(R.id.material_content_header);
-            mActionContainer = (ContentContainer<Action>)rootView
-                    .findViewById(R.id.material_content_container);
-
-            mTitle.setTextColor(mAdapter.mContext.getResources().getColor(R.color.secondary_text_color));
-            mActionContainer.setListener(this);
-        }
-
-        public void bind(UserGoal userGoal){
-            mTitle.setText(mAdapter.mContext.getString(R.string.library_review_action_header,
-                    userGoal.getTitle()));
-        }
-
-        public void bind(UserBehavior userBehavior){
-            mTitle.setText(mAdapter.mContext.getString(R.string.library_review_action_header,
-                    userBehavior.getTitle()));
-        }
-
-        public void addActions(List<Action> actions){
-            for (Action action:actions){
-                mActionContainer.addContent(action);
-            }
         }
 
         @Override
-        public void onContentClick(@NonNull Action content){
-            mAdapter.mListener.onActionSelected(content);
+        public void onClick(View v){
+
         }
     }
 
