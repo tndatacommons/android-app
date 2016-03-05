@@ -55,16 +55,16 @@ public class ReviewActionsActivity
         mUserBehavior = (UserBehavior)getIntent().getSerializableExtra(USER_BEHAVIOR_KEY);
         if (mUserBehavior == null){
             mAdapter = new ReviewActionsAdapter(this, this, mUserGoal);
-            mGetActionsNextUrl = API.getActionsUrl(mUserGoal.getGoal());
+            mGetActionsNextUrl = API.getUserActionsUrl(mUserGoal.getGoal());
         }
         else{
             mAdapter = new ReviewActionsAdapter(this, this, mUserBehavior);
-            mGetActionsNextUrl = API.getActionsUrl(mUserBehavior.getBehavior());
+            mGetActionsNextUrl = API.getUserActionsUrl(mUserBehavior.getBehavior());
         }
 
         Log.d("ReviewActionsActivity", mUserGoal.getPrimaryCategory().getColor());
         setHeader();
-        //setAdapter(mAdapter);
+        setAdapter(mAdapter);
         setColor(Color.parseColor(mUserGoal.getPrimaryCategory().getColor()));
 
         mSelectedAction = null;
@@ -90,7 +90,7 @@ public class ReviewActionsActivity
 
     @Override
     public void onActionSelected(Action action){
-
+        //TODO Open trigger editor
     }
 
     @Override
@@ -100,7 +100,9 @@ public class ReviewActionsActivity
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        Parser.parse(result, ParserModels.ActionContentResultSet.class, this);
+        if (requestCode == mGetActionsRC){
+            Parser.parse(result, ParserModels.UserActionResultSet.class, this);
+        }
     }
 
     @Override
@@ -115,6 +117,10 @@ public class ReviewActionsActivity
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-
+        if (result instanceof ParserModels.UserActionResultSet){
+            ParserModels.UserActionResultSet set = (ParserModels.UserActionResultSet)result;
+            mGetActionsNextUrl = set.next;
+            mAdapter.addActions(set.results, mGetActionsNextUrl != null);
+        }
     }
 }

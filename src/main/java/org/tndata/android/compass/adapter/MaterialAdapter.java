@@ -526,6 +526,15 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
         }
 
         /**
+         * Sets the color of the title in the header.
+         *
+         * @param color the new color.
+         */
+        public void setTitleColor(int color){
+            mHeader.setTextColor(color);
+        }
+
+        /**
          * Sets a layout manager to the list. It defaults to a vertical linear layout manager.
          *
          * @param layoutManager the new layout manager.

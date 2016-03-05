@@ -66,7 +66,7 @@ public final class ParserModels{
         public List<ActionContent> results;
     }
 
-    public final class UserActionResultSet implements ResultSet{
+    public final class UserActionResultSet extends ListResultSet{
         public List<UserAction> results;
     }
 

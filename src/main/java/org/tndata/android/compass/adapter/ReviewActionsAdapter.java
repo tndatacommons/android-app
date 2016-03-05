@@ -1,20 +1,19 @@
 package org.tndata.android.compass.adapter;
 
 import android.content.Context;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserGoal;
-import org.tndata.android.compass.ui.ContentContainer;
-import org.tndata.android.compass.util.CompassUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,34 +27,26 @@ public class ReviewActionsAdapter extends MaterialAdapter{
     private UserGoal mUserGoal;
     private UserBehavior mUserBehavior;
 
+    private ReviewActionAdapter mAdapter;
     private List<Action> mActions;
-
-    private boolean mShowLoading;
-    private String mLoadError;
 
 
     public ReviewActionsAdapter(Context context, ReviewActionsListener listener, UserGoal userGoal){
         super(context, ContentType.LIST, true);
-        init(listener);
+        mListener = listener;
         mUserGoal = userGoal;
         mUserBehavior = null;
+        mActions = new ArrayList<>();
     }
 
     public ReviewActionsAdapter(Context context, ReviewActionsListener listener,
                                 UserBehavior userBehavior){
 
         super(context, ContentType.LIST, true);
-        init(listener);
+        mListener = listener;
         mUserGoal = null;
         mUserBehavior = userBehavior;
-    }
-
-    private void init(ReviewActionsListener listener){
-        mListener = listener;
-
         mActions = new ArrayList<>();
-        mShowLoading = true;
-        mLoadError = "";
     }
 
     @Override
@@ -72,96 +63,88 @@ public class ReviewActionsAdapter extends MaterialAdapter{
     protected void bindListHolder(RecyclerView.ViewHolder rawHolder){
         ListViewHolder holder = (ListViewHolder)rawHolder;
         if (mUserBehavior != null){
-            holder.setTitle(mUserBehavior.getTitle());
+            holder.setTitle(getContext().getString(R.string.library_review_action_header,
+                    mUserBehavior.getTitle()));
         }
         else{
-            holder.setTitle(mUserGoal.getTitle());
+            holder.setTitle(getContext().getString(R.string.library_review_action_header,
+                    mUserGoal.getTitle()));
         }
+        holder.setTitleColor(getContext().getResources().getColor(R.color.black));
+        if (mAdapter == null){
+            mAdapter = new ReviewActionAdapter();
+        }
+        holder.setAdapter(mAdapter);
     }
 
-    /*@Override
-    public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
-        //Blank space
-        if (position == 0){
-            int width = CompassUtil.getScreenWidth(mContext);
-            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    (int)((width*2/3)*0.8)
-            );
-            rawHolder.itemView.setLayoutParams(params);
-            rawHolder.itemView.setVisibility(View.INVISIBLE);
-        }
-        //Actions or load switch
-        else if (position == 1){
-            if (mActions.isEmpty()){
-                if (mShowLoading){
-                    if (mLoadError.isEmpty()){
-                        mListener.loadMore();
-                    }
-                    else{
-                        rawHolder.itemView.findViewById(R.id.material_progress_progress).setVisibility(View.GONE);
-                        TextView error = (TextView)rawHolder.itemView.findViewById(R.id.material_progress_error);
-                        error.setVisibility(View.VISIBLE);
-                        error.setText(mLoadError);
-                    }
-                }
-            }
-            else{
-                if (mUserGoal != null){
-                    ((ActionsViewHolder)rawHolder).bind(mUserGoal);
-                }
-                else if (mUserBehavior != null){
-                    ((ActionsViewHolder)rawHolder).bind(mUserBehavior);
-                }
-            }
-        }
+    @Override
+    protected void loadMore(){
+        mListener.loadMore();
     }
 
-    public void addActions(@NonNull List<Action> actions, boolean showLoading){
+    public void addActions(@NonNull List<UserAction> actions, boolean showLoading){
         //If there are no actions, insert the content card
         if (mActions.isEmpty()){
-            notifyItemInserted(TYPE_CONTENT);
+            notifyListInserted();
         }
-
-        //Set the new loading state
-        mShowLoading = showLoading;
-        //If we should no longer load, remove the load switch
-        if (!mShowLoading){
-            notifyItemRemoved(TYPE_LOAD);
-        }
-        //Otherwise, schedule an item refresh for the load switch half a second from now
-        //  to avoid the load callback getting called twice
-        else{
-            new Handler().postDelayed(new Runnable(){
-                @Override
-                public void run(){
-                    notifyItemChanged(TYPE_LOAD);
-                }
-            }, 500);
-        }
+        //Update the load widget
+        updateLoading(showLoading);
 
         //Add all the actions in the behavior list
         mActions.addAll(actions);
+    }
 
-        //If the holder has been created already
-        if (mActionsHolder != null){
-            //Add the actions
-            mActionsHolder.addActions(actions);
+
+    private class ReviewActionAdapter extends RecyclerView.Adapter<ActionViewHolder>{
+        @Override
+        public ActionViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            View rootView = inflater.inflate(R.layout.item_review_action, parent, false);
+            return new ActionViewHolder(rootView);
         }
-    }*/
+
+        @Override
+        public void onBindViewHolder(ActionViewHolder holder, int position){
+            holder.bind(mActions.get(position));
+        }
+
+        @Override
+        public int getItemCount(){
+            return mActions.size();
+        }
+    }
 
 
     private class ActionViewHolder
             extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
+        private ImageView mEnabled;
+        private TextView mTitle;
+
+
         public ActionViewHolder(@NonNull View rootView){
             super(rootView);
+
+            mEnabled = (ImageView)rootView.findViewById(R.id.review_action_enabled);
+            mTitle = (TextView)rootView.findViewById(R.id.review_action_title);
+
+            rootView.setOnClickListener(this);
+        }
+
+        public void bind(@NonNull Action userAction){
+            if (userAction.isTriggerEnabled()){
+                mEnabled.setImageResource(R.drawable.ic_enabled_black_36dp);
+            }
+            else{
+                mEnabled.setImageResource(R.drawable.ic_disabled_black_36dp);
+            }
+            mTitle.setText(userAction.getTitle());
         }
 
         @Override
         public void onClick(View v){
-
+            mListener.onActionSelected(mActions.get(getAdapterPosition()));
         }
     }
 

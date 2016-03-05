@@ -164,7 +164,7 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
             mAdapter = adapter;
 
             //Fetch UI components
-            mTitle = (TextView)rootView.findViewById(R.id.material_list_header);
+            mTitle = (TextView)rootView.findViewById(R.id.material_content_header);
             mBehaviorContainer = (ContentContainer<BehaviorContent>)rootView
                     .findViewById(R.id.material_content_container);
             mBehaviorContainer.setListener(this);

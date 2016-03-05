@@ -243,16 +243,12 @@ public abstract class API{
 
 
     //Actions
-    public static String getActionsUrl(@NonNull GoalContent goal){
-        return BASE_URL + "actions/?goal=" + goal.getId();
+    public static String getUserActionsUrl(@NonNull GoalContent goal){
+        return BASE_URL + "users/actions/?goal=" + goal.getId();
     }
 
-    public static String getActionsUrl(@NonNull BehaviorContent behavior){
-        return BASE_URL + "actions/?behavior=" + behavior.getId();
-    }
-
-    public static String getTodaysActionsUrl(){
-        return BASE_URL + "users/actions/?today=1";
+    public static String getUserActionsUrl(@NonNull BehaviorContent behavior){
+        return BASE_URL + "users/actions/?behavior=" + behavior.getId();
     }
 
     /**
