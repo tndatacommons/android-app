@@ -322,6 +322,10 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
         }
     }
 
+    /**
+     * Lets the adapter know that the default list holder's RecyclerView needs to change
+     * bounds to accommodate item insertions or deletions.
+     */
     protected final void notifyListChanged(){
         if (mContentType != ContentType.LIST){
             Log.e(TAG, "Can't update a list in a non listing adapter");

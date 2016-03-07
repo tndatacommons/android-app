@@ -169,14 +169,14 @@ public class ChooseBehaviorsActivity
             case R.id.dialog_behavior_activities:
                 showActivities();
             case R.id.dialog_behavior_ok:
-                dismissAll();
+                mShareDialog.cancel();
                 break;
         }
     }
 
     @Override
     public void onCancel(DialogInterface dialog){
-        dismissAll();
+        dismiss();
     }
 
     private void showActivities(){
@@ -187,15 +187,11 @@ public class ChooseBehaviorsActivity
                 .putExtra(ReviewActionsActivity.USER_BEHAVIOR_KEY, userBehavior));
     }
 
-    private void dismissAll(){
-        if (mShareDialog != null){
-            mShareDialog.cancel();
-            mShareDialog = null;
-        }
-
+    private void dismiss(){
+        Log.d("ChooseBehaviorsActivity", "dismiss() called");
         mAdapter.remove(mSelectedBehavior);
         mSelectedBehavior = null;
-        if (!mAdapter.hasBehaviors()){
+        if (mAdapter.isEmpty()){
             setResult(RESULT_OK);
             finish();
         }
@@ -250,7 +246,7 @@ public class ChooseBehaviorsActivity
                 //If the list is empty AND the adapter has no behaviors, then the
                 //  user has already selected all of the behaviors; let him know
                 //  through the error channel
-                if (!mAdapter.hasBehaviors()){
+                if (mAdapter.isEmpty()){
                     mAdapter.displayError("You have already selected all behaviors");
                 }
             }

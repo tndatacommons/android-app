@@ -2,19 +2,23 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
-import org.tndata.android.compass.ui.ContentContainer;
 import org.tndata.android.compass.util.CompassTagHandler;
 
 import java.util.ArrayList;
@@ -33,7 +37,7 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
     private CategoryContent mCategory;
     private GoalContent mGoal;
 
-    private BehaviorsViewHolder mBehaviorsHolder;
+    private BehaviorsAdapter mBehaviorsAdapter;
     private List<BehaviorContent> mBehaviors;
 
 
@@ -59,20 +63,8 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
     }
 
     @Override
-    protected boolean isEmpty(){
+    public boolean isEmpty(){
         return mBehaviors.isEmpty();
-    }
-
-    @Override
-    protected @NonNull RecyclerView.ViewHolder getListHolder(ViewGroup parent){
-        if (mBehaviorsHolder == null){
-            LayoutInflater inflater = LayoutInflater.from(mContext);
-            View rootView = inflater.inflate(R.layout.card_material_content, parent, false);
-            mBehaviorsHolder = new BehaviorsViewHolder(this, rootView);
-            mBehaviorsHolder.addBehaviors(mBehaviors);
-            mBehaviorsHolder.mBehaviorContainer.setAnimationsEnabled(true);
-        }
-        return mBehaviorsHolder;
     }
 
     @Override
@@ -90,11 +82,12 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
 
     @Override
     protected void bindListHolder(RecyclerView.ViewHolder rawHolder){
-        ((BehaviorsViewHolder)rawHolder).bind(mCategory);
-    }
-
-    public boolean hasBehaviors(){
-        return !mBehaviors.isEmpty();
+        ListViewHolder holder = (ListViewHolder)rawHolder;
+        holder.setHeaderColor(Color.parseColor(mCategory.getColor()));
+        holder.setTitleColor(Color.WHITE);
+        holder.setTitle(mContext.getString(R.string.library_behaviors_content_header));
+        mBehaviorsAdapter = new BehaviorsAdapter();
+        holder.setAdapter(mBehaviorsAdapter);
     }
 
     /**
@@ -111,13 +104,15 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
         //Update the load switch
         updateLoading(showLoading);
 
+        //Record the initial position of the new sub-list in the master list
+        int positionStart = mBehaviors.size();
         //Add all the behaviors in the behavior list
         mBehaviors.addAll(behaviors);
-
         //If the holder has been created already
-        if (mBehaviorsHolder != null){
+        if (mBehaviorsAdapter != null){
             //Add the behaviors
-            mBehaviorsHolder.addBehaviors(behaviors);
+            mBehaviorsAdapter.notifyItemRangeInserted(positionStart, behaviors.size());
+            notifyListChanged();
         }
     }
 
@@ -127,8 +122,13 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
      * @param behavior the behavior to be removed.
      */
     public void remove(BehaviorContent behavior){
-        mBehaviors.remove(behavior);
-        mBehaviorsHolder.removeBehavior(behavior);
+        int index = mBehaviors.indexOf(behavior);
+        Log.d("ChooseBehaviorsAdapter", "Index: " + index);
+        mBehaviors.remove(index);
+        mBehaviorsAdapter.notifyItemRemoved(index);
+        if (!mBehaviors.isEmpty()){
+            mBehaviorsAdapter.notifyItemChanged(0);
+        }
     }
 
     @Override
@@ -138,76 +138,94 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
 
 
     /**
+     * Adapter for the list of behaviors.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    private class BehaviorsAdapter extends RecyclerView.Adapter<BehaviorViewHolder>{
+        @Override
+        public int getItemCount(){
+            return mBehaviors.size();
+        }
+
+        @Override
+        public BehaviorViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            View rootView = inflater.inflate(R.layout.item_library_content, parent, false);
+            return new BehaviorViewHolder(rootView);
+        }
+
+        @Override
+        public void onBindViewHolder(BehaviorViewHolder holder, int position){
+            holder.bind(mBehaviors.get(position));
+        }
+    }
+
+
+    /**
      * View holder for a list item.
      *
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    static class BehaviorsViewHolder
-            extends RecyclerView.ViewHolder
-            implements ContentContainer.ContentContainerListener<BehaviorContent>{
-
-        private ChooseBehaviorsAdapter mAdapter;
-
+    private class BehaviorViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private View mSeparator;
+        private RelativeLayout mIconContainer;
+        private ImageView mIcon;
         private TextView mTitle;
-        private ContentContainer<BehaviorContent> mBehaviorContainer;
 
 
         /**
          * Constructor.
          *
-         * @param rootView a view inflated from R.layout.item_choose_behavior
+         * @param rootView the root view of the holder.
          */
-        @SuppressWarnings("unchecked")
-        public BehaviorsViewHolder(@NonNull ChooseBehaviorsAdapter adapter, @NonNull View rootView){
+        public BehaviorViewHolder(@NonNull View rootView){
             super(rootView);
-            mAdapter = adapter;
 
             //Fetch UI components
-            mTitle = (TextView)rootView.findViewById(R.id.material_content_header);
-            mBehaviorContainer = (ContentContainer<BehaviorContent>)rootView
-                    .findViewById(R.id.material_content_container);
-            mBehaviorContainer.setListener(this);
+            mSeparator = rootView.findViewById(R.id.library_content_separator);
+            mIconContainer = (RelativeLayout)rootView.findViewById(R.id.library_content_icon_container);
+            mIcon = (ImageView)rootView.findViewById(R.id.library_content_icon);
+            mTitle = (TextView)rootView.findViewById(R.id.library_content_title);
+
+            rootView.setOnClickListener(this);
         }
 
         /**
-         * Binds a a category to the holder.
+         * Binds a behavior to the holder.
          *
-         * @param category the category to be bound.
+         * @param behavior the behavior to be bound.
          */
-        public void bind(CategoryContent category){
-            mTitle.setText(R.string.library_behaviors_content_header);
-            String colorString = category.getColor();
-            if (colorString != null && !colorString.isEmpty()){
-                mTitle.setBackgroundColor(Color.parseColor(colorString));
+        @SuppressWarnings("deprecation")
+        public void bind(BehaviorContent behavior){
+            //If this is the first item, do not show the separator
+            if (getAdapterPosition() == 0){
+                mSeparator.setVisibility(View.GONE);
             }
-        }
-
-        /**
-         * Adds a list of behaviors to the container.
-         *
-         * @param behaviors the list of behaviors to be added.
-         */
-        public void addBehaviors(List<BehaviorContent> behaviors){
-            for (BehaviorContent behavior:behaviors){
-                mBehaviorContainer.addContent(behavior);
+            else{
+                mSeparator.setVisibility(View.VISIBLE);
             }
-        }
 
-        /**
-         * Removes a behavior from the list.
-         *
-         * @param behavior the behavior to be removed.
-         */
-        public void removeBehavior(BehaviorContent behavior){
-            mBehaviorContainer.removeContent(behavior);
+            GradientDrawable gradientDrawable = (GradientDrawable)mIconContainer.getBackground();
+            gradientDrawable.setColor(Color.parseColor(mCategory.getColor()));
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
+                mIconContainer.setBackgroundDrawable(gradientDrawable);
+            }
+            else{
+                mIconContainer.setBackground(gradientDrawable);
+            }
+            behavior.loadIconIntoView(mIcon);
+            mTitle.setText(behavior.getTitle());
         }
 
         @Override
-        public void onContentClick(@NonNull BehaviorContent content){
-            mAdapter.mListener.onBehaviorSelected(content);
+        public void onClick(View v){
+            mListener.onBehaviorSelected(mBehaviors.get(getAdapterPosition()));
         }
     }
+
 
     /**
      * Listener interface for the adapter.

@@ -168,9 +168,9 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
         }
 
         /**
-         * Binds a category to the holder.
+         * Binds a behavior to the holder.
          *
-         * @param goal the category from which the color should be extracted.
+         * @param goal the behavior to be bound.
          */
         @SuppressWarnings("deprecation")
         public void bind(@NonNull GoalContent goal){
@@ -185,7 +185,7 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
             GradientDrawable gradientDrawable = (GradientDrawable)mIconContainer.getBackground();
             gradientDrawable.setColor(Color.parseColor(mCategory.getColor()));
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
-                mIcon.setBackgroundDrawable(gradientDrawable);
+                mIconContainer.setBackgroundDrawable(gradientDrawable);
             }
             else{
                 mIconContainer.setBackground(gradientDrawable);
