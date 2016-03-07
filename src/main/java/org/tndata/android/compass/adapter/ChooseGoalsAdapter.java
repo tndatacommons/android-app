@@ -103,9 +103,9 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
         int positionStart = mGoals.size();
         //Add all the goals in the goal list
         mGoals.addAll(goals);
-        //If the holder has been created already
+        //If the adapter has been created already, trigger animations
         if (mGoalsAdapter != null){
-            //Add the goals
+            prepareListChange();
             mGoalsAdapter.notifyItemRangeInserted(positionStart, goals.size());
             notifyListChanged();
         }

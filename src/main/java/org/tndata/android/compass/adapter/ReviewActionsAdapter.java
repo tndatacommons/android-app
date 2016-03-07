@@ -117,7 +117,9 @@ public class ReviewActionsAdapter extends MaterialAdapter{
         int positionStart = mActions.size();
         //Add all the actions in the behavior list
         mActions.addAll(actions);
+        //If the adapter has been created already, trigger animations
         if (mAdapter != null){
+            prepareListChange();
             mAdapter.notifyItemRangeInserted(positionStart, actions.size());
             notifyListChanged();
         }

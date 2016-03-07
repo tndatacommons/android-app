@@ -2,12 +2,16 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.ChangeBounds;
+import android.transition.Transition;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -319,6 +323,26 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
         }
         else{
             insertContent();
+        }
+    }
+
+    protected final void prepareListChange(){
+        if (mContentType != ContentType.LIST){
+            Log.e(TAG, "Can't update a list in a non listing adapter");
+        }
+        else{
+            if (mListHolder == null){
+                Log.e(TAG, "Can't update a non-existing default list");
+            }
+            else{
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+                    ViewGroup target = (ViewGroup)mListHolder.mList.getRootView();
+                    long duration = 3*mListHolder.mList.getItemAnimator().getRemoveDuration();
+                    Transition transition = new ChangeBounds();
+                    transition.setDuration(duration);
+                    TransitionManager.beginDelayedTransition(target, transition);
+                }
+            }
         }
     }
 

@@ -7,7 +7,6 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -108,9 +107,9 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
         int positionStart = mBehaviors.size();
         //Add all the behaviors in the behavior list
         mBehaviors.addAll(behaviors);
-        //If the holder has been created already
+        //If the adapter has been created already, trigger animations
         if (mBehaviorsAdapter != null){
-            //Add the behaviors
+            prepareListChange();
             mBehaviorsAdapter.notifyItemRangeInserted(positionStart, behaviors.size());
             notifyListChanged();
         }
@@ -123,7 +122,7 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
      */
     public void remove(BehaviorContent behavior){
         int index = mBehaviors.indexOf(behavior);
-        Log.d("ChooseBehaviorsAdapter", "Index: " + index);
+        prepareListChange();
         mBehaviors.remove(index);
         mBehaviorsAdapter.notifyItemRemoved(index);
         if (!mBehaviors.isEmpty()){
