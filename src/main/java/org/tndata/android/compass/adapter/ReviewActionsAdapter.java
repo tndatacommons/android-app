@@ -20,7 +20,10 @@ import java.util.List;
 
 
 /**
- * Created by isma on 2/24/16.
+ * Adapter for the review actions screen.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class ReviewActionsAdapter extends MaterialAdapter{
     private ReviewActionsListener mListener;
@@ -31,6 +34,13 @@ public class ReviewActionsAdapter extends MaterialAdapter{
     private List<Action> mActions;
 
 
+    /**
+     * Constructor for goal.
+     *
+     * @param context a reference to the context.
+     * @param listener the listener.
+     * @param userGoal the user goal whose actions are to be displayed.
+     */
     public ReviewActionsAdapter(Context context, ReviewActionsListener listener, UserGoal userGoal){
         super(context, ContentType.LIST, true);
         mListener = listener;
@@ -39,6 +49,13 @@ public class ReviewActionsAdapter extends MaterialAdapter{
         mActions = new ArrayList<>();
     }
 
+    /**
+     * Constructor for behavior.
+     *
+     * @param context a reference to the context.
+     * @param listener the listener.
+     * @param userBehavior the behavior whose actions are to be displayed.
+     */
     public ReviewActionsAdapter(Context context, ReviewActionsListener listener,
                                 UserBehavior userBehavior){
 
@@ -82,6 +99,12 @@ public class ReviewActionsAdapter extends MaterialAdapter{
         mListener.loadMore();
     }
 
+    /**
+     * Adds a list of actions to the action adapter.
+     *
+     * @param actions the actions to be added.
+     * @param showLoading whether this adapter should still display the loading screen.
+     */
     public void addActions(@NonNull List<UserAction> actions, boolean showLoading){
         //If there are no actions, insert the content card
         if (mActions.isEmpty()){
@@ -95,6 +118,12 @@ public class ReviewActionsAdapter extends MaterialAdapter{
     }
 
 
+    /**
+     * Adapter for the list of actions. Plain and simple.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     private class ReviewActionAdapter extends RecyclerView.Adapter<ActionViewHolder>{
         @Override
         public ActionViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
@@ -115,24 +144,51 @@ public class ReviewActionsAdapter extends MaterialAdapter{
     }
 
 
+    /**
+     * View holder for action items.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     private class ActionViewHolder
             extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
+        private View mSeparator;
         private ImageView mEnabled;
         private TextView mTitle;
 
 
+        /**
+         * Constructor.
+         *
+         * @param rootView the root view of this holder.
+         */
         public ActionViewHolder(@NonNull View rootView){
             super(rootView);
 
+            mSeparator = rootView.findViewById(R.id.review_action_separator);
             mEnabled = (ImageView)rootView.findViewById(R.id.review_action_enabled);
             mTitle = (TextView)rootView.findViewById(R.id.review_action_title);
 
             rootView.setOnClickListener(this);
         }
 
+        /**
+         * Binds an action to the holder.
+         *
+         * @param userAction the user action to be bound.
+         */
         public void bind(@NonNull Action userAction){
+            //If this is the first item, do not show the separator
+            if (getAdapterPosition() == 0){
+                mSeparator.setVisibility(View.GONE);
+            }
+            else{
+                mSeparator.setVisibility(View.VISIBLE);
+            }
+
+            //Set the icon and title of the view
             if (userAction.isTriggerEnabled()){
                 mEnabled.setImageResource(R.drawable.ic_enabled_black_36dp);
             }
@@ -149,8 +205,24 @@ public class ReviewActionsAdapter extends MaterialAdapter{
     }
 
 
+    /**
+     * Listener interface for the review actions process.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface ReviewActionsListener{
+        /**
+         * Called when an action is tapped.
+         *
+         * @param action the action tapped.
+         */
         void onActionSelected(Action action);
+
+        /**
+         * Called when the bottom of the list is reached if the progress widget is
+         * still active.
+         */
         void loadMore();
     }
 }

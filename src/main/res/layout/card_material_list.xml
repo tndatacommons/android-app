@@ -24,6 +24,12 @@
             android:textSize="18sp"
             android:textColor="@color/white" />
 
+        <View
+            android:id="@+id/material_list_separator"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/light_gray_text_color" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/material_list_list"
             android:layout_width="match_parent"

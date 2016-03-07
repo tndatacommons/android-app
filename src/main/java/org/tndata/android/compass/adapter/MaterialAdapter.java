@@ -1,6 +1,7 @@
 package org.tndata.android.compass.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -490,6 +491,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
      */
     protected static class ListViewHolder extends RecyclerView.ViewHolder{
         private TextView mHeader;
+        private View mSeparator;
         private RecyclerView mList;
 
 
@@ -503,6 +505,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
             super(rootView);
 
             mHeader = (TextView)rootView.findViewById(R.id.material_list_header);
+            mSeparator = rootView.findViewById(R.id.material_list_separator);
             mList = (RecyclerView)rootView.findViewById(R.id.material_list_list);
             mList.setLayoutManager(new LinearLayoutManager(context));
         }
@@ -514,6 +517,12 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
          */
         public void setHeaderColor(int color){
             mHeader.setBackgroundColor(color);
+            if (color != Color.WHITE){
+                mSeparator.setVisibility(View.GONE);
+            }
+            else{
+                mSeparator.setVisibility(View.VISIBLE);
+            }
         }
 
         /**

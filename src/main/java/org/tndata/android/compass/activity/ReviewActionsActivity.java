@@ -1,10 +1,10 @@
 package org.tndata.android.compass.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -23,7 +23,10 @@ import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
- * Created by isma on 2/24/16.
+ * Activity where the user can review the actions in a particular goal or behavior.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class ReviewActionsActivity
         extends MaterialActivity
@@ -34,6 +37,8 @@ public class ReviewActionsActivity
 
     public static final String USER_GOAL_KEY = "org.tndata.compass.ReviewActions.Goal";
     public static final String USER_BEHAVIOR_KEY = "org.tndata.compass.ReviewActions.Behavior";
+
+    public static final int ACTION_ACTIVITY_RC = 4562;
 
 
     private UserGoal mUserGoal;
@@ -62,7 +67,6 @@ public class ReviewActionsActivity
             mGetActionsNextUrl = API.getUserActionsUrl(mUserBehavior.getBehavior());
         }
 
-        Log.d("ReviewActionsActivity", mUserGoal.getPrimaryCategory().getColor());
         setHeader();
         setAdapter(mAdapter);
         setColor(Color.parseColor(mUserGoal.getPrimaryCategory().getColor()));
@@ -89,8 +93,15 @@ public class ReviewActionsActivity
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        
+    }
+
+    @Override
     public void onActionSelected(Action action){
-        //TODO Open trigger editor
+        Intent showAction = new Intent(this, ActionActivity.class)
+                .putExtra(ActionActivity.ACTION_KEY, action);
+        startActivityForResult(showAction, ACTION_ACTIVITY_RC);
     }
 
     @Override
