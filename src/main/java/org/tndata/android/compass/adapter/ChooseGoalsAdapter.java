@@ -2,18 +2,21 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
-import org.tndata.android.compass.ui.ContentContainer;
 import org.tndata.android.compass.util.CompassTagHandler;
 
 import java.util.ArrayList;
@@ -31,7 +34,7 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
     private ChooseGoalsListener mListener;
     private CategoryContent mCategory;
 
-    private GoalsViewHolder mGoalsHolder;
+    private GoalsAdapter mGoalsAdapter;
     private List<GoalContent> mGoals;
 
 
@@ -60,18 +63,6 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
     }
 
     @Override
-    protected @NonNull RecyclerView.ViewHolder getListHolder(ViewGroup parent){
-        if (mGoalsHolder == null){
-            LayoutInflater inflater = LayoutInflater.from(mContext);
-            View rootView = inflater.inflate(R.layout.card_material_content, parent, false);
-            mGoalsHolder = new GoalsViewHolder(this, rootView);
-            mGoalsHolder.add(mGoals);
-            mGoalsHolder.mGoalContainer.setAnimationsEnabled(true);
-        }
-        return mGoalsHolder;
-    }
-
-    @Override
     protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
         HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
         holder.setTitle(mCategory.getTitle());
@@ -86,16 +77,12 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
 
     @Override
     protected void bindListHolder(RecyclerView.ViewHolder rawHolder){
-        ((GoalsViewHolder)rawHolder).bind(mCategory);
-    }
-
-    /**
-     * Tells whether the adapter is displaying goals or not.
-     *
-     * @return true if there are displayed goals, false otherwise.
-     */
-    public boolean hasGoals(){
-        return !mGoals.isEmpty();
+        ListViewHolder holder = (ListViewHolder)rawHolder;
+        holder.setHeaderColor(Color.parseColor(mCategory.getColor()));
+        holder.setTitleColor(Color.WHITE);
+        holder.setTitle(mContext.getString(R.string.library_goals_content_header));
+        mGoalsAdapter = new GoalsAdapter();
+        holder.setAdapter(new GoalsAdapter());
     }
 
     /**
@@ -112,27 +99,16 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
         //Update the load switch
         updateLoading(showLoading);
 
+        //Record the initial position of the new sub-list in the master list
+        int positionStart = mGoals.size();
         //Add all the goals in the goal list
         mGoals.addAll(goals);
-        //Set the icon colors
-        for (GoalContent goal:goals){
-            goal.setColor(mCategory.getColor());
-        }
         //If the holder has been created already
-        if (mGoalsHolder != null){
+        if (mGoalsAdapter != null){
             //Add the goals
-            mGoalsHolder.add(goals);
+            mGoalsAdapter.notifyItemRangeInserted(positionStart, goals.size());
+            notifyListChanged();
         }
-    }
-
-    /**
-     * Removes a goal from the adapter.
-     *
-     * @param goal the goal to be removed.
-     */
-    public void remove(GoalContent goal){
-        mGoals.remove(goal);
-        mGoalsHolder.remove(goal);
     }
 
     @Override
@@ -141,20 +117,37 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
     }
 
 
+    private class GoalsAdapter extends RecyclerView.Adapter<GoalViewHolder>{
+        @Override
+        public int getItemCount(){
+            return mGoals.size();
+        }
+
+        @Override
+        public GoalViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            View rootView = inflater.inflate(R.layout.item_library_content, parent, false);
+            return new GoalViewHolder(rootView);
+        }
+
+        @Override
+        public void onBindViewHolder(GoalViewHolder holder, int position){
+            holder.bind(mGoals.get(position));
+        }
+    }
+
+
     /**
-     * The ViewHolder for a goal.
+     * The view holder for a goal.
      *
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    static class GoalsViewHolder
-            extends RecyclerView.ViewHolder
-            implements ContentContainer.ContentContainerListener<GoalContent>{
-
-        private ChooseGoalsAdapter mAdapter;
-
+    private class GoalViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private View mSeparator;
+        private RelativeLayout mIconContainer;
+        private ImageView mIcon;
         private TextView mTitle;
-        private ContentContainer<GoalContent> mGoalContainer;
 
 
         /**
@@ -162,55 +155,48 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
          *
          * @param rootView the root view held by this view holder.
          */
-        @SuppressWarnings("unchecked")
-        public GoalsViewHolder(ChooseGoalsAdapter adapter, View rootView){
+        public GoalViewHolder(View rootView){
             super(rootView);
 
-            mAdapter = adapter;
-
             //Fetch UI components
-            mTitle = (TextView)rootView.findViewById(R.id.material_content_header);
-            mGoalContainer = (ContentContainer<GoalContent>)rootView
-                    .findViewById(R.id.material_content_container);
-            mGoalContainer.setListener(this);
+            mSeparator = rootView.findViewById(R.id.library_content_separator);
+            mIconContainer = (RelativeLayout)rootView.findViewById(R.id.library_content_icon_container);
+            mIcon = (ImageView)rootView.findViewById(R.id.library_content_icon);
+            mTitle = (TextView)rootView.findViewById(R.id.library_content_title);
+
+            rootView.setOnClickListener(this);
         }
 
         /**
          * Binds a category to the holder.
          *
-         * @param category the category from which the color should be extracted.
+         * @param goal the category from which the color should be extracted.
          */
-        public void bind(@NonNull CategoryContent category){
-            mTitle.setText(R.string.library_goals_content_header);
-            String colorString = category.getColor();
-            if (colorString != null && !colorString.isEmpty()){
-                mTitle.setBackgroundColor(Color.parseColor(colorString));
+        @SuppressWarnings("deprecation")
+        public void bind(@NonNull GoalContent goal){
+            //If this is the first item, do not show the separator
+            if (getAdapterPosition() == 0){
+                mSeparator.setVisibility(View.GONE);
             }
-        }
-
-        /**
-         * Adds a list of goals to the container.
-         *
-         * @param goals the list of goals to be added.
-         */
-        public void add(List<GoalContent> goals){
-            for (GoalContent goal:goals){
-                mGoalContainer.addContent(goal);
+            else{
+                mSeparator.setVisibility(View.VISIBLE);
             }
-        }
 
-        /**
-         * Removes a goal from the container.
-         *
-         * @param goal the goal to be removed.
-         */
-        public void remove(GoalContent goal){
-            mGoalContainer.removeContent(goal);
+            GradientDrawable gradientDrawable = (GradientDrawable)mIconContainer.getBackground();
+            gradientDrawable.setColor(Color.parseColor(mCategory.getColor()));
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
+                mIcon.setBackgroundDrawable(gradientDrawable);
+            }
+            else{
+                mIconContainer.setBackground(gradientDrawable);
+            }
+            goal.loadIconIntoView(mIcon);
+            mTitle.setText(goal.getTitle());
         }
 
         @Override
-        public void onContentClick(@NonNull GoalContent content){
-            mAdapter.mListener.onGoalSelected(content);
+        public void onClick(View v){
+            mListener.onGoalSelected(mGoals.get(getAdapterPosition()));
         }
     }
 

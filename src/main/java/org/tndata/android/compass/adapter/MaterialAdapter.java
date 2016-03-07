@@ -41,6 +41,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
 
     private Context mContext;
     private ContentType mContentType;
+    private ListViewHolder mListHolder;
     private boolean mShowLoading;
     private String mLoadingError;
 
@@ -55,6 +56,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
     protected MaterialAdapter(Context context, ContentType contentType, boolean showLoading){
         mContext = context;
         mContentType = contentType;
+        mListHolder = null;
         mShowLoading = showLoading;
         mLoadingError = "";
     }
@@ -174,7 +176,11 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
             return getHeaderHolder(parent);
         }
         else if (viewType == TYPE_LISTED_CONTENT){
-            return getListHolder(parent);
+            RecyclerView.ViewHolder holder = getListHolder(parent);
+            if (holder instanceof ListViewHolder){
+                mListHolder = (ListViewHolder)holder;
+            }
+            return mListHolder;
         }
         else if (viewType == TYPE_DETAIL_CONTENT){
             return getDetailsHolder(parent);
@@ -309,10 +315,24 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
      */
     protected final void notifyListInserted(){
         if (mContentType != ContentType.LIST){
-            Log.e(TAG, "Can't insert list in a non listing adapter");
+            Log.e(TAG, "Can't insert a list in a non listing adapter");
         }
         else{
             insertContent();
+        }
+    }
+
+    protected final void notifyListChanged(){
+        if (mContentType != ContentType.LIST){
+            Log.e(TAG, "Can't update a list in a non listing adapter");
+        }
+        else{
+            if (mListHolder == null){
+                Log.e(TAG, "Can't update a non-existing default list");
+            }
+            else{
+                mListHolder.mList.requestLayout();
+            }
         }
     }
 

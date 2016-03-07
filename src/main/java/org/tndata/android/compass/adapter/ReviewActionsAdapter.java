@@ -30,7 +30,7 @@ public class ReviewActionsAdapter extends MaterialAdapter{
     private UserGoal mUserGoal;
     private UserBehavior mUserBehavior;
 
-    private ReviewActionAdapter mAdapter;
+    private ActionsAdapter mAdapter;
     private List<Action> mActions;
 
 
@@ -89,7 +89,7 @@ public class ReviewActionsAdapter extends MaterialAdapter{
         }
         holder.setTitleColor(getContext().getResources().getColor(R.color.black));
         if (mAdapter == null){
-            mAdapter = new ReviewActionAdapter();
+            mAdapter = new ActionsAdapter();
         }
         holder.setAdapter(mAdapter);
     }
@@ -113,8 +113,14 @@ public class ReviewActionsAdapter extends MaterialAdapter{
         //Update the load widget
         updateLoading(showLoading);
 
+        //Record the initial position of the new sub-list in the master list
+        int positionStart = mActions.size();
         //Add all the actions in the behavior list
         mActions.addAll(actions);
+        if (mAdapter != null){
+            mAdapter.notifyItemRangeInserted(positionStart, actions.size());
+            notifyListChanged();
+        }
     }
 
 
@@ -124,7 +130,7 @@ public class ReviewActionsAdapter extends MaterialAdapter{
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    private class ReviewActionAdapter extends RecyclerView.Adapter<ActionViewHolder>{
+    private class ActionsAdapter extends RecyclerView.Adapter<ActionViewHolder>{
         @Override
         public ActionViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
             LayoutInflater inflater = LayoutInflater.from(getContext());

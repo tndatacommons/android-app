@@ -42,15 +42,11 @@ public class ChooseGoalsActivity
     //  if it exists it can be retrieved from the UserData bundle
     public static final String CATEGORY_KEY = "org.tndata.compass.ChooseGoalsActivity.Category";
 
-    //Request codes
-    private static final int CHOOSE_BEHAVIORS_RQ = 4528;
-
 
     public CompassApplication mApplication;
 
     private CategoryContent mCategory;
     private ChooseGoalsAdapter mAdapter;
-    private GoalContent mSelectedGoal;
 
     //Request codes and urls
     private int mGetGoalsRequestCode;
@@ -81,30 +77,13 @@ public class ChooseGoalsActivity
         if (!mCategory.getColor().isEmpty()){
             setColor(Color.parseColor(mCategory.getColor()));
         }
-
-        mSelectedGoal = null;
     }
 
     @Override
     public void onGoalSelected(@NonNull GoalContent goal){
-        if (goal.getBehaviorCount() > 0){
-            mSelectedGoal = goal;
-            Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
-                    .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal)
-                    .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, mCategory);
-            startActivityForResult(chooseBehaviors, CHOOSE_BEHAVIORS_RQ);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        if (requestCode == CHOOSE_BEHAVIORS_RQ && resultCode == RESULT_OK){
-            mAdapter.remove(mSelectedGoal);
-            if (!mAdapter.hasGoals()){
-                finish();
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
+        startActivity(new Intent(this, ChooseBehaviorsActivity.class)
+                .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal)
+                .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, mCategory));
     }
 
     @Override
