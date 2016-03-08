@@ -1,8 +1,6 @@
 package org.tndata.android.compass.activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,8 +15,7 @@ import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.ImageHelper;
+import org.tndata.android.compass.util.ImageLoader;
 import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.List;
@@ -60,23 +57,20 @@ public class ChooseGoalsActivity
 
         mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
 
-        View header = inflateHeader(R.layout.header_tile);
-        ImageView tile = (ImageView)header.findViewById(R.id.header_tile);
-
-        int id = CompassUtil.getCategoryTileResId(mCategory.getTitle());
-        Bitmap image = BitmapFactory.decodeResource(getResources(), id);
-        Bitmap circle = ImageHelper.getCircleBitmap(image, CompassUtil.getPixels(this, 200));
-        tile.setImageBitmap(circle);
-        image.recycle();
-
         mGetGoalsNextUrl = API.getGoalsUrl(mCategory);
 
         mAdapter = new ChooseGoalsAdapter(this, this, mCategory);
-        setAdapter(mAdapter);
 
-        if (!mCategory.getColor().isEmpty()){
-            setColor(Color.parseColor(mCategory.getColor()));
-        }
+        setColor(Color.parseColor(mCategory.getColor()));
+        setHeader();
+        setAdapter(mAdapter);
+    }
+
+    private void setHeader(){
+        View header = inflateHeader(R.layout.header_hero);
+        ImageView hero = (ImageView)header.findViewById(R.id.header_hero_image);
+        ImageLoader.Options options = new ImageLoader.Options().setUsePlaceholder(false);
+        ImageLoader.loadBitmap(hero, mCategory.getImageUrl(), options);
     }
 
     @Override

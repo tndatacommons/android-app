@@ -3,16 +3,15 @@ package org.tndata.android.compass.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.ViewSwitcher;
 
 import org.tndata.android.compass.CompassApplication;
@@ -26,6 +25,8 @@ import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
+import org.tndata.android.compass.util.CompassUtil;
+import org.tndata.android.compass.util.ImageHelper;
 import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.List;
@@ -80,42 +81,31 @@ public class ChooseBehaviorsActivity
         super.onCreate(savedInstanceState);
         mApplication = (CompassApplication)getApplication();
 
-        //Pull the goal
+        //Pull the content
         mGoal = (GoalContent)getIntent().getSerializableExtra(GOAL_KEY);
         mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
 
+        //Set up the loading process
         mGetBehaviorsNextUrl = API.getBehaviorsUrl(mGoal);
         mAdapter = new ChooseBehaviorsAdapter(this, this, mCategory, mGoal);
 
+        setColor(Color.parseColor(mCategory.getColor()));
         setHeader();
         setAdapter(mAdapter);
-        if (mCategory != null && !mCategory.getColor().isEmpty()){
-            setColor(Color.parseColor(mCategory.getColor()));
-        }
 
         mSelectedBehavior = null;
     }
 
     @SuppressWarnings("deprecation")
     private void setHeader(){
-        View header = inflateHeader(R.layout.header_icon);
-        RelativeLayout circle = (RelativeLayout)header.findViewById(R.id.header_icon_circle);
-        ImageView icon = (ImageView)header.findViewById(R.id.header_icon_icon);
+        View header = inflateHeader(R.layout.header_tile);
+        ImageView tile = (ImageView)header.findViewById(R.id.header_tile);
 
-        GradientDrawable gradientDrawable = (GradientDrawable) circle.getBackground();
-        if (mCategory != null && !mCategory.getSecondaryColor().isEmpty()){
-            gradientDrawable.setColor(Color.parseColor(mCategory.getSecondaryColor()));
-        }
-        else{
-            gradientDrawable.setColor(getResources().getColor(R.color.grow_accent));
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-            circle.setBackground(gradientDrawable);
-        }
-        else{
-            circle.setBackgroundDrawable(gradientDrawable);
-        }
-        mGoal.loadIconIntoView(icon);
+        int id = CompassUtil.getCategoryTileResId(mCategory.getTitle());
+        Bitmap image = BitmapFactory.decodeResource(getResources(), id);
+        Bitmap circle = ImageHelper.getCircleBitmap(image, CompassUtil.getPixels(this, 200));
+        tile.setImageBitmap(circle);
+        image.recycle();
     }
 
     @Override
