@@ -143,6 +143,10 @@ public abstract class API{
         return BASE_URL + "categories/?page_size=999999";
     }
 
+    public static String getCategoryUrl(long categoryId){
+        return BASE_URL + "categories/" + categoryId + "/";
+    }
+
     public static String getDeleteCategoryUrl(@NonNull UserCategory userCategory){
         return BASE_URL + "users/categories/" + userCategory.getId() + "/";
     }

@@ -85,7 +85,7 @@ public class ChooseBehaviorsActivity
         mGoal = (GoalContent)getIntent().getSerializableExtra(GOAL_KEY);
         mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
 
-        //Set up the loading process
+        //Set up the loading process and the adapter
         mGetBehaviorsNextUrl = API.getBehaviorsUrl(mGoal);
         mAdapter = new ChooseBehaviorsAdapter(this, this, mCategory, mGoal);
 

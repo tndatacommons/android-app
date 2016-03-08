@@ -213,8 +213,7 @@
     <string name="search_header">These goals are relevant to your search:</string>
 
     <!-- Action notification -->
-    <string name="action_notification_yes">Yes</string>
-    <string name="action_notification_no">No</string>
+    <string name="action_notification_yes">Got it</string>
     <string name="action_notification_later">Later</string>
 
     <!-- Didn't do it -->

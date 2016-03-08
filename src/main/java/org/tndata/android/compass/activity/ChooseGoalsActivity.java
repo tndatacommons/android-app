@@ -55,10 +55,11 @@ public class ChooseGoalsActivity
         super.onCreate(savedInstanceState);
         mApplication = (CompassApplication)getApplication();
 
+        //Pull the content
         mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
 
+        //Set up the loading process and the adapter
         mGetGoalsNextUrl = API.getGoalsUrl(mCategory);
-
         mAdapter = new ChooseGoalsAdapter(this, this, mCategory);
 
         setColor(Color.parseColor(mCategory.getColor()));

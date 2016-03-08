@@ -10,6 +10,7 @@ import android.text.Html;
 import android.view.View;
 
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.util.CompassTagHandler;
 
@@ -18,8 +19,8 @@ import org.tndata.android.compass.util.CompassTagHandler;
  * Created by isma on 2/25/16.
  */
 public class ActionAdapter extends MaterialAdapter implements View.OnClickListener{
-    private Context mContext;
     private Action mAction;
+    private CategoryContent mCategory;
 
     private @IdRes int mButtonId;
 
@@ -29,15 +30,16 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
      *
      * @param context a reference to the context.
      */
-    public ActionAdapter(@NonNull Context context, @Nullable Action action){
+    public ActionAdapter(@NonNull Context context, @Nullable Action action, @Nullable CategoryContent category){
         super(context, ContentType.DETAIL, action == null);
 
-        mContext = context;
         mAction = action;
+        mCategory = category;
     }
 
-    public void setAction(@NonNull Action action){
+    public void setAction(@NonNull Action action, @Nullable CategoryContent category){
         mAction = action;
+        mCategory = category;
         notifyHeaderInserted();
         if (mAction instanceof UserAction){
             notifyDetailsInserted();
@@ -71,11 +73,11 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
     protected void bindDetailHolder(DetailViewHolder holder){
         if (mAction instanceof UserAction){
             UserAction userAction = (UserAction)mAction;
-            holder.setHeaderColor(Color.parseColor(userAction.getPrimaryCategory().getColor()));
+            holder.setHeaderColor(Color.parseColor(mCategory.getColor()));
 
             if (!userAction.getHTMLDescription().isEmpty()){
                 holder.setDescription(Html.fromHtml(userAction.getHTMLDescription(), null,
-                        new CompassTagHandler(mContext)));
+                        new CompassTagHandler(getContext())));
             }
             else{
                 holder.setDescription(userAction.getDescription());
@@ -83,7 +85,7 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
 
             if (!userAction.getHTMLMoreInfo().isEmpty()){
                 holder.setMoreInfo(Html.fromHtml(userAction.getHTMLMoreInfo(), null,
-                        new CompassTagHandler(mContext)));
+                        new CompassTagHandler(getContext())));
             }
             else if (!userAction.getMoreInfo().isEmpty()){
                 holder.setMoreInfo(userAction.getMoreInfo());

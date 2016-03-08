@@ -239,11 +239,6 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".activity.DidNotDoItActivity"
-            android:theme="@style/Theme.AppCompat.Light.Dialog"
-            android:screenOrientation="portrait" />
-
-        <activity
             android:name=".activity.PlacesActivity"
             android:label="Places"
             android:screenOrientation="portrait" >
