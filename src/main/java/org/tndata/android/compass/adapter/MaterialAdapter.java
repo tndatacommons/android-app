@@ -184,7 +184,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
             if (holder instanceof ListViewHolder){
                 mListHolder = (ListViewHolder)holder;
             }
-            return mListHolder;
+            return holder;
         }
         else if (viewType == TYPE_DETAIL_CONTENT){
             return getDetailsHolder(parent);

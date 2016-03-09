@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ImageView;
 
-import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.CustomContentManagerAdapter;
@@ -16,7 +15,9 @@ import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.NetworkRequest;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -28,7 +29,7 @@ import org.tndata.android.compass.util.NetworkRequest;
 public class CustomContentManagerActivity
         extends MaterialActivity
         implements
-                NetworkRequest.RequestCallback,
+                HttpRequest.RequestCallback,
                 Parser.ParserCallback,
                 CustomContentManagerAdapter.CustomContentManagerListener{
 
@@ -62,6 +63,7 @@ public class CustomContentManagerActivity
         else{
             mCustomGoal = getIntent().getParcelableExtra(CUSTOM_GOAL_KEY);
             if (mCustomGoal != null){
+                mCustomGoal = (CustomGoal)mApplication.getUserData().getGoal(mCustomGoal);
                 fetchActions(mCustomGoal);
             }
         }
@@ -85,8 +87,7 @@ public class CustomContentManagerActivity
      * @param customGoal the goal whose actions are to be fetched.
      */
     private void fetchActions(@NonNull CustomGoal customGoal){
-        mGetActionsRequestCode = NetworkRequest.get(this, this, API.getCustomActionsUrl(customGoal),
-                mApplication.getToken());
+        mGetActionsRequestCode = HttpRequest.get(this, API.getCustomActionsUrl(customGoal));
     }
 
     @Override
@@ -119,7 +120,7 @@ public class CustomContentManagerActivity
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
+    public void onRequestFailed(int requestCode, HttpRequestError error){
 
     }
 
@@ -130,12 +131,8 @@ public class CustomContentManagerActivity
             mCustomGoal.init();
             mApplication.getUserData().addGoal(mCustomGoal);
         }
-        else if (result instanceof ParserModels.CustomActionResultSet){
-            mCustomGoal.setActions(((ParserModels.CustomActionResultSet)result).results);
-        }
         else if (result instanceof CustomAction){
             mApplication.getUserData().addAction((CustomAction)result);
-            mCustomGoal.addAction((CustomAction)result);
         }
     }
 
@@ -145,43 +142,44 @@ public class CustomContentManagerActivity
             mAdapter.customGoalAdded((CustomGoal)result);
         }
         else if (result instanceof ParserModels.CustomActionResultSet){
-            mAdapter.customActionsFetched();
+            mAdapter.setCustomActions(((ParserModels.CustomActionResultSet)result).results);
         }
         else if (result instanceof CustomAction){
-            mAdapter.customActionAdded();
+            mAdapter.customActionAdded((CustomAction)result);
         }
     }
 
     @Override
     public void onCreateGoal(@NonNull CustomGoal customGoal){
-        mAddGoalRequestCode = NetworkRequest.post(this, this, API.getPostCustomGoalUrl(),
-                mApplication.getToken(), API.getPostPutCustomGoalBody(customGoal));
+        mAddGoalRequestCode = HttpRequest.post(this, API.getPostCustomGoalUrl(),
+                API.getPostPutCustomGoalBody(customGoal));
     }
 
     @Override
     public void onSaveGoal(@NonNull CustomGoal customGoal){
-        NetworkRequest.put(this, null, API.getPutCustomGoalUrl(customGoal),
-                mApplication.getToken(), API.getPostPutCustomGoalBody(customGoal));
+        HttpRequest.put(null, API.getPutCustomGoalUrl(customGoal),
+                API.getPostPutCustomGoalBody(customGoal));
     }
 
     public void deleteGoal(@NonNull CustomGoal customGoal){
         mApplication.removeGoal(customGoal);
-        NetworkRequest.delete(this, null, API.getDeleteGoalUrl(customGoal),
-                mApplication.getToken(), new JSONObject());
+        HttpRequest.delete(null, API.getDeleteGoalUrl(customGoal));
         setResult(RESULT_OK);
         finish();
     }
 
     @Override
     public void onCreateAction(@NonNull CustomAction customAction){
-        mAddActionRequestCode = NetworkRequest.post(this, this, API.getPostCustomActionUrl(),
-                mApplication.getToken(), API.getPostPutCustomActionBody(customAction, customAction.getGoal()));
+        mAddActionRequestCode = HttpRequest.post(this, API.getPostCustomActionUrl(),
+                API.getPostPutCustomActionBody(customAction, customAction.getGoal()));
     }
 
     @Override
     public void onSaveAction(@NonNull CustomAction customAction){
-        NetworkRequest.put(this, null, API.getPutCustomActionUrl(customAction),
-                mApplication.getToken(), API.getPostPutCustomActionBody(customAction, customAction.getGoal()));
+        CustomAction original = (CustomAction)mApplication.getUserData().getAction(customAction);
+        original.setTitle(customAction.getTitle());
+        HttpRequest.put(null, API.getPutCustomActionUrl(customAction),
+                API.getPostPutCustomActionBody(customAction, customAction.getGoal()));
     }
 
     @Override
@@ -192,8 +190,7 @@ public class CustomContentManagerActivity
     }
 
     public void onRemoveClicked(@NonNull CustomAction customAction){
-        NetworkRequest.delete(this, this, API.getDeleteActionUrl(customAction),
-                mApplication.getToken(), new JSONObject());
+        HttpRequest.delete(this, API.getDeleteActionUrl(customAction));
         mApplication.getUserData().removeAction(customAction);
     }
 }

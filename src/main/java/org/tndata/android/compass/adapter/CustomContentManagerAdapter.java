@@ -91,6 +91,11 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
         return mActionListHolder;
     }
 
+    @Override
+    protected void bindListHolder(RecyclerView.ViewHolder rawHolder){
+        Log.d(TAG, "call to bindListHolder()");
+    }
+
     /**
      * Notifies the adapter that the goal has been added to the user's data set. Displays
      * the action list, which will be empty.
@@ -106,11 +111,8 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
         updateLoading(false);
     }
 
-    /**
-     * Lets the adapter know that the list of actions has been fetched.
-     */
-    public void customActionsFetched(){
-        mCustomActions = mCustomGoal.getActions();
+    public void setCustomActions(List<CustomAction> customActions){
+        mCustomActions = customActions;
         mCustomGoalHolder.mButton.setText(mContext.getString(R.string.custom_goal_edit));
         setButtonEnabled(mCustomGoalHolder.mButton, true);
         notifyListInserted();
@@ -122,7 +124,8 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
      * completed. Notifies the recycler view of the insertion of a new element to trigger
      * the proper animation.
      */
-    public void customActionAdded(){
+    public void customActionAdded(CustomAction customAction){
+        mCustomActions.add(customAction);
         mActionListHolder.mAdapter.notifyItemInserted(mCustomActions.size()-1);
         mActionListHolder.mAdapter.notifyItemChanged(mCustomActions.size());
         mActionListHolder.mSwitcher.showPrevious();
