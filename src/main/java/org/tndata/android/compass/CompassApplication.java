@@ -69,11 +69,6 @@ public class CompassApplication extends Application{
         HttpRequest.addHeader("Authorization", "Token " + getToken());
 
         if (setPreferences){
-            Log.d(TAG, "Password: " + user.getPassword());
-            if (user.getPassword() == null){
-                Log.d(TAG, "Password is null");
-                Thread.dumpStack();
-            }
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
             SharedPreferences.Editor editor = settings.edit();
             editor.putString("auth_token", mUser.getToken());
