@@ -3,16 +3,15 @@ package org.tndata.android.compass.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.ViewSwitcher;
 
 import org.tndata.android.compass.CompassApplication;
@@ -26,9 +25,13 @@ import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.NetworkRequest;
+import org.tndata.android.compass.util.CompassUtil;
+import org.tndata.android.compass.util.ImageHelper;
 
 import java.util.List;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -42,22 +45,20 @@ public class ChooseBehaviorsActivity
         implements
                 View.OnClickListener,
                 DialogInterface.OnCancelListener,
-                NetworkRequest.RequestCallback,
+                HttpRequest.RequestCallback,
                 Parser.ParserCallback,
                 ChooseBehaviorsAdapter.ChooseBehaviorsListener{
 
     //Bundle keys
-    //NOTE: These need to be regular content because a user may dive down the library
-    //  without selecting things. User content ain't available in that use case, but
-    //  if it exists it can be retrieved from the UserData bundle
     public static final String CATEGORY_KEY = "org.tndata.compass.ChooseBehaviors.Category";
     public static final String GOAL_KEY = "org.tndata.compass.ChooseBehaviors.Goal";
+    public static final String GOAL_ID_KEY = "org.tndata.compass.ChooseBehaviors.GoalId";
 
     //Activity tag
     private static final String TAG = "ChooseBehaviorsActivity";
 
     //Activity request codes
-    private static final int BEHAVIOR_ACTIVITY_RQ = 5469;
+    private static final int BEHAVIOR_ACTIVITY_RC = 5469;
 
 
     public CompassApplication mApplication;
@@ -70,6 +71,8 @@ public class ChooseBehaviorsActivity
     private AlertDialog mShareDialog;
 
     //Network request codes and urls
+    private int mGetGoalRequestCode;
+    private int mGetCategoryRequestCode;
     private int mGetBehaviorsRequestCode;
     private int mPostBehaviorRequestCode;
     private String mGetBehaviorsNextUrl;
@@ -80,42 +83,44 @@ public class ChooseBehaviorsActivity
         super.onCreate(savedInstanceState);
         mApplication = (CompassApplication)getApplication();
 
-        //Pull the goal
+        //Pull the content
         mGoal = (GoalContent)getIntent().getSerializableExtra(GOAL_KEY);
         mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
 
-        mGetBehaviorsNextUrl = API.getBehaviorsUrl(mGoal);
-        mAdapter = new ChooseBehaviorsAdapter(this, this, mCategory, mGoal);
+        mAdapter = new ChooseBehaviorsAdapter(this, this);
+        setAdapter(mAdapter);
+        mSelectedBehavior = null;
 
+        if (mGoal == null){
+            long goalId = getIntent().getLongExtra(GOAL_ID_KEY, -1);
+            mGetGoalRequestCode = HttpRequest.get(this, API.getGoalUrl(goalId));
+            setColor(getResources().getColor(R.color.grow_primary));
+        }
+        else{
+            setUp();
+        }
+    }
+
+    private void setUp(){
+        //Set up the loading process and the adapter
+        mGetBehaviorsNextUrl = API.getBehaviorsUrl(mGoal);
+        mAdapter.setContent(mCategory, mGoal);
+
+        setColor(Color.parseColor(mCategory.getColor()));
         setHeader();
         setAdapter(mAdapter);
-        if (mCategory != null && !mCategory.getColor().isEmpty()){
-            setColor(Color.parseColor(mCategory.getColor()));
-        }
-
-        mSelectedBehavior = null;
     }
 
     @SuppressWarnings("deprecation")
     private void setHeader(){
-        View header = inflateHeader(R.layout.header_icon);
-        RelativeLayout circle = (RelativeLayout)header.findViewById(R.id.header_icon_circle);
-        ImageView icon = (ImageView)header.findViewById(R.id.header_icon_icon);
+        View header = inflateHeader(R.layout.header_tile);
+        ImageView tile = (ImageView)header.findViewById(R.id.header_tile);
 
-        GradientDrawable gradientDrawable = (GradientDrawable) circle.getBackground();
-        if (mCategory != null && !mCategory.getSecondaryColor().isEmpty()){
-            gradientDrawable.setColor(Color.parseColor(mCategory.getSecondaryColor()));
-        }
-        else{
-            gradientDrawable.setColor(getResources().getColor(R.color.grow_accent));
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-            circle.setBackground(gradientDrawable);
-        }
-        else{
-            circle.setBackgroundDrawable(gradientDrawable);
-        }
-        mGoal.loadIconIntoView(icon);
+        int id = CompassUtil.getCategoryTileResId(mCategory.getTitle());
+        Bitmap image = BitmapFactory.decodeResource(getResources(), id);
+        Bitmap circle = ImageHelper.getCircleBitmap(image, CompassUtil.getPixels(this, 200));
+        tile.setImageBitmap(circle);
+        image.recycle();
     }
 
     @Override
@@ -125,7 +130,7 @@ public class ChooseBehaviorsActivity
             mSelectedBehavior = behavior;
             startActivityForResult(new Intent(this, BehaviorActivity.class)
                     .putExtra(BehaviorActivity.CATEGORY_KEY, mCategory)
-                    .putExtra(BehaviorActivity.BEHAVIOR_KEY, behavior), BEHAVIOR_ACTIVITY_RQ);
+                    .putExtra(BehaviorActivity.BEHAVIOR_KEY, behavior), BEHAVIOR_ACTIVITY_RC);
         }
     }
 
@@ -134,15 +139,13 @@ public class ChooseBehaviorsActivity
         if (API.STAGING && mGetBehaviorsNextUrl.startsWith("https")){
             mGetBehaviorsNextUrl = mGetBehaviorsNextUrl.replaceFirst("s", "");
         }
-        mGetBehaviorsRequestCode = NetworkRequest.get(this, this, mGetBehaviorsNextUrl,
-                mApplication.getToken());
+        mGetBehaviorsRequestCode = HttpRequest.get(this, mGetBehaviorsNextUrl);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        if (requestCode == BEHAVIOR_ACTIVITY_RQ && resultCode == RESULT_OK){
-            mPostBehaviorRequestCode = NetworkRequest.post(this, this,
-                    API.getPostBehaviorUrl(), mApplication.getToken(),
+        if (requestCode == BEHAVIOR_ACTIVITY_RC && resultCode == RESULT_OK){
+            mPostBehaviorRequestCode = HttpRequest.post(this, API.getPostBehaviorUrl(),
                     API.getPostBehaviorBody(mSelectedBehavior, mGoal, mCategory));
 
             ViewGroup rootView = (ViewGroup)findViewById(android.R.id.content);
@@ -169,33 +172,29 @@ public class ChooseBehaviorsActivity
             case R.id.dialog_behavior_activities:
                 showActivities();
             case R.id.dialog_behavior_ok:
-                dismissAll();
+                mShareDialog.cancel();
                 break;
         }
     }
 
     @Override
     public void onCancel(DialogInterface dialog){
-        dismissAll();
+        dismiss();
     }
 
     private void showActivities(){
         UserBehavior userBehavior = mApplication.getUserData().getBehavior(mSelectedBehavior);
         UserGoal userGoal = mApplication.getUserData().getGoal(mGoal);
-        /*startActivity(new Intent(this, ReviewActionsActivity.class)
+        startActivity(new Intent(this, ReviewActionsActivity.class)
                 .putExtra(ReviewActionsActivity.USER_GOAL_KEY, userGoal)
-                .putExtra(ReviewActionsActivity.USER_BEHAVIOR_KEY, userBehavior));*/
+                .putExtra(ReviewActionsActivity.USER_BEHAVIOR_KEY, userBehavior));
     }
 
-    private void dismissAll(){
-        if (mShareDialog != null){
-            mShareDialog.cancel();
-            mShareDialog = null;
-        }
-
+    private void dismiss(){
+        Log.d("ChooseBehaviorsActivity", "dismiss() called");
         mAdapter.remove(mSelectedBehavior);
         mSelectedBehavior = null;
-        if (!mAdapter.hasBehaviors()){
+        if (mAdapter.isEmpty()){
             setResult(RESULT_OK);
             finish();
         }
@@ -203,7 +202,13 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mGetBehaviorsRequestCode){
+        if (requestCode == mGetGoalRequestCode){
+            Parser.parse(result, GoalContent.class, this);
+        }
+        else if (requestCode == mGetCategoryRequestCode){
+            Parser.parse(result, CategoryContent.class, this);
+        }
+        else if (requestCode == mGetBehaviorsRequestCode){
             Parser.parse(result, ParserModels.BehaviorContentResultSet.class, this);
         }
         else if (requestCode == mPostBehaviorRequestCode){
@@ -212,7 +217,7 @@ public class ChooseBehaviorsActivity
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
+    public void onRequestFailed(int requestCode, HttpRequestError error){
         if (requestCode == mGetBehaviorsRequestCode){
             mAdapter.displayError("Couldn't load behaviors");
         }
@@ -237,7 +242,21 @@ public class ChooseBehaviorsActivity
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.BehaviorContentResultSet){
+        if (result instanceof GoalContent){
+            mGoal = (GoalContent)result;
+            long categoryId = -1;
+            for (long id:mGoal.getCategoryIdSet()){
+                if (id >= 23){
+                    categoryId = id;
+                }
+            }
+            mGetCategoryRequestCode = HttpRequest.get(this, API.getCategoryUrl(categoryId));
+        }
+        else if (result instanceof CategoryContent){
+            mCategory = (CategoryContent)result;
+            setUp();
+        }
+        else if (result instanceof ParserModels.BehaviorContentResultSet){
             ParserModels.BehaviorContentResultSet set = (ParserModels.BehaviorContentResultSet)result;
             mGetBehaviorsNextUrl = set.next;
             List<BehaviorContent> behaviorList = set.results;
@@ -250,7 +269,7 @@ public class ChooseBehaviorsActivity
                 //If the list is empty AND the adapter has no behaviors, then the
                 //  user has already selected all of the behaviors; let him know
                 //  through the error channel
-                if (!mAdapter.hasBehaviors()){
+                if (mAdapter.isEmpty()){
                     mAdapter.displayError("You have already selected all behaviors");
                 }
             }

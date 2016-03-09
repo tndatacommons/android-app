@@ -18,9 +18,11 @@ import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.Constants;
-import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.List;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -35,7 +37,7 @@ public class OnBoardingActivity
         implements
                 InstrumentFragment.InstrumentFragmentCallback,
                 ChooseInterestsAdapter.OnCategoriesSelectedListener,
-                NetworkRequest.RequestCallback,
+                HttpRequest.RequestCallback,
                 Parser.ParserCallback{
 
     private static final int STAGE_PROFILE = 0;
@@ -46,10 +48,9 @@ public class OnBoardingActivity
     private Fragment mFragment = null;
 
     //Request codes
-    private int mInitialPostCategoryRequestCode;
-    private int mLastPostCategoryRequestCode;
-    private int mGetDataRequestCode;
-    private int mGetCategoriesRequestCode;
+    private int mInitialPostCategoryRC;
+    private int mLastPostCategoryRC;
+    private int mGetDataRC;
 
 
     @Override
@@ -105,42 +106,36 @@ public class OnBoardingActivity
         //int[] categoryIds = new int[selection.size()];
         for (int i = 0; i < selection.size(); i++){
             if (i == 0){
-                mInitialPostCategoryRequestCode = NetworkRequest.post(this, this,
-                        API.getUserCategoriesUrl(), mApplication.getToken(),
+                mInitialPostCategoryRC = HttpRequest.post(this, API.getUserCategoriesUrl(),
                         API.getPostCategoryBody(selection.get(i)));
-                mLastPostCategoryRequestCode = mInitialPostCategoryRequestCode+selection.size();
+                mLastPostCategoryRC = mInitialPostCategoryRC +selection.size();
             }
             else{
-                NetworkRequest.post(this, this, API.getUserCategoriesUrl(), mApplication.getToken(),
-                        API.getPostCategoryBody(selection.get(i)));
+                CategoryContent cat = selection.get(i);
+                HttpRequest.post(this, API.getUserCategoriesUrl(), API.getPostCategoryBody(cat));
             }
         }
     }
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        if (requestCode < mLastPostCategoryRequestCode){
-            mInitialPostCategoryRequestCode++;
-            if (mInitialPostCategoryRequestCode == mLastPostCategoryRequestCode){
-                mGetDataRequestCode = NetworkRequest.get(this, this, API.getUserDataUrl(),
-                        mApplication.getToken(), 60 * 1000);
+        if (requestCode < mLastPostCategoryRC){
+            mInitialPostCategoryRC++;
+            if (mInitialPostCategoryRC == mLastPostCategoryRC){
+                mGetDataRC = HttpRequest.get(this, API.getUserDataUrl(), 60*1000);
             }
         }
-        else if (requestCode == mGetDataRequestCode){
+        else if (requestCode == mGetDataRC){
             Parser.parse(result, ParserModels.UserDataResultSet.class, this);
-        }
-        else if (requestCode == mGetCategoriesRequestCode){
-            Parser.parse(result, ParserModels.CategoryContentResultSet.class, this);
         }
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
-        if (requestCode < mLastPostCategoryRequestCode){
-            mInitialPostCategoryRequestCode++;
-            if (mInitialPostCategoryRequestCode == mLastPostCategoryRequestCode){
-                mGetDataRequestCode = NetworkRequest.get(this, this, API.getUserDataUrl(),
-                        mApplication.getToken(), 60 * 1000);
+    public void onRequestFailed(int requestCode, HttpRequestError error){
+        if (requestCode < mLastPostCategoryRC){
+            mInitialPostCategoryRC++;
+            if (mInitialPostCategoryRC == mLastPostCategoryRC){
+                mGetDataRC = HttpRequest.get(this, API.getUserDataUrl(), 60*1000);
             }
         }
     }
@@ -162,13 +157,7 @@ public class OnBoardingActivity
 
             User user = mApplication.getUser();
             user.setOnBoardingComplete();
-            NetworkRequest.put(this, null, API.getPutUserProfileUrl(user), mApplication.getToken(),
-                    API.getPutUserProfileBody(user));
-
-            mGetCategoriesRequestCode = NetworkRequest.get(this, this, API.getCategoriesUrl(), "");
-        }
-        else if (result instanceof ParserModels.CategoryContentResultSet){
-            mApplication.setPublicCategories(((ParserModels.CategoryContentResultSet)result).results);
+            HttpRequest.put(null, API.getPutUserProfileUrl(user), API.getPutUserProfileBody(user));
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
         }

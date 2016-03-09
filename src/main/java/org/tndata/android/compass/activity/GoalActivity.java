@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,7 +24,6 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.GoalAdapter;
 import org.tndata.android.compass.model.CategoryContent;
-import org.tndata.android.compass.model.Progress;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserGoal;
@@ -35,8 +33,6 @@ import org.tndata.android.compass.util.ImageLoader;
 import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.OnScrollListenerHub;
 import org.tndata.android.compass.util.ParallaxEffect;
-
-import at.grabner.circleprogress.CircleProgressView;
 
 
 /**
@@ -127,20 +123,6 @@ public class GoalActivity
             fab.setColorPressed(getResources().getColor(R.color.grow_accent));
         }
 
-        //Set up the general progress indicator
-        Progress progress = mUserGoal.getProgress();
-        CircleProgressView indicator = (CircleProgressView)findViewById(R.id.goal_indicator);
-        params = (RelativeLayout.LayoutParams)indicator.getLayoutParams();
-        params.topMargin = heroHeight-params.height-2*params.topMargin;
-        indicator.setLayoutParams(params);
-        indicator.setValue(0);
-        indicator.setAutoTextSize(true);
-        indicator.setShowUnit(true);
-        if (progress != null){
-            Log.d(TAG, "Progress ain't null, setting...");
-            indicator.setValueAnimated(0, progress.getActionsProgressPercent(), 1500);
-        }
-
         //Set up the title bar
         mTitle = (TextView)findViewById(R.id.goal_title);
         params = (RelativeLayout.LayoutParams)mTitle.getLayoutParams();
@@ -168,34 +150,11 @@ public class GoalActivity
         OnScrollListenerHub hub = new OnScrollListenerHub();
         hub.addOnScrollListener(new ParallaxEffect(hero, 1));
 
-        final int indicatorHeight = CompassUtil.getPixels(this, 90);
-        ParallaxEffect indicatorEffect = new ParallaxEffect(indicator, 1);
-        indicatorEffect.setParallaxCondition(new ParallaxEffect.ParallaxCondition(){
-            @Override
-            protected boolean doParallax(){
-                return getParallaxViewOffset() > mTitleHeight/2-indicatorHeight/2;
-            }
-
-            @Override
-            protected int getFixedState(){
-                return mTitleHeight/2-indicatorHeight/2;
-            }
-        });
-        hub.addOnScrollListener(indicatorEffect);
-
         ParallaxEffect titleEffect = new ParallaxEffect(mTitle, 1);
         titleEffect.setParallaxCondition(new ParallaxEffect.ParallaxCondition(){
             @Override
             protected boolean doParallax(){
                 return getParallaxViewOffset() > 0;
-            }
-
-            @Override
-            protected void onStateChanged(int newMargin){
-                View view = getParallaxView();
-                int padding = CompassUtil.getPixels(GoalActivity.this, 15);
-                padding += (int)(((float)(getParallaxViewInitialOffset()-newMargin)/getParallaxViewInitialOffset())*CompassUtil.getPixels(GoalActivity.this, 75));
-                view.setPadding(padding, view.getPaddingTop(), view.getPaddingRight(), view.getPaddingBottom());
             }
         });
         hub.addOnScrollListener(titleEffect);

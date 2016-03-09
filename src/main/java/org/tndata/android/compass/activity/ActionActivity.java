@@ -16,6 +16,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ActionAdapter;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.parser.Parser;
@@ -24,8 +25,10 @@ import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.ImageLoader;
-import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.NotificationUtil;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -39,7 +42,7 @@ public class ActionActivity
         extends MaterialActivity
         implements
                 View.OnClickListener,
-                NetworkRequest.RequestCallback,
+                HttpRequest.RequestCallback,
                 Parser.ParserCallback{
 
     public static final String ACTION_KEY = "org.tndata.compass.ActionActivity.Action";
@@ -51,13 +54,15 @@ public class ActionActivity
     private static final int RESCHEDULE_REQUEST_CODE = 61429;
 
 
-    private CompassApplication mApplication;
-
     //The action in question and the associated reminder
     private Action mAction;
+    private CategoryContent mCategory;
     private Reminder mReminder;
 
     private ActionAdapter mAdapter;
+
+    private int mGetActionRC;
+    private int mGetCategoryRC;
 
     //Firewall
     private boolean mActionUpdated;
@@ -68,20 +73,23 @@ public class ActionActivity
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        mApplication = (CompassApplication)getApplication();
+        CompassApplication application = (CompassApplication)getApplication();
 
         //Retrieve the action and mark the reminder as nonexistent
-        mAction = (UserAction)getIntent().getSerializableExtra(ACTION_KEY);
+        mAction = (Action)getIntent().getSerializableExtra(ACTION_KEY);
         mReminder = null;
 
         if (mAction != null){
-            Action temp = mApplication.getUserData().getAction(mAction);
+            Action temp = application.getUserData().getAction(mAction);
             if (temp != null){
                 mAction = temp;
             }
+            if (mAction instanceof UserAction){
+                mCategory = ((UserAction)mAction).getPrimaryCategory().getCategory();
+            }
         }
 
-        mAdapter = new ActionAdapter(this, mAction);
+        mAdapter = new ActionAdapter(this, mAction, mCategory);
 
         setAdapter(mAdapter);
 
@@ -91,10 +99,11 @@ public class ActionActivity
         if (mAction == null){
             //timeOption.setText(R.string.action_snooze);
             mReminder = (Reminder)getIntent().getSerializableExtra(REMINDER_KEY);
+            setColor(getResources().getColor(R.color.grow_primary));
             fetchAction();
         }
         else{
-            mAction = mApplication.getUserData().getAction(mAction);
+            mAction = application.getUserData().getAction(mAction);
             if (mAction instanceof UserAction){
                 setColor(Color.parseColor(((UserAction)mAction).getPrimaryCategory().getColor()));
             }
@@ -132,28 +141,33 @@ public class ActionActivity
         if (mReminder.isUserAction()){
             int mappingId = mReminder.getUserMappingId();
             Log.d("ActionActivity", "Fetching UserAction: " + mappingId);
-            NetworkRequest.get(this, this, API.getActionUrl(mappingId), mApplication.getToken());
+            mGetActionRC = HttpRequest.get(this, API.getActionUrl(mappingId));
         }
         else if (mReminder.isCustomAction()){
             int customId = mReminder.getObjectId();
             Log.d("ActionActivity", "Fetching UserAction: " + customId);
-            NetworkRequest.get(this, this, API.getCustomActionUrl(customId), mApplication.getToken());
+            mGetActionRC = HttpRequest.get(this, API.getCustomActionUrl(customId));
         }
     }
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        if (mReminder.isUserAction()){
-            Parser.parse(result, UserAction.class, this);
+        if (requestCode == mGetActionRC){
+            if (mReminder.isUserAction()){
+                Parser.parse(result, UserAction.class, this);
+            }
+            else if (mReminder.isCustomAction()){
+                Parser.parse(result, CustomAction.class, this);
+            }
         }
-        else if (mReminder.isCustomAction()){
-            Parser.parse(result, CustomAction.class, this);
+        else if (requestCode == mGetCategoryRC){
+            Parser.parse(result, CategoryContent.class, this);
         }
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
-        mAdapter.displayError("Couldn't retrieve information");
+    public void onRequestFailed(int requestCode, HttpRequestError error){
+        mAdapter.displayError("Couldn't retrieve activity information");
     }
 
     @Override
@@ -161,14 +175,27 @@ public class ActionActivity
         if (result instanceof Action){
             mAction = (Action)result;
         }
+        else if (result instanceof CategoryContent){
+            mCategory = (CategoryContent)result;
+        }
     }
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof UserAction || result instanceof CustomAction){
+        if (result instanceof UserAction){
+            long categoryId = ((UserAction)mAction).getPrimaryCategoryId();
+            mGetCategoryRC = HttpRequest.get(this, API.getCategoryUrl(categoryId));
+        }
+        else if (result instanceof CustomAction){
             mAction = (Action)result;
             setHeader();
-            mAdapter.setAction(mAction);
+            mAdapter.setAction(mAction, null);
+            invalidateOptionsMenu();
+        }
+        else if (result instanceof CategoryContent){
+            setColor(Color.parseColor(mCategory.getColor()));
+            setHeader();
+            mAdapter.setAction(mAction, mCategory);
             invalidateOptionsMenu();
         }
     }
@@ -255,8 +282,7 @@ public class ActionActivity
      * Disables the current action's trigger.
      */
     private void disableTrigger(){
-        NetworkRequest.put(this, null, API.getPutTriggerUrl(mAction),
-                mApplication.getToken(), API.getPutTriggerBody("", "", ""));
+        HttpRequest.put(null, API.getPutTriggerUrl(mAction), API.getPutTriggerBody("", "", ""));
         mAction.setTrigger(null);
         invalidateOptionsMenu();
     }

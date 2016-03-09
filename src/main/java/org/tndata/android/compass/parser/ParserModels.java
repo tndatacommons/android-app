@@ -4,12 +4,14 @@ import org.tndata.android.compass.model.ActionContent;
 import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.CustomAction;
+import org.tndata.android.compass.model.DailyProgress;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.model.UserProfile;
@@ -41,6 +43,10 @@ public final class ParserModels{
         public List<FeedData> results;
     }
 
+    public final class DailyProgressResultSet implements ResultSet{
+        public List<DailyProgress> results;
+    }
+
     public final class PlaceResultSet implements ResultSet{
         public List<Place> results;
     }
@@ -57,16 +63,20 @@ public final class ParserModels{
         public List<BehaviorContent> results;
     }
 
-    public final class ActionContentResultSet implements ResultSet{
+    public final class ActionContentResultSet extends ListResultSet{
         public List<ActionContent> results;
     }
 
-    public final class UserActionResultSet implements ResultSet{
+    public final class UserActionResultSet extends ListResultSet{
         public List<UserAction> results;
     }
 
     public final class CustomActionResultSet implements ResultSet{
         public List<CustomAction> results;
+    }
+
+    public final class UserCategoryResultSet implements ResultSet{
+        public List<UserCategory> results;
     }
 
     public final class UserGoalResultSet implements ResultSet{

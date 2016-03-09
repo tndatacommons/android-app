@@ -8,13 +8,10 @@ import org.tndata.android.compass.fragment.TourFragment;
 
 
 public class TourActivity extends AppCompatActivity implements TourFragment.TourFragmentCallback{
-
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour);
-
 
         getSupportFragmentManager().beginTransaction()
                 //.setCustomAnimations(0, R.animator.fade_out_downwards)
@@ -23,12 +20,12 @@ public class TourActivity extends AppCompatActivity implements TourFragment.Tour
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume(){
         super.onResume();
     }
 
     @Override
-    public void onTourComplete() {
+    public void onTourComplete(){
         finish();
         this.overridePendingTransition(R.anim.push_in, R.anim.push_out);
     }

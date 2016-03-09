@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.AutoSave;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.NetworkRequest;
 
@@ -29,12 +27,7 @@ import org.tndata.android.compass.util.NetworkRequest;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class CheckInFeedbackFragment
-        extends Fragment
-        implements
-                AutoSave.AutoSaveInterface,
-                SeekBar.OnSeekBarChangeListener{
-
+public class CheckInFeedbackFragment extends Fragment implements SeekBar.OnSeekBarChangeListener{
     private static final String INDEX_KEY = "org.tndata.compass.CheckInFeedback.Index";
     private static final String USER_GOAL_KEY = "org.tndata.compass.CheckInFeedback.Goal";
 
@@ -45,10 +38,6 @@ public class CheckInFeedbackFragment
 
     //Model components
     private UserGoal mUserGoal;
-
-    //Auto save
-    private AutoSave mAutoSave;
-    private long mLastUpdate;
 
     //Listener
     private int mIndex;
@@ -82,8 +71,6 @@ public class CheckInFeedbackFragment
         Bundle arguments = getArguments();
         mIndex = arguments.getInt(INDEX_KEY);
         mUserGoal = (UserGoal)arguments.getSerializable(USER_GOAL_KEY);
-
-        mLastUpdate = -1;
     }
 
     @Override
@@ -134,32 +121,6 @@ public class CheckInFeedbackFragment
     }
 
     @Override
-    public void onResume(){
-        super.onResume();
-        mAutoSave = AutoSave.start(getActivity(), this, 1000);
-    }
-
-    @Override
-    public void onPause(){
-        mAutoSave.stop();
-        super.onPause();
-    }
-
-    @Override
-    public long getLastUpdateTime(){
-        return mLastUpdate;
-    }
-
-    @Override
-    public void save(){
-        NetworkRequest.post(getActivity(), null, API.getPostUserGoalProgressUrl(),
-                ((CompassApplication)getActivity().getApplication()).getToken(),
-                API.getPostUserGoalProgressBody(mUserGoal, mBar.getProgress()+1));
-        mLastUpdate = -1;
-        Log.d("Feedback", "Saving");
-    }
-
-    @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
         switch (progress){
             case 0:
@@ -186,14 +147,14 @@ public class CheckInFeedbackFragment
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar){
-        Log.d("CheckInFeedbackFragment", "start tracking");
-        mLastUpdate = -1;
+        //Unused
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar){
-        Log.d("CheckInFeedbackFragment", "stop tracking");
-        mLastUpdate = System.currentTimeMillis();
+        NetworkRequest.post(getActivity(), null, API.getPostUserProgressUrl(),
+                ((CompassApplication)getActivity().getApplication()).getToken(),
+                API.getPostUserProgressBody(mUserGoal, mBar.getProgress()+1));
         mListener.onProgressChanged(mIndex, mBar.getProgress()+1);
     }
 

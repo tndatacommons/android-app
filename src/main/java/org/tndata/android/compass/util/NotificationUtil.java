@@ -17,7 +17,6 @@ import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ActionActivity;
 import org.tndata.android.compass.activity.CheckInActivity;
-import org.tndata.android.compass.activity.DidNotDoItActivity;
 import org.tndata.android.compass.activity.PackageEnrollmentActivity;
 import org.tndata.android.compass.activity.SnoozeActivity;
 import org.tndata.android.compass.fragment.NotificationSettingsFragment;
@@ -137,15 +136,6 @@ public final class NotificationUtil{
 
         String didIt = context.getString(R.string.action_notification_yes);
 
-        //Didn't do it intent; what happens when the user taps the "no" action
-        Intent didNotDoItIntent = new Intent(context, DidNotDoItActivity.class)
-                .putExtra(REMINDER_KEY, reminder);
-
-        PendingIntent didNotDoItPendingIntent = PendingIntent.getActivity(context,
-                (int)System.currentTimeMillis(), didNotDoItIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        String didNotDoIt = context.getString(R.string.action_notification_no);
-
         //Snooze intent; what happens when the user taps the "later" action
         Intent snoozeIntent = new Intent(context, SnoozeActivity.class)
                 .putExtra(REMINDER_KEY, reminder);
@@ -158,7 +148,6 @@ public final class NotificationUtil{
         //Generate the notification and push it
         Notification notification = getBuilder(context, title, message)
                 .addAction(R.drawable.ic_snooze, later, snoozePendingIntent)
-                .addAction(R.drawable.ic_thumb_down_white, didNotDoIt, didNotDoItPendingIntent)
                 .addAction(R.drawable.ic_thumb_up_white, didIt, didItPendingIntent)
                 .setContentIntent(contentIntent)
                 .setDeleteIntent(dismissedPendingIntent)

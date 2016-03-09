@@ -1,255 +1,208 @@
 package org.tndata.android.compass.adapter;
 
 import android.content.Context;
-import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.UserBehavior;
-import org.tndata.android.compass.model.UserGoal;
-import org.tndata.android.compass.ui.ContentContainer;
-import org.tndata.android.compass.util.CompassUtil;
+import org.tndata.android.compass.model.UserAction;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 /**
- * Created by isma on 2/24/16.
+ * Adapter for the review actions screen.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
-public class ReviewActionsAdapter extends RecyclerView.Adapter{
-    private static final int TYPE_BLANK = 0;
-    private static final int TYPE_CONTENT = TYPE_BLANK+1;
-    private static final int TYPE_LOAD = TYPE_CONTENT+1;
-    private static final int ITEM_COUNT = TYPE_LOAD+1;
-
-
-    private Context mContext;
+public class ReviewActionsAdapter extends MaterialAdapter{
     private ReviewActionsListener mListener;
-    private UserGoal mUserGoal;
-    private UserBehavior mUserBehavior;
 
-    private ActionsViewHolder mActionsHolder;
+    private String mListTitle;
+    private ActionsAdapter mAdapter;
     private List<Action> mActions;
 
-    private boolean mShowLoading;
-    private String mLoadError;
 
-
-    public ReviewActionsAdapter(Context context, ReviewActionsListener listener, UserGoal userGoal){
-        init(context, listener);
-        mUserGoal = userGoal;
-        mUserBehavior = null;
-    }
-
-    public ReviewActionsAdapter(Context context, ReviewActionsListener listener,
-                                UserBehavior userBehavior){
-
-        init(context, listener);
-        mUserGoal = null;
-        mUserBehavior = userBehavior;
-    }
-
-    private void init(Context context, ReviewActionsListener listener){
-        mContext = context;
+    /**
+     * Constructor.
+     *
+     * @param context a reference to the context.
+     * @param listener the listener.
+     * @param listTitle the title atop the list of actions.
+     */
+    public ReviewActionsAdapter(Context context, ReviewActionsListener listener, String listTitle){
+        super(context, ContentType.LIST, true);
         mListener = listener;
-
+        mListTitle = listTitle;
         mActions = new ArrayList<>();
-        mShowLoading = true;
-        mLoadError = "";
     }
 
     @Override
-    public int getItemViewType(int position){
-        if (position == 0){
-            return TYPE_BLANK;
-        }
-        else if (position == 1){
-            if (mActions.isEmpty()){
-                return TYPE_LOAD;
-            }
-            return TYPE_CONTENT;
-        }
-        return TYPE_LOAD;
+    protected boolean hasHeader(){
+        return false;
     }
 
     @Override
-    public int getItemCount(){
-        int count = ITEM_COUNT;
-        if (mActions.isEmpty()){
-            count--;
-        }
-        if (!mShowLoading){
-            count--;
-        }
-        return count;
+    protected boolean isEmpty(){
+        return mActions.isEmpty();
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-
-        if (viewType == TYPE_BLANK){
-            return new RecyclerView.ViewHolder(new CardView(mContext)){};
+    protected void bindListHolder(RecyclerView.ViewHolder rawHolder){
+        ListViewHolder holder = (ListViewHolder)rawHolder;
+        holder.setTitle(mListTitle);
+        holder.setTitleColor(getContext().getResources().getColor(R.color.black));
+        if (mAdapter == null){
+            mAdapter = new ActionsAdapter();
         }
-        else if (viewType == TYPE_CONTENT){
-            if (mActionsHolder == null){
-                View rootView = inflater.inflate(R.layout.card_material_content, parent, false);
-                mActionsHolder = new ActionsViewHolder(this, rootView);
-                mActionsHolder.addActions(mActions);
-                mActionsHolder.mActionContainer.setAnimationsEnabled(true);
-            }
-            return mActionsHolder;
-        }
-        else{
-            View rootView = inflater.inflate(R.layout.item_material_progress, parent, false);
-            return new RecyclerView.ViewHolder(rootView){};
-        }
+        holder.setAdapter(mAdapter);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
-        //Blank space
-        if (position == 0){
-            int width = CompassUtil.getScreenWidth(mContext);
-            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    (int)((width*2/3)*0.8)
-            );
-            rawHolder.itemView.setLayoutParams(params);
-            rawHolder.itemView.setVisibility(View.INVISIBLE);
-        }
-        //Actions or load switch
-        else if (position == 1){
-            if (mActions.isEmpty()){
-                if (mShowLoading){
-                    if (mLoadError.isEmpty()){
-                        mListener.loadMore();
-                    }
-                    else{
-                        rawHolder.itemView.findViewById(R.id.material_progress_progress).setVisibility(View.GONE);
-                        TextView error = (TextView)rawHolder.itemView.findViewById(R.id.material_progress_error);
-                        error.setVisibility(View.VISIBLE);
-                        error.setText(mLoadError);
-                    }
-                }
-            }
-            else{
-                if (mUserGoal != null){
-                    ((ActionsViewHolder)rawHolder).bind(mUserGoal);
-                }
-                else if (mUserBehavior != null){
-                    ((ActionsViewHolder)rawHolder).bind(mUserBehavior);
-                }
-            }
-        }
-    }
-
-    public void addActions(@NonNull List<Action> actions, boolean showLoading){
-        //If there are no actions, insert the content card
-        if (mActions.isEmpty()){
-            notifyItemInserted(TYPE_CONTENT);
-        }
-
-        //Set the new loading state
-        mShowLoading = showLoading;
-        //If we should no longer load, remove the load switch
-        if (!mShowLoading){
-            notifyItemRemoved(TYPE_LOAD);
-        }
-        //Otherwise, schedule an item refresh for the load switch half a second from now
-        //  to avoid the load callback getting called twice
-        else{
-            new Handler().postDelayed(new Runnable(){
-                @Override
-                public void run(){
-                    notifyItemChanged(TYPE_LOAD);
-                }
-            }, 500);
-        }
-
-        //Add all the actions in the behavior list
-        mActions.addAll(actions);
-
-        //If the holder has been created already
-        if (mActionsHolder != null){
-            //Add the actions
-            mActionsHolder.addActions(actions);
-        }
+    protected void loadMore(){
+        mListener.loadMore();
     }
 
     /**
-     * Displays an error in place of the load switch.
+     * Adds a list of actions to the action adapter.
      *
-     * @param error the error to be displayed.
+     * @param actions the actions to be added.
+     * @param showLoading whether this adapter should still display the loading screen.
      */
-    public void displayError(String error){
-        mLoadError = error;
+    public void addActions(@NonNull List<UserAction> actions, boolean showLoading){
+        //If there are no actions, insert the content card
         if (mActions.isEmpty()){
-            notifyItemChanged(TYPE_LOAD-1);
+            notifyListInserted();
         }
-        else if (mShowLoading){
-            notifyItemChanged(TYPE_LOAD);
+        //Update the load widget
+        updateLoading(showLoading);
+
+        //Record the initial position of the new sub-list in the master list
+        int positionStart = mActions.size();
+        //Add all the actions in the behavior list
+        mActions.addAll(actions);
+        //If the adapter has been created already, trigger animations
+        if (mAdapter != null){
+            prepareListChange();
+            mAdapter.notifyItemRangeInserted(positionStart, actions.size());
+            notifyListChanged();
         }
     }
 
 
-    private static class ActionsViewHolder
-            extends RecyclerView.ViewHolder
-            implements ContentContainer.ContentContainerListener<Action>{
-
-        private ReviewActionsAdapter mAdapter;
-
-        private TextView mTitle;
-        private ContentContainer<Action> mActionContainer;
-
-
-        @SuppressWarnings("unchecked")
-        public ActionsViewHolder(ReviewActionsAdapter adapter, View rootView){
-            super(rootView);
-            mAdapter = adapter;
-
-            //Fetch UI components
-            mTitle = (TextView)rootView.findViewById(R.id.material_content_header);
-            mActionContainer = (ContentContainer<Action>)rootView
-                    .findViewById(R.id.material_content_container);
-
-            mTitle.setTextColor(mAdapter.mContext.getResources().getColor(R.color.secondary_text_color));
-            mActionContainer.setListener(this);
-        }
-
-        public void bind(UserGoal userGoal){
-            mTitle.setText(mAdapter.mContext.getString(R.string.library_review_action_header,
-                    userGoal.getTitle()));
-        }
-
-        public void bind(UserBehavior userBehavior){
-            mTitle.setText(mAdapter.mContext.getString(R.string.library_review_action_header,
-                    userBehavior.getTitle()));
-        }
-
-        public void addActions(List<Action> actions){
-            for (Action action:actions){
-                mActionContainer.addContent(action);
-            }
+    /**
+     * Adapter for the list of actions. Plain and simple.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    private class ActionsAdapter extends RecyclerView.Adapter<ActionViewHolder>{
+        @Override
+        public ActionViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            View rootView = inflater.inflate(R.layout.item_review_action, parent, false);
+            return new ActionViewHolder(rootView);
         }
 
         @Override
-        public void onContentClick(@NonNull Action content){
-            mAdapter.mListener.onActionSelected(content);
+        public void onBindViewHolder(ActionViewHolder holder, int position){
+            holder.bind(mActions.get(position));
+        }
+
+        @Override
+        public int getItemCount(){
+            return mActions.size();
         }
     }
 
 
+    /**
+     * View holder for action items.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    private class ActionViewHolder
+            extends RecyclerView.ViewHolder
+            implements View.OnClickListener{
+
+        private View mSeparator;
+        private ImageView mEnabled;
+        private TextView mTitle;
+
+
+        /**
+         * Constructor.
+         *
+         * @param rootView the root view of this holder.
+         */
+        public ActionViewHolder(@NonNull View rootView){
+            super(rootView);
+
+            mSeparator = rootView.findViewById(R.id.review_action_separator);
+            mEnabled = (ImageView)rootView.findViewById(R.id.review_action_enabled);
+            mTitle = (TextView)rootView.findViewById(R.id.review_action_title);
+
+            rootView.setOnClickListener(this);
+        }
+
+        /**
+         * Binds an action to the holder.
+         *
+         * @param userAction the user action to be bound.
+         */
+        public void bind(@NonNull Action userAction){
+            //If this is the first item, do not show the separator
+            if (getAdapterPosition() == 0){
+                mSeparator.setVisibility(View.GONE);
+            }
+            else{
+                mSeparator.setVisibility(View.VISIBLE);
+            }
+
+            //Set the icon and title of the view
+            if (userAction.isTriggerEnabled()){
+                mEnabled.setImageResource(R.drawable.ic_enabled_black_36dp);
+            }
+            else{
+                mEnabled.setImageResource(R.drawable.ic_disabled_black_36dp);
+            }
+            mTitle.setText(userAction.getTitle());
+        }
+
+        @Override
+        public void onClick(View v){
+            mListener.onActionSelected(mActions.get(getAdapterPosition()));
+        }
+    }
+
+
+    /**
+     * Listener interface for the review actions process.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface ReviewActionsListener{
+        /**
+         * Called when an action is tapped.
+         *
+         * @param action the action tapped.
+         */
         void onActionSelected(Action action);
+
+        /**
+         * Called when the bottom of the list is reached if the progress widget is
+         * still active.
+         */
         void loadMore();
     }
 }

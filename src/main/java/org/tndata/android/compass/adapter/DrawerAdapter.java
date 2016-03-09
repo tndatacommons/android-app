@@ -31,8 +31,8 @@ public class DrawerAdapter extends RecyclerView.Adapter{
     private static final int TYPE_HEADER = 1;
     private static final int TYPE_ITEM = 2;
 
-    public static final int MY_PRIORITIES = 0;
-    public static final int MYSELF = MY_PRIORITIES+1;
+    public static final int MY_ACTIVITIES = 0;
+    public static final int MYSELF = MY_ACTIVITIES +1;
     public static final int PLACES = MYSELF+1;
     public static final int MY_PRIVACY = PLACES+1;
     public static final int TOUR = MY_PRIVACY+1;
@@ -149,7 +149,7 @@ public class DrawerAdapter extends RecyclerView.Adapter{
         List<DrawerItem> items = new ArrayList<>();
         for (int i = 0; i < DRAWER_COUNT; i++){
             switch (i){
-                case MY_PRIORITIES:
+                case MY_ACTIVITIES:
                     items.add(new DrawerItem(mContext.getString(R.string.action_my_priorities),
                             R.drawable.ic_list_bullet));
                     break;

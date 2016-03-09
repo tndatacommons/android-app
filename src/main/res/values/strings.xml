@@ -23,6 +23,9 @@
     <string name="fab_browse_goals">Browse goals</string>
     <string name="fab_create_goal">Create goal</string>
 
+    <!-- MyActivitiesActivity -->
+    <string name="my_activities_title">My interests</string>
+
     <!-- ChooseCategoryActivity -->
     <string name="choose_category_title">What interests you?</string>
 
@@ -132,7 +135,10 @@
     <string name="dialog_behavior_content">Compass will check back in occasionally with activities that can help you reach your goal.</string>
     <string name="dialog_behavior_activities">Activities</string>
     <string name="dialog_behavior_ok">Got it</string>
-    <string name="library_review_action_header">Ways I can %1$s</string>
+
+    <!-- ReviewActionsActivity -->
+    <string name="review_actions_header">Ways I can %1$s</string>
+    <string name="review_actions_header_cat">From %1$s</string>
 
     <!-- CustomContentManagerActivity -->
     <string name="custom_goal_header">I want to&#8230;</string>
@@ -213,8 +219,7 @@
     <string name="search_header">These goals are relevant to your search:</string>
 
     <!-- Action notification -->
-    <string name="action_notification_yes">Yes</string>
-    <string name="action_notification_no">No</string>
+    <string name="action_notification_yes">Got it</string>
     <string name="action_notification_later">Later</string>
 
     <!-- Didn't do it -->
@@ -325,5 +330,10 @@
 
     <!-- Menus and popups -->
     <string name="menu_popup_remove">Remove</string>
+
+    <!-- Header content descriptions -->
+    <string name="header_hero_cd">Full size category image</string>
+    <string name="header_tile_cd">Centered tile, generally circle cropped from a hero</string>
+    <string name="header_icon_cd">Icon image of a relevant piece of content</string>
 
 </resources>

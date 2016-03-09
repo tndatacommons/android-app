@@ -25,6 +25,7 @@ import org.tndata.android.compass.util.ImageLoader;
 import java.util.List;
 import java.util.Map;
 
+import es.sandwatch.httprequests.HttpRequest;
 import io.fabric.sdk.android.Fabric;
 
 
@@ -50,17 +51,22 @@ public class CompassApplication extends Application{
                 .getString(GcmRegistration.PROPERTY_REG_ID, "");
     }
 
+    public User getUserLoginInfo(){
+        SharedPreferences loginInfo = PreferenceManager.getDefaultSharedPreferences(this);
+        return new User(loginInfo.getString("email", ""), loginInfo.getString("password", ""));
+    }
+
     public User getUser(){
-        if (mUser == null){
-            SharedPreferences loginInfo = PreferenceManager.getDefaultSharedPreferences(this);
-            return new User(loginInfo.getString("email", ""), loginInfo.getString("password", ""));
-        }
         return mUser;
     }
 
     public void setUser(User user, boolean setPreferences){
         Log.d(TAG, "Setting user: " + user);
+        Log.d(TAG, "Set preferences: " + setPreferences);
         mUser = user;
+
+        //Add the authorization header with the user's token to the requests library
+        HttpRequest.addHeader("Authorization", "Token " + getToken());
 
         if (setPreferences){
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -156,6 +162,20 @@ public class CompassApplication extends Application{
         //if(!BuildConfig.DEBUG){
             Fabric.with(this, new Crashlytics());
         //}
+
+        //Init the HttpRequest library
+        HttpRequest.init(getApplicationContext());
+        //Add or remove the authorization header with the user's token
+        String token = getToken();
+        if (token != null && !token.isEmpty()){
+            HttpRequest.addHeader("Authorization", "Token " + getToken());
+        }
+        else{
+            HttpRequest.removeHeader("Authorization");
+        }
+        //Add a constant url parameter vir API versioning
+        HttpRequest.addUrlParameter("version", "2");
+
         startService(new Intent(this, LocationNotificationService.class));
         ImageLoader.initialize(getApplicationContext());
     }

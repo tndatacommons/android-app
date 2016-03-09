@@ -1,8 +1,6 @@
 package org.tndata.android.compass.activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,8 +15,7 @@ import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.ImageHelper;
+import org.tndata.android.compass.util.ImageLoader;
 import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.List;
@@ -42,15 +39,11 @@ public class ChooseGoalsActivity
     //  if it exists it can be retrieved from the UserData bundle
     public static final String CATEGORY_KEY = "org.tndata.compass.ChooseGoalsActivity.Category";
 
-    //Request codes
-    private static final int CHOOSE_BEHAVIORS_RQ = 4528;
-
 
     public CompassApplication mApplication;
 
     private CategoryContent mCategory;
     private ChooseGoalsAdapter mAdapter;
-    private GoalContent mSelectedGoal;
 
     //Request codes and urls
     private int mGetGoalsRequestCode;
@@ -62,49 +55,30 @@ public class ChooseGoalsActivity
         super.onCreate(savedInstanceState);
         mApplication = (CompassApplication)getApplication();
 
+        //Pull the content
         mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
 
-        View header = inflateHeader(R.layout.header_tile);
-        ImageView tile = (ImageView)header.findViewById(R.id.header_tile);
-
-        int id = CompassUtil.getCategoryTileResId(mCategory.getTitle());
-        Bitmap image = BitmapFactory.decodeResource(getResources(), id);
-        Bitmap circle = ImageHelper.getCircleBitmap(image, CompassUtil.getPixels(this, 200));
-        tile.setImageBitmap(circle);
-        image.recycle();
-
+        //Set up the loading process and the adapter
         mGetGoalsNextUrl = API.getGoalsUrl(mCategory);
-
         mAdapter = new ChooseGoalsAdapter(this, this, mCategory);
+
+        setColor(Color.parseColor(mCategory.getColor()));
+        setHeader();
         setAdapter(mAdapter);
+    }
 
-        if (!mCategory.getColor().isEmpty()){
-            setColor(Color.parseColor(mCategory.getColor()));
-        }
-
-        mSelectedGoal = null;
+    private void setHeader(){
+        View header = inflateHeader(R.layout.header_hero);
+        ImageView hero = (ImageView)header.findViewById(R.id.header_hero_image);
+        ImageLoader.Options options = new ImageLoader.Options().setUsePlaceholder(false);
+        ImageLoader.loadBitmap(hero, mCategory.getImageUrl(), options);
     }
 
     @Override
     public void onGoalSelected(@NonNull GoalContent goal){
-        if (goal.getBehaviorCount() > 0){
-            mSelectedGoal = goal;
-            Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
-                    .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal)
-                    .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, mCategory);
-            startActivityForResult(chooseBehaviors, CHOOSE_BEHAVIORS_RQ);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        if (requestCode == CHOOSE_BEHAVIORS_RQ && resultCode == RESULT_OK){
-            mAdapter.remove(mSelectedGoal);
-            if (!mAdapter.hasGoals()){
-                finish();
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
+        startActivity(new Intent(this, ChooseBehaviorsActivity.class)
+                .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal)
+                .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, mCategory));
     }
 
     @Override

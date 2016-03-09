@@ -139,6 +139,12 @@
         </activity>
 
         <activity
+            android:name=".activity.MyActivitiesActivity"
+            android:label="@string/my_activities_title"
+            android:screenOrientation="portrait"
+            android:noHistory="true" />
+
+        <activity
             android:name="org.tndata.android.compass.activity.ChooseCategoryActivity"
             android:label="@string/choose_category_title"
             android:parentActivityName=".activity.MainActivity"
@@ -191,19 +197,6 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".activity.MyPrioritiesActivity"
-            android:parentActivityName=".activity.MainActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.MainActivity"/>
-        </activity>
-
-        <activity
             android:name=".activity.ActionActivity"
             android:screenOrientation="portrait" />
 
@@ -235,11 +228,6 @@
 
         <activity
             android:name=".activity.SnoozeActivity"
-            android:theme="@style/Theme.AppCompat.Light.Dialog"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".activity.DidNotDoItActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog"
             android:screenOrientation="portrait" />
 

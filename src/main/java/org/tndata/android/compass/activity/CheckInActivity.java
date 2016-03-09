@@ -8,13 +8,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.CheckInPagerAdapter;
 import org.tndata.android.compass.fragment.CheckInFeedbackFragment;
 import org.tndata.android.compass.fragment.CheckInRewardFragment;
+import org.tndata.android.compass.model.DailyProgress;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
@@ -86,7 +85,7 @@ public class CheckInActivity
         mGetGoalsRequestCode = NetworkRequest.get(this, this, API.getTodaysGoalsUrl(),
                 mApplication.getToken());
         mGetRewardRequestCode = NetworkRequest.get(this, this, API.getRandomRewardUrl(), "");
-        mGetProgressRequestCode = NetworkRequest.get(this, this, API.getUserGoalProgressUrl(),
+        mGetProgressRequestCode = NetworkRequest.get(this, this, API.getUserProgressUrl(),
                 mApplication.getToken());
     }
 
@@ -102,17 +101,7 @@ public class CheckInActivity
         }
         else if (requestCode == mGetProgressRequestCode){
             Log.d(TAG, "Progress fetched");
-            try{
-                mProgress = (float)new JSONObject(result).getDouble("weekly_checkin_avg");
-            }
-            catch (JSONException jsonx){
-                mProgress = 0;
-                jsonx.printStackTrace();
-            }
-
-            if (++mCompletedRequests == REQUEST_COUNT){
-                setAdapter();
-            }
+            Parser.parse(result, ParserModels.DailyProgressResultSet.class, this);
         }
     }
 
@@ -130,6 +119,15 @@ public class CheckInActivity
         }
         else if (result instanceof ParserModels.RewardResultSet){
             mReward = ((ParserModels.RewardResultSet)result).results.get(0);
+        }
+        else if (result instanceof ParserModels.DailyProgressResultSet){
+            List<DailyProgress> progressList = ((ParserModels.DailyProgressResultSet)result).results;
+            mProgress = 0;
+            for (DailyProgress progress:progressList){
+                mProgress += progress.getCompletedFraction();
+            }
+            mProgress /= progressList.size();
+            mProgress *= 5;
         }
     }
 
@@ -195,6 +193,10 @@ public class CheckInActivity
             currentProgressAverage += currentProgress;
         }
         currentProgressAverage /= mCurrentProgress.length;
+
+        Log.d(TAG, "Progress: " + mProgress);
+        Log.d(TAG, "Current progress: " + currentProgressAverage);
+
         mAdapter.updateRewardFragment(currentProgressAverage >= mProgress);
     }
 }

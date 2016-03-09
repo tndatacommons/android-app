@@ -125,6 +125,11 @@ public abstract class API{
         return BASE_URL + "users/";
     }
 
+    //Feed data
+    public static String getFeedDataUrl(){
+        return BASE_URL + "users/feed/";
+    }
+
 
     //Search
     public static String getSearchUrl(@NonNull String query){
@@ -135,7 +140,11 @@ public abstract class API{
 
     //Categories
     public static String getCategoriesUrl(){
-        return BASE_URL + "categories/";
+        return BASE_URL + "categories/?page_size=999999";
+    }
+
+    public static String getCategoryUrl(long categoryId){
+        return BASE_URL + "categories/" + categoryId + "/";
     }
 
     public static String getDeleteCategoryUrl(@NonNull UserCategory userCategory){
@@ -143,7 +152,7 @@ public abstract class API{
     }
 
     public static String getUserCategoriesUrl(){
-        return BASE_URL + "users/categories/";
+        return BASE_URL + "users/categories/?page_size=999999";
     }
 
     public static JSONObject getPostCategoryBody(@NonNull CategoryContent category){
@@ -238,12 +247,16 @@ public abstract class API{
 
 
     //Actions
-    public static String getActionsUrl(@NonNull BehaviorContent behavior){
-        return BASE_URL + "actions/?behavior=" + behavior.getId();
+    public static String getUserActionsUrl(@NonNull CategoryContent category){
+        return BASE_URL + "users/actions/?category=" + category.getId();
     }
 
-    public static String getTodaysActionsUrl(){
-        return BASE_URL + "users/actions/?today=1";
+    public static String getUserActionsUrl(@NonNull GoalContent goal){
+        return BASE_URL + "users/actions/?goal=" + goal.getId();
+    }
+
+    public static String getUserActionsUrl(@NonNull BehaviorContent behavior){
+        return BASE_URL + "users/actions/?behavior=" + behavior.getId();
     }
 
     /**
@@ -354,16 +367,15 @@ public abstract class API{
      * PROGRESS REPORTING *
      *--------------------*/
 
-    public static String getUserGoalProgressUrl(){
-        return BASE_URL + "users/goals/progress/average/";
+    public static String getUserProgressUrl(){
+        return BASE_URL + "users/progress/";
     }
 
-    public static String getPostUserGoalProgressUrl(){
-        return BASE_URL + "users/goals/progress/";
+    public static String getPostUserProgressUrl(){
+        return BASE_URL + "users/progress/checkin/";
     }
 
-    //TODO
-    public static JSONObject getPostUserGoalProgressBody(@NonNull UserGoal userGoal, int progress){
+    public static JSONObject getPostUserProgressBody(@NonNull UserGoal userGoal, int progress){
         JSONObject postUserGoalProgressBody = new JSONObject();
         try{
             postUserGoalProgressBody.put("goal", userGoal.getContentId())

@@ -68,7 +68,6 @@ public class SurveyView
 
     private EditText mOpenEnded;
     private DatePicker mOpenEndedDate;
-    private boolean mForceDate;
 
 
     /**
@@ -79,23 +78,9 @@ public class SurveyView
      * @param listener the listener object.
      */
     public SurveyView(Context context, Survey survey, SurveyViewListener listener){
-        this(context, survey, listener, false);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param context the context.
-     * @param survey the survey to be displayed.
-     * @param listener the listener object.
-     * @param forceDate true if a date picker should be shown instead of the text input.
-     */
-    public SurveyView(Context context, Survey survey, SurveyViewListener listener, boolean forceDate){
         super(context);
         mSurvey = survey;
         mListener = listener;
-        mForceDate = forceDate;
-        setOrientation(VERTICAL);
         init();
     }
 
@@ -103,6 +88,8 @@ public class SurveyView
      * Creates the view, initializes all the components.
      */
     private void init(){
+        setOrientation(VERTICAL);
+
         //Needed in the future if reuse functionality is to be implemented
         removeAllViews();
 
@@ -234,9 +221,7 @@ public class SurveyView
             case Constants.SURVEY_OPENENDED:
                 Log.d(TAG, "Open ended survey");
 
-                boolean date = mForceDate;
-                date |= mSurvey.getInputType().equalsIgnoreCase(Constants.SURVEY_OPENENDED_DATE_TYPE);
-                if (date){
+                if (mSurvey.getInputType().equalsIgnoreCase(Constants.SURVEY_OPENENDED_DATE_TYPE)){
                     Log.d(TAG, "Date");
                     LayoutInflater dInflater = LayoutInflater.from(getContext());
                     mOpenEndedDate = (DatePicker)dInflater.inflate(R.layout.survey_spinner_picker, this, false);
@@ -297,9 +282,7 @@ public class SurveyView
                 break;
 
             case Constants.SURVEY_OPENENDED:
-                boolean date = mForceDate;
-                date |= mSurvey.getInputType().equalsIgnoreCase(Constants.SURVEY_OPENENDED_DATE_TYPE);
-                if (date){
+                if (mSurvey.getInputType().equalsIgnoreCase(Constants.SURVEY_OPENENDED_DATE_TYPE)){
                     mOpenEndedDate.setEnabled(false);
                 }
                 else{
@@ -379,15 +362,23 @@ public class SurveyView
 
     @Override
     public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth){
-        boolean date = mForceDate;
-        date |= mSurvey.getInputType().equalsIgnoreCase(Constants.SURVEY_OPENENDED_DATE_TYPE);
-        if (mSurvey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_OPENENDED) && date){
-            Calendar cal = Calendar.getInstance();
-            cal.set(year, monthOfYear, dayOfMonth);
-            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            mSurvey.setResponse(formatter.format(cal.getTime()));
-            if (mListener != null) {
-                mListener.onInputReady(mSurvey);
+        if (mSurvey.getInputType().equalsIgnoreCase(Constants.SURVEY_OPENENDED_DATE_TYPE)){
+            Calendar fourteen = Calendar.getInstance();
+            fourteen.set(fourteen.get(Calendar.YEAR)-14, fourteen.get(Calendar.MONTH),
+                    fourteen.get(Calendar.DAY_OF_MONTH)+1, 0, 0, 0);
+            Calendar birthday = Calendar.getInstance();
+            birthday.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
+            if (birthday.before(fourteen)){
+                DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                mSurvey.setResponse(formatter.format(birthday.getTime()));
+                if (mListener != null){
+                    mListener.onInputReady(mSurvey);
+                }
+            }
+            else{
+                if (mListener != null){
+                    mListener.onInputCleared(mSurvey);
+                }
             }
         }
     }
