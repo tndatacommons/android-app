@@ -139,6 +139,12 @@
         </activity>
 
         <activity
+            android:name=".activity.MyActivitiesActivity"
+            android:label="@string/my_activities_title"
+            android:screenOrientation="portrait"
+            android:noHistory="true" />
+
+        <activity
             android:name="org.tndata.android.compass.activity.ChooseCategoryActivity"
             android:label="@string/choose_category_title"
             android:parentActivityName=".activity.MainActivity"

@@ -12,7 +12,9 @@ import android.widget.RelativeLayout;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ReviewActionsAdapter;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.UserBehavior;
+import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
@@ -35,12 +37,14 @@ public class ReviewActionsActivity
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback{
 
+    public static final String USER_CATEGORY_KEY = "org.tndata.compass.ReviewActions.Category";
     public static final String USER_GOAL_KEY = "org.tndata.compass.ReviewActions.Goal";
     public static final String USER_BEHAVIOR_KEY = "org.tndata.compass.ReviewActions.Behavior";
 
     public static final int ACTION_ACTIVITY_RC = 4562;
 
 
+    private UserCategory mUserCategory;
     private UserGoal mUserGoal;
     private UserBehavior mUserBehavior;
 

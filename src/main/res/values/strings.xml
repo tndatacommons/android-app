@@ -23,6 +23,9 @@
     <string name="fab_browse_goals">Browse goals</string>
     <string name="fab_create_goal">Create goal</string>
 
+    <!-- MyActivitiesActivity -->
+    <string name="my_activities_title">My interests</string>
+
     <!-- ChooseCategoryActivity -->
     <string name="choose_category_title">What interests you?</string>
 

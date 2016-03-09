@@ -424,8 +424,8 @@ public class MainActivity
     @Override
     public void onItemClick(int position){
         switch (position){
-            case DrawerAdapter.MY_PRIORITIES:
-                startActivity(new Intent(this, MyPrioritiesActivity.class));
+            case DrawerAdapter.MY_ACTIVITIES:
+                startActivity(new Intent(this, MyActivitiesActivity.class));
                 break;
 
             case DrawerAdapter.MYSELF:
