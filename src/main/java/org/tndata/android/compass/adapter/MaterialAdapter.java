@@ -244,7 +244,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
             int width = CompassUtil.getScreenWidth(mContext);
             ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    (int)((width*2/3)*0.85)
+                    (int)((width*2/3)*0.8)
             );
             rawHolder.itemView.setLayoutParams(params);
             rawHolder.itemView.setVisibility(View.INVISIBLE);

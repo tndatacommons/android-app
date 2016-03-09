@@ -12,13 +12,13 @@ import android.widget.RelativeLayout;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ReviewActionsAdapter;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
+import org.tndata.android.compass.util.ImageLoader;
 
 import es.sandwatch.httprequests.HttpRequest;
 import es.sandwatch.httprequests.HttpRequestError;
@@ -60,26 +60,40 @@ public class ReviewActionsActivity
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
+        mUserCategory = (UserCategory)getIntent().getSerializableExtra(USER_CATEGORY_KEY);
         mUserGoal = (UserGoal)getIntent().getSerializableExtra(USER_GOAL_KEY);
         mUserBehavior = (UserBehavior)getIntent().getSerializableExtra(USER_BEHAVIOR_KEY);
-        if (mUserBehavior == null){
-            mAdapter = new ReviewActionsAdapter(this, this, mUserGoal);
+        if (mUserBehavior != null){
+            String title = getString(R.string.review_actions_header, mUserBehavior.getTitle());
+            mAdapter = new ReviewActionsAdapter(this, this, title);
+            mGetActionsNextUrl = API.getUserActionsUrl(mUserBehavior.getBehavior());
+            setColor(Color.parseColor(mUserGoal.getPrimaryCategory().getColor()));
+            setBehaviorHeader();
+        }
+        else if (mUserGoal != null){
+            String title = getString(R.string.review_actions_header, mUserGoal.getTitle());
+            mAdapter = new ReviewActionsAdapter(this, this, title);
             mGetActionsNextUrl = API.getUserActionsUrl(mUserGoal.getGoal());
+            setColor(Color.parseColor(mUserGoal.getPrimaryCategory().getColor()));
+            setGoalHeader();
+        }
+        else if (mUserCategory != null){
+            String title = getString(R.string.review_actions_header_cat, mUserCategory.getTitle());
+            mAdapter = new ReviewActionsAdapter(this, this, title);
+            mGetActionsNextUrl = API.getUserActionsUrl(mUserCategory.getCategory());
+            setColor(Color.parseColor(mUserCategory.getColor()));
+            setCategoryHeader();
         }
         else{
-            mAdapter = new ReviewActionsAdapter(this, this, mUserBehavior);
-            mGetActionsNextUrl = API.getUserActionsUrl(mUserBehavior.getBehavior());
+            finish();
         }
 
-        setHeader();
         setAdapter(mAdapter);
-        setColor(Color.parseColor(mUserGoal.getPrimaryCategory().getColor()));
-
         mSelectedAction = null;
     }
 
     @SuppressWarnings("deprecation")
-    private void setHeader(){
+    private void setBehaviorHeader(){
         View header = inflateHeader(R.layout.header_icon);
         RelativeLayout circle = (RelativeLayout)header.findViewById(R.id.header_icon_circle);
         ImageView icon = (ImageView)header.findViewById(R.id.header_icon_icon);
@@ -94,6 +108,17 @@ public class ReviewActionsActivity
         }
 
         mUserBehavior.getBehavior().loadIconIntoView(icon);
+    }
+
+    private void setGoalHeader(){
+
+    }
+
+    private void setCategoryHeader(){
+        View header = inflateHeader(R.layout.header_hero);
+        ImageView hero = (ImageView)header.findViewById(R.id.header_hero_image);
+        ImageLoader.Options options = new ImageLoader.Options().setUsePlaceholder(false);
+        ImageLoader.loadBitmap(hero, mUserCategory.getCategory().getImageUrl(), options);
     }
 
     @Override

@@ -247,6 +247,10 @@ public abstract class API{
 
 
     //Actions
+    public static String getUserActionsUrl(@NonNull CategoryContent category){
+        return BASE_URL + "users/actions/?category=" + category.getId();
+    }
+
     public static String getUserActionsUrl(@NonNull GoalContent goal){
         return BASE_URL + "users/actions/?goal=" + goal.getId();
     }

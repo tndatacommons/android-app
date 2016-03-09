@@ -12,8 +12,6 @@ import android.widget.TextView;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.UserAction;
-import org.tndata.android.compass.model.UserBehavior;
-import org.tndata.android.compass.model.UserGoal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,42 +25,23 @@ import java.util.List;
  */
 public class ReviewActionsAdapter extends MaterialAdapter{
     private ReviewActionsListener mListener;
-    private UserGoal mUserGoal;
-    private UserBehavior mUserBehavior;
 
+    private String mListTitle;
     private ActionsAdapter mAdapter;
     private List<Action> mActions;
 
 
     /**
-     * Constructor for goal.
+     * Constructor.
      *
      * @param context a reference to the context.
      * @param listener the listener.
-     * @param userGoal the user goal whose actions are to be displayed.
+     * @param listTitle the title atop the list of actions.
      */
-    public ReviewActionsAdapter(Context context, ReviewActionsListener listener, UserGoal userGoal){
+    public ReviewActionsAdapter(Context context, ReviewActionsListener listener, String listTitle){
         super(context, ContentType.LIST, true);
         mListener = listener;
-        mUserGoal = userGoal;
-        mUserBehavior = null;
-        mActions = new ArrayList<>();
-    }
-
-    /**
-     * Constructor for behavior.
-     *
-     * @param context a reference to the context.
-     * @param listener the listener.
-     * @param userBehavior the behavior whose actions are to be displayed.
-     */
-    public ReviewActionsAdapter(Context context, ReviewActionsListener listener,
-                                UserBehavior userBehavior){
-
-        super(context, ContentType.LIST, true);
-        mListener = listener;
-        mUserGoal = null;
-        mUserBehavior = userBehavior;
+        mListTitle = listTitle;
         mActions = new ArrayList<>();
     }
 
@@ -79,14 +58,7 @@ public class ReviewActionsAdapter extends MaterialAdapter{
     @Override
     protected void bindListHolder(RecyclerView.ViewHolder rawHolder){
         ListViewHolder holder = (ListViewHolder)rawHolder;
-        if (mUserBehavior != null){
-            holder.setTitle(getContext().getString(R.string.library_review_action_header,
-                    mUserBehavior.getTitle()));
-        }
-        else{
-            holder.setTitle(getContext().getString(R.string.library_review_action_header,
-                    mUserGoal.getTitle()));
-        }
+        holder.setTitle(mListTitle);
         holder.setTitleColor(getContext().getResources().getColor(R.color.black));
         if (mAdapter == null){
             mAdapter = new ActionsAdapter();

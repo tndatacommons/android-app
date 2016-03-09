@@ -135,7 +135,10 @@
     <string name="dialog_behavior_content">Compass will check back in occasionally with activities that can help you reach your goal.</string>
     <string name="dialog_behavior_activities">Activities</string>
     <string name="dialog_behavior_ok">Got it</string>
-    <string name="library_review_action_header">Ways I can %1$s</string>
+
+    <!-- ReviewActionsActivity -->
+    <string name="review_actions_header">Ways I can %1$s</string>
+    <string name="review_actions_header_cat">From %1$s</string>
 
     <!-- CustomContentManagerActivity -->
     <string name="custom_goal_header">I want to&#8230;</string>
