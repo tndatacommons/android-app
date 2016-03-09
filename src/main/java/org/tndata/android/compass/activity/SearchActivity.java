@@ -1,5 +1,6 @@
 package org.tndata.android.compass.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -105,9 +106,8 @@ public class SearchActivity
     @Override
     public void onSearchResultSelected(SearchResult result){
         if (result.isGoal()){
-            /*Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
-                    .putExtra(ChooseBehaviorsActivity.GOAL_ID_KEY, result.getId());
-            startActivity(chooseBehaviors);*/
+            startActivity(new Intent(this, ChooseBehaviorsActivity.class)
+                    .putExtra(ChooseBehaviorsActivity.GOAL_ID_KEY, result.getId()));
         }
     }
 }

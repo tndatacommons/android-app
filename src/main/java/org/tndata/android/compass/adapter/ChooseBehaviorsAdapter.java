@@ -45,20 +45,34 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
      *
      * @param context the context.
      * @param listener an implementation of the listener to act upon events.
-     * @param category the parent category of the goal whose behaviors are to be listed.
-     * @param goal the goal whose behaviors are to be listed.
      */
-    public ChooseBehaviorsAdapter(@NonNull Context context, @NonNull ChooseBehaviorsListener listener,
-                                  @NonNull CategoryContent category, @NonNull GoalContent goal){
+    public ChooseBehaviorsAdapter(@NonNull Context context, @NonNull ChooseBehaviorsListener listener){
 
         super(context, ContentType.LIST, true);
 
         //Assign the references
         mContext = context;
         mListener = listener;
+        mCategory = null;
+        mGoal = null;
+        mBehaviors = new ArrayList<>();
+    }
+
+    /**
+     * Sets the necessary content to display the header card,
+     *
+     * @param category the parent category of the goal whose behaviors are to be listed.
+     * @param goal the goal whose behaviors are to be listed.
+     */
+    public void setContent(@NonNull CategoryContent category, @NonNull GoalContent goal){
         mCategory = category;
         mGoal = goal;
-        mBehaviors = new ArrayList<>();
+        notifyHeaderInserted();
+    }
+
+    @Override
+    protected boolean hasHeader(){
+        return mCategory != null && mGoal != null;
     }
 
     @Override
@@ -132,7 +146,9 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
 
     @Override
     protected void loadMore(){
-        mListener.loadMore();
+        if (hasHeader()){
+            mListener.loadMore();
+        }
     }
 
 
