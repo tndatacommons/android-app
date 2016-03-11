@@ -3,6 +3,7 @@ package org.tndata.android.compass.adapter.feed;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.UpcomingAction;
 
 
 /**
@@ -45,12 +46,12 @@ public interface MainFeedAdapterListener{
      *
      * @param action the action being displayed at the card.
      */
-    void onActionSelected(Action action);
+    void onActionSelected(UpcomingAction action);
 
     /**
      * Called when a trigger is selected from the context menu.
      *
      * @param action the action being displayed at the card.
      */
-    void onTriggerSelected(Action action);
+    void onTriggerSelected(UpcomingAction action);
 }

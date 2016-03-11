@@ -10,6 +10,7 @@ import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.SearchResult;
+import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserData;
@@ -29,7 +30,7 @@ import java.util.List;
 public final class ParserModels{
     public interface ResultSet{}
 
-    private class ListResultSet implements ResultSet{
+    private abstract class ListResultSet implements ResultSet{
         public int count;
         public String previous;
         public String next;
@@ -41,6 +42,10 @@ public final class ParserModels{
 
     public final class FeedDataResultSet implements ResultSet{
         public List<FeedData> results;
+    }
+
+    public final class UpcomingActionsResultSet implements  ResultSet{
+        public List<UpcomingAction> results;
     }
 
     public final class DailyProgressResultSet implements ResultSet{

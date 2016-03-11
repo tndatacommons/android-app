@@ -6,6 +6,7 @@ import android.view.View;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.FeedData;
+import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.ui.UpcomingContainer;
 
 
@@ -57,7 +58,7 @@ class UpcomingHolder
      *
      * @param action the action to be added.
      */
-    void addAction(@NonNull Action action){
+    void addAction(@NonNull UpcomingAction action){
         mUpcomingContainer.addAction(action);
     }
 
@@ -66,7 +67,7 @@ class UpcomingHolder
      *
      * @param action the action to be updated.
      */
-    void updateAction(Action action){
+    void updateAction(UpcomingAction action){
         mUpcomingContainer.updateAction(action);
     }
 
@@ -84,7 +85,7 @@ class UpcomingHolder
      *
      * @param action the action to be removed.
      */
-    void removeAction(@NonNull Action action){
+    void removeAction(@NonNull UpcomingAction action){
         mUpcomingContainer.removeAction(action);
     }
 
@@ -112,12 +113,12 @@ class UpcomingHolder
     }
 
     @Override
-    public void onActionClick(@NonNull Action action){
-        mAdapter.mListener.onActionSelected(action);
+    public void onActionClick(@NonNull UpcomingAction action){
+        //mAdapter.mListener.onActionSelected(action);
     }
 
     @Override
-    public void onActionOverflowClick(@NonNull View view, @NonNull Action action){
-        mAdapter.showActionPopup(view, action);
+    public void onActionOverflowClick(@NonNull View view, @NonNull UpcomingAction action){
+        //mAdapter.showActionPopup(view, action);
     }
 }

@@ -17,6 +17,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.ui.ContentContainer;
 import org.tndata.android.compass.util.API;
@@ -57,7 +58,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     private UpcomingHolder mUpcomingHolder;
     private GoalsHolder mGoalsHolder;
 
-    private Action mSelectedAction;
+    private UpcomingAction mSelectedAction;
 
 
     /**
@@ -209,7 +210,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
         //Up next
         else if (CardTypes.isUpNext(position)){
-            ((UpNextHolder)rawHolder).bind(mDataHandler.getUpNext());
+            ((UpNextHolder)rawHolder).bind(mUserData.getFeedData().getUpNextActionX());
         }
         //Feedback
         else if (CardTypes.isFeedback(position)){
@@ -256,7 +257,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         return mDataHandler;
     }
 
-    public void setSelectedAction(Action selectedAction){
+    public void setSelectedAction(UpcomingAction selectedAction){
         mSelectedAction = selectedAction;
     }
 
@@ -297,7 +298,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * @param anchor the view it should be anchored to.
      * @param action the action in question.
      */
-    void showActionPopup(View anchor, Action action){
+    void showActionPopup(View anchor, UpcomingAction action){
         mFeedUtil.showActionPopup(anchor, action);
     }
 
@@ -323,10 +324,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      *
      * @param action the action to be marked as done.
      */
-    void didIt(Action action){
+    void didIt(UpcomingAction action){
         if (mUserData.getFeedData().getNextAction().equals(action)){
             mDataHandler.didIt();
-            mFeedUtil.didIt(mContext, mDataHandler.getUpNext());
+            //mFeedUtil.didIt(mContext, mDataHandler.getUpNext());
             mDataHandler.replaceUpNext();
             mUpcomingHolder.removeFirstAction();
         }
@@ -345,7 +346,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      *
      * @param action the action to be rescheduled.
      */
-    void reschedule(Action action){
+    void reschedule(UpcomingAction action){
         mSelectedAction = action;
         mListener.onTriggerSelected(mSelectedAction);
     }
@@ -357,11 +358,11 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      *
      * @param action the action to be removed.
      */
-    void remove(Action action){
+    void remove(UpcomingAction action){
         mDataHandler.remove(action);
         mUpcomingHolder.removeAction(action);
-        NetworkRequest.delete(mContext, null, API.getDeleteActionUrl(action),
-                ((CompassApplication)mContext.getApplicationContext()).getToken(), new JSONObject());
+        /*NetworkRequest.delete(mContext, null, API.getDeleteActionUrl(action),
+                ((CompassApplication)mContext.getApplicationContext()).getToken(), new JSONObject());*/
     }
 
 
@@ -408,7 +409,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * Loads the next batch of actions into the feed.
      */
     void moreActions(){
-        for (Action action:mDataHandler.loadMoreUpcoming(mUpcomingHolder.getItemCount())){
+        for (UpcomingAction action:mDataHandler.loadMoreUpcoming(mUpcomingHolder.getItemCount())){
             mUpcomingHolder.addAction(action);
         }
         if (!mDataHandler.canLoadMoreActions(mUpcomingHolder.getItemCount())){
@@ -440,7 +441,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      */
     public void updateSelectedAction(){
         if (mSelectedAction != null){
-            mUpcomingHolder.updateAction(mSelectedAction);
+            //mUpcomingHolder.updateAction(mSelectedAction);
             mSelectedAction = null;
         }
     }

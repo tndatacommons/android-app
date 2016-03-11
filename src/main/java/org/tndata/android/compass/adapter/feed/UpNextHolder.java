@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.util.CompassUtil;
 
 import java.util.Calendar;
@@ -22,7 +23,7 @@ import at.grabner.circleprogress.TextMode;
  */
 final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListener{
     //The action bound to the holder
-    private Action mAction;
+    private UpcomingAction mAction;
 
     //Header
     private TextView mHeader;
@@ -95,7 +96,7 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
      *
      * @param action the action to be bound to the holder.
      */
-    void bind(@Nullable Action action){
+    void bind(@Nullable UpcomingAction action){
         mAction = action;
 
         if (action == null){
@@ -125,7 +126,7 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
             String goalTitle = action.getGoalTitle().substring(0, 1).toLowerCase();
             goalTitle += action.getGoalTitle().substring(1);
             mGoalTitle.setText(mAdapter.mContext.getString(R.string.card_up_next_goal_title, goalTitle));
-            mTime.setText(action.getNextReminderDisplay());
+            mTime.setText(action.getTriggerDisplay());
         }
 
         mIndicator.setAutoTextSize(true);

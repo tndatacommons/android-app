@@ -8,6 +8,7 @@ import android.view.View;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.ui.CompassPopupMenu;
 
@@ -20,7 +21,7 @@ import org.tndata.android.compass.ui.CompassPopupMenu;
  */
 class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
     private MainFeedAdapter mAdapter;
-    private Action mSelectedAction;
+    private UpcomingAction mSelectedAction;
 
 
     /**
@@ -38,7 +39,7 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
      * @param anchor the view it should be anchored to.
      * @param action the action in question.
      */
-    void showActionPopup(View anchor, Action action){
+    void showActionPopup(View anchor, UpcomingAction action){
         mSelectedAction = action;
         CompassPopupMenu popup = CompassPopupMenu.newInstance(mAdapter.mContext, anchor);
 
@@ -89,7 +90,7 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
                 break;
 
             case R.id.popup_action_view_goal:
-                mAdapter.viewGoal(mSelectedAction.getGoal());
+                //mAdapter.viewGoal(mSelectedAction.getGoal());
                 break;
 
             case R.id.popup_goal_suggestion_refresh:
@@ -105,9 +106,9 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
      * @param context a reference to the context.
      * @param action the action to be marked as complete.
      */
-    void didIt(@NonNull Context context, @NonNull Action action){
+    void didIt(@NonNull Context context, @NonNull UpcomingAction action){
         context.startService(new Intent(context, ActionReportService.class)
-                .putExtra(ActionReportService.ACTION_KEY, action)
+                //.putExtra(ActionReportService.ACTION_KEY, action)
                 .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
     }
 }

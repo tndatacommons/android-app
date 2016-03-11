@@ -221,6 +221,12 @@ public final class CompassUtil{
         else if (src.equals(DailyProgress.API_TYPE)){
             return DailyProgress.class;
         }
+        else if (src.equals("feed")){
+            return FeedData.class;
+        }
+        else if (src.equals(UpcomingAction.API_TYPE)){
+            return UpcomingAction.class;
+        }
         //Search
         else if (src.contains("search")){
             return SearchResult.class;

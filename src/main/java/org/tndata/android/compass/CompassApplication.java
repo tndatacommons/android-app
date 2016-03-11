@@ -11,6 +11,7 @@ import com.crashlytics.android.Crashlytics;
 
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserAction;
@@ -37,6 +38,20 @@ public class CompassApplication extends Application{
     private User mUser; // The logged-in user
     private UserData mUserData = new UserData(); // The user's selected content.
     private List<CategoryContent> mPublicCategories;
+
+
+
+    private FeedData mFeedDataX;
+
+    public void setFeedDataX(FeedData feedData){
+        mFeedDataX = feedData;
+        mUserData.setFeedData(feedData);
+    }
+
+    public FeedData getFeedDataX(){
+        return mFeedDataX;
+    }
+
 
 
     public String getToken(){
@@ -168,12 +183,13 @@ public class CompassApplication extends Application{
         //Add or remove the authorization header with the user's token
         String token = getToken();
         if (token != null && !token.isEmpty()){
+            Log.d("Init", "Setting auth header: " + getToken());
             HttpRequest.addHeader("Authorization", "Token " + getToken());
         }
         else{
             HttpRequest.removeHeader("Authorization");
         }
-        //Add a constant url parameter vir API versioning
+        //Add a constant url parameter for API versioning
         HttpRequest.addUrlParameter("version", "2");
 
         startService(new Intent(this, LocationNotificationService.class));

@@ -47,6 +47,31 @@ public class FeedData extends TDCBase{
     private List<ContentContainer.ContainerGoal> mGoals;
 
 
+    //Experiment
+    private UpcomingAction mUpNextActionX;
+    private List<UpcomingAction> mUpcomingActionsX;
+
+
+    public void setUpcomingActionsX(List<UpcomingAction> upcomingActions){
+        if (upcomingActions.isEmpty()){
+            mUpNextActionX = null;
+            mUpcomingActionsX = upcomingActions;
+        }
+        else{
+            mUpNextActionX = upcomingActions.remove(0);
+            mUpcomingActionsX = upcomingActions;
+        }
+    }
+
+    public UpcomingAction getUpNextActionX(){
+        return mUpNextActionX;
+    }
+
+    public List<UpcomingAction> getUpcomingActionsX(){
+        return mUpcomingActionsX;
+    }
+
+
     @Override
     protected String getType(){
         return TYPE;
@@ -333,7 +358,7 @@ public class FeedData extends TDCBase{
         //Create the upcoming action array
         mUpcomingActions = new ArrayList<>();
         //Populate it in action's trigger-time order
-        while (!mUpcomingActionIds.isEmpty() && !mUpcomingCustomActionIds.isEmpty()){
+        /*while (!mUpcomingActionIds.isEmpty() && !mUpcomingCustomActionIds.isEmpty()){
             Action userAction = userData.getActions().get(mUpcomingActionIds.get(0));
             Action customAction = userData.getCustomActions().get(mUpcomingCustomActionIds.get(0));
             //This favors CustomActions over UserActions in case of equal trigger time
@@ -369,11 +394,11 @@ public class FeedData extends TDCBase{
                     break;
                 }
             }
-        }
+        }*/
 
         //Select the source
         mGoals = new ArrayList<>();
-        if (!userData.getGoals().isEmpty() || !userData.getCustomGoals().isEmpty()){
+        /*if (!userData.getGoals().isEmpty() || !userData.getCustomGoals().isEmpty()){
             mGoals.addAll(userData.getGoals().values());
             mGoals.addAll(userData.getCustomGoals().values());
             //Sort by title
@@ -384,9 +409,9 @@ public class FeedData extends TDCBase{
                 }
             });
         }
-        else{
+        else{*/
             mGoals.addAll(mSuggestions);
-        }
+        /*}*/
     }
 
 

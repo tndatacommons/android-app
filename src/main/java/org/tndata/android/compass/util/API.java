@@ -128,6 +128,10 @@ public abstract class API{
         return BASE_URL + "users/feed/";
     }
 
+    public static String getUpcomingUrl(){
+        return BASE_URL + "feed/upcoming/";
+    }
+
 
     //Search
     public static String getSearchUrl(@NonNull String query){

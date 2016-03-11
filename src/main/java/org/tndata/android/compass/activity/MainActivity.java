@@ -37,6 +37,7 @@ import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.model.UserGoal;
@@ -511,21 +512,20 @@ public class MainActivity
     }
 
     @Override
-    public void onActionSelected(Action action){
-        if (action instanceof UserAction){
-            mAdapter.setSelectedAction(action);
+    public void onActionSelected(UpcomingAction action){
+        /*if (action instanceof UserAction){
             Intent actionIntent = new Intent(this, ActionActivity.class)
                     .putExtra(ActionActivity.ACTION_KEY, action);
             startActivityForResult(actionIntent, ACTION_REQUEST_CODE);
-        }
+        }*/
     }
 
     @Override
-    public void onTriggerSelected(Action userAction){
-        Intent triggerIntent = new Intent(this, TriggerActivity.class)
+    public void onTriggerSelected(UpcomingAction userAction){
+        /*Intent triggerIntent = new Intent(this, TriggerActivity.class)
                 .putExtra(TriggerActivity.ACTION_KEY, userAction)
                 .putExtra(TriggerActivity.GOAL_KEY, userAction.getGoal());
-        startActivityForResult(triggerIntent, TRIGGER_REQUEST_CODE);
+        startActivityForResult(triggerIntent, TRIGGER_REQUEST_CODE);*/
     }
 
     @Override

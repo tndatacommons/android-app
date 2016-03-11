@@ -19,6 +19,8 @@ import org.tndata.android.compass.fragment.LogInFragment;
 import org.tndata.android.compass.fragment.SignUpFragment;
 import org.tndata.android.compass.fragment.TourFragment;
 import org.tndata.android.compass.fragment.WebFragment;
+import org.tndata.android.compass.model.FeedData;
+import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.Parser;
@@ -68,6 +70,7 @@ public class LoginActivity
     private int mLogInRC;
     private int mGetDataRC;
     private int mGetCategoriesRC;
+    private int mGetUpcomingRCX;
 
 
     @Override
@@ -286,10 +289,14 @@ public class LoginActivity
             }
         }
         else if (requestCode == mGetDataRC){
-            Parser.parse(result, ParserModels.UserDataResultSet.class, this);
+            Parser.parse(result, ParserModels.FeedDataResultSet.class, this);
         }
         else if (requestCode == mGetCategoriesRC){
             Parser.parse(result, ParserModels.CategoryContentResultSet.class, this);
+        }
+        else if (requestCode == mGetUpcomingRCX){
+            Log.d("LogIn", result);
+            Parser.parse(result, ParserModels.UpcomingActionsResultSet.class, this);
         }
     }
 
@@ -312,19 +319,24 @@ public class LoginActivity
         if (result instanceof User){
             mApplication.setUser((User)result, false);
         }
-        else if (result instanceof ParserModels.UserDataResultSet){
-            UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
+        else if (result instanceof ParserModels.FeedDataResultSet){
+            ((ParserModels.FeedDataResultSet)result).results.get(0).sync(null);
+
+            /*UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
 
             userData.sync();
-            userData.logData();
-
-            Log.d("LogIn", "CustomGoals: " + userData.getCustomGoals().size());
+            userData.logData();*/
 
             //Write the places
-            CompassDbHelper helper = new CompassDbHelper(this);
+            /*CompassDbHelper helper = new CompassDbHelper(this);
             helper.emptyPlacesTable();
             helper.savePlaces(userData.getPlaces());
-            helper.close();
+            helper.close();*/
+        }
+        else if (result instanceof ParserModels.UpcomingActionsResultSet){
+            List<UpcomingAction> upcoming = ((ParserModels.UpcomingActionsResultSet)result).results;
+            Log.d("LogIn", "Upcoming size: " + upcoming.size());
+            mApplication.getFeedDataX().setUpcomingActionsX(upcoming);
         }
     }
 
@@ -341,11 +353,15 @@ public class LoginActivity
             }
             else{
                 Log.d("LogIn", "Fetching user data");
-                mGetDataRC = HttpRequest.get(this, API.getUserDataUrl(), 60*1000);
+                mGetDataRC = HttpRequest.get(this, API.getFeedDataUrl(), 60*1000);
             }
         }
-        else if (result instanceof ParserModels.UserDataResultSet){
-            mApplication.setUserData(((ParserModels.UserDataResultSet)result).results.get(0));
+        else if (result instanceof ParserModels.FeedDataResultSet){
+            mApplication.setFeedDataX(((ParserModels.FeedDataResultSet)result).results.get(0));
+            Log.d("LogIn", "Fetching " + API.getUpcomingUrl());
+            mGetUpcomingRCX = HttpRequest.get(this, API.getUpcomingUrl());
+        }
+        else if (result instanceof ParserModels.UpcomingActionsResultSet){
             transitionToMain();
         }
     }

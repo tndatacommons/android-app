@@ -3,6 +3,7 @@ package org.tndata.android.compass.adapter.feed;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.ui.ContentContainer;
 
@@ -54,12 +55,12 @@ class DataHandler{
      *
      * @param action the action to be removed.
      */
-    void remove(Action action){
+    void remove(UpcomingAction action){
         mFeedData.setTotalActions(mFeedData.getTotalActions() - 1);
         int percentage = mFeedData.getCompletedActions() * 100 / mFeedData.getTotalActions();
         mFeedData.setProgressPercentage(percentage);
 
-        mUserData.removeAction(action);
+        //mUserData.removeAction(action);
         if (mFeedData.getNextAction().equals(action)){
             replaceUpNext();
         }
@@ -74,7 +75,7 @@ class DataHandler{
      * @return true if the user does, false otherwise.
      */
     boolean hasUpcoming(){
-        return !mFeedData.getUpcomingActions().isEmpty();
+        return !mFeedData.getUpcomingActionsX().isEmpty();
     }
 
     /**
@@ -129,10 +130,10 @@ class DataHandler{
      * @param displayedActions the number of actions already being displayed in the feed.
      * @return a list containing the new actions.
      */
-    List<Action> loadMoreUpcoming(int displayedActions){
-        List<Action> actions = new ArrayList<>();
+    List<UpcomingAction> loadMoreUpcoming(int displayedActions){
+        List<UpcomingAction> actions = new ArrayList<>();
         while (actions.size() < LOAD_MORE_COUNT && canLoadMoreActions(displayedActions + actions.size())){
-            actions.add(mFeedData.getUpcomingActions().get(displayedActions + actions.size()));
+            actions.add(mFeedData.getUpcomingActionsX().get(displayedActions + actions.size()));
         }
         return actions;
     }
@@ -144,7 +145,7 @@ class DataHandler{
      * @return true if there are more actions to load, false otherwise.
      */
     boolean canLoadMoreActions(int displayedActions){
-        return displayedActions < mFeedData.getUpcomingActions().size();
+        return displayedActions < mFeedData.getUpcomingActionsX().size();
     }
 
     /**
