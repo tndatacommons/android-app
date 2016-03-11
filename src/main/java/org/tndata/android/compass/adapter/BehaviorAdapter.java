@@ -59,10 +59,8 @@ public class BehaviorAdapter extends MaterialAdapter implements View.OnClickList
 
     @Override
     protected void bindDetailHolder(DetailViewHolder holder){
-        if (!mCategory.getColor().isEmpty()){
-            holder.setHeaderColor(Color.parseColor(mCategory.getColor()));
-        }
-
+        holder.setHeaderColor(Color.parseColor(mCategory.getColor()));
+        holder.setTitle(getContext().getString(R.string.library_detail_header));
         holder.setDescription(mBehavior.getDescription());
         if (!mBehavior.getHTMLMoreInfo().isEmpty()){
             holder.setMoreInfo(Html.fromHtml(mBehavior.getHTMLMoreInfo(), null,

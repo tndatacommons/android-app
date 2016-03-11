@@ -650,6 +650,15 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
         }
 
         /**
+         * Binds a title to the card.
+         *
+         * @param title the title to be set in the header.
+         */
+        public void setTitle(String title){
+            mHeader.setText(title);
+        }
+
+        /**
          * Binds a description to the card.
          *
          * @param description the description to be displayed.
