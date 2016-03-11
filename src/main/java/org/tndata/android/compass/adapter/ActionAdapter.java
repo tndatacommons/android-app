@@ -77,21 +77,13 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
         if (mAction instanceof UserAction){
             UserAction userAction = (UserAction)mAction;
             holder.setHeaderColor(Color.parseColor(mCategory.getColor()));
-
-            if (!userAction.getHTMLDescription().isEmpty()){
-                holder.setDescription(Html.fromHtml(userAction.getHTMLDescription(), null,
-                        new CompassTagHandler(getContext())));
-            }
-            else{
-                holder.setDescription(userAction.getDescription());
-            }
-
+            holder.setTitle("More info");
             if (!userAction.getHTMLMoreInfo().isEmpty()){
-                holder.setMoreInfo(Html.fromHtml(userAction.getHTMLMoreInfo(), null,
+                holder.setDescription(Html.fromHtml(userAction.getHTMLMoreInfo(), null,
                         new CompassTagHandler(getContext())));
             }
             else if (!userAction.getMoreInfo().isEmpty()){
-                holder.setMoreInfo(userAction.getMoreInfo());
+                holder.setDescription(userAction.getMoreInfo());
             }
         }
     }

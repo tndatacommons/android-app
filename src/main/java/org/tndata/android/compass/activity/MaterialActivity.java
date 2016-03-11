@@ -38,7 +38,7 @@ public abstract class MaterialActivity extends AppCompatActivity{
 
         //Set up the toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.library_toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
+        toolbar.setNavigationIcon(R.drawable.ic_back_white_24dp);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayShowHomeEnabled(true);

@@ -29,7 +29,8 @@
             android:layout_marginRight="20dp"
             android:layout_marginTop="15dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/dark_text_color" />
+            android:textColor="@color/dark_text_color"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/material_detail_separator"

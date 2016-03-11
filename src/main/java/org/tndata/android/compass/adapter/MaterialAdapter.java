@@ -664,6 +664,13 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
          * @param description the description to be displayed.
          */
         public void setDescription(CharSequence description){
+            mDescription.setVisibility(View.VISIBLE);
+            if (mMoreInfoTitle.getVisibility() == View.VISIBLE){
+                mSeparator.setVisibility(View.VISIBLE);
+            }
+            else{
+                mSeparator.setVisibility(View.GONE);
+            }
             mDescription.setText(description);
         }
 
@@ -674,7 +681,12 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
          * @param moreInfo the more info text to be displayed.
          */
         public void setMoreInfo(CharSequence moreInfo){
-            mSeparator.setVisibility(View.VISIBLE);
+            if (mDescription.getVisibility() == View.VISIBLE){
+                mSeparator.setVisibility(View.VISIBLE);
+            }
+            else{
+                mSeparator.setVisibility(View.GONE);
+            }
             mMoreInfoTitle.setVisibility(View.VISIBLE);
             mMoreInfo.setVisibility(View.VISIBLE);
             mMoreInfo.setText(moreInfo);
