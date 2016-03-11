@@ -49,12 +49,12 @@
                 android:layout_height="wrap_content"
                 android:text="@string/custom_action_list_create"
                 android:textAllCaps="true"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/secondary_text_color" />
 
             <ProgressBar
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_gravity="center" />
 
         </ViewSwitcher>
