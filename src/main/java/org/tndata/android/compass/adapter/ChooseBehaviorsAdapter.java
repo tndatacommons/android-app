@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
-import org.tndata.android.compass.util.CompassTagHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,13 +79,7 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
     protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
         HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
         holder.setTitle(mGoal.getTitle());
-        if (!mGoal.getHTMLDescription().isEmpty()){
-            holder.setContent(Html.fromHtml(mGoal.getHTMLDescription(), null,
-                    new CompassTagHandler(mContext)));
-        }
-        else{
-            holder.setContent(mGoal.getDescription());
-        }
+        holder.setContent(mGoal.getDescription());
     }
 
     @Override

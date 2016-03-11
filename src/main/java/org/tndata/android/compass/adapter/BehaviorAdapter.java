@@ -52,13 +52,7 @@ public class BehaviorAdapter extends MaterialAdapter implements View.OnClickList
     protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
         HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
         holder.setTitle(mContext.getString(R.string.library_behavior_title, mBehavior.getTitle()));
-        if (!mBehavior.getHTMLDescription().isEmpty()){
-            holder.setContent(Html.fromHtml(mBehavior.getHTMLDescription(), null,
-                    new CompassTagHandler(mContext)));
-        }
-        else{
-            holder.setContent(mBehavior.getDescription());
-        }
+        holder.setContent(mBehavior.getDescription());
         holder.setButton(mContext.getString(R.string.library_behavior_yes), this);
         mButtonId = holder.getButtonId();
     }
@@ -69,14 +63,7 @@ public class BehaviorAdapter extends MaterialAdapter implements View.OnClickList
             holder.setHeaderColor(Color.parseColor(mCategory.getColor()));
         }
 
-        if (!mBehavior.getHTMLDescription().isEmpty()){
-            holder.setDescription(Html.fromHtml(mBehavior.getHTMLDescription(), null,
-                    new CompassTagHandler(mContext)));
-        }
-        else{
-            holder.setDescription(mBehavior.getDescription());
-        }
-
+        holder.setDescription(mBehavior.getDescription());
         if (!mBehavior.getHTMLMoreInfo().isEmpty()){
             holder.setMoreInfo(Html.fromHtml(mBehavior.getHTMLMoreInfo(), null,
                     new CompassTagHandler(mContext)));
