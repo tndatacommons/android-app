@@ -305,14 +305,14 @@ public class MainActivity
                 fab.setImageResource(R.drawable.ic_search);
             }
             else if (i == 1){
-                fab.setId(R.id.fab_browse_goals);
-                fab.setLabelText(getString(R.string.fab_browse_goals));
-                fab.setImageResource(R.drawable.ic_list_white_24dp);
-            }
-            else if (i == 2){
                 fab.setId(R.id.fab_custom_goal);
                 fab.setLabelText(getString(R.string.fab_custom_goal));
                 fab.setImageResource(R.drawable.fab_add);
+            }
+            else if (i == 2){
+                fab.setId(R.id.fab_browse_goals);
+                fab.setLabelText(getString(R.string.fab_browse_goals));
+                fab.setImageResource(R.drawable.ic_list_white_24dp);
             }
             fab.setOnClickListener(this);
             mMenu.addMenuButton(fab);
@@ -324,15 +324,12 @@ public class MainActivity
         mMenu.toggle(true);
         switch (v.getId()){
             case R.id.fab_search_goals:
-                searchGoalsClicked();
+            case R.id.fab_custom_goal:
+                search();
                 break;
 
             case R.id.fab_browse_goals:
-                browseGoalsClicked();
-                break;
-
-            case R.id.fab_custom_goal:
-                createCustomGoalClicked();
+                browseGoals();
                 break;
         }
     }
@@ -340,22 +337,15 @@ public class MainActivity
     /**
      * Called when the search goals FAB is clicked.
      */
-    private void searchGoalsClicked(){
+    private void search(){
         startActivity(new Intent(this, SearchActivity.class));
     }
 
     /**
      * Called when the browse Goals FAB is clicked.
      */
-    private void browseGoalsClicked(){
+    private void browseGoals(){
         startActivityForResult(new Intent(this, ChooseCategoryActivity.class), GOAL_REQUEST_CODE);
-    }
-
-    /**
-     * Called when the create goal FAB is clicked.
-     */
-    private void createCustomGoalClicked(){
-        startActivityForResult(new Intent(this, CustomContentManagerActivity.class), GOAL_REQUEST_CODE);
     }
 
     /**
