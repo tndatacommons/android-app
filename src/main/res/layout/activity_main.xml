@@ -57,7 +57,6 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginBottom="16dp"
                 android:layout_marginRight="16dp"
-                fab:menu_icon="@drawable/ic_edit_white_36dp"
                 fab:menu_fab_size="normal"
                 fab:menu_showShadow="true"
                 fab:menu_shadowColor="#66000000"

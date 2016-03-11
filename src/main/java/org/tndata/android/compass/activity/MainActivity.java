@@ -216,7 +216,6 @@ public class MainActivity
         mMenu = (FloatingActionMenu)findViewById(R.id.main_fab_menu);
         mMenu.setMenuButtonHideAnimation(hideAnimation);
         mMenu.setMenuButtonShowAnimation(showAnimation);
-        mMenu.setIconAnimated(false);
         mMenu.setClosedOnTouchOutside(true);
         mMenu.setOnMenuButtonClickListener(new View.OnClickListener(){
             @Override
