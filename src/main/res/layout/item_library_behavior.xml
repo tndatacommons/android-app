@@ -6,7 +6,7 @@
     android:layout_height="wrap_content" >
 
     <include
-        android:id="@+id/library_content_separator"
+        android:id="@+id/library_behavior_separator"
         layout="@layout/separator" />
 
     <LinearLayout
@@ -14,30 +14,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-        <RelativeLayout
-            android:id="@+id/library_content_icon_container"
+        <ImageView
+            android:id="@+id/library_behavior_icon"
             android:layout_width="@dimen/goal_icon_image_size"
             android:layout_height="@dimen/goal_icon_image_size"
-            android:layout_margin="10dp"
-            android:gravity="center_vertical"
-            android:layout_gravity="center_vertical"
-            android:contentDescription="@string/goal_image_description"
-            android:background="@drawable/circle" >
-
-            <ImageView
-                android:id="@+id/library_content_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
-
-        </RelativeLayout>
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:padding="10dp" />
 
         <TextView
-            android:id="@+id/library_content_title"
+            android:id="@+id/library_behavior_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:paddingLeft="2dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/dark_text_color" />
 
