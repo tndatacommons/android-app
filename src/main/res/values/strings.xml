@@ -21,7 +21,7 @@
     <string name="category_card_title">My %1$s goals</string>
     <string name="fab_search_goals">Search goals</string>
     <string name="fab_browse_goals">Browse goals</string>
-    <string name="fab_create_goal">Create goal</string>
+    <string name="fab_custom_goal">Custom goal</string>
 
     <!-- MyActivitiesActivity -->
     <string name="my_activities_title">My interests</string>

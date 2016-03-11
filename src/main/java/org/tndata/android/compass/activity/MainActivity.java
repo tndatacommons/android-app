@@ -310,8 +310,8 @@ public class MainActivity
                 fab.setImageResource(R.drawable.ic_list_white_24dp);
             }
             else if (i == 2){
-                fab.setId(R.id.fab_create_goal);
-                fab.setLabelText(getString(R.string.fab_create_goal));
+                fab.setId(R.id.fab_custom_goal);
+                fab.setLabelText(getString(R.string.fab_custom_goal));
                 fab.setImageResource(R.drawable.fab_add);
             }
             fab.setOnClickListener(this);
@@ -331,7 +331,7 @@ public class MainActivity
                 browseGoalsClicked();
                 break;
 
-            case R.id.fab_create_goal:
+            case R.id.fab_custom_goal:
                 createCustomGoalClicked();
                 break;
         }
@@ -341,7 +341,7 @@ public class MainActivity
      * Called when the search goals FAB is clicked.
      */
     private void searchGoalsClicked(){
-
+        startActivity(new Intent(this, SearchActivity.class));
     }
 
     /**
