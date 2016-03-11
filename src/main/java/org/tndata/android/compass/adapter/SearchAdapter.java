@@ -22,10 +22,14 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>{
+public class SearchAdapter extends RecyclerView.Adapter{
+    private static final int TYPE_RESULT = 0;
+    private static final int TYPE_CREATE = TYPE_RESULT+1;
+
     private Context mContext;
     private SearchAdapterListener mListener;
     private List<SearchResult> mDataSet;
+    private boolean mShowCreateButton;
 
 
     /**
@@ -40,29 +44,44 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         mDataSet = new ArrayList<>();
     }
 
-    public void updateDataSet(@NonNull List<SearchResult> dataSet){
+    public void updateDataSet(@NonNull List<SearchResult> dataSet, boolean showCreateButton){
         mDataSet = dataSet;
+        mShowCreateButton = showCreateButton;
         notifyDataSetChanged();
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        return new ViewHolder(inflater.inflate(R.layout.item_search_result, parent, false));
-    }
-
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position){
-        holder.mTitle.setText(mDataSet.get(position).getTitle());
-        String highlight = mDataSet.get(position).getHighlighted().replace("\n", "<br>");
-        //highlight = highlight.replace("<em>", "<u><span style=\"background-color: yellow\">");
-        //highlight = highlight.replace("</em>", "</span></u>");
-        holder.mSummary.setText(Html.fromHtml(highlight));
+    public int getItemViewType(int position){
+        if (position == mDataSet.size()){
+            return TYPE_CREATE;
+        }
+        return TYPE_RESULT;
     }
 
     @Override
     public int getItemCount(){
-        return mDataSet.size();
+        return mDataSet.size() + (mShowCreateButton ? 1 : 0);
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        if (viewType == TYPE_RESULT){
+            return new ResultViewHolder(inflater.inflate(R.layout.item_search_result, parent, false));
+        }
+        else{
+            return new CreateViewHolder(inflater.inflate(R.layout.item_search_create, parent, false));
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
+        if (position < mDataSet.size()){
+            ResultViewHolder holder = (ResultViewHolder)rawHolder;
+            holder.mTitle.setText(mDataSet.get(position).getTitle());
+            String highlight = mDataSet.get(position).getHighlighted().replace("\n", "<br>");
+            holder.mSummary.setText(Html.fromHtml(highlight));
+        }
     }
 
 
@@ -72,7 +91,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class ResultViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mTitle;
         private TextView mSummary;
 
@@ -82,7 +101,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
          *
          * @param rootView the root view.
          */
-        public ViewHolder(View rootView){
+        public ResultViewHolder(View rootView){
             super(rootView);
             mTitle = (TextView)rootView.findViewById(R.id.search_result_title);
             mSummary = (TextView)rootView.findViewById(R.id.search_result_summary);
@@ -92,6 +111,19 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         @Override
         public void onClick(View v){
             mListener.onSearchResultSelected(mDataSet.get(getAdapterPosition()));
+        }
+    }
+
+
+    class CreateViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        public CreateViewHolder(View rootView){
+            super(rootView);
+            rootView.findViewById(R.id.search_create).setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v){
+            mListener.onCreateCustomGoalSelected();
         }
     }
 
@@ -109,5 +141,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
          * @param result the result tapped.
          */
         void onSearchResultSelected(SearchResult result);
+
+        /**
+         * Called when the 'I don't see my goal' button is selected.
+         */
+        void onCreateCustomGoalSelected();
     }
 }

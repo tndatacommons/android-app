@@ -212,6 +212,7 @@
     <!-- Search -->
     <string name="search">Search</string>
     <string name="search_header">These goals are relevant to your search:</string>
+    <string name="search_create">I don\'t see my goal</string>
 
     <!-- Action notification -->
     <string name="action_notification_yes">Got it</string>

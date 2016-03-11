@@ -15,9 +15,11 @@ import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.ArrayList;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -30,7 +32,7 @@ public class SearchActivity
         extends AppCompatActivity
         implements
                 SearchView.OnQueryTextListener,
-                NetworkRequest.RequestCallback,
+                HttpRequest.RequestCallback,
                 Parser.ParserCallback,
                 SearchAdapter.SearchAdapterListener{
 
@@ -40,6 +42,7 @@ public class SearchActivity
 
     private TextView mSearchHeader;
     private SearchAdapter mSearchAdapter;
+    private String mLastSearch;
     private int mLastSearchRequestCode;
 
 
@@ -67,13 +70,15 @@ public class SearchActivity
 
     @Override
     public boolean onQueryTextChange(String newText){
+        HttpRequest.cancel(mLastSearchRequestCode);
+        mLastSearch = newText;
         if (newText.equals("")){
             mSearchHeader.setVisibility(View.INVISIBLE);
-            mSearchAdapter.updateDataSet(new ArrayList<SearchResult>());
+            mSearchAdapter.updateDataSet(new ArrayList<SearchResult>(), false);
             mLastSearchRequestCode++;
         }
         else{
-            mLastSearchRequestCode = NetworkRequest.get(this, this, API.getSearchUrl(newText), "");
+            mLastSearchRequestCode = HttpRequest.get(this, API.getSearchUrl(newText));
         }
         return false;
     }
@@ -86,7 +91,7 @@ public class SearchActivity
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
+    public void onRequestFailed(int requestCode, HttpRequestError error){
 
     }
 
@@ -98,7 +103,7 @@ public class SearchActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof ParserModels.SearchResultSet){
-            mSearchAdapter.updateDataSet(((ParserModels.SearchResultSet)result).results);
+            mSearchAdapter.updateDataSet(((ParserModels.SearchResultSet)result).results, true);
             mSearchHeader.setVisibility(View.VISIBLE);
         }
     }
@@ -109,5 +114,12 @@ public class SearchActivity
             startActivity(new Intent(this, ChooseBehaviorsActivity.class)
                     .putExtra(ChooseBehaviorsActivity.GOAL_ID_KEY, result.getId()));
         }
+    }
+
+    @Override
+    public void onCreateCustomGoalSelected(){
+        /*startActivity(new Intent(this, CustomContentManagerActivity.class)
+                .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_TITLE_KEY, mLastSearch));
+        finish();*/
     }
 }
