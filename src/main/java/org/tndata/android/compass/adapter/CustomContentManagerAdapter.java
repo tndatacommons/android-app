@@ -36,7 +36,6 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
     private static final String TAG = "CustomActionAdapter";
 
 
-    private Context mContext;
     private CustomGoal mCustomGoal;
     private List<CustomAction> mCustomActions;
     private String mGoalTitle;
@@ -58,7 +57,6 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
 
         super(context, ContentType.LIST, customGoal != null);
 
-        mContext = context;
         mCustomGoal = customGoal;
         mCustomActions = null;
         mGoalTitle = null;
@@ -77,7 +75,6 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
 
         super(context, ContentType.LIST, false);
 
-        mContext = context;
         mCustomGoal = null;
         mCustomActions = null;
         mGoalTitle = title;
@@ -167,10 +164,10 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
      */
     private void setButtonEnabled(TextView button, boolean enabled){
         if (enabled){
-            button.setTextColor(mContext.getResources().getColor(R.color.grow_primary));
+            button.setTextColor(getContext().getResources().getColor(R.color.grow_primary));
         }
         else{
-            button.setTextColor(mContext.getResources().getColor(R.color.secondary_text_color));
+            button.setTextColor(getContext().getResources().getColor(R.color.secondary_text_color));
         }
         button.setEnabled(enabled);
     }
@@ -190,7 +187,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
         private TextView mCreate;
         private ImageView mEdit;
 
-        private Drawable mTitleDefaultDrawable;
+        private Drawable mTitleDefaultBackground;
 
         private boolean mEditing;
 
@@ -208,7 +205,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
             mCreate = (TextView)rootView.findViewById(R.id.create_goal_button);
             mEdit = (ImageView)rootView.findViewById(R.id.create_goal_edit);
 
-            mTitleDefaultDrawable = mTitle.getBackground();
+            mTitleDefaultBackground = mTitle.getBackground();
 
             //Set the listeners
             mTitle.addTextChangedListener(this);
@@ -271,7 +268,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
             switch (view.getId()){
                 case R.id.create_goal_button:
                     //Hide the keyboard and clear the focus
-                    InputMethodManager imm = (InputMethodManager)mContext
+                    InputMethodManager imm = (InputMethodManager)getContext()
                             .getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mTitle.getWindowToken(), 0);
                     mTitle.clearFocus();
@@ -290,7 +287,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
                     //If the holder is in edition mode, this is a save button
                     if (mEditing){
                         //Hide the keyboard and clear the focus
-                        InputMethodManager imm2 = (InputMethodManager)mContext
+                        InputMethodManager imm2 = (InputMethodManager)getContext()
                                 .getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm2.hideSoftInputFromWindow(mTitle.getWindowToken(), 0);
                         mTitle.clearFocus();
@@ -308,17 +305,17 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
                     else{
                         //Set the proper background, make the title focusable and provide the focus
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-                            mTitle.setBackground(mTitleDefaultDrawable);
+                            mTitle.setBackground(mTitleDefaultBackground);
                         }
                         else{
-                            mTitle.setBackgroundDrawable(mTitleDefaultDrawable);
+                            mTitle.setBackgroundDrawable(mTitleDefaultBackground);
                         }
                         mTitle.setFocusable(true);
                         mTitle.setFocusableInTouchMode(true);
                         mTitle.requestFocus();
                         //Put the cursor at the end and open the keyboard
                         mTitle.setSelection(mTitle.getText().length());
-                        InputMethodManager imm2 = (InputMethodManager)mContext
+                        InputMethodManager imm2 = (InputMethodManager)getContext()
                                 .getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm2.toggleSoftInput(InputMethodManager.SHOW_FORCED,
                                 InputMethodManager.HIDE_IMPLICIT_ONLY);
@@ -361,7 +358,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
             //Set the adapter and the inner recycler view
             mAdapter = new CustomActionAdapter();
             RecyclerView rv = (RecyclerView)rootView.findViewById(R.id.custom_action_list);
-            rv.setLayoutManager(new LinearLayoutManager(mContext));
+            rv.setLayoutManager(new LinearLayoutManager(getContext()));
             rv.setAdapter(mAdapter);
 
             //Grab and set the rest of the UI
@@ -400,7 +397,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
 
         @Override
         public CustomActionHolder onCreateViewHolder(ViewGroup parent, int viewType){
-            LayoutInflater inflater = LayoutInflater.from(mContext);
+            LayoutInflater inflater = LayoutInflater.from(getContext());
             View rootView = inflater.inflate(R.layout.item_custom_action, parent, false);
             return new CustomActionHolder(rootView);
         }
@@ -429,6 +426,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
         private CustomAction mCustomAction;
 
         private EditText mTitle;
+        private Drawable mTitleDefaultBackground;
 
         private ImageView mEditTrigger;
         private ImageView mEditAction;
@@ -443,6 +441,8 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
             mEditTrigger = (ImageView)rootView.findViewById(R.id.custom_action_trigger);
             mEditAction = (ImageView)rootView.findViewById(R.id.custom_action_edit);
             mSaveAction = (ImageView)rootView.findViewById(R.id.custom_action_save);
+
+            mTitleDefaultBackground = mTitle.getBackground();
 
             //Set the listeners
             mTitle.addTextChangedListener(this);
@@ -464,6 +464,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
             else{
                 mTitle.setText(mCustomAction.getTitle());
                 mTitle.setFocusable(false);
+                mTitle.setBackgroundResource(0);
                 mEditTrigger.setVisibility(View.VISIBLE);
                 mEditAction.setVisibility(View.VISIBLE);
             }
@@ -502,13 +503,19 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
                     Log.d(TAG, "Editing the title of " + mCustomAction);
                     //Set the title click listener to null to avoid going into the trigger editor
                     mTitle.setOnClickListener(null);
-                    //Make the title focusable and give it focus
+                    //Background and focus
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+                        mTitle.setBackground(mTitleDefaultBackground);
+                    }
+                    else{
+                        mTitle.setBackgroundDrawable(mTitleDefaultBackground);
+                    }
                     mTitle.setFocusable(true);
                     mTitle.setFocusableInTouchMode(true);
                     mTitle.requestFocus();
                     //Put the cursor at the end and open the keyboard
                     mTitle.setSelection(mTitle.getText().length());
-                    InputMethodManager imm = (InputMethodManager)mContext
+                    InputMethodManager imm = (InputMethodManager)getContext()
                             .getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
 
@@ -532,11 +539,12 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
                         }
 
                         //Hide the keyboard and make the title not focusable
-                        InputMethodManager imm2 = (InputMethodManager)mContext
+                        InputMethodManager imm2 = (InputMethodManager)getContext()
                                 .getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm2.hideSoftInputFromWindow(mTitle.getWindowToken(), 0);
                         mTitle.clearFocus();
                         mTitle.setFocusable(false);
+                        mTitle.setBackgroundResource(0);
                         //Set the click listener again to start the trigger editor if the user taps
                         mTitle.setOnClickListener(this);
 

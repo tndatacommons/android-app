@@ -2,6 +2,7 @@ package org.tndata.android.compass.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -144,7 +145,14 @@ public class CustomContentManagerActivity
             mAdapter.setCustomActions(((ParserModels.CustomActionResultSet)result).results);
         }
         else if (result instanceof CustomAction){
-            mAdapter.customActionAdded((CustomAction)result);
+            final CustomAction newAction = (CustomAction)result;
+            mAdapter.customActionAdded(newAction);
+            new Handler().postDelayed(new Runnable(){
+                @Override
+                public void run(){
+                    onEditTrigger(newAction);
+                }
+            }, 500);
         }
     }
 
