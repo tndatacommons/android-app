@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -32,6 +33,7 @@ public class SearchActivity
         extends AppCompatActivity
         implements
                 SearchView.OnQueryTextListener,
+                View.OnClickListener,
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback,
                 SearchAdapter.SearchAdapterListener{
@@ -41,6 +43,7 @@ public class SearchActivity
 
 
     private TextView mSearchHeader;
+    private Button mCreateGoal;
     private SearchAdapter mSearchAdapter;
     private String mLastSearch;
     private int mLastSearchRequestCode;
@@ -54,8 +57,10 @@ public class SearchActivity
         SearchView searchView = (SearchView)findViewById(R.id.search_search);
         mSearchHeader = (TextView)findViewById(R.id.search_message);
         RecyclerView searchList = (RecyclerView)findViewById(R.id.search_list);
+        mCreateGoal = (Button)findViewById(R.id.search_create);
 
         searchView.setOnQueryTextListener(this);
+        mCreateGoal.setOnClickListener(this);
         mSearchAdapter = new SearchAdapter(this, this);
         searchList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         searchList.setAdapter(mSearchAdapter);
@@ -74,13 +79,21 @@ public class SearchActivity
         mLastSearch = newText;
         if (newText.equals("")){
             mSearchHeader.setVisibility(View.INVISIBLE);
-            mSearchAdapter.updateDataSet(new ArrayList<SearchResult>(), false);
+            mCreateGoal.setVisibility(View.GONE);
+            mSearchAdapter.updateDataSet(new ArrayList<SearchResult>());
             mLastSearchRequestCode++;
         }
         else{
             mLastSearchRequestCode = HttpRequest.get(this, API.getSearchUrl(newText));
         }
         return false;
+    }
+
+    @Override
+    public void onClick(View v){
+        startActivity(new Intent(this, CustomContentManagerActivity.class)
+                .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_TITLE_KEY, mLastSearch));
+        finish();
     }
 
     @Override
@@ -103,8 +116,9 @@ public class SearchActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof ParserModels.SearchResultSet){
-            mSearchAdapter.updateDataSet(((ParserModels.SearchResultSet)result).results, true);
+            mSearchAdapter.updateDataSet(((ParserModels.SearchResultSet)result).results);
             mSearchHeader.setVisibility(View.VISIBLE);
+            mCreateGoal.setVisibility(View.VISIBLE);
         }
     }
 
@@ -114,12 +128,5 @@ public class SearchActivity
             startActivity(new Intent(this, ChooseBehaviorsActivity.class)
                     .putExtra(ChooseBehaviorsActivity.GOAL_ID_KEY, result.getId()));
         }
-    }
-
-    @Override
-    public void onCreateCustomGoalSelected(){
-        /*startActivity(new Intent(this, CustomContentManagerActivity.class)
-                .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_TITLE_KEY, mLastSearch));
-        finish();*/
     }
 }
