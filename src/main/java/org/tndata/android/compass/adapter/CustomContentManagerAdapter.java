@@ -1,6 +1,8 @@
 package org.tndata.android.compass.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,6 +39,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
     private Context mContext;
     private CustomGoal mCustomGoal;
     private List<CustomAction> mCustomActions;
+    private String mGoalTitle;
     private CustomContentManagerListener mListener;
 
     private CustomGoalHolder mCustomGoalHolder;
@@ -58,6 +61,26 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
         mContext = context;
         mCustomGoal = customGoal;
         mCustomActions = null;
+        mGoalTitle = null;
+        mListener = listener;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param context a reference to the context.
+     * @param title the title of the input in search when the user fired the manager.
+     * @param listener a listener.
+     */
+    public CustomContentManagerAdapter(@NonNull Context context, @NonNull String title,
+                                       @NonNull CustomContentManagerListener listener){
+
+        super(context, ContentType.LIST, false);
+
+        mContext = context;
+        mCustomGoal = null;
+        mCustomActions = null;
+        mGoalTitle = title;
         mListener = listener;
     }
 
@@ -78,7 +101,12 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
 
     @Override
     protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
-        ((CustomGoalHolder)rawHolder).bind(mCustomGoal);
+        if (mCustomGoal != null){
+            ((CustomGoalHolder)rawHolder).bind(mCustomGoal);
+        }
+        else{
+            ((CustomGoalHolder)rawHolder).bind(mGoalTitle);
+        }
     }
 
     @Override
@@ -161,6 +189,8 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
         private EditText mTitle;
         private TextView mButton;
 
+        private Drawable mTitleDefaultDrawable;
+
         private boolean mEditing;
 
 
@@ -175,6 +205,8 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
             //Grab the UI components
             mTitle = (EditText)rootView.findViewById(R.id.create_goal_title);
             mButton = (TextView)rootView.findViewById(R.id.create_goal_button);
+
+            mTitleDefaultDrawable = mTitle.getBackground();
 
             //Set the listeners
             mTitle.addTextChangedListener(this);
@@ -197,12 +229,19 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
             }
             else{
                 //Otherwise, set the title, enable the button, and set edit as the label.
+                mTitle.setBackgroundResource(0);
                 mTitle.setText(customGoal.getTitle());
                 mTitle.clearFocus();
                 mTitle.setFocusable(false);
                 mButton.setText(mContext.getString(R.string.custom_goal_edit));
                 setButtonEnabled(mButton, true);
             }
+        }
+
+        public void bind(@NonNull String title){
+            mTitle.setText(title);
+            mButton.setText(mContext.getString(R.string.custom_goal_create));
+            setButtonEnabled(mButton, true);
         }
 
         @Override
@@ -250,6 +289,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
                             imm2.hideSoftInputFromWindow(mTitle.getWindowToken(), 0);
                             mTitle.clearFocus();
                             mTitle.setFocusable(false);
+                            mTitle.setBackgroundResource(0);
 
                             //If the titles ain't the same, save the goal
                             if (!mCustomGoal.getTitle().equals(mTitle.getText().toString().trim())){
@@ -260,7 +300,13 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
                             mButton.setText(mContext.getString(R.string.custom_goal_edit));
                         }
                         else{
-                            //Make the title focusable and provide the focus
+                            //Set the proper background, make the title focusable and provide the focus
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+                                mTitle.setBackground(mTitleDefaultDrawable);
+                            }
+                            else{
+                                mTitle.setBackgroundDrawable(mTitleDefaultDrawable);
+                            }
                             mTitle.setFocusable(true);
                             mTitle.setFocusableInTouchMode(true);
                             mTitle.requestFocus();

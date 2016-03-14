@@ -57,8 +57,7 @@ public class CustomContentManagerActivity
 
         String goalTitle = getIntent().getStringExtra(CUSTOM_GOAL_TITLE_KEY);
         if (goalTitle != null){
-            mCustomGoal = new CustomGoal(goalTitle);
-            onCreateGoal(mCustomGoal);
+            mAdapter = new CustomContentManagerAdapter(this, goalTitle, this);
         }
         else{
             mCustomGoal = getIntent().getParcelableExtra(CUSTOM_GOAL_KEY);
@@ -66,8 +65,8 @@ public class CustomContentManagerActivity
                 mCustomGoal = (CustomGoal)mApplication.getUserData().getGoal(mCustomGoal);
                 fetchActions(mCustomGoal);
             }
+            mAdapter = new CustomContentManagerAdapter(this, mCustomGoal, this);
         }
-        mAdapter = new CustomContentManagerAdapter(this, mCustomGoal, this);
         setAdapter(mAdapter);
         setColor(getResources().getColor(R.color.grow_primary));
 
