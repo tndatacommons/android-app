@@ -133,16 +133,16 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
     public void customGoalAdded(@NonNull CustomGoal customGoal){
         mCustomGoal = customGoal;
         mCustomActions = customGoal.getActions();
-        mCustomGoalHolder.mButton.setText(mContext.getString(R.string.custom_goal_edit));
-        setButtonEnabled(mCustomGoalHolder.mButton, true);
+        mCustomGoalHolder.mCreate.setVisibility(View.GONE);
+        mCustomGoalHolder.mEdit.setVisibility(View.VISIBLE);
         notifyListInserted();
         updateLoading(false);
     }
 
     public void setCustomActions(List<CustomAction> customActions){
         mCustomActions = customActions;
-        mCustomGoalHolder.mButton.setText(mContext.getString(R.string.custom_goal_edit));
-        setButtonEnabled(mCustomGoalHolder.mButton, true);
+        mCustomGoalHolder.mCreate.setVisibility(View.GONE);
+        mCustomGoalHolder.mEdit.setVisibility(View.VISIBLE);
         notifyListInserted();
         updateLoading(false);
     }
@@ -187,7 +187,8 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
             implements TextWatcher, View.OnClickListener{
 
         private EditText mTitle;
-        private TextView mButton;
+        private TextView mCreate;
+        private ImageView mEdit;
 
         private Drawable mTitleDefaultDrawable;
 
@@ -204,13 +205,15 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
 
             //Grab the UI components
             mTitle = (EditText)rootView.findViewById(R.id.create_goal_title);
-            mButton = (TextView)rootView.findViewById(R.id.create_goal_button);
+            mCreate = (TextView)rootView.findViewById(R.id.create_goal_button);
+            mEdit = (ImageView)rootView.findViewById(R.id.create_goal_edit);
 
             mTitleDefaultDrawable = mTitle.getBackground();
 
             //Set the listeners
             mTitle.addTextChangedListener(this);
-            mButton.setOnClickListener(this);
+            mCreate.setOnClickListener(this);
+            mEdit.setOnClickListener(this);
 
             //Set the flags
             mEditing = false;
@@ -223,25 +226,28 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
          */
         public void bind(@Nullable CustomGoal customGoal){
             if (customGoal == null){
-                //If no goal was provided, disable the button and set create as the label
-                mButton.setText(mContext.getString(R.string.custom_goal_create));
-                setButtonEnabled(mButton, false);
+                //If no goal was provided, disable the button
+                setButtonEnabled(mCreate, false);
             }
             else{
-                //Otherwise, set the title, enable the button, and set edit as the label.
+                //Otherwise, set the title and swap the create for the edit button
                 mTitle.setBackgroundResource(0);
                 mTitle.setText(customGoal.getTitle());
                 mTitle.clearFocus();
                 mTitle.setFocusable(false);
-                mButton.setText(mContext.getString(R.string.custom_goal_edit));
-                setButtonEnabled(mButton, true);
+                mCreate.setVisibility(View.GONE);
+                mEdit.setVisibility(View.VISIBLE);
             }
         }
 
+        /**
+         * Binds a title to this adapter.
+         *
+         * @param title the title of the goal to be.
+         */
         public void bind(@NonNull String title){
             mTitle.setText(title);
-            mButton.setText(mContext.getString(R.string.custom_goal_create));
-            setButtonEnabled(mButton, true);
+            setButtonEnabled(mCreate, true);
         }
 
         @Override
@@ -252,7 +258,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count){
             //If there is no text in the field, disable the button
-            setButtonEnabled(mButton, count != 0);
+            setButtonEnabled(mCreate, count != 0);
         }
 
         @Override
@@ -264,65 +270,64 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
         public void onClick(View view){
             switch (view.getId()){
                 case R.id.create_goal_button:
-                    //If there is no custom goal, this is a create button
-                    if (mCustomGoal == null){
+                    //Hide the keyboard and clear the focus
+                    InputMethodManager imm = (InputMethodManager)mContext
+                            .getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mTitle.getWindowToken(), 0);
+                    mTitle.clearFocus();
+                    mTitle.setFocusable(false);
+                    mTitle.setBackgroundResource(0);
+
+                    //Disable the button and let the listener know
+                    setButtonEnabled(mCreate, false);
+                    mListener.onCreateGoal(new CustomGoal(mTitle.getText().toString().trim()));
+
+                    //Display the progress indicator
+                    updateLoading(true);
+                    break;
+
+                case R.id.create_goal_edit:
+                    //If the holder is in edition mode, this is a save button
+                    if (mEditing){
                         //Hide the keyboard and clear the focus
                         InputMethodManager imm2 = (InputMethodManager)mContext
                                 .getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm2.hideSoftInputFromWindow(mTitle.getWindowToken(), 0);
                         mTitle.clearFocus();
                         mTitle.setFocusable(false);
+                        mTitle.setBackgroundResource(0);
 
-                        //Disable the button and let the listener know
-                        setButtonEnabled(mButton, false);
-                        mListener.onCreateGoal(new CustomGoal(mTitle.getText().toString().trim()));
-
-                        //Display the progress indicator
-                        updateLoading(true);
+                        //If the titles ain't the same, save the goal
+                        if (!mCustomGoal.getTitle().equals(mTitle.getText().toString().trim())){
+                            mCustomGoal.setTitle(mTitle.getText().toString().trim());
+                            mListener.onSaveGoal(mCustomGoal);
+                        }
+                        //Change the button to edit
+                        mEdit.setImageResource(R.drawable.ic_edit_white_36dp);
                     }
                     else{
-                        //If the holder is in edition mode, this is a save button
-                        if (mEditing){
-                            //Hide the keyboard and clear the focus
-                            InputMethodManager imm2 = (InputMethodManager)mContext
-                                    .getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm2.hideSoftInputFromWindow(mTitle.getWindowToken(), 0);
-                            mTitle.clearFocus();
-                            mTitle.setFocusable(false);
-                            mTitle.setBackgroundResource(0);
-
-                            //If the titles ain't the same, save the goal
-                            if (!mCustomGoal.getTitle().equals(mTitle.getText().toString().trim())){
-                                mCustomGoal.setTitle(mTitle.getText().toString().trim());
-                                mListener.onSaveGoal(mCustomGoal);
-                            }
-                            //Change the button to edit
-                            mButton.setText(mContext.getString(R.string.custom_goal_edit));
+                        //Set the proper background, make the title focusable and provide the focus
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+                            mTitle.setBackground(mTitleDefaultDrawable);
                         }
                         else{
-                            //Set the proper background, make the title focusable and provide the focus
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-                                mTitle.setBackground(mTitleDefaultDrawable);
-                            }
-                            else{
-                                mTitle.setBackgroundDrawable(mTitleDefaultDrawable);
-                            }
-                            mTitle.setFocusable(true);
-                            mTitle.setFocusableInTouchMode(true);
-                            mTitle.requestFocus();
-                            //Put the cursor at the end and open the keyboard
-                            mTitle.setSelection(mTitle.getText().length());
-                            InputMethodManager imm = (InputMethodManager)mContext
-                                    .getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,
-                                    InputMethodManager.HIDE_IMPLICIT_ONLY);
-
-                            //Change the button to save
-                            mButton.setText(mContext.getString(R.string.custom_goal_save));
+                            mTitle.setBackgroundDrawable(mTitleDefaultDrawable);
                         }
-                        //Finally, flip the flag
-                        mEditing = !mEditing;
+                        mTitle.setFocusable(true);
+                        mTitle.setFocusableInTouchMode(true);
+                        mTitle.requestFocus();
+                        //Put the cursor at the end and open the keyboard
+                        mTitle.setSelection(mTitle.getText().length());
+                        InputMethodManager imm2 = (InputMethodManager)mContext
+                                .getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm2.toggleSoftInput(InputMethodManager.SHOW_FORCED,
+                                InputMethodManager.HIDE_IMPLICIT_ONLY);
+
+                        //Change the button to save
+                        mEdit.setImageResource(R.drawable.ic_check_white_36dp);
                     }
+                    //Finally, flip the flag
+                    mEditing = !mEditing;
                     break;
             }
         }

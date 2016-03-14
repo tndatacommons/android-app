@@ -134,11 +134,10 @@
     <string name="review_actions_header">Ways I can %1$s</string>
     <string name="review_actions_header_cat">From %1$s</string>
 
-    <!-- CustomContentManagerActivity -->
+    <!-- CustomContentManager -->
     <string name="custom_goal_header">I want to&#8230;</string>
     <string name="custom_goal_create">Create</string>
-    <string name="custom_goal_edit">Edit</string>
-    <string name="custom_goal_save">Save</string>
+    <string name="custom_goal_edit_cd">Edition mode toggle button</string>
     <string name="custom_action_list_header">Here\'s how I\'ll reach my goal</string>
     <string name="custom_action_list_sub_header">I will&#8230;</string>
     <string name="custom_action_list_create">Create</string>
