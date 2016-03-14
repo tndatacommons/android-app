@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -88,6 +89,11 @@ public class CustomContentManagerActivity
      */
     private void fetchActions(@NonNull CustomGoal customGoal){
         mGetActionsRequestCode = HttpRequest.get(this, API.getCustomActionsUrl(customGoal));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        return true;
     }
 
     @Override
