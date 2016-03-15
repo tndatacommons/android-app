@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.View;
 
+import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.UserAction;
@@ -50,6 +51,11 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
         updateLoading(false);
     }
 
+    public void setCategory(@NonNull CategoryContent category){
+        mCategory = category;
+        notifyItemChanged(2);
+    }
+
     @Override
     protected boolean hasHeader(){
         return mAction != null;
@@ -76,7 +82,12 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
     protected void bindDetailHolder(DetailViewHolder holder){
         if (mAction instanceof UserAction){
             UserAction userAction = (UserAction)mAction;
-            holder.setHeaderColor(Color.parseColor(mCategory.getColor()));
+            if (mCategory == null){
+                holder.setHeaderColor(getContext().getResources().getColor(R.color.grow_primary));
+            }
+            else{
+                holder.setHeaderColor(Color.parseColor(mCategory.getColor()));
+            }
             holder.setTitle("More info");
             if (!userAction.getHTMLMoreInfo().isEmpty()){
                 holder.setDescription(Html.fromHtml(userAction.getHTMLMoreInfo(), null,

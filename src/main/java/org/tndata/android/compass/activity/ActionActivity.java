@@ -2,15 +2,12 @@ package org.tndata.android.compass.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -90,7 +87,6 @@ public class ActionActivity
         }
 
         mAdapter = new ActionAdapter(this, mAction, mCategory);
-
         setAdapter(mAdapter);
 
         mActionUpdated = false;
@@ -114,23 +110,18 @@ public class ActionActivity
         }
     }
 
-    @SuppressWarnings("deprecation")
+    /**
+     * Sets up the header of the activity
+     */
     private void setHeader(){
-        View header = inflateHeader(R.layout.header_icon);
-        RelativeLayout circle = (RelativeLayout)header.findViewById(R.id.header_icon_circle);
-        ImageView icon = (ImageView)header.findViewById(R.id.header_icon_icon);
-
-        GradientDrawable gradientDrawable = (GradientDrawable) circle.getBackground();
-        gradientDrawable.setColor(Color.WHITE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-            circle.setBackground(gradientDrawable);
+        View header = inflateHeader(R.layout.header_hero);
+        ImageView image = (ImageView)header.findViewById(R.id.header_hero_image);
+        if (mCategory == null){
+            image.setImageResource(R.drawable.compass_master_illustration);
         }
         else{
-            circle.setBackgroundDrawable(gradientDrawable);
-        }
-
-        if (mAction instanceof UserAction){
-            ImageLoader.loadBitmap(icon, ((UserAction)mAction).getIconUrl());
+            ImageLoader.Options options = new ImageLoader.Options().setUsePlaceholder(false);
+            ImageLoader.loadBitmap(image, mCategory.getImageUrl(), options);
         }
     }
 
@@ -145,7 +136,7 @@ public class ActionActivity
         }
         else if (mReminder.isCustomAction()){
             int customId = mReminder.getObjectId();
-            Log.d("ActionActivity", "Fetching UserAction: " + customId);
+            Log.d("ActionActivity", "Fetching CustomAction: " + customId);
             mGetActionRC = HttpRequest.get(this, API.getCustomActionUrl(customId));
         }
     }
@@ -184,7 +175,9 @@ public class ActionActivity
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof UserAction){
             long categoryId = ((UserAction)mAction).getPrimaryCategoryId();
+            mAdapter.setAction(mAction, null);
             mGetCategoryRC = HttpRequest.get(this, API.getCategoryUrl(categoryId));
+            invalidateOptionsMenu();
         }
         else if (result instanceof CustomAction){
             mAction = (Action)result;
@@ -195,8 +188,7 @@ public class ActionActivity
         else if (result instanceof CategoryContent){
             setColor(Color.parseColor(mCategory.getColor()));
             setHeader();
-            mAdapter.setAction(mAction, mCategory);
-            invalidateOptionsMenu();
+            mAdapter.setCategory(mCategory);
         }
     }
 
@@ -213,7 +205,7 @@ public class ActionActivity
                 getMenuInflater().inflate(R.menu.menu_action, menu);
             }
         }
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     @Override
