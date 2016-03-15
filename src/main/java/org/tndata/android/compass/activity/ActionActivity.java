@@ -38,7 +38,7 @@ import es.sandwatch.httprequests.HttpRequestError;
 public class ActionActivity
         extends MaterialActivity
         implements
-                View.OnClickListener,
+                ActionAdapter.ActionAdapterListener,
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback{
 
@@ -86,7 +86,7 @@ public class ActionActivity
             }
         }
 
-        mAdapter = new ActionAdapter(this, mAction, mCategory);
+        mAdapter = new ActionAdapter(this, this, mAction, mCategory);
         setAdapter(mAdapter);
 
         mActionUpdated = false;
@@ -212,7 +212,7 @@ public class ActionActivity
     public boolean menuItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.action_trigger:
-                reschedule();
+                onRescheduleClick();
                 break;
 
             case R.id.action_disable_trigger:
@@ -226,47 +226,35 @@ public class ActionActivity
     }
 
     @Override
-    public void onClick(View view){
-        /*switch (view.getId()){
-            case R.id.action_time_option:
-                if (mReminder != null){
-                    snooze();
-                }
-                else{
-                    reschedule();
-                }
-                break;
-
-            case R.id.action_did_it:
-                didIt();
-                break;
-
-            case R.id.action_do_it_now:
-                CompassUtil.doItNow(this, ((UserAction)mAction).getAction().getExternalResource());
-                break;
-        }*/
-    }
-
-    /**
-     * Snooze clicked. This opens the snooze menu.
-     */
-    private void snooze(){
+    public void onIDidItClick(){
         if (mAction != null && !mActionUpdated){
-            Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
-                    .putExtra(NotificationUtil.REMINDER_KEY, mReminder);
-            startActivityForResult(snoozeIntent, SNOOZE_REQUEST_CODE);
+            mActionUpdated = true;
+
+            startService(new Intent(this, ActionReportService.class)
+                    .putExtra(ActionReportService.ACTION_KEY, mAction)
+                    .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
+
+            setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, true));
+            finish();
         }
     }
 
-    /**
-     * Reschedule clicked. This opens the trigger picker.
-     */
-    private void reschedule(){
+    @Override
+    public void onRescheduleClick(){
         if (mAction != null && !mActionUpdated){
             Intent reschedule = new Intent(this, TriggerActivity.class)
                     .putExtra(TriggerActivity.ACTION_KEY, mAction)
                     .putExtra(TriggerActivity.GOAL_KEY, mAction.getGoal());
             startActivityForResult(reschedule, RESCHEDULE_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onSnoozeClick(){
+        if (mAction != null && !mActionUpdated){
+            Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
+                    .putExtra(NotificationUtil.REMINDER_KEY, mReminder);
+            startActivityForResult(snoozeIntent, SNOOZE_REQUEST_CODE);
         }
     }
 
@@ -298,22 +286,6 @@ public class ActionActivity
                     setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, false));
                     finish();
             }
-        }
-    }
-
-    /**
-     * I did it clicked.
-     */
-    private void didIt(){
-        if (mAction != null && !mActionUpdated){
-            mActionUpdated = true;
-
-            startService(new Intent(this, ActionReportService.class)
-                    .putExtra(ActionReportService.ACTION_KEY, mAction)
-                    .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
-
-            setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, true));
-            finish();
         }
     }
 }

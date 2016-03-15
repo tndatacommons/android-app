@@ -3,6 +3,7 @@ package org.tndata.android.compass.ui;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -167,9 +168,12 @@ public class UpcomingContainer extends LinearLayout implements Animation.Animati
      * @param action the action to be removed.
      */
     public void removeAction(@NonNull Action action){
+        Log.d("Upcoming", "call to removeAction()");
         for (int i = 0; i < mDisplayedUpcoming.size(); i++){
             if (mDisplayedUpcoming.get(i).contains(action)){
+                Log.d("Upcoming", "found action at position: " + i);
                 if (mAnimate){
+                    Log.d("Upcoming", "animating removal");
                     outAnimation(i);
                 }
                 else{

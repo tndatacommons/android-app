@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -255,7 +256,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         return mDataHandler;
     }
 
-    void setSelectedAction(Action selectedAction){
+    public void setSelectedAction(Action selectedAction){
         mSelectedAction = selectedAction;
     }
 
@@ -308,6 +309,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      */
     public void didIt(){
         if (mSelectedAction != null){
+            Log.d("Adapter", "selected not null");
             didIt(mSelectedAction);
             mSelectedAction = null;
         }

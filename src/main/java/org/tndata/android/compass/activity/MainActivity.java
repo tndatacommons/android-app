@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -488,9 +489,9 @@ public class MainActivity
     @Override
     public void onGoalSelected(Goal goal){
         if (goal instanceof UserGoal){
-            Intent goalActivityIntent = new Intent(this, GoalActivity.class)
-                    .putExtra(GoalActivity.USER_GOAL_KEY, goal);
-            startActivityForResult(goalActivityIntent, GOAL_REQUEST_CODE);
+            Intent reviewActionsIntent = new Intent(this, ReviewActionsActivity.class)
+                    .putExtra(ReviewActionsActivity.USER_GOAL_KEY, goal);
+            startActivityForResult(reviewActionsIntent, GOAL_REQUEST_CODE);
         }
         else if (goal instanceof CustomGoal){
             Parcelable customGoal = (CustomGoal)goal;
@@ -512,6 +513,7 @@ public class MainActivity
     @Override
     public void onActionSelected(Action action){
         if (action instanceof UserAction){
+            mAdapter.setSelectedAction(action);
             Intent actionIntent = new Intent(this, ActionActivity.class)
                     .putExtra(ActionActivity.ACTION_KEY, action);
             startActivityForResult(actionIntent, ACTION_REQUEST_CODE);
@@ -539,7 +541,9 @@ public class MainActivity
                 mAdapter.updateDataSet();
             }
             else if (requestCode == ACTION_REQUEST_CODE){
+                Log.d("Main", "action request, result ok");
                 if (data.getBooleanExtra(ActionActivity.DID_IT_KEY, false)){
+                    Log.d("Main", "did it");
                     mAdapter.didIt();
                 }
                 else{

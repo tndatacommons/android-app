@@ -2,7 +2,6 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -23,10 +22,10 @@ import org.tndata.android.compass.util.CompassTagHandler;
  * @version 1.0.0
  */
 public class ActionAdapter extends MaterialAdapter implements View.OnClickListener{
+    private ActionAdapterListener mListener;
     private Action mAction;
     private CategoryContent mCategory;
-
-    private @IdRes int mButtonId;
+    private boolean mFromNotification;
 
 
     /**
@@ -34,11 +33,14 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
      *
      * @param context a reference to the context.
      */
-    public ActionAdapter(@NonNull Context context, @Nullable Action action, @Nullable CategoryContent category){
+    public ActionAdapter(@NonNull Context context, @NonNull ActionAdapterListener listener,
+                         @Nullable Action action, @Nullable CategoryContent category){
         super(context, ContentType.DETAIL, action == null);
 
+        mListener = listener;
         mAction = action;
         mCategory = category;
+        mFromNotification = action == null;
     }
 
     public void setAction(@NonNull Action action, @Nullable CategoryContent category){
@@ -73,8 +75,14 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
         if (mAction instanceof UserAction){
             UserAction userAction = (UserAction)mAction;
             holder.setContent(userAction.getDescription());
-            holder.setButton("Edit", this);
-            mButtonId = holder.getButtonId();
+
+            if (mFromNotification){
+                holder.addButton(R.id.action_snooze, R.string.action_snooze, this);
+            }
+            else{
+                holder.addButton(R.id.action_reschedule, R.string.action_reschedule, this);
+            }
+            holder.addButton(R.id.action_did_it, R.string.action_did_it, this);
         }
     }
 
@@ -101,8 +109,31 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
 
     @Override
     public void onClick(View v){
-        if (mButtonId == v.getId()){
+        switch (v.getId()){
+            case R.id.action_did_it:
+                mListener.onIDidItClick();
+                break;
 
+            case R.id.action_reschedule:
+                mListener.onRescheduleClick();
+                break;
+
+            case R.id.action_snooze:
+                mListener.onSnoozeClick();
+                break;
         }
+    }
+
+
+    /**
+     * Listener interface for the adapter.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    public interface ActionAdapterListener{
+        void onIDidItClick();
+        void onRescheduleClick();
+        void onSnoozeClick();
     }
 }

@@ -2,7 +2,6 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -25,8 +24,6 @@ public class BehaviorAdapter extends MaterialAdapter implements View.OnClickList
     private BehaviorListener mListener;
     private CategoryContent mCategory;
     private BehaviorContent mBehavior;
-
-    private @IdRes int mButtonId;
 
 
     /**
@@ -53,8 +50,7 @@ public class BehaviorAdapter extends MaterialAdapter implements View.OnClickList
         HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
         holder.setTitle(mContext.getString(R.string.library_behavior_title, mBehavior.getTitle()));
         holder.setContent(mBehavior.getDescription());
-        holder.setButton(mContext.getString(R.string.library_behavior_yes), this);
-        mButtonId = holder.getButtonId();
+        holder.addButton(R.id.behavior_yes, R.string.library_behavior_yes, this);
     }
 
     @Override
@@ -73,7 +69,7 @@ public class BehaviorAdapter extends MaterialAdapter implements View.OnClickList
 
     @Override
     public void onClick(View v){
-        if (v.getId() == mButtonId){
+        if (v.getId() == R.id.behavior_yes){
             mListener.acceptBehavior();
         }
     }

@@ -40,5 +40,12 @@
             android:textColor="@color/grow_primary"
             android:visibility="gone" />
 
+        <LinearLayout
+            android:id="@+id/material_header_button_container"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end" />
+
     </LinearLayout>
 </android.support.v7.widget.CardView>

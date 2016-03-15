@@ -1,6 +1,8 @@
 package org.tndata.android.compass.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
@@ -18,6 +20,8 @@ import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
+import org.tndata.android.compass.util.CompassUtil;
+import org.tndata.android.compass.util.ImageHelper;
 import org.tndata.android.compass.util.ImageLoader;
 
 import es.sandwatch.httprequests.HttpRequest;
@@ -111,7 +115,14 @@ public class ReviewActionsActivity
     }
 
     private void setGoalHeader(){
+        View header = inflateHeader(R.layout.header_tile);
+        ImageView tile = (ImageView)header.findViewById(R.id.header_tile);
 
+        int id = CompassUtil.getCategoryTileResId(mUserGoal.getPrimaryCategory().getTitle());
+        Bitmap image = BitmapFactory.decodeResource(getResources(), id);
+        Bitmap circle = ImageHelper.getCircleBitmap(image, CompassUtil.getPixels(this, 200));
+        tile.setImageBitmap(circle);
+        image.recycle();
     }
 
     private void setCategoryHeader(){

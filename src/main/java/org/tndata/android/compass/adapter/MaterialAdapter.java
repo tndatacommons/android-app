@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
@@ -206,7 +208,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
     protected @NonNull RecyclerView.ViewHolder getHeaderHolder(ViewGroup parent){
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View rootView = inflater.inflate(R.layout.card_material_header, parent, false);
-        return new HeaderViewHolder(rootView);
+        return new HeaderViewHolder(mContext, rootView);
     }
 
     /**
@@ -471,22 +473,28 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
      * @version 1.0.0
      */
     protected static class HeaderViewHolder extends RecyclerView.ViewHolder{
+        private Context mContext;
+
         private TextView mHeaderTitle;
         private TextView mHeaderContent;
         private TextView mButton;
+        private LinearLayout mButtonContainer;
 
 
         /**
          * Constructor.
          *
+         * @param context a reference to the context.
          * @param rootView the view to be drawn.
          */
-        public HeaderViewHolder(@NonNull View rootView){
+        public HeaderViewHolder(@NonNull Context context, @NonNull View rootView){
             super(rootView);
+            mContext = context;
 
             mHeaderTitle = (TextView)rootView.findViewById(R.id.material_header_title);
             mHeaderContent = (TextView)rootView.findViewById(R.id.material_header_content);
             mButton = (TextView)rootView.findViewById(R.id.material_header_button);
+            mButtonContainer = (LinearLayout)rootView.findViewById(R.id.material_header_button_container);
         }
 
         /**
@@ -527,6 +535,22 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
          */
         public @IdRes int getButtonId(){
             return mButton.getId();
+        }
+
+        /**
+         * Adds a button to the card.
+         *
+         * @param id the id of the new button.
+         * @param caption the resource of the caption of the new button.
+         * @param listener the listener to set to the new button.
+         */
+        public void addButton(@IdRes int id, @StringRes int caption, View.OnClickListener listener){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            View view = inflater.inflate(R.layout.button_material, mButtonContainer);
+            TextView button = (TextView)view.findViewById(R.id.button_material);
+            button.setId(id);
+            button.setText(caption);
+            button.setOnClickListener(listener);
         }
     }
 
