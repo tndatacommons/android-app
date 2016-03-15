@@ -1,5 +1,7 @@
 package org.tndata.android.compass.model;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 import org.tndata.android.compass.ui.ContentContainer;
@@ -15,7 +17,9 @@ import java.util.Date;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public abstract class Action extends UserContent implements Serializable, ContentContainer.ContainerAction{
+public abstract class Action
+        extends UserContent
+        implements Serializable, ContentContainer.ContainerAction, Comparable<Action>{
     private static final long serialVersionUID = 2919447142568751923L;
 
 
@@ -94,6 +98,28 @@ public abstract class Action extends UserContent implements Serializable, Conten
         catch (NumberFormatException nfx){
             nfx.printStackTrace();
             return "";
+        }
+    }
+
+    @Override
+    public int compareTo(@NonNull Action another){
+        if (mTrigger == null && another.mTrigger == null){
+            return getTitle().compareTo(another.getTitle());
+        }
+        else if (mTrigger == null){
+            return 1;
+        }
+        else if (another.mTrigger == null){
+            return -1;
+        }
+        else{
+            int trigger = mTrigger.compareTo(another.mTrigger);
+            if (trigger == 0){
+                return getTitle().compareTo(another.getTitle());
+            }
+            else{
+                return trigger;
+            }
         }
     }
 

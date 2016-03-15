@@ -23,6 +23,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.CustomGoal;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -129,7 +130,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
      */
     public void customGoalAdded(@NonNull CustomGoal customGoal){
         mCustomGoal = customGoal;
-        mCustomActions = customGoal.getActions();
+        mCustomActions = new ArrayList<>();
         mCustomGoalHolder.mCreate.setVisibility(View.GONE);
         mCustomGoalHolder.mEdit.setVisibility(View.VISIBLE);
         notifyListInserted();

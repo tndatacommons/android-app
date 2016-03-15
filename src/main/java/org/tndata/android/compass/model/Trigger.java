@@ -20,7 +20,7 @@ import java.util.Locale;
  * @author Edited by Ismael Alonso
  * @version 2.0.0
  */
-public class Trigger extends TDCBase implements Serializable{
+public class Trigger extends TDCBase implements Serializable, Comparable<Trigger>{
     private static final long serialVersionUID = 7914473023695112323L;
 
     public static final String TYPE = "trigger";
@@ -300,5 +300,27 @@ public class Trigger extends TDCBase implements Serializable{
      */
     public void setEnabled(boolean enabled){
         mDisabled = !enabled;
+    }
+
+    @Override
+    public int compareTo(@NonNull Trigger another){
+        if (getRawDate().isEmpty() && another.getRawDate().isEmpty()){
+            return getTime().compareTo(another.getTime());
+        }
+        else if (getRawDate().isEmpty()){
+            return 1;
+        }
+        else if (another.getRawDate().isEmpty()){
+            return -1;
+        }
+        else{
+            int date = getDate().compareTo(another.getDate());
+            if (date == 0){
+                return getTime().compareTo(another.getTime());
+            }
+            else{
+                return date;
+            }
+        }
     }
 }
