@@ -7,5 +7,9 @@
 
     <item name="fab_search_goals" type="id" />
     <item name="fab_browse_goals" type="id" />
-    <item name="fab_create_goal" type="id" />
+
+    <item name="behavior_yes" type="id" />
+    <item name="action_did_it" type="id" />
+    <item name="action_snooze" type="id" />
+    <item name="action_reschedule" type="id" />
 </resources>

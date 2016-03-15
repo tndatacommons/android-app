@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -15,9 +16,11 @@ import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.ArrayList;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -30,7 +33,8 @@ public class SearchActivity
         extends AppCompatActivity
         implements
                 SearchView.OnQueryTextListener,
-                NetworkRequest.RequestCallback,
+                View.OnClickListener,
+                HttpRequest.RequestCallback,
                 Parser.ParserCallback,
                 SearchAdapter.SearchAdapterListener{
 
@@ -39,7 +43,9 @@ public class SearchActivity
 
 
     private TextView mSearchHeader;
+    private Button mCreateGoal;
     private SearchAdapter mSearchAdapter;
+    private String mLastSearch;
     private int mLastSearchRequestCode;
 
 
@@ -51,8 +57,10 @@ public class SearchActivity
         SearchView searchView = (SearchView)findViewById(R.id.search_search);
         mSearchHeader = (TextView)findViewById(R.id.search_message);
         RecyclerView searchList = (RecyclerView)findViewById(R.id.search_list);
+        mCreateGoal = (Button)findViewById(R.id.search_create);
 
         searchView.setOnQueryTextListener(this);
+        mCreateGoal.setOnClickListener(this);
         mSearchAdapter = new SearchAdapter(this, this);
         searchList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         searchList.setAdapter(mSearchAdapter);
@@ -67,15 +75,26 @@ public class SearchActivity
 
     @Override
     public boolean onQueryTextChange(String newText){
+        HttpRequest.cancel(mLastSearchRequestCode);
+        mLastSearch = newText;
         if (newText.equals("")){
             mSearchHeader.setVisibility(View.INVISIBLE);
+            mCreateGoal.setVisibility(View.GONE);
             mSearchAdapter.updateDataSet(new ArrayList<SearchResult>());
             mLastSearchRequestCode++;
         }
         else{
-            mLastSearchRequestCode = NetworkRequest.get(this, this, API.getSearchUrl(newText), "");
+            mLastSearchRequestCode = HttpRequest.get(this, API.getSearchUrl(newText));
         }
         return false;
+    }
+
+    @Override
+    public void onClick(View v){
+        startActivity(new Intent(this, CustomContentManagerActivity.class)
+                .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_TITLE_KEY, mLastSearch));
+        setResult(RESULT_OK);
+        finish();
     }
 
     @Override
@@ -86,7 +105,7 @@ public class SearchActivity
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
+    public void onRequestFailed(int requestCode, HttpRequestError error){
 
     }
 
@@ -100,6 +119,7 @@ public class SearchActivity
         if (result instanceof ParserModels.SearchResultSet){
             mSearchAdapter.updateDataSet(((ParserModels.SearchResultSet)result).results);
             mSearchHeader.setVisibility(View.VISIBLE);
+            mCreateGoal.setVisibility(View.VISIBLE);
         }
     }
 

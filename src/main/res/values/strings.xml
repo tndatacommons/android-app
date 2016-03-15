@@ -21,7 +21,7 @@
     <string name="category_card_title">My %1$s goals</string>
     <string name="fab_search_goals">Search goals</string>
     <string name="fab_browse_goals">Browse goals</string>
-    <string name="fab_create_goal">Create goal</string>
+    <string name="fab_custom_goal">Custom goal</string>
 
     <!-- MyActivitiesActivity -->
     <string name="my_activities_title">My interests</string>
@@ -102,12 +102,6 @@
     <string name="category_goals">%1$s goals</string>
     <string name="category_goals_add">What are my %1$s goals?</string>
 
-    <!-- LearnMoreFragment -->
-    <string name="behavior_management_label">Manage my priority</string>
-    <string name="action_management_label">Set a reminder for my action</string>
-    <string name="more_info_header">More information</string>
-    <string name="trigger_details">%1$s at %2$s</string>
-
     <!-- GoalDetailsActivity -->
     <string name="goal_title_label">My goal</string>
     <string name="goal_management">Find more activities</string>
@@ -129,7 +123,7 @@
     <string name="library_behaviors_content_header">You can do it!</string>
     <string name="library_behavior_title">I want to %1$s</string>
     <string name="library_behavior_yes">Yes, I\'m in</string>
-    <string name="library_detail_header">Here is why</string>
+    <string name="library_detail_header">Here\'s why</string>
     <string name="library_detail_more_info">More info</string>
     <string name="dialog_behavior_title">I\'m awesome</string>
     <string name="dialog_behavior_content">Compass will check back in occasionally with activities that can help you reach your goal.</string>
@@ -140,11 +134,10 @@
     <string name="review_actions_header">Ways I can %1$s</string>
     <string name="review_actions_header_cat">From %1$s</string>
 
-    <!-- CustomContentManagerActivity -->
-    <string name="custom_goal_header">I want to&#8230;</string>
+    <!-- CustomContentManager -->
+    <string name="custom_goal_header">My goal is to&#8230;</string>
     <string name="custom_goal_create">Create</string>
-    <string name="custom_goal_edit">Edit</string>
-    <string name="custom_goal_save">Save</string>
+    <string name="custom_goal_edit_cd">Edition mode toggle button</string>
     <string name="custom_action_list_header">Here\'s how I\'ll reach my goal</string>
     <string name="custom_action_list_sub_header">I will&#8230;</string>
     <string name="custom_action_list_create">Create</string>
@@ -190,6 +183,7 @@
     <string name="action_trigger">Change reminder</string>
     <string name="action_trigger_condensed">Reminder</string>
     <string name="action_disable_trigger">Disable reminder</string>
+    <string name="action_detail_header">Here\'s why</string>
 
     <!-- TourFragment -->
     <string name="tour_action_skip">SKIP</string>
@@ -217,6 +211,7 @@
     <!-- Search -->
     <string name="search">Search</string>
     <string name="search_header">These goals are relevant to your search:</string>
+    <string name="search_create">I don\'t see my goal</string>
 
     <!-- Action notification -->
     <string name="action_notification_yes">Got it</string>

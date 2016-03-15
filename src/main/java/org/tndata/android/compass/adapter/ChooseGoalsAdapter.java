@@ -6,7 +6,6 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
-import org.tndata.android.compass.util.CompassTagHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,13 +64,7 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
     protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
         HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
         holder.setTitle(mCategory.getTitle());
-        if (!mCategory.getHTMLDescription().isEmpty()){
-            holder.setContent(Html.fromHtml(mCategory.getHTMLDescription(), null,
-                    new CompassTagHandler(mContext)));
-        }
-        else{
-            holder.setContent(mCategory.getDescription());
-        }
+        holder.setContent(mCategory.getDescription());
     }
 
     @Override
@@ -126,7 +118,7 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
         @Override
         public GoalViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            View rootView = inflater.inflate(R.layout.item_library_content, parent, false);
+            View rootView = inflater.inflate(R.layout.item_library_goal, parent, false);
             return new GoalViewHolder(rootView);
         }
 
@@ -159,10 +151,10 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
             super(rootView);
 
             //Fetch UI components
-            mSeparator = rootView.findViewById(R.id.library_content_separator);
-            mIconContainer = (RelativeLayout)rootView.findViewById(R.id.library_content_icon_container);
-            mIcon = (ImageView)rootView.findViewById(R.id.library_content_icon);
-            mTitle = (TextView)rootView.findViewById(R.id.library_content_title);
+            mSeparator = rootView.findViewById(R.id.library_goal_separator);
+            mIconContainer = (RelativeLayout)rootView.findViewById(R.id.library_goal_icon_container);
+            mIcon = (ImageView)rootView.findViewById(R.id.library_goal_icon);
+            mTitle = (TextView)rootView.findViewById(R.id.library_goal_title);
 
             rootView.setOnClickListener(this);
         }

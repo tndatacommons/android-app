@@ -1,8 +1,6 @@
 package org.tndata.android.compass.activity;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v7.app.AppCompatActivity;
@@ -28,12 +26,7 @@ import org.tndata.android.compass.util.ParallaxEffect;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public abstract class MaterialActivity
-        extends AppCompatActivity
-        implements ParallaxEffect.ScrollListener{
-
-    private Toolbar mToolbar;
-
+public abstract class MaterialActivity extends AppCompatActivity{
     private FrameLayout mHeaderContainer;
     private RecyclerView mRecyclerView;
 
@@ -44,9 +37,9 @@ public abstract class MaterialActivity
         setContentView(R.layout.activity_material);
 
         //Set up the toolbar
-        mToolbar = (Toolbar)findViewById(R.id.library_toolbar);
-        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
-        setSupportActionBar(mToolbar);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.library_toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_back_white_24dp);
+        setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -63,9 +56,24 @@ public abstract class MaterialActivity
         mHeaderContainer.setLayoutParams(params);
 
         //Add the parallax effect to the header
-        ParallaxEffect parallaxEffect = new ParallaxEffect(mHeaderContainer, 0.5f);
-        parallaxEffect.setScrollListener(this);
-        mRecyclerView.addOnScrollListener(parallaxEffect);
+        mRecyclerView.addOnScrollListener(new ParallaxEffect(mHeaderContainer, 0.5f));
+
+        //Add the toolbar effect
+        ParallaxEffect toolbarEffect = new ParallaxEffect(toolbar, 1);
+        toolbarEffect.setParallaxCondition(new ParallaxEffect.ParallaxCondition(){
+            @Override
+            protected boolean doParallax(){
+                int height = (int)((CompassUtil.getScreenWidth(MaterialActivity.this) * 2 / 3) * 0.6);
+                return -getRecyclerViewOffset() > height;
+            }
+
+            @Override
+            protected int getParallaxViewOffset(){
+                int height = (int)((CompassUtil.getScreenWidth(MaterialActivity.this) * 2 / 3) * 0.6);
+                return height + getFixedState() + getRecyclerViewOffset();
+            }
+        });
+        mRecyclerView.addOnScrollListener(toolbarEffect);
     }
 
     @Override
@@ -97,17 +105,7 @@ public abstract class MaterialActivity
         return false;
     }
 
-    @Override
-    public void onScroll(float percentage){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-            Drawable color = mToolbar.getBackground();
-            color.setAlpha(Math.round(percentage * 255));
-            mToolbar.setBackground(color);
-        }
-    }
-
     protected final void setColor(int color){
-        mToolbar.setBackgroundColor(color);
         mHeaderContainer.setBackgroundColor(color);
     }
 

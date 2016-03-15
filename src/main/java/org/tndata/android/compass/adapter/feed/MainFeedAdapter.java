@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -227,15 +228,15 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
         //My goals / suggestions
         else if (CardTypes.isGoals(position)){
+            String title;
+            if (mUserData.getGoals().isEmpty() && mUserData.getCustomGoals().isEmpty()){
+                title = mContext.getString(R.string.card_suggestions_header);
+            }
+            else{
+                title = mContext.getString(R.string.card_my_goals_header);
+            }
+            ((GoalsHolder)rawHolder).bind(title);
             if (mGoalsHolder.getItemCount() == 0){
-                String title;
-                if (mUserData.getGoals().isEmpty()){
-                    title = mContext.getString(R.string.card_suggestions_header);
-                }
-                else{
-                    title = mContext.getString(R.string.card_my_goals_header);
-                }
-                ((GoalsHolder)rawHolder).bind(title);
                 moreGoals();
             }
         }
@@ -255,7 +256,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         return mDataHandler;
     }
 
-    void setSelectedAction(Action selectedAction){
+    public void setSelectedAction(Action selectedAction){
         mSelectedAction = selectedAction;
     }
 
@@ -281,6 +282,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
         if (mGoalsHolder != null){
             mGoalsHolder.updateGoals(mUserData.getFeedData().getGoals());
+            notifyItemChanged(CardTypes.getGoalsPosition());
         }
     }
 
@@ -307,6 +309,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      */
     public void didIt(){
         if (mSelectedAction != null){
+            Log.d("Adapter", "selected not null");
             didIt(mSelectedAction);
             mSelectedAction = null;
         }

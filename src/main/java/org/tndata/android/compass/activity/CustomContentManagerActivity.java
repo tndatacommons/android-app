@@ -2,8 +2,10 @@ package org.tndata.android.compass.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -15,6 +17,9 @@ import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
+
+import java.util.Collections;
+import java.util.List;
 
 import es.sandwatch.httprequests.HttpRequest;
 import es.sandwatch.httprequests.HttpRequestError;
@@ -57,8 +62,7 @@ public class CustomContentManagerActivity
 
         String goalTitle = getIntent().getStringExtra(CUSTOM_GOAL_TITLE_KEY);
         if (goalTitle != null){
-            mCustomGoal = new CustomGoal(goalTitle);
-            onCreateGoal(mCustomGoal);
+            mAdapter = new CustomContentManagerAdapter(this, goalTitle, this);
         }
         else{
             mCustomGoal = getIntent().getParcelableExtra(CUSTOM_GOAL_KEY);
@@ -66,8 +70,8 @@ public class CustomContentManagerActivity
                 mCustomGoal = (CustomGoal)mApplication.getUserData().getGoal(mCustomGoal);
                 fetchActions(mCustomGoal);
             }
+            mAdapter = new CustomContentManagerAdapter(this, mCustomGoal, this);
         }
-        mAdapter = new CustomContentManagerAdapter(this, mCustomGoal, this);
         setAdapter(mAdapter);
         setColor(getResources().getColor(R.color.grow_primary));
 
@@ -88,6 +92,11 @@ public class CustomContentManagerActivity
      */
     private void fetchActions(@NonNull CustomGoal customGoal){
         mGetActionsRequestCode = HttpRequest.get(this, API.getCustomActionsUrl(customGoal));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        return true;
     }
 
     @Override
@@ -131,6 +140,9 @@ public class CustomContentManagerActivity
             mCustomGoal.init();
             mApplication.getUserData().addGoal(mCustomGoal);
         }
+        else if (result instanceof ParserModels.CustomActionResultSet){
+            Collections.sort(((ParserModels.CustomActionResultSet)result).results);
+        }
         else if (result instanceof CustomAction){
             mApplication.getUserData().addAction((CustomAction)result);
         }
@@ -145,7 +157,14 @@ public class CustomContentManagerActivity
             mAdapter.setCustomActions(((ParserModels.CustomActionResultSet)result).results);
         }
         else if (result instanceof CustomAction){
-            mAdapter.customActionAdded((CustomAction)result);
+            final CustomAction newAction = (CustomAction)result;
+            mAdapter.customActionAdded(newAction);
+            new Handler().postDelayed(new Runnable(){
+                @Override
+                public void run(){
+                    onEditTrigger(newAction);
+                }
+            }, 500);
         }
     }
 

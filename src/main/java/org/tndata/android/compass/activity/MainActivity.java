@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -216,7 +217,6 @@ public class MainActivity
         mMenu = (FloatingActionMenu)findViewById(R.id.main_fab_menu);
         mMenu.setMenuButtonHideAnimation(hideAnimation);
         mMenu.setMenuButtonShowAnimation(showAnimation);
-        mMenu.setIconAnimated(false);
         mMenu.setClosedOnTouchOutside(true);
         mMenu.setOnMenuButtonClickListener(new View.OnClickListener(){
             @Override
@@ -293,7 +293,7 @@ public class MainActivity
      * Creates the FAB menu.
      */
     private void populateMenu(){
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 2; i++){
             ContextThemeWrapper ctx = new ContextThemeWrapper(this, R.style.MenuButtonStyle);
             FloatingActionButton fab = new FloatingActionButton(ctx);
             fab.setColorNormalResId(R.color.grow_accent);
@@ -310,11 +310,6 @@ public class MainActivity
                 fab.setLabelText(getString(R.string.fab_browse_goals));
                 fab.setImageResource(R.drawable.ic_list_white_24dp);
             }
-            else if (i == 2){
-                fab.setId(R.id.fab_create_goal);
-                fab.setLabelText(getString(R.string.fab_create_goal));
-                fab.setImageResource(R.drawable.fab_add);
-            }
             fab.setOnClickListener(this);
             mMenu.addMenuButton(fab);
         }
@@ -325,15 +320,11 @@ public class MainActivity
         mMenu.toggle(true);
         switch (v.getId()){
             case R.id.fab_search_goals:
-                searchGoalsClicked();
+                search();
                 break;
 
             case R.id.fab_browse_goals:
-                browseGoalsClicked();
-                break;
-
-            case R.id.fab_create_goal:
-                createCustomGoalClicked();
+                browseGoals();
                 break;
         }
     }
@@ -341,22 +332,15 @@ public class MainActivity
     /**
      * Called when the search goals FAB is clicked.
      */
-    private void searchGoalsClicked(){
-
+    private void search(){
+        startActivityForResult(new Intent(this, SearchActivity.class), GOAL_REQUEST_CODE);
     }
 
     /**
      * Called when the browse Goals FAB is clicked.
      */
-    private void browseGoalsClicked(){
+    private void browseGoals(){
         startActivityForResult(new Intent(this, ChooseCategoryActivity.class), GOAL_REQUEST_CODE);
-    }
-
-    /**
-     * Called when the create goal FAB is clicked.
-     */
-    private void createCustomGoalClicked(){
-        startActivityForResult(new Intent(this, CustomContentManagerActivity.class), GOAL_REQUEST_CODE);
     }
 
     /**
@@ -505,9 +489,9 @@ public class MainActivity
     @Override
     public void onGoalSelected(Goal goal){
         if (goal instanceof UserGoal){
-            Intent goalActivityIntent = new Intent(this, GoalActivity.class)
-                    .putExtra(GoalActivity.USER_GOAL_KEY, goal);
-            startActivityForResult(goalActivityIntent, GOAL_REQUEST_CODE);
+            Intent reviewActionsIntent = new Intent(this, ReviewActionsActivity.class)
+                    .putExtra(ReviewActionsActivity.USER_GOAL_KEY, goal);
+            startActivityForResult(reviewActionsIntent, GOAL_REQUEST_CODE);
         }
         else if (goal instanceof CustomGoal){
             Parcelable customGoal = (CustomGoal)goal;
@@ -529,6 +513,7 @@ public class MainActivity
     @Override
     public void onActionSelected(Action action){
         if (action instanceof UserAction){
+            mAdapter.setSelectedAction(action);
             Intent actionIntent = new Intent(this, ActionActivity.class)
                     .putExtra(ActionActivity.ACTION_KEY, action);
             startActivityForResult(actionIntent, ACTION_REQUEST_CODE);
@@ -556,7 +541,9 @@ public class MainActivity
                 mAdapter.updateDataSet();
             }
             else if (requestCode == ACTION_REQUEST_CODE){
+                Log.d("Main", "action request, result ok");
                 if (data.getBooleanExtra(ActionActivity.DID_IT_KEY, false)){
+                    Log.d("Main", "did it");
                     mAdapter.didIt();
                 }
                 else{

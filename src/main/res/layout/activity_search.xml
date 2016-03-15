@@ -9,6 +9,7 @@
         android:id="@+id/search_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:inputType="textCapSentences"
         android:iconifiedByDefault="false" />
 
     <TextView
@@ -29,5 +30,20 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
+
+    <Button
+        android:id="@+id/search_create"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_gravity="end"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:background="@color/grow_primary"
+        android:visibility="gone"
+        android:text="@string/search_create"
+        android:textAllCaps="true"
+        android:textSize="17sp"
+        android:textColor="@color/white" />
 
 </LinearLayout>

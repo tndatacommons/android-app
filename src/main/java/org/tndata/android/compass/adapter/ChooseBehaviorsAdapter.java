@@ -2,23 +2,18 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
-import org.tndata.android.compass.util.CompassTagHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,13 +79,7 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
     protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
         HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
         holder.setTitle(mGoal.getTitle());
-        if (!mGoal.getHTMLDescription().isEmpty()){
-            holder.setContent(Html.fromHtml(mGoal.getHTMLDescription(), null,
-                    new CompassTagHandler(mContext)));
-        }
-        else{
-            holder.setContent(mGoal.getDescription());
-        }
+        holder.setContent(mGoal.getDescription());
     }
 
     @Override
@@ -167,7 +156,7 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
         @Override
         public BehaviorViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            View rootView = inflater.inflate(R.layout.item_library_content, parent, false);
+            View rootView = inflater.inflate(R.layout.item_library_behavior, parent, false);
             return new BehaviorViewHolder(rootView);
         }
 
@@ -186,7 +175,6 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
      */
     private class BehaviorViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private View mSeparator;
-        private RelativeLayout mIconContainer;
         private ImageView mIcon;
         private TextView mTitle;
 
@@ -200,10 +188,9 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
             super(rootView);
 
             //Fetch UI components
-            mSeparator = rootView.findViewById(R.id.library_content_separator);
-            mIconContainer = (RelativeLayout)rootView.findViewById(R.id.library_content_icon_container);
-            mIcon = (ImageView)rootView.findViewById(R.id.library_content_icon);
-            mTitle = (TextView)rootView.findViewById(R.id.library_content_title);
+            mSeparator = rootView.findViewById(R.id.library_behavior_separator);
+            mIcon = (ImageView)rootView.findViewById(R.id.library_behavior_icon);
+            mTitle = (TextView)rootView.findViewById(R.id.library_behavior_title);
 
             rootView.setOnClickListener(this);
         }
@@ -213,7 +200,6 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
          *
          * @param behavior the behavior to be bound.
          */
-        @SuppressWarnings("deprecation")
         public void bind(BehaviorContent behavior){
             //If this is the first item, do not show the separator
             if (getAdapterPosition() == 0){
@@ -223,14 +209,6 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
                 mSeparator.setVisibility(View.VISIBLE);
             }
 
-            GradientDrawable gradientDrawable = (GradientDrawable)mIconContainer.getBackground();
-            gradientDrawable.setColor(Color.parseColor(mCategory.getColor()));
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
-                mIconContainer.setBackgroundDrawable(gradientDrawable);
-            }
-            else{
-                mIconContainer.setBackground(gradientDrawable);
-            }
             behavior.loadIconIntoView(mIcon);
             mTitle.setText(behavior.getTitle());
         }

@@ -2,15 +2,12 @@ package org.tndata.android.compass.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -41,7 +38,7 @@ import es.sandwatch.httprequests.HttpRequestError;
 public class ActionActivity
         extends MaterialActivity
         implements
-                View.OnClickListener,
+                ActionAdapter.ActionAdapterListener,
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback{
 
@@ -89,8 +86,7 @@ public class ActionActivity
             }
         }
 
-        mAdapter = new ActionAdapter(this, mAction, mCategory);
-
+        mAdapter = new ActionAdapter(this, this, mAction, mCategory);
         setAdapter(mAdapter);
 
         mActionUpdated = false;
@@ -114,23 +110,18 @@ public class ActionActivity
         }
     }
 
-    @SuppressWarnings("deprecation")
+    /**
+     * Sets up the header of the activity
+     */
     private void setHeader(){
-        View header = inflateHeader(R.layout.header_icon);
-        RelativeLayout circle = (RelativeLayout)header.findViewById(R.id.header_icon_circle);
-        ImageView icon = (ImageView)header.findViewById(R.id.header_icon_icon);
-
-        GradientDrawable gradientDrawable = (GradientDrawable) circle.getBackground();
-        gradientDrawable.setColor(Color.WHITE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-            circle.setBackground(gradientDrawable);
+        View header = inflateHeader(R.layout.header_hero);
+        ImageView image = (ImageView)header.findViewById(R.id.header_hero_image);
+        if (mCategory == null){
+            image.setImageResource(R.drawable.compass_master_illustration);
         }
         else{
-            circle.setBackgroundDrawable(gradientDrawable);
-        }
-
-        if (mAction instanceof UserAction){
-            ImageLoader.loadBitmap(icon, ((UserAction)mAction).getIconUrl());
+            ImageLoader.Options options = new ImageLoader.Options().setUsePlaceholder(false);
+            ImageLoader.loadBitmap(image, mCategory.getImageUrl(), options);
         }
     }
 
@@ -145,7 +136,7 @@ public class ActionActivity
         }
         else if (mReminder.isCustomAction()){
             int customId = mReminder.getObjectId();
-            Log.d("ActionActivity", "Fetching UserAction: " + customId);
+            Log.d("ActionActivity", "Fetching CustomAction: " + customId);
             mGetActionRC = HttpRequest.get(this, API.getCustomActionUrl(customId));
         }
     }
@@ -184,7 +175,9 @@ public class ActionActivity
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof UserAction){
             long categoryId = ((UserAction)mAction).getPrimaryCategoryId();
+            mAdapter.setAction(mAction, null);
             mGetCategoryRC = HttpRequest.get(this, API.getCategoryUrl(categoryId));
+            invalidateOptionsMenu();
         }
         else if (result instanceof CustomAction){
             mAction = (Action)result;
@@ -195,8 +188,7 @@ public class ActionActivity
         else if (result instanceof CategoryContent){
             setColor(Color.parseColor(mCategory.getColor()));
             setHeader();
-            mAdapter.setAction(mAction, mCategory);
-            invalidateOptionsMenu();
+            mAdapter.setCategory(mCategory);
         }
     }
 
@@ -213,14 +205,14 @@ public class ActionActivity
                 getMenuInflater().inflate(R.menu.menu_action, menu);
             }
         }
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     @Override
     public boolean menuItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.action_trigger:
-                reschedule();
+                onRescheduleClick();
                 break;
 
             case R.id.action_disable_trigger:
@@ -234,47 +226,35 @@ public class ActionActivity
     }
 
     @Override
-    public void onClick(View view){
-        /*switch (view.getId()){
-            case R.id.action_time_option:
-                if (mReminder != null){
-                    snooze();
-                }
-                else{
-                    reschedule();
-                }
-                break;
-
-            case R.id.action_did_it:
-                didIt();
-                break;
-
-            case R.id.action_do_it_now:
-                CompassUtil.doItNow(this, ((UserAction)mAction).getAction().getExternalResource());
-                break;
-        }*/
-    }
-
-    /**
-     * Snooze clicked. This opens the snooze menu.
-     */
-    private void snooze(){
+    public void onIDidItClick(){
         if (mAction != null && !mActionUpdated){
-            Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
-                    .putExtra(NotificationUtil.REMINDER_KEY, mReminder);
-            startActivityForResult(snoozeIntent, SNOOZE_REQUEST_CODE);
+            mActionUpdated = true;
+
+            startService(new Intent(this, ActionReportService.class)
+                    .putExtra(ActionReportService.ACTION_KEY, mAction)
+                    .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
+
+            setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, true));
+            finish();
         }
     }
 
-    /**
-     * Reschedule clicked. This opens the trigger picker.
-     */
-    private void reschedule(){
+    @Override
+    public void onRescheduleClick(){
         if (mAction != null && !mActionUpdated){
             Intent reschedule = new Intent(this, TriggerActivity.class)
                     .putExtra(TriggerActivity.ACTION_KEY, mAction)
                     .putExtra(TriggerActivity.GOAL_KEY, mAction.getGoal());
             startActivityForResult(reschedule, RESCHEDULE_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onSnoozeClick(){
+        if (mAction != null && !mActionUpdated){
+            Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
+                    .putExtra(NotificationUtil.REMINDER_KEY, mReminder);
+            startActivityForResult(snoozeIntent, SNOOZE_REQUEST_CODE);
         }
     }
 
@@ -306,22 +286,6 @@ public class ActionActivity
                     setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, false));
                     finish();
             }
-        }
-    }
-
-    /**
-     * I did it clicked.
-     */
-    private void didIt(){
-        if (mAction != null && !mActionUpdated){
-            mActionUpdated = true;
-
-            startService(new Intent(this, ActionReportService.class)
-                    .putExtra(ActionReportService.ACTION_KEY, mAction)
-                    .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
-
-            setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, true));
-            finish();
         }
     }
 }

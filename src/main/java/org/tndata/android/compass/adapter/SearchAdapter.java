@@ -22,7 +22,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>{
+public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultViewHolder>{
     private Context mContext;
     private SearchAdapterListener mListener;
     private List<SearchResult> mDataSet;
@@ -46,23 +46,21 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        return new ViewHolder(inflater.inflate(R.layout.item_search_result, parent, false));
-    }
-
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position){
-        holder.mTitle.setText(mDataSet.get(position).getTitle());
-        String highlight = mDataSet.get(position).getHighlighted().replace("\n", "<br>");
-        //highlight = highlight.replace("<em>", "<u><span style=\"background-color: yellow\">");
-        //highlight = highlight.replace("</em>", "</span></u>");
-        holder.mSummary.setText(Html.fromHtml(highlight));
-    }
-
-    @Override
     public int getItemCount(){
         return mDataSet.size();
+    }
+
+    @Override
+    public ResultViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        return new ResultViewHolder(inflater.inflate(R.layout.item_search_result, parent, false));
+    }
+
+    @Override
+    public void onBindViewHolder(ResultViewHolder holder, int position){
+        holder.mTitle.setText(mDataSet.get(position).getTitle());
+        String highlight = mDataSet.get(position).getHighlighted().replace("\n", "<br>");
+        holder.mSummary.setText(Html.fromHtml(highlight));
     }
 
 
@@ -72,7 +70,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class ResultViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mTitle;
         private TextView mSummary;
 
@@ -82,7 +80,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
          *
          * @param rootView the root view.
          */
-        public ViewHolder(View rootView){
+        public ResultViewHolder(View rootView){
             super(rootView);
             mTitle = (TextView)rootView.findViewById(R.id.search_result_title);
             mSummary = (TextView)rootView.findViewById(R.id.search_result_summary);
