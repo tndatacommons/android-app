@@ -227,15 +227,15 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
         //My goals / suggestions
         else if (CardTypes.isGoals(position)){
+            String title;
+            if (mUserData.getGoals().isEmpty() && mUserData.getCustomGoals().isEmpty()){
+                title = mContext.getString(R.string.card_suggestions_header);
+            }
+            else{
+                title = mContext.getString(R.string.card_my_goals_header);
+            }
+            ((GoalsHolder)rawHolder).bind(title);
             if (mGoalsHolder.getItemCount() == 0){
-                String title;
-                if (mUserData.getGoals().isEmpty()){
-                    title = mContext.getString(R.string.card_suggestions_header);
-                }
-                else{
-                    title = mContext.getString(R.string.card_my_goals_header);
-                }
-                ((GoalsHolder)rawHolder).bind(title);
                 moreGoals();
             }
         }
@@ -281,6 +281,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
         if (mGoalsHolder != null){
             mGoalsHolder.updateGoals(mUserData.getFeedData().getGoals());
+            notifyItemChanged(CardTypes.getGoalsPosition());
         }
     }
 

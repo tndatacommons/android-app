@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.util.CompassUtil;
@@ -31,12 +32,10 @@ import java.util.Queue;
  * @author Ismael Alonso
  * @version 1.0.0
  */
+@Deprecated
 public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
         extends LinearLayout
         implements Animation.AnimationListener{
-
-    private static int sCustomGoalCount = 0;
-
 
     //Content list and listener
     private List<ContentHolder> mDisplayedContent;
@@ -146,24 +145,33 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
             }
         }
 
-        //Next, update the list of displayed content
-        for (int i = 0; i < dataSet.size(); i++){
-            //Update the existing holder or create a new one according to needs
-            if (i < mDisplayedContent.size()){
-                mDisplayedContent.get(i).update(dataSet.get(i));
-            }
-            else{
+        if (stoppingPoint == null){
+            mDisplayedContent.clear();
+            removeAllViews();
+            for (int i = 0; i < 3 && i < dataSet.size(); i++){
                 mDisplayedContent.add(new ContentHolder(dataSet.get(i)));
             }
-            //If the stopping point has been reached
-            if (stoppingPoint != null && stoppingPoint.equals(mDisplayedContent.get(i).mContent)){
-                //Remove all the holders after it, if any
-                i++;
-                while (i < mDisplayedContent.size()){
-                    mDisplayedContent.remove(i);
-                    removeViewAt(i);
+        }
+        else{
+            //Next, update the list of displayed content
+            for (int i = 0; i < dataSet.size(); i++){
+                //Update the existing holder or create a new one according to needs
+                if (i < mDisplayedContent.size()){
+                    mDisplayedContent.get(i).update(dataSet.get(i));
                 }
-                break;
+                else{
+                    mDisplayedContent.add(new ContentHolder(dataSet.get(i)));
+                }
+                //If the stopping point has been reached
+                if (stoppingPoint.equals(mDisplayedContent.get(i).mContent)){
+                    //Remove all the holders after it, if any
+                    i++;
+                    while (i < mDisplayedContent.size()){
+                        mDisplayedContent.remove(i);
+                        removeViewAt(i);
+                    }
+                    break;
+                }
             }
         }
     }
@@ -313,11 +321,11 @@ public class ContentContainer<T extends ContentContainer.ContainerDisplayable>
             if (content instanceof CustomGoal){
                 gradientDrawable.setColor(Color.TRANSPARENT);
                 ((RelativeLayout.LayoutParams)mIcon.getLayoutParams()).setMargins(0, 0, 0, 0);
-                if (sCustomGoalCount++ % 2 == 0){
-                    mIcon.setImageResource(R.drawable.ic_lady);
+                if (((CompassApplication)getContext().getApplicationContext()).getUser().isMale()){
+                    mIcon.setImageResource(R.drawable.ic_guy);
                 }
                 else{
-                    mIcon.setImageResource(R.drawable.ic_guy);
+                    mIcon.setImageResource(R.drawable.ic_lady);
                 }
             }
             else{

@@ -332,7 +332,7 @@ public class MainActivity
      * Called when the search goals FAB is clicked.
      */
     private void search(){
-        startActivity(new Intent(this, SearchActivity.class));
+        startActivityForResult(new Intent(this, SearchActivity.class), GOAL_REQUEST_CODE);
     }
 
     /**

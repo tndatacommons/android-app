@@ -84,6 +84,9 @@ class GoalsHolder
      */
     void updateGoals(@NonNull List<ContentContainer.ContainerGoal> dataSet){
         mContentContainer.updateContent(dataSet);
+        if (mContentContainer.getCount() == dataSet.size()){
+            hideFooter();
+        }
     }
 
     /**

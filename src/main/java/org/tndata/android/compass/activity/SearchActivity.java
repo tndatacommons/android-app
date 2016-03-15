@@ -93,6 +93,7 @@ public class SearchActivity
     public void onClick(View v){
         startActivity(new Intent(this, CustomContentManagerActivity.class)
                 .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_TITLE_KEY, mLastSearch));
+        setResult(RESULT_OK);
         finish();
     }
 
