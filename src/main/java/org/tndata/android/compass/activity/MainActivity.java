@@ -292,7 +292,7 @@ public class MainActivity
      * Creates the FAB menu.
      */
     private void populateMenu(){
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 2; i++){
             ContextThemeWrapper ctx = new ContextThemeWrapper(this, R.style.MenuButtonStyle);
             FloatingActionButton fab = new FloatingActionButton(ctx);
             fab.setColorNormalResId(R.color.grow_accent);
@@ -305,11 +305,6 @@ public class MainActivity
                 fab.setImageResource(R.drawable.ic_search);
             }
             else if (i == 1){
-                fab.setId(R.id.fab_custom_goal);
-                fab.setLabelText(getString(R.string.fab_custom_goal));
-                fab.setImageResource(R.drawable.fab_add);
-            }
-            else if (i == 2){
                 fab.setId(R.id.fab_browse_goals);
                 fab.setLabelText(getString(R.string.fab_browse_goals));
                 fab.setImageResource(R.drawable.ic_list_white_24dp);
@@ -324,7 +319,6 @@ public class MainActivity
         mMenu.toggle(true);
         switch (v.getId()){
             case R.id.fab_search_goals:
-            case R.id.fab_custom_goal:
                 search();
                 break;
 

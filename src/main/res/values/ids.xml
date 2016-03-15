@@ -7,5 +7,4 @@
 
     <item name="fab_search_goals" type="id" />
     <item name="fab_browse_goals" type="id" />
-    <item name="fab_custom_goal" type="id" />
 </resources>
