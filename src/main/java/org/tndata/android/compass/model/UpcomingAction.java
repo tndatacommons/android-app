@@ -85,12 +85,37 @@ public class UpcomingAction implements Parcelable{
     }
 
     @Override
+    public String toString(){
+        String result = "";
+        if (isUserAction()){
+            result = "UserAction ";
+        }
+        else if (isCustomAction()){
+            result = "CustomAction ";
+        }
+        result += "#" + mId + ": " + mTitle;
+        return result;
+    }
+
+    @Override
     public boolean equals(Object o){
         if (o == null || !(o instanceof UpcomingAction)){
             return false;
         }
         UpcomingAction action = (UpcomingAction)o;
         return mType.equals(action.mType) && mId == action.mId;
+    }
+
+    //TODO is the editor going to nag me if I combine this with equals()?
+    @SuppressWarnings("RedundantIfStatement")
+    public boolean is(Action action){
+        if (isUserAction() && action instanceof UserAction){
+            return mId == action.getId();
+        }
+        if (isCustomAction() && action instanceof CustomAction){
+            return mId == action.getId();
+        }
+        return false;
     }
 
     @Override

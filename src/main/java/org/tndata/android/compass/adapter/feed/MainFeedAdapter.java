@@ -309,11 +309,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * reset when this method is called.
      */
     public void didIt(){
-        if (mSelectedAction != null){
-            Log.d("Adapter", "selected not null");
-            didIt(mSelectedAction);
-            mSelectedAction = null;
-        }
+        didIt(mUpcomingHolder.didIt());
     }
 
     /**
@@ -324,8 +320,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      *
      * @param action the action to be marked as done.
      */
-    void didIt(UpcomingAction action){
-        if (mUserData.getFeedData().getNextAction().equals(action)){
+    public void didIt(UpcomingAction action){
+        Log.d("MainFeed", "Done: " + action);
+        Log.d("MainFeed", "Stored: " + mUserData.getFeedData().getUpNextActionX());
+        if (mUserData.getFeedData().getUpNextActionX().equals(action)){
             mDataHandler.didIt();
             //mFeedUtil.didIt(mContext, mDataHandler.getUpNext());
             mDataHandler.replaceUpNext();
@@ -333,7 +331,8 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
         else{
             mDataHandler.didIt();
-            mFeedUtil.didIt(mContext, action);
+            //Good grief. Period.
+            //mFeedUtil.didIt(mContext, action);
             mUpcomingHolder.removeAction(action);
         }
     }

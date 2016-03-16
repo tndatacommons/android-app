@@ -112,6 +112,15 @@ class UpcomingHolder extends MainFeedViewHolder implements View.OnClickListener{
         //mList.updateActions(feedData);
     }
 
+    UpcomingAction didIt(){
+        if (mSelectedAction != null){
+            removeAction(mSelectedAction);
+        }
+        UpcomingAction selectedAction = mSelectedAction;
+        mSelectedAction = null;
+        return selectedAction;
+    }
+
     /**
      * Removes an action from the list.
      *

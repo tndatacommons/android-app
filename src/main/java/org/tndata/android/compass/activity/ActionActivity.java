@@ -166,6 +166,9 @@ public class ActionActivity
      * @return the relevant id for the action.
      */
     private int getActionId(){
+        if (mAction != null){
+            return (int)mAction.getId();
+        }
         if (mUpcomingAction != null){
             return (int)mUpcomingAction.getId();
         }
@@ -300,7 +303,8 @@ public class ActionActivity
                     .putExtra(ActionReportService.ACTION_KEY, mAction)
                     .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
 
-            setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, true));
+            setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, true)
+                    .putExtra(ACTION_KEY, mAction));
             finish();
         }
     }

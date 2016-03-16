@@ -22,9 +22,9 @@ import org.tndata.android.compass.util.NotificationUtil;
 public class ActionReportService extends IntentService{
     private static final String TAG = "ActionReportService";
 
-    public static final String ACTION_KEY = "org.tndata.compass.CompleteAction.Action";
-    public static final String STATE_KEY = "org.tndata.compass.CompleteAction.State";
-    public static final String LENGTH_KEY = "org.tndata.compass.CompleteAction.Length";
+    public static final String ACTION_KEY = "org.tndata.compass.ActionReport.Action";
+    public static final String STATE_KEY = "org.tndata.compass.ActionReport.State";
+    public static final String LENGTH_KEY = "org.tndata.compass.ActionReport.Length";
 
     public static final String STATE_COMPLETED = "completed";
     public static final String STATE_UNCOMPLETED = "uncompleted";

@@ -63,6 +63,10 @@ public class FeedData extends TDCBase{
         }
     }
 
+    public void setUpNextActionX(UpcomingAction upNextAction){
+        mUpNextActionX = upNextAction;
+    }
+
     public UpcomingAction getUpNextActionX(){
         return mUpNextActionX;
     }
@@ -347,6 +351,38 @@ public class FeedData extends TDCBase{
      */
     public void removeAction(Action action){
         mUpcomingActions.remove(action);
+    }
+
+    public UpcomingAction getActionX(Action action){
+        if (mUpNextActionX.is(action)){
+            return mUpNextActionX;
+        }
+        for (int i = 0; i < mUpcomingActionsX.size(); i++){
+            if (mUpcomingActionsX.get(i).is(action)){
+                return mUpcomingActionsX.get(i);
+            }
+        }
+        return null;
+    }
+
+    public UpcomingAction removeActionX(Action action){
+        if (mUpNextActionX.is(action)){
+            UpcomingAction upNext = mUpNextActionX;
+            if (mUpcomingActionsX.isEmpty()){
+                mUpNextActionX = null;
+            }
+            else{
+                mUpNextActionX = mUpcomingActionsX.remove(0);
+            }
+            return upNext;
+        }
+        for (int i = 0; i < mUpcomingActionsX.size(); i++){
+            if (mUpcomingActionsX.get(i).is(action)){
+                return mUpcomingActionsX.remove(i);
+            }
+        }
+        Log.wtf("FeedData", "this method is supposed to be called from the feed only, this scenario is not possible");
+        return null;
     }
 
     /**

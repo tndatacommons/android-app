@@ -32,6 +32,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapterListener;
+import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.Goal;
@@ -537,10 +538,9 @@ public class MainActivity
                 mAdapter.updateDataSet();
             }
             else if (requestCode == ACTION_REQUEST_CODE){
-                Log.d("Main", "action request, result ok");
                 if (data.getBooleanExtra(ActionActivity.DID_IT_KEY, false)){
-                    Log.d("Main", "did it");
-                    mAdapter.didIt();
+                    Action action = (Action)data.getSerializableExtra(ActionActivity.ACTION_KEY);
+                    mAdapter.didIt(mApplication.getFeedDataX().getActionX(action));
                 }
                 else{
                     mAdapter.updateSelectedAction();

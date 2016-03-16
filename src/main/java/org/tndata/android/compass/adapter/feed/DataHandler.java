@@ -101,14 +101,14 @@ class DataHandler{
      *
      * @return the new next action.
      */
-    Action replaceUpNext(){
-        if (mFeedData.getUpcomingActions().isEmpty()){
-            mFeedData.setNextAction(null);
+    UpcomingAction replaceUpNext(){
+        if (mFeedData.getUpcomingActionsX().isEmpty()){
+            mFeedData.setUpNextActionX(null);
         }
         else{
-            mFeedData.setNextAction(mFeedData.getUpcomingActions().remove(0));
+            mFeedData.setUpNextActionX(mFeedData.getUpcomingActionsX().remove(0));
         }
-        return mFeedData.getNextAction();
+        return mFeedData.getUpNextActionX();
     }
 
     /**

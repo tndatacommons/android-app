@@ -20,6 +20,7 @@ import java.util.Date;
 public abstract class Action
         extends UserContent
         implements Serializable, ContentContainer.ContainerAction, Comparable<Action>{
+
     private static final long serialVersionUID = 2919447142568751923L;
 
 
