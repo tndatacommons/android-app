@@ -21,8 +21,8 @@
             android:padding="10dp"
             android:text="@string/card_upcoming_header" />
 
-        <org.tndata.android.compass.ui.UpcomingContainer
-            android:id="@+id/card_upcoming_action_container"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/card_upcoming_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

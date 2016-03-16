@@ -409,13 +409,10 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * Loads the next batch of actions into the feed.
      */
     void moreActions(){
-        for (UpcomingAction action:mDataHandler.loadMoreUpcoming(mUpcomingHolder.getItemCount())){
-            mUpcomingHolder.addAction(action);
-        }
+        mUpcomingHolder.addActions(mDataHandler.loadMoreUpcoming(mUpcomingHolder.getItemCount()));
         if (!mDataHandler.canLoadMoreActions(mUpcomingHolder.getItemCount())){
             mUpcomingHolder.hideFooter();
         }
-        mUpcomingHolder.setAnimationsEnabled(true);
     }
 
     /**
