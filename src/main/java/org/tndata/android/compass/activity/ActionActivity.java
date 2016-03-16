@@ -9,12 +9,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ActionAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.CustomAction;
+import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
@@ -42,6 +42,7 @@ public class ActionActivity
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback{
 
+    public static final String UPCOMING_ACTION_KEY = "org.tndata.compass.ActionActivity.Upcoming";
     public static final String ACTION_KEY = "org.tndata.compass.ActionActivity.Action";
     public static final String REMINDER_KEY = "org.tndata.compass.ActionActivity.Reminder";
 
@@ -54,6 +55,7 @@ public class ActionActivity
     //The action in question and the associated reminder
     private Action mAction;
     private CategoryContent mCategory;
+    private UpcomingAction mUpcomingAction;
     private Reminder mReminder;
 
     private ActionAdapter mAdapter;
@@ -70,22 +72,31 @@ public class ActionActivity
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        CompassApplication application = (CompassApplication)getApplication();
-
-        //Retrieve the action and mark the reminder as nonexistent
+        //Retrieve the action and mark the reminder and upcoming action as nonexistent
         mAction = (Action)getIntent().getSerializableExtra(ACTION_KEY);
+        mUpcomingAction = null;
         mReminder = null;
 
+        //If the action exists do some initial setup and fetching
         if (mAction != null){
-            Action temp = application.getUserData().getAction(mAction);
-            if (temp != null){
-                mAction = temp;
-            }
             if (mAction instanceof UserAction){
-                mCategory = ((UserAction)mAction).getPrimaryCategory().getCategory();
+                UserAction userAction = (UserAction)mAction;
+                if (userAction.getPrimaryCategory() != null){
+                    mCategory = userAction.getPrimaryCategory().getCategory();
+                    setColor(Color.parseColor(mCategory.getColor()));
+                    setHeader();
+                }
+                else{
+                    setColor(getResources().getColor(R.color.grow_primary));
+                    fetchCategory(userAction);
+                }
+            }
+            else{
+                setColor(getResources().getColor(R.color.grow_primary));
+                setHeader();
             }
         }
-
+        //Create and set the adapter
         mAdapter = new ActionAdapter(this, this, mAction, mCategory);
         setAdapter(mAdapter);
 
@@ -93,20 +104,10 @@ public class ActionActivity
 
         //If the action wasn't provided via the intent it needs to be fetched
         if (mAction == null){
-            //timeOption.setText(R.string.action_snooze);
+            mUpcomingAction = getIntent().getParcelableExtra(UPCOMING_ACTION_KEY);
             mReminder = (Reminder)getIntent().getSerializableExtra(REMINDER_KEY);
             setColor(getResources().getColor(R.color.grow_primary));
             fetchAction();
-        }
-        else{
-            mAction = application.getUserData().getAction(mAction);
-            if (mAction instanceof UserAction){
-                setColor(Color.parseColor(((UserAction)mAction).getPrimaryCategory().getColor()));
-            }
-            else{
-                setColor(getResources().getColor(R.color.grow_primary));
-            }
-            setHeader();
         }
     }
 
@@ -125,29 +126,75 @@ public class ActionActivity
         }
     }
 
+    @SuppressWarnings("RedundantIfStatement")
+    private boolean isUserAction(){
+        if (mAction != null && mAction instanceof UserAction){
+            return true;
+        }
+        if (mUpcomingAction != null && mUpcomingAction.isUserAction()){
+            return true;
+        }
+        if (mReminder != null && mReminder.isUserAction()){
+            return true;
+        }
+        return false;
+    }
+
+    @SuppressWarnings("RedundantIfStatement")
+    private boolean isCustomAction(){
+        if (mAction != null && mAction instanceof CustomAction){
+            return true;
+        }
+        if (mUpcomingAction != null && mUpcomingAction.isCustomAction()){
+            return true;
+        }
+        if (mReminder != null && mReminder.isCustomAction()){
+            return true;
+        }
+        return false;
+    }
+
+    private int getActionId(){
+        if (mUpcomingAction != null){
+            return (int)mUpcomingAction.getId();
+        }
+        if (mReminder != null){
+            if (mReminder.isUserAction()){
+                return mReminder.getUserMappingId();
+            }
+            else if (mReminder.isCustomAction()){
+                return mReminder.getObjectId();
+            }
+        }
+        return -1;
+    }
+
     /**
      * Retrieves an action from the API
      */
     private void fetchAction(){
-        if (mReminder.isUserAction()){
-            int mappingId = mReminder.getUserMappingId();
-            Log.d("ActionActivity", "Fetching UserAction: " + mappingId);
-            mGetActionRC = HttpRequest.get(this, API.getActionUrl(mappingId));
+        int id = getActionId();
+        if (isUserAction()){
+            Log.d("ActionActivity", "Fetching UserAction: " + id);
+            mGetActionRC = HttpRequest.get(this, API.getActionUrl(id));
         }
-        else if (mReminder.isCustomAction()){
-            int customId = mReminder.getObjectId();
-            Log.d("ActionActivity", "Fetching CustomAction: " + customId);
-            mGetActionRC = HttpRequest.get(this, API.getCustomActionUrl(customId));
+        else if (isCustomAction()){
+            Log.d("ActionActivity", "Fetching CustomAction: " + id);
+            mGetActionRC = HttpRequest.get(this, API.getCustomActionUrl(id));
         }
+    }
+
+    private void fetchCategory(UserAction userAction){
+        mGetCategoryRC = HttpRequest.get(this, API.getCategoryUrl(userAction.getPrimaryCategoryId()));
     }
 
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetActionRC){
-            if (mReminder.isUserAction()){
+            if (isUserAction()){
                 Parser.parse(result, UserAction.class, this);
             }
-            else if (mReminder.isCustomAction()){
+            else if (isCustomAction()){
                 Parser.parse(result, CustomAction.class, this);
             }
         }
@@ -174,9 +221,8 @@ public class ActionActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof UserAction){
-            long categoryId = ((UserAction)mAction).getPrimaryCategoryId();
             mAdapter.setAction(mAction, null);
-            mGetCategoryRC = HttpRequest.get(this, API.getCategoryUrl(categoryId));
+            fetchCategory((UserAction)mAction);
             invalidateOptionsMenu();
         }
         else if (result instanceof CustomAction){

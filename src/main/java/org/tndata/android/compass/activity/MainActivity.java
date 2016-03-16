@@ -32,13 +32,11 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapterListener;
-import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UpcomingAction;
-import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
@@ -513,11 +511,9 @@ public class MainActivity
 
     @Override
     public void onActionSelected(UpcomingAction action){
-        /*if (action instanceof UserAction){
-            Intent actionIntent = new Intent(this, ActionActivity.class)
-                    .putExtra(ActionActivity.ACTION_KEY, action);
-            startActivityForResult(actionIntent, ACTION_REQUEST_CODE);
-        }*/
+        Intent actionIntent = new Intent(this, ActionActivity.class)
+                .putExtra(ActionActivity.UPCOMING_ACTION_KEY, action);
+        startActivityForResult(actionIntent, ACTION_REQUEST_CODE);
     }
 
     @Override

@@ -32,6 +32,7 @@ class UpcomingHolder extends MainFeedViewHolder implements View.OnClickListener{
 
     private UpcomingAdapter mUpcomingAdapter;
     private List<UpcomingAction> mActions;
+    private UpcomingAction mSelectedAction;
 
 
     /**
@@ -146,10 +147,6 @@ class UpcomingHolder extends MainFeedViewHolder implements View.OnClickListener{
         return mUpcomingAdapter.getItemCount();
     }
 
-    public void onActionClick(@NonNull UpcomingAction action){
-        //mAdapter.mListener.onActionSelected(action);
-    }
-
     public void onActionOverflowClick(@NonNull View view, @NonNull UpcomingAction action){
         //mAdapter.showActionPopup(view, action);
     }
@@ -189,6 +186,7 @@ class UpcomingHolder extends MainFeedViewHolder implements View.OnClickListener{
             mTime = (TextView)rootView.findViewById(R.id.action_time);
 
             rootView.setOnClickListener(this);
+            rootView.findViewById(R.id.action_overflow_box).setOnClickListener(this);
         }
 
         public void bind(@NonNull UpcomingAction action){
@@ -198,8 +196,15 @@ class UpcomingHolder extends MainFeedViewHolder implements View.OnClickListener{
         }
 
         @Override
-        public void onClick(View v){
+        public void onClick(View view){
+            switch (view.getId()){
+                case R.id.action_overflow_box:
+                    break;
 
+                default:
+                    mSelectedAction = mActions.get(getAdapterPosition());
+                    mAdapter.mListener.onActionSelected(mSelectedAction);
+            }
         }
     }
 }

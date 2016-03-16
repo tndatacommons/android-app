@@ -62,7 +62,7 @@
             android:id="@+id/action_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="right"
+            android:gravity="end"
             android:textColor="@color/secondary_text_color"
             android:textSize="15sp" />
 

@@ -1,15 +1,18 @@
 package org.tndata.android.compass.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 
 /**
  * Created by isma on 3/10/16.
  */
-public class UpcomingAction{
+public class UpcomingAction implements Parcelable{
     public static final String API_TYPE = "upcoming_item";
 
-    @SerializedName("acton_id")
+    @SerializedName("action_id")
     private long mId;
     @SerializedName("action")
     private String mTitle;
@@ -23,6 +26,8 @@ public class UpcomingAction{
     private boolean mEditable;
     @SerializedName("goal_id")
     private long mGoalId;
+    @SerializedName("category_id")
+    private long mCategoryId;
     @SerializedName("type")
     private String mType;
 
@@ -33,6 +38,10 @@ public class UpcomingAction{
 
     public long getGoalId(){
         return mGoalId;
+    }
+
+    public long getCategoryId(){
+        return mCategoryId;
     }
 
     public String getTitle(){
@@ -73,5 +82,61 @@ public class UpcomingAction{
 
     public boolean isCustomAction(){
         return mType.equals("customaction");
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if (o == null || !(o instanceof UpcomingAction)){
+            return false;
+        }
+        UpcomingAction action = (UpcomingAction)o;
+        return mType.equals(action.mType) && mId == action.mId;
+    }
+
+    @Override
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags){
+        dest.writeLong(mId);
+        dest.writeString(mTitle);
+        dest.writeString(mGoalTitle);
+        dest.writeString(mTrigger);
+        dest.writeString(mColor);
+        dest.writeByte((byte)(mEditable ? 1 : 0));
+        dest.writeLong(mGoalId);
+        dest.writeLong(mCategoryId);
+        dest.writeString(mType);
+    }
+
+    public static final Parcelable.Creator<UpcomingAction> CREATOR = new Parcelable.Creator<UpcomingAction>(){
+        @Override
+        public UpcomingAction createFromParcel(Parcel in){
+            return new UpcomingAction(in);
+        }
+
+        @Override
+        public UpcomingAction[] newArray(int size){
+            return new UpcomingAction[size];
+        }
+    };
+
+    /**
+     * Constructor to create from parcel.
+     *
+     * @param in the parcel where the object is stored.
+     */
+    private UpcomingAction(Parcel in){
+        mId = in.readLong();
+        mTitle = in.readString();
+        mGoalTitle = in.readString();
+        mTrigger = in.readString();
+        mColor = in.readString();
+        mEditable = in.readByte() == 1;
+        mGoalId = in.readLong();
+        mCategoryId = in.readLong();
+        mType = in.readString();
     }
 }
