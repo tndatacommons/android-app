@@ -33,7 +33,7 @@ import es.sandwatch.httprequests.HttpRequestError;
  * whether they did it or snooze the action.
  *
  * @author Ismael Alonso
- * @version 1.2.1
+ * @version 1.3.0
  */
 public class ActionActivity
         extends MaterialActivity
@@ -42,8 +42,8 @@ public class ActionActivity
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback{
 
-    public static final String UPCOMING_ACTION_KEY = "org.tndata.compass.ActionActivity.Upcoming";
     public static final String ACTION_KEY = "org.tndata.compass.ActionActivity.Action";
+    public static final String UPCOMING_ACTION_KEY = "org.tndata.compass.ActionActivity.Upcoming";
     public static final String REMINDER_KEY = "org.tndata.compass.ActionActivity.Reminder";
 
     public static final String DID_IT_KEY = "org.tndata.compass.ActionActivity.DidIt";
@@ -62,9 +62,6 @@ public class ActionActivity
 
     private int mGetActionRC;
     private int mGetCategoryRC;
-
-    //Firewall
-    private boolean mActionUpdated;
 
 
     @Override
@@ -100,8 +97,6 @@ public class ActionActivity
         mAdapter = new ActionAdapter(this, this, mAction, mCategory);
         setAdapter(mAdapter);
 
-        mActionUpdated = false;
-
         //If the action wasn't provided via the intent it needs to be fetched
         if (mAction == null){
             mUpcomingAction = getIntent().getParcelableExtra(UPCOMING_ACTION_KEY);
@@ -126,6 +121,11 @@ public class ActionActivity
         }
     }
 
+    /**
+     * Tells whether the action is a user action.
+     *
+     * @return true if it is a user action, false otherwise.
+     */
     @SuppressWarnings("RedundantIfStatement")
     private boolean isUserAction(){
         if (mAction != null && mAction instanceof UserAction){
@@ -140,6 +140,11 @@ public class ActionActivity
         return false;
     }
 
+    /**
+     * Tells whether the action is a custom action.
+     *
+     * @return true if it is a custom action, false otherwise.
+     */
     @SuppressWarnings("RedundantIfStatement")
     private boolean isCustomAction(){
         if (mAction != null && mAction instanceof CustomAction){
@@ -154,6 +159,12 @@ public class ActionActivity
         return false;
     }
 
+    /**
+     * Gets the id of the action. This will be the mapping id in the case of a user action
+     * and the object id in case of a user action.
+     *
+     * @return the relevant id for the action.
+     */
     private int getActionId(){
         if (mUpcomingAction != null){
             return (int)mUpcomingAction.getId();
@@ -184,6 +195,11 @@ public class ActionActivity
         }
     }
 
+    /**
+     * Fetches a category from the backend.
+     *
+     * @param userAction the user action whose category is to be fetched.
+     */
     private void fetchCategory(UserAction userAction){
         mGetCategoryRC = HttpRequest.get(this, API.getCategoryUrl(userAction.getPrimaryCategoryId()));
     }
@@ -272,10 +288,14 @@ public class ActionActivity
     }
 
     @Override
-    public void onIDidItClick(){
-        if (mAction != null && !mActionUpdated){
-            mActionUpdated = true;
+    public void onBackPressed(){
+        setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, mAction));
+        finish();
+    }
 
+    @Override
+    public void onIDidItClick(){
+        if (mAction != null){
             startService(new Intent(this, ActionReportService.class)
                     .putExtra(ActionReportService.ACTION_KEY, mAction)
                     .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
@@ -287,7 +307,7 @@ public class ActionActivity
 
     @Override
     public void onRescheduleClick(){
-        if (mAction != null && !mActionUpdated){
+        if (mAction != null){
             Intent reschedule = new Intent(this, TriggerActivity.class)
                     .putExtra(TriggerActivity.ACTION_KEY, mAction)
                     .putExtra(TriggerActivity.GOAL_KEY, mAction.getGoal());
@@ -297,7 +317,7 @@ public class ActionActivity
 
     @Override
     public void onSnoozeClick(){
-        if (mAction != null && !mActionUpdated){
+        if (mAction != null){
             Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
                     .putExtra(NotificationUtil.REMINDER_KEY, mReminder);
             startActivityForResult(snoozeIntent, SNOOZE_REQUEST_CODE);
@@ -317,19 +337,12 @@ public class ActionActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (resultCode == RESULT_OK){
             switch (requestCode){
-                case RESCHEDULE_REQUEST_CODE:if (mReminder.isUserAction()){
-                    NotificationUtil.cancel(this, NotificationUtil.USER_ACTION_TAG,
-                            mReminder.getUserMappingId());
-                }
-                else if (mReminder.isCustomAction()){
-                    NotificationUtil.cancel(this, NotificationUtil.CUSTOM_ACTION_TAG,
-                            mReminder.getObjectId());
-                }
+                case RESCHEDULE_REQUEST_CODE:
+                    NotificationUtil.cancel(this, NotificationUtil.USER_ACTION_TAG, getActionId());
 
                 //In either case, the activity should finish after a second
                 case SNOOZE_REQUEST_CODE:
-                    mActionUpdated = true;
-                    setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, false));
+                    setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, mAction));
                     finish();
             }
         }
