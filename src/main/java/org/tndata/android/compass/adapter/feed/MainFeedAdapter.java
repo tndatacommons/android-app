@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,7 +58,6 @@ public class MainFeedAdapter
 
     private UserData mUserData;
     private FeedData mFeedData;
-    private DataHandler mDataHandler;
     private FeedUtil mFeedUtil;
     private GoalContent mSuggestion;
 
@@ -91,7 +89,6 @@ public class MainFeedAdapter
             mListener.onNullData();
         }
         else{
-            mDataHandler = new DataHandler(mUserData);
             CardTypes.setDataSource(mFeedData);
             List<GoalContent> suggestions = mUserData.getFeedData().getSuggestions();
             if (suggestions.isEmpty()){
@@ -230,11 +227,11 @@ public class MainFeedAdapter
         }
         //Up next
         else if (CardTypes.isUpNext(position)){
-            ((UpNextHolder)rawHolder).bind(mUserData.getFeedData().getUpNextActionX());
+            ((UpNextHolder)rawHolder).bind(mFeedData.getUpNextActionX(), mFeedData.getProgress());
         }
         //Feedback
         else if (CardTypes.isFeedback(position)){
-            ((FeedbackHolder)rawHolder).bind(mUserData.getFeedData());
+            ((FeedbackHolder)rawHolder).bind(mFeedData.getFeedback());
         }
         //Goal suggestion card
         else if (CardTypes.isSuggestion(position)){
@@ -267,10 +264,6 @@ public class MainFeedAdapter
     /*----------------------*
      * FEED ADAPTER METHODS *
      *----------------------*/
-
-    DataHandler getDataHandler(){
-        return mDataHandler;
-    }
 
     public void setSelectedAction(UpcomingAction selectedAction){
         mSelectedAction = selectedAction;
@@ -326,20 +319,7 @@ public class MainFeedAdapter
      * @param action the action to be marked as done.
      */
     public void didIt(UpcomingAction action){
-        Log.d("MainFeed", "Done: " + action);
-        Log.d("MainFeed", "Stored: " + mUserData.getFeedData().getUpNextActionX());
-        if (mUserData.getFeedData().getUpNextActionX().equals(action)){
-            mDataHandler.didIt();
-            //mFeedUtil.didIt(mContext, mDataHandler.getUpNext());
-            mDataHandler.replaceUpNext();
-            mUpcomingHolder.removeFirstAction();
-        }
-        else{
-            mDataHandler.didIt();
-            //Good grief. Period.
-            //mFeedUtil.didIt(mContext, action);
-            mUpcomingHolder.removeAction(action);
-        }
+        mFeedData.removeUpcomingActionX(action, true);
     }
 
     /**
@@ -363,7 +343,7 @@ public class MainFeedAdapter
      * @param action the action to be removed.
      */
     void remove(UpcomingAction action){
-        mDataHandler.remove(action);
+        mFeedData.removeUpcomingActionX(action, false);
         mUpcomingHolder.removeAction(action);
         /*NetworkRequest.delete(mContext, null, API.getDeleteActionUrl(action),
                 ((CompassApplication)mContext.getApplicationContext()).getToken(), new JSONObject());*/
@@ -413,8 +393,8 @@ public class MainFeedAdapter
      * Loads the next batch of actions into the feed.
      */
     void moreActions(){
-        mUpcomingHolder.addActions(mDataHandler.loadMoreUpcoming(mUpcomingHolder.getItemCount()));
-        if (!mDataHandler.canLoadMoreActions(mUpcomingHolder.getItemCount())){
+        mUpcomingHolder.addActions(mFeedData.loadMoreUpcomingX(mUpcomingHolder.getItemCount()));
+        if (!mFeedData.canLoadMoreActionsX(mUpcomingHolder.getItemCount())){
             mUpcomingHolder.hideFooter();
         }
     }

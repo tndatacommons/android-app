@@ -15,6 +15,8 @@ import org.tndata.android.compass.model.FeedData;
  * @version 1.0.0
  */
 class FeedbackHolder extends MainFeedViewHolder implements View.OnClickListener{
+    private FeedData.ActionFeedback mFeedback;
+
     private ImageView mIcon;
     private TextView mTitle;
     private TextView mSubtitle;
@@ -36,19 +38,21 @@ class FeedbackHolder extends MainFeedViewHolder implements View.OnClickListener{
         rootView.setOnClickListener(this);
     }
 
-    @Override
-    public void onClick(View v){
-        mAdapter.mListener.onFeedbackSelected(mAdapter.getDataHandler().getFeedbackGoal());
-    }
-
     /**
      * Retrieves the values of the feedback from the feed data bundle.
      *
-     * @param feedData the feed data bundle.
+     * @param feedback the feed data bundle.
      */
-    void bind(FeedData feedData){
-        mIcon.setImageResource(feedData.getFeedbackIcon());
-        mTitle.setText(feedData.getFeedbackTitle());
-        mSubtitle.setText(feedData.getFeedbackSubtitle());
+    void bind(FeedData.ActionFeedback feedback){
+        mFeedback = feedback;
+
+        mIcon.setImageResource(feedback.getFeedbackIcon());
+        mTitle.setText(feedback.getFeedbackTitle());
+        mSubtitle.setText(feedback.getFeedbackSubtitle());
+    }
+
+    @Override
+    public void onClick(View v){
+        mAdapter.mListener.onFeedbackSelected(mFeedback);
     }
 }

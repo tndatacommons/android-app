@@ -1,11 +1,13 @@
 package org.tndata.android.compass.adapter.feed;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.view.View;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.util.CompassUtil;
 
@@ -76,27 +78,12 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
         mOverflow.setOnClickListener(this);
     }
 
-    @Override
-    public void onClick(View view){
-        switch (view.getId()){
-            case R.id.up_next_overflow_box:
-                mAdapter.setSelectedAction(mAction);
-                mAdapter.showActionPopup(view, mAction);
-                break;
-
-            default:
-                if (mAction != null){
-                    mAdapter.mListener.onActionSelected(mAction);
-                }
-        }
-    }
-
     /**
      * Binds an action to the holder.
      *
      * @param action the action to be bound to the holder.
      */
-    void bind(@Nullable UpcomingAction action){
+    void bind(@Nullable UpcomingAction action, @NonNull FeedData.Progress progress){
         mAction = action;
 
         if (action == null){
@@ -104,7 +91,7 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
             mNoActionsContainer.setVisibility(View.VISIBLE);
             mContentContainer.setVisibility(View.GONE);
 
-            if (mAdapter.getDataHandler().getTotalActions() != 0){
+            if (progress.getTotalActions() != 0){
                 mHeader.setText(R.string.card_up_next_header_completed);
                 mNoActionsTitle.setText(R.string.card_up_next_title_completed);
                 mNoActionsSubtitle.setText(R.string.card_up_next_subtitle_completed);
@@ -130,14 +117,28 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
         }
 
         mIndicator.setAutoTextSize(true);
-        mIndicator.setValue(mAdapter.getDataHandler().getProgress());
+        mIndicator.setValue(progress.getProgressPercentage());
         mIndicator.setTextMode(TextMode.TEXT);
-        mIndicator.setValueAnimated(0, mAdapter.getDataHandler().getProgress(), 1500);
-        mIndicatorCaption.setText(mAdapter.mContext.getString(R.string.card_up_next_indicator_caption,
-                mAdapter.getDataHandler().getProgressFraction()));
-
+        mIndicator.setValueAnimated(0, progress.getProgressPercentage(), 1500);
+        @StringRes int capRes = R.string.card_up_next_indicator_caption;
+        mIndicatorCaption.setText(mAdapter.mContext.getString(capRes, progress.getProgressFraction()));
         Calendar calendar = Calendar.getInstance();
         String month = CompassUtil.getMonthString(calendar.get(Calendar.MONTH) + 1);
         mIndicator.setText(month + " " + calendar.get(Calendar.DAY_OF_MONTH));
+    }
+
+    @Override
+    public void onClick(View view){
+        switch (view.getId()){
+            case R.id.up_next_overflow_box:
+                mAdapter.setSelectedAction(mAction);
+                mAdapter.showActionPopup(view, mAction);
+                break;
+
+            default:
+                if (mAction != null){
+                    mAdapter.mListener.onActionSelected(mAction);
+                }
+        }
     }
 }

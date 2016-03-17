@@ -13,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,6 +34,7 @@ import org.tndata.android.compass.adapter.feed.MainFeedAdapterListener;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.CustomGoal;
+import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UpcomingAction;
@@ -502,11 +502,14 @@ public class MainActivity
     }
 
     @Override
-    public void onFeedbackSelected(Goal goal){
-        if (goal != null && goal instanceof UserGoal){
-            Intent goalActivityIntent = new Intent(this, GoalActivity.class)
+    public void onFeedbackSelected(FeedData.ActionFeedback feedback){
+        if (feedback.hasUserGoal()){
+            /*Intent goalActivityIntent = new Intent(this, GoalActivity.class)
                     .putExtra(GoalActivity.USER_GOAL_KEY, goal);
-            startActivityForResult(goalActivityIntent, GOAL_REQUEST_CODE);
+            startActivityForResult(goalActivityIntent, GOAL_REQUEST_CODE);*/
+        }
+        else if (feedback.hasCustomGoal()){
+            //TODO
         }
     }
 

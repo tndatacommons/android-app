@@ -12,8 +12,6 @@ import org.tndata.android.compass.ui.ContentContainer;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +24,8 @@ import java.util.List;
  */
 public class FeedData extends TDCBase{
     public static final String TYPE = "feed_data";
+
+    private static final int LOAD_MORE_COUNT = 3;
 
 
     //API delivered fields
@@ -63,6 +63,7 @@ public class FeedData extends TDCBase{
         }
         else{
             mUpNextActionX = upcomingActions.remove(0);
+            mActionFeedback.setFeedbackGoal(mUpNextActionX);
             mUpcomingActionsX = upcomingActions;
         }
     }
@@ -90,6 +91,56 @@ public class FeedData extends TDCBase{
 
     public String getNextGoalBatchUrl(){
         return mNextGoalBatchUrlX;
+    }
+
+    public UpcomingAction replaceUpNextActionX(){
+        if (mUpcomingActionsX.isEmpty()){
+            mUpNextActionX = null;
+        }
+        else{
+            mUpNextActionX = mUpcomingActionsX.remove(0);
+        }
+        return mUpNextActionX;
+    }
+
+    public void removeUpcomingActionX(UpcomingAction action, boolean didIt){
+        if (didIt){
+            mProgress.complete();
+        }
+        else{
+            mProgress.remove();
+        }
+
+        if (mUpNextActionX.equals(action)){
+            replaceUpNextActionX();
+        }
+        else{
+            mUpcomingActionsX.remove(action);
+        }
+    }
+
+    /**
+     * Returns the next batch of actions to be displayed in the feed.
+     *
+     * @param displayedActions the number of actions already being displayed in the feed.
+     * @return a list containing the new actions.
+     */
+    public List<UpcomingAction> loadMoreUpcomingX(int displayedActions){
+        List<UpcomingAction> actions = new ArrayList<>();
+        while (actions.size() < LOAD_MORE_COUNT && canLoadMoreActionsX(displayedActions + actions.size())){
+            actions.add(mUpcomingActionsX.get(displayedActions + actions.size()));
+        }
+        return actions;
+    }
+
+    /**
+     * Tells whether there are more actions to display.
+     *
+     * @param displayedActions the number of actions already being displayed in the feed.
+     * @return true if there are more actions to load, false otherwise.
+     */
+    public boolean canLoadMoreActionsX(int displayedActions){
+        return displayedActions < mUpcomingActionsX.size();
     }
 
 
@@ -127,136 +178,12 @@ public class FeedData extends TDCBase{
         return mActionFeedback != null;
     }
 
-    /**
-     * Sets the feedback title.
-     *
-     * @param feedbackTitle the feedback title
-     */
-    public void setFeedbackTitle(String feedbackTitle){
-        mActionFeedback.mFeedbackTitle = feedbackTitle;
+    public ActionFeedback getFeedback(){
+        return mActionFeedback;
     }
 
-    /**
-     * Gets the feedback title.
-     *
-     * @return the feedback title.
-     */
-    public String getFeedbackTitle(){
-        return mActionFeedback.mFeedbackTitle;
-    }
-
-    /**
-     * Sets the feedback subtitle.
-     *
-     * @param feedbackSubtitle the feedback subtitle.
-     */
-    public void setFeedbackSubtitle(String feedbackSubtitle){
-        mActionFeedback.mFeedbackSubtitle = feedbackSubtitle;
-    }
-
-    /**
-     * Gets the feedback subtitle.
-     *
-     * @return the feedback subtitle.
-     */
-    public String getFeedbackSubtitle(){
-        return mActionFeedback.mFeedbackSubtitle;
-    }
-
-    /**
-     * Sets the feedback icon id.
-     *
-     * @param feedbackIconId the feedback icon id.
-     */
-    public void setFeedbackIconId(int feedbackIconId){
-        mActionFeedback.mFeedbackIconId = feedbackIconId;
-    }
-
-    /**
-     * Gets the feedback icon resource id.
-     *
-     * @return the feedback icon resource id.
-     */
-    @DrawableRes
-    public int getFeedbackIcon(){
-        switch (mActionFeedback.mFeedbackIconId){
-            case 1:
-                return R.drawable.feedback1;
-            case 2:
-                return R.drawable.feedback2;
-            case 3:
-                return R.drawable.feedback3;
-            case 4:
-                return R.drawable.feedback4;
-            default:
-                return 0;
-        }
-    }
-
-    /**
-     * Sets the total actions.
-     *
-     * @param totalActions the total actions.
-     */
-    public void setTotalActions(int totalActions){
-        mProgress.mTotalActions = totalActions;
-    }
-
-    /**
-     * Sets the completed actions.
-     *
-     * @param completedActions the completed actions.
-     */
-    public void setCompletedActions(int completedActions){
-        mProgress.mCompletedActions = completedActions;
-    }
-
-
-
-    /**
-     *
-     * Sets the progress percentage of completed actions.
-     *
-     * @param percentage progress percentage of completed actions.
-     */
-    public void setProgressPercentage(int percentage){
-        mProgress.mPercentage = percentage;
-    }
-
-    /**
-     * Gets the completed actions,
-     *
-     * @return the completed actions.
-     */
-    public int getCompletedActions(){
-        return mProgress.mCompletedActions;
-    }
-
-    /**
-     * Gets the total actions.
-     *
-     * @return the total actions.
-     */
-    public int getTotalActions(){
-        return mProgress.mTotalActions;
-    }
-
-    /**
-     * Gets the progress percentage of completed actions.
-     *
-     * @return the progress percentage of completed actions.
-     */
-    public int getProgress(){
-        return mProgress.mPercentage;
-    }
-
-    /**
-     * Gets the progress percentage as a fraction.
-     *
-     * @return the progress percentage as a fraction.
-     */
-    public String getProgressFraction(){
-        return mProgress.mCompletedActions + "/" + mProgress.mTotalActions;
+    public Progress getProgress(){
+        return mProgress;
     }
 
     /**
@@ -470,22 +397,153 @@ public class FeedData extends TDCBase{
     }
 
 
-    private class ActionFeedback{
+    /**
+     * Model for an action feedback. Also contains information about which goal's feedback
+     * is being displayed and the type of such goal.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    public class ActionFeedback{
         @SerializedName("title")
         private String mFeedbackTitle;
         @SerializedName("subtitle")
         private String mFeedbackSubtitle;
         @SerializedName("icon")
         private int mFeedbackIconId;
+
+        private long mFeedbackGoalIdX;
+        private String mFeedbackGoalTypeX;
+
+
+        /**
+         * Gets the feedback title.
+         *
+         * @return the feedback title.
+         */
+        public String getFeedbackTitle(){
+            return mFeedbackTitle;
+        }
+
+        /**
+         * Gets the feedback subtitle.
+         *
+         * @return the feedback subtitle.
+         */
+        public String getFeedbackSubtitle(){
+            return mFeedbackSubtitle;
+        }
+
+        /**
+         * Gets the feedback icon resource id.
+         *
+         * @return the feedback icon resource id.
+         */
+        @DrawableRes
+        public int getFeedbackIcon(){
+            switch (mFeedbackIconId){
+                case 1:
+                    return R.drawable.feedback1;
+                case 2:
+                    return R.drawable.feedback2;
+                case 3:
+                    return R.drawable.feedback3;
+                case 4:
+                    return R.drawable.feedback4;
+                default:
+                    return 0;
+            }
+        }
+
+        private void setFeedbackGoal(UpcomingAction action){
+            mFeedbackGoalIdX = action.getGoalId();
+            if (action.isUserAction()){
+                mFeedbackGoalTypeX = "usergoal";
+            }
+            else if (action.isCustomAction()){
+                mFeedbackGoalTypeX = "customgoal";
+            }
+        }
+
+        public long getFeedbackGoalId(){
+            return mFeedbackGoalIdX;
+        }
+
+        public boolean hasUserGoal(){
+            return mFeedbackGoalTypeX.equals("usergoal");
+        }
+
+        public boolean hasCustomGoal(){
+            return mFeedbackGoalTypeX.equals("customgoal");
+        }
     }
 
 
-    private class Progress{
+    /**
+     * Model for the user's daily progress towards actions.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    public class Progress{
         @SerializedName("total")
         private int mTotalActions;
         @SerializedName("completed")
         private int mCompletedActions;
         @SerializedName("progress")
-        private int mPercentage;
+        private int mProgressPercentage;
+
+
+        /**
+         * Completes one action's stats in the data set.
+         */
+        private void complete(){
+            mCompletedActions++;
+            mProgressPercentage = mCompletedActions * 100 / mTotalActions;
+        }
+
+        /**
+         * Removes one action's stats from the data set.
+         */
+        private void remove(){
+            mTotalActions--;
+            mProgressPercentage = mCompletedActions * 100 / mTotalActions;
+        }
+
+        /**
+         * Gets the total actions.
+         *
+         * @return the total actions.
+         */
+        public int getTotalActions(){
+            return mTotalActions;
+        }
+
+        /**
+         * Gets the completed actions,
+         *
+         * @return the completed actions.
+         */
+        public int getCompletedActions(){
+            return mCompletedActions;
+        }
+
+        /**
+         * Gets the progress percentage of completed actions.
+         *
+         * @return the progress percentage of completed actions.
+         */
+        public int getProgressPercentage(){
+            return mProgressPercentage;
+        }
+
+        /**
+         * Gets the progress percentage as a fraction.
+         *
+         * @return the progress percentage as a fraction.
+         */
+        public String getProgressFraction(){
+            return mCompletedActions + "/" + mTotalActions;
+        }
     }
 }
