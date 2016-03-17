@@ -4,17 +4,16 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ReviewActionsAdapter;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.BehaviorContent;
+import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserGoal;
@@ -49,10 +48,6 @@ public class ReviewActionsActivity
     public static final int ACTION_ACTIVITY_RC = 4562;
 
 
-    private UserCategory mUserCategory;
-    private UserGoal mUserGoal;
-    private UserBehavior mUserBehavior;
-
     private Action mSelectedAction;
     private ReviewActionsAdapter mAdapter;
 
@@ -67,29 +62,38 @@ public class ReviewActionsActivity
 
         CompassApplication app = (CompassApplication)getApplication();
 
-        mUserCategory = (UserCategory)getIntent().getSerializableExtra(USER_CATEGORY_KEY);
-        mUserGoal = (UserGoal)getIntent().getSerializableExtra(USER_GOAL_KEY);
-        mUserBehavior = (UserBehavior)getIntent().getSerializableExtra(USER_BEHAVIOR_KEY);
-        if (mUserBehavior != null){
-            String title = getString(R.string.review_actions_header, mUserBehavior.getTitle());
-            mAdapter = new ReviewActionsAdapter(this, this, title);
-            mGetActionsNextUrl = API.getUserActionsUrl(mUserBehavior.getBehavior());
-            setColor(Color.parseColor(mUserGoal.getPrimaryCategory().getColor()));
-            setBehaviorHeader();
+        //A UserCategory is all it's needed when a category's actions are to be displayed
+        UserCategory userCategory = (UserCategory)getIntent().getSerializableExtra(USER_CATEGORY_KEY);
+        //If either a UserGoal's actions or a UserBehavior's actions are to be displayed
+        //  the a CategoryContent can be used to populate headers. In this case a UserGoal
+        //  will always be available, so the primary category id can be used to retrieve
+        //  it from the Application class list
+        UserGoal userGoal = (UserGoal)getIntent().getSerializableExtra(USER_GOAL_KEY);
+        UserBehavior userBehavior = (UserBehavior)getIntent().getSerializableExtra(USER_BEHAVIOR_KEY);
+
+        if (userGoal != null){
+            CategoryContent category = app.getPublicCategories().get(userGoal.getPrimaryCategoryId());
+            if (userBehavior != null){
+                String title = getString(R.string.review_actions_header, userBehavior.getTitle());
+                mAdapter = new ReviewActionsAdapter(this, this, title);
+                mGetActionsNextUrl = API.getUserActionsUrl(userBehavior.getBehavior());
+                setColor(Color.parseColor(category.getColor()));
+                setBehaviorHeader(userBehavior.getBehavior());
+            }
+            else{
+                String title = getString(R.string.review_actions_header, userGoal.getTitle());
+                mAdapter = new ReviewActionsAdapter(this, this, title);
+                mGetActionsNextUrl = API.getUserActionsUrl(userGoal.getGoal());
+                setColor(Color.parseColor(category.getColor()));
+                setGoalHeader(category);
+            }
         }
-        else if (mUserGoal != null){
-            String title = getString(R.string.review_actions_header, mUserGoal.getTitle());
+        else if (userCategory != null){
+            String title = getString(R.string.review_actions_header_cat, userCategory.getTitle());
             mAdapter = new ReviewActionsAdapter(this, this, title);
-            mGetActionsNextUrl = API.getUserActionsUrl(mUserGoal.getGoal());
-            setColor(Color.parseColor(mUserGoal.getPrimaryCategory().getColor()));
-            setGoalHeader();
-        }
-        else if (mUserCategory != null){
-            String title = getString(R.string.review_actions_header_cat, mUserCategory.getTitle());
-            mAdapter = new ReviewActionsAdapter(this, this, title);
-            mGetActionsNextUrl = API.getUserActionsUrl(mUserCategory.getCategory());
-            setColor(Color.parseColor(mUserCategory.getColor()));
-            setCategoryHeader();
+            mGetActionsNextUrl = API.getUserActionsUrl(userCategory.getCategory());
+            setColor(Color.parseColor(userCategory.getColor()));
+            setCategoryHeader(userCategory.getCategory());
         }
         else{
             finish();
@@ -99,40 +103,27 @@ public class ReviewActionsActivity
         mSelectedAction = null;
     }
 
-    @SuppressWarnings("deprecation")
-    private void setBehaviorHeader(){
+    private void setBehaviorHeader(BehaviorContent behavior){
         View header = inflateHeader(R.layout.header_icon);
-        RelativeLayout circle = (RelativeLayout)header.findViewById(R.id.header_icon_circle);
-        ImageView icon = (ImageView)header.findViewById(R.id.header_icon_icon);
-
-        GradientDrawable gradientDrawable = (GradientDrawable) circle.getBackground();
-        gradientDrawable.setColor(Color.parseColor(mUserGoal.getPrimaryCategory().getColor()));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-            circle.setBackground(gradientDrawable);
-        }
-        else{
-            circle.setBackgroundDrawable(gradientDrawable);
-        }
-
-        mUserBehavior.getBehavior().loadIconIntoView(icon);
+        behavior.loadIconIntoView((ImageView)header.findViewById(R.id.header_icon_icon));
     }
 
-    private void setGoalHeader(){
+    private void setGoalHeader(CategoryContent category){
         View header = inflateHeader(R.layout.header_tile);
         ImageView tile = (ImageView)header.findViewById(R.id.header_tile);
 
-        int id = CompassUtil.getCategoryTileResId(mUserGoal.getPrimaryCategory().getTitle());
+        int id = CompassUtil.getCategoryTileResId(category.getTitle());
         Bitmap image = BitmapFactory.decodeResource(getResources(), id);
         Bitmap circle = ImageHelper.getCircleBitmap(image, CompassUtil.getPixels(this, 200));
         tile.setImageBitmap(circle);
         image.recycle();
     }
 
-    private void setCategoryHeader(){
+    private void setCategoryHeader(CategoryContent category){
         View header = inflateHeader(R.layout.header_hero);
         ImageView hero = (ImageView)header.findViewById(R.id.header_hero_image);
         ImageLoader.Options options = new ImageLoader.Options().setUsePlaceholder(false);
-        ImageLoader.loadBitmap(hero, mUserCategory.getCategory().getImageUrl(), options);
+        ImageLoader.loadBitmap(hero, category.getImageUrl(), options);
     }
 
     @Override

@@ -7,7 +7,7 @@
     android:layout_marginBottom="15dp"
     android:gravity="center"
     android:layout_gravity="center"
-    android:background="@drawable/circle_gray" >
+    android:background="@drawable/circle_white" >
 
     <ImageView
         android:contentDescription="@string/header_icon_cd"
