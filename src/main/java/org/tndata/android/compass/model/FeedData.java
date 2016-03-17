@@ -1,6 +1,8 @@
 package org.tndata.android.compass.model;
 
 import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
@@ -50,6 +52,8 @@ public class FeedData extends TDCBase{
     //Experiment
     private UpcomingAction mUpNextActionX;
     private List<UpcomingAction> mUpcomingActionsX;
+    private List<Goal> mDisplayedGoalsX;
+    private String mNextGoalBatchUrlX;
 
 
     public void setUpcomingActionsX(List<UpcomingAction> upcomingActions){
@@ -73,6 +77,19 @@ public class FeedData extends TDCBase{
 
     public List<UpcomingAction> getUpcomingActionsX(){
         return mUpcomingActionsX;
+    }
+
+    public void addGoalsX(@NonNull List<? extends Goal> goals, @Nullable String nextBatchUrl){
+        mDisplayedGoalsX.addAll(goals);
+        mNextGoalBatchUrlX = nextBatchUrl;
+    }
+
+    public List<Goal> getGoalsX(){
+        return mDisplayedGoalsX;
+    }
+
+    public String getNextGoalBatchUrl(){
+        return mNextGoalBatchUrlX;
     }
 
 
@@ -448,6 +465,8 @@ public class FeedData extends TDCBase{
         else{*/
             mGoals.addAll(mSuggestions);
         /*}*/
+
+        mDisplayedGoalsX = new ArrayList<>();
     }
 
 

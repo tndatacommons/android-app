@@ -19,12 +19,17 @@ import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.ui.ContentContainer;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.List;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -33,7 +38,12 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 2.0.0
  */
-public class MainFeedAdapter extends RecyclerView.Adapter{
+public class MainFeedAdapter
+        extends RecyclerView.Adapter
+        implements
+                HttpRequest.RequestCallback,
+                Parser.ParserCallback{
+
     //Item view types
     private static final int TYPE_BLANK = 0;
     private static final int TYPE_WELCOME = TYPE_BLANK+1;
@@ -238,7 +248,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             }
             ((GoalsHolder)rawHolder).bind(title);
             if (mGoalsHolder.getItemCount() == 0){
-                moreGoals();
+                mGoalsHolder.setGoals(mUserData.getFeedData().getGoalsX());
             }
         }
     }
@@ -300,16 +310,6 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      */
     void showActionPopup(View anchor, UpcomingAction action){
         mFeedUtil.showActionPopup(anchor, action);
-    }
-
-    /**
-     * Generic did it to be called when events are triggered outside the adapter. It
-     * uses the selected item set using the setSelectedAction(int) method. If no item
-     * was set as selected prior to the call, it is ignored. The selected item is
-     * reset when this method is called.
-     */
-    public void didIt(){
-        didIt(mUpcomingHolder.didIt());
     }
 
     /**
@@ -418,13 +418,13 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * Loads the next batch of goals into the feed.
      */
     void moreGoals(){
-        for (ContentContainer.ContainerGoal goal:mDataHandler.loadMoreGoals(mGoalsHolder.getItemCount())){
+        /*for (ContentContainer.ContainerGoal goal:mDataHandler.loadMoreGoals(mGoalsHolder.getItemCount())){
             mGoalsHolder.addGoal(goal);
         }
         if (!mDataHandler.canLoadMoreGoals(mGoalsHolder.getItemCount())){
             mGoalsHolder.hideFooter();
-        }
-        mGoalsHolder.setAnimationsEnabled(true);
+        }*/
+
     }
 
 
@@ -440,5 +440,25 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             //mUpcomingHolder.updateAction(mSelectedAction);
             mSelectedAction = null;
         }
+    }
+
+    @Override
+    public void onRequestComplete(int requestCode, String result){
+
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode, HttpRequestError error){
+
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+
     }
 }

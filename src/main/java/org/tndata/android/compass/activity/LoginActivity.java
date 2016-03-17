@@ -71,6 +71,8 @@ public class LoginActivity
     private int mGetDataRC;
     private int mGetCategoriesRC;
     private int mGetUpcomingRCX;
+    private int mGetCustomGoalsRCX;
+    private int mGetUserGoalsRCX;
 
 
     @Override
@@ -295,8 +297,13 @@ public class LoginActivity
             Parser.parse(result, ParserModels.CategoryContentResultSet.class, this);
         }
         else if (requestCode == mGetUpcomingRCX){
-            Log.d("LogIn", result);
             Parser.parse(result, ParserModels.UpcomingActionsResultSet.class, this);
+        }
+        else if (requestCode == mGetCustomGoalsRCX){
+            Parser.parse(result, ParserModels.CustomGoalsResultSet.class, this);
+        }
+        else if (requestCode == mGetUserGoalsRCX){
+            Parser.parse(result, ParserModels.UserGoalsResultSet.class, this);
         }
     }
 
@@ -338,6 +345,10 @@ public class LoginActivity
             Log.d("LogIn", "Upcoming size: " + upcoming.size());
             mApplication.getFeedDataX().setUpcomingActionsX(upcoming);
         }
+        else if (result instanceof ParserModels.CustomGoalsResultSet){
+            ParserModels.CustomGoalsResultSet set = (ParserModels.CustomGoalsResultSet)result;
+            mApplication.getFeedDataX().addGoalsX(set.results, set.next);
+        }
     }
 
     @Override
@@ -362,6 +373,9 @@ public class LoginActivity
             mGetUpcomingRCX = HttpRequest.get(this, API.getUpcomingUrl());
         }
         else if (result instanceof ParserModels.UpcomingActionsResultSet){
+            mGetCustomGoalsRCX = HttpRequest.get(this, API.getCustomGoalsUrl());
+        }
+        else if (result instanceof ParserModels.CustomGoalsResultSet){
             transitionToMain();
         }
     }

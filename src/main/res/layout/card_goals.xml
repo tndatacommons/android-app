@@ -21,8 +21,8 @@
             android:textColor="@color/dark_text_color"
             android:padding="10dp" />
 
-        <org.tndata.android.compass.ui.ContentContainer
-            android:id="@+id/card_goals_goal_container"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/card_goals_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
