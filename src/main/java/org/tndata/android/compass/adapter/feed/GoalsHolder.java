@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -35,9 +36,12 @@ class GoalsHolder extends MainFeedViewHolder implements View.OnClickListener{
     private TextView mHeader;
     private RecyclerView mList;
     private View mMore;
+    private TextView mMoreButton;
+    private ProgressBar mMoreProgress;
 
     private GoalsAdapter mGoalsAdapter;
     private List<Goal> mGoals;
+    private int mPreviousSize;
 
 
     /**
@@ -56,12 +60,17 @@ class GoalsHolder extends MainFeedViewHolder implements View.OnClickListener{
         mList = (RecyclerView)rootView.findViewById(R.id.card_goals_list);
         mList.setLayoutManager(new LinearLayoutManager(mAdapter.mContext));
         mList.setAdapter(mGoalsAdapter);
-        mMore = rootView.findViewById(R.id.card_goals_more);
-        mMore.setOnClickListener(this);
+        mMore = rootView.findViewById(R.id.card_goals_more_container);
+        mMoreButton = (TextView)rootView.findViewById(R.id.card_goals_more);
+        mMoreProgress = (ProgressBar)rootView.findViewById(R.id.card_goals_more_progress);
+
+        mMoreButton.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view){
+        mMoreButton.setVisibility(View.GONE);
+        mMoreProgress.setVisibility(View.VISIBLE);
         mAdapter.moreGoals();
     }
 
@@ -87,15 +96,20 @@ class GoalsHolder extends MainFeedViewHolder implements View.OnClickListener{
         mList.requestLayout();
     }
 
-    void addGoals(@NonNull List<Goal> goals){if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-        ViewGroup target = (ViewGroup)itemView.getRootView();
-        Transition transition = new ChangeBounds();
-        transition.setDuration(500);
-        TransitionManager.beginDelayedTransition(target, transition);
+    void prepareGoalAddition(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            ViewGroup target = (ViewGroup)itemView.getRootView();
+            Transition transition = new ChangeBounds();
+            transition.setDuration(500);
+            TransitionManager.beginDelayedTransition(target, transition);
+        }
+        mPreviousSize = mGoals.size();
     }
-        int start = mGoals.size();
-        mGoals.addAll(goals);
-        mGoalsAdapter.notifyItemRangeInserted(start, mGoals.size());
+
+    void onGoalsAdded(){
+        mMoreButton.setVisibility(View.VISIBLE);
+        mMoreProgress.setVisibility(View.GONE);
+        mGoalsAdapter.notifyItemRangeInserted(mPreviousSize, mGoals.size());
         mList.requestLayout();
     }
 

@@ -27,7 +27,7 @@
             android:layout_height="wrap_content" />
 
         <LinearLayout
-            android:id="@+id/card_goals_more"
+            android:id="@+id/card_goals_more_container"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
@@ -35,6 +35,7 @@
             <include layout="@layout/separator" />
 
             <TextView
+                android:id="@+id/card_goals_more"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -42,6 +43,14 @@
                 android:textSize="15sp"
                 android:textColor="@color/grow_primary"
                 android:text="@string/card_footer_see_more" />
+
+            <ProgressBar
+                android:id="@+id/card_goals_more_progress"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="5dp"
+                android:layout_gravity="center"
+                android:visibility="gone" />
 
         </LinearLayout>
     </LinearLayout>

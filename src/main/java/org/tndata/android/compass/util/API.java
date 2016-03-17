@@ -174,6 +174,10 @@ public abstract class API{
         return BASE_URL + "goals/?category=" + category.getId();
     }
 
+    public static String getUserGoalsUrl(){
+        return BASE_URL + "users/goals/?page_size=3";
+    }
+
     public static String getTodaysGoalsUrl(){
         return BASE_URL + "users/goals/?today=1";
     }

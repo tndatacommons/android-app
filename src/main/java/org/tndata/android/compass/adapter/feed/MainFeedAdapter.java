@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UpcomingAction;
@@ -24,7 +25,6 @@ import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.ui.ContentContainer;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.List;
 
@@ -59,6 +59,7 @@ public class MainFeedAdapter
     final MainFeedAdapterListener mListener;
 
     private UserData mUserData;
+    private FeedData mFeedData;
     private DataHandler mDataHandler;
     private FeedUtil mFeedUtil;
     private GoalContent mSuggestion;
@@ -69,6 +70,8 @@ public class MainFeedAdapter
     private GoalsHolder mGoalsHolder;
 
     private UpcomingAction mSelectedAction;
+
+    private int mGetMoreGoalsRC;
 
 
     /**
@@ -83,6 +86,7 @@ public class MainFeedAdapter
         mContext = context;
         mListener = listener;
         mUserData = ((CompassApplication)mContext.getApplicationContext()).getUserData();
+        mFeedData = mUserData.getFeedData();
 
         if (mUserData.getFeedData() == null){
             mListener.onNullData();
@@ -418,6 +422,7 @@ public class MainFeedAdapter
      * Loads the next batch of goals into the feed.
      */
     void moreGoals(){
+        mGetMoreGoalsRC = HttpRequest.get(this, mUserData.getFeedData().getNextGoalBatchUrl());
         /*for (ContentContainer.ContainerGoal goal:mDataHandler.loadMoreGoals(mGoalsHolder.getItemCount())){
             mGoalsHolder.addGoal(goal);
         }
@@ -444,7 +449,14 @@ public class MainFeedAdapter
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-
+        if (requestCode == mGetMoreGoalsRC){
+            if (mFeedData.getNextGoalBatchUrl().contains("customgoals")){
+                Parser.parse(result, ParserModels.CustomGoalsResultSet.class, this);
+            }
+            else{
+                Parser.parse(result, ParserModels.UserGoalsResultSet.class, this);
+            }
+        }
     }
 
     @Override
@@ -459,6 +471,33 @@ public class MainFeedAdapter
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-
+        if (result instanceof ParserModels.CustomGoalsResultSet){
+            ParserModels.CustomGoalsResultSet set = (ParserModels.CustomGoalsResultSet)result;
+            String url = set.next;
+            if (url == null){
+                url = API.getUserGoalsUrl();
+            }
+            if (API.STAGING && url.startsWith("https")){
+                url = url.replaceFirst("s", "");
+            }
+            mGoalsHolder.prepareGoalAddition();
+            mFeedData.addGoalsX(set.results, url);
+            mGoalsHolder.onGoalsAdded();
+        }
+        else if (result instanceof ParserModels.UserGoalsResultSet){
+            ParserModels.UserGoalsResultSet set = (ParserModels.UserGoalsResultSet)result;
+            mGoalsHolder.prepareGoalAddition();
+            String url = set.next;
+            if (url == null){
+                mGoalsHolder.hideFooter();
+            }
+            else{
+                if (API.STAGING && url.startsWith("https")){
+                    url = url.replaceFirst("s", "");
+                }
+            }
+            mFeedData.addGoalsX(set.results, url);
+            mGoalsHolder.onGoalsAdded();
+        }
     }
 }

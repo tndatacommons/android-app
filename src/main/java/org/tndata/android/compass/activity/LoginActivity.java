@@ -347,7 +347,11 @@ public class LoginActivity
         }
         else if (result instanceof ParserModels.CustomGoalsResultSet){
             ParserModels.CustomGoalsResultSet set = (ParserModels.CustomGoalsResultSet)result;
-            mApplication.getFeedDataX().addGoalsX(set.results, set.next);
+            String url = set.next;
+            if (API.STAGING && url.startsWith("https")){
+                url = url.replaceFirst("s", "");
+            }
+            mApplication.getFeedDataX().addGoalsX(set.results, url);
         }
     }
 
