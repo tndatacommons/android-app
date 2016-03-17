@@ -16,7 +16,6 @@ import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UpcomingAction;
-import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
@@ -55,7 +54,6 @@ public class MainFeedAdapter
     final Context mContext;
     final MainFeedAdapterListener mListener;
 
-    private UserData mUserData;
     private FeedData mFeedData;
     private FeedUtil mFeedUtil;
     private GoalContent mSuggestion;
@@ -63,7 +61,7 @@ public class MainFeedAdapter
     private MainFeedPadding mMainFeedPadding;
 
     private UpcomingHolder mUpcomingHolder;
-    private GoalsHolder mGoalsHolder;
+    private GoalsHolder<Goal> mMyGoalsHolder;
 
     private UpcomingAction mSelectedAction;
 
@@ -81,15 +79,14 @@ public class MainFeedAdapter
                            boolean initialSuggestion){
         mContext = context;
         mListener = listener;
-        mUserData = ((CompassApplication)mContext.getApplicationContext()).getUserData();
-        mFeedData = mUserData.getFeedData();
+        mFeedData = ((CompassApplication)mContext.getApplicationContext()).getFeedDataX();
 
-        if (mUserData.getFeedData() == null){
+        if (mFeedData == null){
             mListener.onNullData();
         }
         else{
             CardTypes.setDataSource(mFeedData);
-            List<GoalContent> suggestions = mUserData.getFeedData().getSuggestions();
+            List<GoalContent> suggestions = mFeedData.getSuggestions();
             if (suggestions.isEmpty()){
                 mSuggestion = null;
             }
@@ -191,12 +188,12 @@ public class MainFeedAdapter
             return mUpcomingHolder;
         }
         else if (viewType == TYPE_MY_GOALS){
-            if (mGoalsHolder == null){
+            if (mMyGoalsHolder == null){
                 LayoutInflater inflater = LayoutInflater.from(mContext);
                 View rootView = inflater.inflate(R.layout.card_goals, parent, false);
-                mGoalsHolder = new GoalsHolder(this, rootView);
+                mMyGoalsHolder = new GoalsHolder<>(this, rootView);
             }
-            return mGoalsHolder;
+            return mMyGoalsHolder;
         }
         else if (viewType == TYPE_GOAL_SUGGESTIONS){
             //TODO
@@ -213,7 +210,7 @@ public class MainFeedAdapter
         //This is a possible fix to a crash where the application gets destroyed and the
         //  user data gets invalidated. In such a case, the app should restart and fetch
         //  the user data again. Bottomline, do not keep going
-        if (mUserData.getFeedData() == null){
+        if (mFeedData == null){
             return;
         }
 
@@ -245,8 +242,8 @@ public class MainFeedAdapter
         }
         //My goals
         else if (CardTypes.isMyGoals(position)){
-            if (mGoalsHolder.getItemCount() == 0){
-                mGoalsHolder.setGoals(mUserData.getFeedData().getGoalsX());
+            if (mMyGoalsHolder.getItemCount() == 0){
+                mMyGoalsHolder.setGoals(mFeedData.getGoalsX());
             }
         }
         else if (CardTypes.isGoalSuggestions(position)){
@@ -286,9 +283,9 @@ public class MainFeedAdapter
 
     public void updateDataSet(){
         if (mUpcomingHolder != null){
-            mUpcomingHolder.updateActions(mUserData.getFeedData());
+            mUpcomingHolder.updateActions(mFeedData);
         }
-        if (mGoalsHolder != null){
+        if (mMyGoalsHolder != null){
             //mGoalsHolder.updateGoals(mUserData.getFeedData().getGoals());
             notifyItemChanged(CardTypes.getGoalsPosition());
         }
@@ -367,7 +364,7 @@ public class MainFeedAdapter
     }
 
     void refreshSuggestion(){
-        List<GoalContent> suggestions = mUserData.getFeedData().getSuggestions();
+        List<GoalContent> suggestions = mFeedData.getSuggestions();
         mSuggestion = suggestions.get((int)(Math.random()*suggestions.size()));
         notifyItemChanged(CardTypes.getSuggestionPosition());
     }
@@ -402,14 +399,7 @@ public class MainFeedAdapter
      * Loads the next batch of goals into the feed.
      */
     void moreGoals(){
-        mGetMoreGoalsRC = HttpRequest.get(this, mUserData.getFeedData().getNextGoalBatchUrl());
-        /*for (ContentContainer.ContainerGoal goal:mDataHandler.loadMoreGoals(mGoalsHolder.getItemCount())){
-            mGoalsHolder.addGoal(goal);
-        }
-        if (!mDataHandler.canLoadMoreGoals(mGoalsHolder.getItemCount())){
-            mGoalsHolder.hideFooter();
-        }*/
-
+        mGetMoreGoalsRC = HttpRequest.get(this, mFeedData.getNextGoalBatchUrl());
     }
 
 
@@ -460,16 +450,16 @@ public class MainFeedAdapter
             if (API.STAGING && url.startsWith("https")){
                 url = url.replaceFirst("s", "");
             }
-            mGoalsHolder.prepareGoalAddition();
+            mMyGoalsHolder.prepareGoalAddition();
             mFeedData.addGoalsX(set.results, url);
-            mGoalsHolder.onGoalsAdded();
+            mMyGoalsHolder.onGoalsAdded();
         }
         else if (result instanceof ParserModels.UserGoalsResultSet){
             ParserModels.UserGoalsResultSet set = (ParserModels.UserGoalsResultSet)result;
-            mGoalsHolder.prepareGoalAddition();
+            mMyGoalsHolder.prepareGoalAddition();
             String url = set.next;
             if (url == null){
-                mGoalsHolder.hideFooter();
+                mMyGoalsHolder.hideFooter();
             }
             else{
                 if (API.STAGING && url.startsWith("https")){
@@ -477,7 +467,7 @@ public class MainFeedAdapter
                 }
             }
             mFeedData.addGoalsX(set.results, url);
-            mGoalsHolder.onGoalsAdded();
+            mMyGoalsHolder.onGoalsAdded();
         }
     }
 }
