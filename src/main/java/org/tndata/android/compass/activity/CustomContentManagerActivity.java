@@ -19,7 +19,6 @@ import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 
 import java.util.Collections;
-import java.util.List;
 
 import es.sandwatch.httprequests.HttpRequest;
 import es.sandwatch.httprequests.HttpRequestError;
@@ -67,7 +66,6 @@ public class CustomContentManagerActivity
         else{
             mCustomGoal = getIntent().getParcelableExtra(CUSTOM_GOAL_KEY);
             if (mCustomGoal != null){
-                mCustomGoal = (CustomGoal)mApplication.getUserData().getGoal(mCustomGoal);
                 fetchActions(mCustomGoal);
             }
             mAdapter = new CustomContentManagerAdapter(this, mCustomGoal, this);

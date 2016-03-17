@@ -23,6 +23,8 @@ import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.ImageLoader;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +39,7 @@ public class CompassApplication extends Application{
 
     private User mUser; // The logged-in user
     private UserData mUserData = new UserData(); // The user's selected content.
-    private List<CategoryContent> mPublicCategories;
+    private Map<Long, CategoryContent> mPublicCategories;
 
 
 
@@ -104,12 +106,19 @@ public class CompassApplication extends Application{
         mUserData = userData;
     }
 
-    public void setPublicCategories(List<CategoryContent> publicCategories){
-        mPublicCategories = publicCategories;
+    public void setPublicCategories(List<CategoryContent> categories){
+        mPublicCategories = new HashMap<>();
+        for (CategoryContent category:categories){
+            mPublicCategories.put(category.getId(), category);
+        }
     }
 
-    public List<CategoryContent> getPublicCategories(){
+    public Map<Long, CategoryContent> getPublicCategories(){
         return mPublicCategories;
+    }
+
+    public List<CategoryContent> getPublicCategoryList(){
+        return new ArrayList<>(mPublicCategories.values());
     }
 
     // -------------------------------------------------------------------

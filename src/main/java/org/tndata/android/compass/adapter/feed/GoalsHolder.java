@@ -1,5 +1,6 @@
 package org.tndata.android.compass.adapter.feed;
 
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -16,28 +17,32 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.ui.ContentContainer;
+import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.UserGoal;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 /**
- * View holder for a goal card.
+ * View holder for a goals card, either recommendations or my goals.
  *
  * @author Ismael Alonso
  * @version 1.1.0
  */
-class MyGoalsHolder extends MainFeedViewHolder implements View.OnClickListener{
+class GoalsHolder<T> extends MainFeedViewHolder implements View.OnClickListener{
     private RecyclerView mList;
     private View mMore;
     private TextView mMoreButton;
     private ProgressBar mMoreProgress;
 
     private GoalsAdapter mGoalsAdapter;
-    private List<Goal> mGoals;
+    private List<T> mGoals;
     private int mPreviousSize;
 
 
@@ -47,7 +52,7 @@ class MyGoalsHolder extends MainFeedViewHolder implements View.OnClickListener{
      * @param adapter a reference to the adapter that will handle the holder.
      * @param rootView the root view held by this holder.
      */
-    MyGoalsHolder(@NonNull MainFeedAdapter adapter, @NonNull View rootView){
+    GoalsHolder(@NonNull MainFeedAdapter adapter, @NonNull View rootView){
         super(adapter, rootView);
 
         mGoals = new ArrayList<>();
@@ -70,7 +75,7 @@ class MyGoalsHolder extends MainFeedViewHolder implements View.OnClickListener{
         mAdapter.moreGoals();
     }
 
-    void setGoals(@NonNull List<Goal> goals){
+    void setGoals(@NonNull List<T> goals){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
             ViewGroup target = (ViewGroup)itemView.getRootView();
             Transition transition = new ChangeBounds();
@@ -98,27 +103,6 @@ class MyGoalsHolder extends MainFeedViewHolder implements View.OnClickListener{
         mMoreProgress.setVisibility(View.GONE);
         mGoalsAdapter.notifyItemRangeInserted(mPreviousSize, mGoals.size());
         mList.requestLayout();
-    }
-
-    /**
-     * Adds a goal to the list.
-     *
-     * @param goal the goal to be added.
-     */
-    void addGoal(@NonNull Goal goal){
-        //mContentContainer.addContent(goal);
-    }
-
-    /**
-     * Refreshes the list from the feed data bundle.
-     *
-     * @param dataSet the new data set.
-     */
-    void updateGoals(@NonNull List<ContentContainer.ContainerGoal> dataSet){
-        /*mContentContainer.updateContent(dataSet);
-        if (mContentContainer.getCount() == dataSet.size()){
-            hideFooter();
-        }*/
     }
 
     /**
@@ -159,7 +143,6 @@ class MyGoalsHolder extends MainFeedViewHolder implements View.OnClickListener{
 
 
     private class GoalsItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        private View mSeparator;
         private RelativeLayout mIconContainer;
         private ImageView mIcon;
         private TextView mTitle;
@@ -169,7 +152,6 @@ class MyGoalsHolder extends MainFeedViewHolder implements View.OnClickListener{
             super(rootView);
 
             //Fetch UI components
-            mSeparator = rootView.findViewById(R.id.goal_separator);
             mIconContainer = (RelativeLayout)rootView.findViewById(R.id.goal_icon_container);
             mIcon = (ImageView)rootView.findViewById(R.id.goal_icon);
             mTitle = (TextView)rootView.findViewById(R.id.goal_title);
@@ -183,30 +165,72 @@ class MyGoalsHolder extends MainFeedViewHolder implements View.OnClickListener{
          * @param goal the behavior to be bound.
          */
         @SuppressWarnings("deprecation")
-        public void bind(@NonNull Goal goal){
-            //If this is the first item, do not show the separator
-            if (getAdapterPosition() == 0){
-                mSeparator.setVisibility(View.GONE);
-            }
-            else{
-                mSeparator.setVisibility(View.VISIBLE);
-            }
-
+        public void bind(@NonNull T goal){
+            CompassApplication app = (CompassApplication)mAdapter.mContext.getApplicationContext();
             GradientDrawable gradientDrawable = (GradientDrawable)mIconContainer.getBackground();
-            //gradientDrawable.setColor(Color.parseColor(mCategory.getColor()));
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
-                mIconContainer.setBackgroundDrawable(gradientDrawable);
+            if (goal instanceof GoalContent){
+                GoalContent goalContent = (GoalContent)goal;
+                CategoryContent category = null;
+                for (Long id:goalContent.getCategoryIdSet()){
+                    if (id > 22){
+                        category = app.getPublicCategories().get(id);
+                    }
+                }
+                if (category == null){
+                    gradientDrawable.setColor(mAdapter.mContext.getResources().getColor(R.color.grow_primary));
+                }
+                else{
+                    gradientDrawable.setColor(Color.parseColor(category.getColor()));
+                }
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
+                    mIconContainer.setBackgroundDrawable(gradientDrawable);
+                }
+                else{
+                    mIconContainer.setBackground(gradientDrawable);
+                }
+                goalContent.loadIconIntoView(mIcon);
+                mTitle.setText(goalContent.getTitle());
             }
-            else{
-                mIconContainer.setBackground(gradientDrawable);
+            else if (goal instanceof UserGoal){
+                UserGoal userGoal = (UserGoal)goal;
+                CategoryContent category = app.getPublicCategories().get(userGoal.getPrimaryCategoryId());
+                if (category == null){
+                    gradientDrawable.setColor(mAdapter.mContext.getResources().getColor(R.color.grow_primary));
+                }
+                else{
+                    gradientDrawable.setColor(Color.parseColor(category.getColor()));
+                }
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
+                    mIconContainer.setBackgroundDrawable(gradientDrawable);
+                }
+                else{
+                    mIconContainer.setBackground(gradientDrawable);
+                }
+                userGoal.getGoal().loadIconIntoView(mIcon);
+                mTitle.setText(userGoal.getTitle());
             }
-            //goal.g.loadIconIntoView(mIcon);
-            mTitle.setText(goal.getTitle());
+            else if (goal instanceof CustomGoal){
+                CustomGoal customGoal = (CustomGoal)goal;
+                if (app.getUser().isMale()){
+                    mIconContainer.setBackgroundResource(R.drawable.ic_guy);
+                }
+                else{
+                    mIconContainer.setBackgroundResource(R.drawable.ic_lady);
+                }
+                mIcon.setImageResource(0);
+                mTitle.setText(customGoal.getTitle());
+            }
         }
 
         @Override
         public void onClick(View v){
-
+            T goal = mGoals.get(getAdapterPosition());
+            if (goal instanceof GoalContent){
+                mAdapter.mListener.onSuggestionSelected((GoalContent)goal);
+            }
+            else if (goal instanceof Goal){
+                mAdapter.mListener.onGoalSelected((Goal)goal);
+            }
         }
     }
 }

@@ -7,7 +7,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.ui.CompassPopupMenu;

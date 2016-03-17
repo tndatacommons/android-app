@@ -131,7 +131,7 @@ public class ChooseInterestsFragment
             loadCategories();
         }
         else{
-            mAdapter.setCategories(mApplication.getPublicCategories(), mApplication.getCategories());
+            mAdapter.setCategories(mApplication.getPublicCategoryList(), mApplication.getCategories());
         }
     }
 

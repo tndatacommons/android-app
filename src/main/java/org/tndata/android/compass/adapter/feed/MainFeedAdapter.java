@@ -64,7 +64,7 @@ public class MainFeedAdapter
     private MainFeedPadding mMainFeedPadding;
 
     private UpcomingHolder mUpcomingHolder;
-    private MyGoalsHolder mGoalsHolder;
+    private GoalsHolder mGoalsHolder;
 
     private UpcomingAction mSelectedAction;
 
@@ -195,7 +195,7 @@ public class MainFeedAdapter
             if (mGoalsHolder == null){
                 LayoutInflater inflater = LayoutInflater.from(mContext);
                 View rootView = inflater.inflate(R.layout.card_goals, parent, false);
-                mGoalsHolder = new MyGoalsHolder(this, rootView);
+                mGoalsHolder = new GoalsHolder(this, rootView);
             }
             return mGoalsHolder;
         }
@@ -290,7 +290,7 @@ public class MainFeedAdapter
             mUpcomingHolder.updateActions(mUserData.getFeedData());
         }
         if (mGoalsHolder != null){
-            mGoalsHolder.updateGoals(mUserData.getFeedData().getGoals());
+            //mGoalsHolder.updateGoals(mUserData.getFeedData().getGoals());
             notifyItemChanged(CardTypes.getGoalsPosition());
         }
     }

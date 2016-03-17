@@ -489,9 +489,12 @@ public class MainActivity
     @Override
     public void onGoalSelected(Goal goal){
         if (goal instanceof UserGoal){
+            //TODO
+            //UserGoal userGoal = (UserGoal)goal;
+            //userGoal.setPrimaryCategory(mApplication.getPublicCategories().get(userGoal.getPrimaryCategoryId()));
             Intent reviewActionsIntent = new Intent(this, ReviewActionsActivity.class)
                     .putExtra(ReviewActionsActivity.USER_GOAL_KEY, goal);
-            startActivityForResult(reviewActionsIntent, GOAL_REQUEST_CODE);
+            //startActivityForResult(reviewActionsIntent, GOAL_REQUEST_CODE);
         }
         else if (goal instanceof CustomGoal){
             Parcelable customGoal = (CustomGoal)goal;
