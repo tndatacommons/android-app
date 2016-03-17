@@ -11,10 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 
-import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.GoalContent;
@@ -51,8 +49,9 @@ public class MainFeedAdapter
     private static final int TYPE_FEEDBACK = TYPE_UP_NEXT+1;
     private static final int TYPE_SUGGESTION = TYPE_FEEDBACK+1;
     private static final int TYPE_UPCOMING = TYPE_SUGGESTION+1;
-    private static final int TYPE_GOALS = TYPE_UPCOMING +1;
-    private static final int TYPE_OTHER = TYPE_GOALS+1;
+    private static final int TYPE_MY_GOALS = TYPE_UPCOMING +1;
+    private static final int TYPE_GOAL_SUGGESTIONS = TYPE_MY_GOALS+1;
+    private static final int TYPE_OTHER = TYPE_GOAL_SUGGESTIONS+1;
 
 
     final Context mContext;
@@ -67,7 +66,7 @@ public class MainFeedAdapter
     private MainFeedPadding mMainFeedPadding;
 
     private UpcomingHolder mUpcomingHolder;
-    private GoalsHolder mGoalsHolder;
+    private MyGoalsHolder mGoalsHolder;
 
     private UpcomingAction mSelectedAction;
 
@@ -93,7 +92,7 @@ public class MainFeedAdapter
         }
         else{
             mDataHandler = new DataHandler(mUserData);
-            CardTypes.setDataSource(mDataHandler);
+            CardTypes.setDataSource(mFeedData);
             List<GoalContent> suggestions = mUserData.getFeedData().getSuggestions();
             if (suggestions.isEmpty()){
                 mSuggestion = null;
@@ -150,8 +149,11 @@ public class MainFeedAdapter
         if (CardTypes.isUpcoming(position)){
             return TYPE_UPCOMING;
         }
-        if (CardTypes.isGoals(position)){
-            return TYPE_GOALS;
+        if (CardTypes.isMyGoals(position)){
+            return TYPE_MY_GOALS;
+        }
+        if (CardTypes.isGoalSuggestions(position)){
+            return TYPE_GOAL_SUGGESTIONS;
         }
         return TYPE_OTHER;
     }
@@ -192,13 +194,17 @@ public class MainFeedAdapter
             }
             return mUpcomingHolder;
         }
-        else if (viewType == TYPE_GOALS){
+        else if (viewType == TYPE_MY_GOALS){
             if (mGoalsHolder == null){
                 LayoutInflater inflater = LayoutInflater.from(mContext);
                 View rootView = inflater.inflate(R.layout.card_goals, parent, false);
-                mGoalsHolder = new GoalsHolder(this, rootView);
+                mGoalsHolder = new MyGoalsHolder(this, rootView);
             }
             return mGoalsHolder;
+        }
+        else if (viewType == TYPE_GOAL_SUGGESTIONS){
+            //TODO
+            return new RecyclerView.ViewHolder(new CardView(mContext)){};
         }
         else if (viewType == TYPE_OTHER){
             return new RecyclerView.ViewHolder(new CardView(mContext)){};
@@ -241,19 +247,14 @@ public class MainFeedAdapter
                 moreActions();
             }
         }
-        //My goals / suggestions
-        else if (CardTypes.isGoals(position)){
-            String title;
-            if (mUserData.getGoals().isEmpty() && mUserData.getCustomGoals().isEmpty()){
-                title = mContext.getString(R.string.card_suggestions_header);
-            }
-            else{
-                title = mContext.getString(R.string.card_my_goals_header);
-            }
-            ((GoalsHolder)rawHolder).bind(title);
+        //My goals
+        else if (CardTypes.isMyGoals(position)){
             if (mGoalsHolder.getItemCount() == 0){
                 mGoalsHolder.setGoals(mUserData.getFeedData().getGoalsX());
             }
+        }
+        else if (CardTypes.isGoalSuggestions(position)){
+
         }
     }
 

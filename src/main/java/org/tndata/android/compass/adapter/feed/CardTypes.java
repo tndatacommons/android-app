@@ -1,16 +1,18 @@
 package org.tndata.android.compass.adapter.feed;
 
+import org.tndata.android.compass.model.FeedData;
+
 
 /**
  * This class is responsible of telling what types of cards different positions
  * in the feed hold.
  *
  * @author Ismael Alonso
- * @author Honorable mention to Brad Montgomery for his help naming this class. Thanks!
+ * @author Honorable mention to Brad Montgomery for his help in naming this class. Thanks!
  * @version 1.0.0
  */
 final class CardTypes{
-    private static DataHandler sDataHandler;
+    private static FeedData sFeedData;
     private static boolean sDisplaySuggestion;
 
 
@@ -18,10 +20,10 @@ final class CardTypes{
      * Sets the data object from which the class draws the information required to make
      * distinctions between positions.
      *
-     * @param dataHandler the data handler of the adapter.
+     * @param feedData the data handler of the adapter.
      */
-    static void setDataSource(DataHandler dataHandler){
-        sDataHandler = dataHandler;
+    static void setDataSource(FeedData feedData){
+        sFeedData = feedData;
         sDisplaySuggestion = false;
     }
 
@@ -40,7 +42,7 @@ final class CardTypes{
      * @return true if there is a welcome card, false otherwise.
      */
     static boolean hasWelcomeCard(){
-        return !sDataHandler.hasGoals();
+        return sFeedData.getGoalsX().isEmpty();
     }
 
     /**
@@ -49,7 +51,7 @@ final class CardTypes{
      * @return true if there is an up next card, false otherwise.
      */
     static boolean hasUpNextAction(){
-        return sDataHandler.getUpNext() != null;
+        return sFeedData.getUpNextActionX() != null;
     }
 
     /**
@@ -71,8 +73,13 @@ final class CardTypes{
         return getUpNextPosition() == position;
     }
 
+    /**
+     * Tells whether the feed should display a feedback card.
+     *
+     * @return true if there is a feedback card, false otherwise.
+     */
     static boolean hasFeedback(){
-        return hasUpNextAction() && sDataHandler.hasFeedback();
+        return hasUpNextAction() && sFeedData.hasFeedback();
     }
 
     /**
@@ -103,7 +110,7 @@ final class CardTypes{
      * @return true if the feed should display a suggestion.
      */
     static boolean hasSuggestion(){
-        return sDisplaySuggestion && sDataHandler.hasGoals();
+        return sDisplaySuggestion && !sFeedData.getGoalsX().isEmpty();
     }
 
     /**
@@ -131,7 +138,7 @@ final class CardTypes{
      * @return true if there are upcoming actions, false otherwise.
      */
     static boolean hasUpcoming(){
-        return sDataHandler.hasUpcoming();
+        return !sFeedData.getUpcomingActionsX().isEmpty();
     }
 
     /**
@@ -165,6 +172,24 @@ final class CardTypes{
     }
 
     /**
+     * Tells whether there are goal suggestions.
+     *
+     * @return true if there are goal suggestions, false otherwise.
+     */
+    static boolean hasGoalSuggestions(){
+        return sFeedData.getGoalsX().isEmpty();
+    }
+
+    /**
+     * Tells whether there are my goals.
+     *
+     * @return true if there are my goals, false otherwise.
+     */
+    static boolean hasMyGoals(){
+        return !hasGoalSuggestions();
+    }
+
+    /**
      * Tells whether a position is that of my goals' header.
      *
      * @return true if the position id that of my goals header item, false otherwise.
@@ -179,13 +204,23 @@ final class CardTypes{
     }
 
     /**
-     * Tells whether a position is that of the my goals header card.
+     * Tells whether a position is that of the goal suggestions card.
      *
      * @param position the position to be checked.
-     * @return true if it is the position of the my goals header, false otherwise.
+     * @return true if it is the position of the goal suggestions card, false otherwise.
      */
-    static boolean isGoals(int position){
-        return getGoalsPosition() == position;
+    static boolean isGoalSuggestions(int position){
+        return hasGoalSuggestions() && getGoalsPosition() == position;
+    }
+
+    /**
+     * Tells whether a position is that of the my goals card.
+     *
+     * @param position the position to be checked.
+     * @return true if it is the position of the my goals card, false otherwise.
+     */
+    static boolean isMyGoals(int position){
+        return hasMyGoals() && getGoalsPosition() == position;
     }
 
     /**

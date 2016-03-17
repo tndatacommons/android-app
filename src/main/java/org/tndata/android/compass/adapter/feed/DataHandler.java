@@ -1,11 +1,9 @@
 package org.tndata.android.compass.adapter.feed;
 
-import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserData;
-import org.tndata.android.compass.ui.ContentContainer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,33 +68,6 @@ class DataHandler{
     }
 
     /**
-     * Tells whether the user has any upcoming actions left for the day.
-     *
-     * @return true if the user does, false otherwise.
-     */
-    boolean hasUpcoming(){
-        return !mFeedData.getUpcomingActionsX().isEmpty();
-    }
-
-    /**
-     * Tells whether the user has selected goals or not.
-     *
-     * @return true if the user has selected goals, false otherwise.
-     */
-    boolean hasGoals(){
-        return !mFeedData.getGoals().isEmpty();
-    }
-
-    /**
-     * Getter for the user's next action.
-     *
-     * @return the next action.
-     */
-    Action getUpNext(){
-        return mFeedData.getNextAction();
-    }
-
-    /**
      * Replaces the up next action with the one after.
      *
      * @return the new next action.
@@ -118,10 +89,6 @@ class DataHandler{
      */
     Goal getFeedbackGoal(){
         return mFeedbackGoal;
-    }
-
-    boolean hasFeedback(){
-        return mFeedData.hasFeedback();
     }
 
     /**
@@ -146,31 +113,6 @@ class DataHandler{
      */
     boolean canLoadMoreActions(int displayedActions){
         return displayedActions < mFeedData.getUpcomingActionsX().size();
-    }
-
-    /**
-     * Returns the next batch of goals to be displayed in the feed.
-     *
-     * @param displayedGoals the number of goals already being displayed din the feed.
-     * @return a list containing the new goals.
-     */
-    List<ContentContainer.ContainerGoal> loadMoreGoals(int displayedGoals){
-        //Populate the new list
-        List<ContentContainer.ContainerGoal> goals = new ArrayList<>();
-        while (goals.size() < LOAD_MORE_COUNT && canLoadMoreGoals(displayedGoals + goals.size())){
-            goals.add(mFeedData.getGoals().get(displayedGoals + goals.size()));
-        }
-        return goals;
-    }
-
-    /**
-     * Tells whether there are more goals to display.
-     *
-     * @param displayedGoals the number of goals already being displayed din the feed.
-     * @return true if there are more goals to load, false otherwise.
-     */
-    boolean canLoadMoreGoals(int displayedGoals){
-        return displayedGoals < mFeedData.getGoals().size();
     }
 
     /**

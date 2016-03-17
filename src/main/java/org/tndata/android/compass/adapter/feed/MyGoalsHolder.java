@@ -1,6 +1,5 @@
 package org.tndata.android.compass.adapter.feed;
 
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.ui.ContentContainer;
 
 import java.util.ArrayList;
@@ -32,8 +30,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.1.0
  */
-class GoalsHolder extends MainFeedViewHolder implements View.OnClickListener{
-    private TextView mHeader;
+class MyGoalsHolder extends MainFeedViewHolder implements View.OnClickListener{
     private RecyclerView mList;
     private View mMore;
     private TextView mMoreButton;
@@ -50,13 +47,12 @@ class GoalsHolder extends MainFeedViewHolder implements View.OnClickListener{
      * @param adapter a reference to the adapter that will handle the holder.
      * @param rootView the root view held by this holder.
      */
-    GoalsHolder(@NonNull MainFeedAdapter adapter, @NonNull View rootView){
+    MyGoalsHolder(@NonNull MainFeedAdapter adapter, @NonNull View rootView){
         super(adapter, rootView);
 
         mGoals = new ArrayList<>();
         mGoalsAdapter = new GoalsAdapter();
 
-        mHeader = (TextView)rootView.findViewById(R.id.card_goals_header);
         mList = (RecyclerView)rootView.findViewById(R.id.card_goals_list);
         mList.setLayoutManager(new LinearLayoutManager(mAdapter.mContext));
         mList.setAdapter(mGoalsAdapter);
@@ -72,15 +68,6 @@ class GoalsHolder extends MainFeedViewHolder implements View.OnClickListener{
         mMoreButton.setVisibility(View.GONE);
         mMoreProgress.setVisibility(View.VISIBLE);
         mAdapter.moreGoals();
-    }
-
-    /**
-     * Binds a title to the goals card.
-     *
-     * @param title the title to be used as header.
-     */
-    void bind(@NonNull String title){
-        mHeader.setText(title);
     }
 
     void setGoals(@NonNull List<Goal> goals){
