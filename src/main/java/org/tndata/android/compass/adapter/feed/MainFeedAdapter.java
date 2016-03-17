@@ -19,7 +19,6 @@ import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
-import org.tndata.android.compass.ui.ContentContainer;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 
@@ -354,13 +353,13 @@ public class MainFeedAdapter
      * GOAL RELATED METHODS *
      *----------------------*/
 
-    void viewGoal(ContentContainer.ContainerGoal goal){
+    void viewGoal(Goal goal){/* TODO ?
         if (goal instanceof Goal){
             mListener.onGoalSelected((Goal)goal);
         }
         else if (goal instanceof GoalContent){
             mListener.onSuggestionSelected((GoalContent)goal);
-        }
+        }*/
     }
 
     void showSuggestionPopup(View anchor){

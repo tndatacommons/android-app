@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ReviewActionsAdapter;
 import org.tndata.android.compass.model.Action;
@@ -63,6 +64,8 @@ public class ReviewActionsActivity
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+        CompassApplication app = (CompassApplication)getApplication();
 
         mUserCategory = (UserCategory)getIntent().getSerializableExtra(USER_CATEGORY_KEY);
         mUserGoal = (UserGoal)getIntent().getSerializableExtra(USER_GOAL_KEY);

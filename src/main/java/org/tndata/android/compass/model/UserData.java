@@ -32,6 +32,7 @@ import java.util.Set;
  * @author Ismael Alonso
  * @version 2.0.0
  */
+@Deprecated
 public class UserData extends TDCBase{
     private static final String TAG = "UserData";
 
@@ -269,7 +270,7 @@ public class UserData extends TDCBase{
                 }
             }
 
-            mFeedData.addGoal(userGoal);
+            //mFeedData.addGoal(userGoal);
         }
     }
 
@@ -299,7 +300,7 @@ public class UserData extends TDCBase{
                 }
             }
 
-            mFeedData.removeGoal(removedGoal);
+            //mFeedData.removeGoal(removedGoal);
         }
     }
 
@@ -446,7 +447,7 @@ public class UserData extends TDCBase{
         if (removedAction != null && removedAction.getBehavior() != null){
             removedAction.getBehavior().removeAction(removedAction);
 
-            mFeedData.removeAction(action);
+            //mFeedData.removeAction(action);
         }
     }
 
@@ -462,13 +463,13 @@ public class UserData extends TDCBase{
     private void addGoal(CustomGoal customGoal){
         if (!mCustomGoals.containsKey(customGoal.getContentId())){
             mCustomGoals.put(customGoal.getContentId(), customGoal);
-            mFeedData.addGoal(customGoal);
+            //mFeedData.addGoal(customGoal);
         }
     }
 
     private void removeGoal(CustomGoal customGoal){
         mCustomGoals.remove(customGoal.getContentId());
-        mFeedData.removeGoal(customGoal);
+        //mFeedData.removeGoal(customGoal);
 
         for (CustomAction customAction:customGoal.getActions()){
             if (mCustomActions.containsKey(customAction.getContentId())){
@@ -499,7 +500,7 @@ public class UserData extends TDCBase{
         if (customGoal != null){
             customGoal.removeAction(customAction);
         }
-        mFeedData.removeAction(customAction);
+        //mFeedData.removeAction(customAction);
     }
 
 

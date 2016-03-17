@@ -8,7 +8,6 @@ import android.util.Log;
 import com.google.gson.annotations.SerializedName;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.ui.ContentContainer;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -18,6 +17,8 @@ import java.util.List;
 
 /**
  * Data holder for the data to be displayed in the feed.
+ *
+ * TODO major clean up
  *
  * @author Ismael Alonso
  * @version 1.0.0
@@ -46,7 +47,6 @@ public class FeedData extends TDCBase{
     //Fields set during post-processing
     private Action mNextAction;
     private List<Action> mUpcomingActions;
-    private List<ContentContainer.ContainerGoal> mGoals;
 
 
     //Experiment
@@ -91,6 +91,18 @@ public class FeedData extends TDCBase{
 
     public String getNextGoalBatchUrl(){
         return mNextGoalBatchUrlX;
+    }
+
+    public UpcomingAction getActionX(Action action){
+        if (mUpNextActionX.is(action)){
+            return mUpNextActionX;
+        }
+        for (int i = 0; i < mUpcomingActionsX.size(); i++){
+            if (mUpcomingActionsX.get(i).is(action)){
+                return mUpcomingActionsX.get(i);
+            }
+        }
+        return null;
     }
 
     public UpcomingAction replaceUpNextActionX(){
@@ -156,24 +168,6 @@ public class FeedData extends TDCBase{
         return -1;
     }
 
-    /**
-     * Sets the next action.
-     *
-     * @param nextAction the next action.
-     */
-    public void setNextAction(Action nextAction){
-        mNextAction = nextAction;
-    }
-
-    /**
-     * Gets the next action.
-     *
-     * @return the next action.
-     */
-    public Action getNextAction(){
-        return mNextAction;
-    }
-
     public boolean hasFeedback(){
         return mActionFeedback != null;
     }
@@ -187,19 +181,6 @@ public class FeedData extends TDCBase{
     }
 
     /**
-     * Gets the list of upcoming actions.
-     *
-     * @return the list of upcoming actions.
-     */
-    public List<Action> getUpcomingActions(){
-        return mUpcomingActions;
-    }
-
-    public List<ContentContainer.ContainerGoal> getGoals(){
-        return mGoals;
-    }
-
-    /**
      * Gets the list of suggestions.
      *
      * @return the list of suggestions.
@@ -209,46 +190,12 @@ public class FeedData extends TDCBase{
     }
 
     /**
-     * Adds a goal to the list of goals being displayed.
-     *
-     * @param goal the goal to be added.
-     */
-    public void addGoal(ContentContainer.ContainerGoal goal){
-        //If the list contained suggestions, clear it and add the goal
-        if (mGoals.get(0) instanceof GoalContent){
-            mGoals.clear();
-            mGoals.add(goal);
-        }
-        //Otherwise, add the goal in the relevant position
-        else{
-            for (int i = 0; i < mGoals.size(); i++){
-                if (mGoals.get(i).getTitle().compareTo(goal.getTitle()) > 0){
-                    mGoals.add(i, goal);
-                    break;
-                }
-                else if (i == mGoals.size()-1){
-                    mGoals.add(goal);
-                    break;
-                }
-            }
-        }
-    }
-
-    /**
-     * Removes a goal from the list of goals to be displayed.
-     *
-     * @param goal the goal to be removed.
-     */
-    public void removeGoal(ContentContainer.ContainerGoal goal){
-        mGoals.remove(goal);
-    }
-
-    /**
      * Adds an action to the upcoming list if the action is due today.
      *
      * @param action the action to be added.
      */
     public void addAction(Action action){
+        //TODO edit this to generate an UpcomingAction from an Action
         Log.d("FeedData", "addAction() called: " + action);
 
         Calendar todayCalendar = Calendar.getInstance();
@@ -286,47 +233,6 @@ public class FeedData extends TDCBase{
                 }
             }
         }
-    }
-
-    /**
-     * Removes an action from the action list.
-     *
-     * @param action the action to be removed.
-     */
-    public void removeAction(Action action){
-        mUpcomingActions.remove(action);
-    }
-
-    public UpcomingAction getActionX(Action action){
-        if (mUpNextActionX.is(action)){
-            return mUpNextActionX;
-        }
-        for (int i = 0; i < mUpcomingActionsX.size(); i++){
-            if (mUpcomingActionsX.get(i).is(action)){
-                return mUpcomingActionsX.get(i);
-            }
-        }
-        return null;
-    }
-
-    public UpcomingAction removeActionX(Action action){
-        if (mUpNextActionX.is(action)){
-            UpcomingAction upNext = mUpNextActionX;
-            if (mUpcomingActionsX.isEmpty()){
-                mUpNextActionX = null;
-            }
-            else{
-                mUpNextActionX = mUpcomingActionsX.remove(0);
-            }
-            return upNext;
-        }
-        for (int i = 0; i < mUpcomingActionsX.size(); i++){
-            if (mUpcomingActionsX.get(i).is(action)){
-                return mUpcomingActionsX.remove(i);
-            }
-        }
-        Log.wtf("FeedData", "this method is supposed to be called from the feed only, this scenario is not possible");
-        return null;
     }
 
     /**
@@ -374,11 +280,11 @@ public class FeedData extends TDCBase{
                     break;
                 }
             }
-        }*/
+        }
 
         //Select the source
         mGoals = new ArrayList<>();
-        /*if (!userData.getGoals().isEmpty() || !userData.getCustomGoals().isEmpty()){
+        if (!userData.getGoals().isEmpty() || !userData.getCustomGoals().isEmpty()){
             mGoals.addAll(userData.getGoals().values());
             mGoals.addAll(userData.getCustomGoals().values());
             //Sort by title
@@ -389,9 +295,9 @@ public class FeedData extends TDCBase{
                 }
             });
         }
-        else{*/
+        else{
             mGoals.addAll(mSuggestions);
-        /*}*/
+        }*/
 
         mDisplayedGoalsX = new ArrayList<>();
     }
