@@ -62,6 +62,7 @@ public class MainFeedAdapter
 
     private UpcomingHolder mUpcomingHolder;
     private GoalsHolder<Goal> mMyGoalsHolder;
+    private GoalsHolder<GoalContent> mSuggestionsHolder;
 
     private UpcomingAction mSelectedAction;
 
@@ -196,8 +197,12 @@ public class MainFeedAdapter
             return mMyGoalsHolder;
         }
         else if (viewType == TYPE_GOAL_SUGGESTIONS){
-            //TODO
-            return new RecyclerView.ViewHolder(new CardView(mContext)){};
+            if (mSuggestionsHolder == null){
+                LayoutInflater inflater = LayoutInflater.from(mContext);
+                View rootView = inflater.inflate(R.layout.card_goals, parent, false);
+                mSuggestionsHolder = new GoalsHolder<>(this, rootView);
+            }
+            return mSuggestionsHolder;
         }
         else if (viewType == TYPE_OTHER){
             return new RecyclerView.ViewHolder(new CardView(mContext)){};
@@ -247,7 +252,10 @@ public class MainFeedAdapter
             }
         }
         else if (CardTypes.isGoalSuggestions(position)){
-
+            if (mSuggestionsHolder.getItemCount() == 0){
+                mSuggestionsHolder.setGoals(mFeedData.getSuggestions());
+                mSuggestionsHolder.hideFooter();
+            }
         }
     }
 

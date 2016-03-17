@@ -345,14 +345,6 @@ public class LoginActivity
             Log.d("LogIn", "Upcoming size: " + upcoming.size());
             mApplication.getFeedDataX().setUpcomingActionsX(upcoming);
         }
-        else if (result instanceof ParserModels.CustomGoalsResultSet){
-            ParserModels.CustomGoalsResultSet set = (ParserModels.CustomGoalsResultSet)result;
-            String url = set.next;
-            if (API.STAGING && url.startsWith("https")){
-                url = url.replaceFirst("s", "");
-            }
-            mApplication.getFeedDataX().addGoalsX(set.results, url);
-        }
     }
 
     @Override
@@ -380,6 +372,33 @@ public class LoginActivity
             mGetCustomGoalsRCX = HttpRequest.get(this, API.getCustomGoalsUrl());
         }
         else if (result instanceof ParserModels.CustomGoalsResultSet){
+            ParserModels.CustomGoalsResultSet set = (ParserModels.CustomGoalsResultSet)result;
+            String url = set.next;
+            if (url == null){
+                url = API.getUserGoalsUrl();
+                if (set.results.isEmpty()){
+                    mGetUserGoalsRCX = HttpRequest.get(this, url);
+                }
+                else{
+                    mApplication.getFeedDataX().addGoalsX(set.results, url);
+                    transitionToMain();
+                }
+            }
+            else{
+                if (API.STAGING && url.startsWith("https")){
+                    url = url.replaceFirst("s", "");
+                }
+                mApplication.getFeedDataX().addGoalsX(set.results, url);
+                transitionToMain();
+            }
+        }
+        else if (result instanceof ParserModels.UserGoalsResultSet){
+            ParserModels.UserGoalsResultSet set = (ParserModels.UserGoalsResultSet)result;
+            String url = set.next;
+            if (url != null){
+                url = url.replaceFirst("s", "");
+            }
+            mApplication.getFeedDataX().addGoalsX(set.results, url);
             transitionToMain();
         }
     }
