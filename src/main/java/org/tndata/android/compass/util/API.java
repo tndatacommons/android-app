@@ -191,6 +191,10 @@ public abstract class API{
         return BASE_URL + "users/customgoals/?page_size=3";
     }
 
+    public static String getCustomGoalUrl(long customGoalId){
+        return BASE_URL + "users/customgoals/" + customGoalId + "/";
+    }
+
     public static String getPostCustomGoalUrl(){
         return BASE_URL + "users/customgoals/";
     }

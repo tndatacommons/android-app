@@ -63,7 +63,9 @@ public class FeedData extends TDCBase{
         }
         else{
             mUpNextActionX = upcomingActions.remove(0);
-            mActionFeedback.setFeedbackGoal(mUpNextActionX);
+            if (hasFeedback()){
+                mActionFeedback.setFeedbackGoal(mUpNextActionX);
+            }
             mUpcomingActionsX = upcomingActions;
         }
     }

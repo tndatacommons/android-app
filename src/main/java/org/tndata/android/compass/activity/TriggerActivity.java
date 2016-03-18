@@ -1,13 +1,14 @@
 package org.tndata.android.compass.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.Time;
 import android.util.Log;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.doomonafireball.betterpickers.calendardatepicker.CalendarDatePickerDialog;
@@ -16,19 +17,15 @@ import com.doomonafireball.betterpickers.recurrencepicker.EventRecurrence;
 import com.doomonafireball.betterpickers.recurrencepicker.EventRecurrenceFormatter;
 import com.doomonafireball.betterpickers.recurrencepicker.RecurrencePickerDialog;
 
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.TriggerFragment;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
-import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.model.UserAction;
-import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.NetworkRequest;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -36,6 +33,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -55,20 +55,16 @@ import java.util.Locale;
 public class TriggerActivity
         extends AppCompatActivity
         implements
-                NetworkRequest.RequestCallback,
+                HttpRequest.RequestCallback,
                 Parser.ParserCallback,
                 RecurrencePickerDialog.OnRecurrenceSetListener,
                 RadialTimePickerDialog.OnTimeSetListener,
                 CalendarDatePickerDialog.OnDateSetListener,
                 TriggerFragment.TriggerFragmentListener{
 
-    //NOTE: These need to be user content. Once an action is added, the trigger can be
-    //  edited. The trigger needs to be attached to an action when it is added
+    public static final String GOAL_TITLE_KEY = "org.tndata.compass.TriggerActivity.GoalTitle";
     public static final String ACTION_KEY = "org.tndata.compass.TriggerActivity.Action";
-    public static final String GOAL_KEY = "org.tndata.compass.TriggerActivity.Goal";
-
-    public static final String CUSTOM_GOAL_KEY = "org.tndata.compass.Trigger.CustomGoal";
-    public static final String CUSTOM_ACTION_KEY = "org.tndata.compass.Trigger.CustomAction";
+    public static final String TRIGGER_KEY = "org.tndata.compass.TriggerActivity.Trigger";
 
     private static final String TAG = "TriggerActivity";
     private static final String FRAG_TAG_RECUR_PICKER = "recurrencePickerDialogFragment";
@@ -84,7 +80,6 @@ public class TriggerActivity
     // of the RRULE data.
     private EventRecurrence mEventRecurrence = new EventRecurrence();
     private String mRrule; // RFC 2445 RRULE string
-    private boolean savingTrigger = false; // flag so we know when a trigger is saved.
 
     //Date object that stores both the selected time and date
     private Date mDateTime;
@@ -120,37 +115,18 @@ public class TriggerActivity
 
         setContentView(R.layout.activity_base_toolbar);
 
+        String goalTitle = getIntent().getStringExtra(GOAL_TITLE_KEY);
+        mAction = getIntent().getParcelableExtra(ACTION_KEY);
+
         Toolbar toolbar = (Toolbar)findViewById(R.id.tool_bar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
         toolbar.getBackground().setAlpha(255);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setTitle(goalTitle);
         }
 
-        UserData userData = ((CompassApplication)getApplication()).getUserData();
-
-        //Retrieve the goal and the original user action
-        Goal goal = (Goal)getIntent().getSerializableExtra(GOAL_KEY);
-        mAction = userData.getAction((Action)getIntent().getSerializableExtra(ACTION_KEY));
-
-        //TODO until parcelable is widely implemented
-        if (mAction == null){
-            goal = getIntent().getParcelableExtra(CUSTOM_GOAL_KEY);
-            mAction = getIntent().getParcelableExtra(CUSTOM_ACTION_KEY);
-        }
-
-        //TODO this is another workaround
-        if (goal != null){
-            getSupportActionBar().setTitle(goal.getTitle());
-        }
-        setAction();
-    }
-
-    /**
-     * Calls the initialisation routine and brings in the TriggerFragment.
-     */
-    private void setAction(){
         initializeReminders(mAction.getTrigger());
 
         fragment = TriggerFragment.newInstance(mAction);
@@ -280,30 +256,10 @@ public class TriggerActivity
     }
 
     @Override
-    public void onBackPressed(){
-        if (!savingTrigger){
-            onSaveTrigger();
-        }
-        super.onBackPressed();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
-            case android.R.id.home:
-                if (!savingTrigger){
-                    onSaveTrigger();
-                }
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onFireTimePicker(){
         Calendar calendar = Calendar.getInstance();
         RadialTimePickerDialog timePickerDialog = RadialTimePickerDialog.newInstance(
-                TriggerActivity.this, calendar.get(Calendar.HOUR_OF_DAY),
+                this, calendar.get(Calendar.HOUR_OF_DAY),
                 calendar.get(Calendar.MINUTE), android.text.format.DateFormat.is24HourFormat(this));
 
         timePickerDialog.show(getSupportFragmentManager(), FRAG_TAG_TIME_PICKER);
@@ -350,15 +306,10 @@ public class TriggerActivity
 
     @Override
     public void onDisableTrigger(){
-        if (mAction.isEditable()){
-            mTimeSelected = false;
-            mDateSelected = false;
-            setRRULE(null);
-            saveActionTrigger(mAction);
-        }
-        else{
-            finish();
-        }
+        mTimeSelected = false;
+        mDateSelected = false;
+        setRRULE(null);
+        saveActionTrigger(mAction);
     }
 
     @Override
@@ -458,16 +409,11 @@ public class TriggerActivity
 
             //Time is required and one of date or rule is required
             //TODO: Fails when time/date/rrule is empty or null
-            mPutTriggerRequestCode = NetworkRequest.put(this, this,
-                    API.getPutTriggerUrl(action),
-                    ((CompassApplication)getApplication()).getToken(),
+            mPutTriggerRequestCode = HttpRequest.put(this, API.getPutTriggerUrl(action),
                     API.getPutTriggerBody(time, rrule, date));
-
-            //We want to know that we've attempted to save, even if saving fails.
-            savingTrigger = true;
         }
         else{
-            setResult(RESULT_OK);
+            setResult(RESULT_CANCELED);
             finish();
         }
     }
@@ -485,7 +431,7 @@ public class TriggerActivity
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
+    public void onRequestFailed(int requestCode, HttpRequestError error){
         if (requestCode == mPutTriggerRequestCode){
             Log.d(TAG, "actionTriggerAdded: received null Action");
             if (fragment != null){
@@ -497,21 +443,15 @@ public class TriggerActivity
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof Action){
-            Action action = (Action)result;
-            Log.d(TAG, "Updated Action: " + action.getTitle());
-            Log.d(TAG, "Updated Trigger: " + action.getTrigger());
 
-            mAction.setTrigger(action.getTrigger());
-            mAction.setNextReminder(action.getNextReminder());
-            ((CompassApplication)getApplication()).getUserData().updateActionTrigger(mAction);
-        }
     }
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        Toast.makeText(this, getText(R.string.trigger_saved_confirmation_toast), Toast.LENGTH_SHORT).show();
-        setResult(RESULT_OK);
-        finish();
+        if (result instanceof Action){
+            Parcelable trigger = ((Action)result).getTrigger();
+            setResult(RESULT_OK, new Intent().putExtra(TRIGGER_KEY, trigger));
+            finish();
+        }
     }
 }

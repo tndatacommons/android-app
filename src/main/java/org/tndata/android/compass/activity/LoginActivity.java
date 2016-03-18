@@ -45,6 +45,7 @@ public class LoginActivity
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback{
 
+    private static final String TAG = "LogInActivity";
 
     //Fragment ids
     private static final int DEFAULT = 0;
@@ -303,6 +304,7 @@ public class LoginActivity
             Parser.parse(result, ParserModels.CustomGoalsResultSet.class, this);
         }
         else if (requestCode == mGetUserGoalsRCX){
+            Log.d(TAG, result);
             Parser.parse(result, ParserModels.UserGoalsResultSet.class, this);
         }
     }
@@ -373,6 +375,7 @@ public class LoginActivity
         }
         else if (result instanceof ParserModels.CustomGoalsResultSet){
             ParserModels.CustomGoalsResultSet set = (ParserModels.CustomGoalsResultSet)result;
+            Log.d(TAG, "Custom goals: " + set.results.size());
             String url = set.next;
             if (url == null){
                 url = API.getUserGoalsUrl();
@@ -394,6 +397,7 @@ public class LoginActivity
         }
         else if (result instanceof ParserModels.UserGoalsResultSet){
             ParserModels.UserGoalsResultSet set = (ParserModels.UserGoalsResultSet)result;
+            Log.d(TAG, "User goals: " + set.results.size());
             String url = set.next;
             if (url != null){
                 url = url.replaceFirst("s", "");

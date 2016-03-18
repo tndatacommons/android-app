@@ -1,6 +1,7 @@
 package org.tndata.android.compass.fragment;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
@@ -36,6 +37,7 @@ public class TriggerFragment
                 CompoundButton.OnCheckedChangeListener{
 
     private static final String ACTION_KEY = "org.tndata.compass.TriggerFragment.Action";
+    private static final String TRIGGER_KEY = "org.tndata.compass.TriggerFragment.Trigger";
 
     private TriggerFragmentListener mCallback;
 
@@ -52,12 +54,12 @@ public class TriggerFragment
     /**
      * Creates a new instance of the fragment and delivers the action.
      *
-     * @param action the action to be delivered.
-     * @return the fragment.
+     * @param action the action containing the trigger.
+     * @return the new fragment.
      */
-    public static TriggerFragment newInstance(Action action){
+    public static TriggerFragment newInstance(@NonNull Action action){
         Bundle args = new Bundle();
-        args.putSerializable(ACTION_KEY, action);
+        args.putParcelable(ACTION_KEY, action);
 
         TriggerFragment fragment = new TriggerFragment();
         fragment.setArguments(args);
@@ -67,7 +69,6 @@ public class TriggerFragment
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
-
         //This makes sure that the container activity has implemented the callback
         //  interface. If not, it throws an exception
         try{
@@ -82,10 +83,8 @@ public class TriggerFragment
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        mAction = (Action)getArguments().get(ACTION_KEY);
-        if (mAction != null){
-            mTrigger = mAction.getTrigger();
-        }
+        mAction = getArguments().getParcelable(ACTION_KEY);
+        mTrigger = mAction.getTrigger();
     }
 
     @Override
@@ -99,7 +98,7 @@ public class TriggerFragment
         title.setText(mAction.getTitle());
 
         SwitchCompat notificationSwitch = (SwitchCompat)rootView.findViewById(R.id.trigger_enabled);
-        notificationSwitch.setChecked(!mTrigger.isDisabled());
+        notificationSwitch.setChecked(mTrigger.isEnabled());
 
         timePickerTextView = (TextView)rootView.findViewById(R.id.trigger_time);
         datePickerTextView = (TextView)rootView.findViewById(R.id.trigger_date);

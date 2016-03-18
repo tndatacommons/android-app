@@ -1,10 +1,11 @@
 package org.tndata.android.compass.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,31 +14,32 @@ import java.util.Locale;
 
 
 /**
- * An action trigger.
- *
- * //TODO yo, future Izzy, fix this mess. Seriously.
+ * Model class for a trigger.
  *
  * @author Edited by Ismael Alonso
  * @version 2.0.0
  */
-public class Trigger extends TDCBase implements Serializable, Comparable<Trigger>{
-    private static final long serialVersionUID = 7914473023695112323L;
-
+public class Trigger extends TDCBase implements Parcelable, Comparable<Trigger>{
     public static final String TYPE = "trigger";
 
 
     // A default RRULE value for the recurrence picker (NOTE: no RRULE prefix)
     public static final String DEFAULT_RRULE = "FREQ=DAILY";
 
-    private String recurrences_display = "";
-    private String location = "";
-    private String name = "";
+    @SerializedName("name")
+    private String mName;
 
-    // NOTE: Any of these can be null
+    //Actual values, these can be null
     /** {@link} http://www.ietf.org/rfc/rfc2445.txt */
-    private String recurrences = "";
-    private String time = "";
-    private String trigger_date = "";
+    @SerializedName("time")
+    private String mTime;
+    @SerializedName("trigger_date")
+    private String mDate;
+    @SerializedName("recurrences")
+    private String mRecurrences;
+
+    @SerializedName("recurrences_display")
+    private String mRecurrencesDisplay;
 
     @SerializedName("disabled")
     private boolean mDisabled;
@@ -51,112 +53,12 @@ public class Trigger extends TDCBase implements Serializable, Comparable<Trigger
     }
 
     /**
-     * Recurrences display getter.
-     *
-     * @return the recurrences display string.
-     */
-    public String getRecurrencesDisplay(){
-        if (recurrences_display == null){
-            return "";
-        }
-        return recurrences_display;
-    }
-
-    /**
-     * Recurrences display getter.
-     *
-     * @param recurrences_display the recurrences display string
-     */
-    public void setRecurrencesDisplay(String recurrences_display){
-        this.recurrences_display = recurrences_display;
-    }
-
-    /**
-     * Recurrences getter.
-     *
-     * @return the recurrences string.
-     */
-    public String getRecurrences(){
-        if(recurrences == null){
-            return "";
-        }
-        return recurrences;
-    }
-
-    /**
-     * Recurrences setter.
-     *
-     * @param recurrences the recurrences.
-     */
-    public void setRecurrences(String recurrences){
-        this.recurrences = recurrences;
-    }
-
-    /**
-     * RRULE getter.
-     *
-     * @return the RRULE of the recurrences.
-     */
-    public String getRRULE() {
-        if(recurrences == null) {return "";}
-        // The RRULE data from the api (stored in `recurrences`) will contain a RRULE:
-        // prefix. However, the betterPickers library doesn't like this, so this method
-        // will return the RRULE data without that prefix.
-        if(recurrences.startsWith("RRULE:")){
-            return recurrences.substring(6);
-        }
-        return recurrences;
-    }
-
-    /**
-     * Raw date setter.
-     *
-     * @param date raw trigger date
-     */
-    public void setRawDate(String date){
-        this.trigger_date = date;
-    }
-
-    /**
-     * Raw date getter.
-     *
-     * @return the date as a string in format "yyyy-MM-d" or an empty string if there is no date.
-     */
-    public String getRawDate(){
-        if (trigger_date == null){
-            return "";
-        }
-        return trigger_date;
-    }
-
-    /**
-     * Raw time setter.
-     *
-     * @param time raw trigger time
-     */
-    public void setRawTime(String time){
-        this.time = time;
-    }
-
-    /**
-     * Raw time getter.
-     *
-     * @return the raw time as a string in format "H:mm:ss" or an empty string if there is no time
-     */
-    public String getRawTime(){
-        if(time == null){
-            return "";
-        }
-        return time;
-    }
-
-    /**
      * Name getter.
      *
      * @return the name of the trigger.
      */
     public String getName() {
-        return name;
+        return mName;
     }
 
     /**
@@ -165,30 +67,107 @@ public class Trigger extends TDCBase implements Serializable, Comparable<Trigger
      * @param name the name of the trigger.
      */
     public void setName(String name) {
-        this.name = name;
+        mName = name;
     }
 
     /**
-     * Location getter.
+     * Raw time setter.
      *
-     * @return the location.
+     * @param time raw trigger time
      */
-    public String getLocation() {
-        return location;
+    public void setRawTime(String time){
+        mTime = time;
     }
 
     /**
-     * Location setter.
+     * Raw time getter.
      *
-     * @param location the location.
+     * @return the raw time as a string in format "H:mm:ss" or an empty string if there is no time
      */
-    public void setLocation(String location) {
-        this.location = location;
+    public String getRawTime(){
+        if(mTime == null){
+            return "";
+        }
+        return mTime;
     }
 
-    @Override
-    protected String getType(){
-        return TYPE;
+    /**
+     * Raw date setter.
+     *
+     * @param date raw trigger date.
+     */
+    public void setRawDate(String date){
+        mDate = date;
+    }
+
+    /**
+     * Raw date getter.
+     *
+     * @return the date as a string in format "yyyy-MM-d" or an empty string if there is no date.
+     */
+    public String getRawDate(){
+        if (mDate == null){
+            return "";
+        }
+        return mDate;
+    }
+
+    /**
+     * Recurrences setter.
+     *
+     * @param recurrences the recurrences.
+     */
+    public void setRecurrences(String recurrences){
+        mRecurrences = recurrences;
+    }
+
+    /**
+     * Recurrences getter.
+     *
+     * @return the mRecurrences string.
+     */
+    public String getRecurrences(){
+        if(mRecurrences == null){
+            return "";
+        }
+        return mRecurrences;
+    }
+
+    /**
+     * Recurrences display setter.
+     *
+     * @param recurrencesDisplay the recurrences display string
+     */
+    public void setRecurrencesDisplay(String recurrencesDisplay){
+        this.mRecurrencesDisplay = recurrencesDisplay;
+    }
+
+    /**
+     * Recurrences display getter.
+     *
+     * @return the recurrences display string.
+     */
+    public String getRecurrencesDisplay(){
+        if (mRecurrencesDisplay == null){
+            return "";
+        }
+        return mRecurrencesDisplay;
+    }
+
+    /**
+     * RRULE getter.
+     *
+     * @return the RRULE of the recurrences.
+     */
+    public String getRRULE() {
+        if(mRecurrences == null) {return "";}
+        //The RRULE data from the api (stored in `recurrences`) will contain a RRULE:
+        //  prefix. However, the betterPickers library doesn't like this, so this method
+        //  will return the RRULE data without that prefix.
+        if(mRecurrences.startsWith("RRULE:")){
+            return mRecurrences.substring(6);
+        }
+        return mRecurrences;
     }
 
     /**
@@ -200,9 +179,9 @@ public class Trigger extends TDCBase implements Serializable, Comparable<Trigger
     public Date getTime(){
         Date date = new Date();
         try{
-            if(!time.isEmpty()){
+            if (!mTime.isEmpty()){
                 DateFormat format = new SimpleDateFormat("H:mm", Locale.getDefault());
-                date = format.parse(time.substring(0, 5));
+                date = format.parse(mTime.substring(0, 5));
             }
         }
         catch (ParseException px){
@@ -212,7 +191,7 @@ public class Trigger extends TDCBase implements Serializable, Comparable<Trigger
     }
 
     /**
-     * Returns a string with the time formatted in the default format or an empty
+     * Returns a string with the time formatted in the default format (h:mm a) or an empty
      * string if the trigger hs no time.
      *
      * @return the time as a string.
@@ -223,7 +202,7 @@ public class Trigger extends TDCBase implements Serializable, Comparable<Trigger
 
     /**
      * Returns a string with the time formatted in the specified format or an empty
-     * string if the trigger hs no time.
+     * string if the trigger has no time.
      *
      * @param format the format the time should be formatted in.
      * @return the time as a string.
@@ -245,9 +224,9 @@ public class Trigger extends TDCBase implements Serializable, Comparable<Trigger
     public Date getDate(){
         Date date = new Date();
         try{
-            if(!trigger_date.isEmpty()){
+            if(!mDate.isEmpty()){
                 DateFormat format = new SimpleDateFormat("yyyy-MM-d", Locale.getDefault());
-                date = format.parse(trigger_date);
+                date = format.parse(mDate);
             }
         }
         catch (ParseException px){
@@ -257,7 +236,7 @@ public class Trigger extends TDCBase implements Serializable, Comparable<Trigger
     }
 
     /**
-     * Returns a string with the date formatted in the default format or an empty
+     * Returns a string with the date formatted in the default format (MMM d yyy) or an empty
      * string if the trigger hs no date.
      *
      * @return the date as a string.
@@ -268,7 +247,7 @@ public class Trigger extends TDCBase implements Serializable, Comparable<Trigger
 
     /**
      * Returns a string with the date formatted in the specified format or an empty
-     * string if the trigger hs no date.
+     * string if the trigger has no date.
      *
      * @param format the format the date should be formatted in.
      * @return the date as a string.
@@ -282,15 +261,12 @@ public class Trigger extends TDCBase implements Serializable, Comparable<Trigger
     }
 
     /**
-     * Tells whether the trigger is disabled or not.
+     * Tells whether the trigger is enabled or not.
      *
-     * @return true if the trigger is disabled, false otherwise.
+     * @return true if the trigger is enabled, false otherwise.
      */
-    public boolean isDisabled(){
-        //If the user disabled the trigger, then the Trigger object will exist
-        //  with details like a name, but all of the time/trigger_date/recurrence
-        //  information will be null (or empty)
-        return mDisabled;
+    public boolean isEnabled(){
+        return !mDisabled;
     }
 
     /**
@@ -322,5 +298,54 @@ public class Trigger extends TDCBase implements Serializable, Comparable<Trigger
                 return date;
             }
         }
+    }
+
+    @Override
+    protected String getType(){
+        return TYPE;
+    }
+
+    @Override
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags){
+        dest.writeLong(getId());
+        //The getters are used because the values stored may be null
+        dest.writeString(getName());
+        dest.writeString(getRawTime());
+        dest.writeString(getRawDate());
+        dest.writeString(getRecurrences());
+        dest.writeString(getRecurrencesDisplay());
+        dest.writeByte((byte)(mDisabled ? 1 : 0));
+    }
+
+    public static final Parcelable.Creator<Trigger> CREATOR = new Parcelable.Creator<Trigger>(){
+        @Override
+        public Trigger createFromParcel(Parcel in){
+            return new Trigger(in);
+        }
+
+        @Override
+        public Trigger[] newArray(int size){
+            return new Trigger[size];
+        }
+    };
+
+    /**
+     * Constructor to create from parcel.
+     *
+     * @param in the parcel where the object is stored.
+     */
+    private Trigger(Parcel in){
+        setId(in.readLong());
+        mName = in.readString();
+        mTime = in.readString();
+        mDate = in.readString();
+        mRecurrences = in.readString();
+        mRecurrencesDisplay = in.readString();
+        mDisabled = in.readByte() == 1;
     }
 }

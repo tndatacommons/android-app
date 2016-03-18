@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -134,7 +135,7 @@ public class ReviewActionsActivity
     @Override
     public void onActionSelected(Action action){
         Intent showAction = new Intent(this, ActionActivity.class)
-                .putExtra(ActionActivity.ACTION_KEY, action);
+                .putExtra(ActionActivity.ACTION_KEY, (Parcelable)action);
         startActivityForResult(showAction, ACTION_ACTIVITY_RC);
     }
 

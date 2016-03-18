@@ -23,7 +23,6 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.CustomGoal;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -130,15 +129,15 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
      */
     public void customGoalAdded(@NonNull CustomGoal customGoal){
         mCustomGoal = customGoal;
-        mCustomActions = new ArrayList<>();
+        mCustomActions = mCustomGoal.getActions();
         mCustomGoalHolder.mCreate.setVisibility(View.GONE);
         mCustomGoalHolder.mEdit.setVisibility(View.VISIBLE);
         notifyListInserted();
         updateLoading(false);
     }
 
-    public void setCustomActions(List<CustomAction> customActions){
-        mCustomActions = customActions;
+    public void customActionsSet(){
+        mCustomActions = mCustomGoal.getActions();
         mCustomGoalHolder.mCreate.setVisibility(View.GONE);
         mCustomGoalHolder.mEdit.setVisibility(View.VISIBLE);
         notifyListInserted();
@@ -150,8 +149,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
      * completed. Notifies the recycler view of the insertion of a new element to trigger
      * the proper animation.
      */
-    public void customActionAdded(CustomAction customAction){
-        mCustomActions.add(customAction);
+    public void customActionAdded(){
         mActionListHolder.mAdapter.notifyItemInserted(mCustomActions.size()-1);
         mActionListHolder.mAdapter.notifyItemChanged(mCustomActions.size());
         mActionListHolder.mSwitcher.showPrevious();
@@ -163,6 +161,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
      * @param button the button to be enabled or disabled.
      * @param enabled whether the button should be enabled or disabled.
      */
+    @SuppressWarnings("deprecation")
     private void setButtonEnabled(TextView button, boolean enabled){
         if (enabled){
             button.setTextColor(getContext().getResources().getColor(R.color.grow_primary));

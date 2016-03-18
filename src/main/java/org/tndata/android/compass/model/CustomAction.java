@@ -12,7 +12,7 @@ import com.google.gson.annotations.SerializedName;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class CustomAction extends Action implements Parcelable{
+public class CustomAction extends Action{
     public static final String TYPE = "custom_action";
 
 

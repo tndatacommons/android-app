@@ -261,9 +261,9 @@ public class GoalActivity
 
     @Override
     public void onActionSelected(UserBehavior userBehavior, UserAction userAction){
-        Intent trigger = new Intent(this, TriggerActivity.class)
+        /*Intent trigger = new Intent(this, TriggerActivity.class)
                 .putExtra(TriggerActivity.ACTION_KEY, userAction)
                 .putExtra(TriggerActivity.GOAL_KEY, mUserGoal);
-        startActivityForResult(trigger, TRIGGER_REQUEST_CODE);
+        startActivityForResult(trigger, TRIGGER_REQUEST_CODE);*/
     }
 }

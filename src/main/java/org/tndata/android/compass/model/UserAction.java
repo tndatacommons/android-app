@@ -1,10 +1,11 @@
 package org.tndata.android.compass.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import org.tndata.android.compass.parser.ParserModels;
-
-import java.io.Serializable;
 
 
 /**
@@ -13,15 +14,7 @@ import java.io.Serializable;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserAction
-        extends Action
-        implements
-                Serializable,
-                ParserModels.ResultSet,
-                UserSelectedContent{
-
-    private static final long serialVersionUID = 291944745632851923L;
-
+public class UserAction extends Action implements ParserModels.ResultSet, UserSelectedContent{
     public static final String TYPE = "useraction";
 
 
@@ -181,5 +174,44 @@ public class UserAction
     @Override
     public String toString(){
         return "UserAction #" + getId() + " (" + mAction.toString() + ")";
+    }
+
+    @Override
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags){
+        dest.writeLong(getId());
+        dest.writeByte((byte)(isEditable() ? 1 : 0));
+        dest.writeParcelable(mAction, flags);
+        dest.writeLong(mPrimaryGoalId);
+        dest.writeLong(mPrimaryCategoryId);
+    }
+
+    public static final Parcelable.Creator<UserAction> CREATOR = new Parcelable.Creator<UserAction>(){
+        @Override
+        public UserAction createFromParcel(Parcel in){
+            return new UserAction(in);
+        }
+
+        @Override
+        public UserAction[] newArray(int size){
+            return new UserAction[size];
+        }
+    };
+
+    /**
+     * Constructor to create from parcel.
+     *
+     * @param in the parcel where the object is stored.
+     */
+    private UserAction(Parcel in){
+        setId(in.readLong());
+        setEditable(in.readByte() == 1);
+        mAction = in.readParcelable(ActionContent.class.getClassLoader());
+        mPrimaryGoalId = in.readLong();
+        mPrimaryCategoryId = in.readLong();
     }
 }

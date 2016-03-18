@@ -33,14 +33,13 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
      *
      * @param context a reference to the context.
      */
-    public ActionAdapter(@NonNull Context context, @NonNull ActionAdapterListener listener,
-                         @Nullable Action action, @Nullable CategoryContent category){
-        super(context, ContentType.DETAIL, action == null);
+    public ActionAdapter(@NonNull Context context, @NonNull ActionAdapterListener listener, boolean fromNotification){
+        super(context, ContentType.DETAIL, true);
 
         mListener = listener;
-        mAction = action;
-        mCategory = category;
-        mFromNotification = action == null;
+        mAction = null;
+        mCategory = null;
+        mFromNotification = fromNotification;
     }
 
     public void setAction(@NonNull Action action, @Nullable CategoryContent category){

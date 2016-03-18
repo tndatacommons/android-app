@@ -542,7 +542,7 @@ public class MainActivity
             }
             else if (requestCode == ACTION_REQUEST_CODE){
                 if (data.getBooleanExtra(ActionActivity.DID_IT_KEY, false)){
-                    Action action = (Action)data.getSerializableExtra(ActionActivity.ACTION_KEY);
+                    Action action = data.getParcelableExtra(ActionActivity.ACTION_KEY);
                     mAdapter.didIt(mApplication.getFeedDataX().getActionX(action));
                 }
                 else{
