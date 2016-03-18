@@ -101,13 +101,11 @@ public abstract class API{
         return BASE_URL + "notifications/devices/";
     }
 
-    public static JSONObject getPostDeviceRegistrationBody(@NonNull String registrationId,
-                                                           @NonNull String deviceId){
+    public static JSONObject getPostDeviceRegistrationBody(@NonNull String registrationId){
         JSONObject postDeviceRegistrationBody = new JSONObject();
         try{
             postDeviceRegistrationBody.put("registration_id", registrationId)
-                    .put("device_name", Build.MANUFACTURER + " " + Build.PRODUCT)
-                    .put("device_id", deviceId);
+                    .put("device_name", Build.MANUFACTURER + " " + Build.PRODUCT);
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();

@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -164,12 +162,9 @@ public class GcmRegistration{
     }
 
     private void sendRegistrationIdToBackend(String registration_id){
-        WifiManager manager = (WifiManager)mContext.getSystemService(Context.WIFI_SERVICE);
-        WifiInfo info = manager.getConnectionInfo();
-        String address = info.getMacAddress();
         NetworkRequest.post(mContext, null, API.getPostDeviceRegistrationUrl(),
                 ((CompassApplication)mContext.getApplicationContext()).getToken(),
-                API.getPostDeviceRegistrationBody(registration_id, address));
+                API.getPostDeviceRegistrationBody(registration_id));
     }
 
     /**
