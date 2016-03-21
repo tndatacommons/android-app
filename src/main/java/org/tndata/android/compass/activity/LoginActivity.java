@@ -19,10 +19,8 @@ import org.tndata.android.compass.fragment.LogInFragment;
 import org.tndata.android.compass.fragment.SignUpFragment;
 import org.tndata.android.compass.fragment.TourFragment;
 import org.tndata.android.compass.fragment.WebFragment;
-import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.User;
-import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
@@ -74,6 +72,7 @@ public class LoginActivity
     private int mGetUpcomingRCX;
     private int mGetCustomGoalsRCX;
     private int mGetUserGoalsRCX;
+    private int mGetPlacesRC;
 
 
     @Override
@@ -307,6 +306,9 @@ public class LoginActivity
             Log.d(TAG, result);
             Parser.parse(result, ParserModels.UserGoalsResultSet.class, this);
         }
+        else if (requestCode == mGetPlacesRC){
+            Parser.parse(result, ParserModels.UserPlacesResultSet.class, this);
+        }
     }
 
     @Override
@@ -335,17 +337,17 @@ public class LoginActivity
 
             userData.sync();
             userData.logData();*/
-
-            //Write the places
-            /*CompassDbHelper helper = new CompassDbHelper(this);
-            helper.emptyPlacesTable();
-            helper.savePlaces(userData.getPlaces());
-            helper.close();*/
         }
         else if (result instanceof ParserModels.UpcomingActionsResultSet){
             List<UpcomingAction> upcoming = ((ParserModels.UpcomingActionsResultSet)result).results;
             Log.d("LogIn", "Upcoming size: " + upcoming.size());
             mApplication.getFeedDataX().setUpcomingActionsX(upcoming);
+        }
+        else if (result instanceof ParserModels.UserPlacesResultSet){
+            CompassDbHelper helper = new CompassDbHelper(this);
+            helper.emptyPlacesTable();
+            helper.savePlaces(((ParserModels.UserPlacesResultSet)result).results);
+            helper.close();
         }
     }
 
@@ -353,6 +355,7 @@ public class LoginActivity
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof User){
             mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
+            mGetPlacesRC = HttpRequest.get(this, API.getUserPlacesUrl());
 
         }
         else if (result instanceof ParserModels.CategoryContentResultSet){

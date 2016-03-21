@@ -16,6 +16,7 @@ import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.model.UserGoal;
+import org.tndata.android.compass.model.UserPlace;
 import org.tndata.android.compass.model.UserProfile;
 
 import java.util.List;
@@ -61,8 +62,12 @@ public final class ParserModels{
         public List<DailyProgress> results;
     }
 
-    public final class PlaceResultSet implements ResultSet{
+    public final class PlacesResultSet implements ResultSet{
         public List<Place> results;
+    }
+
+    public final class UserPlacesResultSet implements ResultSet{
+        public List<UserPlace> results;
     }
 
     public final class CategoryContentResultSet implements ResultSet{

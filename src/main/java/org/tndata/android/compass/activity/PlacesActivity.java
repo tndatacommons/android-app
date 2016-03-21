@@ -107,7 +107,7 @@ public class PlacesActivity
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        Parser.parse(result, ParserModels.PlaceResultSet.class, this);
+        Parser.parse(result, ParserModels.PlacesResultSet.class, this);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class PlacesActivity
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        List<Place> primaryPlaces = ((ParserModels.PlaceResultSet)result).results;
+        List<Place> primaryPlaces = ((ParserModels.PlacesResultSet)result).results;
         Log.d(TAG, "Primary places: " + primaryPlaces.toString());
 
         //Two lists are used to sort the list
