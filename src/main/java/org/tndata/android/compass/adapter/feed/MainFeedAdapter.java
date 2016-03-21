@@ -64,8 +64,6 @@ public class MainFeedAdapter
     private GoalsHolder<Goal> mMyGoalsHolder;
     private GoalsHolder<GoalContent> mSuggestionsHolder;
 
-    private UpcomingAction mSelectedAction;
-
     private int mGetMoreGoalsRC;
 
 
@@ -270,7 +268,7 @@ public class MainFeedAdapter
      *----------------------*/
 
     public void setSelectedAction(UpcomingAction selectedAction){
-        mSelectedAction = selectedAction;
+        //mSelectedAction = selectedAction;
     }
 
     public int getGoalsPosition(){
@@ -290,9 +288,17 @@ public class MainFeedAdapter
     }
 
     public void updateDataSet(){
+        updateUpcoming();
+        updateMyGoals();
+    }
+
+    public void updateUpcoming(){
         if (mUpcomingHolder != null){
             mUpcomingHolder.updateActions(mFeedData);
         }
+    }
+
+    public void updateMyGoals(){
         if (mMyGoalsHolder != null){
             mMyGoalsHolder.updateGoals();
             notifyItemChanged(CardTypes.getGoalsPosition());
@@ -335,8 +341,7 @@ public class MainFeedAdapter
      * @param action the action to be rescheduled.
      */
     void reschedule(UpcomingAction action){
-        mSelectedAction = action;
-        mListener.onTriggerSelected(mSelectedAction);
+        mListener.onTriggerSelected(action);
     }
 
     /**
@@ -411,19 +416,9 @@ public class MainFeedAdapter
     }
 
 
-    /*--------------------------------------------------*
-     * ACTIONS TO BE CARRIED OUT UPON THE SELECTED ITEM *
-     *--------------------------------------------------*/
-
-    /**
-     * Updates the item marked as selected.
-     */
-    public void updateSelectedAction(){
-        if (mSelectedAction != null){
-            //mUpcomingHolder.updateAction(mSelectedAction);
-            mSelectedAction = null;
-        }
-    }
+    /*-------------------------*
+     * REQUEST RELATED METHODS *
+     *-------------------------*/
 
     @Override
     public void onRequestComplete(int requestCode, String result){

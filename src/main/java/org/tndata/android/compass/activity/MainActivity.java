@@ -538,7 +538,6 @@ public class MainActivity
                 mAdapter.dismissSuggestion();
             }
             else if (requestCode == GOAL_RC){
-                Log.d("MainActivity", "Goal RC result");
                 mAdapter.updateDataSet();
             }
             else if (requestCode == ACTION_REQUEST_CODE){
@@ -547,11 +546,12 @@ public class MainActivity
                     mAdapter.didIt(mApplication.getFeedDataX().getActionX(action));
                 }
                 else{
-                    mAdapter.updateSelectedAction();
+                    mApplication.updateAction((Action)data.getParcelableExtra(ActionActivity.ACTION_KEY));
+                    mAdapter.updateUpcoming();
                 }
             }
             else if (requestCode == TRIGGER_REQUEST_CODE){
-                mAdapter.updateSelectedAction();
+                mAdapter.updateUpcoming();
             }
         }
         else if (resultCode == Constants.LOGGED_OUT_RESULT_CODE){

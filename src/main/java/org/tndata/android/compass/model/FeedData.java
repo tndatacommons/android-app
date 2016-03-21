@@ -137,8 +137,11 @@ public class FeedData extends TDCBase{
      * @return a list containing the new actions.
      */
     public List<UpcomingAction> loadMoreUpcomingX(int displayedActions){
+        Log.d("FeedData", "Total size: " + mUpcomingActionsX.size());
+        Log.d("FeedData", "Displayed: " + displayedActions);
         List<UpcomingAction> actions = new ArrayList<>();
         while (actions.size() < LOAD_MORE_COUNT && canLoadMoreActionsX(displayedActions + actions.size())){
+            Log.d("FeedData", "Adding: " + (displayedActions + actions.size()));
             actions.add(mUpcomingActionsX.get(displayedActions + actions.size()));
         }
         return actions;

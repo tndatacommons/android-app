@@ -127,6 +127,12 @@ public class ReviewActionsActivity
     }
 
     @Override
+    public void onBackPressed(){
+        setResult(RESULT_OK);
+        finish();
+    }
+
+    @Override
     public void onActionSelected(Action action){
         Intent showAction = new Intent(this, ActionActivity.class)
                 .putExtra(ActionActivity.ACTION_KEY, (Parcelable)action);

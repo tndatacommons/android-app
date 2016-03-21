@@ -99,9 +99,6 @@ public class ActionActivity
             }
             fetchGoal(mAction);
         }
-        //Create and set the adapter
-        mAdapter = new ActionAdapter(this, this, mAction == null);
-        setAdapter(mAdapter);
 
         //If the action wasn't provided via the intent it needs to be fetched
         if (mAction == null){
@@ -109,6 +106,10 @@ public class ActionActivity
             mReminder = (Reminder)getIntent().getSerializableExtra(REMINDER_KEY);
             fetchAction();
         }
+
+        //Create and set the adapter
+        mAdapter = new ActionAdapter(this, this, mReminder != null);
+        setAdapter(mAdapter);
     }
 
     /**
