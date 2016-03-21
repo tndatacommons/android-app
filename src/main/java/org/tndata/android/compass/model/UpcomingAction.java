@@ -75,7 +75,7 @@ public class UpcomingAction implements Parcelable{
         String temp = mTrigger.substring(mTrigger.indexOf("-")+1);
         String month = temp.substring(0, temp.indexOf("-"));
         temp = temp.substring(temp.indexOf("-")+1);
-        String day = temp.substring(0, temp.indexOf("T"));
+        String day = temp.substring(0, temp.indexOf(" "));
 
         String time = mTrigger.substring(mTrigger.indexOf(' ')+1);
         String hour = time.substring(0, time.indexOf(':'));

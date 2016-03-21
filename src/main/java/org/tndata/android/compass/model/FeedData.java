@@ -226,6 +226,7 @@ public class FeedData extends TDCBase{
 
     private boolean happensToday(Action action){
         if (action.getNextReminder() == null){
+            Log.d("FeedData", "nextReminder is null");
             return false;
         }
 

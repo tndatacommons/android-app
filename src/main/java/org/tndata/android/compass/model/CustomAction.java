@@ -106,6 +106,11 @@ public class CustomAction extends Action{
         dest.writeString(mTitle);
         dest.writeLong(mCustomGoalId);
         dest.writeString(mNotificationText);
+        dest.writeParcelable(getTrigger(), flags);
+        dest.writeByte((byte)(getNextReminder() != null ? 1 : 0));
+        if (getNextReminder() != null){
+            dest.writeString(getNextReminder());
+        }
     }
 
     public static final Parcelable.Creator<CustomAction> CREATOR = new Parcelable.Creator<CustomAction>(){
@@ -130,5 +135,9 @@ public class CustomAction extends Action{
         mTitle = in.readString();
         mCustomGoalId = in.readLong();
         mNotificationText = in.readString();
+        setTrigger((Trigger)in.readParcelable(Trigger.class.getClassLoader()));
+        if (in.readByte() == 1){
+            setNextReminder(in.readString());
+        }
     }
 }

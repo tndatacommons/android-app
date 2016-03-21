@@ -188,6 +188,11 @@ public class UserAction extends Action implements ParserModels.ResultSet, UserSe
         dest.writeParcelable(mAction, flags);
         dest.writeLong(mPrimaryGoalId);
         dest.writeLong(mPrimaryCategoryId);
+        dest.writeParcelable(getTrigger(), flags);
+        dest.writeByte((byte)(getNextReminder() != null ? 1 : 0));
+        if (getNextReminder() != null){
+            dest.writeString(getNextReminder());
+        }
     }
 
     public static final Parcelable.Creator<UserAction> CREATOR = new Parcelable.Creator<UserAction>(){
@@ -213,5 +218,9 @@ public class UserAction extends Action implements ParserModels.ResultSet, UserSe
         mAction = in.readParcelable(ActionContent.class.getClassLoader());
         mPrimaryGoalId = in.readLong();
         mPrimaryCategoryId = in.readLong();
+        setTrigger((Trigger)in.readParcelable(Trigger.class.getClassLoader()));
+        if (in.readByte() == 1){
+            setNextReminder(in.readString());
+        }
     }
 }
