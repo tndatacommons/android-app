@@ -56,12 +56,8 @@ public class ChooseCategoryActivity
         Intent chooseGoals = new Intent(this, ChooseGoalsActivity.class)
                 .putExtra(ChooseGoalsActivity.CATEGORY_KEY, category);
         startActivity(chooseGoals);
-    }
-
-    @Override
-    public void onBackPressed(){
         setResult(RESULT_OK);
-        super.onBackPressed();
+        finish();
     }
 
     @Override

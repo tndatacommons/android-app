@@ -235,10 +235,7 @@ public class ChooseBehaviorsActivity
             mAddedGoal = mAddedBehavior.getParentUserGoal();
             Log.d(TAG, "(Post) " + mAddedBehavior.toString());
 
-            //TODO add the relevant stuff to FeedData
-            /*mApplication.getUserData().addCategory(userBehavior.getParentUserCategory());
-            mApplication.getUserData().addGoal(userBehavior.getParentUserGoal());
-            mApplication.getUserData().addBehavior(userBehavior);*/
+            mApplication.addGoal(mAddedGoal);
         }
     }
 
