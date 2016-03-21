@@ -23,9 +23,11 @@ import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.List;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -37,7 +39,7 @@ import java.util.List;
 public class ChooseInterestsFragment
         extends Fragment
         implements
-                NetworkRequest.RequestCallback,
+                HttpRequest.RequestCallback,
                 Parser.ParserCallback,
                 ChooseInterestsAdapter.OnCategoriesSelectedListener{
 
@@ -139,8 +141,7 @@ public class ChooseInterestsFragment
      * Starts the category load process.
      */
     private void loadCategories(){
-        mGetCategoriesRequestCode = NetworkRequest.get(getActivity(), this, API.getCategoriesUrl(),
-                mApplication.getToken());
+        mGetCategoriesRequestCode = HttpRequest.get(this, API.getCategoriesUrl());
     }
 
     @Override
@@ -151,7 +152,7 @@ public class ChooseInterestsFragment
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
+    public void onRequestFailed(int requestCode, HttpRequestError error){
         if (requestCode == mGetCategoriesRequestCode){
             notifyError(R.string.choose_categories_error);
         }

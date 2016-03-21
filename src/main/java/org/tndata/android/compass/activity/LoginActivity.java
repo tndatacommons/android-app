@@ -331,12 +331,7 @@ public class LoginActivity
             mApplication.setUser((User)result, false);
         }
         else if (result instanceof ParserModels.FeedDataResultSet){
-            ((ParserModels.FeedDataResultSet)result).results.get(0).sync(null);
-
-            /*UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
-
-            userData.sync();
-            userData.logData();*/
+            ((ParserModels.FeedDataResultSet)result).results.get(0).sync();
         }
         else if (result instanceof ParserModels.UpcomingActionsResultSet){
             List<UpcomingAction> upcoming = ((ParserModels.UpcomingActionsResultSet)result).results;
@@ -356,7 +351,6 @@ public class LoginActivity
         if (result instanceof User){
             mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
             mGetPlacesRC = HttpRequest.get(this, API.getUserPlacesUrl());
-
         }
         else if (result instanceof ParserModels.CategoryContentResultSet){
             mApplication.setPublicCategories(((ParserModels.CategoryContentResultSet)result).results);

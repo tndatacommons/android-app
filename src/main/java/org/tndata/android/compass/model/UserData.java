@@ -582,7 +582,6 @@ public class UserData extends TDCBase{
         linkBehaviorsAndGoals();
         linkActions();
         linkCustomContent();
-        mFeedData.sync(this);
     }
 
     /**

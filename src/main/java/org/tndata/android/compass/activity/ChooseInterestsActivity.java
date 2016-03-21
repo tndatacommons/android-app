@@ -3,22 +3,19 @@ package org.tndata.android.compass.activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseInterestsAdapter;
-import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.fragment.ChooseInterestsFragment;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.UserCategory;
-import org.tndata.android.compass.model.UserData;
-import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -31,8 +28,7 @@ public class ChooseInterestsActivity
         extends AppCompatActivity
         implements
                 ChooseInterestsAdapter.OnCategoriesSelectedListener,
-                NetworkRequest.RequestCallback,
-                Parser.ParserCallback{
+                HttpRequest.RequestCallback{
 
     private CompassApplication mApplication;
 
@@ -43,7 +39,6 @@ public class ChooseInterestsActivity
     private int mLastPostCategoryRequestCode;
     private int mInitialDeleteCategoryRequestCode;
     private int mLastDeleteCategoryRequestCode;
-    private int mGetDataRequestCode;
 
 
     @Override
@@ -75,14 +70,13 @@ public class ChooseInterestsActivity
         if (toAdd.size() > 0){
             for (int i = 0; i < toAdd.size(); i++){
                 if (i == 0){
-                    mInitialPostCategoryRequestCode = NetworkRequest.post(this, this,
-                            API.getUserCategoriesUrl(), mApplication.getToken(),
-                            API.getPostCategoryBody(toAdd.get(i)));
+                    mInitialPostCategoryRequestCode = HttpRequest.post(this,
+                            API.getUserCategoriesUrl(), API.getPostCategoryBody(toAdd.get(i)));
                     mLastPostCategoryRequestCode = mInitialPostCategoryRequestCode+toAdd.size();
                 }
                 else{
-                    NetworkRequest.post(this, this, API.getUserCategoriesUrl(),
-                            mApplication.getToken(), API.getPostCategoryBody(toAdd.get(i)));
+                    HttpRequest.post(this, API.getUserCategoriesUrl(),
+                            API.getPostCategoryBody(toAdd.get(i)));
                 }
             }
         }
@@ -105,28 +99,19 @@ public class ChooseInterestsActivity
         if (toDelete.size() > 0){
             for (int i = 0; i < toDelete.size(); i++){
                 if (i == 0){
-                    mInitialDeleteCategoryRequestCode = NetworkRequest.delete(this, this,
-                            API.getDeleteCategoryUrl(toDelete.get(i)),
-                            mApplication.getToken(), new JSONObject());
+                    mInitialDeleteCategoryRequestCode = HttpRequest.delete(this,
+                            API.getDeleteCategoryUrl(toDelete.get(i)));
                     mLastDeleteCategoryRequestCode = mInitialDeleteCategoryRequestCode+toDelete.size();
                 }
                 else{
-                    NetworkRequest.delete(this, this, API.getDeleteCategoryUrl(toDelete.get(i)),
-                            mApplication.getToken(), new JSONObject());
+                    HttpRequest.delete(this, API.getDeleteCategoryUrl(toDelete.get(i)));
                 }
             }
         }
         else{
-            getUserData();
+            setResult(RESULT_OK);
+            finish();
         }
-    }
-
-    /**
-     * Triggers data retrieval from the API.
-     */
-    private void getUserData(){
-        mGetDataRequestCode = NetworkRequest.get(this, this, API.getUserDataUrl(),
-                mApplication.getToken(), 60 * 1000);
     }
 
     @Override
@@ -140,16 +125,14 @@ public class ChooseInterestsActivity
         else if (requestCode < mLastDeleteCategoryRequestCode){
             mInitialDeleteCategoryRequestCode++;
             if (mInitialDeleteCategoryRequestCode == mLastDeleteCategoryRequestCode){
-                getUserData();
+                setResult(RESULT_OK);
+                finish();
             }
-        }
-        else if (requestCode == mGetDataRequestCode){
-            Parser.parse(result, ParserModels.UserDataResultSet.class, this);
         }
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
+    public void onRequestFailed(int requestCode, HttpRequestError error){
         if (requestCode < mLastPostCategoryRequestCode){
             mInitialPostCategoryRequestCode++;
             if (mInitialPostCategoryRequestCode == mLastPostCategoryRequestCode){
@@ -159,39 +142,9 @@ public class ChooseInterestsActivity
         else if (requestCode < mLastDeleteCategoryRequestCode){
             mInitialDeleteCategoryRequestCode++;
             if (mInitialDeleteCategoryRequestCode == mLastDeleteCategoryRequestCode){
-                getUserData();
+                setResult(RESULT_OK);
+                finish();
             }
-        }
-        else if (requestCode == mGetDataRequestCode){
-            setResult(RESULT_OK);
-            finish();
-        }
-    }
-
-    @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.UserDataResultSet){
-            UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
-
-            userData.sync();
-            userData.logData();
-
-            //Write the places
-            CompassDbHelper helper = new CompassDbHelper(this);
-            helper.emptyPlacesTable();
-            helper.savePlaces(userData.getPlaces());
-            helper.close();
-        }
-    }
-
-    @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.UserDataResultSet){
-            UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
-
-            mApplication.setUserData(userData);
-            setResult(RESULT_OK);
-            finish();
         }
     }
 }

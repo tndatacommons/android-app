@@ -330,69 +330,9 @@ public class FeedData extends TDCBase{
     }
 
     /**
-     * Synchronizes the feed data with the user data.
-     *
-     * @param userData the user data bundle.
+     * Initializes the feed data bundle.
      */
-    public void sync(UserData userData){
-        //Create the upcoming action array
-        //mUpcomingActions = new ArrayList<>();
-        //Populate it in action's trigger-time order
-        /*while (!mUpcomingActionIds.isEmpty() && !mUpcomingCustomActionIds.isEmpty()){
-            Action userAction = userData.getActions().get(mUpcomingActionIds.get(0));
-            Action customAction = userData.getCustomActions().get(mUpcomingCustomActionIds.get(0));
-            //This favors CustomActions over UserActions in case of equal trigger time
-            if (userAction.getNextReminderDate().compareTo(customAction.getNextReminderDate()) < 0){
-                mUpcomingActions.add(userAction);
-                mUpcomingActionIds.remove(0);
-            }
-            else{
-                mUpcomingActions.add(customAction);
-                mUpcomingCustomActionIds.remove(0);
-            }
-        }
-
-        //The remaining actions are added (Note that only one of the two for loops will
-        //  get to execute the inner block)
-        for (Long upcomingActionId:mUpcomingActionIds){
-            mUpcomingActions.add(userData.getActions().get(upcomingActionId));
-        }
-        for (Long upcomingCustomActionId:mUpcomingCustomActionIds){
-            mUpcomingActions.add(userData.getCustomActions().get(upcomingCustomActionId));
-        }
-
-        //Set the next Action of there is one
-        if (!mUpcomingActions.isEmpty()){
-            mNextAction = mUpcomingActions.remove(0);
-        }
-
-        //Assign colors to suggestions
-        for (GoalContent suggestion:mSuggestions){
-            for (Long categoryId:suggestion.getCategoryIdSet()){
-                if (userData.getCategories().containsKey(categoryId)){
-                    suggestion.setColor(userData.getCategories().get(categoryId).getColor());
-                    break;
-                }
-            }
-        }
-
-        //Select the source
-        mGoals = new ArrayList<>();
-        if (!userData.getGoals().isEmpty() || !userData.getCustomGoals().isEmpty()){
-            mGoals.addAll(userData.getGoals().values());
-            mGoals.addAll(userData.getCustomGoals().values());
-            //Sort by title
-            Collections.sort(mGoals, new Comparator<ContentContainer.ContainerGoal>(){
-                @Override
-                public int compare(ContentContainer.ContainerGoal lhs, ContentContainer.ContainerGoal rhs){
-                    return lhs.getTitle().toLowerCase().compareTo(rhs.getTitle().toLowerCase());
-                }
-            });
-        }
-        else{
-            mGoals.addAll(mSuggestions);
-        }*/
-
+    public void sync(){
         mDisplayedGoalsX = new ArrayList<>();
     }
 
