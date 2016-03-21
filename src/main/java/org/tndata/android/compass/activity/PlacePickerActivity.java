@@ -31,13 +31,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.PlacePickerAdapter;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.UserPlace;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.NetworkRequest;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -55,7 +56,7 @@ public class PlacePickerActivity
                 ResultCallback<PlaceBuffer>,
                 AdapterView.OnItemClickListener,
                 OnMapReadyCallback,
-                NetworkRequest.RequestCallback{
+                HttpRequest.RequestCallback{
 
     //Data keys
     public static final String PLACE_KEY = "org.tndata.compass.Place";
@@ -144,13 +145,11 @@ public class PlacePickerActivity
     public boolean onOptionsItemSelected(MenuItem item){
         if (item.getItemId() == R.id.place_picker_save){
             if (mPlace.getId() == -1){
-                NetworkRequest.post(this, this, API.getPostPutPlaceUrl(mPlace),
-                        ((CompassApplication)getApplication()).getToken(),
+                HttpRequest.post(this, API.getPostPutPlaceUrl(mPlace),
                         API.getPostPutPlaceBody(mPlace));
             }
             else{
-                NetworkRequest.put(this, this, API.getPostPutPlaceUrl(mPlace),
-                        ((CompassApplication)getApplication()).getToken(),
+                HttpRequest.put(this, API.getPostPutPlaceUrl(mPlace),
                         API.getPostPutPlaceBody(mPlace));
             }
             return true;
@@ -176,8 +175,8 @@ public class PlacePickerActivity
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    public void onRequestFailed(int requestCode, HttpRequestError error){
+        Toast.makeText(this, error.getMessage(), Toast.LENGTH_SHORT).show();
     }
 
     @Override

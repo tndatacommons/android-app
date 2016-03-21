@@ -18,7 +18,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.PlacesAdapter;
 import org.tndata.android.compass.database.CompassDbHelper;
@@ -27,10 +26,12 @@ import org.tndata.android.compass.model.UserPlace;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -44,7 +45,7 @@ public class PlacesActivity
         extends AppCompatActivity
         implements
                 AdapterView.OnItemClickListener,
-                NetworkRequest.RequestCallback,
+                HttpRequest.RequestCallback,
                 Parser.ParserCallback,
                 DialogInterface.OnClickListener,
                 DialogInterface.OnShowListener,
@@ -55,8 +56,6 @@ public class PlacesActivity
     //Request codes
     private static final int PLACE_PICKER_REQUEST_CODE = 65485;
 
-
-    private CompassApplication mApplication;
 
     //Activity UI components
     private ProgressBar mProgress;
@@ -77,8 +76,6 @@ public class PlacesActivity
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_places);
-
-        mApplication = (CompassApplication)getApplication();
 
         //Get and set the toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.places_toolbar);
@@ -105,7 +102,7 @@ public class PlacesActivity
         mNameDialog.setOnShowListener(this);
 
         //Load the primary places
-        NetworkRequest.get(this, this, API.getPrimaryPlacesUrl(), "");
+        HttpRequest.get(this, API.getPrimaryPlacesUrl());
     }
 
     @Override
@@ -114,9 +111,9 @@ public class PlacesActivity
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
+    public void onRequestFailed(int requestCode, HttpRequestError error){
         //If the data couldn't be retrieved the user is notified
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, error.getMessage(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -127,7 +124,9 @@ public class PlacesActivity
         //Two lists are used to sort the list
         List<UserPlace> places = new ArrayList<>();
         List<UserPlace> userPlaces = new ArrayList<>();
-        List<UserPlace> currentPlaces = mApplication.getUserData().getPlaces();
+        CompassDbHelper helper = new CompassDbHelper(this);
+        List<UserPlace> currentPlaces = helper.getPlaces();
+        helper.close();
 
         //The user places are added to the list in the appropriate order
         for (UserPlace userPlace:currentPlaces){
@@ -233,15 +232,13 @@ public class PlacesActivity
                 if (mEdition){
                     mCurrentPlace.getPlace().setName(mName.getText().toString().trim());
                     mAdapter.notifyDataSetChanged();
-                    NetworkRequest.put(this, null, API.getPostPutPlaceUrl(mCurrentPlace),
-                            mApplication.getToken(), API.getPostPutPlaceBody(mCurrentPlace));
+                    HttpRequest.put(null, API.getPostPutPlaceUrl(mCurrentPlace),
+                            API.getPostPutPlaceBody(mCurrentPlace));
 
                     //Update the place in the database
                     CompassDbHelper dbHelper = new CompassDbHelper(this);
                     dbHelper.updatePlace(mCurrentPlace);
                     dbHelper.close();
-
-                    addPlaceToLocalList(mCurrentPlace);
                 }
                 //Otherwise this is a new place request, fire the place picker
                 else{
@@ -326,20 +323,7 @@ public class PlacesActivity
                     mCurrentPlace.getPlace().setSet(true);
                     mAdapter.notifyDataSetChanged();
                 }
-                addPlaceToLocalList(place);
             }
-        }
-    }
-
-    public void addPlaceToLocalList(UserPlace place){
-        List<UserPlace> userPlaces = mApplication.getUserData().getPlaces();
-        if (!userPlaces.contains(place)){
-            userPlaces.add(place);
-        }
-        else{
-            int index = userPlaces.indexOf(place);
-            userPlaces.remove(index);
-            userPlaces.add(index, place);
         }
     }
 }

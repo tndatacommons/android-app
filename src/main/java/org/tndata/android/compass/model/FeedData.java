@@ -44,11 +44,6 @@ public class FeedData extends TDCBase{
     private List<GoalContent> mSuggestions;
 
 
-    //Fields set during post-processing
-    private Action mNextAction;
-    private List<Action> mUpcomingActions;
-
-
     //Experiment
     private UpcomingAction mUpNextActionX;
     private List<UpcomingAction> mUpcomingActionsX;
@@ -83,7 +78,9 @@ public class FeedData extends TDCBase{
     }
 
     public void addGoalsX(@NonNull List<? extends Goal> goals, @Nullable String nextBatchUrl){
-        mDisplayedGoalsX.addAll(goals);
+        for (Goal goal:goals){
+            addGoal(goal);
+        }
         mNextGoalBatchUrlX = nextBatchUrl;
     }
 
@@ -191,48 +188,120 @@ public class FeedData extends TDCBase{
         return mSuggestions;
     }
 
-    /**
-     * Adds an action to the upcoming list if the action is due today.
-     *
-     * @param action the action to be added.
-     */
-    public void addAction(Action action){
-        //TODO edit this to generate an UpcomingAction from an Action
-        Log.d("FeedData", "addAction() called: " + action);
+    public List<UpcomingAction> getUpcomingList(int size){
+        if (size > mUpcomingActionsX.size()){
+            size = mUpcomingActionsX.size();
+        }
+        return mUpcomingActionsX.subList(0, size);
+    }
 
-        Calendar todayCalendar = Calendar.getInstance();
-        todayCalendar.set(Calendar.HOUR_OF_DAY, 0);
-        todayCalendar.set(Calendar.MINUTE, 0);
-        todayCalendar.set(Calendar.SECOND, 0);
-        todayCalendar.set(Calendar.MILLISECOND, 0);
+    public void addGoal(Goal goal){
+        Log.d("FeedData", "addGoal() called");
+        if (!mDisplayedGoalsX.contains(goal)){
+            Log.d("FeedData", "Adding goal");
+            mDisplayedGoalsX.add(goal);
+        }
+    }
+
+    public void updateGoal(Goal goal){
+        if (goal instanceof CustomGoal){
+            CustomGoal customGoal = (CustomGoal)goal;
+            for (Goal listedGoal:mDisplayedGoalsX){
+                if (listedGoal.equals(goal)){
+                    CustomGoal existingGoal = (CustomGoal)listedGoal;
+                    existingGoal.setTitle(customGoal.getTitle());
+                }
+            }
+        }
+    }
+
+    public void removeGoal(Goal goal){
+        for (int i = 0; i < mDisplayedGoalsX.size(); i++){
+            if (mDisplayedGoalsX.get(i).equals(goal)){
+                mDisplayedGoalsX.remove(i);
+                break;
+            }
+        }
+    }
+
+    private boolean happensToday(Action action){
+        if (action.getNextReminder() == null){
+            return false;
+        }
 
         Calendar tomorrowCalendar = Calendar.getInstance();
-        tomorrowCalendar.set(Calendar.DAY_OF_MONTH, todayCalendar.get(Calendar.DAY_OF_MONTH)+1);
+        tomorrowCalendar.set(Calendar.DAY_OF_MONTH, tomorrowCalendar.get(Calendar.DAY_OF_MONTH)+1);
         tomorrowCalendar.set(Calendar.HOUR_OF_DAY, 0);
         tomorrowCalendar.set(Calendar.MINUTE, 0);
         tomorrowCalendar.set(Calendar.SECOND, 0);
         tomorrowCalendar.set(Calendar.MILLISECOND, 0);
 
-        Date today = todayCalendar.getTime();
+        Date now = Calendar.getInstance().getTime();
         Date tomorrow = tomorrowCalendar.getTime();
         Date actionDate = action.getNextReminderDate();
 
-        Log.d("FeedData", "Today: " + today);
+        Log.d("FeedData", "Now: " + now);
         Log.d("FeedData", "Action: " + actionDate);
         Log.d("FeedData", "Tomorrow: " + tomorrow);
 
-        if (actionDate.after(today) && actionDate.before(tomorrow)){
-            for (int i = 0; i < mUpcomingActions.size(); i++){
-                if (mUpcomingActions.get(i).getNextReminderDate().compareTo(actionDate) > 0){
+        return actionDate.after(now) && actionDate.before(tomorrow);
+    }
+
+    /**
+     * Adds an action to the upcoming list if the action is due today.
+     *
+     * @param goal the parent goal of the action.
+     * @param action the action to be added.
+     */
+    public void addAction(Goal goal, Action action){
+        if (happensToday(action)){
+            Date actionDate = action.getNextReminderDate();
+            for (int i = 0; i < mUpcomingActionsX.size(); i++){
+                if (mUpcomingActionsX.get(i).getTriggerDate().compareTo(actionDate) > 0){
                     Log.d("FeedData", "Added at: " + i);
-                    mUpcomingActions.add(i, action);
+                    mUpcomingActionsX.add(i, new UpcomingAction(goal, action));
                     break;
                 }
-                else if (i == mUpcomingActions.size()-1){
+                else if (i == mUpcomingActionsX.size()-1){
                     Log.d("FeedData", "Added at the end");
-                    mUpcomingActions.add(action);
+                    mUpcomingActionsX.add(new UpcomingAction(goal, action));
                     break;
                 }
+            }
+        }
+    }
+
+    public void updateAction(Action action){
+        if (!happensToday(action)){
+            removeAction(action);
+        }
+        else{
+            for (int i = 0; i < mUpcomingActionsX.size(); i++){
+                UpcomingAction upcomingAction = mUpcomingActionsX.get(i);
+                if (upcomingAction.is(action)){
+                    upcomingAction.update(action);
+                    break;
+                }
+            }
+        }
+    }
+
+    public void updateAction(Goal goal, Action action){
+        //Remove and add, it's easier than lookup and update.
+        Log.d("FeedData", "updateAction(G, A) called");
+        removeAction(action);
+        if (happensToday(action)){
+            Log.d("FeedData", "Updating action: " + action);
+            addAction(goal, action);
+        }
+    }
+
+    public void removeAction(Action action){
+        for (int i = 0; i < mUpcomingActionsX.size(); i++){
+            UpcomingAction upcomingAction = mUpcomingActionsX.get(i);
+            if (upcomingAction.is(action)){
+                mUpcomingActionsX.remove(i);
+                break;
             }
         }
     }
@@ -244,7 +313,7 @@ public class FeedData extends TDCBase{
      */
     public void sync(UserData userData){
         //Create the upcoming action array
-        mUpcomingActions = new ArrayList<>();
+        //mUpcomingActions = new ArrayList<>();
         //Populate it in action's trigger-time order
         /*while (!mUpcomingActionIds.isEmpty() && !mUpcomingCustomActionIds.isEmpty()){
             Action userAction = userData.getActions().get(mUpcomingActionIds.get(0));
@@ -453,5 +522,9 @@ public class FeedData extends TDCBase{
         public String getProgressFraction(){
             return mCompletedActions + "/" + mTotalActions;
         }
+    }
+
+    public interface DataSetChangeListener{
+        //TODO maybe?
     }
 }

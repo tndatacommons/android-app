@@ -105,6 +105,11 @@ class GoalsHolder<T> extends MainFeedViewHolder implements View.OnClickListener{
         mList.requestLayout();
     }
 
+    void updateGoals(){
+        mAdapter.notifyDataSetChanged();
+        mList.requestLayout();
+    }
+
     /**
      * Hides the footer of the card.
      */

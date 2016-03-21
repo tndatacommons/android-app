@@ -49,7 +49,7 @@ public class ReviewActionsActivity
     public static final int ACTION_ACTIVITY_RC = 4562;
 
 
-    private Action mSelectedAction;
+    private CompassApplication mApplication;
     private ReviewActionsAdapter mAdapter;
 
     //Network request codes and urls
@@ -61,7 +61,7 @@ public class ReviewActionsActivity
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        CompassApplication app = (CompassApplication)getApplication();
+        mApplication = (CompassApplication)getApplication();
 
         //A UserCategory is all it's needed when a category's actions are to be displayed
         UserCategory userCategory = (UserCategory)getIntent().getSerializableExtra(USER_CATEGORY_KEY);
@@ -73,7 +73,7 @@ public class ReviewActionsActivity
         UserBehavior userBehavior = (UserBehavior)getIntent().getSerializableExtra(USER_BEHAVIOR_KEY);
 
         if (userGoal != null){
-            CategoryContent category = app.getPublicCategories().get(userGoal.getPrimaryCategoryId());
+            CategoryContent category = mApplication.getPublicCategories().get(userGoal.getPrimaryCategoryId());
             if (userBehavior != null){
                 String title = getString(R.string.review_actions_header, userBehavior.getTitle());
                 mAdapter = new ReviewActionsAdapter(this, this, title);
@@ -101,7 +101,6 @@ public class ReviewActionsActivity
         }
 
         setAdapter(mAdapter);
-        mSelectedAction = null;
     }
 
     private void setBehaviorHeader(BehaviorContent behavior){
@@ -128,15 +127,18 @@ public class ReviewActionsActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-
-    }
-
-    @Override
     public void onActionSelected(Action action){
         Intent showAction = new Intent(this, ActionActivity.class)
                 .putExtra(ActionActivity.ACTION_KEY, (Parcelable)action);
         startActivityForResult(showAction, ACTION_ACTIVITY_RC);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (requestCode == ACTION_ACTIVITY_RC && resultCode == RESULT_OK){
+            Action action = data.getParcelableExtra(ActionActivity.ACTION_KEY);
+            mApplication.updateAction(action);
+        }
     }
 
     @Override
@@ -166,6 +168,10 @@ public class ReviewActionsActivity
         if (result instanceof ParserModels.UserActionResultSet){
             ParserModels.UserActionResultSet set = (ParserModels.UserActionResultSet)result;
             mGetActionsNextUrl = set.next;
+            for (Action action:((ParserModels.UserActionResultSet)result).results){
+                //TODO
+                //mApplication.addAction(action);
+            }
             mAdapter.addActions(set.results, mGetActionsNextUrl != null);
         }
     }

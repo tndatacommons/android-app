@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -72,8 +73,7 @@ public class MainActivity
 
     //Activity request codes
     private static final int CATEGORIES_REQUEST_CODE = 4821;
-    private static final int GOAL_REQUEST_CODE = 3486;
-    private static final int CUSTOM_GOAL_RC = 3475;
+    private static final int GOAL_RC = 3486;
     private static final int GOAL_SUGGESTION_REQUEST_CODE = 8962;
     private static final int ACTION_REQUEST_CODE = 4582;
     private static final int TRIGGER_REQUEST_CODE = 7631;
@@ -333,14 +333,14 @@ public class MainActivity
      * Called when the search goals FAB is clicked.
      */
     private void search(){
-        startActivityForResult(new Intent(this, SearchActivity.class), GOAL_REQUEST_CODE);
+        startActivityForResult(new Intent(this, SearchActivity.class), GOAL_RC);
     }
 
     /**
      * Called when the browse Goals FAB is clicked.
      */
     private void browseGoals(){
-        startActivityForResult(new Intent(this, ChooseCategoryActivity.class), GOAL_REQUEST_CODE);
+        startActivityForResult(new Intent(this, ChooseCategoryActivity.class), GOAL_RC);
     }
 
     /**
@@ -475,8 +475,8 @@ public class MainActivity
     public void onSuggestionSelected(GoalContent goal){
         CategoryContent category = null;
         for (Long categoryId:goal.getCategoryIdSet()){
-            if (mApplication.getUserData().getCategories().containsKey(categoryId)){
-                category = mApplication.getCategories().get(categoryId).getCategory();
+            if (mApplication.getPublicCategories().containsKey(categoryId)){
+                category = mApplication.getPublicCategories().get(categoryId);
                 break;
             }
         }
@@ -491,13 +491,13 @@ public class MainActivity
         if (goal instanceof UserGoal){
             Intent reviewActionsIntent = new Intent(this, ReviewActionsActivity.class)
                     .putExtra(ReviewActionsActivity.USER_GOAL_KEY, goal);
-            startActivityForResult(reviewActionsIntent, GOAL_REQUEST_CODE);
+            startActivityForResult(reviewActionsIntent, GOAL_RC);
         }
         else if (goal instanceof CustomGoal){
             Parcelable customGoal = (CustomGoal)goal;
             Intent editGoal = new Intent(this, CustomContentManagerActivity.class)
                     .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, customGoal);
-            startActivityForResult(editGoal, CUSTOM_GOAL_RC);
+            startActivityForResult(editGoal, GOAL_RC);
         }
     }
 
@@ -506,7 +506,7 @@ public class MainActivity
         if (feedback.hasUserGoal()){
             /*Intent goalActivityIntent = new Intent(this, GoalActivity.class)
                     .putExtra(GoalActivity.USER_GOAL_KEY, goal);
-            startActivityForResult(goalActivityIntent, GOAL_REQUEST_CODE);*/
+            startActivityForResult(goalActivityIntent, GOAL_RC);*/
         }
         else if (feedback.hasCustomGoal()){
             //TODO
@@ -537,7 +537,8 @@ public class MainActivity
             else if (requestCode == GOAL_SUGGESTION_REQUEST_CODE){
                 mAdapter.dismissSuggestion();
             }
-            else if (requestCode == GOAL_REQUEST_CODE){
+            else if (requestCode == GOAL_RC){
+                Log.d("MainActivity", "Goal RC result");
                 mAdapter.updateDataSet();
             }
             else if (requestCode == ACTION_REQUEST_CODE){

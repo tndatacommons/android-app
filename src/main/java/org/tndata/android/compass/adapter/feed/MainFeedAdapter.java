@@ -294,7 +294,7 @@ public class MainFeedAdapter
             mUpcomingHolder.updateActions(mFeedData);
         }
         if (mMyGoalsHolder != null){
-            //mGoalsHolder.updateGoals(mUserData.getFeedData().getGoals());
+            mMyGoalsHolder.updateGoals();
             notifyItemChanged(CardTypes.getGoalsPosition());
         }
     }

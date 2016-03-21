@@ -13,9 +13,10 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import org.tndata.android.compass.BuildConfig;
-import org.tndata.android.compass.CompassApplication;
 
 import java.io.IOException;
+
+import es.sandwatch.httprequests.HttpRequest;
 
 
 /**
@@ -33,7 +34,7 @@ public class GcmRegistration{
     String registration_id = "";
 
     public GcmRegistration(Context context) {
-        this.mContext = context;
+        mContext = context;
         // Check device for Play Services APK.
         if (checkPlayServices()) {
             gcm = GoogleCloudMessaging.getInstance(context);
@@ -124,11 +125,10 @@ public class GcmRegistration{
      * Stores the registration ID and app versionCode in the application's
      * shared preferences.
      */
-    private void registerInBackground() {
-
-        new AsyncTask<Void,Void, String>() {
+    private void registerInBackground(){
+        new AsyncTask<Void,Void, String>(){
             @Override
-            protected String doInBackground(Void... params) {
+            protected String doInBackground(Void... params){
                 String msg;
                 try {
                     if (gcm == null) {
@@ -162,8 +162,7 @@ public class GcmRegistration{
     }
 
     private void sendRegistrationIdToBackend(String registration_id){
-        NetworkRequest.post(mContext, null, API.getPostDeviceRegistrationUrl(),
-                ((CompassApplication)mContext.getApplicationContext()).getToken(),
+        HttpRequest.post(null, API.getPostDeviceRegistrationUrl(),
                 API.getPostDeviceRegistrationBody(registration_id));
     }
 

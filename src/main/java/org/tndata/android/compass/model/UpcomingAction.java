@@ -5,6 +5,9 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Calendar;
+import java.util.Date;
+
 
 /**
  * Created by isma on 3/10/16.
@@ -32,6 +35,21 @@ public class UpcomingAction implements Parcelable{
     private String mType;
 
 
+    public UpcomingAction(Goal goal, Action action){
+        mId = action.getId();
+        mTitle = action.getTitle();
+        mGoalTitle = goal.getTitle();
+        mTrigger = action.getNextReminder().replace('T', ' ');
+        mEditable = action.isEditable();
+        mGoalId = goal.getId();
+        if (action instanceof UserAction){
+            mType = "useraction";
+        }
+        else if (action instanceof CustomAction){
+            mType = "customaction";
+        }
+    }
+
     public long getId(){
         return mId;
     }
@@ -50,6 +68,29 @@ public class UpcomingAction implements Parcelable{
 
     public String getGoalTitle(){
         return mGoalTitle;
+    }
+
+    public Date getTriggerDate(){
+        String year = mTrigger.substring(0, mTrigger.indexOf("-"));
+        String temp = mTrigger.substring(mTrigger.indexOf("-")+1);
+        String month = temp.substring(0, temp.indexOf("-"));
+        temp = temp.substring(temp.indexOf("-")+1);
+        String day = temp.substring(0, temp.indexOf("T"));
+
+        String time = mTrigger.substring(mTrigger.indexOf(' ')+1);
+        String hour = time.substring(0, time.indexOf(':'));
+        time = time.substring(time.indexOf(':')+1);
+        String minute = time.substring(0, time.indexOf(':'));
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, Integer.valueOf(year));
+        calendar.set(Calendar.MONTH, Integer.valueOf(month)-1);
+        calendar.set(Calendar.DAY_OF_MONTH, Integer.valueOf(day));
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(hour));
+        calendar.set(Calendar.MINUTE, Integer.valueOf(minute));
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
     }
 
     public String getTriggerDisplay(){
@@ -116,6 +157,17 @@ public class UpcomingAction implements Parcelable{
             return mId == action.getId();
         }
         return false;
+    }
+
+    public void update(Action action){
+        if (is(action)){
+            mTitle = action.getTitle();
+            mTrigger = action.getNextReminder().replace('T', ' ');
+        }
+    }
+
+    public void update(Action action, Goal goal){
+
     }
 
     @Override

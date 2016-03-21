@@ -7,7 +7,8 @@ import android.preference.PreferenceManager;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.NetworkRequest;
+
+import es.sandwatch.httprequests.HttpRequest;
 
 
 /**
@@ -43,7 +44,7 @@ public class LogOutService extends IntentService{
             editor.putInt("id", -1);
             editor.apply();
 
-            NetworkRequest.post(this, null, API.getLogOutUrl(), app.getToken(), API.getLogOutBody(regId));
+            HttpRequest.post(null, API.getLogOutUrl(), API.getLogOutBody(regId));
         }
     }
 }

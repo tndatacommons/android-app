@@ -4,13 +4,13 @@ import android.app.IntentService;
 import android.content.Intent;
 
 import org.json.JSONObject;
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.NotificationUtil;
+
+import es.sandwatch.httprequests.HttpRequest;
 
 
 /**
@@ -76,7 +76,6 @@ public class ActionReportService extends IntentService{
 
         NotificationUtil.cancel(this, notificationTag, actionId);
 
-        String token = ((CompassApplication)getApplication()).getToken();
         JSONObject body;
         String state = intent.getStringExtra(STATE_KEY);
         if (state.equals(STATE_SNOOZED)){
@@ -86,6 +85,6 @@ public class ActionReportService extends IntentService{
             body = API.getPostActionReportBody(state);
         }
 
-        NetworkRequest.post(this, null, url, token, body);
+        HttpRequest.post(null, url, body);
     }
 }

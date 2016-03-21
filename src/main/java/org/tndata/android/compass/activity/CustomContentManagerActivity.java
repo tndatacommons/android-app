@@ -12,9 +12,9 @@ import android.widget.ImageView;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.CustomContentManagerAdapter;
+import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.CustomGoal;
-import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
@@ -49,8 +49,6 @@ public class CustomContentManagerActivity
     private CompassApplication mApplication;
     private CustomGoal mCustomGoal;
     private CustomContentManagerAdapter mAdapter;
-
-    private CustomAction mSelectedAction;
 
     //Request codes
     private int mAddGoalRequestCode;
@@ -142,12 +140,14 @@ public class CustomContentManagerActivity
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
         if (result instanceof CustomGoal){
             mCustomGoal = (CustomGoal)result;
+            mApplication.addGoal(mCustomGoal);
             mCustomGoal.init();
         }
         else if (result instanceof ParserModels.CustomActionResultSet){
             Collections.sort(((ParserModels.CustomActionResultSet)result).results);
         }
         else if (result instanceof CustomAction){
+            mApplication.addAction(mCustomGoal, (CustomAction)result);
             mCustomGoal.addAction((CustomAction)result);
         }
     }
@@ -181,11 +181,12 @@ public class CustomContentManagerActivity
 
     @Override
     public void onSaveGoal(@NonNull CustomGoal customGoal){
+        mApplication.updateGoal(customGoal);
         HttpRequest.put(null, API.getPutCustomGoalUrl(customGoal),
                 API.getPostPutCustomGoalBody(customGoal));
     }
 
-    public void deleteGoal(@NonNull CustomGoal customGoal){
+    public void onDeleteGoal(@NonNull CustomGoal customGoal){
         mApplication.removeGoal(customGoal);
         HttpRequest.delete(null, API.getDeleteGoalUrl(customGoal));
         setResult(RESULT_OK);
@@ -200,15 +201,18 @@ public class CustomContentManagerActivity
 
     @Override
     public void onSaveAction(@NonNull CustomAction customAction){
-        CustomAction original = (CustomAction)mApplication.getUserData().getAction(customAction);
-        original.setTitle(customAction.getTitle());
+        mApplication.updateAction(mCustomGoal, customAction);
         HttpRequest.put(null, API.getPutCustomActionUrl(customAction),
                 API.getPostPutCustomActionBody(customAction, customAction.getGoal()));
     }
 
+    public void onRemoveAction(@NonNull CustomAction customAction){
+        mApplication.removeAction(customAction);
+        HttpRequest.delete(this, API.getDeleteActionUrl(customAction));
+    }
+
     @Override
     public void onEditTrigger(@NonNull CustomAction customAction){
-        mSelectedAction = customAction;
         startActivityForResult(new Intent(this, TriggerActivity.class)
                 .putExtra(TriggerActivity.GOAL_TITLE_KEY, customAction.getGoal().getTitle())
                 .putExtra(TriggerActivity.ACTION_KEY, (Parcelable)customAction), TRIGGER_RC);
@@ -218,15 +222,9 @@ public class CustomContentManagerActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == TRIGGER_RC){
             if (resultCode == RESULT_OK){
-                Trigger trigger = data.getParcelableExtra(TriggerActivity.TRIGGER_KEY);
-                mSelectedAction.setTrigger(trigger);
+                Action action = data.getParcelableExtra(TriggerActivity.ACTION_KEY);
+                mApplication.updateAction(mCustomGoal, action);
             }
-            mSelectedAction = null;
         }
-    }
-
-    public void onRemoveClicked(@NonNull CustomAction customAction){
-        HttpRequest.delete(this, API.getDeleteActionUrl(customAction));
-        mApplication.getUserData().removeAction(customAction);
     }
 }

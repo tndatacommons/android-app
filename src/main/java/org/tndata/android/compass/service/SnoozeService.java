@@ -4,10 +4,10 @@ import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Intent;
 
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.NotificationUtil;
+
+import es.sandwatch.httprequests.HttpRequest;
 
 
 /**
@@ -45,9 +45,8 @@ public class SnoozeService extends IntentService{
 
         //If the notification id is not -1, create the request
         if (notificationId != -1){
-            NetworkRequest.put(this, null, API.getPutSnoozeUrl(notificationId),
-                ((CompassApplication)getApplication()).getToken(),
-                API.getPutSnoozeBody(date, time));
+            HttpRequest.put(null, API.getPutSnoozeUrl(notificationId),
+                    API.getPutSnoozeBody(date, time));
         }
     }
 }

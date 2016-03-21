@@ -36,11 +36,6 @@ public class CompassApplicationTest {
     }
 
     @Test
-    public void userData_notNull_returnsTrue() {
-        assertNotNull(application.getUserData());
-    }
-
-    @Test
     public void user_Null_returnsTrue() {
         assertNull(application.getUser());
     }
@@ -76,7 +71,6 @@ public class CompassApplicationTest {
     @Test
     public void setUserData_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
         UserData userData = new UserData();
-        application.setUserData(userData);
         final Field field = application.getClass().getDeclaredField("mUserData");
         field.setAccessible(true);
         assertEquals(userData, field.get(application));
@@ -88,7 +82,6 @@ public class CompassApplicationTest {
         final Field field = application.getClass().getDeclaredField("mUserData");
         field.setAccessible(true);
         field.set(application, userData);
-        final UserData result = application.getUserData();
         assertEquals(userData, result);
     }
 

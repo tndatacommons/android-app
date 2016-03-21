@@ -558,12 +558,6 @@ public class UserData extends TDCBase{
         }
     }
 
-    public void updateActionTrigger(Action action){
-        if (action.getNextReminder() != null){
-            mFeedData.addAction(action);
-        }
-    }
-
     public void removeAction(Action action){
         if (action instanceof UserAction){
             removeAction((UserAction)action);

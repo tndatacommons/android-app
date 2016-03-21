@@ -14,11 +14,8 @@ import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.User;
-import org.tndata.android.compass.model.UserAction;
-import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserData;
-import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.ImageLoader;
@@ -98,10 +95,6 @@ public class CompassApplication extends Application{
         }
     }
 
-    public UserData getUserData() {
-        return mUserData;
-    }
-
     public void setUserData(UserData userData) {
         mUserData = userData;
     }
@@ -130,54 +123,32 @@ public class CompassApplication extends Application{
         return mUserData.getCategories();
     }
 
-    public void addCategory(UserCategory category) {
-        mUserData.addCategory(category);
+    public void addGoal(Goal goal){
+        mFeedDataX.addGoal(goal);
     }
 
-    public List<UserGoal> getCategoryGoals(CategoryContent category) {
-        return mUserData.getCategoryGoals(category);
+    public void updateGoal(Goal goal){
+        mFeedDataX.updateGoal(goal);
     }
 
-    public Map<Long, UserGoal> getGoals() {
-        return mUserData.getGoals();
+    public void removeGoal(Goal goal){
+        mFeedDataX.removeGoal(goal);
     }
 
-    public void addGoal(UserGoal goal) {
-        mUserData.addGoal(goal);
-        mUserData.logSelectedData("AFTER CompassApplication.addGoal", false);
+    public void addAction(Goal goal, Action action){
+        mFeedDataX.addAction(goal, action);
     }
 
-    public void removeGoal(Goal goal) {
-        mUserData.removeGoal(goal);
-        mUserData.logSelectedData("AFTER CompassApplication.removeGoal", false);
+    public void updateAction(Goal goal, Action action){
+        mFeedDataX.updateAction(goal, action);
     }
 
-    public Map<Long, UserBehavior> getBehaviors() {
-        return mUserData.getBehaviors();
+    public void updateAction(Action action){
+        mFeedDataX.updateAction(action);
     }
 
-    public void removeBehavior(UserBehavior behavior) {
-        mUserData.removeBehavior(behavior);
-        mUserData.logSelectedData("AFTER CompassApplication.removeBehavior: ", false);
-    }
-
-    public void addBehavior(UserBehavior behavior) {
-        mUserData.addBehavior(behavior);
-        mUserData.logSelectedData("AFTER CompassApplication.addBehavior", false);
-    }
-
-    public Map<Long, UserAction> getActions() {
-        return mUserData.getActions();
-    }
-
-    public void removeAction(Action action) {
-        mUserData.removeAction(action);
-        mUserData.logSelectedData("AFTER CompassApplication.removeAction: ", false);
-    }
-
-    public void addAction(UserAction action) {
-        mUserData.addAction(action);
-        mUserData.logSelectedData("AFTER CompassApplication.addAction", false);
+    public void removeAction(Action action){
+        mFeedDataX.removeAction(action);
     }
 
     @Override

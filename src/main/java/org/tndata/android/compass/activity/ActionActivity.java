@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ActionAdapter;
 import org.tndata.android.compass.model.Action;
@@ -17,7 +18,6 @@ import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.GoalContent;
-import org.tndata.android.compass.model.Trigger;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.parser.Parser;
@@ -56,6 +56,8 @@ public class ActionActivity
     private static final int RESCHEDULE_REQUEST_CODE = 61429;
 
 
+    private CompassApplication mApplication;
+
     //The action in question and the associated reminder
     private Action mAction;
     private CustomGoal mCustomGoal;
@@ -76,6 +78,8 @@ public class ActionActivity
     @SuppressWarnings("deprecation")
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+        mApplication = (CompassApplication)getApplication();
 
         //Retrieve the action and mark the reminder and upcoming action as nonexistent
         mAction = getIntent().getParcelableExtra(ACTION_KEY);
@@ -382,12 +386,12 @@ public class ActionActivity
         if (resultCode == RESULT_OK){
             switch (requestCode){
                 case RESCHEDULE_REQUEST_CODE:
-                    Trigger trigger = data.getParcelableExtra(TriggerActivity.TRIGGER_KEY);
-                    mAction.setTrigger(trigger);
-                    NotificationUtil.cancel(this, NotificationUtil.USER_ACTION_TAG, getActionId());
+                    mAction = data.getParcelableExtra(TriggerActivity.ACTION_KEY);
+                    mApplication.updateAction(mAction);
 
                 //In either case, the activity should finish after a second
                 case SNOOZE_REQUEST_CODE:
+                    NotificationUtil.cancel(this, NotificationUtil.USER_ACTION_TAG, getActionId());
                     setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, (Parcelable)mAction));
                     finish();
             }

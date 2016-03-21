@@ -64,7 +64,6 @@ public class TriggerActivity
 
     public static final String GOAL_TITLE_KEY = "org.tndata.compass.TriggerActivity.GoalTitle";
     public static final String ACTION_KEY = "org.tndata.compass.TriggerActivity.Action";
-    public static final String TRIGGER_KEY = "org.tndata.compass.TriggerActivity.Trigger";
 
     private static final String TAG = "TriggerActivity";
     private static final String FRAG_TAG_RECUR_PICKER = "recurrencePickerDialogFragment";
@@ -449,8 +448,7 @@ public class TriggerActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof Action){
-            Parcelable trigger = ((Action)result).getTrigger();
-            setResult(RESULT_OK, new Intent().putExtra(TRIGGER_KEY, trigger));
+            setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, (Parcelable)result));
             finish();
         }
     }

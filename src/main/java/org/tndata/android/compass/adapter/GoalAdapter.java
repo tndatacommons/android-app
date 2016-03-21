@@ -224,7 +224,7 @@ public class GoalAdapter extends RecyclerView.Adapter{
                 switch (item.getItemId()){
                     case R.id.behavior_popup_remove:
                         UserBehavior userBehavior = mUserGoal.getBehaviors().get(position/2);
-                        mApplication.removeBehavior(userBehavior);
+                        //mApplication.removeBehavior(userBehavior);
                         NetworkRequest.delete(mContext, null, API.getDeleteBehaviorUrl(userBehavior),
                                 mApplication.getToken(), new JSONObject());
                         Log.d(TAG, "Position: " + position);
