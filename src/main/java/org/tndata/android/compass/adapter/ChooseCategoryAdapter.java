@@ -47,6 +47,11 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter<ChooseCategoryAd
         for (int i = 0; i < mCategories.size(); i++){
             CategoryContent category = mCategories.get(i);
             int imageResId = CompassUtil.getCategoryTileResId(category.getTitle());
+            if (imageResId == 0){
+                mCategories.remove(i);
+                i--;
+                continue;
+            }
             Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), imageResId);
             mBitmaps[i] = ImageHelper.getCircleBitmap(bitmap, CompassUtil.getPixels(mContext, 100));
             bitmap.recycle();

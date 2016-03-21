@@ -293,6 +293,7 @@ public class MainFeedAdapter
     }
 
     public void updateUpcoming(){
+        notifyItemChanged(CardTypes.getUpNextPosition());
         if (mUpcomingHolder != null){
             mUpcomingHolder.updateActions(mFeedData);
         }

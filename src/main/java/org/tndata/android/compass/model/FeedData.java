@@ -260,16 +260,25 @@ public class FeedData extends TDCBase{
     public void addAction(Goal goal, Action action){
         if (happensToday(action)){
             Date actionDate = action.getNextReminderDate();
-            for (int i = 0; i < mUpcomingActionsX.size(); i++){
-                if (mUpcomingActionsX.get(i).getTriggerDate().compareTo(actionDate) > 0){
-                    Log.d("FeedData", "Added at: " + i);
-                    mUpcomingActionsX.add(i, new UpcomingAction(goal, action));
-                    break;
-                }
-                else if (i == mUpcomingActionsX.size()-1){
-                    Log.d("FeedData", "Added at the end");
-                    mUpcomingActionsX.add(new UpcomingAction(goal, action));
-                    break;
+            if (mUpNextActionX == null){
+                mUpNextActionX = new UpcomingAction(goal, action);
+            }
+            else if (mUpNextActionX.getTriggerDate().compareTo(actionDate) > 0){
+                mUpcomingActionsX.add(0, mUpNextActionX);
+                mUpNextActionX = new UpcomingAction(goal, action);
+            }
+            else{
+                for (int i = 0; i < mUpcomingActionsX.size(); i++){
+                    if (mUpcomingActionsX.get(i).getTriggerDate().compareTo(actionDate) > 0){
+                        Log.d("FeedData", "Added at: " + i);
+                        mUpcomingActionsX.add(i, new UpcomingAction(goal, action));
+                        break;
+                    }
+                    else if (i == mUpcomingActionsX.size() - 1){
+                        Log.d("FeedData", "Added at the end");
+                        mUpcomingActionsX.add(new UpcomingAction(goal, action));
+                        break;
+                    }
                 }
             }
         }
@@ -280,11 +289,16 @@ public class FeedData extends TDCBase{
             removeAction(action);
         }
         else{
-            for (int i = 0; i < mUpcomingActionsX.size(); i++){
-                UpcomingAction upcomingAction = mUpcomingActionsX.get(i);
-                if (upcomingAction.is(action)){
-                    upcomingAction.update(action);
-                    break;
+            if (mUpNextActionX != null && mUpNextActionX.is(action)){
+                mUpNextActionX.update(action);
+            }
+            else{
+                for (int i = 0; i < mUpcomingActionsX.size(); i++){
+                    UpcomingAction upcomingAction = mUpcomingActionsX.get(i);
+                    if (upcomingAction.is(action)){
+                        upcomingAction.update(action);
+                        break;
+                    }
                 }
             }
         }
@@ -301,11 +315,16 @@ public class FeedData extends TDCBase{
     }
 
     public void removeAction(Action action){
-        for (int i = 0; i < mUpcomingActionsX.size(); i++){
-            UpcomingAction upcomingAction = mUpcomingActionsX.get(i);
-            if (upcomingAction.is(action)){
-                mUpcomingActionsX.remove(i);
-                break;
+        if (mUpNextActionX != null && mUpNextActionX.is(action)){
+            replaceUpNextActionX();
+        }
+        else{
+            for (int i = 0; i < mUpcomingActionsX.size(); i++){
+                UpcomingAction upcomingAction = mUpcomingActionsX.get(i);
+                if (upcomingAction.is(action)){
+                    mUpcomingActionsX.remove(i);
+                    break;
+                }
             }
         }
     }
