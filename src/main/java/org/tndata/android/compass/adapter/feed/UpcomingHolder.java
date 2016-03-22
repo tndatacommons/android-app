@@ -63,19 +63,6 @@ class UpcomingHolder extends MainFeedViewHolder implements View.OnClickListener{
         }
     }
 
-    void setActions(@NonNull List<UpcomingAction> actions){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-            ViewGroup target = (ViewGroup)itemView.getRootView();
-            Transition transition = new ChangeBounds();
-            transition.setDuration(500);
-            TransitionManager.beginDelayedTransition(target, transition);
-        }
-        int start = mActions.size();
-        mActions = actions;
-        mUpcomingAdapter.notifyItemRangeInserted(start, mActions.size());
-        mList.requestLayout();
-    }
-
     /**
      * Adds a list of actions to the data set
      *
@@ -92,15 +79,6 @@ class UpcomingHolder extends MainFeedViewHolder implements View.OnClickListener{
         mActions.addAll(actions);
         mUpcomingAdapter.notifyItemRangeInserted(start, mActions.size());
         mList.requestLayout();
-    }
-
-    /**
-     * Updates a specific action in the list.
-     *
-     * @param action the action to be updated.
-     */
-    void updateAction(UpcomingAction action){
-        mUpcomingAdapter.notifyItemChanged(mActions.indexOf(action));
     }
 
     /**

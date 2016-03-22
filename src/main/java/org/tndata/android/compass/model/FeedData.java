@@ -96,13 +96,14 @@ public class FeedData extends TDCBase{
     }
 
     public UpcomingAction replaceUpNextActionX(){
+        UpcomingAction oldUpNext = mUpNextActionX;
         if (mUpcomingActionsX.isEmpty()){
             mUpNextActionX = null;
         }
         else{
             mUpNextActionX = mUpcomingActionsX.remove(0);
         }
-        return mUpNextActionX;
+        return oldUpNext;
     }
 
     public void removeUpcomingActionX(UpcomingAction action, boolean didIt){
@@ -183,10 +184,11 @@ public class FeedData extends TDCBase{
     }
 
     public List<UpcomingAction> getUpcomingList(int size){
+        Log.d("FeedData", "getUpcomingList() called");
         if (size > mUpcomingActionsX.size()){
             size = mUpcomingActionsX.size();
         }
-        return mUpcomingActionsX.subList(0, size);
+        return new ArrayList<>(mUpcomingActionsX.subList(0, size));
     }
 
     public void addGoal(Goal goal){
@@ -277,22 +279,33 @@ public class FeedData extends TDCBase{
     }
 
     public void updateAction(Action action){
+        logData();
         UpcomingAction upcomingAction = removeAction(action);
+        logData();
         if (upcomingAction != null && happensToday(action)){
+            upcomingAction.update(action);
             if (mUpNextActionX.getTriggerDate().compareTo(upcomingAction.getTriggerDate()) > 0){
+                Log.d("FeedData", "Moving action to the head");
                 UpcomingAction oldUpNext = mUpNextActionX;
                 mUpNextActionX = upcomingAction;
                 mUpcomingActionsX.add(0, oldUpNext);
             }
             else{
+                Log.d("FeedData", "Moving action to upcoming");
                 for (int i = 0; i < mUpcomingActionsX.size(); i++){
                     UpcomingAction nextUpcoming = mUpcomingActionsX.get(i);
                     if (nextUpcoming.getTriggerDate().compareTo(upcomingAction.getTriggerDate()) > 0){
                         mUpcomingActionsX.add(i, upcomingAction);
+                        break;
+                    }
+                    if (i == mUpcomingActionsX.size() -1){
+                        mUpcomingActionsX.add(upcomingAction);
+                        break;
                     }
                 }
             }
         }
+        logData();
     }
 
     public void updateAction(Goal goal, Action action){
@@ -323,6 +336,11 @@ public class FeedData extends TDCBase{
      */
     public void init(){
         mDisplayedGoalsX = new ArrayList<>();
+    }
+
+    private void logData(){
+        Log.d("FeedData", "Up next: " + mUpNextActionX);
+        Log.d("FeedData", "Upcoming: " + mUpcomingActionsX);
     }
 
 

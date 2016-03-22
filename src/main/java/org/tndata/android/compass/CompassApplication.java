@@ -106,6 +106,11 @@ public class CompassApplication extends Application{
         return new ArrayList<>(mPublicCategories.values());
     }
 
+
+    /*---------------------------------------------------------------------------*
+     * These methods wrap add, update, and remove methods in the FeedData class. *
+     *---------------------------------------------------------------------------*/
+
     public void addGoal(Goal goal){
         mFeedDataX.addGoal(goal);
     }
