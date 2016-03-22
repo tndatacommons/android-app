@@ -308,20 +308,6 @@ public class MainFeedAdapter
         mFeedData.removeUpcomingActionX(action, true);
     }
 
-    /**
-     * Removes the selected action from the user data bundle. This is done in three steps:
-     * (1) the action is removed in the webapp through an api call, (2) the action is
-     * removed in the local model, and (3) the adapter is updated to reflect the changes.
-     *
-     * @param action the action to be removed.
-     */
-    void remove(UpcomingAction action){
-        mFeedData.removeUpcomingActionX(action, false);
-        mUpcomingHolder.removeAction(action);
-        /*NetworkRequest.delete(mContext, null, API.getDeleteActionUrl(action),
-                ((CompassApplication)mContext.getApplicationContext()).getToken(), new JSONObject());*/
-    }
-
 
     /*----------------------*
      * GOAL RELATED METHODS *

@@ -177,7 +177,7 @@ final class CardTypes{
      * @return true if there are goal suggestions, false otherwise.
      */
     static boolean hasGoalSuggestions(){
-        return sFeedData.getGoalsX().isEmpty();
+        return !sFeedData.getSuggestions().isEmpty() && sFeedData.getGoalsX().isEmpty();
     }
 
     /**
@@ -186,13 +186,22 @@ final class CardTypes{
      * @return true if there are my goals, false otherwise.
      */
     static boolean hasMyGoals(){
-        return !hasGoalSuggestions();
+        return !sFeedData.getGoalsX().isEmpty();
     }
 
     /**
-     * Tells whether a position is that of my goals' header.
+     * Tells whether there is a goals card or not.
      *
-     * @return true if the position id that of my goals header item, false otherwise.
+     * @return true if there is a goals card, false otherwise.
+     */
+    static boolean hasGoals(){
+        return hasGoalSuggestions() || hasMyGoals();
+    }
+
+    /**
+     * Gets the position of a goals card.
+     *
+     * @return the position of a goals card.
      */
     static int getGoalsPosition(){
         //If there are upcoming actions then my goals are right after
@@ -229,6 +238,18 @@ final class CardTypes{
      * @return the number of cards in the feed.
      */
     static int getItemCount(){
-        return getGoalsPosition()+1;
+        if (hasGoals()){
+            return getGoalsPosition()+1;
+        }
+        if (hasUpcoming()){
+            return getUpcomingPosition()+1;
+        }
+        if (hasFeedback()){
+            return getFeedbackPosition()+1;
+        }
+        if (hasSuggestion()){
+            return getSuggestionPosition()+1;
+        }
+        return getUpNextPosition()+1;
     }
 }
