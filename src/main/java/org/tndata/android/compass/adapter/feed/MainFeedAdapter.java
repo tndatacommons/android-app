@@ -58,8 +58,6 @@ public class MainFeedAdapter
     private FeedUtil mFeedUtil;
     private GoalContent mSuggestion;
 
-    private MainFeedPadding mMainFeedPadding;
-
     private UpcomingHolder mUpcomingHolder;
     private GoalsHolder<Goal> mMyGoalsHolder;
     private GoalsHolder<GoalContent> mSuggestionsHolder;
@@ -94,7 +92,6 @@ public class MainFeedAdapter
             }
             mFeedUtil = new FeedUtil(this);
         }
-        mMainFeedPadding = null;
 
         if (mSuggestion != null){
             if (initialSuggestion){
@@ -273,18 +270,6 @@ public class MainFeedAdapter
 
     public int getGoalsPosition(){
         return CardTypes.getGoalsPosition();
-    }
-
-    /**
-     * Gets the ItemDecoration object for the feed.
-     *
-     * @return the ItemDecoration object containing the information about the feed padding.
-     */
-    public MainFeedPadding getMainFeedPadding(){
-        if (mMainFeedPadding == null){
-            mMainFeedPadding = new MainFeedPadding(mContext);
-        }
-        return mMainFeedPadding;
     }
 
     public void updateDataSet(){

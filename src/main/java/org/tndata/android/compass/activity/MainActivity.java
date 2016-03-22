@@ -151,17 +151,13 @@ public class MainActivity
         mFeed = (RecyclerView)findViewById(R.id.main_feed);
         mFeed.setAdapter(mAdapter);
         mFeed.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mFeed.addItemDecoration(mAdapter.getMainFeedPadding());
 
         //Create the hub and add to it all the items that need to be parallaxed
         OnScrollListenerHub hub = new OnScrollListenerHub();
 
-        ParallaxEffect parallax = new ParallaxEffect(header, 0.5f);
-        parallax.setItemDecoration(((MainFeedAdapter)mFeed.getAdapter()).getMainFeedPadding());
-        hub.addOnScrollListener(parallax);
+        hub.addOnScrollListener(new ParallaxEffect(header, 0.5f));
 
         ParallaxEffect toolbarEffect = new ParallaxEffect(toolbar, 1);
-        toolbarEffect.setItemDecoration(mAdapter.getMainFeedPadding());
         toolbarEffect.setParallaxCondition(new ParallaxEffect.ParallaxCondition(){
             @Override
             protected boolean doParallax(){
@@ -550,12 +546,8 @@ public class MainActivity
         if (feedData != null){
             mApplication.setFeedDataX(feedData);
 
-            //Remove the previous item decoration before recreating the adapter
-            mFeed.removeItemDecoration(mAdapter.getMainFeedPadding());
-
             mAdapter = new MainFeedAdapter(this, this, !mSuggestionDismissed);
             mFeed.setAdapter(mAdapter);
-            mFeed.addItemDecoration(mAdapter.getMainFeedPadding());
 
             mSuggestionDismissed = false;
 
