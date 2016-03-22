@@ -35,11 +35,6 @@ public class FeedData extends TDCBase{
     @SerializedName("progress")
     private Progress mProgress;
 
-    @SerializedName("upcoming_actions")
-    private List<Long> mUpcomingActionIds;
-    @SerializedName("upcoming_customactions")
-    private List<Long> mUpcomingCustomActionIds;
-
     @SerializedName("suggestions")
     private List<GoalContent> mSuggestions;
 
@@ -63,10 +58,6 @@ public class FeedData extends TDCBase{
             }
             mUpcomingActionsX = upcomingActions;
         }
-    }
-
-    public void setUpNextActionX(UpcomingAction upNextAction){
-        mUpNextActionX = upNextAction;
     }
 
     public UpcomingAction getUpNextActionX(){
@@ -215,6 +206,7 @@ public class FeedData extends TDCBase{
                     existingGoal.setTitle(customGoal.getTitle());
                 }
             }
+            //TODO update custom actions
         }
     }
 
@@ -285,19 +277,18 @@ public class FeedData extends TDCBase{
     }
 
     public void updateAction(Action action){
-        if (!happensToday(action)){
-            removeAction(action);
-        }
-        else{
-            if (mUpNextActionX != null && mUpNextActionX.is(action)){
-                mUpNextActionX.update(action);
+        UpcomingAction upcomingAction = removeAction(action);
+        if (upcomingAction != null && happensToday(action)){
+            if (mUpNextActionX.getTriggerDate().compareTo(upcomingAction.getTriggerDate()) > 0){
+                UpcomingAction oldUpNext = mUpNextActionX;
+                mUpNextActionX = upcomingAction;
+                mUpcomingActionsX.add(0, oldUpNext);
             }
             else{
                 for (int i = 0; i < mUpcomingActionsX.size(); i++){
-                    UpcomingAction upcomingAction = mUpcomingActionsX.get(i);
-                    if (upcomingAction.is(action)){
-                        upcomingAction.update(action);
-                        break;
+                    UpcomingAction nextUpcoming = mUpcomingActionsX.get(i);
+                    if (nextUpcoming.getTriggerDate().compareTo(upcomingAction.getTriggerDate()) > 0){
+                        mUpcomingActionsX.add(i, upcomingAction);
                     }
                 }
             }
@@ -308,31 +299,29 @@ public class FeedData extends TDCBase{
         //Remove and add, it's easier than lookup and update.
         Log.d("FeedData", "updateAction(G, A) called");
         removeAction(action);
-        if (happensToday(action)){
-            Log.d("FeedData", "Updating action: " + action);
-            addAction(goal, action);
-        }
+        Log.d("FeedData", "Updating action: " + action);
+        addAction(goal, action);
     }
 
-    public void removeAction(Action action){
+    public UpcomingAction removeAction(Action action){
         if (mUpNextActionX != null && mUpNextActionX.is(action)){
-            replaceUpNextActionX();
+            return replaceUpNextActionX();
         }
         else{
             for (int i = 0; i < mUpcomingActionsX.size(); i++){
                 UpcomingAction upcomingAction = mUpcomingActionsX.get(i);
                 if (upcomingAction.is(action)){
-                    mUpcomingActionsX.remove(i);
-                    break;
+                    return mUpcomingActionsX.remove(i);
                 }
             }
         }
+        return null;
     }
 
     /**
      * Initializes the feed data bundle.
      */
-    public void sync(){
+    public void init(){
         mDisplayedGoalsX = new ArrayList<>();
     }
 
@@ -485,9 +474,5 @@ public class FeedData extends TDCBase{
         public String getProgressFraction(){
             return mCompletedActions + "/" + mTotalActions;
         }
-    }
-
-    public interface DataSetChangeListener{
-        //TODO maybe?
     }
 }

@@ -1,5 +1,6 @@
 package org.tndata.android.compass.activity;
 
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,12 +20,14 @@ import org.tndata.android.compass.fragment.LogInFragment;
 import org.tndata.android.compass.fragment.SignUpFragment;
 import org.tndata.android.compass.fragment.TourFragment;
 import org.tndata.android.compass.fragment.WebFragment;
+import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.util.FeedDataLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +44,8 @@ public class LoginActivity
                 LogInFragment.LogInFragmentCallback,
                 TourFragment.TourFragmentCallback,
                 HttpRequest.RequestCallback,
-                Parser.ParserCallback{
+                Parser.ParserCallback,
+                FeedDataLoader.Callback{
 
     private static final String TAG = "LogInActivity";
 
@@ -67,11 +71,7 @@ public class LoginActivity
 
     //Request codes
     private int mLogInRC;
-    private int mGetDataRC;
     private int mGetCategoriesRC;
-    private int mGetUpcomingRCX;
-    private int mGetCustomGoalsRCX;
-    private int mGetUserGoalsRCX;
     private int mGetPlacesRC;
 
 
@@ -128,21 +128,21 @@ public class LoginActivity
                     mLauncherFragment = new LauncherFragment();
                 }
                 fragment = mLauncherFragment;
-                getSupportActionBar().hide();
+                switchActionBarState(false);
                 break;
             case LOGIN:
                 if (mLoginFragment == null){
                     mLoginFragment = new LogInFragment();
                 }
                 fragment = mLoginFragment;
-                getSupportActionBar().hide();
+                switchActionBarState(false);
                 break;
             case SIGN_UP:
                 if (mSignUpFragment == null){
                     mSignUpFragment = new SignUpFragment();
                 }
                 fragment = mSignUpFragment;
-                getSupportActionBar().hide();
+                switchActionBarState(false);
                 break;
             case TERMS:
                 if (mWebFragment == null){
@@ -150,7 +150,7 @@ public class LoginActivity
 
                 }
                 fragment = mWebFragment;
-                getSupportActionBar().show();
+                switchActionBarState(true);
                 mToolbar.setTitle(R.string.terms_title);
                 mWebFragment.setUrl(Constants.TERMS_AND_CONDITIONS_URL);
                 break;
@@ -159,7 +159,7 @@ public class LoginActivity
                     mTourFragment = new TourFragment();
                 }
                 fragment = mTourFragment;
-                getSupportActionBar().hide();
+                switchActionBarState(false);
                 break;
             default:
                 break;
@@ -172,6 +172,17 @@ public class LoginActivity
         }
     }
 
+    private void switchActionBarState(boolean show){
+        if (getSupportActionBar() != null){
+            if (show){
+                getSupportActionBar().show();
+            }
+            else{
+                getSupportActionBar().hide();
+            }
+        }
+    }
+
     private void handleBackStack(){
         if (!mFragmentStack.isEmpty()){
             mFragmentStack.remove(mFragmentStack.size() - 1);
@@ -179,7 +190,7 @@ public class LoginActivity
 
         if (mFragmentStack.isEmpty()){
             HttpRequest.cancel(mLogInRC);
-            HttpRequest.cancel(mGetDataRC);
+            FeedDataLoader.cancel();
             finish();
         }
         else{
@@ -187,7 +198,7 @@ public class LoginActivity
 
             int index = DEFAULT;
             if (fragment instanceof LauncherFragment){
-                HttpRequest.cancel(mGetDataRC);
+                FeedDataLoader.cancel();
                 ((LauncherFragment)fragment).showProgress(false);
             }
             else if (fragment instanceof LogInFragment){
@@ -290,21 +301,8 @@ public class LoginActivity
                 Parser.parse(result, User.class, this);
             }
         }
-        else if (requestCode == mGetDataRC){
-            Parser.parse(result, ParserModels.FeedDataResultSet.class, this);
-        }
         else if (requestCode == mGetCategoriesRC){
             Parser.parse(result, ParserModels.CategoryContentResultSet.class, this);
-        }
-        else if (requestCode == mGetUpcomingRCX){
-            Parser.parse(result, ParserModels.UpcomingActionsResultSet.class, this);
-        }
-        else if (requestCode == mGetCustomGoalsRCX){
-            Parser.parse(result, ParserModels.CustomGoalsResultSet.class, this);
-        }
-        else if (requestCode == mGetUserGoalsRCX){
-            Log.d(TAG, result);
-            Parser.parse(result, ParserModels.UserGoalsResultSet.class, this);
         }
         else if (requestCode == mGetPlacesRC){
             Parser.parse(result, ParserModels.UserPlacesResultSet.class, this);
@@ -317,9 +315,6 @@ public class LoginActivity
             Log.d("LogIn", "Login request failed");
             swapFragments(LOGIN, true);
         }
-        else if (requestCode == mGetDataRC){
-            Log.d("LogIn", "Get data failed");
-        }
         else if (requestCode == mGetCategoriesRC){
             Log.d("LogIn", "Get categories failed");
         }
@@ -331,7 +326,7 @@ public class LoginActivity
             mApplication.setUser((User)result, false);
         }
         else if (result instanceof ParserModels.FeedDataResultSet){
-            ((ParserModels.FeedDataResultSet)result).results.get(0).sync();
+            ((ParserModels.FeedDataResultSet)result).results.get(0).init();
         }
         else if (result instanceof ParserModels.UpcomingActionsResultSet){
             List<UpcomingAction> upcoming = ((ParserModels.UpcomingActionsResultSet)result).results;
@@ -359,47 +354,15 @@ public class LoginActivity
             }
             else{
                 Log.d("LogIn", "Fetching user data");
-                mGetDataRC = HttpRequest.get(this, API.getFeedDataUrl(), 60*1000);
+                FeedDataLoader.load(this);
             }
         }
-        else if (result instanceof ParserModels.FeedDataResultSet){
-            mApplication.setFeedDataX(((ParserModels.FeedDataResultSet)result).results.get(0));
-            Log.d("LogIn", "Fetching " + API.getUpcomingUrl());
-            mGetUpcomingRCX = HttpRequest.get(this, API.getUpcomingUrl());
-        }
-        else if (result instanceof ParserModels.UpcomingActionsResultSet){
-            mGetCustomGoalsRCX = HttpRequest.get(this, API.getCustomGoalsUrl());
-        }
-        else if (result instanceof ParserModels.CustomGoalsResultSet){
-            ParserModels.CustomGoalsResultSet set = (ParserModels.CustomGoalsResultSet)result;
-            Log.d(TAG, "Custom goals: " + set.results.size());
-            String url = set.next;
-            if (url == null){
-                url = API.getUserGoalsUrl();
-                if (set.results.isEmpty()){
-                    mGetUserGoalsRCX = HttpRequest.get(this, url);
-                }
-                else{
-                    mApplication.getFeedDataX().addGoalsX(set.results, url);
-                    transitionToMain();
-                }
-            }
-            else{
-                if (API.STAGING && url.startsWith("https")){
-                    url = url.replaceFirst("s", "");
-                }
-                mApplication.getFeedDataX().addGoalsX(set.results, url);
-                transitionToMain();
-            }
-        }
-        else if (result instanceof ParserModels.UserGoalsResultSet){
-            ParserModels.UserGoalsResultSet set = (ParserModels.UserGoalsResultSet)result;
-            Log.d(TAG, "User goals: " + set.results.size());
-            String url = set.next;
-            if (url != null){
-                url = url.replaceFirst("s", "");
-            }
-            mApplication.getFeedDataX().addGoalsX(set.results, url);
+    }
+
+    @Override
+    public void onFeedDataLoaded(@Nullable FeedData feedData){
+        if (feedData != null){
+            mApplication.setFeedDataX(feedData);
             transitionToMain();
         }
     }

@@ -50,6 +50,7 @@ public class OnBoardingActivity
     //Request codes
     private int mInitialPostCategoryRC;
     private int mLastPostCategoryRC;
+    //TODO feed data
     private int mGetDataRC;
 
 
