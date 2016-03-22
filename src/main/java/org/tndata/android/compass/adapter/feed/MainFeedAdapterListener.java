@@ -47,11 +47,4 @@ public interface MainFeedAdapterListener{
      * @param action the action being displayed at the card.
      */
     void onActionSelected(UpcomingAction action);
-
-    /**
-     * Called when a trigger is selected from the context menu.
-     *
-     * @param action the action being displayed at the card.
-     */
-    void onTriggerSelected(UpcomingAction action);
 }

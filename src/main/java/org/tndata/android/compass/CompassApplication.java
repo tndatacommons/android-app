@@ -139,6 +139,11 @@ public class CompassApplication extends Application{
         mFeedDataX.removeAction(action);
     }
 
+
+    /*----------------------------------*
+     * Application's onCreate() method. *
+     *----------------------------------*/
+
     @Override
     public void onCreate(){
         super.onCreate();

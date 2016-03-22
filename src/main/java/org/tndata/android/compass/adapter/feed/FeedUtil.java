@@ -20,7 +20,6 @@ import org.tndata.android.compass.ui.CompassPopupMenu;
  */
 class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
     private MainFeedAdapter mAdapter;
-    private UpcomingAction mSelectedAction;
 
 
     /**
@@ -30,31 +29,6 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
      */
     FeedUtil(MainFeedAdapter adapter){
         mAdapter = adapter;
-    }
-
-    /**
-     * Display the popup menu for a specific action.
-     *
-     * @param anchor the view it should be anchored to.
-     * @param action the action in question.
-     */
-    void showActionPopup(View anchor, UpcomingAction action){
-        mSelectedAction = action;
-        CompassPopupMenu popup = CompassPopupMenu.newInstance(mAdapter.mContext, anchor);
-
-        //If the category couldn't be found or it is packaged, exclude removal options.
-        if (!action.isEditable()){
-            popup.getMenuInflater().inflate(R.menu.popup_action_non_editable, popup.getMenu());
-        }
-        else{
-            popup.getMenuInflater().inflate(R.menu.popup_action, popup.getMenu());
-        }
-
-        //Set the listener
-        popup.setOnMenuItemClickListener(this);
-
-        //Show the menu.
-        popup.show();
     }
 
     /**
@@ -76,22 +50,6 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
     @Override
     public boolean onMenuItemClick(MenuItem item){
         switch (item.getItemId()){
-            case R.id.popup_action_did_it:
-                mAdapter.didIt(mSelectedAction);
-                break;
-
-            case R.id.popup_action_reschedule:
-                mAdapter.reschedule(mSelectedAction);
-                break;
-
-            case R.id.popup_action_remove:
-                mAdapter.remove(mSelectedAction);
-                break;
-
-            case R.id.popup_action_view_goal:
-                //mAdapter.viewGoal(mSelectedAction.getGoal());
-                break;
-
             case R.id.popup_goal_suggestion_refresh:
                 mAdapter.refreshSuggestion();
                 break;

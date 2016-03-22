@@ -297,16 +297,6 @@ public class MainFeedAdapter
      *------------------------*/
 
     /**
-     * Display the popup menu for a specific action.
-     *
-     * @param anchor the view it should be anchored to.
-     * @param action the action in question.
-     */
-    void showActionPopup(View anchor, UpcomingAction action){
-        mFeedUtil.showActionPopup(anchor, action);
-    }
-
-    /**
      * Marks an action as done in every possible way. This is done in three steps:
      * (1) mark the action as complete within the model and the webapp through an
      * api request, (2) update the data set, and (3) update the adapter to reflect
@@ -316,18 +306,6 @@ public class MainFeedAdapter
      */
     public void didIt(UpcomingAction action){
         mFeedData.removeUpcomingActionX(action, true);
-    }
-
-    /**
-     * Marks the given item as selected and then lets the listener know that the
-     * trigger editor needs to be opened. If the trigger was modified when the
-     * activity is finished the updateSelectedItem() method should be called to
-     * make the change reflect in the UI.
-     *
-     * @param action the action to be rescheduled.
-     */
-    void reschedule(UpcomingAction action){
-        mListener.onTriggerSelected(action);
     }
 
     /**
@@ -348,15 +326,6 @@ public class MainFeedAdapter
     /*----------------------*
      * GOAL RELATED METHODS *
      *----------------------*/
-
-    void viewGoal(Goal goal){/* TODO ?
-        if (goal instanceof Goal){
-            mListener.onGoalSelected((Goal)goal);
-        }
-        else if (goal instanceof GoalContent){
-            mListener.onSuggestionSelected((GoalContent)goal);
-        }*/
-    }
 
     void showSuggestionPopup(View anchor){
         mFeedUtil.showSuggestionPopup(anchor);

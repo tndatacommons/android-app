@@ -498,14 +498,6 @@ public class MainActivity
     }
 
     @Override
-    public void onTriggerSelected(UpcomingAction userAction){
-        /*Intent triggerIntent = new Intent(this, TriggerActivity.class)
-                .putExtra(TriggerActivity.ACTION_KEY, userAction)
-                .putExtra(TriggerActivity.GOAL_KEY, userAction.getGoal());
-        startActivityForResult(triggerIntent, TRIGGER_REQUEST_CODE);*/
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (resultCode == RESULT_OK){
             if (requestCode == CATEGORIES_REQUEST_CODE){

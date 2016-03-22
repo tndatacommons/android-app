@@ -29,7 +29,6 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
 
     //Header
     private TextView mHeader;
-    private View mOverflow;
 
     //Indicator
     private CircleProgressView mIndicator;
@@ -59,7 +58,6 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
         super(adapter, rootView);
 
         mHeader = (TextView)rootView.findViewById(R.id.up_next_header);
-        mOverflow = rootView.findViewById(R.id.up_next_overflow_box);
 
         mIndicator = (CircleProgressView)rootView.findViewById(R.id.up_next_indicator);
 
@@ -75,7 +73,6 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
         mTime = (TextView)rootView.findViewById(R.id.up_next_time);
 
         rootView.setOnClickListener(this);
-        mOverflow.setOnClickListener(this);
     }
 
     /**
@@ -87,7 +84,6 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
         mAction = action;
 
         if (action == null){
-            mOverflow.setVisibility(View.GONE);
             mNoActionsContainer.setVisibility(View.VISIBLE);
             mContentContainer.setVisibility(View.GONE);
 
@@ -104,7 +100,6 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
             mTime.setText("");
         }
         else{
-            mOverflow.setVisibility(View.VISIBLE);
             mNoActionsContainer.setVisibility(View.GONE);
             mContentContainer.setVisibility(View.VISIBLE);
 
@@ -129,16 +124,8 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
 
     @Override
     public void onClick(View view){
-        switch (view.getId()){
-            case R.id.up_next_overflow_box:
-                mAdapter.setSelectedAction(mAction);
-                mAdapter.showActionPopup(view, mAction);
-                break;
-
-            default:
-                if (mAction != null){
-                    mAdapter.mListener.onActionSelected(mAction);
-                }
+        if (mAction != null){
+            mAdapter.mListener.onActionSelected(mAction);
         }
     }
 }
