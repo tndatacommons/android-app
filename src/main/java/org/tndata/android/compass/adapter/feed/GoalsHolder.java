@@ -36,6 +36,7 @@ import java.util.List;
  * @version 1.1.0
  */
 class GoalsHolder<T> extends MainFeedViewHolder implements View.OnClickListener{
+    private TextView mHeader;
     private RecyclerView mList;
     private View mMore;
     private TextView mMoreButton;
@@ -58,6 +59,7 @@ class GoalsHolder<T> extends MainFeedViewHolder implements View.OnClickListener{
         mGoals = new ArrayList<>();
         mGoalsAdapter = new GoalsAdapter();
 
+        mHeader = (TextView)rootView.findViewById(R.id.card_goals_header);
         mList = (RecyclerView)rootView.findViewById(R.id.card_goals_list);
         mList.setLayoutManager(new LinearLayoutManager(mAdapter.mContext));
         mList.setAdapter(mGoalsAdapter);
@@ -66,6 +68,10 @@ class GoalsHolder<T> extends MainFeedViewHolder implements View.OnClickListener{
         mMoreProgress = (ProgressBar)rootView.findViewById(R.id.card_goals_more_progress);
 
         mMoreButton.setOnClickListener(this);
+    }
+
+    void bind(String title){
+        mHeader.setText(title);
     }
 
     @Override

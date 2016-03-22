@@ -17,6 +17,7 @@
         android:layout_marginRight="5dp" >
 
         <TextView
+            android:id="@+id/card_goals_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"

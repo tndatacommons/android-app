@@ -243,11 +243,13 @@ public class MainFeedAdapter
         //My goals
         else if (CardTypes.isMyGoals(position)){
             if (mMyGoalsHolder.getItemCount() == 0){
+                mMyGoalsHolder.bind(mContext.getString(R.string.card_my_goals_header));
                 mMyGoalsHolder.setGoals(mFeedData.getGoalsX());
             }
         }
         else if (CardTypes.isGoalSuggestions(position)){
             if (mSuggestionsHolder.getItemCount() == 0){
+                mSuggestionsHolder.bind(mContext.getString(R.string.card_suggestions_header));
                 mSuggestionsHolder.setGoals(mFeedData.getSuggestions());
                 mSuggestionsHolder.hideFooter();
             }

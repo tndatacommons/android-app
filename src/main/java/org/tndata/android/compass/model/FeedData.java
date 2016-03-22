@@ -336,7 +336,7 @@ public class FeedData extends TDCBase{
      */
     public void init(){
         mDisplayedGoalsX = new ArrayList<>();
-        mSuggestions.clear();
+        //mSuggestions.clear();
     }
 
     private void logData(){
