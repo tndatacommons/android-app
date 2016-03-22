@@ -14,7 +14,6 @@ import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserCategory;
-import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.model.UserPlace;
 import org.tndata.android.compass.model.UserProfile;
@@ -36,10 +35,6 @@ public final class ParserModels{
         public int count;
         public String previous;
         public String next;
-    }
-
-    public final class UserDataResultSet implements ResultSet{
-        public List<UserData> results;
     }
 
     public final class FeedDataResultSet implements ResultSet{

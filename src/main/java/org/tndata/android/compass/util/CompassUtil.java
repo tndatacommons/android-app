@@ -281,9 +281,6 @@ public final class CompassUtil{
         else if (src.contains("surveyresult")){
             return UserProfile.SurveyResponse.class;
         }
-        else if (src.contains("user")){
-            return UserData.class;
-        }
         else if (src.contains("instrument")){
             return Instrument.class;
         }
