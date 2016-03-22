@@ -14,8 +14,6 @@ import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.User;
-import org.tndata.android.compass.model.UserCategory;
-import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.ImageLoader;
@@ -35,7 +33,6 @@ public class CompassApplication extends Application{
 
 
     private User mUser; // The logged-in user
-    private UserData mUserData = new UserData(); // The user's selected content.
     private Map<Long, CategoryContent> mPublicCategories;
 
 
@@ -44,7 +41,6 @@ public class CompassApplication extends Application{
 
     public void setFeedDataX(FeedData feedData){
         mFeedDataX = feedData;
-        mUserData.setFeedData(feedData);
     }
 
     public FeedData getFeedDataX(){
@@ -95,10 +91,6 @@ public class CompassApplication extends Application{
         }
     }
 
-    public void setUserData(UserData userData) {
-        mUserData = userData;
-    }
-
     public void setPublicCategories(List<CategoryContent> categories){
         mPublicCategories = new HashMap<>();
         for (CategoryContent category:categories){
@@ -112,15 +104,6 @@ public class CompassApplication extends Application{
 
     public List<CategoryContent> getPublicCategoryList(){
         return new ArrayList<>(mPublicCategories.values());
-    }
-
-    // -------------------------------------------------------------------
-    // The following methods are wrappers around UserData methods; All
-    // of this info used to be stored directly in the CompassApplication
-    // class, so I've left these here for backwards compatibility.
-    // -------------------------------------------------------------------
-    public Map<Long, UserCategory> getCategories() {
-        return mUserData.getCategories();
     }
 
     public void addGoal(Goal goal){

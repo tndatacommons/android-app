@@ -3,7 +3,6 @@ package org.tndata.android.compass.activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseInterestsAdapter;
 import org.tndata.android.compass.fragment.ChooseInterestsFragment;
@@ -12,7 +11,9 @@ import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.util.API;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import es.sandwatch.httprequests.HttpRequest;
 import es.sandwatch.httprequests.HttpRequestError;
@@ -30,9 +31,8 @@ public class ChooseInterestsActivity
                 ChooseInterestsAdapter.OnCategoriesSelectedListener,
                 HttpRequest.RequestCallback{
 
-    private CompassApplication mApplication;
-
     private List<CategoryContent> mSelection;
+    private Map<Long, UserCategory> mSelectedMap;
 
     //Request codes
     private int mInitialPostCategoryRequestCode;
@@ -46,8 +46,6 @@ public class ChooseInterestsActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
 
-        mApplication = (CompassApplication) getApplication();
-
         Bundle args = new Bundle();
         args.putBoolean(ChooseInterestsFragment.ON_BOARDING_KEY, false);
 
@@ -57,12 +55,17 @@ public class ChooseInterestsActivity
     }
 
     @Override
-    public void onCategoriesSelected(List<CategoryContent> selection){
+    public void onCategoriesSelected(List<CategoryContent> selection, List<UserCategory> original){
         mSelection = selection;
+
+        mSelectedMap = new HashMap<>();
+        for (UserCategory category:original){
+            mSelectedMap.put(category.getContentId(), category);
+        }
 
         List<CategoryContent> toAdd = new ArrayList<>();
         for (CategoryContent category:selection){
-            if (!mApplication.getCategories().containsKey(category.getId())){
+            if (!mSelectedMap.containsKey(category.getId())){
                 toAdd.add(category);
             }
         }
@@ -90,7 +93,7 @@ public class ChooseInterestsActivity
      */
     private void deleteCategories(){
         List<UserCategory> toDelete = new ArrayList<>();
-        for (UserCategory userCategory:mApplication.getCategories().values()){
+        for (UserCategory userCategory:mSelectedMap.values()){
             if (!mSelection.contains(userCategory.getCategory())){
                 toDelete.add(userCategory);
             }

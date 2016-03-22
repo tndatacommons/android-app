@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,13 +39,11 @@ import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UpcomingAction;
-import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.model.UserGoal;
-import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.util.FeedDataLoader;
 import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.OnScrollListenerHub;
@@ -65,11 +63,10 @@ public class MainActivity
         extends AppCompatActivity
         implements
                 SwipeRefreshLayout.OnRefreshListener,
-                NetworkRequest.RequestCallback,
                 DrawerAdapter.OnItemClickListener,
                 MainFeedAdapterListener,
                 View.OnClickListener,
-                Parser.ParserCallback{
+                FeedDataLoader.Callback{
 
     //Activity request codes
     private static final int CATEGORIES_REQUEST_CODE = 4821;
@@ -96,8 +93,6 @@ public class MainActivity
     private FloatingActionMenu mMenu;
 
     private boolean mSuggestionDismissed;
-
-    private int mGetUserDataRequestCode;
 
 
     @Override
@@ -265,20 +260,6 @@ public class MainActivity
 
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mGetUserDataRequestCode){
-            Parser.parse(result, ParserModels.UserDataResultSet.class, this);
-        }
-    }
-
-    @Override
-    public void onRequestFailed(int requestCode, String message){
-        if (requestCode == mGetUserDataRequestCode){
-            Toast.makeText(this, "Couldn't reload", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -561,31 +542,17 @@ public class MainActivity
 
     @Override
     public void onRefresh(){
-        mGetUserDataRequestCode = NetworkRequest.get(this, this, API.getUserDataUrl(),
-                mApplication.getToken());
+        FeedDataLoader.load(this);
     }
 
     @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.UserDataResultSet){
-            UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
-
-            userData.sync();
-            userData.logData();
-        }
-    }
-
-    @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.UserDataResultSet){
-            UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
-
-            mApplication.setUserData(userData);
+    public void onFeedDataLoaded(@Nullable FeedData feedData){
+        if (feedData != null){
+            mApplication.setFeedDataX(feedData);
 
             //Remove the previous item decoration before recreating the adapter
             mFeed.removeItemDecoration(mAdapter.getMainFeedPadding());
 
-            //Recreate the adapter and set the new decoration
             mAdapter = new MainFeedAdapter(this, this, !mSuggestionDismissed);
             mFeed.setAdapter(mAdapter);
             mFeed.addItemDecoration(mAdapter.getMainFeedPadding());

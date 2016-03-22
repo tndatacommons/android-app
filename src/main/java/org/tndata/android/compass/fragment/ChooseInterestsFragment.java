@@ -19,6 +19,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseInterestsAdapter;
 import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
@@ -56,7 +57,7 @@ public class ChooseInterestsFragment
     private CompassApplication mApplication;
 
     //Request codes
-    private int mGetCategoriesRequestCode;
+    private int mGetUserCategoriesRC;
 
 
     /**
@@ -128,42 +129,37 @@ public class ChooseInterestsFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-        mApplication = (CompassApplication) getActivity().getApplication();
-        if (mApplication.getPublicCategories() == null){
-            loadCategories();
-        }
-        else{
-            mAdapter.setCategories(mApplication.getPublicCategoryList(), mApplication.getCategories());
-        }
+        mApplication = (CompassApplication)getActivity().getApplication();
+        loadCategories();
     }
 
     /**
      * Starts the category load process.
      */
     private void loadCategories(){
-        mGetCategoriesRequestCode = HttpRequest.get(this, API.getCategoriesUrl());
+        mGetUserCategoriesRC = HttpRequest.get(this, API.getUserCategoriesUrl());
     }
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mGetCategoriesRequestCode){
-            Parser.parse(result, ParserModels.CategoryContentResultSet.class, this);
+        if (requestCode == mGetUserCategoriesRC){
+            Parser.parse(result, ParserModels.UserCategoryResultSet.class, this);
         }
     }
 
     @Override
     public void onRequestFailed(int requestCode, HttpRequestError error){
-        if (requestCode == mGetCategoriesRequestCode){
+        if (requestCode == mGetUserCategoriesRC){
             notifyError(R.string.choose_categories_error);
         }
     }
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.CategoryContentResultSet){
-            List<CategoryContent> categories = ((ParserModels.CategoryContentResultSet)result).results;
+        if (result instanceof ParserModels.UserCategoryResultSet){
+            List<UserCategory> categories = ((ParserModels.UserCategoryResultSet)result).results;
             if (categories != null){
-                mAdapter.setCategories(categories, mApplication.getCategories());
+                mAdapter.setCategories(mApplication.getPublicCategoryList(), categories);
             }
         }
     }
@@ -184,14 +180,14 @@ public class ChooseInterestsFragment
     }
 
     @Override
-    public void onCategoriesSelected(List<CategoryContent> selection){
+    public void onCategoriesSelected(List<CategoryContent> selection, List<UserCategory> original){
         mDialog = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.choose_categories_syncing_title)
                 .setCancelable(false)
                 .setView(getActivity().getLayoutInflater().inflate(R.layout.dialog_syncing, null))
                 .create();
         mDialog.show();
-        mCallback.onCategoriesSelected(selection);
+        mCallback.onCategoriesSelected(selection, original);
     }
 
 
@@ -243,6 +239,8 @@ public class ChooseInterestsFragment
 
     /**
      * Creates a parallax effect on the material header view.
+     *
+     * //TODO kill this and use the other one.
      *
      * @author Ismael Alonso
      * @version 1.0.0

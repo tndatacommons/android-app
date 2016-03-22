@@ -26,7 +26,6 @@ import org.tndata.android.compass.util.CompassUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -50,6 +49,7 @@ public class ChooseInterestsAdapter
 
     private List<CategoryContent> mCategories;
     private List<CategoryContent> mSelectedCategories;
+    private List<UserCategory> mOriginalSelection;
 
     private int mLastAnimation;
     private int mCurrentAnimations;
@@ -84,15 +84,14 @@ public class ChooseInterestsAdapter
      * @param all the list of all available categories.
      * @param selected the map of user selected categories.
      */
-    public void setCategories(@NonNull List<CategoryContent> all, @NonNull Map<Long, UserCategory> selected){
+    public void setCategories(@NonNull List<CategoryContent> all, @NonNull List<UserCategory> selected){
         //Let the GC take care of the previous list and fill a new one
-        mCategories = new ArrayList<>();
-        mCategories.addAll(all);
-
+        mCategories = all;
         mSelectedCategories = new ArrayList<>();
-        for (UserCategory userCategory:selected.values()){
-            mSelectedCategories.add(userCategory.getCategory());
+        for (UserCategory category:selected){
+            mSelectedCategories.add(category.getCategory());
         }
+        mOriginalSelection = selected;
     }
 
     /**
@@ -382,11 +381,11 @@ public class ChooseInterestsAdapter
                             Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    mCallback.onCategoriesSelected(mSelectedCategories);
+                    mCallback.onCategoriesSelected(mSelectedCategories, mOriginalSelection);
                 }
             }
             else{
-                mCallback.onCategoriesSelected(mSelectedCategories);
+                mCallback.onCategoriesSelected(mSelectedCategories, mOriginalSelection);
             }
         }
     }
@@ -404,6 +403,6 @@ public class ChooseInterestsAdapter
          *
          * @param selection the list of selected categories.
          */
-        void onCategoriesSelected(List<CategoryContent> selection);
+        void onCategoriesSelected(List<CategoryContent> selection, List<UserCategory> original);
     }
 }
