@@ -284,7 +284,10 @@ public class FeedData extends TDCBase{
         logData();
         if (upcomingAction != null && happensToday(action)){
             upcomingAction.update(action);
-            if (mUpNextActionX.getTriggerDate().compareTo(upcomingAction.getTriggerDate()) > 0){
+            if (mUpNextActionX == null){
+                mUpNextActionX = upcomingAction;
+            }
+            else if (mUpNextActionX.getTriggerDate().compareTo(upcomingAction.getTriggerDate()) > 0){
                 Log.d("FeedData", "Moving action to the head");
                 UpcomingAction oldUpNext = mUpNextActionX;
                 mUpNextActionX = upcomingAction;

@@ -9,4 +9,10 @@
         android:titleCondensed="@string/action_view_goal_condensed"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_trigger"
+        android:title="@string/action_trigger"
+        android:titleCondensed="@string/action_trigger_condensed"
+        app:showAsAction="never" />
+
 </menu>

@@ -180,6 +180,8 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_did_it">I did it</string>
     <string name="action_tick_cd">Action complete tick</string>
+    <string name="action_view_goal">View goal</string>
+    <string name="action_view_goal_condensed">Goal</string>
     <string name="action_trigger">Change reminder</string>
     <string name="action_trigger_condensed">Reminder</string>
     <string name="action_disable_trigger">Disable reminder</string>

@@ -281,7 +281,18 @@ public class Trigger extends TDCBase implements Parcelable, Comparable<Trigger>{
     @Override
     public int compareTo(@NonNull Trigger another){
         if (getRawDate().isEmpty() && another.getRawDate().isEmpty()){
-            return getTime().compareTo(another.getTime());
+            if (getRawTime().isEmpty() && another.getRawTime().isEmpty()){
+                return 0;
+            }
+            else if (getRawTime().isEmpty()){
+                return 1;
+            }
+            else if (another.getRawTime().isEmpty()){
+                return -1;
+            }
+            else{
+                return getTime().compareTo(another.getTime());
+            }
         }
         else if (getRawDate().isEmpty()){
             return 1;

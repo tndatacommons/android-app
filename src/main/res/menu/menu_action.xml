@@ -4,9 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
-        android:id="@+id/action_trigger"
-        android:title="@string/action_trigger"
-        android:titleCondensed="@string/action_trigger_condensed"
+        android:id="@+id/action_view_goal"
+        android:title="@string/action_view_goal"
+        android:titleCondensed="@string/action_view_goal_condensed"
         app:showAsAction="never" />
 
     <item

@@ -266,10 +266,6 @@ public class MainFeedAdapter
      * FEED ADAPTER METHODS *
      *----------------------*/
 
-    public void setSelectedAction(UpcomingAction selectedAction){
-        //mSelectedAction = selectedAction;
-    }
-
     public int getGoalsPosition(){
         return CardTypes.getGoalsPosition();
     }

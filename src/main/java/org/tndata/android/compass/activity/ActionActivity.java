@@ -301,7 +301,18 @@ public class ActionActivity
         //We need to check for null action here because sometimes the action needs to
         //  be fetched from the backend. If the action has not been fetched yet, the
         //  overflow button doesn't make sense
-        if (mAction != null && mAction.isEditable()){
+        if (mAction == null || !mAction.isEditable()){
+            return false;
+        }
+        if (mReminder != null){
+            if (mAction.hasTrigger() && mAction.getTrigger().isEnabled()){
+                getMenuInflater().inflate(R.menu.menu_action_reminder, menu);
+            }
+            else{
+                getMenuInflater().inflate(R.menu.menu_action_reminder_disabled, menu);
+            }
+        }
+        else{
             if (mAction.hasTrigger() && mAction.getTrigger().isEnabled()){
                 getMenuInflater().inflate(R.menu.menu_action, menu);
             }
@@ -315,6 +326,10 @@ public class ActionActivity
     @Override
     public boolean menuItemSelected(MenuItem item){
         switch (item.getItemId()){
+            case R.id.action_view_goal:
+                viewGoal();
+                break;
+
             case R.id.action_trigger:
                 onRescheduleClick();
                 break;
@@ -327,6 +342,10 @@ public class ActionActivity
                 return false;
         }
         return true;
+    }
+
+    private void viewGoal(){
+
     }
 
     @Override

@@ -71,18 +71,19 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
     protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
         HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
         holder.setTitle(mAction.getTitle());
+
         if (mAction instanceof UserAction){
             UserAction userAction = (UserAction)mAction;
             holder.setContent(userAction.getDescription());
-
-            if (mFromNotification){
-                holder.addButton(R.id.action_snooze, R.string.action_snooze, this);
-            }
-            else{
-                holder.addButton(R.id.action_reschedule, R.string.action_reschedule, this);
-            }
-            holder.addButton(R.id.action_did_it, R.string.action_did_it, this);
         }
+
+        if (mFromNotification){
+            holder.addButton(R.id.action_snooze, R.string.action_snooze, this);
+        }
+        else{
+            holder.addButton(R.id.action_reschedule, R.string.action_reschedule, this);
+        }
+        holder.addButton(R.id.action_did_it, R.string.action_did_it, this);
     }
 
     @Override
