@@ -2,6 +2,7 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.IdRes;
@@ -504,6 +505,10 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
          */
         public void setTitle(CharSequence title){
             mHeaderTitle.setText(title);
+        }
+
+        public void setTitleBold(){
+            mHeaderTitle.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Medium.ttf"));
         }
 
         /**
