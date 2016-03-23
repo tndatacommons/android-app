@@ -11,6 +11,9 @@ import android.view.View;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.CustomAction;
+import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.util.CompassTagHandler;
 
@@ -25,6 +28,8 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
     private ActionAdapterListener mListener;
     private Action mAction;
     private CategoryContent mCategory;
+    private Goal mGoal;
+    private Reward mReward;
     private boolean mFromNotification;
 
 
@@ -46,9 +51,16 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
         mAction = action;
         mCategory = category;
         notifyHeaderInserted();
-        if (mAction instanceof UserAction){
-            notifyDetailsInserted();
-        }
+        notifyDetailsInserted();
+        updateLoading(false);
+    }
+
+    public void setAction(@NonNull Action action, @NonNull Goal goal, @NonNull Reward reward){
+        mAction = action;
+        mGoal = goal;
+        mReward = reward;
+        notifyHeaderInserted();
+        notifyDetailsInserted();
         updateLoading(false);
     }
 
@@ -64,17 +76,21 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
 
     @Override
     protected boolean hasDetails(){
-        return mAction != null && mAction instanceof UserAction;
+        return mAction != null;
     }
 
     @Override
     protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
         HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
-        holder.setTitle(mAction.getTitle());
 
         if (mAction instanceof UserAction){
+            holder.setTitle(mAction.getTitle());
             UserAction userAction = (UserAction)mAction;
             holder.setContent(userAction.getDescription());
+        }
+        else if (mAction instanceof CustomAction){
+            holder.setTitle("To " + mGoal.getTitle() + ":");
+            holder.setContent(mAction.getTitle());
         }
 
         if (mFromNotification){
@@ -103,6 +119,25 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
             }
             else if (!userAction.getMoreInfo().isEmpty()){
                 holder.setDescription(userAction.getMoreInfo());
+            }
+        }
+        else if (mAction instanceof CustomAction){
+            holder.setHeaderColor(getContext().getResources().getColor(R.color.grow_primary));
+            if (mReward.isFortune()){
+                holder.setTitle("Here's a fortune cookie for you");
+                holder.setDescription(mReward.getMessage());
+            }
+            else if (mReward.isFunFact()){
+                holder.setTitle("Here's a fun fact for you");
+                holder.setDescription(mReward.getMessage());
+            }
+            else if (mReward.isJoke()){
+                holder.setTitle("Here's a joke for you");
+                holder.setDescription(mReward.getMessage());
+            }
+            else{
+                holder.setTitle("Here's a nice quote for you");
+                holder.setDescription(mReward.getMessage() + " (" + mReward.getAuthor() + ")");
             }
         }
     }

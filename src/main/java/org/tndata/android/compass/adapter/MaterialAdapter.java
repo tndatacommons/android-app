@@ -683,6 +683,15 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
         }
 
         /**
+         * Sets the color of the title in the header.
+         *
+         * @param color the new color.
+         */
+        public void setTitleColor(int color){
+            mHeader.setTextColor(color);
+        }
+
+        /**
          * Binds a description to the card.
          *
          * @param description the description to be displayed.
