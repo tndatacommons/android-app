@@ -79,6 +79,7 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
     protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
         HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
         holder.setTitle(mGoal.getTitle());
+        holder.setTitleBold();
         holder.setContent(mGoal.getDescription());
     }
 

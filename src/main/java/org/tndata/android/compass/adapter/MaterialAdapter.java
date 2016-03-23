@@ -478,7 +478,6 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
 
         private TextView mHeaderTitle;
         private TextView mHeaderContent;
-        private TextView mButton;
         private LinearLayout mButtonContainer;
 
 
@@ -494,7 +493,6 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
 
             mHeaderTitle = (TextView)rootView.findViewById(R.id.material_header_title);
             mHeaderContent = (TextView)rootView.findViewById(R.id.material_header_content);
-            mButton = (TextView)rootView.findViewById(R.id.material_header_button);
             mButtonContainer = (LinearLayout)rootView.findViewById(R.id.material_header_button_container);
         }
 
@@ -518,28 +516,6 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
          */
         public void setContent(CharSequence content){
             mHeaderContent.setText(content);
-        }
-
-        /**
-         * Sets up the button of the holder. Calling this method will make the button appear,
-         * which is hidden by default.
-         *
-         * @param caption the caption of the button.
-         * @param onClickListener the click listener for the button.
-         */
-        public void setButton(CharSequence caption, View.OnClickListener onClickListener){
-            mButton.setText(caption);
-            mButton.setVisibility(View.VISIBLE);
-            mButton.setOnClickListener(onClickListener);
-        }
-
-        /**
-         * Gets the id of the button.
-         *
-         * @return the id of the button.
-         */
-        public @IdRes int getButtonId(){
-            return mButton.getId();
         }
 
         /**

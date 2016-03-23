@@ -64,6 +64,7 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
     protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
         HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
         holder.setTitle(mCategory.getTitle());
+        holder.setTitleBold();
         holder.setContent(mCategory.getDescription());
     }
 

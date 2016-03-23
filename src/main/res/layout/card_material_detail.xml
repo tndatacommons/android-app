@@ -18,7 +18,10 @@
             android:id="@+id/material_detail_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp"
+            android:paddingTop="18dp"
+            android:paddingLeft="20dp"
+            android:paddingBottom="18dp"
+            android:paddingRight="20dp"
             android:textSize="18sp"
             android:textAllCaps="true"
             android:textColor="@color/white" />
