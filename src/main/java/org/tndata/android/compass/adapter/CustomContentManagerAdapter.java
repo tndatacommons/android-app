@@ -10,9 +10,11 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -373,8 +375,10 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
             switch (view.getId()){
                 case R.id.custom_action_list_create:
                     String title = mAdapter.mNewActionHolder.mTitle.getText().toString().trim();
-                    mSwitcher.showNext();
-                    mListener.onCreateAction(new CustomAction(title, mCustomGoal));
+                    if (title.length() > 0){
+                        mSwitcher.showNext();
+                        mListener.onCreateAction(new CustomAction(title, mCustomGoal));
+                    }
             }
         }
     }
@@ -421,7 +425,10 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
      */
     private class CustomActionHolder
             extends RecyclerView.ViewHolder
-            implements TextWatcher, View.OnClickListener{
+            implements
+                    TextWatcher,
+                    TextView.OnEditorActionListener,
+                    View.OnClickListener{
 
         private CustomAction mCustomAction;
 
@@ -446,6 +453,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
 
             //Set the listeners
             mTitle.addTextChangedListener(this);
+            mTitle.setOnEditorActionListener(this);
             mEditTrigger.setOnClickListener(this);
             mEditAction.setOnClickListener(this);
             mSaveAction.setOnClickListener(this);
@@ -489,6 +497,22 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
         }
 
         @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event){
+            if (actionId == EditorInfo.IME_ACTION_DONE){
+                Log.d(TAG, "Action: done");
+                Log.d(TAG, "Position: " + getAdapterPosition());
+                Log.d(TAG, "Count: " + mActionListHolder.mAdapter.getItemCount());
+                if (getAdapterPosition() == mActionListHolder.mAdapter.getItemCount()-1){
+                    create();
+                }
+                else{
+                    save();
+                }
+            }
+            return false;
+        }
+
+        @Override
         public void onClick(View view){
             switch (view.getId()){
                 case R.id.custom_action_trigger:
@@ -527,33 +551,41 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
 
                 //When the user saves a currently existing goal (only from edition)
                 case R.id.custom_action_save:
-                    //Grab the title and check it ain't empty
-                    String newTitle = mTitle.getText().toString().trim();
-                    if (newTitle.length() > 0){
-                        Log.d(TAG, "Saving the title of " + mCustomAction);
-
-                        //If the title has changed, set it and send an update to the backend
-                        if (!mCustomAction.getTitle().equals(newTitle)){
-                            mCustomAction.setTitle(newTitle);
-                            mListener.onSaveAction(mCustomAction);
-                        }
-
-                        //Hide the keyboard and make the title not focusable
-                        InputMethodManager imm2 = (InputMethodManager)getContext()
-                                .getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm2.hideSoftInputFromWindow(mTitle.getWindowToken(), 0);
-                        mTitle.clearFocus();
-                        mTitle.setFocusable(false);
-                        mTitle.setBackgroundResource(0);
-                        //Set the click listener again to start the trigger editor if the user taps
-                        mTitle.setOnClickListener(this);
-
-                        //Swap the save button for the edit button
-                        mEditTrigger.setVisibility(View.VISIBLE);
-                        mEditAction.setVisibility(View.VISIBLE);
-                        mSaveAction.setVisibility(View.GONE);
-                    }
+                    save();
                     break;
+            }
+        }
+
+        private void create(){
+            mActionListHolder.onClick(mActionListHolder.mButton);
+        }
+
+        private void save(){
+            //Grab the title and check it ain't empty
+            String newTitle = mTitle.getText().toString().trim();
+            if (newTitle.length() > 0){
+                Log.d(TAG, "Saving the title of " + mCustomAction);
+
+                //If the title has changed, set it and send an update to the backend
+                if (!mCustomAction.getTitle().equals(newTitle)){
+                    mCustomAction.setTitle(newTitle);
+                    mListener.onSaveAction(mCustomAction);
+                }
+
+                //Hide the keyboard and make the title not focusable
+                InputMethodManager imm2 = (InputMethodManager)getContext()
+                        .getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm2.hideSoftInputFromWindow(mTitle.getWindowToken(), 0);
+                mTitle.clearFocus();
+                mTitle.setFocusable(false);
+                mTitle.setBackgroundResource(0);
+                //Set the click listener again to start the trigger editor if the user taps
+                mTitle.setOnClickListener(this);
+
+                //Swap the save button for the edit button
+                mEditTrigger.setVisibility(View.VISIBLE);
+                mEditAction.setVisibility(View.VISIBLE);
+                mSaveAction.setVisibility(View.GONE);
             }
         }
     }
