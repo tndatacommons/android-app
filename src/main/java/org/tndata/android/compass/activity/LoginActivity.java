@@ -21,7 +21,6 @@ import org.tndata.android.compass.fragment.SignUpFragment;
 import org.tndata.android.compass.fragment.TourFragment;
 import org.tndata.android.compass.fragment.WebFragment;
 import org.tndata.android.compass.model.FeedData;
-import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
@@ -327,11 +326,6 @@ public class LoginActivity
         }
         else if (result instanceof ParserModels.FeedDataResultSet){
             ((ParserModels.FeedDataResultSet)result).results.get(0).init();
-        }
-        else if (result instanceof ParserModels.UpcomingActionsResultSet){
-            List<UpcomingAction> upcoming = ((ParserModels.UpcomingActionsResultSet)result).results;
-            Log.d("LogIn", "Upcoming size: " + upcoming.size());
-            mApplication.getFeedDataX().setUpcomingActionsX(upcoming);
         }
         else if (result instanceof ParserModels.UserPlacesResultSet){
             CompassDbHelper helper = new CompassDbHelper(this);

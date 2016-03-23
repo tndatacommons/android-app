@@ -34,38 +34,24 @@ public class FeedData extends TDCBase{
     private ActionFeedback mActionFeedback;
     @SerializedName("progress")
     private Progress mProgress;
-
+    @SerializedName("upcoming")
+    private List<UpcomingAction> mUpcomingActions;
     @SerializedName("suggestions")
     private List<GoalContent> mSuggestions;
 
 
     //Experiment
     private UpcomingAction mUpNextActionX;
-    private List<UpcomingAction> mUpcomingActionsX;
     private List<Goal> mDisplayedGoalsX;
     private String mNextGoalBatchUrlX;
 
-
-    public void setUpcomingActionsX(List<UpcomingAction> upcomingActions){
-        if (upcomingActions.isEmpty()){
-            mUpNextActionX = null;
-            mUpcomingActionsX = upcomingActions;
-        }
-        else{
-            mUpNextActionX = upcomingActions.remove(0);
-            if (hasFeedback()){
-                mActionFeedback.setFeedbackGoal(mUpNextActionX);
-            }
-            mUpcomingActionsX = upcomingActions;
-        }
-    }
 
     public UpcomingAction getUpNextActionX(){
         return mUpNextActionX;
     }
 
     public List<UpcomingAction> getUpcomingActionsX(){
-        return mUpcomingActionsX;
+        return mUpcomingActions;
     }
 
     public void addGoalsX(@NonNull List<? extends Goal> goals, @Nullable String nextBatchUrl){
@@ -87,9 +73,9 @@ public class FeedData extends TDCBase{
         if (mUpNextActionX.is(action)){
             return mUpNextActionX;
         }
-        for (int i = 0; i < mUpcomingActionsX.size(); i++){
-            if (mUpcomingActionsX.get(i).is(action)){
-                return mUpcomingActionsX.get(i);
+        for (int i = 0; i < mUpcomingActions.size(); i++){
+            if (mUpcomingActions.get(i).is(action)){
+                return mUpcomingActions.get(i);
             }
         }
         return null;
@@ -97,11 +83,11 @@ public class FeedData extends TDCBase{
 
     public UpcomingAction replaceUpNextActionX(){
         UpcomingAction oldUpNext = mUpNextActionX;
-        if (mUpcomingActionsX.isEmpty()){
+        if (mUpcomingActions.isEmpty()){
             mUpNextActionX = null;
         }
         else{
-            mUpNextActionX = mUpcomingActionsX.remove(0);
+            mUpNextActionX = mUpcomingActions.remove(0);
         }
         return oldUpNext;
     }
@@ -118,7 +104,7 @@ public class FeedData extends TDCBase{
             replaceUpNextActionX();
         }
         else{
-            mUpcomingActionsX.remove(action);
+            mUpcomingActions.remove(action);
         }
     }
 
@@ -129,12 +115,12 @@ public class FeedData extends TDCBase{
      * @return a list containing the new actions.
      */
     public List<UpcomingAction> loadMoreUpcomingX(int displayedActions){
-        Log.d("FeedData", "Total size: " + mUpcomingActionsX.size());
+        Log.d("FeedData", "Total size: " + mUpcomingActions.size());
         Log.d("FeedData", "Displayed: " + displayedActions);
         List<UpcomingAction> actions = new ArrayList<>();
         while (actions.size() < LOAD_MORE_COUNT && canLoadMoreActionsX(displayedActions + actions.size())){
             Log.d("FeedData", "Adding: " + (displayedActions + actions.size()));
-            actions.add(mUpcomingActionsX.get(displayedActions + actions.size()));
+            actions.add(mUpcomingActions.get(displayedActions + actions.size()));
         }
         return actions;
     }
@@ -146,7 +132,7 @@ public class FeedData extends TDCBase{
      * @return true if there are more actions to load, false otherwise.
      */
     public boolean canLoadMoreActionsX(int displayedActions){
-        return displayedActions < mUpcomingActionsX.size();
+        return displayedActions < mUpcomingActions.size();
     }
 
 
@@ -185,10 +171,10 @@ public class FeedData extends TDCBase{
 
     public List<UpcomingAction> getUpcomingList(int size){
         Log.d("FeedData", "getUpcomingList() called");
-        if (size > mUpcomingActionsX.size()){
-            size = mUpcomingActionsX.size();
+        if (size > mUpcomingActions.size()){
+            size = mUpcomingActions.size();
         }
-        return new ArrayList<>(mUpcomingActionsX.subList(0, size));
+        return new ArrayList<>(mUpcomingActions.subList(0, size));
     }
 
     public void addGoal(Goal goal){
@@ -258,19 +244,19 @@ public class FeedData extends TDCBase{
                 mUpNextActionX = new UpcomingAction(goal, action);
             }
             else if (mUpNextActionX.getTriggerDate().compareTo(actionDate) > 0){
-                mUpcomingActionsX.add(0, mUpNextActionX);
+                mUpcomingActions.add(0, mUpNextActionX);
                 mUpNextActionX = new UpcomingAction(goal, action);
             }
             else{
-                for (int i = 0; i < mUpcomingActionsX.size(); i++){
-                    if (mUpcomingActionsX.get(i).getTriggerDate().compareTo(actionDate) > 0){
+                for (int i = 0; i < mUpcomingActions.size(); i++){
+                    if (mUpcomingActions.get(i).getTriggerDate().compareTo(actionDate) > 0){
                         Log.d("FeedData", "Added at: " + i);
-                        mUpcomingActionsX.add(i, new UpcomingAction(goal, action));
+                        mUpcomingActions.add(i, new UpcomingAction(goal, action));
                         break;
                     }
-                    else if (i == mUpcomingActionsX.size() - 1){
+                    else if (i == mUpcomingActions.size() - 1){
                         Log.d("FeedData", "Added at the end");
-                        mUpcomingActionsX.add(new UpcomingAction(goal, action));
+                        mUpcomingActions.add(new UpcomingAction(goal, action));
                         break;
                     }
                 }
@@ -291,18 +277,18 @@ public class FeedData extends TDCBase{
                 Log.d("FeedData", "Moving action to the head");
                 UpcomingAction oldUpNext = mUpNextActionX;
                 mUpNextActionX = upcomingAction;
-                mUpcomingActionsX.add(0, oldUpNext);
+                mUpcomingActions.add(0, oldUpNext);
             }
             else{
                 Log.d("FeedData", "Moving action to upcoming");
-                for (int i = 0; i < mUpcomingActionsX.size(); i++){
-                    UpcomingAction nextUpcoming = mUpcomingActionsX.get(i);
+                for (int i = 0; i < mUpcomingActions.size(); i++){
+                    UpcomingAction nextUpcoming = mUpcomingActions.get(i);
                     if (nextUpcoming.getTriggerDate().compareTo(upcomingAction.getTriggerDate()) > 0){
-                        mUpcomingActionsX.add(i, upcomingAction);
+                        mUpcomingActions.add(i, upcomingAction);
                         break;
                     }
-                    if (i == mUpcomingActionsX.size() -1){
-                        mUpcomingActionsX.add(upcomingAction);
+                    if (i == mUpcomingActions.size() -1){
+                        mUpcomingActions.add(upcomingAction);
                         break;
                     }
                 }
@@ -324,10 +310,10 @@ public class FeedData extends TDCBase{
             return replaceUpNextActionX();
         }
         else{
-            for (int i = 0; i < mUpcomingActionsX.size(); i++){
-                UpcomingAction upcomingAction = mUpcomingActionsX.get(i);
+            for (int i = 0; i < mUpcomingActions.size(); i++){
+                UpcomingAction upcomingAction = mUpcomingActions.get(i);
                 if (upcomingAction.is(action)){
-                    return mUpcomingActionsX.remove(i);
+                    return mUpcomingActions.remove(i);
                 }
             }
         }
@@ -339,12 +325,17 @@ public class FeedData extends TDCBase{
      */
     public void init(){
         mDisplayedGoalsX = new ArrayList<>();
-        //mSuggestions.clear();
+        if (!mUpcomingActions.isEmpty()){
+            mUpNextActionX = mUpcomingActions.remove(0);
+            if (hasFeedback()){
+                mActionFeedback.setFeedbackGoal(mUpNextActionX);
+            }
+        }
     }
 
     private void logData(){
         Log.d("FeedData", "Up next: " + mUpNextActionX);
-        Log.d("FeedData", "Upcoming: " + mUpcomingActionsX);
+        Log.d("FeedData", "Upcoming: " + mUpcomingActions);
     }
 
 

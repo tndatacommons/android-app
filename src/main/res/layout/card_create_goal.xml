@@ -16,6 +16,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
             android:text="@string/custom_goal_header"
             android:textAllCaps="true"
             android:textSize="18sp"
@@ -25,7 +26,11 @@
             android:id="@+id/create_goal_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:imeOptions="actionDone"
             android:inputType="textCapSentences"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/dark_text_color"/>
@@ -48,8 +53,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_gravity="end"
-            android:src="@drawable/ic_edit_white_36dp"
-            android:tint="@color/black"
+            android:src="@drawable/ic_edit_white_24dp"
+            android:tint="@color/gray600"
             android:visibility="gone"
             android:contentDescription="@string/custom_goal_edit_cd" />
 

@@ -4,11 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.tndata.android.compass.model.FeedData;
-import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
-
-import java.util.List;
 
 import es.sandwatch.httprequests.HttpRequest;
 import es.sandwatch.httprequests.HttpRequestError;
@@ -30,7 +27,6 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
 
     public static void cancel(){
         HttpRequest.cancel(sLoader.mGetFeedDataRC);
-        HttpRequest.cancel(sLoader.mGetUpcomingRC);
         HttpRequest.cancel(sLoader.mGetCustomGoalsRC);
         HttpRequest.cancel(sLoader.mGetUserGoalsRC);
     }
@@ -40,7 +36,6 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
     private FeedData mFeedData;
 
     private int mGetFeedDataRC;
-    private int mGetUpcomingRC;
     private int mGetCustomGoalsRC;
     private int mGetUserGoalsRC;
 
@@ -54,9 +49,6 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetFeedDataRC){
             Parser.parse(result, ParserModels.FeedDataResultSet.class, this);
-        }
-        else if (requestCode == mGetUpcomingRC){
-            Parser.parse(result, ParserModels.UpcomingActionsResultSet.class, this);
         }
         else if (requestCode == mGetCustomGoalsRC){
             Parser.parse(result, ParserModels.CustomGoalsResultSet.class, this);
@@ -76,19 +68,12 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
         if (result instanceof ParserModels.FeedDataResultSet){
             ((ParserModels.FeedDataResultSet)result).results.get(0).init();
         }
-        else if (result instanceof ParserModels.UpcomingActionsResultSet){
-            List<UpcomingAction> upcoming = ((ParserModels.UpcomingActionsResultSet)result).results;
-            mFeedData.setUpcomingActionsX(upcoming);
-        }
     }
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof ParserModels.FeedDataResultSet){
             mFeedData = ((ParserModels.FeedDataResultSet)result).results.get(0);
-            mGetUpcomingRC = HttpRequest.get(this, API.getUpcomingUrl());
-        }
-        else if (result instanceof ParserModels.UpcomingActionsResultSet){
             mGetCustomGoalsRC = HttpRequest.get(this, API.getCustomGoalsUrl());
         }
         else if (result instanceof ParserModels.CustomGoalsResultSet){

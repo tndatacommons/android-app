@@ -4,7 +4,6 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
     android:gravity="center_vertical" >
 
     <EditText
@@ -42,8 +41,6 @@
         android:contentDescription="@string/custom_action_save_cd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="5dp"
-        android:layout_marginEnd="5dp"
         android:visibility="gone"
         android:src="@drawable/ic_check_white_24dp"
         android:tint="@color/gray600" />
