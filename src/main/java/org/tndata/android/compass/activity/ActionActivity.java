@@ -239,7 +239,7 @@ public class ActionActivity
             Parser.parse(result, CustomGoal.class, this);
         }
         else if (requestCode == mGetUserGoalRC){
-            Parser.parse(result, ParserModels.UserGoalResultSet.class, this);
+            Parser.parse(result, ParserModels.UserGoalsResultSet.class, this);
         }
         else if (requestCode == mGetCategoryRC){
             Parser.parse(result, CategoryContent.class, this);
@@ -259,8 +259,8 @@ public class ActionActivity
         else if (result instanceof CustomGoal){
             mGoal = (CustomGoal)result;
         }
-        else if (result instanceof ParserModels.UserGoalResultSet){
-            mGoal = ((ParserModels.UserGoalResultSet)result).results.get(0);
+        else if (result instanceof ParserModels.UserGoalsResultSet){
+            mGoal = ((ParserModels.UserGoalsResultSet)result).results.get(0);
         }
         else if (result instanceof CategoryContent){
             mCategory = (CategoryContent)result;
@@ -281,7 +281,7 @@ public class ActionActivity
             mAdapter.setAction(mAction, null);
             invalidateOptionsMenu();
         }
-        else if (result instanceof ParserModels.UserGoalResultSet){
+        else if (result instanceof ParserModels.UserGoalsResultSet){
             mAdapter.setAction(mAction, null);
             if (mCategory != null){
                 mAdapter.setCategory(mCategory);

@@ -2,8 +2,6 @@ package org.tndata.android.compass.model;
 
 import android.content.Context;
 
-import org.tndata.android.compass.R;
-
 import java.io.Serializable;
 
 

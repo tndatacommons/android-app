@@ -232,10 +232,6 @@ public abstract class API{
         return BASE_URL + "behaviors/?goal=" + goal.getId();
     }
 
-    public static String getBehaviorUrl(long behaviorId){
-        return BASE_URL + "behaviors/" + behaviorId + "/";
-    }
-
     public static String getPostBehaviorUrl(){
         return BASE_URL + "users/behaviors/";
     }
@@ -281,25 +277,6 @@ public abstract class API{
      */
     public static String getActionUrl(int actionMappingId){
         return BASE_URL + "users/actions/" + actionMappingId + "/";
-    }
-
-    public static String getPostActionUrl(){
-        return BASE_URL + "users/actions/";
-    }
-
-    public static JSONObject getPostActionBody(@NonNull ActionContent action, @NonNull BehaviorContent behavior,
-                                               @NonNull GoalContent goal, @NonNull CategoryContent category){
-        JSONObject postActionBody = new JSONObject();
-        try{
-            postActionBody.put("action", action.getId())
-                    .put("behavior", behavior.getId())
-                    .put("goal", goal.getId())
-                    .put("category", category.getId());
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-        }
-        return postActionBody;
     }
 
     //Custom actions

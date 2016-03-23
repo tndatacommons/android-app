@@ -1,6 +1,5 @@
 package org.tndata.android.compass.parser;
 
-import org.tndata.android.compass.model.ActionContent;
 import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.CustomAction;
@@ -45,6 +44,10 @@ public final class ParserModels{
         public List<UpcomingAction> results;
     }
 
+    public final class CategoryContentResultSet implements ResultSet{
+        public List<CategoryContent> results;
+    }
+
     public final class CustomGoalsResultSet extends ListResultSet{
         public List<CustomGoal> results;
     }
@@ -57,28 +60,12 @@ public final class ParserModels{
         public List<DailyProgress> results;
     }
 
-    public final class PlacesResultSet implements ResultSet{
-        public List<Place> results;
-    }
-
-    public final class UserPlacesResultSet implements ResultSet{
-        public List<UserPlace> results;
-    }
-
-    public final class CategoryContentResultSet implements ResultSet{
-        public List<CategoryContent> results;
-    }
-
     public final class GoalContentResultSet extends ListResultSet{
         public List<GoalContent> results;
     }
 
     public final class BehaviorContentResultSet extends ListResultSet{
         public List<BehaviorContent> results;
-    }
-
-    public final class ActionContentResultSet extends ListResultSet{
-        public List<ActionContent> results;
     }
 
     public final class UserActionResultSet extends ListResultSet{
@@ -93,10 +80,6 @@ public final class ParserModels{
         public List<UserCategory> results;
     }
 
-    public final class UserGoalResultSet implements ResultSet{
-        public List<UserGoal> results;
-    }
-
     public final class RewardResultSet implements ResultSet{
         public List<Reward> results;
     }
@@ -107,6 +90,14 @@ public final class ParserModels{
 
     public final class UserProfileResultSet implements ResultSet{
         public List<UserProfile> results;
+    }
+
+    public final class UserPlacesResultSet implements ResultSet{
+        public List<UserPlace> results;
+    }
+
+    public final class PlacesResultSet implements ResultSet{
+        public List<Place> results;
     }
 
     private ParserModels(){

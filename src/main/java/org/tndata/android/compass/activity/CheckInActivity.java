@@ -87,7 +87,7 @@ public class CheckInActivity
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetGoalsRequestCode){
             Log.d(TAG, "Goals fetched");
-            Parser.parse(result, ParserModels.UserGoalResultSet.class, this);
+            Parser.parse(result, ParserModels.UserGoalsResultSet.class, this);
         }
         else if (requestCode == mGetRewardRequestCode){
             Log.d(TAG, "Reward fetched");
@@ -107,8 +107,8 @@ public class CheckInActivity
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.UserGoalResultSet){
-            mGoals = ((ParserModels.UserGoalResultSet)result).results;
+        if (result instanceof ParserModels.UserGoalsResultSet){
+            mGoals = ((ParserModels.UserGoalsResultSet)result).results;
             mCurrentProgress = new int[mGoals.size()];
         }
         else if (result instanceof ParserModels.RewardResultSet){
