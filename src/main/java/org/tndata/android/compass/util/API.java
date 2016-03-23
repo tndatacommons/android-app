@@ -118,11 +118,6 @@ public abstract class API{
      * APPLICATION DATA AND LIBRARY *
      *------------------------------*/
 
-    //User data
-    public static String getUserDataUrl(){
-        return BASE_URL + "users/";
-    }
-
     //Feed data
     public static String getFeedDataUrl(){
         return BASE_URL + "users/feed/";
@@ -184,6 +179,10 @@ public abstract class API{
 
     public static String getGoalUrl(long goalId){
         return BASE_URL + "goals/" + goalId + "/";
+    }
+
+    public static String getUserGoalUrl(long goalId){
+        return BASE_URL + "users/goals/?goal=" + goalId;
     }
 
     //Custom goals

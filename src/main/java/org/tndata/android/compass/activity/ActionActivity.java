@@ -16,9 +16,10 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.CustomGoal;
-import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.service.ActionReportService;
@@ -51,14 +52,14 @@ public class ActionActivity
 
     public static final String DID_IT_KEY = "org.tndata.compass.ActionActivity.DidIt";
 
+    //private static final int VIEW_GOAL_RC = 4536;
     private static final int SNOOZE_REQUEST_CODE = 61428;
     private static final int RESCHEDULE_REQUEST_CODE = 61429;
 
 
     //The action in question and the associated reminder
     private Action mAction;
-    private CustomGoal mCustomGoal;
-    private GoalContent mGoal;
+    private Goal mGoal;
     private CategoryContent mCategory;
     private UpcomingAction mUpcomingAction;
     private Reminder mReminder;
@@ -67,7 +68,7 @@ public class ActionActivity
 
     private int mGetActionRC;
     private int mGetCustomGoalRC;
-    private int mGetGoalRC;
+    private int mGetUserGoalRC;
     private int mGetCategoryRC;
 
 
@@ -207,7 +208,7 @@ public class ActionActivity
     private void fetchGoal(Action action){
         if (action instanceof UserAction){
             UserAction userAction = (UserAction)action;
-            mGetGoalRC = HttpRequest.get(this, API.getGoalUrl(userAction.getPrimaryGoalId()));
+            mGetUserGoalRC = HttpRequest.get(this, API.getUserGoalUrl(userAction.getPrimaryGoalId()));
         }
         else{
             CustomAction customAction = (CustomAction)action;
@@ -237,8 +238,8 @@ public class ActionActivity
         else if (requestCode == mGetCustomGoalRC){
             Parser.parse(result, CustomGoal.class, this);
         }
-        else if (requestCode == mGetGoalRC){
-            Parser.parse(result, GoalContent.class, this);
+        else if (requestCode == mGetUserGoalRC){
+            Parser.parse(result, ParserModels.UserGoalResultSet.class, this);
         }
         else if (requestCode == mGetCategoryRC){
             Parser.parse(result, CategoryContent.class, this);
@@ -256,10 +257,10 @@ public class ActionActivity
             mAction = (Action)result;
         }
         else if (result instanceof CustomGoal){
-            mCustomGoal = (CustomGoal)result;
+            mGoal = (CustomGoal)result;
         }
-        else if (result instanceof GoalContent){
-            mGoal = (GoalContent)result;
+        else if (result instanceof ParserModels.UserGoalResultSet){
+            mGoal = ((ParserModels.UserGoalResultSet)result).results.get(0);
         }
         else if (result instanceof CategoryContent){
             mCategory = (CategoryContent)result;
@@ -280,7 +281,7 @@ public class ActionActivity
             mAdapter.setAction(mAction, null);
             invalidateOptionsMenu();
         }
-        else if (result instanceof GoalContent){
+        else if (result instanceof ParserModels.UserGoalResultSet){
             mAdapter.setAction(mAction, null);
             if (mCategory != null){
                 mAdapter.setCategory(mCategory);
@@ -344,14 +345,23 @@ public class ActionActivity
         return true;
     }
 
-    private void viewGoal(){
-
-    }
-
     @Override
     public void onBackPressed(){
         setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, (Parcelable)mAction));
         finish();
+    }
+
+    private void viewGoal(){
+        if (mGoal != null){
+            if (mGoal instanceof UserGoal){
+                startActivity(new Intent(this, ReviewActionsActivity.class)
+                        .putExtra(ReviewActionsActivity.USER_GOAL_KEY, mGoal));
+            }
+            else{
+                startActivity(new Intent(this, CustomContentManagerActivity.class)
+                        .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, mGoal));
+            }
+        }
     }
 
     @Override
@@ -370,9 +380,8 @@ public class ActionActivity
     @Override
     public void onRescheduleClick(){
         if (mAction != null){
-            String goalTitle = mGoal != null ? mGoal.getTitle() : mCustomGoal.getTitle();
             Intent reschedule = new Intent(this, TriggerActivity.class)
-                    .putExtra(TriggerActivity.GOAL_TITLE_KEY, goalTitle)
+                    .putExtra(TriggerActivity.GOAL_TITLE_KEY, mGoal.getTitle())
                     .putExtra(TriggerActivity.ACTION_KEY, (Parcelable)mAction);
             startActivityForResult(reschedule, RESCHEDULE_REQUEST_CODE);
         }
