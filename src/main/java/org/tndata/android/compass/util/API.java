@@ -140,6 +140,10 @@ public abstract class API{
         return BASE_URL + "categories/" + categoryId + "/";
     }
 
+    public static String getUserCategoryUrl(long categoryId){
+        return BASE_URL + "users/categories/?category=" + categoryId;
+    }
+
     public static String getDeleteCategoryUrl(@NonNull UserCategory userCategory){
         return BASE_URL + "users/categories/" + userCategory.getId() + "/";
     }

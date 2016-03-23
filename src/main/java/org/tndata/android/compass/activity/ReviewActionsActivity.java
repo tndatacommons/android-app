@@ -53,6 +53,7 @@ public class ReviewActionsActivity
     private ReviewActionsAdapter mAdapter;
 
     //Network request codes and urls
+    private int mGetUserCategoryRC;
     private int mGetActionsRC;
     private String mGetActionsNextUrl;
 
@@ -85,8 +86,14 @@ public class ReviewActionsActivity
                 String title = getString(R.string.review_actions_header, userGoal.getTitle());
                 mAdapter = new ReviewActionsAdapter(this, this, title);
                 mGetActionsNextUrl = API.getUserActionsUrl(userGoal.getGoal());
-                setColor(Color.parseColor(category.getColor()));
-                setGoalHeader(category);
+                if (category != null){
+                    setColor(Color.parseColor(category.getColor()));
+                    setGoalHeader(category);
+                }
+                else{
+                    long categoryId = userGoal.getPrimaryCategoryId();
+                    mGetUserCategoryRC = HttpRequest.get(this, API.getUserCategoryUrl(categoryId));
+                }
             }
         }
         else if (userCategory != null){
@@ -122,8 +129,13 @@ public class ReviewActionsActivity
     private void setCategoryHeader(CategoryContent category){
         View header = inflateHeader(R.layout.header_hero);
         ImageView hero = (ImageView)header.findViewById(R.id.header_hero_image);
-        ImageLoader.Options options = new ImageLoader.Options().setUsePlaceholder(false);
-        ImageLoader.loadBitmap(hero, category.getImageUrl(), options);
+        if (category.getImageUrl() == null){
+            hero.setImageResource(R.drawable.compass_master_illustration);
+        }
+        else{
+            ImageLoader.Options options = new ImageLoader.Options().setUsePlaceholder(false);
+            ImageLoader.loadBitmap(hero, category.getImageUrl(), options);
+        }
     }
 
     @Override
@@ -154,7 +166,10 @@ public class ReviewActionsActivity
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mGetActionsRC){
+        if (requestCode == mGetUserCategoryRC){
+            Parser.parse(result, ParserModels.UserCategoryResultSet.class, this);
+        }
+        else if (requestCode == mGetActionsRC){
             Parser.parse(result, ParserModels.UserActionResultSet.class, this);
         }
     }
@@ -171,7 +186,11 @@ public class ReviewActionsActivity
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.UserActionResultSet){
+        if (result instanceof ParserModels.UserCategoryResultSet){
+            UserCategory cat = ((ParserModels.UserCategoryResultSet)result).results.get(0);
+            setCategoryHeader(cat.getCategory());
+        }
+        else if (result instanceof ParserModels.UserActionResultSet){
             ParserModels.UserActionResultSet set = (ParserModels.UserActionResultSet)result;
             mGetActionsNextUrl = set.next;
             for (Action action:((ParserModels.UserActionResultSet)result).results){
