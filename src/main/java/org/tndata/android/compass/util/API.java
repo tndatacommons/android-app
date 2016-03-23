@@ -334,13 +334,13 @@ public abstract class API{
         }
     }
 
-    public static JSONObject getPutTriggerBody(@NonNull String time, @NonNull String rrule,
-                                               @NonNull String date){
+    public static JSONObject getPutTriggerBody(@NonNull Trigger trigger){
         JSONObject putTriggerBody = new JSONObject();
         try{
-            putTriggerBody.put("custom_trigger_time", time)
-                    .put("custom_trigger_rrule", rrule)
-                    .put("custom_trigger_date", date);
+            putTriggerBody.put("custom_trigger_time", trigger.getRawTime())
+                    .put("custom_trigger_date", trigger.getRawDate())
+                    .put("custom_trigger_rrule", trigger.getRecurrences())
+                    .put("custom_trigger_disabled", !trigger.isEnabled());
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();

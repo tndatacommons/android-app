@@ -52,6 +52,14 @@ public class Trigger extends TDCBase implements Parcelable, Comparable<Trigger>{
 
     }
 
+    public Trigger(@NonNull String time, @NonNull String date, @NonNull String recurrences){
+        mTime = time;
+        mDate = date;
+        mRecurrences = recurrences;
+
+        mDisabled = false;
+    }
+
     /**
      * Name getter.
      *

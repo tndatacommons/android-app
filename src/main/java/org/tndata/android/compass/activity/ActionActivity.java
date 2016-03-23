@@ -400,8 +400,8 @@ public class ActionActivity
      * Disables the current action's trigger.
      */
     private void disableTrigger(){
-        HttpRequest.put(null, API.getPutTriggerUrl(mAction), API.getPutTriggerBody("", "", ""));
-        mAction.setTrigger(null);
+        mAction.getTrigger().setEnabled(false);
+        HttpRequest.put(null, API.getPutTriggerUrl(mAction), API.getPutTriggerBody(mAction.getTrigger()));
         invalidateOptionsMenu();
     }
 

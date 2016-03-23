@@ -3,12 +3,16 @@ package org.tndata.android.compass.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.format.Time;
 import android.util.Log;
+import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.doomonafireball.betterpickers.calendardatepicker.CalendarDatePickerDialog;
@@ -18,7 +22,6 @@ import com.doomonafireball.betterpickers.recurrencepicker.EventRecurrenceFormatt
 import com.doomonafireball.betterpickers.recurrencepicker.RecurrencePickerDialog;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.fragment.TriggerFragment;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.Trigger;
@@ -48,19 +51,22 @@ import es.sandwatch.httprequests.HttpRequestError;
  *
  * This Activity tracks those bits of information as well as an Action to update.
  *
+ * TODO optimize and clean up this mess.
+ *
  * @author Kevin Zetterstrom
  * @author Edited by Ismael Alonso
- * @version 2.0.0
+ * @version 2.1.0
  */
 public class TriggerActivity
         extends AppCompatActivity
         implements
+                View.OnClickListener,
+                CompoundButton.OnCheckedChangeListener,
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback,
                 RecurrencePickerDialog.OnRecurrenceSetListener,
                 RadialTimePickerDialog.OnTimeSetListener,
-                CalendarDatePickerDialog.OnDateSetListener,
-                TriggerFragment.TriggerFragmentListener{
+                CalendarDatePickerDialog.OnDateSetListener{
 
     public static final String GOAL_TITLE_KEY = "org.tndata.compass.TriggerActivity.GoalTitle";
     public static final String ACTION_KEY = "org.tndata.compass.TriggerActivity.Action";
@@ -70,15 +76,6 @@ public class TriggerActivity
     private static final String FRAG_TAG_DATE_PICKER = "datePickerDialogFragment";
     private static final String FRAG_TAG_TIME_PICKER = "timePickerDialogFragment";
 
-
-    private TriggerFragment fragment;
-
-    private Action mAction;
-
-    // An EventRecurrence instance gives us access to different representations
-    // of the RRULE data.
-    private EventRecurrence mEventRecurrence = new EventRecurrence();
-    private String mRrule; // RFC 2445 RRULE string
 
     //Date object that stores both the selected time and date
     private Date mDateTime;
@@ -94,6 +91,24 @@ public class TriggerActivity
     private DateFormat mApiDateFormat;
     private DateFormat mApiDateTimeFormat;
 
+    //UI components
+    private TextView datePickerTextView;
+    private TextView timePickerTextView;
+    private TextView recurrencePickerTextView;
+    private ProgressBar mProgress;
+    private TextView mUpdateTrigger;
+
+    //Model components (extras)
+    private Action mAction;
+    private Trigger mTrigger;
+
+    // An EventRecurrence instance gives us access to different representations
+    // of the RRULE data.
+    private EventRecurrence mEventRecurrence = new EventRecurrence();
+    private String mRrule; // RFC 2445 RRULE string
+
+
+
     //Request codes
     private int mPutTriggerRequestCode;
 
@@ -101,23 +116,36 @@ public class TriggerActivity
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_trigger);
 
+        //Flags and stores
         mDateTime = new Date();
         mTimeSelected = false;
         mDateSelected = false;
 
+        //Create parsers/formatters
         mDisplayTimeFormat = new SimpleDateFormat("h:mm a", Locale.getDefault());
         mDisplayDateFormat = new SimpleDateFormat("MMM d yyyy", Locale.getDefault());
         mApiTimeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
         mApiDateFormat = new SimpleDateFormat("yyyy-MM-d", Locale.getDefault());
         mApiDateTimeFormat = new SimpleDateFormat("y-MM-d HH:mm", Locale.getDefault());
 
-        setContentView(R.layout.activity_base_toolbar);
+        //Grab UI components
+        Toolbar toolbar = (Toolbar)findViewById(R.id.trigger_toolbar);
+        TextView title = (TextView)findViewById(R.id.trigger_action_title);
+        SwitchCompat enabled = (SwitchCompat)findViewById(R.id.trigger_enabled);
+        timePickerTextView = (TextView)findViewById(R.id.trigger_time);
+        datePickerTextView = (TextView)findViewById(R.id.trigger_date);
+        recurrencePickerTextView = (TextView)findViewById(R.id.trigger_recurrence);
+        mProgress = (ProgressBar)findViewById(R.id.trigger_progress);
+        mUpdateTrigger = (TextView)findViewById(R.id.trigger_update);
 
+        //Grab extras
         String goalTitle = getIntent().getStringExtra(GOAL_TITLE_KEY);
         mAction = getIntent().getParcelableExtra(ACTION_KEY);
+        mTrigger = mAction.getTrigger();
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.tool_bar);
+        //Setup toolbar
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
         toolbar.getBackground().setAlpha(255);
         setSupportActionBar(toolbar);
@@ -126,40 +154,38 @@ public class TriggerActivity
             getSupportActionBar().setTitle(goalTitle);
         }
 
-        initializeReminders(mAction.getTrigger());
+        //Setup UI components
+        title.setText(mAction.getTitle());
+        enabled.setChecked(mTrigger.isEnabled());
 
-        fragment = TriggerFragment.newInstance(mAction);
-        if (fragment != null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.base_content, fragment)
-                    .commit();
+        if (mAction.isEditable()){
+            enabled.setEnabled(true);
+            enabled.setOnCheckedChangeListener(this);
+            findViewById(R.id.trigger_time_container).setOnClickListener(this);
+            findViewById(R.id.trigger_date_container).setOnClickListener(this);
+            findViewById(R.id.trigger_recurrence_container).setOnClickListener(this);
         }
-    }
+        else{
+            enabled.setEnabled(false);
+        }
+        mUpdateTrigger.setOnClickListener(this);
 
-    /**
-     * Populates the activity with the provided trigger.
-     *
-     * @param trigger the trigger from where the data is to be extracted.
-     */
-    public void initializeReminders(@NonNull Trigger trigger){
-        //Initialize the Date object
         try{
-            if (trigger.getRawDate().equals("")){
-                if (!trigger.getRawTime().equals("")){
+            if (mTrigger.getRawDate().equals("")){
+                if (!mTrigger.getRawTime().equals("")){
                     mTimeSelected = true;
-                    mDateTime = trigger.getTime();
+                    mDateTime = mTrigger.getTime();
                 }
             }
             else{
                 mDateSelected = true;
-                if (!trigger.getRawTime().equals("")){
+                if (!mTrigger.getRawTime().equals("")){
                     mTimeSelected = true;
-                    String dateTime = trigger.getRawDate() + " " + trigger.getRawTime();
+                    String dateTime = mTrigger.getRawDate() + " " + mTrigger.getRawTime();
                     mDateTime = mApiDateTimeFormat.parse(dateTime);
                 }
                 else{
-                    mDateTime = trigger.getDate();
+                    mDateTime = mTrigger.getDate();
                 }
             }
         }
@@ -167,7 +193,91 @@ public class TriggerActivity
             px.printStackTrace();
         }
 
-        setRRULE(trigger.getRRULE());
+        setRRULE(mTrigger.getRRULE());
+
+
+
+        // Update labels with Trigger details if applicable.
+        if(!mTrigger.getRawTime().isEmpty()) {
+            updateTimeView(mTrigger.getTime());
+        }
+        if(!mTrigger.getRawDate().isEmpty()) {
+            updateDateView(mTrigger.getDate());
+        }
+        if(!mTrigger.getRecurrences().isEmpty()) {
+            updateRecurrenceView(mTrigger.getRecurrencesDisplay());
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
+        switch (buttonView.getId()){
+            case R.id.trigger_enabled:
+                mTrigger.setEnabled(isChecked);
+                break;
+        }
+    }
+
+    @Override
+    public void onClick(View view){
+        Calendar calendar = Calendar.getInstance();
+        FragmentManager fm = getSupportFragmentManager();
+        switch (view.getId()){
+            case R.id.trigger_time_container:
+                RadialTimePickerDialog timePickerDialog = RadialTimePickerDialog.newInstance(
+                        this, calendar.get(Calendar.HOUR_OF_DAY),
+                        calendar.get(Calendar.MINUTE), android.text.format.DateFormat.is24HourFormat(this));
+
+                timePickerDialog.show(getSupportFragmentManager(), FRAG_TAG_TIME_PICKER);
+                break;
+
+            case R.id.trigger_date_container:
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                CalendarDatePickerDialog calendarDatePickerDialog = CalendarDatePickerDialog
+                        .newInstance(TriggerActivity.this, year, month, day);
+                calendarDatePickerDialog.show(fm, FRAG_TAG_DATE_PICKER);
+                break;
+
+            case R.id.trigger_recurrence_container:
+                String rrule;
+                if (!mTrigger.getRecurrences().isEmpty()){
+                    rrule = mTrigger.getRRULE();
+                }
+                else{
+                    rrule = Trigger.DEFAULT_RRULE;
+                }
+                Bundle b = new Bundle();
+                Time t = new Time();
+                t.setToNow();
+
+                b.putLong(RecurrencePickerDialog.BUNDLE_START_TIME_MILLIS, t.toMillis(false));
+                b.putString(RecurrencePickerDialog.BUNDLE_TIME_ZONE, t.timezone);
+
+                // may be more efficient to serialize and pass in EventRecurrence
+                if (rrule == null){
+                    rrule = "";
+                }
+                b.putString(RecurrencePickerDialog.BUNDLE_RRULE, rrule);
+
+                RecurrencePickerDialog rpd = (RecurrencePickerDialog)fm.findFragmentByTag(FRAG_TAG_RECUR_PICKER);
+                if (rpd != null) {
+                    rpd.dismiss();
+                }
+                rpd = new RecurrencePickerDialog();
+                rpd.setArguments(b);
+                rpd.setOnRecurrenceSetListener(this);
+                rpd.show(fm, FRAG_TAG_RECUR_PICKER);
+                break;
+
+            case R.id.trigger_update:
+                mProgress.setVisibility(View.VISIBLE);
+                mUpdateTrigger.setEnabled(false);
+                saveActionTrigger(mAction);
+                break;
+        }
     }
 
     /**
@@ -255,68 +365,6 @@ public class TriggerActivity
     }
 
     @Override
-    public void onFireTimePicker(){
-        Calendar calendar = Calendar.getInstance();
-        RadialTimePickerDialog timePickerDialog = RadialTimePickerDialog.newInstance(
-                this, calendar.get(Calendar.HOUR_OF_DAY),
-                calendar.get(Calendar.MINUTE), android.text.format.DateFormat.is24HourFormat(this));
-
-        timePickerDialog.show(getSupportFragmentManager(), FRAG_TAG_TIME_PICKER);
-    }
-
-    @Override
-    public void onFireDatePicker(){
-        FragmentManager fm = getSupportFragmentManager();
-        final Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int day = c.get(Calendar.DAY_OF_MONTH);
-
-        CalendarDatePickerDialog calendarDatePickerDialog = CalendarDatePickerDialog
-                .newInstance(TriggerActivity.this, year, month, day);
-        calendarDatePickerDialog.show(fm, FRAG_TAG_DATE_PICKER);
-    }
-
-    @Override
-    public void onFireRecurrencePicker(String rrule){
-        Bundle b = new Bundle();
-        Time t = new Time();
-        t.setToNow();
-
-        b.putLong(RecurrencePickerDialog.BUNDLE_START_TIME_MILLIS, t.toMillis(false));
-        b.putString(RecurrencePickerDialog.BUNDLE_TIME_ZONE, t.timezone);
-
-        // may be more efficient to serialize and pass in EventRecurrence
-        if (rrule == null){
-            rrule = "";
-        }
-        b.putString(RecurrencePickerDialog.BUNDLE_RRULE, rrule);
-
-        FragmentManager fm = getSupportFragmentManager();
-        RecurrencePickerDialog rpd = (RecurrencePickerDialog)fm.findFragmentByTag(FRAG_TAG_RECUR_PICKER);
-        if (rpd != null) {
-            rpd.dismiss();
-        }
-        rpd = new RecurrencePickerDialog();
-        rpd.setArguments(b);
-        rpd.setOnRecurrenceSetListener(this);
-        rpd.show(fm, FRAG_TAG_RECUR_PICKER);
-    }
-
-    @Override
-    public void onDisableTrigger(){
-        mTimeSelected = false;
-        mDateSelected = false;
-        setRRULE(null);
-        saveActionTrigger(mAction);
-    }
-
-    @Override
-    public void onSaveTrigger(){
-        saveActionTrigger(mAction);
-    }
-
-    @Override
     public void onTimeSet(RadialTimePickerDialog dialog, int hourOfDay, int minute){
         //A calendar instance is retrieved and the picked time is set
         Calendar calendar = Calendar.getInstance();
@@ -327,10 +375,7 @@ public class TriggerActivity
         //The datetime object is replaced with the new one
         mDateTime = calendar.getTime();
         mTimeSelected = true;
-
-        if (fragment != null){
-            fragment.updateTimeView(getDisplayTime());
-        }
+        updateTimeView(getDisplayTime());
 
         Toast.makeText(this,
                 getString(R.string.time_picker_confirmation_toast, getDisplayTime()),
@@ -347,10 +392,7 @@ public class TriggerActivity
         //The datetime object is replaced with the new one
         mDateTime = calendar.getTime();
         mDateSelected = true;
-
-        if (fragment != null){
-            fragment.updateDateView(getDisplayDate());
-        }
+        updateDateView(getDisplayDate());
 
         Toast.makeText(this,
                 getText(R.string.date_picker_confirmation_toast),
@@ -362,10 +404,7 @@ public class TriggerActivity
         if (rrule != null){
             setEventRecurrence(rrule);
         }
-
-        if(fragment != null){
-            fragment.updateRecurrenceView(getFriendlyRecurrenceString());
-        }
+        updateRecurrenceView(getFriendlyRecurrenceString());
 
         //Our API needs the 'RRULE' prefix on the rrule string, but BetterPicker's
         //  EventRecurrence should *not* have that: https://goo.gl/QhY9aC
@@ -406,10 +445,9 @@ public class TriggerActivity
             Log.d(TAG, "Date: " + date);
             Log.d(TAG, "RRULE: " + rrule);
 
-            //Time is required and one of date or rule is required
-            //TODO: Fails when time/date/rrule is empty or null
+            Trigger trigger = new Trigger(time, date, rrule);
             mPutTriggerRequestCode = HttpRequest.put(this, API.getPutTriggerUrl(action),
-                    API.getPutTriggerBody(time, rrule, date));
+                    API.getPutTriggerBody(trigger));
         }
         else{
             setResult(RESULT_CANCELED);
@@ -432,10 +470,8 @@ public class TriggerActivity
     @Override
     public void onRequestFailed(int requestCode, HttpRequestError error){
         if (requestCode == mPutTriggerRequestCode){
-            Log.d(TAG, "actionTriggerAdded: received null Action");
-            if (fragment != null){
-                fragment.reportError();
-            }
+            mProgress.setVisibility(View.GONE);
+            mUpdateTrigger.setEnabled(true);
             Toast.makeText(this, getText(R.string.reminder_failed), Toast.LENGTH_SHORT).show();
         }
     }
@@ -450,6 +486,33 @@ public class TriggerActivity
         if (result instanceof Action){
             setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, (Parcelable)result));
             finish();
+        }
+    }
+
+
+
+    public void updateTimeView(String time){
+        timePickerTextView.setText(time);
+    }
+
+    public void updateTimeView(Date time){
+        timePickerTextView.setText(mDisplayTimeFormat.format(time));
+    }
+
+    public void updateDateView(String date){
+        datePickerTextView.setText(date);
+    }
+
+    public void updateDateView(Date date){
+        datePickerTextView.setText(mDisplayDateFormat.format(date));
+    }
+
+    public void updateRecurrenceView(String recurrence){
+        if(recurrence != null && !recurrence.isEmpty()){
+            recurrencePickerTextView.setText(recurrence);
+        }
+        else{
+            recurrencePickerTextView.setText(getText(R.string.trigger_recurrence_picker_label));
         }
     }
 }
