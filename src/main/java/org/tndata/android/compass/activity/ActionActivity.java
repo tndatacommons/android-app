@@ -351,6 +351,12 @@ public class ActionActivity
         finish();
     }
 
+    @Override
+    protected void onHomeTapped(){
+        setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, (Parcelable)mAction));
+        finish();
+    }
+
     private void viewGoal(){
         if (mGoal != null){
             if (mGoal instanceof UserGoal){
