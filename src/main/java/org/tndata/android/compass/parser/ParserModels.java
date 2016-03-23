@@ -40,10 +40,6 @@ public final class ParserModels{
         public List<FeedData> results;
     }
 
-    public final class UpcomingActionsResultSet implements ResultSet{
-        public List<UpcomingAction> results;
-    }
-
     public final class CategoryContentResultSet implements ResultSet{
         public List<CategoryContent> results;
     }
