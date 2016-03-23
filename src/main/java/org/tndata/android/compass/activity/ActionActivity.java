@@ -13,12 +13,12 @@ import android.widget.ImageView;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ActionAdapter;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
@@ -60,7 +60,7 @@ public class ActionActivity
     //The action in question and the associated reminder
     private Action mAction;
     private Goal mGoal;
-    private CategoryContent mCategory;
+    private UserCategory mUserCategory;
     private UpcomingAction mUpcomingAction;
     private Reminder mReminder;
 
@@ -70,7 +70,7 @@ public class ActionActivity
     private int mGetCustomGoalRC;
     private int mGetRewardRC;
     private int mGetUserGoalRC;
-    private int mGetCategoryRC;
+    private int mGetUserCategoryRC;
 
 
     @Override
@@ -115,12 +115,17 @@ public class ActionActivity
     private void setHeader(){
         View header = inflateHeader(R.layout.header_hero);
         ImageView image = (ImageView)header.findViewById(R.id.header_hero_image);
-        if (mCategory == null){
+        if (mUserCategory == null){
             image.setImageResource(R.drawable.compass_master_illustration);
         }
         else{
-            ImageLoader.Options options = new ImageLoader.Options().setUsePlaceholder(false);
-            ImageLoader.loadBitmap(image, mCategory.getImageUrl(), options);
+            if (mUserCategory.getCategory().getImageUrl() == null){
+                image.setImageResource(R.drawable.compass_master_illustration);
+            }
+            else{
+                ImageLoader.Options options = new ImageLoader.Options().setUsePlaceholder(false);
+                ImageLoader.loadBitmap(image, mUserCategory.getCategory().getImageUrl(), options);
+            }
         }
     }
 
@@ -223,7 +228,8 @@ public class ActionActivity
      * @param userAction the user action whose category is to be fetched.
      */
     private void fetchCategory(UserAction userAction){
-        mGetCategoryRC = HttpRequest.get(this, API.getCategoryUrl(userAction.getPrimaryCategoryId()));
+        long userCategoryId = userAction.getPrimaryCategoryId();
+        mGetUserCategoryRC = HttpRequest.get(this, API.getUserCategoryUrl(userCategoryId));
     }
 
     @Override
@@ -245,8 +251,8 @@ public class ActionActivity
         else if (requestCode == mGetUserGoalRC){
             Parser.parse(result, ParserModels.UserGoalsResultSet.class, this);
         }
-        else if (requestCode == mGetCategoryRC){
-            Parser.parse(result, CategoryContent.class, this);
+        else if (requestCode == mGetUserCategoryRC){
+            Parser.parse(result, ParserModels.UserCategoryResultSet.class, this);
         }
     }
 
@@ -266,8 +272,8 @@ public class ActionActivity
         else if (result instanceof ParserModels.UserGoalsResultSet){
             mGoal = ((ParserModels.UserGoalsResultSet)result).results.get(0);
         }
-        else if (result instanceof CategoryContent){
-            mCategory = (CategoryContent)result;
+        else if (result instanceof ParserModels.UserCategoryResultSet){
+            mUserCategory = ((ParserModels.UserCategoryResultSet)result).results.get(0);
         }
     }
 
@@ -290,16 +296,16 @@ public class ActionActivity
         }
         else if (result instanceof ParserModels.UserGoalsResultSet){
             mAdapter.setAction(mAction, null);
-            if (mCategory != null){
-                mAdapter.setCategory(mCategory);
+            if (mUserCategory != null){
+                mAdapter.setCategory(mUserCategory.getCategory());
             }
             invalidateOptionsMenu();
         }
-        else if (result instanceof CategoryContent){
-            setColor(Color.parseColor(mCategory.getColor()));
+        else if (result instanceof ParserModels.UserCategoryResultSet){
+            setColor(Color.parseColor(mUserCategory.getColor()));
             setHeader();
             if (mGoal != null){
-                mAdapter.setCategory(mCategory);
+                mAdapter.setCategory(mUserCategory.getCategory());
             }
         }
     }
