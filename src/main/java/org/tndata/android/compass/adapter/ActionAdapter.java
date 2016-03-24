@@ -16,6 +16,7 @@ import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.util.CompassTagHandler;
+import org.tndata.android.compass.util.CompassUtil;
 
 
 /**
@@ -100,6 +101,9 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
         else{
             holder.addButton(R.id.action_reschedule, R.string.action_reschedule, this);
         }
+        if (mAction instanceof UserAction && !((UserAction)mAction).getExternalResource().isEmpty()){
+            holder.addButton(R.id.action_do_it_now, R.string.action_do_it_now, this);
+        }
         holder.addButton(R.id.action_did_it, R.string.action_did_it, this);
     }
 
@@ -148,6 +152,10 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
         switch (v.getId()){
             case R.id.action_did_it:
                 mListener.onIDidItClick();
+                break;
+
+            case R.id.action_do_it_now:
+                CompassUtil.doItNow(getContext(), ((UserAction)mAction).getExternalResource());
                 break;
 
             case R.id.action_reschedule:
