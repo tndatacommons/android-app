@@ -78,22 +78,32 @@ public class ReviewActionsAdapter extends MaterialAdapter{
      * @param showLoading whether this adapter should still display the loading screen.
      */
     public void addActions(@NonNull List<UserAction> actions, boolean showLoading){
-        //If there are no actions, insert the content card
-        if (mActions.isEmpty()){
-            notifyListInserted();
+        if (!actions.isEmpty()){
+            //If there are no actions, insert the content card
+            if (mActions.isEmpty()){
+                notifyListInserted();
+            }
+            //Record the initial position of the new sub-list in the master list
+            int positionStart = mActions.size();
+            //Add all the actions in the behavior list
+            mActions.addAll(actions);
+            //If the adapter has been created already, trigger animations
+            if (mAdapter != null){
+                prepareListChange();
+                mAdapter.notifyItemRangeInserted(positionStart, actions.size());
+                notifyListChanged();
+            }
         }
+
         //Update the load widget
         updateLoading(showLoading);
+    }
 
-        //Record the initial position of the new sub-list in the master list
-        int positionStart = mActions.size();
-        //Add all the actions in the behavior list
-        mActions.addAll(actions);
-        //If the adapter has been created already, trigger animations
-        if (mAdapter != null){
-            prepareListChange();
-            mAdapter.notifyItemRangeInserted(positionStart, actions.size());
-            notifyListChanged();
+    public void updateAction(Action action){
+        int index = mActions.indexOf(action);
+        if (index >= 0 && index < mAdapter.getItemCount()){
+            mActions.set(index, action);
+            mAdapter.notifyItemChanged(index);
         }
     }
 

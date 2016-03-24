@@ -421,7 +421,8 @@ public class ActionActivity
     private void disableTrigger(){
         mAction.getTrigger().setEnabled(false);
         HttpRequest.put(null, API.getPutTriggerUrl(mAction), API.getPutTriggerBody(mAction.getTrigger()));
-        invalidateOptionsMenu();
+        setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, (Parcelable)mAction));
+        finish();
     }
 
     @Override

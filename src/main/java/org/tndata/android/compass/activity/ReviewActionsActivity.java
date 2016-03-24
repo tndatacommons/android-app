@@ -156,6 +156,7 @@ public class ReviewActionsActivity
         if (requestCode == ACTION_ACTIVITY_RC && resultCode == RESULT_OK){
             Action action = data.getParcelableExtra(ActionActivity.ACTION_KEY);
             mApplication.updateAction(action);
+            mAdapter.updateAction(action);
         }
     }
 
