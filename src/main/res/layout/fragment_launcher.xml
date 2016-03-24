@@ -76,7 +76,8 @@
                     android:id="@+id/launcher_sign_up"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_marginRight="40dp"
+                    android:layout_marginEnd="40dp"
                     android:text="@string/launcher_sign_up"
                     android:textSize="16sp"
                     android:textColor="@color/grow_primary" />
@@ -85,7 +86,8 @@
                     android:id="@+id/launcher_login"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginStart="40dp"
                     android:text="@string/launcher_login"
                     android:textSize="16sp"
                     android:textColor="@color/grow_primary" />

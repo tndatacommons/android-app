@@ -52,8 +52,6 @@ class UpcomingHolder extends MainFeedViewHolder implements View.OnClickListener{
         mList.setAdapter(mUpcomingAdapter);
         mMore = rootView.findViewById(R.id.card_upcoming_more);
         mMore.setOnClickListener(this);
-
-
     }
 
     @Override
@@ -175,7 +173,9 @@ class UpcomingHolder extends MainFeedViewHolder implements View.OnClickListener{
 
         public void bind(@NonNull UpcomingAction action){
             mTitle.setText(action.getTitle());
-            mGoal.setText(action.getGoalTitle());
+            String goalString = "To " + action.getGoalTitle().substring(0, 1).toLowerCase()
+                    + action.getGoalTitle().substring(1);
+            mGoal.setText(goalString);
             mTime.setText(action.getTriggerDisplay());
         }
 
