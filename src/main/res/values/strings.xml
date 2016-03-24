@@ -4,6 +4,38 @@
     <string name="app_name">Compass</string>
     <string name="ok">OK</string>
 
+    <!-- LoginActivity -->
+    <string name="terms_title">Terms and Conditions</string>
+    <string name="launcher_sign_up">SIGN UP</string>
+    <string name="launcher_login">LOG IN</string>
+    <string name="launcher_tagline">Sign up or log in</string>
+    <string name="launcher_compass_image_cd">Compass image</string>
+    <string name="launcher_compass_logo_cd">Compass logo</string>
+    <string name="launcher_de_soto_bridge_cd">Hernando DeSoto bridge</string>
+    <string name="launcher_made_in_memphis">made in memphis</string>
+    <string name="launcher_tour">TOUR</string>
+    <string name="login_email_hint">email</string>
+    <string name="login_password_hint">password</string>
+    <string name="login_email_label">email address</string>
+    <string name="login_password_label">password</string>
+    <string name="login_email_error">Please enter a valid email</string>
+    <string name="login_pass_error">Please enter a password</string>
+    <string name="login_first_name_error">Please enter your first name</string>
+    <string name="login_last_name_error">Please enter your last name</string>
+    <string name="login_error">An error occurred when logging in</string>
+    <string name="login_header_label">LOG IN</string>
+    <string name="signup_password_mismatch_error">Passwords must match</string>
+    <string name="signup_password_length_error">Password must be at least 5 characters</string>
+    <string name="signup_first_name_label">first name</string>
+    <string name="signup_last_name_label">last name</string>
+    <string name="signup_first_name_hint">enter first name</string>
+    <string name="signup_last_name_hint">enter last name</string>
+    <string name="signup_confirm_password_label">re-enter password</string>
+    <string name="signup_error">An error occurred when signing up</string>
+    <string name="signup_privacy_link">Privacy Policy</string>
+    <string name="signup_header_label">CREATE YOUR ACCOUNT</string>
+    <string name="signup_accept_terms">Creating an account indicates that you agree to our terms of service</string>
+
     <!-- MainActivity -->
     <string name="action_my_progress">My progress</string>
     <string name="action_my_information">My information</string>
@@ -43,36 +75,6 @@
     <string name="time_picker_confirmation_toast">You have selected %1$s</string>
     <string name="recurrence_picker_confirmation_toast">Recurring schedule saved</string>
     <string name="reminder_failed">Failed to save reminder</string>
-
-    <!-- LoginActivity -->
-    <string name="terms_title">Terms and Conditions</string>
-    <string name="launcher_sign_up">SIGN UP</string>
-    <string name="launcher_login">LOG IN</string>
-    <string name="launcher_tagline">Sign up or log in</string>
-    <string name="launcher_grow_image">Compass</string>
-    <string name="launcher_tour">TOUR</string>
-    <string name="login_email_hint">email</string>
-    <string name="login_password_hint">password</string>
-    <string name="login_email_label">email address</string>
-    <string name="login_password_label">password</string>
-    <string name="login_email_error">Please enter a valid email</string>
-    <string name="login_pass_error">Please enter a password</string>
-    <string name="login_first_name_error">Please enter your first name</string>
-    <string name="login_last_name_error">Please enter your last name</string>
-    <string name="login_error">An error occurred when logging in</string>
-    <string name="login_header_label">LOG IN</string>
-    <string name="signup_password_mismatch_error">Passwords must match</string>
-    <string name="signup_password_length_error">Password must be at least 5 characters</string>
-    <string name="signup_first_name_label">first name</string>
-    <string name="signup_last_name_label">last name</string>
-    <string name="signup_first_name_hint">enter first name</string>
-    <string name="signup_last_name_hint">enter last name</string>
-    <string name="signup_confirm_password_label">re-enter password</string>
-    <string name="signup_error">An error occurred when signing up</string>
-    <string name="signup_privacy_link">Privacy Policy</string>
-    <string name="signup_header_label">CREATE YOUR ACCOUNT</string>
-    <string name="signup_accept_terms">Creating an account indicates that you agree to our terms of service</string>
-
 
     <!-- OnBoardingActivity -->
     <string name="category_image_description">Select</string>

@@ -26,9 +26,11 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
     }
 
     public static void cancel(){
-        HttpRequest.cancel(sLoader.mGetFeedDataRC);
-        HttpRequest.cancel(sLoader.mGetCustomGoalsRC);
-        HttpRequest.cancel(sLoader.mGetUserGoalsRC);
+        if (sLoader != null){
+            HttpRequest.cancel(sLoader.mGetFeedDataRC);
+            HttpRequest.cancel(sLoader.mGetCustomGoalsRC);
+            HttpRequest.cancel(sLoader.mGetUserGoalsRC);
+        }
     }
 
 
@@ -60,6 +62,7 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
 
     @Override
     public void onRequestFailed(int requestCode, HttpRequestError error){
+        sLoader = null;
         mCallback.onFeedDataLoaded(null);
     }
 
@@ -86,6 +89,7 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
                 }
                 else{
                     mFeedData.addGoalsX(set.results, url);
+                    sLoader = null;
                     mCallback.onFeedDataLoaded(mFeedData);
                 }
             }
@@ -94,6 +98,7 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
                     url = url.replaceFirst("s", "");
                 }
                 mFeedData.addGoalsX(set.results, url);
+                sLoader = null;
                 mCallback.onFeedDataLoaded(mFeedData);
             }
         }
@@ -104,6 +109,7 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
                 url = url.replaceFirst("s", "");
             }
             mFeedData.addGoalsX(set.results, url);
+            sLoader = null;
             mCallback.onFeedDataLoaded(mFeedData);
         }
     }

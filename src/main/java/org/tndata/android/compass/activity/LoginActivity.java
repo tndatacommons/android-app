@@ -58,13 +58,13 @@ public class LoginActivity
 
     private Toolbar mToolbar;
 
-    private WebFragment mWebFragment = null;
-    private LauncherFragment mLauncherFragment = null;
-    private LogInFragment mLoginFragment = null;
-    private SignUpFragment mSignUpFragment = null;
-    private TourFragment mTourFragment = null;
+    private WebFragment mWebFragment;
+    private LauncherFragment mLauncherFragment;
+    private LogInFragment mLoginFragment;
+    private SignUpFragment mSignUpFragment;
+    private TourFragment mTourFragment;
 
-    private List<Fragment> mFragmentStack = new ArrayList<>();
+    private List<Fragment> mFragmentStack;
 
     private CompassApplication mApplication;
 
@@ -88,6 +88,8 @@ public class LoginActivity
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().hide();
         }
+
+        mFragmentStack = new ArrayList<>();
 
         SharedPreferences settings = getSharedPreferences(Constants.PREFERENCES_NAME, 0);
         swapFragments(DEFAULT, true);
@@ -195,25 +197,11 @@ public class LoginActivity
         else{
             Fragment fragment = mFragmentStack.get(mFragmentStack.size() - 1);
 
-            int index = DEFAULT;
             if (fragment instanceof LauncherFragment){
-                FeedDataLoader.cancel();
                 ((LauncherFragment)fragment).showProgress(false);
             }
-            else if (fragment instanceof LogInFragment){
-                index = LOGIN;
-            }
-            else if (fragment instanceof SignUpFragment){
-                index = SIGN_UP;
-            }
-            else if (fragment instanceof WebFragment){
-                index = TERMS;
-            }
-            else if (fragment instanceof TourFragment){
-                index = TOUR;
-            }
 
-            swapFragments(index, false);
+            getSupportFragmentManager().beginTransaction().replace(R.id.base_content, fragment).commit();
         }
     }
 
@@ -252,11 +240,6 @@ public class LoginActivity
     @Override
     public void logIn() {
         swapFragments(LOGIN, true);
-    }
-
-    @Override
-    public void tour() {
-        swapFragments(TOUR, true);
     }
 
     @Override
@@ -312,6 +295,7 @@ public class LoginActivity
     public void onRequestFailed(int requestCode, HttpRequestError error){
         if (requestCode == mLogInRC){
             Log.d("LogIn", "Login request failed");
+            mFragmentStack.clear();
             swapFragments(LOGIN, true);
         }
         else if (requestCode == mGetCategoriesRC){

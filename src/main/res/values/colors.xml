@@ -3,6 +3,7 @@
 
     <color name="black">#000</color>
     <color name="gray600">#99000000</color>
+    <color name="black54">#8A000000</color>
 
     <color name="grow_primary">#2196F3</color>
     <color name="grow_primary_dark">#1976D2</color>
