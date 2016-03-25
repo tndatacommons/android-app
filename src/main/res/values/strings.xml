@@ -234,6 +234,7 @@
     <string name="later_tomorrow">This time tomorrow</string>
     <string name="later_pick_time">Pick a date and time</string>
     <string name="later_pick_place">Pick a place</string>
+    <string name="later_someday">Someday</string>
     <string name="later_create_place">Create a new place</string>
 
     <!-- I did it -->
