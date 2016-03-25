@@ -245,6 +245,9 @@ public class MainFeedAdapter
             if (mMyGoalsHolder.getItemCount() == 0){
                 mMyGoalsHolder.bind(mContext.getString(R.string.card_my_goals_header));
                 mMyGoalsHolder.setGoals(mFeedData.getGoalsX());
+                if (mFeedData.getNextGoalBatchUrl() == null){
+                    mMyGoalsHolder.hideFooter();
+                }
             }
         }
         else if (CardTypes.isGoalSuggestions(position)){
