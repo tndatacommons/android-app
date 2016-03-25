@@ -3,7 +3,6 @@ package org.tndata.android.compass.adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.View;
@@ -15,8 +14,14 @@ import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserModels;
+import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -25,13 +30,21 @@ import org.tndata.android.compass.util.CompassUtil;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class ActionAdapter extends MaterialAdapter implements View.OnClickListener{
+public class ActionAdapter
+        extends MaterialAdapter
+        implements
+                View.OnClickListener,
+                HttpRequest.RequestCallback,
+                Parser.ParserCallback{
+
     private ActionAdapterListener mListener;
     private Action mAction;
     private CategoryContent mCategory;
     private Goal mGoal;
-    private Reward mReward;
     private boolean mFromNotification;
+
+    private int mGetRewardRC;
+    private Reward mReward;
 
 
     /**
@@ -48,26 +61,30 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
         mFromNotification = fromNotification;
     }
 
-    public void setAction(@NonNull Action action, @Nullable CategoryContent category){
+    public void setAction(@NonNull Action action){
         mAction = action;
-        mCategory = category;
         notifyHeaderInserted();
-        notifyDetailsInserted();
-        updateLoading(false);
+        if (hasDetails()){
+            notifyDetailsInserted();
+            updateLoading(false);
+        }
+        else{
+            fetchReward();
+        }
     }
 
-    public void setAction(@NonNull Action action, @NonNull Goal goal, @NonNull Reward reward){
+    public void setAction(@NonNull Action action, @NonNull Goal goal){
         mAction = action;
         mGoal = goal;
-        mReward = reward;
         notifyHeaderInserted();
-        notifyDetailsInserted();
-        updateLoading(false);
+        fetchReward();
     }
 
     public void setCategory(@NonNull CategoryContent category){
         mCategory = category;
-        notifyItemChanged(2);
+        if (hasDetails()){
+            notifyItemChanged(2);
+        }
     }
 
     @Override
@@ -77,7 +94,19 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
 
     @Override
     protected boolean hasDetails(){
-        return mAction != null;
+        if (mAction != null){
+            if (mAction instanceof UserAction){
+                UserAction userAction = (UserAction)mAction;
+                if (!userAction.getMoreInfo().isEmpty() || !userAction.getHTMLMoreInfo().isEmpty()){
+                    return true;
+                }
+                return mReward != null;
+            }
+            else if (mAction instanceof CustomAction){
+                return mReward != null;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -125,25 +154,32 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
             else if (!userAction.getMoreInfo().isEmpty()){
                 holder.setDescription(userAction.getMoreInfo());
             }
+            else{
+                setReward(holder);
+            }
         }
         else if (mAction instanceof CustomAction){
             holder.setHeaderColor(getContext().getResources().getColor(R.color.grow_primary));
-            if (mReward.isFortune()){
-                holder.setTitle("Here's a fortune cookie for you");
-                holder.setDescription(mReward.getMessage());
-            }
-            else if (mReward.isFunFact()){
-                holder.setTitle("Here's a fun fact for you");
-                holder.setDescription(mReward.getMessage());
-            }
-            else if (mReward.isJoke()){
-                holder.setTitle("Here's a joke for you");
-                holder.setDescription(mReward.getMessage());
-            }
-            else{
-                holder.setTitle("Here's a nice quote for you");
-                holder.setDescription(mReward.getMessage() + " (" + mReward.getAuthor() + ")");
-            }
+            setReward(holder);
+        }
+    }
+
+    private void setReward(DetailViewHolder holder){
+        if (mReward.isFortune()){
+            holder.setTitle("Here's a fortune cookie for you");
+            holder.setDescription(mReward.getMessage());
+        }
+        else if (mReward.isFunFact()){
+            holder.setTitle("Here's a fun fact for you");
+            holder.setDescription(mReward.getMessage());
+        }
+        else if (mReward.isJoke()){
+            holder.setTitle("Here's a joke for you");
+            holder.setDescription(mReward.getMessage());
+        }
+        else{
+            holder.setTitle("Here's a nice quote for you");
+            holder.setDescription(mReward.getMessage() + " (" + mReward.getAuthor() + ")");
         }
     }
 
@@ -165,6 +201,36 @@ public class ActionAdapter extends MaterialAdapter implements View.OnClickListen
             case R.id.action_snooze:
                 mListener.onSnoozeClick();
                 break;
+        }
+    }
+
+    private void fetchReward(){
+        mGetRewardRC = HttpRequest.get(this, API.getRandomRewardUrl());
+    }
+
+    @Override
+    public void onRequestComplete(int requestCode, String result){
+        if (requestCode == mGetRewardRC){
+            Parser.parse(result, ParserModels.RewardResultSet.class, this);
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode, HttpRequestError error){
+
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.RewardResultSet){
+            mReward = ((ParserModels.RewardResultSet)result).results.get(0);
+            notifyDetailsInserted();
+            updateLoading(false);
         }
     }
 

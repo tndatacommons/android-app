@@ -68,7 +68,6 @@ public class ActionActivity
 
     private int mGetActionRC;
     private int mGetCustomGoalRC;
-    private int mGetRewardRC;
     private int mGetUserGoalRC;
     private int mGetUserCategoryRC;
 
@@ -245,9 +244,6 @@ public class ActionActivity
         else if (requestCode == mGetCustomGoalRC){
             Parser.parse(result, CustomGoal.class, this);
         }
-        else if (requestCode == mGetRewardRC){
-            Parser.parse(result, ParserModels.RewardResultSet.class, this);
-        }
         else if (requestCode == mGetUserGoalRC){
             Parser.parse(result, ParserModels.UserGoalsResultSet.class, this);
         }
@@ -288,14 +284,11 @@ public class ActionActivity
         }
         else if (result instanceof CustomGoal){
             setHeader();
-            mGetRewardRC = HttpRequest.get(this, API.getRandomRewardUrl());
-        }
-        else if (result instanceof ParserModels.RewardResultSet){
-            mAdapter.setAction(mAction, mGoal, ((ParserModels.RewardResultSet)result).results.get(0));
+            mAdapter.setAction(mAction, mGoal);
             invalidateOptionsMenu();
         }
         else if (result instanceof ParserModels.UserGoalsResultSet){
-            mAdapter.setAction(mAction, null);
+            mAdapter.setAction(mAction);
             if (mUserCategory != null){
                 mAdapter.setCategory(mUserCategory.getCategory());
             }
