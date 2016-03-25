@@ -323,9 +323,10 @@
     <string name="check_in_reward_fun_fact">Fun fact:</string>
     <string name="check_in_reward_joke">Here\'s a little joke for you.</string>
     <string name="check_in_reward_author">—%1$s</string>
-    <string name="check_in_reward_more">One more</string>
-    <string name="check_in_reward_review">My goals</string>
-    <string name="check_in_reward_share">Share</string>
+    <string name="check_in_reward_error">Compass couldn\'t load a new item</string>
+    <string name="check_in_reward_more_cd">Load another item</string>
+    <string name="check_in_reward_share_cd">Share the currently displayed item</string>
+    <string name="check_in_reward_home_cd">Go back to the feed</string>
 
     <!-- Menus and popups -->
     <string name="menu_popup_remove">Remove</string>

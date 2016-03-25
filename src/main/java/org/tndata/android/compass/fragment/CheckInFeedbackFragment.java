@@ -13,12 +13,12 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.NetworkRequest;
+
+import es.sandwatch.httprequests.HttpRequest;
 
 
 /**
@@ -152,9 +152,8 @@ public class CheckInFeedbackFragment extends Fragment implements SeekBar.OnSeekB
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar){
-        NetworkRequest.post(getActivity(), null, API.getPostUserProgressUrl(),
-                ((CompassApplication)getActivity().getApplication()).getToken(),
-                API.getPostUserProgressBody(mUserGoal, mBar.getProgress()+1));
+        HttpRequest.post(null, API.getPostUserProgressUrl(),
+                API.getPostUserProgressBody(mUserGoal, mBar.getProgress() + 1));
         mListener.onProgressChanged(mIndex, mBar.getProgress()+1);
     }
 

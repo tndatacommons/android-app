@@ -141,7 +141,7 @@ public class CheckInActivity
     }
 
     @Override
-    public void onReviewClick(){
+    public void onHomeClick(){
         startActivity(new Intent(this, LoginActivity.class));
         finish();
     }

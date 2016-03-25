@@ -5,11 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
@@ -18,10 +16,11 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
-import org.tndata.android.compass.ui.CompassPopupMenu;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.NetworkRequest;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -34,9 +33,8 @@ public class CheckInRewardFragment
         extends Fragment
         implements
                 View.OnClickListener,
-                NetworkRequest.RequestCallback,
-                Parser.ParserCallback,
-                PopupMenu.OnMenuItemClickListener{
+                HttpRequest.RequestCallback,
+                Parser.ParserCallback{
 
     public static final String REWARD_KEY = "org.tndata.compass.Reward.Reward";
 
@@ -111,7 +109,8 @@ public class CheckInRewardFragment
         mAuthor = (TextView)rootView.findViewById(R.id.check_in_reward_author);
         mMoreSwitcher = (ViewSwitcher)rootView.findViewById(R.id.check_in_reward_switcher);
         rootView.findViewById(R.id.check_in_reward_more).setOnClickListener(this);
-        rootView.findViewById(R.id.check_in_reward_overflow).setOnClickListener(this);
+        rootView.findViewById(R.id.check_in_reward_share).setOnClickListener(this);
+        rootView.findViewById(R.id.check_in_reward_home).setOnClickListener(this);
 
         populateUI();
     }
@@ -175,42 +174,26 @@ public class CheckInRewardFragment
     @Override
     public void onClick(View view){
         switch (view.getId()){
-            case R.id.check_in_reward_overflow:
-                //Create the popup and inflate the menu
-                CompassPopupMenu popup = CompassPopupMenu.newInstance(getActivity(), view);
-                popup.getMenuInflater().inflate(R.menu.popup_reward, popup.getMenu());
-                //Set the listener and show the menu
-                popup.setOnMenuItemClickListener(this);
-                popup.show();
-                break;
-
             case R.id.check_in_reward_more:
                 mMoreSwitcher.showNext();
                 fetchReward();
                 break;
-        }
-    }
 
-    @Override
-    public boolean onMenuItemClick(MenuItem item){
-        switch (item.getItemId()){
-            case R.id.popup_reward_my_goals:
-                mListener.onReviewClick();
-                break;
-
-            case R.id.popup_reward_share:
+            case R.id.check_in_reward_share:
                 mListener.onShareClick(mReward);
                 break;
 
+            case R.id.check_in_reward_home:
+                mListener.onHomeClick();
+                break;
         }
-        return false;
     }
 
     /**
      * Fires the request to get a new reward.
      */
     private void fetchReward(){
-        NetworkRequest.get(getActivity(), this, API.getRandomRewardUrl(), "");
+        HttpRequest.get(this, API.getRandomRewardUrl());
     }
 
     @Override
@@ -219,8 +202,8 @@ public class CheckInRewardFragment
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
-        Toast.makeText(getActivity(), "Couldn't load a new item", Toast.LENGTH_SHORT).show();
+    public void onRequestFailed(int requestCode, HttpRequestError error){
+        Toast.makeText(getActivity(), R.string.check_in_reward_error, Toast.LENGTH_SHORT).show();
         mMoreSwitcher.showPrevious();
     }
 
@@ -247,9 +230,9 @@ public class CheckInRewardFragment
      */
     public interface CheckInRewardListener{
         /**
-         * Called when the review button is clicked.
+         * Called when the home button is clicked.
          */
-        void onReviewClick();
+        void onHomeClick();
 
         /**
          * Called when the share button is clicked.

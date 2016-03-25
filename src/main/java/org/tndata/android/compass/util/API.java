@@ -571,7 +571,7 @@ public final class API{
     }
 
 
-    //TODO idea: (the file will be bigger, but more organized?)
+    //TODO idea: (the file will be bigger, but more organized? it will yield shorter method names in some instances)
     public static final class URL{
         private URL(){
 
