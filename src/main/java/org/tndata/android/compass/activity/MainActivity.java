@@ -45,9 +45,10 @@ import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.FeedDataLoader;
 import org.tndata.android.compass.util.GcmRegistration;
-import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.OnScrollListenerHub;
 import org.tndata.android.compass.util.ParallaxEffect;
+
+import es.sandwatch.httprequests.HttpRequest;
 
 
 /**
@@ -103,8 +104,8 @@ public class MainActivity
         mApplication = (CompassApplication)getApplication();
 
         //Update the timezone and register with GCM
-        NetworkRequest.put(this, null, API.getPutUserProfileUrl(mApplication.getUser()),
-                mApplication.getToken(), API.getPutUserProfileBody(mApplication.getUser()));
+        HttpRequest.put(null, API.getPutUserProfileUrl(mApplication.getUser()),
+                API.getPutUserProfileBody(mApplication.getUser()));
         new GcmRegistration(this);
 
         //Set up the toolbar
