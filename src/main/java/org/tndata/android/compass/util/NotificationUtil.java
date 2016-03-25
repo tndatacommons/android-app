@@ -73,7 +73,7 @@ public final class NotificationUtil{
         boolean light = preferences.getBoolean(NotificationSettingsFragment.LIGHT_KEY, true);
 
         NotificationCompat.Builder builder =  new NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.ic_action_compass_white)
+                .setSmallIcon(R.drawable.ic_compass_notification_white_24dp)
                 .setLargeIcon(icon)
                 .setContentTitle(title)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message))

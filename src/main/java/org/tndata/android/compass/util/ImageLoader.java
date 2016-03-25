@@ -69,7 +69,7 @@ public final class ImageLoader{
             workerTask = null;
 
             mPlaceHolderBitmap = BitmapFactory.decodeResource(mContext.getResources(),
-                    R.drawable.ic_action_compass_white);
+                    R.drawable.ic_compass_white_50dp);
         }
     }
 

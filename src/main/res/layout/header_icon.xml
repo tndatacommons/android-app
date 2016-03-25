@@ -16,6 +16,6 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:padding="40dp"
-        android:src="@drawable/ic_action_compass_white" />
+        android:src="@drawable/ic_compass_white_50dp" />
 
 </RelativeLayout>
