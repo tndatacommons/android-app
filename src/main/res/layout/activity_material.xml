@@ -6,25 +6,43 @@
     android:animateLayoutChanges="true" >
 
     <FrameLayout
-        android:id="@+id/library_header_container"
+        android:id="@+id/material_header_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/grow_primary" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/library_list"
+        android:id="@+id/material_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/transparent" />
 
     <android.support.v7.widget.Toolbar
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/library_toolbar"
+        android:id="@+id/material_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:minHeight="?attr/actionBarSize"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+    
+    <com.github.clans.fab.FloatingActionButton
+        xmlns:fab="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/material_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_add_white_24dp"
+        android:visibility="invisible"
+        fab:fab_size="normal"
+        fab:fab_colorNormal="@color/grow_primary"
+        fab:fab_colorPressed="@color/grow_primary"
+        fab:fab_colorRipple="@color/white" />
 
 </RelativeLayout>

@@ -8,6 +8,8 @@
     <item name="fab_search_goals" type="id" />
     <item name="fab_browse_goals" type="id" />
 
+    <item name="review_fab" type="id" />
+
     <item name="behavior_yes" type="id" />
     <item name="action_did_it" type="id" />
     <item name="action_do_it_now" type="id" />

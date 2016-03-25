@@ -38,6 +38,7 @@ import es.sandwatch.httprequests.HttpRequestError;
 public class ReviewActionsActivity
         extends MaterialActivity
         implements
+                View.OnClickListener,
                 ReviewActionsAdapter.ReviewActionsListener,
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback{
@@ -52,6 +53,10 @@ public class ReviewActionsActivity
     private CompassApplication mApplication;
     private ReviewActionsAdapter mAdapter;
 
+    private UserCategory mUserCategory;
+    private UserGoal mUserGoal;
+    private CategoryContent mGoalCategory;
+
     //Network request codes and urls
     private int mGetUserCategoryRC;
     private int mGetActionsRC;
@@ -65,43 +70,45 @@ public class ReviewActionsActivity
         mApplication = (CompassApplication)getApplication();
 
         //A UserCategory is all it's needed when a category's actions are to be displayed
-        UserCategory userCategory = (UserCategory)getIntent().getSerializableExtra(USER_CATEGORY_KEY);
+        mUserCategory = (UserCategory)getIntent().getSerializableExtra(USER_CATEGORY_KEY);
         //If either a UserGoal's actions or a UserBehavior's actions are to be displayed
         //  the a CategoryContent can be used to populate headers. In this case a UserGoal
         //  will always be available, so the primary category id can be used to retrieve
         //  it from the Application class list
-        UserGoal userGoal = (UserGoal)getIntent().getSerializableExtra(USER_GOAL_KEY);
+        mUserGoal = (UserGoal)getIntent().getSerializableExtra(USER_GOAL_KEY);
         UserBehavior userBehavior = (UserBehavior)getIntent().getSerializableExtra(USER_BEHAVIOR_KEY);
 
-        if (userGoal != null){
-            CategoryContent category = mApplication.getPublicCategories().get(userGoal.getPrimaryCategoryId());
+        if (mUserGoal != null){
+            mGoalCategory = mApplication.getPublicCategories().get(mUserGoal.getPrimaryCategoryId());
             if (userBehavior != null){
                 String title = getString(R.string.review_actions_header, userBehavior.getTitle());
                 mAdapter = new ReviewActionsAdapter(this, this, title);
                 mGetActionsNextUrl = API.getUserActionsUrl(userBehavior.getBehavior());
-                setColor(Color.parseColor(category.getColor()));
+                setColor(Color.parseColor(mGoalCategory.getColor()));
                 setBehaviorHeader(userBehavior.getBehavior());
             }
             else{
-                String title = getString(R.string.review_actions_header, userGoal.getTitle());
+                String title = getString(R.string.review_actions_header, mUserGoal.getTitle());
                 mAdapter = new ReviewActionsAdapter(this, this, title);
-                mGetActionsNextUrl = API.getUserActionsUrl(userGoal.getGoal());
-                if (category != null){
-                    setColor(Color.parseColor(category.getColor()));
-                    setGoalHeader(category);
+                mGetActionsNextUrl = API.getUserActionsUrl(mUserGoal.getGoal());
+                if (mGoalCategory != null){
+                    setColor(Color.parseColor(mGoalCategory.getColor()));
+                    setGoalHeader(mGoalCategory);
+                    setFAB(R.id.review_fab, this);
                 }
                 else{
-                    long categoryId = userGoal.getPrimaryCategoryId();
+                    long categoryId = mUserGoal.getPrimaryCategoryId();
                     mGetUserCategoryRC = HttpRequest.get(this, API.getUserCategoryUrl(categoryId));
                 }
             }
         }
-        else if (userCategory != null){
-            String title = getString(R.string.review_actions_header_cat, userCategory.getTitle());
+        else if (mUserCategory != null){
+            String title = getString(R.string.review_actions_header_cat, mUserCategory.getTitle());
             mAdapter = new ReviewActionsAdapter(this, this, title);
-            mGetActionsNextUrl = API.getUserActionsUrl(userCategory.getCategory());
-            setColor(Color.parseColor(userCategory.getColor()));
-            setCategoryHeader(userCategory.getCategory());
+            mGetActionsNextUrl = API.getUserActionsUrl(mUserCategory.getCategory());
+            setColor(Color.parseColor(mUserCategory.getColor()));
+            setCategoryHeader(mUserCategory.getCategory());
+            setFAB(R.id.review_fab, this);
         }
         else{
             finish();
@@ -142,6 +149,23 @@ public class ReviewActionsActivity
     public void onBackPressed(){
         setResult(RESULT_OK);
         finish();
+    }
+
+    @Override
+    public void onClick(View view){
+        switch (view.getId()){
+            case R.id.review_fab:
+                if (mUserGoal == null){
+                    startActivity(new Intent(this, ChooseGoalsActivity.class)
+                            .putExtra(ChooseGoalsActivity.CATEGORY_KEY, mUserCategory.getCategory()));
+                }
+                else{
+                    startActivity(new Intent(this, ChooseBehaviorsActivity.class)
+                            .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, mGoalCategory)
+                            .putExtra(ChooseBehaviorsActivity.GOAL_KEY, mUserGoal.getGoal()));
+                }
+                break;
+        }
     }
 
     @Override
@@ -188,8 +212,9 @@ public class ReviewActionsActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof ParserModels.UserCategoryResultSet){
-            UserCategory cat = ((ParserModels.UserCategoryResultSet)result).results.get(0);
-            setCategoryHeader(cat.getCategory());
+            mUserCategory = ((ParserModels.UserCategoryResultSet)result).results.get(0);
+            setColor(Color.parseColor(mUserCategory.getColor()));
+            setCategoryHeader(mUserCategory.getCategory());
         }
         else if (result instanceof ParserModels.UserActionResultSet){
             ParserModels.UserActionResultSet set = (ParserModels.UserActionResultSet)result;
@@ -198,7 +223,10 @@ public class ReviewActionsActivity
                 //TODO
                 //mApplication.addAction(action);
             }
-            mAdapter.addActions(set.results, mGetActionsNextUrl != null);
+            mAdapter.addActions(set.results, mGetActionsNextUrl != null || set.results.isEmpty());
+            if (set.results.isEmpty()){
+                mAdapter.displayError("There are no activities");
+            }
         }
     }
 }
