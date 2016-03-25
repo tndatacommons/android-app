@@ -18,7 +18,7 @@ import java.util.TimeZone;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public abstract class API{
+public final class API{
     //Api urls and app configuration
     public static final boolean STAGING = BuildConfig.DEBUG;
     private static final boolean USE_NGROK_TUNNEL = false;
@@ -568,5 +568,21 @@ public abstract class API{
             jsonx.printStackTrace();
         }
         return putConsentAcknowledgementBody;
+    }
+
+
+    //TODO idea: (the file will be bigger, but more organized?)
+    public static final class URL{
+        private URL(){
+
+        }
+        //URL getters
+    }
+
+    public static final class BODY{
+        private BODY(){
+
+        }
+        //Body getters
     }
 }
