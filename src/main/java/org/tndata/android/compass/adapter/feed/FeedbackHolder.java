@@ -14,7 +14,7 @@ import org.tndata.android.compass.model.FeedData;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-class FeedbackHolder extends MainFeedViewHolder implements View.OnClickListener{
+class FeedbackHolder extends MainFeedAdapter.ViewHolder implements View.OnClickListener{
     private FeedData.ActionFeedback mFeedback;
 
     private ImageView mIcon;

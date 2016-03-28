@@ -9,7 +9,7 @@ import org.tndata.android.compass.model.FeedData;
  *
  * @author Ismael Alonso
  * @author Honorable mention to Brad Montgomery for his help in naming this class. Thanks!
- * @version 1.0.0
+ * @version 1.1.0
  */
 final class CardTypes{
     private static FeedData sFeedData;

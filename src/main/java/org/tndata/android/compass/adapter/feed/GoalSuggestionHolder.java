@@ -12,7 +12,7 @@ import org.tndata.android.compass.R;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class GoalSuggestionHolder extends MainFeedViewHolder implements View.OnClickListener{
+public class GoalSuggestionHolder extends MainFeedAdapter.ViewHolder implements View.OnClickListener{
     TextView mTitle;
 
 

@@ -23,7 +23,7 @@ import at.grabner.circleprogress.TextMode;
  * @author Ismael Alonso
  * @version 1.1.0
  */
-final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListener{
+final class UpNextHolder extends MainFeedAdapter.ViewHolder implements View.OnClickListener{
     //The action bound to the holder
     private UpcomingAction mAction;
 

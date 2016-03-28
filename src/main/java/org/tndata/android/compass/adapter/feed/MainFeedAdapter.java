@@ -52,7 +52,7 @@ public class MainFeedAdapter
 
 
     final Context mContext;
-    final MainFeedAdapterListener mListener;
+    final Listener mListener;
 
     private FeedData mFeedData;
     private FeedUtil mFeedUtil;
@@ -72,7 +72,7 @@ public class MainFeedAdapter
      * @param listener the listener.
      * @param initialSuggestion true the feed should display an initial suggestion.
      */
-    public MainFeedAdapter(@NonNull Context context, @NonNull MainFeedAdapterListener listener,
+    public MainFeedAdapter(@NonNull Context context, @NonNull Listener listener,
                            boolean initialSuggestion){
         mContext = context;
         mListener = listener;
@@ -414,5 +414,80 @@ public class MainFeedAdapter
             mFeedData.addGoals(set.results, url);
             mMyGoalsHolder.onGoalsAdded();
         }
+    }
+
+
+    /**
+     * Parent class of all the view holders in for the main feed adapter. Provides a reference
+     * to the adapter that needs to be passed through the constructor.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    abstract static class ViewHolder extends RecyclerView.ViewHolder{
+        protected MainFeedAdapter mAdapter;
+
+        /**
+         * Constructor,
+         *
+         * @param adapter a reference to the adapter that will handle the holder.
+         * @param rootView the root view of this adapter.
+         */
+        protected ViewHolder(MainFeedAdapter adapter, View rootView){
+            super(rootView);
+            mAdapter = adapter;
+        }
+    }
+
+
+    /**
+     * Listener interface for the main feed adapter.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    public interface Listener{
+        /**
+         * Called when the user data is null.
+         */
+        void onNullData();
+
+        /**
+         * Called when the welcome card is tapped.
+         */
+        void onInstructionsSelected();
+
+        /**
+         * Called when a suggestion is dismissed.
+         */
+        void onSuggestionDismissed();
+
+        /**
+         * Called when a goal from a goal list is selected.
+         *
+         * @param suggestion the selected goal suggestion.
+         */
+        void onSuggestionSelected(GoalContent suggestion);
+
+        /**
+         * Called when a goal is selected.
+         *
+         * @param goal the selected goal.
+         */
+        void onGoalSelected(Goal goal);
+
+        /**
+         * Called when the feedback card is tapped.
+         *
+         * @param feedback bundle containing information about the feedback goal.
+         */
+        void onFeedbackSelected(FeedData.ActionFeedback feedback);
+
+        /**
+         * Called when an action card is tapped.
+         *
+         * @param action the action being displayed at the card.
+         */
+        void onActionSelected(UpcomingAction action);
     }
 }

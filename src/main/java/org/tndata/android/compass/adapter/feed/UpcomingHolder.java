@@ -26,7 +26,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 2.0.0
  */
-class UpcomingHolder extends MainFeedViewHolder implements View.OnClickListener{
+class UpcomingHolder extends MainFeedAdapter.ViewHolder implements View.OnClickListener{
     private RecyclerView mList;
     private View mMore;
 

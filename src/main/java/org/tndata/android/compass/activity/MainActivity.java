@@ -31,7 +31,6 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
-import org.tndata.android.compass.adapter.feed.MainFeedAdapterListener;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.CustomGoal;
@@ -65,7 +64,7 @@ public class MainActivity
         implements
                 SwipeRefreshLayout.OnRefreshListener,
                 DrawerAdapter.OnItemClickListener,
-                MainFeedAdapterListener,
+        MainFeedAdapter.Listener,
                 View.OnClickListener,
                 FeedDataLoader.Callback{
 

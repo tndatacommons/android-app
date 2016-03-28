@@ -35,7 +35,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.1.0
  */
-class GoalsHolder<T> extends MainFeedViewHolder implements View.OnClickListener{
+class GoalsHolder<T> extends MainFeedAdapter.ViewHolder implements View.OnClickListener{
     private TextView mHeader;
     private RecyclerView mList;
     private View mMore;
