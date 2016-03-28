@@ -56,16 +56,4 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
         }
         return true;
     }
-
-    /**
-     * Sends a request to the API to mark an action as complete.
-     *
-     * @param context a reference to the context.
-     * @param action the action to be marked as complete.
-     */
-    void didIt(@NonNull Context context, @NonNull UpcomingAction action){
-        context.startService(new Intent(context, ActionReportService.class)
-                //.putExtra(ActionReportService.ACTION_KEY, action)
-                .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
-    }
 }
