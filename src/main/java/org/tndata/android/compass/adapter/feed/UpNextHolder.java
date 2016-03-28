@@ -1,11 +1,14 @@
 package org.tndata.android.compass.adapter.feed;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.view.View;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.FeedData;
+import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.util.CompassUtil;
 
 import java.util.Calendar;
@@ -20,13 +23,12 @@ import at.grabner.circleprogress.TextMode;
  * @author Ismael Alonso
  * @version 1.1.0
  */
-final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListener{
+final class UpNextHolder extends MainFeedAdapter.ViewHolder implements View.OnClickListener{
     //The action bound to the holder
-    private Action mAction;
+    private UpcomingAction mAction;
 
     //Header
     private TextView mHeader;
-    private View mOverflow;
 
     //Indicator
     private CircleProgressView mIndicator;
@@ -56,7 +58,6 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
         super(adapter, rootView);
 
         mHeader = (TextView)rootView.findViewById(R.id.up_next_header);
-        mOverflow = rootView.findViewById(R.id.up_next_overflow_box);
 
         mIndicator = (CircleProgressView)rootView.findViewById(R.id.up_next_indicator);
 
@@ -72,22 +73,6 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
         mTime = (TextView)rootView.findViewById(R.id.up_next_time);
 
         rootView.setOnClickListener(this);
-        mOverflow.setOnClickListener(this);
-    }
-
-    @Override
-    public void onClick(View view){
-        switch (view.getId()){
-            case R.id.up_next_overflow_box:
-                mAdapter.setSelectedAction(mAction);
-                mAdapter.showActionPopup(view, mAction);
-                break;
-
-            default:
-                if (mAction != null){
-                    mAdapter.mListener.onActionSelected(mAction);
-                }
-        }
     }
 
     /**
@@ -95,15 +80,14 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
      *
      * @param action the action to be bound to the holder.
      */
-    void bind(@Nullable Action action){
+    void bind(@Nullable UpcomingAction action, @NonNull FeedData.Progress progress){
         mAction = action;
 
         if (action == null){
-            mOverflow.setVisibility(View.GONE);
             mNoActionsContainer.setVisibility(View.VISIBLE);
             mContentContainer.setVisibility(View.GONE);
 
-            if (mAdapter.getDataHandler().getTotalActions() != 0){
+            if (progress.getTotalActions() != 0){
                 mHeader.setText(R.string.card_up_next_header_completed);
                 mNoActionsTitle.setText(R.string.card_up_next_title_completed);
                 mNoActionsSubtitle.setText(R.string.card_up_next_subtitle_completed);
@@ -116,7 +100,6 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
             mTime.setText("");
         }
         else{
-            mOverflow.setVisibility(View.VISIBLE);
             mNoActionsContainer.setVisibility(View.GONE);
             mContentContainer.setVisibility(View.VISIBLE);
 
@@ -125,18 +108,24 @@ final class UpNextHolder extends MainFeedViewHolder implements View.OnClickListe
             String goalTitle = action.getGoalTitle().substring(0, 1).toLowerCase();
             goalTitle += action.getGoalTitle().substring(1);
             mGoalTitle.setText(mAdapter.mContext.getString(R.string.card_up_next_goal_title, goalTitle));
-            mTime.setText(action.getNextReminderDisplay());
+            mTime.setText(action.getTriggerDisplay());
         }
 
         mIndicator.setAutoTextSize(true);
-        mIndicator.setValue(mAdapter.getDataHandler().getProgress());
+        mIndicator.setValue(progress.getProgressPercentage());
         mIndicator.setTextMode(TextMode.TEXT);
-        mIndicator.setValueAnimated(0, mAdapter.getDataHandler().getProgress(), 1500);
-        mIndicatorCaption.setText(mAdapter.mContext.getString(R.string.card_up_next_indicator_caption,
-                mAdapter.getDataHandler().getProgressFraction()));
-
+        mIndicator.setValueAnimated(0, progress.getProgressPercentage(), 1500);
+        @StringRes int capRes = R.string.card_up_next_indicator_caption;
+        mIndicatorCaption.setText(mAdapter.mContext.getString(capRes, progress.getProgressFraction()));
         Calendar calendar = Calendar.getInstance();
         String month = CompassUtil.getMonthString(calendar.get(Calendar.MONTH) + 1);
         mIndicator.setText(month + " " + calendar.get(Calendar.DAY_OF_MONTH));
+    }
+
+    @Override
+    public void onClick(View view){
+        if (mAction != null){
+            mAdapter.mListener.onActionSelected(mAction);
+        }
     }
 }

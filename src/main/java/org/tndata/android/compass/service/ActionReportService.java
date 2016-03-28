@@ -4,13 +4,13 @@ import android.app.IntentService;
 import android.content.Intent;
 
 import org.json.JSONObject;
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.NotificationUtil;
+
+import es.sandwatch.httprequests.HttpRequest;
 
 
 /**
@@ -22,9 +22,9 @@ import org.tndata.android.compass.util.NotificationUtil;
 public class ActionReportService extends IntentService{
     private static final String TAG = "ActionReportService";
 
-    public static final String ACTION_KEY = "org.tndata.compass.CompleteAction.Action";
-    public static final String STATE_KEY = "org.tndata.compass.CompleteAction.State";
-    public static final String LENGTH_KEY = "org.tndata.compass.CompleteAction.Length";
+    public static final String ACTION_KEY = "org.tndata.compass.ActionReport.Action";
+    public static final String STATE_KEY = "org.tndata.compass.ActionReport.State";
+    public static final String LENGTH_KEY = "org.tndata.compass.ActionReport.Length";
 
     public static final String STATE_COMPLETED = "completed";
     public static final String STATE_UNCOMPLETED = "uncompleted";
@@ -76,7 +76,6 @@ public class ActionReportService extends IntentService{
 
         NotificationUtil.cancel(this, notificationTag, actionId);
 
-        String token = ((CompassApplication)getApplication()).getToken();
         JSONObject body;
         String state = intent.getStringExtra(STATE_KEY);
         if (state.equals(STATE_SNOOZED)){
@@ -86,6 +85,6 @@ public class ActionReportService extends IntentService{
             body = API.getPostActionReportBody(state);
         }
 
-        NetworkRequest.post(this, null, url, token, body);
+        HttpRequest.post(null, url, body);
     }
 }

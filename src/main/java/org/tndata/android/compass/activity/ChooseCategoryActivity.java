@@ -38,9 +38,11 @@ public class ChooseCategoryActivity
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        CompassApplication app = (CompassApplication)getApplication();
+
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.choose_category_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        recyclerView.setAdapter(new ChooseCategoryAdapter(this, this, ((CompassApplication)getApplication()).getPublicCategories()));
+        recyclerView.setAdapter(new ChooseCategoryAdapter(this, this, app.getPublicCategoryList()));
     }
 
     @Override
@@ -54,12 +56,8 @@ public class ChooseCategoryActivity
         Intent chooseGoals = new Intent(this, ChooseGoalsActivity.class)
                 .putExtra(ChooseGoalsActivity.CATEGORY_KEY, category);
         startActivity(chooseGoals);
-    }
-
-    @Override
-    public void onBackPressed(){
         setResult(RESULT_OK);
-        super.onBackPressed();
+        finish();
     }
 
     @Override

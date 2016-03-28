@@ -28,8 +28,10 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
+        xmlns:tools="http://schemas.android.com/tools"
         android:name=".CompassApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
+        tools:replace="android:allowBackup"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/CustomActionBarTheme"
@@ -146,18 +148,7 @@
         <activity
             android:name="org.tndata.android.compass.activity.ChooseCategoryActivity"
             android:label="@string/choose_category_title"
-            android:parentActivityName=".activity.MainActivity"
-            android:screenOrientation="portrait"
-            android:noHistory="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.MainActivity" />
-        </activity>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name="org.tndata.android.compass.activity.ChooseGoalsActivity"
@@ -201,16 +192,7 @@
 
         <activity
             android:name="org.tndata.android.compass.activity.TriggerActivity"
-            android:parentActivityName=".activity.MainActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.MainActivity"/>
-        </activity>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name="org.tndata.android.compass.activity.TourActivity"

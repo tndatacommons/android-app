@@ -1,5 +1,6 @@
 package org.tndata.android.compass.activity;
 
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,12 +13,12 @@ import org.tndata.android.compass.adapter.ChooseInterestsAdapter;
 import org.tndata.android.compass.fragment.ChooseInterestsFragment;
 import org.tndata.android.compass.fragment.InstrumentFragment;
 import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.User;
-import org.tndata.android.compass.model.UserData;
-import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserModels;
+import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.util.FeedDataLoader;
 
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class OnBoardingActivity
                 InstrumentFragment.InstrumentFragmentCallback,
                 ChooseInterestsAdapter.OnCategoriesSelectedListener,
                 HttpRequest.RequestCallback,
-                Parser.ParserCallback{
+                FeedDataLoader.Callback{
 
     private static final int STAGE_PROFILE = 0;
     private static final int STAGE_CHOOSE_CATEGORIES = 1;
@@ -50,7 +51,6 @@ public class OnBoardingActivity
     //Request codes
     private int mInitialPostCategoryRC;
     private int mLastPostCategoryRC;
-    private int mGetDataRC;
 
 
     @Override
@@ -101,7 +101,7 @@ public class OnBoardingActivity
     }
 
     @Override
-    public void onCategoriesSelected(List<CategoryContent> selection){
+    public void onCategoriesSelected(List<CategoryContent> selection, List<UserCategory> original){
         //Process and log the selection, and save it
         //int[] categoryIds = new int[selection.size()];
         for (int i = 0; i < selection.size(); i++){
@@ -115,6 +115,10 @@ public class OnBoardingActivity
                 HttpRequest.post(this, API.getUserCategoriesUrl(), API.getPostCategoryBody(cat));
             }
         }
+
+        User user = mApplication.getUser();
+        user.setOnBoardingComplete();
+        HttpRequest.put(null, API.getPutUserProfileUrl(user), API.getPutUserProfileBody(user));
     }
 
     @Override
@@ -122,11 +126,8 @@ public class OnBoardingActivity
         if (requestCode < mLastPostCategoryRC){
             mInitialPostCategoryRC++;
             if (mInitialPostCategoryRC == mLastPostCategoryRC){
-                mGetDataRC = HttpRequest.get(this, API.getUserDataUrl(), 60*1000);
+                FeedDataLoader.load(this);
             }
-        }
-        else if (requestCode == mGetDataRC){
-            Parser.parse(result, ParserModels.UserDataResultSet.class, this);
         }
     }
 
@@ -135,29 +136,15 @@ public class OnBoardingActivity
         if (requestCode < mLastPostCategoryRC){
             mInitialPostCategoryRC++;
             if (mInitialPostCategoryRC == mLastPostCategoryRC){
-                mGetDataRC = HttpRequest.get(this, API.getUserDataUrl(), 60*1000);
+                FeedDataLoader.load(this);
             }
         }
     }
 
     @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.UserDataResultSet){
-            UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
-
-            userData.sync();
-            userData.logData();
-        }
-    }
-
-    @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.UserDataResultSet){
-            mApplication.setUserData(((ParserModels.UserDataResultSet)result).results.get(0));
-
-            User user = mApplication.getUser();
-            user.setOnBoardingComplete();
-            HttpRequest.put(null, API.getPutUserProfileUrl(user), API.getPutUserProfileBody(user));
+    public void onFeedDataLoaded(@Nullable FeedData feedData){
+        if (feedData != null){
+            mApplication.setFeedData(feedData);
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
         }

@@ -1,7 +1,6 @@
 package org.tndata.android.compass.activity;
 
 import android.app.AlertDialog;
-import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -100,6 +99,16 @@ public class SnoozeActivity
         }
         else if (position == 3){
             displayPlacesDialog();
+        }
+        else if (position == 4){
+            if (mReminder.isUserAction()){
+                NotificationUtil.cancel(this, NotificationUtil.USER_ACTION_TAG, mReminder.getUserMappingId());
+            }
+            else if (mReminder.isCustomAction()){
+                NotificationUtil.cancel(this, NotificationUtil.CUSTOM_ACTION_TAG, mReminder.getObjectId());
+            }
+            setResult(RESULT_OK);
+            finish();
         }
     }
 
@@ -207,8 +216,7 @@ public class SnoozeActivity
             dbHelper.saveReminder(mReminder);
             dbHelper.close();
 
-            NotificationManager manager = ((NotificationManager)getSystemService(NOTIFICATION_SERVICE));
-            manager.cancel(NotificationUtil.USER_ACTION_TAG, mReminder.getObjectId());
+            NotificationUtil.cancel(this, NotificationUtil.USER_ACTION_TAG, mReminder.getObjectId());
 
             startService(new Intent(this, LocationNotificationService.class));
 

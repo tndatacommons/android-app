@@ -75,6 +75,12 @@ public class ChooseGoalsActivity
     }
 
     @Override
+    public void onBackPressed(){
+        setResult(RESULT_OK);
+        super.onBackPressed();
+    }
+
+    @Override
     public void onGoalSelected(@NonNull GoalContent goal){
         startActivity(new Intent(this, ChooseBehaviorsActivity.class)
                 .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal)

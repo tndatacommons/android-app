@@ -10,9 +10,11 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -23,7 +25,6 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.CustomGoal;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -130,15 +131,15 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
      */
     public void customGoalAdded(@NonNull CustomGoal customGoal){
         mCustomGoal = customGoal;
-        mCustomActions = new ArrayList<>();
+        mCustomActions = mCustomGoal.getActions();
         mCustomGoalHolder.mCreate.setVisibility(View.GONE);
         mCustomGoalHolder.mEdit.setVisibility(View.VISIBLE);
         notifyListInserted();
         updateLoading(false);
     }
 
-    public void setCustomActions(List<CustomAction> customActions){
-        mCustomActions = customActions;
+    public void customActionsSet(){
+        mCustomActions = mCustomGoal.getActions();
         mCustomGoalHolder.mCreate.setVisibility(View.GONE);
         mCustomGoalHolder.mEdit.setVisibility(View.VISIBLE);
         notifyListInserted();
@@ -150,8 +151,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
      * completed. Notifies the recycler view of the insertion of a new element to trigger
      * the proper animation.
      */
-    public void customActionAdded(CustomAction customAction){
-        mCustomActions.add(customAction);
+    public void customActionAdded(){
         mActionListHolder.mAdapter.notifyItemInserted(mCustomActions.size()-1);
         mActionListHolder.mAdapter.notifyItemChanged(mCustomActions.size());
         mActionListHolder.mSwitcher.showPrevious();
@@ -163,6 +163,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
      * @param button the button to be enabled or disabled.
      * @param enabled whether the button should be enabled or disabled.
      */
+    @SuppressWarnings("deprecation")
     private void setButtonEnabled(TextView button, boolean enabled){
         if (enabled){
             button.setTextColor(getContext().getResources().getColor(R.color.grow_primary));
@@ -182,7 +183,10 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
      */
     private class CustomGoalHolder
             extends RecyclerView.ViewHolder
-            implements TextWatcher, View.OnClickListener{
+            implements
+                    TextWatcher,
+                    EditText.OnEditorActionListener,
+                    View.OnClickListener{
 
         private EditText mTitle;
         private TextView mCreate;
@@ -210,6 +214,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
 
             //Set the listeners
             mTitle.addTextChangedListener(this);
+            mTitle.setOnEditorActionListener(this);
             mCreate.setOnClickListener(this);
             mEdit.setOnClickListener(this);
 
@@ -301,7 +306,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
                             mListener.onSaveGoal(mCustomGoal);
                         }
                         //Change the button to edit
-                        mEdit.setImageResource(R.drawable.ic_edit_white_36dp);
+                        mEdit.setImageResource(R.drawable.ic_edit_white_24dp);
                     }
                     else{
                         //Set the proper background, make the title focusable and provide the focus
@@ -322,12 +327,28 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
                                 InputMethodManager.HIDE_IMPLICIT_ONLY);
 
                         //Change the button to save
-                        mEdit.setImageResource(R.drawable.ic_check_white_36dp);
+                        mEdit.setImageResource(R.drawable.ic_check_white_24dp);
                     }
                     //Finally, flip the flag
                     mEditing = !mEditing;
                     break;
             }
+        }
+
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event){
+            if (actionId == EditorInfo.IME_ACTION_DONE){
+                if (mTitle.getText().toString().trim().length() > 0){
+                    if (mEditing){
+                        onClick(mEdit);
+                    }
+                    else{
+                        onClick(mCreate);
+                    }
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
@@ -374,8 +395,10 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
             switch (view.getId()){
                 case R.id.custom_action_list_create:
                     String title = mAdapter.mNewActionHolder.mTitle.getText().toString().trim();
-                    mSwitcher.showNext();
-                    mListener.onCreateAction(new CustomAction(title, mCustomGoal));
+                    if (title.length() > 0){
+                        mSwitcher.showNext();
+                        mListener.onCreateAction(new CustomAction(title, mCustomGoal));
+                    }
             }
         }
     }
@@ -422,7 +445,10 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
      */
     private class CustomActionHolder
             extends RecyclerView.ViewHolder
-            implements TextWatcher, View.OnClickListener{
+            implements
+                    TextWatcher,
+                    TextView.OnEditorActionListener,
+                    View.OnClickListener{
 
         private CustomAction mCustomAction;
 
@@ -447,6 +473,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
 
             //Set the listeners
             mTitle.addTextChangedListener(this);
+            mTitle.setOnEditorActionListener(this);
             mEditTrigger.setOnClickListener(this);
             mEditAction.setOnClickListener(this);
             mSaveAction.setOnClickListener(this);
@@ -490,6 +517,22 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
         }
 
         @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event){
+            if (actionId == EditorInfo.IME_ACTION_DONE){
+                if (mTitle.getText().toString().trim().length() > 0){
+                    if (getAdapterPosition() == mActionListHolder.mAdapter.getItemCount() - 1){
+                        mActionListHolder.onClick(mActionListHolder.mButton);
+                    }
+                    else{
+                        onClick(mSaveAction);
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
         public void onClick(View view){
             switch (view.getId()){
                 case R.id.custom_action_trigger:
@@ -527,8 +570,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
                     break;
 
                 //When the user saves a currently existing goal (only from edition)
-                case R.id.custom_action_save:
-                    //Grab the title and check it ain't empty
+                case R.id.custom_action_save://Grab the title and check it ain't empty
                     String newTitle = mTitle.getText().toString().trim();
                     if (newTitle.length() > 0){
                         Log.d(TAG, "Saving the title of " + mCustomAction);

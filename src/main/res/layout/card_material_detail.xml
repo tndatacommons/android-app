@@ -4,7 +4,9 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginRight="8dp"
     card_view:cardCornerRadius="@dimen/card_view_corner_radius" >
 
     <LinearLayout
@@ -16,7 +18,10 @@
             android:id="@+id/material_detail_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp"
+            android:paddingTop="18dp"
+            android:paddingLeft="20dp"
+            android:paddingBottom="18dp"
+            android:paddingRight="20dp"
             android:textSize="18sp"
             android:textAllCaps="true"
             android:textColor="@color/white" />
@@ -26,6 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
+            android:layout_marginBottom="25dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="15dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -36,7 +42,6 @@
             android:id="@+id/material_detail_separator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="25dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:background="@color/light_gray_text_color"

@@ -1,11 +1,9 @@
 package org.tndata.android.compass.activity;
 
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.NotificationSettingsFragment;
 import org.tndata.android.compass.fragment.SettingsFragment;
 import org.tndata.android.compass.fragment.SettingsFragment.OnSettingsClickListener;
-import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.service.LogOutService;
 import org.tndata.android.compass.util.Constants;
 
@@ -76,8 +74,6 @@ public class SettingsActivity extends AppCompatActivity implements OnSettingsCli
     @Override
     public void logOut(){
         startService(new Intent(this, LogOutService.class));
-
-        ((CompassApplication)getApplication()).setUserData(new UserData());
         setResult(Constants.LOGGED_OUT_RESULT_CODE);
         finish();
     }

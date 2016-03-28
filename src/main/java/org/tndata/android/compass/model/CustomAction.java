@@ -12,7 +12,7 @@ import com.google.gson.annotations.SerializedName;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class CustomAction extends Action implements Parcelable{
+public class CustomAction extends Action{
     public static final String TYPE = "custom_action";
 
 
@@ -106,6 +106,11 @@ public class CustomAction extends Action implements Parcelable{
         dest.writeString(mTitle);
         dest.writeLong(mCustomGoalId);
         dest.writeString(mNotificationText);
+        dest.writeParcelable(getTrigger(), flags);
+        dest.writeByte((byte)(getNextReminder() != null ? 1 : 0));
+        if (getNextReminder() != null){
+            dest.writeString(getNextReminder());
+        }
     }
 
     public static final Parcelable.Creator<CustomAction> CREATOR = new Parcelable.Creator<CustomAction>(){
@@ -130,5 +135,9 @@ public class CustomAction extends Action implements Parcelable{
         mTitle = in.readString();
         mCustomGoalId = in.readLong();
         mNotificationText = in.readString();
+        setTrigger((Trigger)in.readParcelable(Trigger.class.getClassLoader()));
+        if (in.readByte() == 1){
+            setNextReminder(in.readString());
+        }
     }
 }

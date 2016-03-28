@@ -5,34 +5,40 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 
-import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.GoalContent;
-import org.tndata.android.compass.model.UserData;
-import org.tndata.android.compass.ui.ContentContainer;
+import org.tndata.android.compass.model.UpcomingAction;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.List;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
  * Adapter for the main feed.
  *
  * @author Ismael Alonso
- * @version 2.0.0
+ * @version 2.1.0
  */
-public class MainFeedAdapter extends RecyclerView.Adapter{
+public class MainFeedAdapter
+        extends RecyclerView.Adapter
+        implements
+                HttpRequest.RequestCallback,
+                Parser.ParserCallback{
+
     //Item view types
     private static final int TYPE_BLANK = 0;
     private static final int TYPE_WELCOME = TYPE_BLANK+1;
@@ -40,24 +46,23 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
     private static final int TYPE_FEEDBACK = TYPE_UP_NEXT+1;
     private static final int TYPE_SUGGESTION = TYPE_FEEDBACK+1;
     private static final int TYPE_UPCOMING = TYPE_SUGGESTION+1;
-    private static final int TYPE_GOALS = TYPE_UPCOMING +1;
-    private static final int TYPE_OTHER = TYPE_GOALS+1;
+    private static final int TYPE_MY_GOALS = TYPE_UPCOMING +1;
+    private static final int TYPE_GOAL_SUGGESTIONS = TYPE_MY_GOALS+1;
+    private static final int TYPE_OTHER = TYPE_GOAL_SUGGESTIONS+1;
 
 
     final Context mContext;
-    final MainFeedAdapterListener mListener;
+    final Listener mListener;
 
-    private UserData mUserData;
-    private DataHandler mDataHandler;
+    private FeedData mFeedData;
     private FeedUtil mFeedUtil;
     private GoalContent mSuggestion;
 
-    private MainFeedPadding mMainFeedPadding;
-
     private UpcomingHolder mUpcomingHolder;
-    private GoalsHolder mGoalsHolder;
+    private GoalsHolder<Goal> mMyGoalsHolder;
+    private GoalsHolder<GoalContent> mSuggestionsHolder;
 
-    private Action mSelectedAction;
+    private int mGetMoreGoalsRC;
 
 
     /**
@@ -67,19 +72,18 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * @param listener the listener.
      * @param initialSuggestion true the feed should display an initial suggestion.
      */
-    public MainFeedAdapter(@NonNull Context context, @NonNull MainFeedAdapterListener listener,
+    public MainFeedAdapter(@NonNull Context context, @NonNull Listener listener,
                            boolean initialSuggestion){
         mContext = context;
         mListener = listener;
-        mUserData = ((CompassApplication)mContext.getApplicationContext()).getUserData();
+        mFeedData = ((CompassApplication)mContext.getApplicationContext()).getFeedData();
 
-        if (mUserData.getFeedData() == null){
+        if (mFeedData == null){
             mListener.onNullData();
         }
         else{
-            mDataHandler = new DataHandler(mUserData);
-            CardTypes.setDataSource(mDataHandler);
-            List<GoalContent> suggestions = mUserData.getFeedData().getSuggestions();
+            CardTypes.setDataSource(mFeedData);
+            List<GoalContent> suggestions = mFeedData.getSuggestions();
             if (suggestions.isEmpty()){
                 mSuggestion = null;
             }
@@ -88,7 +92,6 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             }
             mFeedUtil = new FeedUtil(this);
         }
-        mMainFeedPadding = null;
 
         if (mSuggestion != null){
             if (initialSuggestion){
@@ -135,8 +138,11 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         if (CardTypes.isUpcoming(position)){
             return TYPE_UPCOMING;
         }
-        if (CardTypes.isGoals(position)){
-            return TYPE_GOALS;
+        if (CardTypes.isMyGoals(position)){
+            return TYPE_MY_GOALS;
+        }
+        if (CardTypes.isGoalSuggestions(position)){
+            return TYPE_GOAL_SUGGESTIONS;
         }
         return TYPE_OTHER;
     }
@@ -177,13 +183,21 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
             }
             return mUpcomingHolder;
         }
-        else if (viewType == TYPE_GOALS){
-            if (mGoalsHolder == null){
+        else if (viewType == TYPE_MY_GOALS){
+            if (mMyGoalsHolder == null){
                 LayoutInflater inflater = LayoutInflater.from(mContext);
                 View rootView = inflater.inflate(R.layout.card_goals, parent, false);
-                mGoalsHolder = new GoalsHolder(this, rootView);
+                mMyGoalsHolder = new GoalsHolder<>(this, rootView);
             }
-            return mGoalsHolder;
+            return mMyGoalsHolder;
+        }
+        else if (viewType == TYPE_GOAL_SUGGESTIONS){
+            if (mSuggestionsHolder == null){
+                LayoutInflater inflater = LayoutInflater.from(mContext);
+                View rootView = inflater.inflate(R.layout.card_goals, parent, false);
+                mSuggestionsHolder = new GoalsHolder<>(this, rootView);
+            }
+            return mSuggestionsHolder;
         }
         else if (viewType == TYPE_OTHER){
             return new RecyclerView.ViewHolder(new CardView(mContext)){};
@@ -196,7 +210,7 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         //This is a possible fix to a crash where the application gets destroyed and the
         //  user data gets invalidated. In such a case, the app should restart and fetch
         //  the user data again. Bottomline, do not keep going
-        if (mUserData.getFeedData() == null){
+        if (mFeedData == null){
             return;
         }
 
@@ -209,11 +223,11 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         }
         //Up next
         else if (CardTypes.isUpNext(position)){
-            ((UpNextHolder)rawHolder).bind(mDataHandler.getUpNext());
+            ((UpNextHolder)rawHolder).bind(mFeedData.getUpNextAction(), mFeedData.getProgress());
         }
         //Feedback
         else if (CardTypes.isFeedback(position)){
-            ((FeedbackHolder)rawHolder).bind(mUserData.getFeedData());
+            ((FeedbackHolder)rawHolder).bind(mFeedData.getFeedback());
         }
         //Goal suggestion card
         else if (CardTypes.isSuggestion(position)){
@@ -226,18 +240,21 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
                 moreActions();
             }
         }
-        //My goals / suggestions
-        else if (CardTypes.isGoals(position)){
-            String title;
-            if (mUserData.getGoals().isEmpty() && mUserData.getCustomGoals().isEmpty()){
-                title = mContext.getString(R.string.card_suggestions_header);
+        //My goals
+        else if (CardTypes.isMyGoals(position)){
+            if (mMyGoalsHolder.getItemCount() == 0){
+                mMyGoalsHolder.bind(mContext.getString(R.string.card_my_goals_header));
+                mMyGoalsHolder.setGoals(mFeedData.getGoals());
+                if (mFeedData.getNextGoalBatchUrl() == null){
+                    mMyGoalsHolder.hideFooter();
+                }
             }
-            else{
-                title = mContext.getString(R.string.card_my_goals_header);
-            }
-            ((GoalsHolder)rawHolder).bind(title);
-            if (mGoalsHolder.getItemCount() == 0){
-                moreGoals();
+        }
+        else if (CardTypes.isGoalSuggestions(position)){
+            if (mSuggestionsHolder.getItemCount() == 0){
+                mSuggestionsHolder.bind(mContext.getString(R.string.card_suggestions_header));
+                mSuggestionsHolder.setGoals(mFeedData.getSuggestions());
+                mSuggestionsHolder.hideFooter();
             }
         }
     }
@@ -252,36 +269,39 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * FEED ADAPTER METHODS *
      *----------------------*/
 
-    DataHandler getDataHandler(){
-        return mDataHandler;
-    }
-
-    public void setSelectedAction(Action selectedAction){
-        mSelectedAction = selectedAction;
-    }
-
+    /**
+     * Gets the position of the goals card.
+     *
+     * @return the index of the goals card.
+     */
     public int getGoalsPosition(){
         return CardTypes.getGoalsPosition();
     }
 
     /**
-     * Gets the ItemDecoration object for the feed.
-     *
-     * @return the ItemDecoration object containing the information about the feed padding.
+     * Updates the data set (up next, upcoming, and my goals).
      */
-    public MainFeedPadding getMainFeedPadding(){
-        if (mMainFeedPadding == null){
-            mMainFeedPadding = new MainFeedPadding(mContext);
-        }
-        return mMainFeedPadding;
+    public void updateDataSet(){
+        updateUpcoming();
+        updateMyGoals();
     }
 
-    public void updateDataSet(){
+    /**
+     * Updates upcoming and up next.
+     */
+    public void updateUpcoming(){
+        notifyItemChanged(CardTypes.getUpNextPosition());
         if (mUpcomingHolder != null){
-            mUpcomingHolder.updateActions(mUserData.getFeedData());
+            mUpcomingHolder.updateActions(mFeedData);
         }
-        if (mGoalsHolder != null){
-            mGoalsHolder.updateGoals(mUserData.getFeedData().getGoals());
+    }
+
+    /**
+     * Updates my goals.
+     */
+    public void updateMyGoals(){
+        if (mMyGoalsHolder != null){
+            mMyGoalsHolder.updateGoals();
             notifyItemChanged(CardTypes.getGoalsPosition());
         }
     }
@@ -292,76 +312,12 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      *------------------------*/
 
     /**
-     * Display the popup menu for a specific action.
-     *
-     * @param anchor the view it should be anchored to.
-     * @param action the action in question.
-     */
-    void showActionPopup(View anchor, Action action){
-        mFeedUtil.showActionPopup(anchor, action);
-    }
-
-    /**
-     * Generic did it to be called when events are triggered outside the adapter. It
-     * uses the selected item set using the setSelectedAction(int) method. If no item
-     * was set as selected prior to the call, it is ignored. The selected item is
-     * reset when this method is called.
-     */
-    public void didIt(){
-        if (mSelectedAction != null){
-            Log.d("Adapter", "selected not null");
-            didIt(mSelectedAction);
-            mSelectedAction = null;
-        }
-    }
-
-    /**
-     * Marks an action as done in every possible way. This is done in three steps:
-     * (1) mark the action as complete within the model and the webapp through an
-     * api request, (2) update the data set, and (3) update the adapter to reflect
-     * the changes in the data set.
+     * Marks an action as done in he data set.
      *
      * @param action the action to be marked as done.
      */
-    void didIt(Action action){
-        if (mUserData.getFeedData().getNextAction().equals(action)){
-            mDataHandler.didIt();
-            mFeedUtil.didIt(mContext, mDataHandler.getUpNext());
-            mDataHandler.replaceUpNext();
-            mUpcomingHolder.removeFirstAction();
-        }
-        else{
-            mDataHandler.didIt();
-            mFeedUtil.didIt(mContext, action);
-            mUpcomingHolder.removeAction(action);
-        }
-    }
-
-    /**
-     * Marks the given item as selected and then lets the listener know that the
-     * trigger editor needs to be opened. If the trigger was modified when the
-     * activity is finished the updateSelectedItem() method should be called to
-     * make the change reflect in the UI.
-     *
-     * @param action the action to be rescheduled.
-     */
-    void reschedule(Action action){
-        mSelectedAction = action;
-        mListener.onTriggerSelected(mSelectedAction);
-    }
-
-    /**
-     * Removes the selected action from the user data bundle. This is done in three steps:
-     * (1) the action is removed in the webapp through an api call, (2) the action is
-     * removed in the local model, and (3) the adapter is updated to reflect the changes.
-     *
-     * @param action the action to be removed.
-     */
-    void remove(Action action){
-        mDataHandler.remove(action);
-        mUpcomingHolder.removeAction(action);
-        NetworkRequest.delete(mContext, null, API.getDeleteActionUrl(action),
-                ((CompassApplication)mContext.getApplicationContext()).getToken(), new JSONObject());
+    public void didIt(UpcomingAction action){
+        mFeedData.removeUpcomingActionX(action, true);
     }
 
 
@@ -369,25 +325,27 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * GOAL RELATED METHODS *
      *----------------------*/
 
-    void viewGoal(ContentContainer.ContainerGoal goal){
-        if (goal instanceof Goal){
-            mListener.onGoalSelected((Goal)goal);
-        }
-        else if (goal instanceof GoalContent){
-            mListener.onSuggestionSelected((GoalContent)goal);
-        }
-    }
-
+    /**
+     * Shows the suggestion card popup menu.
+     *
+     * @param anchor the anchor view.
+     */
     void showSuggestionPopup(View anchor){
         mFeedUtil.showSuggestionPopup(anchor);
     }
 
+    /**
+     * Refreshes the suggestion card.
+     */
     void refreshSuggestion(){
-        List<GoalContent> suggestions = mUserData.getFeedData().getSuggestions();
+        List<GoalContent> suggestions = mFeedData.getSuggestions();
         mSuggestion = suggestions.get((int)(Math.random()*suggestions.size()));
         notifyItemChanged(CardTypes.getSuggestionPosition());
     }
 
+    /**
+     * Dismisses the suggestion card.
+     */
     public void dismissSuggestion(){
         CardTypes.displaySuggestion(false);
         notifyItemRemoved(CardTypes.getSuggestionPosition());
@@ -395,6 +353,9 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
         mListener.onSuggestionDismissed();
     }
 
+    /**
+     * Opens up a view to display the suggestion in the suggestion card.
+     */
     void viewSuggestion(){
         mListener.onSuggestionSelected(mSuggestion);
     }
@@ -408,40 +369,150 @@ public class MainFeedAdapter extends RecyclerView.Adapter{
      * Loads the next batch of actions into the feed.
      */
     void moreActions(){
-        for (Action action:mDataHandler.loadMoreUpcoming(mUpcomingHolder.getItemCount())){
-            mUpcomingHolder.addAction(action);
-        }
-        if (!mDataHandler.canLoadMoreActions(mUpcomingHolder.getItemCount())){
+        mUpcomingHolder.addActions(mFeedData.loadMoreUpcoming(mUpcomingHolder.getItemCount()));
+        if (!mFeedData.canLoadMoreActions(mUpcomingHolder.getItemCount())){
             mUpcomingHolder.hideFooter();
         }
-        mUpcomingHolder.setAnimationsEnabled(true);
     }
 
     /**
      * Loads the next batch of goals into the feed.
      */
     void moreGoals(){
-        for (ContentContainer.ContainerGoal goal:mDataHandler.loadMoreGoals(mGoalsHolder.getItemCount())){
-            mGoalsHolder.addGoal(goal);
-        }
-        if (!mDataHandler.canLoadMoreGoals(mGoalsHolder.getItemCount())){
-            mGoalsHolder.hideFooter();
-        }
-        mGoalsHolder.setAnimationsEnabled(true);
+        mGetMoreGoalsRC = HttpRequest.get(this, mFeedData.getNextGoalBatchUrl());
     }
 
 
-    /*--------------------------------------------------*
-     * ACTIONS TO BE CARRIED OUT UPON THE SELECTED ITEM *
-     *--------------------------------------------------*/
+    /*-------------------------*
+     * REQUEST RELATED METHODS *
+     *-------------------------*/
+
+    @Override
+    public void onRequestComplete(int requestCode, String result){
+        if (requestCode == mGetMoreGoalsRC){
+            if (mFeedData.getNextGoalBatchUrl().contains("customgoals")){
+                Parser.parse(result, ParserModels.CustomGoalsResultSet.class, this);
+            }
+            else{
+                Parser.parse(result, ParserModels.UserGoalsResultSet.class, this);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode, HttpRequestError error){
+
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.CustomGoalsResultSet){
+            ParserModels.CustomGoalsResultSet set = (ParserModels.CustomGoalsResultSet)result;
+            String url = set.next;
+            if (url == null){
+                url = API.getUserGoalsUrl();
+            }
+            if (API.STAGING && url.startsWith("https")){
+                url = url.replaceFirst("s", "");
+            }
+            mMyGoalsHolder.prepareGoalAddition();
+            mFeedData.addGoals(set.results, url);
+            mMyGoalsHolder.onGoalsAdded();
+        }
+        else if (result instanceof ParserModels.UserGoalsResultSet){
+            ParserModels.UserGoalsResultSet set = (ParserModels.UserGoalsResultSet)result;
+            mMyGoalsHolder.prepareGoalAddition();
+            String url = set.next;
+            if (url == null){
+                mMyGoalsHolder.hideFooter();
+            }
+            else{
+                if (API.STAGING && url.startsWith("https")){
+                    url = url.replaceFirst("s", "");
+                }
+            }
+            mFeedData.addGoals(set.results, url);
+            mMyGoalsHolder.onGoalsAdded();
+        }
+    }
+
 
     /**
-     * Updates the item marked as selected.
+     * Parent class of all the view holders in for the main feed adapter. Provides a reference
+     * to the adapter that needs to be passed through the constructor.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
      */
-    public void updateSelectedAction(){
-        if (mSelectedAction != null){
-            mUpcomingHolder.updateAction(mSelectedAction);
-            mSelectedAction = null;
+    abstract static class ViewHolder extends RecyclerView.ViewHolder{
+        protected MainFeedAdapter mAdapter;
+
+        /**
+         * Constructor,
+         *
+         * @param adapter a reference to the adapter that will handle the holder.
+         * @param rootView the root view of this adapter.
+         */
+        protected ViewHolder(MainFeedAdapter adapter, View rootView){
+            super(rootView);
+            mAdapter = adapter;
         }
+    }
+
+
+    /**
+     * Listener interface for the main feed adapter.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    public interface Listener{
+        /**
+         * Called when the user data is null.
+         */
+        void onNullData();
+
+        /**
+         * Called when the welcome card is tapped.
+         */
+        void onInstructionsSelected();
+
+        /**
+         * Called when a suggestion is dismissed.
+         */
+        void onSuggestionDismissed();
+
+        /**
+         * Called when a goal from a goal list is selected.
+         *
+         * @param suggestion the selected goal suggestion.
+         */
+        void onSuggestionSelected(GoalContent suggestion);
+
+        /**
+         * Called when a goal is selected.
+         *
+         * @param goal the selected goal.
+         */
+        void onGoalSelected(Goal goal);
+
+        /**
+         * Called when the feedback card is tapped.
+         *
+         * @param feedback bundle containing information about the feedback goal.
+         */
+        void onFeedbackSelected(FeedData.ActionFeedback feedback);
+
+        /**
+         * Called when an action card is tapped.
+         *
+         * @param action the action being displayed at the card.
+         */
+        void onActionSelected(UpcomingAction action);
     }
 }

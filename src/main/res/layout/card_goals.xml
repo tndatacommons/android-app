@@ -4,6 +4,9 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginLeft="12dp"
+    android:layout_marginBottom="12dp"
+    android:layout_marginRight="12dp"
     card_view:cardCornerRadius="@dimen/card_view_corner_radius" >
 
     <LinearLayout
@@ -17,17 +20,18 @@
             android:id="@+id/card_goals_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/card_my_goals_header"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/dark_text_color"
-            android:padding="10dp" />
+            android:textColor="@color/dark_text_color" />
 
-        <org.tndata.android.compass.ui.ContentContainer
-            android:id="@+id/card_goals_goal_container"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/card_goals_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <LinearLayout
-            android:id="@+id/card_goals_more"
+            android:id="@+id/card_goals_more_container"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
@@ -35,6 +39,7 @@
             <include layout="@layout/separator" />
 
             <TextView
+                android:id="@+id/card_goals_more"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -42,6 +47,14 @@
                 android:textSize="15sp"
                 android:textColor="@color/grow_primary"
                 android:text="@string/card_footer_see_more" />
+
+            <ProgressBar
+                android:id="@+id/card_goals_more_progress"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="5dp"
+                android:layout_gravity="center"
+                android:visibility="gone" />
 
         </LinearLayout>
     </LinearLayout>

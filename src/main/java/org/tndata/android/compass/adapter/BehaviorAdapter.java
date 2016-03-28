@@ -49,6 +49,7 @@ public class BehaviorAdapter extends MaterialAdapter implements View.OnClickList
     protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
         HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
         holder.setTitle(mContext.getString(R.string.library_behavior_title, mBehavior.getTitle()));
+        holder.setTitleBold();
         holder.setContent(mBehavior.getDescription());
         holder.addButton(R.id.behavior_yes, R.string.library_behavior_yes, this);
     }

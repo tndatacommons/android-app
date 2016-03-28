@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,24 +31,23 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
-import org.tndata.android.compass.adapter.feed.MainFeedAdapterListener;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.CustomGoal;
+import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.GoalContent;
-import org.tndata.android.compass.model.UserAction;
-import org.tndata.android.compass.model.UserData;
+import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserGoal;
-import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.util.FeedDataLoader;
 import org.tndata.android.compass.util.GcmRegistration;
-import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.OnScrollListenerHub;
 import org.tndata.android.compass.util.ParallaxEffect;
+
+import es.sandwatch.httprequests.HttpRequest;
 
 
 /**
@@ -64,16 +63,14 @@ public class MainActivity
         extends AppCompatActivity
         implements
                 SwipeRefreshLayout.OnRefreshListener,
-                NetworkRequest.RequestCallback,
                 DrawerAdapter.OnItemClickListener,
-                MainFeedAdapterListener,
+        MainFeedAdapter.Listener,
                 View.OnClickListener,
-                Parser.ParserCallback{
+                FeedDataLoader.Callback{
 
     //Activity request codes
     private static final int CATEGORIES_REQUEST_CODE = 4821;
-    private static final int GOAL_REQUEST_CODE = 3486;
-    private static final int CUSTOM_GOAL_RC = 3475;
+    private static final int GOAL_RC = 3486;
     private static final int GOAL_SUGGESTION_REQUEST_CODE = 8962;
     private static final int ACTION_REQUEST_CODE = 4582;
     private static final int TRIGGER_REQUEST_CODE = 7631;
@@ -97,8 +94,6 @@ public class MainActivity
 
     private boolean mSuggestionDismissed;
 
-    private int mGetUserDataRequestCode;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -108,8 +103,8 @@ public class MainActivity
         mApplication = (CompassApplication)getApplication();
 
         //Update the timezone and register with GCM
-        NetworkRequest.put(this, null, API.getPutUserProfileUrl(mApplication.getUser()),
-                mApplication.getToken(), API.getPutUserProfileBody(mApplication.getUser()));
+        HttpRequest.put(null, API.getPutUserProfileUrl(mApplication.getUser()),
+                API.getPutUserProfileBody(mApplication.getUser()));
         new GcmRegistration(this);
 
         //Set up the toolbar
@@ -156,17 +151,13 @@ public class MainActivity
         mFeed = (RecyclerView)findViewById(R.id.main_feed);
         mFeed.setAdapter(mAdapter);
         mFeed.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mFeed.addItemDecoration(mAdapter.getMainFeedPadding());
 
         //Create the hub and add to it all the items that need to be parallaxed
         OnScrollListenerHub hub = new OnScrollListenerHub();
 
-        ParallaxEffect parallax = new ParallaxEffect(header, 0.5f);
-        parallax.setItemDecoration(((MainFeedAdapter)mFeed.getAdapter()).getMainFeedPadding());
-        hub.addOnScrollListener(parallax);
+        hub.addOnScrollListener(new ParallaxEffect(header, 0.5f));
 
         ParallaxEffect toolbarEffect = new ParallaxEffect(toolbar, 1);
-        toolbarEffect.setItemDecoration(mAdapter.getMainFeedPadding());
         toolbarEffect.setParallaxCondition(new ParallaxEffect.ParallaxCondition(){
             @Override
             protected boolean doParallax(){
@@ -269,20 +260,6 @@ public class MainActivity
     }
 
     @Override
-    public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mGetUserDataRequestCode){
-            Parser.parse(result, ParserModels.UserDataResultSet.class, this);
-        }
-    }
-
-    @Override
-    public void onRequestFailed(int requestCode, String message){
-        if (requestCode == mGetUserDataRequestCode){
-            Toast.makeText(this, "Couldn't reload", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
     protected void onResume(){
         super.onResume();
         mAdapter.notifyDataSetChanged();
@@ -333,14 +310,14 @@ public class MainActivity
      * Called when the search goals FAB is clicked.
      */
     private void search(){
-        startActivityForResult(new Intent(this, SearchActivity.class), GOAL_REQUEST_CODE);
+        startActivityForResult(new Intent(this, SearchActivity.class), GOAL_RC);
     }
 
     /**
      * Called when the browse Goals FAB is clicked.
      */
     private void browseGoals(){
-        startActivityForResult(new Intent(this, ChooseCategoryActivity.class), GOAL_REQUEST_CODE);
+        startActivityForResult(new Intent(this, ChooseCategoryActivity.class), GOAL_RC);
     }
 
     /**
@@ -475,8 +452,8 @@ public class MainActivity
     public void onSuggestionSelected(GoalContent goal){
         CategoryContent category = null;
         for (Long categoryId:goal.getCategoryIdSet()){
-            if (mApplication.getUserData().getCategories().containsKey(categoryId)){
-                category = mApplication.getCategories().get(categoryId).getCategory();
+            if (mApplication.getPublicCategories().containsKey(categoryId)){
+                category = mApplication.getPublicCategories().get(categoryId);
                 break;
             }
         }
@@ -491,41 +468,33 @@ public class MainActivity
         if (goal instanceof UserGoal){
             Intent reviewActionsIntent = new Intent(this, ReviewActionsActivity.class)
                     .putExtra(ReviewActionsActivity.USER_GOAL_KEY, goal);
-            startActivityForResult(reviewActionsIntent, GOAL_REQUEST_CODE);
+            startActivityForResult(reviewActionsIntent, GOAL_RC);
         }
         else if (goal instanceof CustomGoal){
             Parcelable customGoal = (CustomGoal)goal;
             Intent editGoal = new Intent(this, CustomContentManagerActivity.class)
                     .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, customGoal);
-            startActivityForResult(editGoal, CUSTOM_GOAL_RC);
+            startActivityForResult(editGoal, GOAL_RC);
         }
     }
 
     @Override
-    public void onFeedbackSelected(Goal goal){
-        if (goal != null && goal instanceof UserGoal){
-            Intent goalActivityIntent = new Intent(this, GoalActivity.class)
+    public void onFeedbackSelected(FeedData.ActionFeedback feedback){
+        if (feedback.hasUserGoal()){
+            /*Intent goalActivityIntent = new Intent(this, GoalActivity.class)
                     .putExtra(GoalActivity.USER_GOAL_KEY, goal);
-            startActivityForResult(goalActivityIntent, GOAL_REQUEST_CODE);
+            startActivityForResult(goalActivityIntent, GOAL_RC);*/
+        }
+        else if (feedback.hasCustomGoal()){
+            //TODO
         }
     }
 
     @Override
-    public void onActionSelected(Action action){
-        if (action instanceof UserAction){
-            mAdapter.setSelectedAction(action);
-            Intent actionIntent = new Intent(this, ActionActivity.class)
-                    .putExtra(ActionActivity.ACTION_KEY, action);
-            startActivityForResult(actionIntent, ACTION_REQUEST_CODE);
-        }
-    }
-
-    @Override
-    public void onTriggerSelected(Action userAction){
-        Intent triggerIntent = new Intent(this, TriggerActivity.class)
-                .putExtra(TriggerActivity.ACTION_KEY, userAction)
-                .putExtra(TriggerActivity.GOAL_KEY, userAction.getGoal());
-        startActivityForResult(triggerIntent, TRIGGER_REQUEST_CODE);
+    public void onActionSelected(UpcomingAction action){
+        Intent actionIntent = new Intent(this, ActionActivity.class)
+                .putExtra(ActionActivity.UPCOMING_ACTION_KEY, action);
+        startActivityForResult(actionIntent, ACTION_REQUEST_CODE);
     }
 
     @Override
@@ -537,21 +506,22 @@ public class MainActivity
             else if (requestCode == GOAL_SUGGESTION_REQUEST_CODE){
                 mAdapter.dismissSuggestion();
             }
-            else if (requestCode == GOAL_REQUEST_CODE){
+            else if (requestCode == GOAL_RC){
                 mAdapter.updateDataSet();
             }
             else if (requestCode == ACTION_REQUEST_CODE){
-                Log.d("Main", "action request, result ok");
                 if (data.getBooleanExtra(ActionActivity.DID_IT_KEY, false)){
-                    Log.d("Main", "did it");
-                    mAdapter.didIt();
+                    Action action = data.getParcelableExtra(ActionActivity.ACTION_KEY);
+                    mAdapter.didIt(mApplication.getFeedData().getAction(action));
+                    mAdapter.updateUpcoming();
                 }
                 else{
-                    mAdapter.updateSelectedAction();
+                    mApplication.updateAction((Action)data.getParcelableExtra(ActionActivity.ACTION_KEY));
+                    mAdapter.updateUpcoming();
                 }
             }
             else if (requestCode == TRIGGER_REQUEST_CODE){
-                mAdapter.updateSelectedAction();
+                mAdapter.updateUpcoming();
             }
         }
         else if (resultCode == Constants.LOGGED_OUT_RESULT_CODE){
@@ -561,34 +531,16 @@ public class MainActivity
 
     @Override
     public void onRefresh(){
-        mGetUserDataRequestCode = NetworkRequest.get(this, this, API.getUserDataUrl(),
-                mApplication.getToken());
+        FeedDataLoader.load(this);
     }
 
     @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.UserDataResultSet){
-            UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
+    public void onFeedDataLoaded(@Nullable FeedData feedData){
+        if (feedData != null){
+            mApplication.setFeedData(feedData);
 
-            userData.sync();
-            userData.logData();
-        }
-    }
-
-    @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.UserDataResultSet){
-            UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
-
-            mApplication.setUserData(userData);
-
-            //Remove the previous item decoration before recreating the adapter
-            mFeed.removeItemDecoration(mAdapter.getMainFeedPadding());
-
-            //Recreate the adapter and set the new decoration
             mAdapter = new MainFeedAdapter(this, this, !mSuggestionDismissed);
             mFeed.setAdapter(mAdapter);
-            mFeed.addItemDecoration(mAdapter.getMainFeedPadding());
 
             mSuggestionDismissed = false;
 

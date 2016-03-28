@@ -1,8 +1,9 @@
 package org.tndata.android.compass.model;
 
-import com.google.gson.annotations.SerializedName;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import java.io.Serializable;
+import com.google.gson.annotations.SerializedName;
 
 
 /**
@@ -11,9 +12,7 @@ import java.io.Serializable;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class ActionContent extends TDCContent implements Serializable{
-    private static final long serialVersionUID = 2919447130236951923L;
-
+public class ActionContent extends TDCContent implements Parcelable{
     public static final String TYPE = "action";
 
 
@@ -79,5 +78,63 @@ public class ActionContent extends TDCContent implements Serializable{
     @Override
     public String toString(){
         return "ActionContent #" + getId() + ": " + getTitle();
+    }
+
+    @Override
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags){
+        dest.writeLong(getId());
+        dest.writeString(getTitle());
+        dest.writeString(getDescription());
+        dest.writeString(getHTMLDescription());
+        dest.writeString(getIconUrl());
+        dest.writeInt(mSequenceOrder);
+        dest.writeString(mMoreInfo);
+        dest.writeString(mHtmlMoreInfo);
+        dest.writeString(mExternalResource);
+        dest.writeString(mExternalResourceName);
+        dest.writeByte((byte)(mTrigger != null ? 1 : 0));
+        if (mTrigger != null){
+            dest.writeParcelable(mTrigger, flags);
+        }
+        dest.writeLong(mBehaviorId);
+    }
+
+    public static final Parcelable.Creator<ActionContent> CREATOR = new Parcelable.Creator<ActionContent>(){
+        @Override
+        public ActionContent createFromParcel(Parcel in){
+            return new ActionContent(in);
+        }
+
+        @Override
+        public ActionContent[] newArray(int size){
+            return new ActionContent[size];
+        }
+    };
+
+    /**
+     * Constructor to create from parcel.
+     *
+     * @param in the parcel where the object is stored.
+     */
+    private ActionContent(Parcel in){
+        setId(in.readLong());
+        setTitle(in.readString());
+        setDescription(in.readString());
+        setHTMLDescription(in.readString());
+        setIconUrl(in.readString());
+        mSequenceOrder = in.readInt();
+        mMoreInfo = in.readString();
+        mHtmlMoreInfo = in.readString();
+        mExternalResource = in.readString();
+        mExternalResourceName = in.readString();
+        if (in.readByte() == 1){
+            mTrigger = in.readParcelable(Trigger.class.getClassLoader());
+        }
+        mBehaviorId = in.readLong();
     }
 }

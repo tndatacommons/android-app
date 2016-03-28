@@ -213,6 +213,7 @@ public final class CompassUtil{
     }
 
     public static Class getTypeOf(String src){
+        //TODO: contains to equals whenever possible
         //IMPORTANT NOTE: the order of the statements matters.
         //Default to Long (for IDs)
         if (src == null){
@@ -220,6 +221,12 @@ public final class CompassUtil{
         }
         else if (src.equals(DailyProgress.API_TYPE)){
             return DailyProgress.class;
+        }
+        else if (src.equals(FeedData.API_TYPE)){
+            return FeedData.class;
+        }
+        else if (src.equals(UpcomingAction.API_TYPE)){
+            return UpcomingAction.class;
         }
         //Search
         else if (src.contains("search")){
@@ -274,9 +281,6 @@ public final class CompassUtil{
         }
         else if (src.contains("surveyresult")){
             return UserProfile.SurveyResponse.class;
-        }
-        else if (src.contains("user")){
-            return UserData.class;
         }
         else if (src.contains("instrument")){
             return Instrument.class;

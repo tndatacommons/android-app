@@ -17,6 +17,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
+@Deprecated
 public class OnScrollListenerHub extends RecyclerView.OnScrollListener{
     private List<RecyclerView.OnScrollListener> mListeners;
 

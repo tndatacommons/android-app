@@ -3,19 +3,23 @@ package org.tndata.android.compass.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ActionAdapter;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.CustomAction;
+import org.tndata.android.compass.model.CustomGoal;
+import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserCategory;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.service.ActionReportService;
@@ -33,7 +37,7 @@ import es.sandwatch.httprequests.HttpRequestError;
  * whether they did it or snooze the action.
  *
  * @author Ismael Alonso
- * @version 1.2.1
+ * @version 1.3.0
  */
 public class ActionActivity
         extends MaterialActivity
@@ -43,26 +47,29 @@ public class ActionActivity
                 Parser.ParserCallback{
 
     public static final String ACTION_KEY = "org.tndata.compass.ActionActivity.Action";
+    public static final String UPCOMING_ACTION_KEY = "org.tndata.compass.ActionActivity.Upcoming";
     public static final String REMINDER_KEY = "org.tndata.compass.ActionActivity.Reminder";
 
     public static final String DID_IT_KEY = "org.tndata.compass.ActionActivity.DidIt";
 
+    //private static final int VIEW_GOAL_RC = 4536;
     private static final int SNOOZE_REQUEST_CODE = 61428;
     private static final int RESCHEDULE_REQUEST_CODE = 61429;
 
 
     //The action in question and the associated reminder
     private Action mAction;
-    private CategoryContent mCategory;
+    private Goal mGoal;
+    private UserCategory mUserCategory;
+    private UpcomingAction mUpcomingAction;
     private Reminder mReminder;
 
     private ActionAdapter mAdapter;
 
     private int mGetActionRC;
-    private int mGetCategoryRC;
-
-    //Firewall
-    private boolean mActionUpdated;
+    private int mGetCustomGoalRC;
+    private int mGetUserGoalRC;
+    private int mGetUserCategoryRC;
 
 
     @Override
@@ -70,44 +77,35 @@ public class ActionActivity
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        CompassApplication application = (CompassApplication)getApplication();
-
-        //Retrieve the action and mark the reminder as nonexistent
-        mAction = (Action)getIntent().getSerializableExtra(ACTION_KEY);
+        //Retrieve the action and mark the reminder and upcoming action as nonexistent
+        mAction = getIntent().getParcelableExtra(ACTION_KEY);
+        mUpcomingAction = null;
         mReminder = null;
 
+        setColor(getResources().getColor(R.color.grow_primary));
+
+        //If the action exists do some initial setup and fetching
         if (mAction != null){
-            Action temp = application.getUserData().getAction(mAction);
-            if (temp != null){
-                mAction = temp;
-            }
             if (mAction instanceof UserAction){
-                mCategory = ((UserAction)mAction).getPrimaryCategory().getCategory();
+                UserAction userAction = (UserAction)mAction;
+                fetchCategory(userAction);
             }
+            else{
+                setHeader();
+            }
+            fetchGoal(mAction);
         }
-
-        mAdapter = new ActionAdapter(this, this, mAction, mCategory);
-        setAdapter(mAdapter);
-
-        mActionUpdated = false;
 
         //If the action wasn't provided via the intent it needs to be fetched
         if (mAction == null){
-            //timeOption.setText(R.string.action_snooze);
+            mUpcomingAction = getIntent().getParcelableExtra(UPCOMING_ACTION_KEY);
             mReminder = (Reminder)getIntent().getSerializableExtra(REMINDER_KEY);
-            setColor(getResources().getColor(R.color.grow_primary));
             fetchAction();
         }
-        else{
-            mAction = application.getUserData().getAction(mAction);
-            if (mAction instanceof UserAction){
-                setColor(Color.parseColor(((UserAction)mAction).getPrimaryCategory().getColor()));
-            }
-            else{
-                setColor(getResources().getColor(R.color.grow_primary));
-            }
-            setHeader();
-        }
+
+        //Create and set the adapter
+        mAdapter = new ActionAdapter(this, this, mReminder != null);
+        setAdapter(mAdapter);
     }
 
     /**
@@ -116,43 +114,141 @@ public class ActionActivity
     private void setHeader(){
         View header = inflateHeader(R.layout.header_hero);
         ImageView image = (ImageView)header.findViewById(R.id.header_hero_image);
-        if (mCategory == null){
+        if (mUserCategory == null){
             image.setImageResource(R.drawable.compass_master_illustration);
         }
         else{
-            ImageLoader.Options options = new ImageLoader.Options().setUsePlaceholder(false);
-            ImageLoader.loadBitmap(image, mCategory.getImageUrl(), options);
+            if (mUserCategory.getCategory().getImageUrl() == null){
+                image.setImageResource(R.drawable.compass_master_illustration);
+            }
+            else{
+                ImageLoader.Options options = new ImageLoader.Options().setUsePlaceholder(false);
+                ImageLoader.loadBitmap(image, mUserCategory.getCategory().getImageUrl(), options);
+            }
         }
+    }
+
+    /**
+     * Tells whether the action is a user action.
+     *
+     * @return true if it is a user action, false otherwise.
+     */
+    @SuppressWarnings("RedundantIfStatement")
+    private boolean isUserAction(){
+        if (mAction != null && mAction instanceof UserAction){
+            return true;
+        }
+        if (mUpcomingAction != null && mUpcomingAction.isUserAction()){
+            return true;
+        }
+        if (mReminder != null && mReminder.isUserAction()){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Tells whether the action is a custom action.
+     *
+     * @return true if it is a custom action, false otherwise.
+     */
+    @SuppressWarnings("RedundantIfStatement")
+    private boolean isCustomAction(){
+        if (mAction != null && mAction instanceof CustomAction){
+            return true;
+        }
+        if (mUpcomingAction != null && mUpcomingAction.isCustomAction()){
+            return true;
+        }
+        if (mReminder != null && mReminder.isCustomAction()){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Gets the id of the action. This will be the mapping id in the case of a user action
+     * and the object id in case of a user action.
+     *
+     * @return the relevant id for the action.
+     */
+    private int getActionId(){
+        if (mAction != null){
+            return (int)mAction.getId();
+        }
+        if (mUpcomingAction != null){
+            return (int)mUpcomingAction.getId();
+        }
+        if (mReminder != null){
+            if (mReminder.isUserAction()){
+                return mReminder.getUserMappingId();
+            }
+            else if (mReminder.isCustomAction()){
+                return mReminder.getObjectId();
+            }
+        }
+        return -1;
     }
 
     /**
      * Retrieves an action from the API
      */
     private void fetchAction(){
-        if (mReminder.isUserAction()){
-            int mappingId = mReminder.getUserMappingId();
-            Log.d("ActionActivity", "Fetching UserAction: " + mappingId);
-            mGetActionRC = HttpRequest.get(this, API.getActionUrl(mappingId));
+        int id = getActionId();
+        if (isUserAction()){
+            Log.d("ActionActivity", "Fetching UserAction: " + id);
+            mGetActionRC = HttpRequest.get(this, API.getActionUrl(id));
         }
-        else if (mReminder.isCustomAction()){
-            int customId = mReminder.getObjectId();
-            Log.d("ActionActivity", "Fetching CustomAction: " + customId);
-            mGetActionRC = HttpRequest.get(this, API.getCustomActionUrl(customId));
+        else if (isCustomAction()){
+            Log.d("ActionActivity", "Fetching CustomAction: " + id);
+            mGetActionRC = HttpRequest.get(this, API.getCustomActionUrl(id));
         }
+    }
+
+    /**
+     * Fetches a goal from the backend.
+     *
+     * @param action the action whose goal is to be fetched.
+     */
+    private void fetchGoal(Action action){
+        if (action instanceof UserAction){
+            UserAction userAction = (UserAction)action;
+            mGetUserGoalRC = HttpRequest.get(this, API.getUserGoalUrl(userAction.getPrimaryGoalId()));
+        }
+        else{
+            CustomAction customAction = (CustomAction)action;
+            mGetCustomGoalRC = HttpRequest.get(this, API.getCustomGoalUrl(customAction.getCustomGoalId()));
+        }
+    }
+
+    /**
+     * Fetches a category from the backend.
+     *
+     * @param userAction the user action whose category is to be fetched.
+     */
+    private void fetchCategory(UserAction userAction){
+        long userCategoryId = userAction.getPrimaryCategoryId();
+        mGetUserCategoryRC = HttpRequest.get(this, API.getUserCategoryUrl(userCategoryId));
     }
 
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetActionRC){
-            if (mReminder.isUserAction()){
+            if (isUserAction()){
                 Parser.parse(result, UserAction.class, this);
             }
-            else if (mReminder.isCustomAction()){
+            else if (isCustomAction()){
                 Parser.parse(result, CustomAction.class, this);
             }
         }
-        else if (requestCode == mGetCategoryRC){
-            Parser.parse(result, CategoryContent.class, this);
+        else if (requestCode == mGetCustomGoalRC){
+            Parser.parse(result, CustomGoal.class, this);
+        }
+        else if (requestCode == mGetUserGoalRC){
+            Parser.parse(result, ParserModels.UserGoalsResultSet.class, this);
+        }
+        else if (requestCode == mGetUserCategoryRC){
+            Parser.parse(result, ParserModels.UserCategoryResultSet.class, this);
         }
     }
 
@@ -166,29 +262,44 @@ public class ActionActivity
         if (result instanceof Action){
             mAction = (Action)result;
         }
-        else if (result instanceof CategoryContent){
-            mCategory = (CategoryContent)result;
+        else if (result instanceof CustomGoal){
+            mGoal = (CustomGoal)result;
+        }
+        else if (result instanceof ParserModels.UserGoalsResultSet){
+            mGoal = ((ParserModels.UserGoalsResultSet)result).results.get(0);
+        }
+        else if (result instanceof ParserModels.UserCategoryResultSet){
+            mUserCategory = ((ParserModels.UserCategoryResultSet)result).results.get(0);
         }
     }
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof UserAction){
-            long categoryId = ((UserAction)mAction).getPrimaryCategoryId();
-            mAdapter.setAction(mAction, null);
-            mGetCategoryRC = HttpRequest.get(this, API.getCategoryUrl(categoryId));
-            invalidateOptionsMenu();
+            fetchGoal(mAction);
+            fetchCategory((UserAction)mAction);
         }
         else if (result instanceof CustomAction){
-            mAction = (Action)result;
+            fetchGoal(mAction);
+        }
+        else if (result instanceof CustomGoal){
             setHeader();
-            mAdapter.setAction(mAction, null);
+            mAdapter.setAction(mAction, mGoal);
             invalidateOptionsMenu();
         }
-        else if (result instanceof CategoryContent){
-            setColor(Color.parseColor(mCategory.getColor()));
+        else if (result instanceof ParserModels.UserGoalsResultSet){
+            mAdapter.setAction(mAction);
+            if (mUserCategory != null){
+                mAdapter.setCategory(mUserCategory.getCategory());
+            }
+            invalidateOptionsMenu();
+        }
+        else if (result instanceof ParserModels.UserCategoryResultSet){
+            setColor(Color.parseColor(mUserCategory.getColor()));
             setHeader();
-            mAdapter.setCategory(mCategory);
+            if (mGoal != null){
+                mAdapter.setCategory(mUserCategory.getCategory());
+            }
         }
     }
 
@@ -197,12 +308,23 @@ public class ActionActivity
         //We need to check for null action here because sometimes the action needs to
         //  be fetched from the backend. If the action has not been fetched yet, the
         //  overflow button doesn't make sense
-        if (mAction != null && mAction.isEditable()){
-            if (!mAction.hasTrigger() || mAction.getTrigger().isDisabled()){
-                getMenuInflater().inflate(R.menu.menu_action_disabled, menu);
+        if (mAction == null || !mAction.isEditable()){
+            return false;
+        }
+        if (mReminder != null){
+            if (mAction.hasTrigger() && mAction.getTrigger().isEnabled()){
+                getMenuInflater().inflate(R.menu.menu_action_reminder, menu);
             }
             else{
+                getMenuInflater().inflate(R.menu.menu_action_reminder_disabled, menu);
+            }
+        }
+        else{
+            if (mAction.hasTrigger() && mAction.getTrigger().isEnabled()){
                 getMenuInflater().inflate(R.menu.menu_action, menu);
+            }
+            else{
+                getMenuInflater().inflate(R.menu.menu_action_disabled, menu);
             }
         }
         return true;
@@ -211,6 +333,10 @@ public class ActionActivity
     @Override
     public boolean menuItemSelected(MenuItem item){
         switch (item.getItemId()){
+            case R.id.action_view_goal:
+                viewGoal();
+                break;
+
             case R.id.action_trigger:
                 onRescheduleClick();
                 break;
@@ -226,32 +352,56 @@ public class ActionActivity
     }
 
     @Override
-    public void onIDidItClick(){
-        if (mAction != null && !mActionUpdated){
-            mActionUpdated = true;
+    public void onBackPressed(){
+        setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, (Parcelable)mAction));
+        finish();
+    }
 
+    @Override
+    protected void onHomeTapped(){
+        setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, (Parcelable)mAction));
+        finish();
+    }
+
+    private void viewGoal(){
+        if (mGoal != null){
+            if (mGoal instanceof UserGoal){
+                startActivity(new Intent(this, ReviewActionsActivity.class)
+                        .putExtra(ReviewActionsActivity.USER_GOAL_KEY, mGoal));
+            }
+            else{
+                startActivity(new Intent(this, CustomContentManagerActivity.class)
+                        .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, mGoal));
+            }
+        }
+    }
+
+    @Override
+    public void onIDidItClick(){
+        if (mAction != null){
             startService(new Intent(this, ActionReportService.class)
-                    .putExtra(ActionReportService.ACTION_KEY, mAction)
+                    .putExtra(ActionReportService.ACTION_KEY, (Parcelable)mAction)
                     .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
 
-            setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, true));
+            setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, true)
+                    .putExtra(ACTION_KEY, (Parcelable)mAction));
             finish();
         }
     }
 
     @Override
     public void onRescheduleClick(){
-        if (mAction != null && !mActionUpdated){
+        if (mAction != null){
             Intent reschedule = new Intent(this, TriggerActivity.class)
-                    .putExtra(TriggerActivity.ACTION_KEY, mAction)
-                    .putExtra(TriggerActivity.GOAL_KEY, mAction.getGoal());
+                    .putExtra(TriggerActivity.GOAL_TITLE_KEY, mGoal.getTitle())
+                    .putExtra(TriggerActivity.ACTION_KEY, (Parcelable)mAction);
             startActivityForResult(reschedule, RESCHEDULE_REQUEST_CODE);
         }
     }
 
     @Override
     public void onSnoozeClick(){
-        if (mAction != null && !mActionUpdated){
+        if (mAction != null){
             Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
                     .putExtra(NotificationUtil.REMINDER_KEY, mReminder);
             startActivityForResult(snoozeIntent, SNOOZE_REQUEST_CODE);
@@ -262,28 +412,23 @@ public class ActionActivity
      * Disables the current action's trigger.
      */
     private void disableTrigger(){
-        HttpRequest.put(null, API.getPutTriggerUrl(mAction), API.getPutTriggerBody("", "", ""));
-        mAction.setTrigger(null);
-        invalidateOptionsMenu();
+        mAction.getTrigger().setEnabled(false);
+        HttpRequest.put(null, API.getPutTriggerUrl(mAction), API.getPutTriggerBody(mAction.getTrigger()));
+        setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, (Parcelable)mAction));
+        finish();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (resultCode == RESULT_OK){
             switch (requestCode){
-                case RESCHEDULE_REQUEST_CODE:if (mReminder.isUserAction()){
-                    NotificationUtil.cancel(this, NotificationUtil.USER_ACTION_TAG,
-                            mReminder.getUserMappingId());
-                }
-                else if (mReminder.isCustomAction()){
-                    NotificationUtil.cancel(this, NotificationUtil.CUSTOM_ACTION_TAG,
-                            mReminder.getObjectId());
-                }
+                case RESCHEDULE_REQUEST_CODE:
+                    mAction = data.getParcelableExtra(TriggerActivity.ACTION_KEY);
+                    setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, (Parcelable)mAction));
 
                 //In either case, the activity should finish after a second
                 case SNOOZE_REQUEST_CODE:
-                    mActionUpdated = true;
-                    setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, false));
+                    NotificationUtil.cancel(this, NotificationUtil.USER_ACTION_TAG, getActionId());
                     finish();
             }
         }

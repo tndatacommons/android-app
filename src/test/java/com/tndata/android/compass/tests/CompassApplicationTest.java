@@ -10,7 +10,6 @@ import org.robolectric.annotation.Config;
 import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.model.User;
-import org.tndata.android.compass.model.UserData;
 
 import java.lang.reflect.Field;
 import java.util.UUID;
@@ -33,11 +32,6 @@ public class CompassApplicationTest {
     @Test
     public void application_notNull_returnsTrue() {
         assertNotNull(application);
-    }
-
-    @Test
-    public void userData_notNull_returnsTrue() {
-        assertNotNull(application.getUserData());
     }
 
     @Test
@@ -71,25 +65,6 @@ public class CompassApplicationTest {
         field.set(application, user);
         final User result = application.getUser();
         assertEquals(user, result);
-    }
-
-    @Test
-    public void setUserData_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
-        UserData userData = new UserData();
-        application.setUserData(userData);
-        final Field field = application.getClass().getDeclaredField("mUserData");
-        field.setAccessible(true);
-        assertEquals(userData, field.get(application));
-    }
-
-    @Test
-    public void getUserData_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
-        UserData userData = new UserData();
-        final Field field = application.getClass().getDeclaredField("mUserData");
-        field.setAccessible(true);
-        field.set(application, userData);
-        final UserData result = application.getUserData();
-        assertEquals(userData, result);
     }
 
     @Test

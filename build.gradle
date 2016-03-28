@@ -13,7 +13,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.5.0'
-        classpath 'io.fabric.tools:gradle:1.+'
+        classpath 'io.fabric.tools:gradle:1.21.5'
     }
 }
 
@@ -78,9 +78,7 @@ dependencies {
     compile 'com.android.support:support-v4:23.2.0'
     compile 'com.android.support:appcompat-v7:23.2.0'
     compile 'com.google.code.gson:gson:2.4'
-    compile 'de.hdodenhof:circleimageview:1.2.2'
     compile 'com.google.android.gms:play-services:7.0.0'
-    compile 'org.jraf:android-switch-backport:1.4.0@aar'
     compile 'me.relex:circleindicator:1.1.5@aar'
     compile('com.doomonafireball.betterpickers:library:1.6.0') {
         exclude group: 'com.android.support', module: 'support-v4'

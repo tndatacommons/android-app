@@ -12,7 +12,9 @@
         android:layout_height="@dimen/material_header_size"
         android:gravity="center_vertical"
         android:paddingLeft="30dp"
+        android:paddingStart="30dp"
         android:paddingRight="20dp"
+        android:paddingEnd="20dp"
         android:background="@color/grow_primary"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textSize="24sp"
@@ -40,7 +42,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingLeft="30dp"
+                    android:paddingStart="30dp"
                     android:paddingRight="20dp"
+                    android:paddingEnd="20dp"
                     android:paddingTop="30dp"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textSize="20sp"
@@ -51,7 +55,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingLeft="30dp"
+                    android:paddingStart="30dp"
                     android:paddingRight="20dp"
+                    android:paddingEnd="20dp"
                     android:paddingTop="15dp"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@color/dark_text_color"
@@ -85,7 +91,7 @@
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
+        android:layout_gravity="end"
         android:layout_marginLeft="30dp"
         android:layout_marginBottom="10dp"
         android:layout_marginRight="30dp"
@@ -95,15 +101,16 @@
             android:id="@+id/check_in_reward_switcher"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp" >
+            android:layout_marginRight="15dp"
+            android:layout_marginEnd="15dp" >
 
             <ImageView
                 android:id="@+id/check_in_reward_more"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_refresh"
-                android:tint="@color/grow_primary" />
+                android:tint="@color/grow_primary"
+                android:contentDescription="@string/check_in_reward_more_cd" />
 
             <ProgressBar
                 android:layout_width="20dp"
@@ -113,11 +120,22 @@
         </ViewSwitcher>
 
         <ImageView
-            android:id="@+id/check_in_reward_overflow"
+            android:id="@+id/check_in_reward_share"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_overflow_vertical_white"
-            android:tint="@color/grow_primary" />
+            android:layout_marginRight="15dp"
+            android:layout_marginEnd="15dp"
+            android:src="@drawable/ic_share_white_24dp"
+            android:tint="@color/grow_primary"
+            android:contentDescription="@string/check_in_reward_share_cd" />
+
+        <!-- TODO create a 24dp icon and set the sizes to wrap_content -->
+        <ImageView
+            android:id="@+id/check_in_reward_home"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_launcher"
+            android:contentDescription="@string/check_in_reward_home_cd" />
 
     </LinearLayout>
 </LinearLayout>

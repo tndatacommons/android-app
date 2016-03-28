@@ -18,7 +18,7 @@ import java.util.TimeZone;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public abstract class API{
+public final class API{
     //Api urls and app configuration
     public static final boolean STAGING = BuildConfig.DEBUG;
     private static final boolean USE_NGROK_TUNNEL = false;
@@ -118,11 +118,6 @@ public abstract class API{
      * APPLICATION DATA AND LIBRARY *
      *------------------------------*/
 
-    //User data
-    public static String getUserDataUrl(){
-        return BASE_URL + "users/";
-    }
-
     //Feed data
     public static String getFeedDataUrl(){
         return BASE_URL + "users/feed/";
@@ -143,6 +138,10 @@ public abstract class API{
 
     public static String getCategoryUrl(long categoryId){
         return BASE_URL + "categories/" + categoryId + "/";
+    }
+
+    public static String getUserCategoryUrl(long categoryId){
+        return BASE_URL + "users/categories/?category=" + categoryId;
     }
 
     public static String getDeleteCategoryUrl(@NonNull UserCategory userCategory){
@@ -170,6 +169,10 @@ public abstract class API{
         return BASE_URL + "goals/?category=" + category.getId();
     }
 
+    public static String getUserGoalsUrl(){
+        return BASE_URL + "users/goals/?page_size=3";
+    }
+
     public static String getTodaysGoalsUrl(){
         return BASE_URL + "users/goals/?today=1";
     }
@@ -178,7 +181,19 @@ public abstract class API{
         return BASE_URL + "goals/" + goalId + "/";
     }
 
+    public static String getUserGoalUrl(long goalId){
+        return BASE_URL + "users/goals/?goal=" + goalId;
+    }
+
     //Custom goals
+    public static String getCustomGoalsUrl(){
+        return BASE_URL + "users/customgoals/?page_size=3";
+    }
+
+    public static String getCustomGoalUrl(long customGoalId){
+        return BASE_URL + "users/customgoals/" + customGoalId + "/";
+    }
+
     public static String getPostCustomGoalUrl(){
         return BASE_URL + "users/customgoals/";
     }
@@ -215,10 +230,6 @@ public abstract class API{
     //Behaviors
     public static String getBehaviorsUrl(@NonNull GoalContent goal){
         return BASE_URL + "behaviors/?goal=" + goal.getId();
-    }
-
-    public static String getBehaviorUrl(long behaviorId){
-        return BASE_URL + "behaviors/" + behaviorId + "/";
     }
 
     public static String getPostBehaviorUrl(){
@@ -266,25 +277,6 @@ public abstract class API{
      */
     public static String getActionUrl(int actionMappingId){
         return BASE_URL + "users/actions/" + actionMappingId + "/";
-    }
-
-    public static String getPostActionUrl(){
-        return BASE_URL + "users/actions/";
-    }
-
-    public static JSONObject getPostActionBody(@NonNull ActionContent action, @NonNull BehaviorContent behavior,
-                                               @NonNull GoalContent goal, @NonNull CategoryContent category){
-        JSONObject postActionBody = new JSONObject();
-        try{
-            postActionBody.put("action", action.getId())
-                    .put("behavior", behavior.getId())
-                    .put("goal", goal.getId())
-                    .put("category", category.getId());
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-        }
-        return postActionBody;
     }
 
     //Custom actions
@@ -346,13 +338,13 @@ public abstract class API{
         }
     }
 
-    public static JSONObject getPutTriggerBody(@NonNull String time, @NonNull String rrule,
-                                               @NonNull String date){
+    public static JSONObject getPutTriggerBody(@NonNull Trigger trigger){
         JSONObject putTriggerBody = new JSONObject();
         try{
-            putTriggerBody.put("custom_trigger_time", time)
-                    .put("custom_trigger_rrule", rrule)
-                    .put("custom_trigger_date", date);
+            putTriggerBody.put("custom_trigger_time", trigger.getRawTime())
+                    .put("custom_trigger_date", trigger.getRawDate())
+                    .put("custom_trigger_rrule", trigger.getRecurrences())
+                    .put("custom_trigger_disabled", !trigger.isEnabled());
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
@@ -466,6 +458,10 @@ public abstract class API{
         return BASE_URL + "places/";
     }
 
+    public static String getUserPlacesUrl(){
+        return BASE_URL + "users/places/";
+    }
+
     public static String getPostPutPlaceUrl(@NonNull UserPlace userPlace){
         String url =  BASE_URL + "users/places/";
         if (userPlace.getId() != -1){
@@ -572,5 +568,21 @@ public abstract class API{
             jsonx.printStackTrace();
         }
         return putConsentAcknowledgementBody;
+    }
+
+
+    //TODO idea: (the file will be bigger, but more organized? it will yield shorter method names in some instances)
+    public static final class URL{
+        private URL(){
+
+        }
+        //URL getters
+    }
+
+    public static final class BODY{
+        private BODY(){
+
+        }
+        //Body getters
     }
 }

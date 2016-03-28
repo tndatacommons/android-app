@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.CustomContentManagerAdapter;
+import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.parser.Parser;
@@ -19,7 +20,6 @@ import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 
 import java.util.Collections;
-import java.util.List;
 
 import es.sandwatch.httprequests.HttpRequest;
 import es.sandwatch.httprequests.HttpRequestError;
@@ -42,6 +42,8 @@ public class CustomContentManagerActivity
 
     public static final String CUSTOM_GOAL_KEY = "org.tndata.compass.CreateGoal.Goal";
     public static final String CUSTOM_GOAL_TITLE_KEY = "org.tndata.compass.CreateGoal.GoalTitle";
+
+    private static final int TRIGGER_RC = 1254;
 
 
     private CompassApplication mApplication;
@@ -67,7 +69,6 @@ public class CustomContentManagerActivity
         else{
             mCustomGoal = getIntent().getParcelableExtra(CUSTOM_GOAL_KEY);
             if (mCustomGoal != null){
-                mCustomGoal = (CustomGoal)mApplication.getUserData().getGoal(mCustomGoal);
                 fetchActions(mCustomGoal);
             }
             mAdapter = new CustomContentManagerAdapter(this, mCustomGoal, this);
@@ -130,21 +131,24 @@ public class CustomContentManagerActivity
 
     @Override
     public void onRequestFailed(int requestCode, HttpRequestError error){
-
+        if (requestCode == mGetActionsRequestCode){
+            mAdapter.displayError("Couldn't load your activities");
+        }
     }
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
         if (result instanceof CustomGoal){
             mCustomGoal = (CustomGoal)result;
+            mApplication.addGoal(mCustomGoal);
             mCustomGoal.init();
-            mApplication.getUserData().addGoal(mCustomGoal);
         }
         else if (result instanceof ParserModels.CustomActionResultSet){
             Collections.sort(((ParserModels.CustomActionResultSet)result).results);
         }
         else if (result instanceof CustomAction){
-            mApplication.getUserData().addAction((CustomAction)result);
+            mApplication.addAction(mCustomGoal, (CustomAction)result);
+            mCustomGoal.addAction((CustomAction)result);
         }
     }
 
@@ -154,11 +158,12 @@ public class CustomContentManagerActivity
             mAdapter.customGoalAdded((CustomGoal)result);
         }
         else if (result instanceof ParserModels.CustomActionResultSet){
-            mAdapter.setCustomActions(((ParserModels.CustomActionResultSet)result).results);
+            mCustomGoal.setActions(((ParserModels.CustomActionResultSet)result).results);
+            mAdapter.customActionsSet();
         }
         else if (result instanceof CustomAction){
             final CustomAction newAction = (CustomAction)result;
-            mAdapter.customActionAdded(newAction);
+            mAdapter.customActionAdded();
             new Handler().postDelayed(new Runnable(){
                 @Override
                 public void run(){
@@ -176,11 +181,12 @@ public class CustomContentManagerActivity
 
     @Override
     public void onSaveGoal(@NonNull CustomGoal customGoal){
+        mApplication.updateGoal(customGoal);
         HttpRequest.put(null, API.getPutCustomGoalUrl(customGoal),
                 API.getPostPutCustomGoalBody(customGoal));
     }
 
-    public void deleteGoal(@NonNull CustomGoal customGoal){
+    public void onDeleteGoal(@NonNull CustomGoal customGoal){
         mApplication.removeGoal(customGoal);
         HttpRequest.delete(null, API.getDeleteGoalUrl(customGoal));
         setResult(RESULT_OK);
@@ -195,21 +201,30 @@ public class CustomContentManagerActivity
 
     @Override
     public void onSaveAction(@NonNull CustomAction customAction){
-        CustomAction original = (CustomAction)mApplication.getUserData().getAction(customAction);
-        original.setTitle(customAction.getTitle());
+        mApplication.updateAction(mCustomGoal, customAction);
         HttpRequest.put(null, API.getPutCustomActionUrl(customAction),
                 API.getPostPutCustomActionBody(customAction, customAction.getGoal()));
     }
 
-    @Override
-    public void onEditTrigger(@NonNull CustomAction customAction){
-        startActivity(new Intent(this, TriggerActivity.class)
-                .putExtra(TriggerActivity.GOAL_KEY, (Parcelable)customAction.getGoal())
-                .putExtra(TriggerActivity.ACTION_KEY, (Parcelable)customAction));
+    public void onRemoveAction(@NonNull CustomAction customAction){
+        mApplication.removeAction(customAction);
+        HttpRequest.delete(this, API.getDeleteActionUrl(customAction));
     }
 
-    public void onRemoveClicked(@NonNull CustomAction customAction){
-        HttpRequest.delete(this, API.getDeleteActionUrl(customAction));
-        mApplication.getUserData().removeAction(customAction);
+    @Override
+    public void onEditTrigger(@NonNull CustomAction customAction){
+        startActivityForResult(new Intent(this, TriggerActivity.class)
+                .putExtra(TriggerActivity.GOAL_TITLE_KEY, customAction.getGoal().getTitle())
+                .putExtra(TriggerActivity.ACTION_KEY, (Parcelable)customAction), TRIGGER_RC);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (requestCode == TRIGGER_RC){
+            if (resultCode == RESULT_OK){
+                Action action = data.getParcelableExtra(TriggerActivity.ACTION_KEY);
+                mApplication.updateAction(mCustomGoal, action);
+            }
+        }
     }
 }

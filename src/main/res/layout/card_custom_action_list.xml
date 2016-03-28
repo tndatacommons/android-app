@@ -34,7 +34,10 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/custom_action_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="11dp"
+            android:layout_marginRight="11dp"
+            android:padding="0dp" />
 
         <ViewSwitcher
             android:id="@+id/custom_action_list_switcher"

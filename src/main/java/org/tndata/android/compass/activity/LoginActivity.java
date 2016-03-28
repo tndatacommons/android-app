@@ -1,5 +1,6 @@
 package org.tndata.android.compass.activity;
 
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,12 +20,13 @@ import org.tndata.android.compass.fragment.LogInFragment;
 import org.tndata.android.compass.fragment.SignUpFragment;
 import org.tndata.android.compass.fragment.TourFragment;
 import org.tndata.android.compass.fragment.WebFragment;
+import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.User;
-import org.tndata.android.compass.model.UserData;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.Constants;
+import org.tndata.android.compass.util.FeedDataLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +43,10 @@ public class LoginActivity
                 LogInFragment.LogInFragmentCallback,
                 TourFragment.TourFragmentCallback,
                 HttpRequest.RequestCallback,
-                Parser.ParserCallback{
+                Parser.ParserCallback,
+                FeedDataLoader.Callback{
 
+    private static final String TAG = "LogInActivity";
 
     //Fragment ids
     private static final int DEFAULT = 0;
@@ -54,20 +58,20 @@ public class LoginActivity
 
     private Toolbar mToolbar;
 
-    private WebFragment mWebFragment = null;
-    private LauncherFragment mLauncherFragment = null;
-    private LogInFragment mLoginFragment = null;
-    private SignUpFragment mSignUpFragment = null;
-    private TourFragment mTourFragment = null;
+    private WebFragment mWebFragment;
+    private LauncherFragment mLauncherFragment;
+    private LogInFragment mLoginFragment;
+    private SignUpFragment mSignUpFragment;
+    private TourFragment mTourFragment;
 
-    private List<Fragment> mFragmentStack = new ArrayList<>();
+    private List<Fragment> mFragmentStack;
 
     private CompassApplication mApplication;
 
     //Request codes
     private int mLogInRC;
-    private int mGetDataRC;
     private int mGetCategoriesRC;
+    private int mGetPlacesRC;
 
 
     @Override
@@ -84,6 +88,8 @@ public class LoginActivity
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().hide();
         }
+
+        mFragmentStack = new ArrayList<>();
 
         SharedPreferences settings = getSharedPreferences(Constants.PREFERENCES_NAME, 0);
         swapFragments(DEFAULT, true);
@@ -123,21 +129,21 @@ public class LoginActivity
                     mLauncherFragment = new LauncherFragment();
                 }
                 fragment = mLauncherFragment;
-                getSupportActionBar().hide();
+                switchActionBarState(false);
                 break;
             case LOGIN:
                 if (mLoginFragment == null){
                     mLoginFragment = new LogInFragment();
                 }
                 fragment = mLoginFragment;
-                getSupportActionBar().hide();
+                switchActionBarState(false);
                 break;
             case SIGN_UP:
                 if (mSignUpFragment == null){
                     mSignUpFragment = new SignUpFragment();
                 }
                 fragment = mSignUpFragment;
-                getSupportActionBar().hide();
+                switchActionBarState(false);
                 break;
             case TERMS:
                 if (mWebFragment == null){
@@ -145,7 +151,7 @@ public class LoginActivity
 
                 }
                 fragment = mWebFragment;
-                getSupportActionBar().show();
+                switchActionBarState(true);
                 mToolbar.setTitle(R.string.terms_title);
                 mWebFragment.setUrl(Constants.TERMS_AND_CONDITIONS_URL);
                 break;
@@ -154,7 +160,7 @@ public class LoginActivity
                     mTourFragment = new TourFragment();
                 }
                 fragment = mTourFragment;
-                getSupportActionBar().hide();
+                switchActionBarState(false);
                 break;
             default:
                 break;
@@ -167,6 +173,17 @@ public class LoginActivity
         }
     }
 
+    private void switchActionBarState(boolean show){
+        if (getSupportActionBar() != null){
+            if (show){
+                getSupportActionBar().show();
+            }
+            else{
+                getSupportActionBar().hide();
+            }
+        }
+    }
+
     private void handleBackStack(){
         if (!mFragmentStack.isEmpty()){
             mFragmentStack.remove(mFragmentStack.size() - 1);
@@ -174,31 +191,17 @@ public class LoginActivity
 
         if (mFragmentStack.isEmpty()){
             HttpRequest.cancel(mLogInRC);
-            HttpRequest.cancel(mGetDataRC);
+            FeedDataLoader.cancel();
             finish();
         }
         else{
             Fragment fragment = mFragmentStack.get(mFragmentStack.size() - 1);
 
-            int index = DEFAULT;
             if (fragment instanceof LauncherFragment){
-                HttpRequest.cancel(mGetDataRC);
                 ((LauncherFragment)fragment).showProgress(false);
             }
-            else if (fragment instanceof LogInFragment){
-                index = LOGIN;
-            }
-            else if (fragment instanceof SignUpFragment){
-                index = SIGN_UP;
-            }
-            else if (fragment instanceof WebFragment){
-                index = TERMS;
-            }
-            else if (fragment instanceof TourFragment){
-                index = TOUR;
-            }
 
-            swapFragments(index, false);
+            getSupportFragmentManager().beginTransaction().replace(R.id.base_content, fragment).commit();
         }
     }
 
@@ -237,11 +240,6 @@ public class LoginActivity
     @Override
     public void logIn() {
         swapFragments(LOGIN, true);
-    }
-
-    @Override
-    public void tour() {
-        swapFragments(TOUR, true);
     }
 
     @Override
@@ -285,11 +283,11 @@ public class LoginActivity
                 Parser.parse(result, User.class, this);
             }
         }
-        else if (requestCode == mGetDataRC){
-            Parser.parse(result, ParserModels.UserDataResultSet.class, this);
-        }
         else if (requestCode == mGetCategoriesRC){
             Parser.parse(result, ParserModels.CategoryContentResultSet.class, this);
+        }
+        else if (requestCode == mGetPlacesRC){
+            Parser.parse(result, ParserModels.UserPlacesResultSet.class, this);
         }
     }
 
@@ -297,10 +295,8 @@ public class LoginActivity
     public void onRequestFailed(int requestCode, HttpRequestError error){
         if (requestCode == mLogInRC){
             Log.d("LogIn", "Login request failed");
+            mFragmentStack.clear();
             swapFragments(LOGIN, true);
-        }
-        else if (requestCode == mGetDataRC){
-            Log.d("LogIn", "Get data failed");
         }
         else if (requestCode == mGetCategoriesRC){
             Log.d("LogIn", "Get categories failed");
@@ -312,18 +308,13 @@ public class LoginActivity
         if (result instanceof User){
             mApplication.setUser((User)result, false);
         }
-        else if (result instanceof ParserModels.UserDataResultSet){
-            UserData userData = ((ParserModels.UserDataResultSet)result).results.get(0);
-
-            userData.sync();
-            userData.logData();
-
-            Log.d("LogIn", "CustomGoals: " + userData.getCustomGoals().size());
-
-            //Write the places
+        else if (result instanceof ParserModels.FeedDataResultSet){
+            ((ParserModels.FeedDataResultSet)result).results.get(0).init();
+        }
+        else if (result instanceof ParserModels.UserPlacesResultSet){
             CompassDbHelper helper = new CompassDbHelper(this);
             helper.emptyPlacesTable();
-            helper.savePlaces(userData.getPlaces());
+            helper.savePlaces(((ParserModels.UserPlacesResultSet)result).results);
             helper.close();
         }
     }
@@ -332,7 +323,7 @@ public class LoginActivity
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof User){
             mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
-
+            mGetPlacesRC = HttpRequest.get(this, API.getUserPlacesUrl());
         }
         else if (result instanceof ParserModels.CategoryContentResultSet){
             mApplication.setPublicCategories(((ParserModels.CategoryContentResultSet)result).results);
@@ -341,11 +332,15 @@ public class LoginActivity
             }
             else{
                 Log.d("LogIn", "Fetching user data");
-                mGetDataRC = HttpRequest.get(this, API.getUserDataUrl(), 60*1000);
+                FeedDataLoader.load(this);
             }
         }
-        else if (result instanceof ParserModels.UserDataResultSet){
-            mApplication.setUserData(((ParserModels.UserDataResultSet)result).results.get(0));
+    }
+
+    @Override
+    public void onFeedDataLoaded(@Nullable FeedData feedData){
+        if (feedData != null){
+            mApplication.setFeedData(feedData);
             transitionToMain();
         }
     }

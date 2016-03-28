@@ -170,7 +170,7 @@ public class GoalActivity
         //Since we are moving serializables around, the object that actually changes is not the
         //  one we are referencing. The Goal with the new list of behaviors needs to be pulled
         //  from the application's list
-        mUserGoal = (UserGoal)mApplication.getUserData().getGoal(mUserGoal);
+        //mUserGoal = (UserGoal)mApplication.getUserData().getGoal(mUserGoal);
 
         //Set the adapter with the fresh goal
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)mTitle.getLayoutParams();
@@ -212,7 +212,7 @@ public class GoalActivity
         if (item.getItemId() == R.id.goal_remove){
             NetworkRequest.delete(this, null, API.getDeleteGoalUrl(mUserGoal),
                     mApplication.getToken(), new JSONObject());
-            mApplication.getUserData().removeGoal(mUserGoal);
+            //mApplication.getUserData().removeGoal(mUserGoal);
             setResult(RESULT_OK);
             finish();
             return true;
@@ -261,9 +261,9 @@ public class GoalActivity
 
     @Override
     public void onActionSelected(UserBehavior userBehavior, UserAction userAction){
-        Intent trigger = new Intent(this, TriggerActivity.class)
+        /*Intent trigger = new Intent(this, TriggerActivity.class)
                 .putExtra(TriggerActivity.ACTION_KEY, userAction)
                 .putExtra(TriggerActivity.GOAL_KEY, mUserGoal);
-        startActivityForResult(trigger, TRIGGER_REQUEST_CODE);
+        startActivityForResult(trigger, TRIGGER_REQUEST_CODE);*/
     }
 }

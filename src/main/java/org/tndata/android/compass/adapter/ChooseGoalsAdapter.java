@@ -64,6 +64,7 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
     protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
         HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
         holder.setTitle(mCategory.getTitle());
+        holder.setTitleBold();
         holder.setContent(mCategory.getDescription());
     }
 
@@ -118,7 +119,7 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
         @Override
         public GoalViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            View rootView = inflater.inflate(R.layout.item_library_goal, parent, false);
+            View rootView = inflater.inflate(R.layout.item_goal, parent, false);
             return new GoalViewHolder(rootView);
         }
 
@@ -151,10 +152,10 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
             super(rootView);
 
             //Fetch UI components
-            mSeparator = rootView.findViewById(R.id.library_goal_separator);
-            mIconContainer = (RelativeLayout)rootView.findViewById(R.id.library_goal_icon_container);
-            mIcon = (ImageView)rootView.findViewById(R.id.library_goal_icon);
-            mTitle = (TextView)rootView.findViewById(R.id.library_goal_title);
+            mSeparator = rootView.findViewById(R.id.goal_separator);
+            mIconContainer = (RelativeLayout)rootView.findViewById(R.id.goal_icon_container);
+            mIcon = (ImageView)rootView.findViewById(R.id.goal_icon);
+            mTitle = (TextView)rootView.findViewById(R.id.goal_title);
 
             rootView.setOnClickListener(this);
         }

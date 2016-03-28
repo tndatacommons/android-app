@@ -17,7 +17,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserGoal extends Goal implements Serializable, UserSelectedContent{
+public class UserGoal extends Goal implements Serializable{
     private static final long serialVersionUID = 7109406686231550671L;
 
     public static final String TYPE = "usergoal";
@@ -82,12 +82,10 @@ public class UserGoal extends Goal implements Serializable, UserSelectedContent{
         return mGoal.getTitle();
     }
 
-    @Override
     public String getDescription(){
         return mGoal.getDescription();
     }
 
-    @Override
     public String getHTMLDescription(){
         return mGoal.getHTMLDescription();
     }

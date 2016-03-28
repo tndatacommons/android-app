@@ -18,7 +18,7 @@ import org.tndata.android.compass.R;
  * @version 1.0.0
  */
 public class SnoozeAdapter extends BaseAdapter{
-    private static final int OPTION_NUMBER = 4;
+    private static final int OPTION_NUMBER = 5;
 
     public Context mContext;
 
@@ -66,6 +66,9 @@ public class SnoozeAdapter extends BaseAdapter{
         }
         else if (position == 3){
             title.setText(R.string.later_pick_place);
+        }
+        else if (position == 4){
+            title.setText(R.string.later_someday);
         }
 
         return convertView;

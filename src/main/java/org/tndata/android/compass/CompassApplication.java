@@ -11,17 +11,15 @@ import com.crashlytics.android.Crashlytics;
 
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.User;
-import org.tndata.android.compass.model.UserAction;
-import org.tndata.android.compass.model.UserBehavior;
-import org.tndata.android.compass.model.UserCategory;
-import org.tndata.android.compass.model.UserData;
-import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.ImageLoader;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,16 +27,28 @@ import es.sandwatch.httprequests.HttpRequest;
 import io.fabric.sdk.android.Fabric;
 
 
-//TODO Fix this mess.
+/**
+ * Application class. Contains some utility methods and global data (user info and feed data).
+ *
+ * @author Ismael Alonso.
+ * @version 2.0.0
+ */
 public class CompassApplication extends Application{
     private static final String TAG = "CompassApplication";
 
+    //The logged-in user
+    private User mUser;
+    //The list of public categories
+    private Map<Long, CategoryContent> mPublicCategories;
+    //The feed data bundle
+    private FeedData mFeedData;
 
-    private User mUser; // The logged-in user
-    private UserData mUserData = new UserData(); // The user's selected content.
-    private List<CategoryContent> mPublicCategories;
 
-
+    /**
+     * Token getter.
+     *
+     * @return the user token if one is set, otherwise an empty string.
+     */
     public String getToken(){
         if (mUser != null && mUser.getToken() != null && !mUser.getToken().isEmpty()){
             return mUser.getToken();
@@ -46,23 +56,35 @@ public class CompassApplication extends Application{
         return PreferenceManager.getDefaultSharedPreferences(this).getString("auth_token", "");
     }
 
+    /**
+     * GCM registration id getter.
+     *
+     * @return the GCM registration id ifone is available, an empty string otherwise.
+     */
     public String getGcmRegistrationId(){
         return getSharedPreferences(GcmRegistration.class.getSimpleName(), Context.MODE_PRIVATE)
                 .getString(GcmRegistration.PROPERTY_REG_ID, "");
     }
 
+    /**
+     * User log in info getter.
+     *
+     * @return a {@code User} object with email and password fields set. If no login information is
+     *         available, these fields will be empty strings.
+     */
     public User getUserLoginInfo(){
         SharedPreferences loginInfo = PreferenceManager.getDefaultSharedPreferences(this);
         return new User(loginInfo.getString("email", ""), loginInfo.getString("password", ""));
     }
 
-    public User getUser(){
-        return mUser;
-    }
-
+    /**
+     * User setter.
+     *
+     * @param user the user who logged in.
+     * @param setPreferences true to overwrite shared preferences.
+     */
     public void setUser(User user, boolean setPreferences){
         Log.d(TAG, "Setting user: " + user);
-        Log.d(TAG, "Set preferences: " + setPreferences);
         mUser = user;
 
         //Add the authorization header with the user's token to the requests library
@@ -81,80 +103,137 @@ public class CompassApplication extends Application{
         }
     }
 
-    public UserData getUserData() {
-        return mUserData;
+    /**
+     * User getter.
+     *
+     * @return the currently logged in user.
+     */
+    public User getUser(){
+        return mUser;
     }
 
-    public void setUserData(UserData userData) {
-        mUserData = userData;
+    /**
+     * Public category setter. The data is kept internally as a Long->CategoryContent HashMap.
+     *
+     * @param categories the list of public categories.
+     */
+    public void setPublicCategories(List<CategoryContent> categories){
+        mPublicCategories = new HashMap<>();
+        for (CategoryContent category:categories){
+            mPublicCategories.put(category.getId(), category);
+        }
     }
 
-    public void setPublicCategories(List<CategoryContent> publicCategories){
-        mPublicCategories = publicCategories;
-    }
-
-    public List<CategoryContent> getPublicCategories(){
+    /**
+     * Public category getter.
+     *
+     * @return A Long->CategoryContent HashMap.
+     */
+    public Map<Long, CategoryContent> getPublicCategories(){
         return mPublicCategories;
     }
 
-    // -------------------------------------------------------------------
-    // The following methods are wrappers around UserData methods; All
-    // of this info used to be stored directly in the CompassApplication
-    // class, so I've left these here for backwards compatibility.
-    // -------------------------------------------------------------------
-    public Map<Long, UserCategory> getCategories() {
-        return mUserData.getCategories();
+    /**
+     * Public category list getter.
+     *
+     * @return the unordered list of public categories.
+     */
+    public List<CategoryContent> getPublicCategoryList(){
+        return new ArrayList<>(mPublicCategories.values());
     }
 
-    public void addCategory(UserCategory category) {
-        mUserData.addCategory(category);
+    /**
+     * Feed data setter.
+     *
+     * @param feedData the user's feed data bundle.
+     */
+    public void setFeedData(FeedData feedData){
+        mFeedData = feedData;
     }
 
-    public List<UserGoal> getCategoryGoals(CategoryContent category) {
-        return mUserData.getCategoryGoals(category);
+    /**
+     * Feed data getter.
+     *
+     * @return the user's feed data bundle.
+     */
+    public FeedData getFeedData(){
+        return mFeedData;
     }
 
-    public Map<Long, UserGoal> getGoals() {
-        return mUserData.getGoals();
+
+    /*---------------------------------------------------------------------------*
+     * These methods wrap add, update, and remove methods in the FeedData class. *
+     *---------------------------------------------------------------------------*/
+
+    /**
+     * Adds a goal to the global FeedData bundle.
+     *
+     * @param goal the goal to be added.
+     */
+    public void addGoal(Goal goal){
+        mFeedData.addGoal(goal);
     }
 
-    public void addGoal(UserGoal goal) {
-        mUserData.addGoal(goal);
-        mUserData.logSelectedData("AFTER CompassApplication.addGoal", false);
+    /**
+     * Updates a goal in the global FeedData bundle.
+     *
+     * @param goal the goal to be updated.
+     */
+    public void updateGoal(Goal goal){
+        mFeedData.updateGoal(goal);
     }
 
-    public void removeGoal(Goal goal) {
-        mUserData.removeGoal(goal);
-        mUserData.logSelectedData("AFTER CompassApplication.removeGoal", false);
+    /**
+     * Removes a goal from the global FeedData bundle.
+     *
+     * @param goal the goal to be removed.
+     */
+    public void removeGoal(Goal goal){
+        mFeedData.removeGoal(goal);
     }
 
-    public Map<Long, UserBehavior> getBehaviors() {
-        return mUserData.getBehaviors();
+    /**
+     * Adds an action to the global FeedData bundle.
+     *
+     * @param goal the parent goal of the action.
+     * @param action the action to be added.
+     */
+    public void addAction(Goal goal, Action action){
+        mFeedData.addAction(goal, action);
     }
 
-    public void removeBehavior(UserBehavior behavior) {
-        mUserData.removeBehavior(behavior);
-        mUserData.logSelectedData("AFTER CompassApplication.removeBehavior: ", false);
+    /**
+     * Updates an action in the global FeedData bundle.
+     *
+     * @param goal the parent goal of the action.
+     * @param action the action to be added.
+     */
+    public void updateAction(Goal goal, Action action){
+        mFeedData.updateAction(goal, action);
     }
 
-    public void addBehavior(UserBehavior behavior) {
-        mUserData.addBehavior(behavior);
-        mUserData.logSelectedData("AFTER CompassApplication.addBehavior", false);
+    /**
+     * Updates an action in the global FeedData bundle.
+     *
+     * @param action the acton to be added.
+     */
+    public void updateAction(Action action){
+        mFeedData.updateAction(action);
     }
 
-    public Map<Long, UserAction> getActions() {
-        return mUserData.getActions();
+    /**
+     * Removes an action from the global FeedData bundle.
+     *
+     * @param action the action to be removed.
+     */
+    public void removeAction(Action action){
+        mFeedData.removeAction(action);
     }
 
-    public void removeAction(Action action) {
-        mUserData.removeAction(action);
-        mUserData.logSelectedData("AFTER CompassApplication.removeAction: ", false);
-    }
 
-    public void addAction(UserAction action) {
-        mUserData.addAction(action);
-        mUserData.logSelectedData("AFTER CompassApplication.addAction", false);
-    }
+    /*----------------------------------*
+     * Application's onCreate() method. *
+     *----------------------------------*/
 
     @Override
     public void onCreate(){
@@ -168,12 +247,13 @@ public class CompassApplication extends Application{
         //Add or remove the authorization header with the user's token
         String token = getToken();
         if (token != null && !token.isEmpty()){
+            Log.d(TAG, "(Init) Setting auth header: " + getToken());
             HttpRequest.addHeader("Authorization", "Token " + getToken());
         }
         else{
             HttpRequest.removeHeader("Authorization");
         }
-        //Add a constant url parameter vir API versioning
+        //Add a constant url parameter for API versioning
         HttpRequest.addUrlParameter("version", "2");
 
         startService(new Intent(this, LocationNotificationService.class));

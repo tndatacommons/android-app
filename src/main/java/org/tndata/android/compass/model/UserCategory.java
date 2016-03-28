@@ -13,7 +13,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserCategory extends UserContent implements Serializable, UserSelectedContent{
+public class UserCategory extends UserContent implements Serializable{
     private static final long serialVersionUID = 1751646542285854670L;
 
     public static final String TYPE = "usercategory";
@@ -53,22 +53,18 @@ public class UserCategory extends UserContent implements Serializable, UserSelec
         return mCategory.getId();
     }
 
-    @Override
     public String getTitle(){
         return mCategory.getTitle();
     }
 
-    @Override
     public String getDescription(){
         return mCategory.getDescription();
     }
 
-    @Override
     public String getHTMLDescription(){
         return mCategory.getHTMLDescription();
     }
 
-    @Override
     public String getIconUrl(){
         return mCategory.getIconUrl();
     }

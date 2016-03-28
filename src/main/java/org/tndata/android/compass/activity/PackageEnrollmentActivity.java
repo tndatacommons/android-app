@@ -14,15 +14,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.TDCPackage;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassTagHandler;
-import org.tndata.android.compass.util.NetworkRequest;
 import org.tndata.android.compass.util.NotificationUtil;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -36,16 +37,13 @@ public class PackageEnrollmentActivity
         extends AppCompatActivity
         implements
                 View.OnClickListener,
-                NetworkRequest.RequestCallback,
+                HttpRequest.RequestCallback,
                 Parser.ParserCallback{
 
     //Keys
     public static final String PACKAGE_ID_KEY = "org.tndata.compass.PackageId";
 
     private TDCPackage mPackage;
-
-    //A reference to the application class
-    private CompassApplication mApplication;
 
     //UI components
     private ProgressBar mProgressBar;
@@ -65,8 +63,6 @@ public class PackageEnrollmentActivity
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_package_enrollment);
-
-        mApplication = (CompassApplication)getApplication();
 
         //Get and set the toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.package_toolbar);
@@ -88,8 +84,7 @@ public class PackageEnrollmentActivity
 
         //Fetch the package
         int packageId = getIntent().getIntExtra(PACKAGE_ID_KEY, -1);
-        mGetPackageRequestCode = NetworkRequest.get(this, this, API.getPackageUrl(packageId),
-                mApplication.getToken());
+        mGetPackageRequestCode = HttpRequest.get(this, API.getPackageUrl(packageId));
     }
 
     @Override
@@ -106,7 +101,7 @@ public class PackageEnrollmentActivity
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
+    public void onRequestFailed(int requestCode, HttpRequestError error){
         if (requestCode == mGetPackageRequestCode){
             mProgressBar.setVisibility(View.GONE);
             Toast.makeText(this, R.string.package_load_error, Toast.LENGTH_SHORT).show();
@@ -167,8 +162,8 @@ public class PackageEnrollmentActivity
             case R.id.package_accept:
                 //Show the progress bar and fire up the acknowledgement task
                 mAcceptSwitcher.showNext();
-                mPutConsentRequestCode = NetworkRequest.put(this, this,
-                        API.getPutConsentAcknowledgementUrl(mPackage), mApplication.getToken(),
+                mPutConsentRequestCode = HttpRequest.put(this,
+                        API.getPutConsentAcknowledgementUrl(mPackage),
                         API.getPutConsentAcknowledgementBody());
                 break;
         }

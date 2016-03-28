@@ -73,7 +73,7 @@ public final class NotificationUtil{
         boolean light = preferences.getBoolean(NotificationSettingsFragment.LIGHT_KEY, true);
 
         NotificationCompat.Builder builder =  new NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.ic_action_compass_white)
+                .setSmallIcon(R.drawable.ic_compass_notification_white_24dp)
                 .setLargeIcon(icon)
                 .setContentTitle(title)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
@@ -126,16 +126,6 @@ public final class NotificationUtil{
         PendingIntent dismissedPendingIntent = PendingIntent.getService(context,
                 (int)System.currentTimeMillis(), dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        //Did it intent; what happens when the user taps the "yes" action
-        Intent didItIntent = new Intent(context, ActionReportService.class)
-                .putExtra(REMINDER_KEY, reminder)
-                .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED);
-
-        PendingIntent didItPendingIntent = PendingIntent.getService(context,
-                (int)System.currentTimeMillis(), didItIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        String didIt = context.getString(R.string.action_notification_yes);
-
         //Snooze intent; what happens when the user taps the "later" action
         Intent snoozeIntent = new Intent(context, SnoozeActivity.class)
                 .putExtra(REMINDER_KEY, reminder);
@@ -148,7 +138,6 @@ public final class NotificationUtil{
         //Generate the notification and push it
         Notification notification = getBuilder(context, title, message)
                 .addAction(R.drawable.ic_snooze, later, snoozePendingIntent)
-                .addAction(R.drawable.ic_thumb_up_white, didIt, didItPendingIntent)
                 .setContentIntent(contentIntent)
                 .setDeleteIntent(dismissedPendingIntent)
                 .setAutoCancel(false)

@@ -68,6 +68,8 @@ public class ChooseBehaviorsActivity
     private BehaviorContent mSelectedBehavior;
     private ChooseBehaviorsAdapter mAdapter;
 
+    private UserGoal mAddedGoal;
+    private UserBehavior mAddedBehavior;
     private AlertDialog mShareDialog;
 
     //Network request codes and urls
@@ -183,11 +185,9 @@ public class ChooseBehaviorsActivity
     }
 
     private void showActivities(){
-        UserBehavior userBehavior = mApplication.getUserData().getBehavior(mSelectedBehavior);
-        UserGoal userGoal = mApplication.getUserData().getGoal(mGoal);
         startActivity(new Intent(this, ReviewActionsActivity.class)
-                .putExtra(ReviewActionsActivity.USER_GOAL_KEY, userGoal)
-                .putExtra(ReviewActionsActivity.USER_BEHAVIOR_KEY, userBehavior));
+                .putExtra(ReviewActionsActivity.USER_GOAL_KEY, mAddedGoal)
+                .putExtra(ReviewActionsActivity.USER_BEHAVIOR_KEY, mAddedBehavior));
     }
 
     private void dismiss(){
@@ -231,12 +231,11 @@ public class ChooseBehaviorsActivity
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
         if (result instanceof UserBehavior){
-            UserBehavior userBehavior = (UserBehavior)result;
-            Log.d(TAG, "(Post) " + userBehavior.toString());
+            mAddedBehavior = (UserBehavior)result;
+            mAddedGoal = mAddedBehavior.getParentUserGoal();
+            Log.d(TAG, "(Post) " + mAddedBehavior.toString());
 
-            mApplication.getUserData().addCategory(userBehavior.getParentUserCategory());
-            mApplication.getUserData().addGoal(userBehavior.getParentUserGoal());
-            mApplication.getUserData().addBehavior(userBehavior);
+            mApplication.addGoal(mAddedGoal);
         }
     }
 

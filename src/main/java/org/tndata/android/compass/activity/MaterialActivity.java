@@ -2,6 +2,7 @@ package org.tndata.android.compass.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,8 +12,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+
+import com.github.clans.fab.FloatingActionButton;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.MaterialAdapter;
@@ -29,15 +33,16 @@ import org.tndata.android.compass.util.ParallaxEffect;
 public abstract class MaterialActivity extends AppCompatActivity{
     private FrameLayout mHeaderContainer;
     private RecyclerView mRecyclerView;
+    private FloatingActionButton mFAB;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_material);
+        super.setContentView(R.layout.activity_material);
 
         //Set up the toolbar
-        Toolbar toolbar = (Toolbar)findViewById(R.id.library_toolbar);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.material_toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_back_white_24dp);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
@@ -46,9 +51,9 @@ public abstract class MaterialActivity extends AppCompatActivity{
         }
 
         //Fetch UI components
-        mHeaderContainer = (FrameLayout)findViewById(R.id.library_header_container);
-        mRecyclerView = (RecyclerView)findViewById(R.id.library_list);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mHeaderContainer = (FrameLayout)findViewById(R.id.material_header_container);
+        mRecyclerView = (RecyclerView)findViewById(R.id.material_list);
+        mFAB = (FloatingActionButton)findViewById(R.id.material_fab);
 
         //Make the header the right size
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)mHeaderContainer.getLayoutParams();
@@ -56,6 +61,7 @@ public abstract class MaterialActivity extends AppCompatActivity{
         mHeaderContainer.setLayoutParams(params);
 
         //Add the parallax effect to the header
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.addOnScrollListener(new ParallaxEffect(mHeaderContainer, 0.5f));
 
         //Add the toolbar effect
@@ -74,6 +80,23 @@ public abstract class MaterialActivity extends AppCompatActivity{
             }
         });
         mRecyclerView.addOnScrollListener(toolbarEffect);
+    }
+
+    @Override
+    public void setContentView(@LayoutRes int layoutResID){
+        /* no-op */
+        //This and the two following methods are overriden and empty to prevent
+        //  the programmer from changing the default layout of this activity
+    }
+
+    @Override
+    public void setContentView(View view){
+        /* no-op */
+    }
+
+    @Override
+    public void setContentView(View view, ViewGroup.LayoutParams params){
+        /* no-op */
     }
 
     @Override
@@ -107,6 +130,8 @@ public abstract class MaterialActivity extends AppCompatActivity{
 
     protected final void setColor(int color){
         mHeaderContainer.setBackgroundColor(color);
+        mFAB.setColorNormal(color);
+        mFAB.setColorPressed(color);
     }
 
     protected final void setAdapter(MaterialAdapter adapter){
@@ -115,5 +140,11 @@ public abstract class MaterialActivity extends AppCompatActivity{
 
     protected final View inflateHeader(@LayoutRes int layoutResId){
         return LayoutInflater.from(this).inflate(layoutResId, mHeaderContainer);
+    }
+
+    protected final void setFAB(@IdRes int id, View.OnClickListener listener){
+        mFAB.setId(id);
+        mFAB.setOnClickListener(listener);
+        mFAB.setVisibility(View.VISIBLE);
     }
 }

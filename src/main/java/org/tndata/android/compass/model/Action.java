@@ -1,12 +1,10 @@
 package org.tndata.android.compass.model;
 
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.tndata.android.compass.ui.ContentContainer;
-
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -17,12 +15,7 @@ import java.util.Date;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public abstract class Action
-        extends UserContent
-        implements Serializable, ContentContainer.ContainerAction, Comparable<Action>{
-    private static final long serialVersionUID = 2919447142568751923L;
-
-
+public abstract class Action extends UserContent implements Parcelable, Comparable<Action>{
     @SerializedName("trigger")
     private Trigger mTrigger;
     @SerializedName("next_reminder")
@@ -41,9 +34,8 @@ public abstract class Action
         return mTrigger != null;
     }
 
-    @Override
     public boolean isTriggerEnabled(){
-        return !mTrigger.isDisabled();
+        return mTrigger.isEnabled();
     }
 
     public void setNextReminder(String nextReminder){

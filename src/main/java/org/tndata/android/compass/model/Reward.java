@@ -1,6 +1,13 @@
 package org.tndata.android.compass.model;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.text.Layout;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.AlignmentSpan;
+
+import com.google.gson.annotations.SerializedName;
 
 
 /**
@@ -9,53 +16,104 @@ import java.io.Serializable;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class Reward implements Serializable{
-    static final long serialVersionUID = 96156188439L;
-
+public class Reward implements Parcelable{
     private static final String QUOTE = "quote";
     private static final String FORTUNE = "fortune";
     private static final String FACT = "fact";
     private static final String JOKE = "joke";
 
 
-    private int id;
-    private String message_type;
-    private String message;
-    private String author;
+    @SerializedName("id")
+    private long mId;
+    @SerializedName("message_type")
+    private String mMessageType;
+    @SerializedName("message")
+    private String mMessage;
+    @SerializedName("author")
+    private String mAuthor;
 
 
-    public Reward(int id, String message_type, String message, String author){
-        this.id = id;
-        this.message_type = message_type;
-        this.message = message;
-        this.author = author;
+    public Reward(long id, String messageType, String message, String author){
+        mId = id;
+        mMessageType = messageType;
+        mMessage = message;
+        mAuthor = author;
     }
 
-    public int getId(){
-        return id;
+    public long getId(){
+        return mId;
     }
 
     public String getMessage(){
-        return message;
+        return mMessage;
     }
 
     public String getAuthor(){
-        return author;
+        return mAuthor;
     }
 
     public boolean isQuote(){
-        return message_type.equals(QUOTE);
+        return mMessageType.equals(QUOTE);
     }
 
     public boolean isFortune(){
-        return message_type.equals(FORTUNE);
+        return mMessageType.equals(FORTUNE);
     }
 
     public boolean isFunFact(){
-        return message_type.equals(FACT);
+        return mMessageType.equals(FACT);
     }
 
     public boolean isJoke(){
-        return message_type.equals(JOKE);
+        return mMessageType.equals(JOKE);
+    }
+
+    public SpannableString format(){
+        SpannableString string;
+        if (isQuote()){
+            string = new SpannableString(mMessage + "\n—" + mAuthor);
+            int start = string.length()-mAuthor.length()-1;
+            int end  = string.length();
+            string.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_OPPOSITE), start, end,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        else{
+            string = new SpannableString(mMessage);
+        }
+        return string;
+    }
+
+    @Override
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags){
+        dest.writeLong(mId);
+        dest.writeString(mMessageType);
+        dest.writeString(mMessage);
+        dest.writeString(mAuthor);
+    }
+
+    public static final Parcelable.Creator<Reward> CREATOR = new Parcelable.Creator<Reward>(){
+        @Override
+        public Reward createFromParcel(Parcel in){
+            return new Reward(in);
+        }
+
+        @Override
+        public Reward[] newArray(int size){
+            return new Reward[size];
+        }
+    };
+
+    /**
+     * Constructor to create from parcel.
+     *
+     * @param in the parcel where the object is stored.
+     */
+    private Reward(Parcel in){
+        this(in.readLong(), in.readString(), in.readString(), in.readString());
     }
 }

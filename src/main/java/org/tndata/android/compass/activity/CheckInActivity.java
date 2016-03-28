@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.CheckInPagerAdapter;
 import org.tndata.android.compass.fragment.CheckInFeedbackFragment;
@@ -19,10 +18,11 @@ import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.List;
 
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 import me.relex.circleindicator.CircleIndicator;
 
 
@@ -35,7 +35,7 @@ import me.relex.circleindicator.CircleIndicator;
 public class CheckInActivity
         extends AppCompatActivity
         implements
-                NetworkRequest.RequestCallback,
+                HttpRequest.RequestCallback,
                 Parser.ParserCallback,
                 CheckInRewardFragment.CheckInRewardListener,
                 CheckInFeedbackFragment.CheckInFeedbackListener{
@@ -45,8 +45,6 @@ public class CheckInActivity
     //Magic numbers!! This is the total amount of requests performed by this activity
     public static final int REQUEST_COUNT = 3;
 
-
-    private CompassApplication mApplication;
 
     //UI components
     private ProgressBar mLoading;
@@ -73,8 +71,6 @@ public class CheckInActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_in);
 
-        mApplication = (CompassApplication)getApplication();
-
         mLoading = (ProgressBar)findViewById(R.id.check_in_loading);
         mContent = findViewById(R.id.check_in_content);
         mPager = (ViewPager)findViewById(R.id.check_in_pager);
@@ -82,18 +78,16 @@ public class CheckInActivity
 
         //API requests
         mCompletedRequests = 0;
-        mGetGoalsRequestCode = NetworkRequest.get(this, this, API.getTodaysGoalsUrl(),
-                mApplication.getToken());
-        mGetRewardRequestCode = NetworkRequest.get(this, this, API.getRandomRewardUrl(), "");
-        mGetProgressRequestCode = NetworkRequest.get(this, this, API.getUserProgressUrl(),
-                mApplication.getToken());
+        mGetGoalsRequestCode = HttpRequest.get(this, API.getTodaysGoalsUrl());
+        mGetRewardRequestCode = HttpRequest.get(this, API.getRandomRewardUrl());
+        mGetProgressRequestCode = HttpRequest.get(this, API.getUserProgressUrl());
     }
 
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetGoalsRequestCode){
             Log.d(TAG, "Goals fetched");
-            Parser.parse(result, ParserModels.UserGoalResultSet.class, this);
+            Parser.parse(result, ParserModels.UserGoalsResultSet.class, this);
         }
         else if (requestCode == mGetRewardRequestCode){
             Log.d(TAG, "Reward fetched");
@@ -106,15 +100,15 @@ public class CheckInActivity
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
+    public void onRequestFailed(int requestCode, HttpRequestError error){
         Log.d(TAG, "Request " + requestCode + " failed");
         finish();
     }
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.UserGoalResultSet){
-            mGoals = ((ParserModels.UserGoalResultSet)result).results;
+        if (result instanceof ParserModels.UserGoalsResultSet){
+            mGoals = ((ParserModels.UserGoalsResultSet)result).results;
             mCurrentProgress = new int[mGoals.size()];
         }
         else if (result instanceof ParserModels.RewardResultSet){
@@ -147,13 +141,8 @@ public class CheckInActivity
     }
 
     @Override
-    public void onReviewClick(){
-        if (mApplication.getUserData() != null){
-            startActivity(new Intent(this, MainActivity.class));
-        }
-        else{
-            startActivity(new Intent(this, LoginActivity.class));
-        }
+    public void onHomeClick(){
+        startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
 
