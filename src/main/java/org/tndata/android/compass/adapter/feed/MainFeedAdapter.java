@@ -76,7 +76,7 @@ public class MainFeedAdapter
                            boolean initialSuggestion){
         mContext = context;
         mListener = listener;
-        mFeedData = ((CompassApplication)mContext.getApplicationContext()).getFeedDataX();
+        mFeedData = ((CompassApplication)mContext.getApplicationContext()).getFeedData();
 
         if (mFeedData == null){
             mListener.onNullData();

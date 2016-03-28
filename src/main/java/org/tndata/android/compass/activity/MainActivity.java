@@ -513,7 +513,7 @@ public class MainActivity
             else if (requestCode == ACTION_REQUEST_CODE){
                 if (data.getBooleanExtra(ActionActivity.DID_IT_KEY, false)){
                     Action action = data.getParcelableExtra(ActionActivity.ACTION_KEY);
-                    mAdapter.didIt(mApplication.getFeedDataX().getActionX(action));
+                    mAdapter.didIt(mApplication.getFeedData().getActionX(action));
                     mAdapter.updateUpcoming();
                 }
                 else{
@@ -538,7 +538,7 @@ public class MainActivity
     @Override
     public void onFeedDataLoaded(@Nullable FeedData feedData){
         if (feedData != null){
-            mApplication.setFeedDataX(feedData);
+            mApplication.setFeedData(feedData);
 
             mAdapter = new MainFeedAdapter(this, this, !mSuggestionDismissed);
             mFeed.setAdapter(mAdapter);

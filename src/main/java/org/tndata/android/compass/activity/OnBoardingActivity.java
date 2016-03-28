@@ -144,7 +144,7 @@ public class OnBoardingActivity
     @Override
     public void onFeedDataLoaded(@Nullable FeedData feedData){
         if (feedData != null){
-            mApplication.setFeedDataX(feedData);
+            mApplication.setFeedData(feedData);
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
         }
