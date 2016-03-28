@@ -15,13 +15,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserBehavior
-        extends UserContent
-        implements
-                Serializable,
-                ParserModels.ResultSet,
-                UserSelectedContent{
-
+public class UserBehavior extends UserContent implements Serializable, ParserModels.ResultSet{
     private static final long serialVersionUID = 774798265423822842L;
 
     public static final String TYPE = "userbehavior";
@@ -78,22 +72,18 @@ public class UserBehavior
         return mBehavior.getId();
     }
 
-    @Override
     public String getTitle(){
         return mBehavior.getTitle();
     }
 
-    @Override
     public String getDescription(){
         return mBehavior.getDescription();
     }
 
-    @Override
     public String getHTMLDescription(){
         return mBehavior.getHTMLDescription();
     }
 
-    @Override
     public String getIconUrl(){
         return mBehavior.getIconUrl();
     }

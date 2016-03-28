@@ -14,7 +14,7 @@ import org.tndata.android.compass.parser.ParserModels;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserAction extends Action implements ParserModels.ResultSet, UserSelectedContent{
+public class UserAction extends Action implements ParserModels.ResultSet{
     public static final String TYPE = "useraction";
 
 
@@ -87,12 +87,10 @@ public class UserAction extends Action implements ParserModels.ResultSet, UserSe
         return mPrimaryGoal.getTitle();
     }
 
-    @Override
     public String getDescription(){
         return mAction.getDescription();
     }
 
-    @Override
     public String getHTMLDescription(){
         return mAction.getHTMLDescription();
     }
@@ -113,7 +111,6 @@ public class UserAction extends Action implements ParserModels.ResultSet, UserSe
         return mAction.getExternalResourceName();
     }
 
-    @Override
     public String getIconUrl(){
         return mAction.getIconUrl();
     }
