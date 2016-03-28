@@ -31,7 +31,7 @@ import es.sandwatch.httprequests.HttpRequestError;
  * Adapter for the main feed.
  *
  * @author Ismael Alonso
- * @version 2.0.0
+ * @version 2.1.0
  */
 public class MainFeedAdapter
         extends RecyclerView.Adapter
@@ -269,15 +269,26 @@ public class MainFeedAdapter
      * FEED ADAPTER METHODS *
      *----------------------*/
 
+    /**
+     * Gets the position of the goals card.
+     *
+     * @return the index of the goals card.
+     */
     public int getGoalsPosition(){
         return CardTypes.getGoalsPosition();
     }
 
+    /**
+     * Updates the data set (up next, upcoming, and my goals).
+     */
     public void updateDataSet(){
         updateUpcoming();
         updateMyGoals();
     }
 
+    /**
+     * Updates upcoming and up next.
+     */
     public void updateUpcoming(){
         notifyItemChanged(CardTypes.getUpNextPosition());
         if (mUpcomingHolder != null){
@@ -285,6 +296,9 @@ public class MainFeedAdapter
         }
     }
 
+    /**
+     * Updates my goals.
+     */
     public void updateMyGoals(){
         if (mMyGoalsHolder != null){
             mMyGoalsHolder.updateGoals();
@@ -298,10 +312,7 @@ public class MainFeedAdapter
      *------------------------*/
 
     /**
-     * Marks an action as done in every possible way. This is done in three steps:
-     * (1) mark the action as complete within the model and the webapp through an
-     * api request, (2) update the data set, and (3) update the adapter to reflect
-     * the changes in the data set.
+     * Marks an action as done in he data set.
      *
      * @param action the action to be marked as done.
      */
@@ -314,16 +325,27 @@ public class MainFeedAdapter
      * GOAL RELATED METHODS *
      *----------------------*/
 
+    /**
+     * Shows the suggestion card popup menu.
+     *
+     * @param anchor the anchor view.
+     */
     void showSuggestionPopup(View anchor){
         mFeedUtil.showSuggestionPopup(anchor);
     }
 
+    /**
+     * Refreshes the suggestion card.
+     */
     void refreshSuggestion(){
         List<GoalContent> suggestions = mFeedData.getSuggestions();
         mSuggestion = suggestions.get((int)(Math.random()*suggestions.size()));
         notifyItemChanged(CardTypes.getSuggestionPosition());
     }
 
+    /**
+     * Dismisses the suggestion card.
+     */
     public void dismissSuggestion(){
         CardTypes.displaySuggestion(false);
         notifyItemRemoved(CardTypes.getSuggestionPosition());
@@ -331,6 +353,9 @@ public class MainFeedAdapter
         mListener.onSuggestionDismissed();
     }
 
+    /**
+     * Opens up a view to display the suggestion in the suggestion card.
+     */
     void viewSuggestion(){
         mListener.onSuggestionSelected(mSuggestion);
     }
