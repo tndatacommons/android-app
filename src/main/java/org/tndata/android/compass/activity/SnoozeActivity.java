@@ -69,7 +69,7 @@ public class SnoozeActivity
         setContentView(R.layout.activity_snooze);
         setTitle(R.string.later_title);
 
-        mReminder = (Reminder)getIntent().getSerializableExtra(NotificationUtil.REMINDER_KEY);
+        mReminder = getIntent().getParcelableExtra(NotificationUtil.REMINDER_KEY);
 
         ListView list = (ListView)findViewById(R.id.snooze_list);
         list.setAdapter(new SnoozeAdapter(this));

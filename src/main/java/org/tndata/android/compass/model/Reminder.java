@@ -1,6 +1,7 @@
 package org.tndata.android.compass.model;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 
 /**
@@ -10,10 +11,7 @@ import java.io.Serializable;
  * @author Ismael Alonso
  * @version 1.1.0
  */
-public class Reminder implements Serializable{
-    static final long serialVersionUID = 94124918239L;
-
-
+public class Reminder implements Parcelable{
     private int mId;
     private int mNotificationId;
     private int mPlaceId;
@@ -163,11 +161,68 @@ public class Reminder implements Serializable{
         return mLastDelivered;
     }
 
+    /**
+     * Tells whether the reminder is that of a UserAction
+     *
+     * @return true if this reminder is that of a UserAction, false otherwise.
+     */
     public boolean isUserAction(){
         return mUserMappingId != -1;
     }
 
+    /**
+     * Tells whether the reminder is that of a CustomAction
+     *
+     * @return true if this reminder is that of a CustomAction, false otherwise.
+     */
     public boolean isCustomAction(){
         return mUserMappingId == -1;
+    }
+
+    @Override
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags){
+        dest.writeInt(mId);
+        dest.writeInt(mNotificationId);
+        dest.writeInt(mPlaceId);
+        dest.writeString(mTitle);
+        dest.writeString(mMessage);
+        dest.writeInt(mObjectId);
+        dest.writeInt(mUserMappingId);
+        dest.writeByte((byte)(mSnoozed ? 1 : 0));
+        dest.writeLong(mLastDelivered);
+    }
+
+    public static final Parcelable.Creator<Reminder> CREATOR = new Parcelable.Creator<Reminder>(){
+        @Override
+        public Reminder createFromParcel(Parcel in){
+            return new Reminder(in);
+        }
+
+        @Override
+        public Reminder[] newArray(int size){
+            return new Reminder[size];
+        }
+    };
+
+    /**
+     * Constructor to create from parcel.
+     *
+     * @param in the parcel where the object is stored.
+     */
+    private Reminder(Parcel in){
+        mId = in.readInt();
+        mNotificationId = in.readInt();
+        mPlaceId = in.readInt();
+        mTitle = in.readString();
+        mMessage = in.readString();
+        mObjectId = in.readInt();
+        mUserMappingId = in.readInt();
+        mSnoozed = in.readByte() == 1;
+        mLastDelivered = in.readLong();
     }
 }
