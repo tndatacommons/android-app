@@ -85,7 +85,7 @@ class UpcomingHolder extends MainFeedViewHolder implements View.OnClickListener{
      * @param feedData a reference to the feed data. bundle.
      */
     void updateActions(@NonNull FeedData feedData){
-        mActions = feedData.getUpcomingList(mActions.size());
+        mActions = feedData.getUpcomingActionsSubList(mActions.size());
         mUpcomingAdapter.notifyDataSetChanged();
         mList.requestLayout();
     }

@@ -88,7 +88,7 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
                     mGetUserGoalsRC = HttpRequest.get(this, url);
                 }
                 else{
-                    mFeedData.addGoalsX(set.results, url);
+                    mFeedData.addGoals(set.results, url);
                     sLoader = null;
                     mCallback.onFeedDataLoaded(mFeedData);
                 }
@@ -97,7 +97,7 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
                 if (API.STAGING && url.startsWith("https")){
                     url = url.replaceFirst("s", "");
                 }
-                mFeedData.addGoalsX(set.results, url);
+                mFeedData.addGoals(set.results, url);
                 sLoader = null;
                 mCallback.onFeedDataLoaded(mFeedData);
             }
@@ -108,7 +108,7 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
             if (url != null){
                 url = url.replaceFirst("s", "");
             }
-            mFeedData.addGoalsX(set.results, url);
+            mFeedData.addGoals(set.results, url);
             sLoader = null;
             mCallback.onFeedDataLoaded(mFeedData);
         }

@@ -513,7 +513,7 @@ public class MainActivity
             else if (requestCode == ACTION_REQUEST_CODE){
                 if (data.getBooleanExtra(ActionActivity.DID_IT_KEY, false)){
                     Action action = data.getParcelableExtra(ActionActivity.ACTION_KEY);
-                    mAdapter.didIt(mApplication.getFeedData().getActionX(action));
+                    mAdapter.didIt(mApplication.getFeedData().getAction(action));
                     mAdapter.updateUpcoming();
                 }
                 else{

@@ -223,7 +223,7 @@ public class MainFeedAdapter
         }
         //Up next
         else if (CardTypes.isUpNext(position)){
-            ((UpNextHolder)rawHolder).bind(mFeedData.getUpNextActionX(), mFeedData.getProgress());
+            ((UpNextHolder)rawHolder).bind(mFeedData.getUpNextAction(), mFeedData.getProgress());
         }
         //Feedback
         else if (CardTypes.isFeedback(position)){
@@ -244,7 +244,7 @@ public class MainFeedAdapter
         else if (CardTypes.isMyGoals(position)){
             if (mMyGoalsHolder.getItemCount() == 0){
                 mMyGoalsHolder.bind(mContext.getString(R.string.card_my_goals_header));
-                mMyGoalsHolder.setGoals(mFeedData.getGoalsX());
+                mMyGoalsHolder.setGoals(mFeedData.getGoals());
                 if (mFeedData.getNextGoalBatchUrl() == null){
                     mMyGoalsHolder.hideFooter();
                 }
@@ -344,8 +344,8 @@ public class MainFeedAdapter
      * Loads the next batch of actions into the feed.
      */
     void moreActions(){
-        mUpcomingHolder.addActions(mFeedData.loadMoreUpcomingX(mUpcomingHolder.getItemCount()));
-        if (!mFeedData.canLoadMoreActionsX(mUpcomingHolder.getItemCount())){
+        mUpcomingHolder.addActions(mFeedData.loadMoreUpcoming(mUpcomingHolder.getItemCount()));
+        if (!mFeedData.canLoadMoreActions(mUpcomingHolder.getItemCount())){
             mUpcomingHolder.hideFooter();
         }
     }
@@ -396,7 +396,7 @@ public class MainFeedAdapter
                 url = url.replaceFirst("s", "");
             }
             mMyGoalsHolder.prepareGoalAddition();
-            mFeedData.addGoalsX(set.results, url);
+            mFeedData.addGoals(set.results, url);
             mMyGoalsHolder.onGoalsAdded();
         }
         else if (result instanceof ParserModels.UserGoalsResultSet){
@@ -411,7 +411,7 @@ public class MainFeedAdapter
                     url = url.replaceFirst("s", "");
                 }
             }
-            mFeedData.addGoalsX(set.results, url);
+            mFeedData.addGoals(set.results, url);
             mMyGoalsHolder.onGoalsAdded();
         }
     }

@@ -166,8 +166,10 @@ public class UpcomingAction implements Parcelable{
         }
     }
 
-    public void update(Action action, Goal goal){
-
+    public void update(CustomGoal goal){
+        if (isCustomAction() && mGoalId == goal.getId()){
+            mGoalTitle = goal.getTitle();
+        }
     }
 
     @Override

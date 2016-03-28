@@ -42,7 +42,7 @@ final class CardTypes{
      * @return true if there is a welcome card, false otherwise.
      */
     static boolean hasWelcomeCard(){
-        return sFeedData.getGoalsX().isEmpty();
+        return sFeedData.getGoals().isEmpty();
     }
 
     /**
@@ -51,7 +51,7 @@ final class CardTypes{
      * @return true if there is an up next card, false otherwise.
      */
     static boolean hasUpNextAction(){
-        return sFeedData.getUpNextActionX() != null;
+        return sFeedData.getUpNextAction() != null;
     }
 
     /**
@@ -110,7 +110,7 @@ final class CardTypes{
      * @return true if the feed should display a suggestion.
      */
     static boolean hasSuggestion(){
-        return sDisplaySuggestion && !sFeedData.getGoalsX().isEmpty();
+        return sDisplaySuggestion && !sFeedData.getGoals().isEmpty();
     }
 
     /**
@@ -138,7 +138,7 @@ final class CardTypes{
      * @return true if there are upcoming actions, false otherwise.
      */
     static boolean hasUpcoming(){
-        return !sFeedData.getUpcomingActionsX().isEmpty();
+        return !sFeedData.getUpcomingActions().isEmpty();
     }
 
     /**
@@ -177,7 +177,7 @@ final class CardTypes{
      * @return true if there are goal suggestions, false otherwise.
      */
     static boolean hasGoalSuggestions(){
-        return !sFeedData.getSuggestions().isEmpty() && sFeedData.getGoalsX().isEmpty();
+        return !sFeedData.getSuggestions().isEmpty() && sFeedData.getGoals().isEmpty();
     }
 
     /**
@@ -186,7 +186,7 @@ final class CardTypes{
      * @return true if there are my goals, false otherwise.
      */
     static boolean hasMyGoals(){
-        return !sFeedData.getGoalsX().isEmpty();
+        return !sFeedData.getGoals().isEmpty();
     }
 
     /**
