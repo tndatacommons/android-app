@@ -11,7 +11,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 import org.tndata.android.compass.BuildConfig;
-import org.tndata.android.compass.service.GcmBroadcastReceiver;
+import org.tndata.android.compass.receiver.GcmBroadcastReceiver;
 
 import java.util.List;
 
