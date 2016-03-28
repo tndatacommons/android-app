@@ -58,7 +58,7 @@ public class CheckInRewardFragment
      */
     public static CheckInRewardFragment newInstance(Reward reward){
         Bundle args = new Bundle();
-        args.putSerializable(REWARD_KEY, reward);
+        args.putParcelable(REWARD_KEY, reward);
 
         CheckInRewardFragment fragment = new CheckInRewardFragment();
         fragment.setArguments(args);
@@ -69,7 +69,7 @@ public class CheckInRewardFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        mReward = (Reward)getArguments().getSerializable(REWARD_KEY);
+        mReward = getArguments().getParcelable(REWARD_KEY);
         mBetter = false;
     }
 
