@@ -10,67 +10,96 @@ import java.util.Date;
 
 
 /**
- * Created by isma on 3/10/16.
+ * Model representation of an upcoming action. Gathers the necessary data to display and
+ * fetch an Action and parent content in the feed or elsewhere.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class UpcomingAction implements Parcelable{
     public static final String API_TYPE = "upcoming_item";
+
+    private static final String USER_ACTION_TYPE = "useraction";
+    private static final String CUSTOM_ACTION_TYPE = "customaction";
+
 
     @SerializedName("action_id")
     private long mId;
     @SerializedName("action")
     private String mTitle;
+    @SerializedName("goal_id")
+    private long mGoalId;
     @SerializedName("goal")
     private String mGoalTitle;
     @SerializedName("trigger")
     private String mTrigger;
-    @SerializedName("category_color")
-    private String mColor;
-    @SerializedName("editable")
-    private boolean mEditable;
-    @SerializedName("goal_id")
-    private long mGoalId;
-    @SerializedName("category_id")
-    private long mCategoryId;
     @SerializedName("type")
     private String mType;
 
 
+    /**
+     * Constructor. Generates an UpcomingAction from a Goal and an Action.
+     *
+     * @param goal the goal to be extracted information from.
+     * @param action the action to be extracted information from.
+     */
     public UpcomingAction(Goal goal, Action action){
         mId = action.getId();
         mTitle = action.getTitle();
         mGoalTitle = goal.getTitle();
         mTrigger = action.getNextReminder().replace('T', ' ');
-        mEditable = action.isEditable();
         mGoalId = goal.getId();
         if (action instanceof UserAction){
-            mType = "useraction";
+            mType = USER_ACTION_TYPE;
         }
         else if (action instanceof CustomAction){
-            mType = "customaction";
+            mType = CUSTOM_ACTION_TYPE;
         }
     }
 
+    /**
+     * Id getter.
+     *
+     * @return the id of the upcoming action.
+     */
     public long getId(){
         return mId;
     }
 
-    public long getGoalId(){
-        return mGoalId;
-    }
-
-    public long getCategoryId(){
-        return mCategoryId;
-    }
-
+    /**
+     * Title getter.
+     *
+     * @return the title of the upcoming action.
+     */
     public String getTitle(){
         return mTitle;
     }
 
+    /**
+     * Goal id getter.
+     *
+     * @return the id of the parent/primary goal for the upcoming action.
+     */
+    public long getGoalId(){
+        return mGoalId;
+    }
+
+    /**
+     * Goal title getter.
+     *
+     * @return the goal title of the parent/primary goal for the upcoming action.
+     */
     public String getGoalTitle(){
         return mGoalTitle;
     }
 
+    /**
+     * Trigger date getter.
+     *
+     * @return a Date object set to the trigger time.
+     */
     public Date getTriggerDate(){
+        //TODO parse with DateTime?
         String year = mTrigger.substring(0, mTrigger.indexOf("-"));
         String temp = mTrigger.substring(mTrigger.indexOf("-")+1);
         String month = temp.substring(0, temp.indexOf("-"));
@@ -93,6 +122,11 @@ public class UpcomingAction implements Parcelable{
         return calendar.getTime();
     }
 
+    /**
+     * Trigger date display getter.
+     *
+     * @return a string with the display format of the trigger.
+     */
     public String getTriggerDisplay(){
         String time = mTrigger.substring(mTrigger.indexOf(' ')+1, mTrigger.lastIndexOf('-'));
         String hourStr = time.substring(0, time.indexOf(':'));
@@ -113,16 +147,22 @@ public class UpcomingAction implements Parcelable{
         }
     }
 
-    public boolean isEditable(){
-        return true;
-    }
-
+    /**
+     * Tells whether this UpcomingAction represents a UserAction.
+     *
+     * @return true if it does, false otherwise.
+     */
     public boolean isUserAction(){
-        return mType.equals("useraction");
+        return mType.equals(USER_ACTION_TYPE);
     }
 
+    /**
+     * Tells whether this UpcomingAction represents a CustomAction.
+     *
+     * @return true if it does, false otherwise.
+     */
     public boolean isCustomAction(){
-        return mType.equals("customaction");
+        return mType.equals(CUSTOM_ACTION_TYPE);
     }
 
     @Override
@@ -148,7 +188,7 @@ public class UpcomingAction implements Parcelable{
     }
 
     //TODO is the editor going to nag me if I combine this with equals()?
-    @SuppressWarnings("RedundantIfStatement")
+    @SuppressWarnings("SimplifiableIfStatement")
     public boolean is(Action action){
         if (isUserAction() && action instanceof UserAction){
             return mId == action.getId();
@@ -159,6 +199,11 @@ public class UpcomingAction implements Parcelable{
         return false;
     }
 
+    /**
+     * Updates this UpcomingAction if it is equal to the provided acton.
+     *
+     * @param action the action where the info should be extracted.
+     */
     public void update(Action action){
         if (is(action)){
             mTitle = action.getTitle();
@@ -166,11 +211,21 @@ public class UpcomingAction implements Parcelable{
         }
     }
 
-    public void update(CustomGoal goal){
-        if (isCustomAction() && mGoalId == goal.getId()){
-            mGoalTitle = goal.getTitle();
+    /**
+     * Updates a the goal contained by this action if it is it's parent goal.
+     *
+     * @param customGoal the goal where the info should be extracted.
+     */
+    public void update(CustomGoal customGoal){
+        if (isCustomAction() && mGoalId == customGoal.getId()){
+            mGoalTitle = customGoal.getTitle();
         }
     }
+
+
+    /*------------------*
+     * Parcelable STUFF *
+     *------------------*/
 
     @Override
     public int describeContents(){
@@ -181,12 +236,9 @@ public class UpcomingAction implements Parcelable{
     public void writeToParcel(Parcel dest, int flags){
         dest.writeLong(mId);
         dest.writeString(mTitle);
+        dest.writeLong(mGoalId);
         dest.writeString(mGoalTitle);
         dest.writeString(mTrigger);
-        dest.writeString(mColor);
-        dest.writeByte((byte)(mEditable ? 1 : 0));
-        dest.writeLong(mGoalId);
-        dest.writeLong(mCategoryId);
         dest.writeString(mType);
     }
 
@@ -210,12 +262,9 @@ public class UpcomingAction implements Parcelable{
     private UpcomingAction(Parcel in){
         mId = in.readLong();
         mTitle = in.readString();
+        mGoalId = in.readLong();
         mGoalTitle = in.readString();
         mTrigger = in.readString();
-        mColor = in.readString();
-        mEditable = in.readByte() == 1;
-        mGoalId = in.readLong();
-        mCategoryId = in.readLong();
         mType = in.readString();
     }
 }
