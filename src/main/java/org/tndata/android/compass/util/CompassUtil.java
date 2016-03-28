@@ -319,7 +319,7 @@ public final class CompassUtil{
      * @param permission the permission to check.
      * @return true if the permission has been granted, false otherwise.
      */
-    public boolean hasPermission(@NonNull Context context, String permission){
+    public static boolean hasPermission(@NonNull Context context, String permission){
         int permissionGranted = PackageManager.PERMISSION_GRANTED;
         return ContextCompat.checkSelfPermission(context, permission) == permissionGranted;
     }

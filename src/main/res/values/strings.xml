@@ -236,6 +236,9 @@
     <string name="later_pick_place">Pick a place</string>
     <string name="later_someday">Someday</string>
     <string name="later_create_place">Create a new place</string>
+    <string name="later_location_rationale_title">Compass needs access to your location</string>
+    <string name="later_location_rationale">Compass needs access to your location in order to send you location-based reminders.</string>
+    <string name="later_location_rationale_button">Got it!</string>
 
     <!-- I did it -->
     <string name="did_it_title">I did it</string>

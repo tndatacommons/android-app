@@ -1,9 +1,13 @@
 package org.tndata.android.compass.activity;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +25,7 @@ import org.tndata.android.compass.model.UserPlace;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.service.SnoozeService;
+import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.NotificationUtil;
 
 import java.util.Calendar;
@@ -44,13 +49,18 @@ public class SnoozeActivity
 
     private static final String TAG = "SnoozeActivity";
 
+    //Request codes
     private static final int PLACES_REQUEST_CODE = 600;
+    private static final int LOCATION_PERMISSION_RC = 1;
 
 
     private Reminder mReminder;
     private int mYear, mMonth, mDay;
 
     private List<UserPlace> mPlaces;
+    private UserPlace mPickedPlace;
+
+    private AlertDialog mRationaleDialog;
 
 
     @Override
@@ -205,27 +215,92 @@ public class SnoozeActivity
 
     @Override
     public void onClick(DialogInterface dialog, int which){
-        if (which == mPlaces.size()){
-            startActivityForResult(new Intent(this, PlacesActivity.class), PLACES_REQUEST_CODE);
+        //If the caller was the rationale dialog fire the permission request
+        if (dialog == mRationaleDialog){
+            firePermissionRequest();
+        }
+        //Otherwise, the user tapped one of the places in the place list dialog
+        else{
+            //If the user tapped the add a place item, fire the place picker activity
+            if (which == mPlaces.size()){
+                startActivityForResult(new Intent(this, PlacesActivity.class), PLACES_REQUEST_CODE);
+            }
+            else{
+                //Otherwise, save the tapped place
+                mPickedPlace = mPlaces.get(which);
+                Log.d(TAG, mPickedPlace.getName() + " selected");
+                //If the app doesn't have the location permission, request it, otherwise snooze
+                if (!CompassUtil.hasPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)){
+                    firePermissionRequest();
+                }
+                else{
+                    snooze(mPickedPlace);
+                }
+            }
+        }
+    }
+
+    /**
+     * Fires the permission rationale dialog or the permission request dialog.
+     */
+    private void firePermissionRequest(){
+        String locationPermission = Manifest.permission.ACCESS_FINE_LOCATION;
+        boolean rationale = ActivityCompat.shouldShowRequestPermissionRationale(this, locationPermission);
+        if (rationale && mRationaleDialog == null){
+            //Show the rationale dialog
+            mRationaleDialog = new AlertDialog.Builder(this)
+                    .setTitle(R.string.later_location_rationale_title)
+                    .setMessage(R.string.later_location_rationale)
+                    .setPositiveButton(R.string.later_location_rationale_button, this)
+                    .create();
+            mRationaleDialog.show();
         }
         else{
-            Log.d(TAG, mPlaces.get(which).getName() + " selected");
-            mReminder.setPlaceId(mPlaces.get(which).getId());
-            mReminder.setSnoozed(true);
-            CompassDbHelper dbHelper = new CompassDbHelper(this);
-            dbHelper.saveReminder(mReminder);
-            dbHelper.close();
-
-            NotificationUtil.cancel(this, NotificationUtil.USER_ACTION_TAG, mReminder.getObjectId());
-
-            startService(new Intent(this, LocationNotificationService.class));
-
-            //Report the snooze
-            reportSnooze(ActionReportService.LENGTH_LOCATION);
-
-            setResult(RESULT_OK);
-            finish();
+            //Request permissions
+            ActivityCompat.requestPermissions(this, new String[]{locationPermission},
+                    LOCATION_PERMISSION_RC);
+            mRationaleDialog = null;
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults){
+        switch (requestCode){
+            case LOCATION_PERMISSION_RC:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    snooze(mPickedPlace);
+                }
+                else{
+                    displayPlacesDialog();
+                }
+                break;
+        }
+    }
+
+    /**
+     * Snoozes the reminder to a place.
+     *
+     * @param userPlace the user place to snooze the reminder to.
+     */
+    private void snooze(@NonNull UserPlace userPlace){
+        //Prepare and save the reminder
+        mReminder.setPlaceId(userPlace.getId());
+        mReminder.setSnoozed(true);
+        CompassDbHelper dbHelper = new CompassDbHelper(this);
+        dbHelper.saveReminder(mReminder);
+        dbHelper.close();
+
+        //Cancel the notification
+        NotificationUtil.cancel(this, NotificationUtil.USER_ACTION_TAG, mReminder.getObjectId());
+
+        //Start the location service and report the snooze
+        startService(new Intent(this, LocationNotificationService.class));
+        reportSnooze(ActionReportService.LENGTH_LOCATION);
+
+        //Kill the activity
+        setResult(RESULT_OK);
+        finish();
     }
 
     @Override
@@ -241,6 +316,11 @@ public class SnoozeActivity
         }
     }
 
+    /**
+     * Reports the snooze operation to the backend.
+     *
+     * @param length the length of the snooze.
+     */
     private void reportSnooze(String length){
         Intent report = new Intent(this, ActionReportService.class)
                 .putExtra(NotificationUtil.REMINDER_KEY, mReminder)
