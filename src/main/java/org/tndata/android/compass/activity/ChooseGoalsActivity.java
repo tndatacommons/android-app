@@ -3,6 +3,7 @@ package org.tndata.android.compass.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ImageView;
@@ -83,7 +84,7 @@ public class ChooseGoalsActivity
     @Override
     public void onGoalSelected(@NonNull GoalContent goal){
         startActivity(new Intent(this, ChooseBehaviorsActivity.class)
-                .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal)
+                .putExtra(ChooseBehaviorsActivity.GOAL_KEY, (Parcelable)goal)
                 .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, mCategory));
     }
 

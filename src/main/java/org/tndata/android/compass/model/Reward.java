@@ -96,7 +96,7 @@ public class Reward implements Parcelable{
         dest.writeString(mAuthor);
     }
 
-    public static final Parcelable.Creator<Reward> CREATOR = new Parcelable.Creator<Reward>(){
+    public static final Creator<Reward> CREATOR = new Creator<Reward>(){
         @Override
         public Reward createFromParcel(Parcel in){
             return new Reward(in);

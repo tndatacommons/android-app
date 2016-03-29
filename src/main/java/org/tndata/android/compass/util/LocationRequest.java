@@ -34,6 +34,9 @@ public class LocationRequest
     private static final int DEFAULT_LOCATION_TIMEOUT = 10*60*1000; //10 minutes
     private static final int MINIMUM_LOCATION_TIMEOUT = 5*1000; //5 seconds
 
+    private static final String LOCATION_PERMISSION = Manifest.permission.ACCESS_FINE_LOCATION;
+    private static final int GRANTED = PackageManager.PERMISSION_GRANTED;
+
 
     //Context, callback, and timeout
     private final Context context;
@@ -108,8 +111,10 @@ public class LocationRequest
             googleApiClient.disconnect();
         }
         if (locationManager != null){
-            locationManager.removeUpdates(this);
-            locationManager = null;
+            if (ContextCompat.checkSelfPermission(context, LOCATION_PERMISSION) == GRANTED){
+                locationManager.removeUpdates(this);
+                locationManager = null;
+            }
         }
     }
 
@@ -144,8 +149,10 @@ public class LocationRequest
             locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
 
             //Accepted providers are the carrier network and the GPS network
-            //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+            if (ContextCompat.checkSelfPermission(context, LOCATION_PERMISSION) == GRANTED){
+                //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+            }
         }
         //Otherwise
         else{
@@ -155,8 +162,10 @@ public class LocationRequest
             //If the update was from the backup system
             if (locationManager != null){
                 //The backup system is silenced
-                locationManager.removeUpdates(this);
-                locationManager = null;
+                if (ContextCompat.checkSelfPermission(context, LOCATION_PERMISSION) == GRANTED){
+                    locationManager.removeUpdates(this);
+                    locationManager = null;
+                }
             }
 
             //The location is provided
@@ -216,8 +225,10 @@ public class LocationRequest
         //If the location providers still alive
         if (locationManager != null){
             //The location providers are silenced
-            locationManager.removeUpdates(this);
-            locationManager = null;
+            if (ContextCompat.checkSelfPermission(context, LOCATION_PERMISSION) == GRANTED){
+                locationManager.removeUpdates(this);
+                locationManager = null;
+            }
         }
 
         //The location is provided

@@ -1,5 +1,6 @@
 package org.tndata.android.compass.model;
 
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
@@ -25,6 +26,10 @@ public abstract class TDCContent extends TDCBase implements Serializable, Compar
     @SerializedName("icon_url")
     private String mIconUrl;
 
+
+    public TDCContent(){
+
+    }
 
     /*---------*
      * SETTERS *
@@ -81,5 +86,21 @@ public abstract class TDCContent extends TDCBase implements Serializable, Compar
     public int compareTo(@NonNull TDCContent another){
         //By default, order by title in alphabetical order
         return getTitle().compareTo(another.getTitle());
+    }
+
+    protected void addToParcel(@NonNull Parcel dst, int flags){
+        super.addToParcel(dst, flags);
+        dst.writeString(mTitle);
+        dst.writeString(mDescription);
+        dst.writeString(mHtmlDescription);
+        dst.writeString(mIconUrl);
+    }
+
+    protected TDCContent(Parcel src){
+        super(src);
+        mTitle = src.readString();
+        mDescription = src.readString();
+        mHtmlDescription = src.readString();
+        mIconUrl = src.readString();
     }
 }

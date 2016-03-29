@@ -25,6 +25,7 @@ import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.UserPlace;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
+import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.util.API;
 
 import java.util.ArrayList;
@@ -291,7 +292,7 @@ public class PlacesActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (resultCode == RESULT_OK){
             if (requestCode == PLACE_PICKER_REQUEST_CODE){
-                UserPlace place = (UserPlace)data.getSerializableExtra(PlacePickerActivity.PLACE_RESULT_KEY);
+                UserPlace place = data.getParcelableExtra(PlacePickerActivity.PLACE_RESULT_KEY);
                 Log.d(TAG, place.toString());
                 //If a place wasn't selected this is a new place, so save it.
                 if (mCurrentPlace == null){
@@ -323,6 +324,10 @@ public class PlacesActivity
                     mCurrentPlace.getPlace().setSet(true);
                     mAdapter.notifyDataSetChanged();
                 }
+
+                //Once a place is saved, start the location notification service to
+                //  update its internal lists of places
+                startService(new Intent(this, LocationNotificationService.class));
             }
         }
     }

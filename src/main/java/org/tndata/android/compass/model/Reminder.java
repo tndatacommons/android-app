@@ -14,7 +14,7 @@ import android.os.Parcelable;
 public class Reminder implements Parcelable{
     private int mId;
     private int mNotificationId;
-    private int mPlaceId;
+    private long mPlaceId;
     private String mTitle;
     private String mMessage;
     private int mObjectId;
@@ -58,7 +58,7 @@ public class Reminder implements Parcelable{
      *
      * @param placeId the place id.
      */
-    public void setPlaceId(int placeId){
+    public void setPlaceId(long placeId){
         mPlaceId = placeId;
     }
 
@@ -103,7 +103,7 @@ public class Reminder implements Parcelable{
      *
      * @return the place id.
      */
-    public int getPlaceId(){
+    public long getPlaceId(){
         return mPlaceId;
     }
 
@@ -188,7 +188,7 @@ public class Reminder implements Parcelable{
     public void writeToParcel(Parcel dest, int flags){
         dest.writeInt(mId);
         dest.writeInt(mNotificationId);
-        dest.writeInt(mPlaceId);
+        dest.writeLong(mPlaceId);
         dest.writeString(mTitle);
         dest.writeString(mMessage);
         dest.writeInt(mObjectId);
@@ -217,7 +217,7 @@ public class Reminder implements Parcelable{
     private Reminder(Parcel in){
         mId = in.readInt();
         mNotificationId = in.readInt();
-        mPlaceId = in.readInt();
+        mPlaceId = in.readLong();
         mTitle = in.readString();
         mMessage = in.readString();
         mObjectId = in.readInt();

@@ -87,11 +87,7 @@ public class ActionContent extends TDCContent implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags){
-        dest.writeLong(getId());
-        dest.writeString(getTitle());
-        dest.writeString(getDescription());
-        dest.writeString(getHTMLDescription());
-        dest.writeString(getIconUrl());
+        addToParcel(dest, flags);
         dest.writeInt(mSequenceOrder);
         dest.writeString(mMoreInfo);
         dest.writeString(mHtmlMoreInfo);
@@ -122,11 +118,7 @@ public class ActionContent extends TDCContent implements Parcelable{
      * @param in the parcel where the object is stored.
      */
     private ActionContent(Parcel in){
-        setId(in.readLong());
-        setTitle(in.readString());
-        setDescription(in.readString());
-        setHTMLDescription(in.readString());
-        setIconUrl(in.readString());
+        super(in);
         mSequenceOrder = in.readInt();
         mMoreInfo = in.readString();
         mHtmlMoreInfo = in.readString();

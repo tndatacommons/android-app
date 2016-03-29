@@ -1,6 +1,8 @@
 package org.tndata.android.compass.model;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.widget.ImageView;
 
 import com.google.gson.annotations.SerializedName;
@@ -8,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.util.ImageLoader;
 
-import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -18,9 +20,7 @@ import java.util.Set;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class GoalContent extends TDCContent implements Serializable{
-    private static final long serialVersionUID = 7109406671934150671L;
-
+public class GoalContent extends TDCContent implements Parcelable{
     public static final String TYPE = "goal";
 
 
@@ -104,5 +104,48 @@ public class GoalContent extends TDCContent implements Serializable{
     @Override
     public String toString(){
         return "GoalContent #" + getId() + ": " + getTitle();
+    }
+
+    @Override
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags){
+        addToParcel(dest, flags);
+        dest.writeString(mOutcome);
+        dest.writeInt(mCategoryIdSet.size());
+        for (Long categoryId:mCategoryIdSet){
+            dest.writeLong(categoryId);
+        }
+        dest.writeInt(mBehaviorCount);
+    }
+
+    public static final Creator<GoalContent> CREATOR = new Creator<GoalContent>(){
+        @Override
+        public GoalContent createFromParcel(Parcel source){
+            return new GoalContent(source);
+        }
+
+        @Override
+        public GoalContent[] newArray(int size){
+            return new GoalContent[size];
+        }
+    };
+
+    /**
+     * Constructor to create from a parcel.
+     *
+     * @param src the source parcel.
+     */
+    private GoalContent(Parcel src){
+        super(src);
+        mOutcome = src.readString();
+        mCategoryIdSet = new HashSet<>();
+        for (int i = 0, length = src.readInt(); i < length; i++){
+            mCategoryIdSet.add(src.readLong());
+        }
+        mBehaviorCount = src.readInt();
     }
 }

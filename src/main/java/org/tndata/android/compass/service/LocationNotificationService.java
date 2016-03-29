@@ -57,7 +57,7 @@ public class LocationNotificationService
     private boolean mRequestInProgress;
 
     //Map of places and list of reminders
-    private Map<Integer, UserPlace> mPlaces;
+    private Map<Long, UserPlace> mPlaces;
     private List<Reminder> mReminders;
 
     //Next update time
@@ -151,26 +151,29 @@ public class LocationNotificationService
         for (Reminder reminder:mReminders){
             //The place is retrieved from the map and the distance calculated
             UserPlace place = mPlaces.get(reminder.getPlaceId());
-            double distance = CompassUtil.getDistance(place.getLocation(), current);
+            //This shouldn't happen in production, but just in case
+            if (place != null){
+                double distance = CompassUtil.getDistance(place.getLocation(), current);
 
-            //If the pone is within the geofence a notification is created
-            if (distance < GEOFENCE_RADIUS){
-                NotificationUtil.putActionNotification(this, reminder.getNotificationId(),
-                        reminder.getTitle(), reminder.getMessage(), reminder.getObjectId(),
-                        reminder.getUserMappingId());
+                //If the pone is within the geofence a notification is created
+                if (distance < GEOFENCE_RADIUS){
+                    NotificationUtil.putActionNotification(this, reminder.getNotificationId(),
+                            reminder.getTitle(), reminder.getMessage(), reminder.getObjectId(),
+                            reminder.getUserMappingId());
 
-                //The reminder is removed from the database and added to the removal list
-                //NOTE: This is the case because all reminders in the database are snoozed
-                //  at the moment, which means that they should be triggered only once.
-                CompassDbHelper dbHelper = new CompassDbHelper(this);
-                dbHelper.deleteReminder(reminder);
-                dbHelper.close();
-                remindersToRemove.add(reminder);
-            }
-            //If the phone is not in the fence but the distance is the minimum seen so far
-            else if (distance < minDistance){
-                //The distance is recorded as the minimum
-                minDistance = distance;
+                    //The reminder is removed from the database and added to the removal list
+                    //NOTE: This is the case because all reminders in the database are snoozed
+                    //  at the moment, which means that they should be triggered only once.
+                    CompassDbHelper dbHelper = new CompassDbHelper(this);
+                    dbHelper.deleteReminder(reminder);
+                    dbHelper.close();
+                    remindersToRemove.add(reminder);
+                }
+                //If the phone is not in the fence but the distance is the minimum seen so far
+                else if (distance < minDistance){
+                    //The distance is recorded as the minimum
+                    minDistance = distance;
+                }
             }
         }
 

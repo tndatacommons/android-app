@@ -118,10 +118,10 @@ public class CustomGoal extends Goal implements Parcelable{
         dest.writeTypedList(mActions);
     }
 
-    public static final Parcelable.Creator<CustomGoal> CREATOR = new Parcelable.Creator<CustomGoal>(){
+    public static final Creator<CustomGoal> CREATOR = new Creator<CustomGoal>(){
         @Override
-        public CustomGoal createFromParcel(Parcel in){
-            return new CustomGoal(in);
+        public CustomGoal createFromParcel(Parcel source){
+            return new CustomGoal(source);
         }
 
         @Override
@@ -133,14 +133,14 @@ public class CustomGoal extends Goal implements Parcelable{
     /**
      * Constructor to create from parcel.
      *
-     * @param in the parcel where the object is stored.
+     * @param src the parcel where the object is stored.
      */
-    private CustomGoal(Parcel in){
-        setId(in.readLong());
-        mTitle = in.readString();
+    private CustomGoal(Parcel src){
+        setId(src.readLong());
+        mTitle = src.readString();
         //Retrieve the actions as an array list and assign the parent goal
         mActions = new ArrayList<>();
-        in.readTypedList(mActions, CustomAction.CREATOR);
+        src.readTypedList(mActions, CustomAction.CREATOR);
         for (CustomAction action:mActions){
             action.setGoal(this);
         }
