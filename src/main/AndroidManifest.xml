@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.tndata.android.compass"
     android:versionCode="25"
     android:versionName="@string/version_name" >
@@ -12,20 +13,23 @@
         * PATCH version when you make backwards-compatible bug fixes.
     -->
 
+
+    <!-- Permissions -->
+
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="org.tndata.android.compass.permission.C2D_MESSAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+
+    <!-- Application tag -->
 
     <application
         xmlns:tools="http://schemas.android.com/tools"
@@ -36,6 +40,7 @@
         android:label="@string/app_name"
         android:theme="@style/CustomActionBarTheme"
         android:largeHeap="true" >
+
 
         <!-- Maps stuff -->
 
@@ -49,9 +54,13 @@
 
 
         <!-- Fabric stuff -->
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${fabricApiKey}" />
+
+
+        <!-- Activities -->
 
         <activity
             android:name=".activity.LoginActivity"
@@ -231,6 +240,9 @@
             android:name=".activity.CheckInActivity"
             android:screenOrientation="portrait" />
 
+
+        <!-- Broadcast receivers -->
+
         <receiver
             android:name=".receiver.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
@@ -252,13 +264,14 @@
             </intent-filter>
         </receiver>
 
-        <service
-            android:name=".service.GcmIntentService"
-            android:exported="false" />
+
+        <!-- Services -->
+
+        <service android:name=".service.GcmIntentService" android:exported="false" />
 
         <service android:name=".service.ActionReportService" />
 
-        <service android:enabled="true" android:name=".service.SnoozeService" />
+        <service android:name=".service.SnoozeService" />
 
         <service android:name=".service.LogOutService" />
 
