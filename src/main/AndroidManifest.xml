@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.tndata.android.compass"
     android:versionCode="25"
     android:versionName="@string/version_name" >
@@ -12,20 +13,23 @@
         * PATCH version when you make backwards-compatible bug fixes.
     -->
 
+
+    <!-- Permissions -->
+
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="org.tndata.android.compass.permission.C2D_MESSAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+
+    <!-- Application tag -->
 
     <application
         xmlns:tools="http://schemas.android.com/tools"
@@ -36,6 +40,7 @@
         android:label="@string/app_name"
         android:theme="@style/CustomActionBarTheme"
         android:largeHeap="true" >
+
 
         <!-- Maps stuff -->
 
@@ -49,12 +54,16 @@
 
 
         <!-- Fabric stuff -->
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${fabricApiKey}" />
 
+
+        <!-- Activities -->
+
         <activity
-            android:name="org.tndata.android.compass.activity.LoginActivity"
+            android:name=".activity.LoginActivity"
             android:label="@string/app_name"
             android:theme="@style/LogInTheme"
             android:screenOrientation="portrait">
@@ -70,17 +79,12 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".activity.GoalActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait" />
-
-        <activity
             android:name=".activity.CustomContentManagerActivity"
             android:label="Create goal"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="org.tndata.android.compass.activity.OnBoardingActivity"
+            android:name=".activity.OnBoardingActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
@@ -89,7 +93,7 @@
         </activity>
 
         <activity
-            android:name="org.tndata.android.compass.activity.SettingsActivity"
+            android:name=".activity.SettingsActivity"
             android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -112,7 +116,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="org.tndata.android.compass.activity.UserProfileActivity"
+            android:name=".activity.UserProfileActivity"
             android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -146,12 +150,12 @@
             android:noHistory="true" />
 
         <activity
-            android:name="org.tndata.android.compass.activity.ChooseCategoryActivity"
+            android:name=".activity.ChooseCategoryActivity"
             android:label="@string/choose_category_title"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="org.tndata.android.compass.activity.ChooseGoalsActivity"
+            android:name=".activity.ChooseGoalsActivity"
             android:parentActivityName=".activity.ChooseCategoryActivity"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -191,11 +195,11 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="org.tndata.android.compass.activity.TriggerActivity"
+            android:name=".activity.TriggerActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="org.tndata.android.compass.activity.TourActivity"
+            android:name=".activity.TourActivity"
             android:screenOrientation="portrait" />
 
         <activity
@@ -215,13 +219,7 @@
         <activity
             android:name=".activity.PlacesActivity"
             android:label="Places"
-            android:screenOrientation="portrait" >
-
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.tndata.android.compass.activity.UserProfileActivity" />
-
-        </activity>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".activity.PlacePickerActivity"
@@ -241,6 +239,9 @@
         <activity
             android:name=".activity.CheckInActivity"
             android:screenOrientation="portrait" />
+
+
+        <!-- Broadcast receivers -->
 
         <receiver
             android:name=".receiver.GcmBroadcastReceiver"
@@ -263,15 +264,16 @@
             </intent-filter>
         </receiver>
 
-        <service
-            android:name="org.tndata.android.compass.service.GcmIntentService"
-            android:exported="false" />
+
+        <!-- Services -->
+
+        <service android:name=".service.GcmIntentService" android:exported="false" />
 
         <service android:name=".service.ActionReportService" />
 
-        <service android:enabled="true" android:name=".service.SnoozeService" />
+        <service android:name=".service.SnoozeService" />
 
-        <service android:name="org.tndata.android.compass.service.LogOutService" />
+        <service android:name=".service.LogOutService" />
 
         <service android:name=".service.LocationNotificationService" />
 

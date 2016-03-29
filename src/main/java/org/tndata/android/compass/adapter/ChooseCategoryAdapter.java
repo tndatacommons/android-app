@@ -61,7 +61,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter<ChooseCategoryAd
     @Override
     public CategoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        View rootView = inflater.inflate(R.layout.item_choose_category_category, parent, false);
+        View rootView = inflater.inflate(R.layout.card_category, parent, false);
         return new CategoryViewHolder(rootView);
     }
 
@@ -96,7 +96,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter<ChooseCategoryAd
         public CategoryViewHolder(View rootView){
             super(rootView);
 
-            mImage = (ImageView)rootView.findViewById(R.id.choose_category_category_image);
+            mImage = (ImageView)rootView.findViewById(R.id.category_image);
             mCaption = (TextView)rootView.findViewById(R.id.choose_category_category_caption);
 
             rootView.setOnClickListener(this);

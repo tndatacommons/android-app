@@ -54,7 +54,7 @@ public class MyActivitiesActivity
         setContentView(R.layout.activity_my_activities);
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.my_activities_toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
+        toolbar.setNavigationIcon(R.drawable.ic_back_white_24dp);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayShowHomeEnabled(true);

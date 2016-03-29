@@ -118,7 +118,7 @@ public class ReviewActionsAdapter extends MaterialAdapter{
         @Override
         public ActionViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            View rootView = inflater.inflate(R.layout.item_review_action, parent, false);
+            View rootView = inflater.inflate(R.layout.item_action, parent, false);
             return new ActionViewHolder(rootView);
         }
 
@@ -180,7 +180,7 @@ public class ReviewActionsAdapter extends MaterialAdapter{
 
             //Set the icon and title of the view
             if (userAction.isTriggerEnabled()){
-                mEnabled.setImageResource(R.drawable.ic_enabled_black_36dp);
+                mEnabled.setImageResource(R.drawable.ic_check_white_36dp);
             }
             else{
                 mEnabled.setImageResource(R.drawable.ic_disabled_black_36dp);

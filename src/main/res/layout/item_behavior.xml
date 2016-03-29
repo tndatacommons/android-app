@@ -3,37 +3,35 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="10dp"
-    android:baselineAligned="false" >
+    android:layout_height="wrap_content" >
+
+    <include
+        android:id="@+id/library_behavior_separator"
+        layout="@layout/separator" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/behavior_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_marginBottom="18dp" />
+        android:layout_height="wrap_content" >
 
         <ImageView
-            android:id="@+id/behavior_overflow"
+            android:id="@+id/library_behavior_icon"
+            android:layout_width="@dimen/goal_icon_image_size"
+            android:layout_height="@dimen/goal_icon_image_size"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:padding="10dp" />
+
+        <TextView
+            android:id="@+id/library_behavior_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:src="@drawable/ic_more_vert_black_18dp" />
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/dark_text_color" />
 
     </LinearLayout>
-
-    <!-- The reminder of the content gets inserted dynamically here -->
-    <LinearLayout
-        android:id="@+id/behavior_actions"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
 </LinearLayout>

@@ -82,7 +82,7 @@ public class LoginActivity
         mApplication = (CompassApplication)getApplication();
 
         mToolbar = (Toolbar) findViewById(R.id.tool_bar);
-        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
+        mToolbar.setNavigationIcon(R.drawable.ic_back_white_24dp);
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayShowHomeEnabled(true);

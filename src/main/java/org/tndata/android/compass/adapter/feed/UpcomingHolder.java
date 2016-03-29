@@ -139,7 +139,7 @@ class UpcomingHolder extends MainFeedAdapter.ViewHolder implements View.OnClickL
         @Override
         public UpcomingItemHolder onCreateViewHolder(ViewGroup parent, int viewType){
             LayoutInflater inflater = LayoutInflater.from(mAdapter.mContext);
-            View rootView = inflater.inflate(R.layout.item_upcoming_action, parent, false);
+            View rootView = inflater.inflate(R.layout.item_action_upcoming, parent, false);
             return new UpcomingItemHolder(rootView);
         }
 

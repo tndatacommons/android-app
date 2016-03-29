@@ -80,7 +80,7 @@ public class PlacesActivity
 
         //Get and set the toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.places_toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
+        toolbar.setNavigationIcon(R.drawable.ic_back_white_24dp);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayShowHomeEnabled(true);
