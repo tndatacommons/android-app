@@ -180,7 +180,7 @@ public class ReviewActionsAdapter extends MaterialAdapter{
 
             //Set the icon and title of the view
             if (userAction.isTriggerEnabled()){
-                mEnabled.setImageResource(R.drawable.ic_enabled_black_36dp);
+                mEnabled.setImageResource(R.drawable.ic_check_white_36dp);
             }
             else{
                 mEnabled.setImageResource(R.drawable.ic_disabled_black_36dp);

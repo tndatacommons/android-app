@@ -257,6 +257,8 @@
     </string-array>
     <string name="places_save_error">The place couldn\'t be saved</string>
     <string name="places_picker_hint">Search a place or address</string>
+    <string name="place_picker_save">Save place</string>
+    <string name="place_picker_save_condensed">Save</string>
 
     <!-- Package consent -->
     <string name="package_enrollment_consent_title">Package Enrollment Consent</string>

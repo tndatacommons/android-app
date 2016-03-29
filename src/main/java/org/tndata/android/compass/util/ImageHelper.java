@@ -1,6 +1,5 @@
 package org.tndata.android.compass.util;
 
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -10,12 +9,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.GradientDrawable;
 import android.media.ThumbnailUtils;
-import android.os.Build;
-import android.widget.ImageView;
-
-import org.tndata.android.compass.R;
 
 
 /**
@@ -25,10 +19,6 @@ import org.tndata.android.compass.R;
  * @version 1.0.0
  */
 public class ImageHelper{
-    public final static int SELECTED = 1;
-    public final static int ADD = 2;
-    public final static int CHOOSE = 3;
-
     /**
      * Calculates the sample size given a bitmap's parameters and requested width and height.
      *
@@ -55,34 +45,6 @@ public class ImageHelper{
         }
 
         return inSampleSize;
-    }
-
-    @SuppressWarnings("deprecation")
-    public static void setupImageViewButton(final Resources resources, ImageView imageView, int style){
-        GradientDrawable buttonDrawable = (GradientDrawable) imageView.getBackground();
-        int color = -1;
-        switch (style) {
-            case SELECTED:
-                color = resources.getColor(R.color.grow_primary_dark);
-                imageView.setImageResource(R.drawable.ic_check);
-                break;
-            case ADD:
-                color = resources.getColor(R.color.grow_accent);
-                imageView.setImageResource(R.drawable.ic_add_white_24dp);
-                break;
-            case CHOOSE:
-                color = resources.getColor(android.R.color.transparent);
-                imageView.setImageResource(R.drawable.ic_more_vert);
-                break;
-        }
-        if (color != -1) {
-            buttonDrawable.setColor(color);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            imageView.setBackground(buttonDrawable);
-        } else {
-            imageView.setBackgroundDrawable(buttonDrawable);
-        }
     }
 
     /**

@@ -12,7 +12,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:padding="10dp"
-        android:src="@drawable/ic_action_new_large"
+        android:src="@drawable/ic_add_white_36dp"
         android:background="@drawable/circle_white"
         transition:color_active="@color/grow_accent"
         transition:color_transition="#888"

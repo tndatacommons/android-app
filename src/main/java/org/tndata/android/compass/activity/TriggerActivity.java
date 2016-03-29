@@ -146,7 +146,7 @@ public class TriggerActivity
         mTrigger = mAction.getTrigger();
 
         //Setup toolbar
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
+        toolbar.setNavigationIcon(R.drawable.ic_back_white_24dp);
         toolbar.getBackground().setAlpha(255);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){

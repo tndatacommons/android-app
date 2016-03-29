@@ -22,7 +22,8 @@
             android:id="@+id/review_action_enabled"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:tint="@color/black" />
 
         <TextView
             android:id="@+id/review_action_title"
