@@ -4,7 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
-import android.util.Log;
+
+import org.tndata.android.compass.service.LocationNotificationService;
 
 
 /**
@@ -22,9 +23,12 @@ public class LocationReceiver extends BroadcastReceiver{
 
         if (isLocationEnabled){
             //Fire up location
+            context.startService(new Intent(context.getApplicationContext(),
+                    LocationNotificationService.class));
         }
         else{
             //Kill location
+            LocationNotificationService.cancel();
         }
     }
 }
