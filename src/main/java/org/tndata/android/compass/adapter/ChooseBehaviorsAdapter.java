@@ -157,7 +157,7 @@ public class ChooseBehaviorsAdapter extends MaterialAdapter{
         @Override
         public BehaviorViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            View rootView = inflater.inflate(R.layout.item_library_behavior, parent, false);
+            View rootView = inflater.inflate(R.layout.item_behavior, parent, false);
             return new BehaviorViewHolder(rootView);
         }
 

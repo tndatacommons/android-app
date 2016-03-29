@@ -118,7 +118,7 @@ public class ReviewActionsAdapter extends MaterialAdapter{
         @Override
         public ActionViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            View rootView = inflater.inflate(R.layout.item_review_action, parent, false);
+            View rootView = inflater.inflate(R.layout.item_action, parent, false);
             return new ActionViewHolder(rootView);
         }
 
