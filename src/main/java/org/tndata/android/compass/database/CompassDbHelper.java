@@ -272,7 +272,7 @@ public class CompassDbHelper extends SQLiteOpenHelper{
                 calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
 
         String query = "SELECT * FROM " + ReminderEntry.TABLE
-                + " WHERE "
+                +       " WHERE "
                 +       ReminderEntry.SNOOZED + "<>0"
                 +       " OR "
                 +       ReminderEntry.LAST_DELIVERED + "<" + calendar.getTimeInMillis();
@@ -321,6 +321,24 @@ public class CompassDbHelper extends SQLiteOpenHelper{
         db.execSQL("DELETE FROM " + ReminderEntry.TABLE + " WHERE " + ReminderEntry.ID + "=" + reminder.getId());
         db.close();
         reminder.setId(-1);
+    }
+
+    /**
+     * Tells whether the reminder table is empty.
+     *
+     * @return true if it is empty, false otherwise.
+     */
+    public boolean isReminderTableEmpty(){
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + ReminderEntry.TABLE, null);
+        cursor.moveToFirst();
+
+        int count = cursor.getInt(0);
+
+        cursor.close();
+        db.close();
+
+        return count == 0;
     }
 
     /**
