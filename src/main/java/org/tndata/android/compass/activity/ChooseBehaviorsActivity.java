@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,7 +87,7 @@ public class ChooseBehaviorsActivity
         mApplication = (CompassApplication)getApplication();
 
         //Pull the content
-        mGoal = (GoalContent)getIntent().getSerializableExtra(GOAL_KEY);
+        mGoal = getIntent().getParcelableExtra(GOAL_KEY);
         mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
 
         mAdapter = new ChooseBehaviorsAdapter(this, this);
@@ -132,7 +133,7 @@ public class ChooseBehaviorsActivity
             mSelectedBehavior = behavior;
             startActivityForResult(new Intent(this, BehaviorActivity.class)
                     .putExtra(BehaviorActivity.CATEGORY_KEY, mCategory)
-                    .putExtra(BehaviorActivity.BEHAVIOR_KEY, behavior), BEHAVIOR_ACTIVITY_RC);
+                    .putExtra(BehaviorActivity.BEHAVIOR_KEY, (Parcelable)behavior), BEHAVIOR_ACTIVITY_RC);
         }
     }
 

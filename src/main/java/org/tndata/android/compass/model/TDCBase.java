@@ -1,5 +1,8 @@
 package org.tndata.android.compass.model;
 
+import android.os.Parcel;
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 import org.tndata.android.compass.parser.ParserModels;
@@ -21,10 +24,24 @@ public abstract class TDCBase implements Serializable, ParserModels.ResultSet{
     private long mId;
 
 
+    /**
+     * Explicit default constructor.
+     */
+    public TDCBase(){
+        //The rationale of this constructor is to avoid errors based on the presence of
+        //  the TDCBase(Parcel) constructor
+    }
+
+
     /*---------*
      * SETTERS *
      *---------*/
 
+    /**
+     * Id setter.
+     *
+     * @param id the id of the object.
+     */
     public void setId(long id){
         this.mId = id;
     }
@@ -34,6 +51,11 @@ public abstract class TDCBase implements Serializable, ParserModels.ResultSet{
      * GETTERS *
      *---------*/
 
+    /**
+     * Id getter.
+     *
+     * @return the id of the object.
+     */
     public long getId(){
         return mId;
     }
@@ -65,5 +87,26 @@ public abstract class TDCBase implements Serializable, ParserModels.ResultSet{
             }
         }
         return result;
+    }
+
+    /**
+     * Adds the contents of this class to a parcel.
+     *
+     * @param dst the destination parcel.
+     * @param flags the parcelable flags.
+     */
+    protected void addToParcel(@NonNull Parcel dst, int flags){
+        //TODO eventually, when all classes are Parcelable-ready, make TDCBase implement Parcelable
+        //TODO and copy these contents to writeToParcel.
+        dst.writeLong(mId);
+    }
+
+    /**
+     * Constructor to create an object from a parcel.
+     *
+     * @param src the source parcel.
+     */
+    protected TDCBase(Parcel src){
+        mId = src.readLong();
     }
 }

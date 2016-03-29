@@ -3,7 +3,6 @@ package org.tndata.android.compass.model;
 
 import org.tndata.android.compass.parser.ParserModels;
 
-import java.io.Serializable;
 import java.util.List;
 
 
@@ -13,9 +12,7 @@ import java.util.List;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class Instrument extends TDCBase implements Serializable, ParserModels.ResultSet{
-    private static final long serialVersionUID = 3492049583975743778L;
-
+public class Instrument extends TDCBase implements ParserModels.ResultSet{
     public static final String TYPE = "instrument";
 
 

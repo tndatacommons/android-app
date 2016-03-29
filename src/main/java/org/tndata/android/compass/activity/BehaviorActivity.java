@@ -35,7 +35,7 @@ public class BehaviorActivity extends MaterialActivity implements BehaviorAdapte
         super.onCreate(savedInstanceState);
 
         CategoryContent category = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
-        mBehavior = (BehaviorContent)getIntent().getSerializableExtra(BEHAVIOR_KEY);
+        mBehavior = getIntent().getParcelableExtra(BEHAVIOR_KEY);
 
         setHeader();
         setAdapter(new BehaviorAdapter(this, this, category, mBehavior));

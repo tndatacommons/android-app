@@ -1,7 +1,6 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -113,10 +112,10 @@ public class CustomAction extends Action{
         }
     }
 
-    public static final Parcelable.Creator<CustomAction> CREATOR = new Parcelable.Creator<CustomAction>(){
+    public static final Creator<CustomAction> CREATOR = new Creator<CustomAction>(){
         @Override
-        public CustomAction createFromParcel(Parcel in){
-            return new CustomAction(in);
+        public CustomAction createFromParcel(Parcel source){
+            return new CustomAction(source);
         }
 
         @Override
@@ -128,16 +127,16 @@ public class CustomAction extends Action{
     /**
      * Constructor to create from parcel.
      *
-     * @param in the parcel where the object is stored.
+     * @param src the parcel where the object is stored.
      */
-    private CustomAction(Parcel in){
-        setId(in.readLong());
-        mTitle = in.readString();
-        mCustomGoalId = in.readLong();
-        mNotificationText = in.readString();
-        setTrigger((Trigger)in.readParcelable(Trigger.class.getClassLoader()));
-        if (in.readByte() == 1){
-            setNextReminder(in.readString());
+    private CustomAction(Parcel src){
+        setId(src.readLong());
+        mTitle = src.readString();
+        mCustomGoalId = src.readLong();
+        mNotificationText = src.readString();
+        setTrigger((Trigger)src.readParcelable(Trigger.class.getClassLoader()));
+        if (src.readByte() == 1){
+            setNextReminder(src.readString());
         }
     }
 }

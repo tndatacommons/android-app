@@ -83,7 +83,7 @@ public class PlacePickerActivity
         setContentView(R.layout.activity_place_picker);
 
         //Retrieve the place, which may be null
-        mPlace = (UserPlace)getIntent().getSerializableExtra(PLACE_KEY);
+        mPlace = getIntent().getParcelableExtra(PLACE_KEY);
 
         //Get and set the toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.place_picker_toolbar);

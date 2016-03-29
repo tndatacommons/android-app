@@ -162,7 +162,7 @@ public class ReviewActionsActivity
                 else{
                     startActivity(new Intent(this, ChooseBehaviorsActivity.class)
                             .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, mGoalCategory)
-                            .putExtra(ChooseBehaviorsActivity.GOAL_KEY, mUserGoal.getGoal()));
+                            .putExtra(ChooseBehaviorsActivity.GOAL_KEY, (Parcelable)mUserGoal.getGoal()));
                 }
                 break;
         }

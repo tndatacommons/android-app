@@ -458,7 +458,7 @@ public class MainActivity
             }
         }
         Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
-                .putExtra(ChooseBehaviorsActivity.GOAL_KEY, goal)
+                .putExtra(ChooseBehaviorsActivity.GOAL_KEY, (Parcelable)goal)
                 .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, category);
         startActivityForResult(chooseBehaviors, GOAL_SUGGESTION_REQUEST_CODE);
     }

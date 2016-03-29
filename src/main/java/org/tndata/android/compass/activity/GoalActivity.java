@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -225,7 +226,7 @@ public class GoalActivity
         switch (view.getId()){
             case R.id.goal_fab:
                 Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
-                        .putExtra(ChooseBehaviorsActivity.GOAL_KEY, mUserGoal.getGoal());
+                        .putExtra(ChooseBehaviorsActivity.GOAL_KEY, (Parcelable)mUserGoal.getGoal());
                 if (mUserGoal.getPrimaryCategory() != null){
                     CategoryContent category = mUserGoal.getPrimaryCategory().getCategory();
                     chooseBehaviors.putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, category);

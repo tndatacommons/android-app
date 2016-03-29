@@ -10,6 +10,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
+import org.tndata.android.compass.receiver.GcmBroadcastReceiver;
 import org.tndata.android.compass.util.NotificationUtil;
 
 

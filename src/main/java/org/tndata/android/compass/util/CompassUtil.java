@@ -3,10 +3,12 @@ package org.tndata.android.compass.util;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.net.Uri;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.WindowManager;
@@ -308,5 +310,17 @@ public final class CompassUtil{
         else{
             return Long.class;
         }
+    }
+
+    /**
+     * Tells whether a particular permission has been granted.
+     *
+     * @param context a reference to the context.
+     * @param permission the permission to check.
+     * @return true if the permission has been granted, false otherwise.
+     */
+    public static boolean hasPermission(@NonNull Context context, String permission){
+        int permissionGranted = PackageManager.PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission(context, permission) == permissionGranted;
     }
 }
