@@ -2,18 +2,15 @@
 <resources>
 
     <string name="app_name">Compass</string>
-    <string name="ok">OK</string>
 
     <!-- LoginActivity -->
     <string name="terms_title">Terms and Conditions</string>
     <string name="launcher_sign_up">SIGN UP</string>
     <string name="launcher_login">LOG IN</string>
-    <string name="launcher_tagline">Sign up or log in</string>
     <string name="launcher_compass_image_cd">Compass image</string>
     <string name="launcher_compass_logo_cd">Compass logo</string>
     <string name="launcher_de_soto_bridge_cd">Hernando DeSoto bridge</string>
     <string name="launcher_made_in_memphis">made in memphis</string>
-    <string name="launcher_tour">TOUR</string>
     <string name="login_email_hint">email</string>
     <string name="login_password_hint">password</string>
     <string name="login_email_label">email address</string>
@@ -37,23 +34,18 @@
     <string name="signup_accept_terms">Creating an account indicates that you agree to our terms of service</string>
 
     <!-- MainActivity -->
-    <string name="action_my_progress">My progress</string>
     <string name="action_my_information">My information</string>
     <string name="action_my_places">My places</string>
     <string name="action_my_priorities">My activities</string>
     <string name="action_my_privacy">My privacy</string>
     <string name="action_settings">Settings</string>
-    <string name="action_check_in">Check in</string>
     <string name="action_tour">Tour</string>
     <string name="action_support">Support</string>
     <string name="action_support_share_title">Select your email client</string>
     <string name="action_support_subject">Compass Feedback</string>
     <string name="nav_drawer_action">Compass</string>
-    <string name="main_tab_title">My Journey</string>
-    <string name="category_card_title">My %1$s goals</string>
     <string name="fab_search_goals">Search goals</string>
     <string name="fab_browse_goals">Browse goals</string>
-    <string name="fab_custom_goal">Custom goal</string>
 
     <!-- MyActivitiesActivity -->
     <string name="my_activities_title">Customize my activities</string>
@@ -61,55 +53,18 @@
     <!-- ChooseCategoryActivity -->
     <string name="choose_category_title">What interests you?</string>
 
-    <!-- CategoryFragment -->
-    <string name="popup_menu_content_description">View more options</string>
-    <string name="goal_deleted">Goal deleted</string>
-    <string name="goal_card_add_label">SHOW ME HOW</string>
-    <string name="goal_card_details_label">MY ACTIVITIES</string>
-    <string name="goal_dialog_delete_title">Delete goal?</string>
-    <string name="goal_dialog_delete_message">You are about to permanently remove this</string>
-
     <!-- Time/Recurrence pickers -->
-    <string name="trigger_saved_confirmation_toast">Reminder saved</string>
     <string name="date_picker_confirmation_toast">Date set</string>
     <string name="time_picker_confirmation_toast">You have selected %1$s</string>
     <string name="recurrence_picker_confirmation_toast">Recurring schedule saved</string>
     <string name="reminder_failed">Failed to save reminder</string>
 
     <!-- OnBoardingActivity -->
-    <string name="category_image_description">Select</string>
-    <string name="choose_categories_need_more">You must select at least 4 categories</string>
     <string name="onboarding_category_done">NEXT</string>
 
-    <string name="onboarding_checkprogress_title">ARE YOU ON COURSE?</string>
-    <string name="onboarding_checkprogress_info">Compass will help you track your progress. These icons let you know if you are heading in the right direction. Tap one to get started.</string>
-    <string name="onboarding_checkprogress_privacy_title">My privacy</string>
-    <string name="onboarding_checkprogress_privacy_content">Compass respects your privacy and will never share your personal information with others.</string>
-
-    <string name="choose_goals_goal_removed">Goal removed</string>
-    <string name="choose_goals_done">I\'M DONE</string>
-    <string name="choose_goals_header_label">%1$s goals</string>
-    <string name="choose_goals_info_label">Select my goals</string>
-    <string name="choose_goals_error_label">Uh Oh! There seems to have been an issue finding goals</string>
-    <string name="choose_goals_list_item_more_info_label">MORE INFO</string>
-    <string name="choose_goals_list_item_select_button">I WANT THIS</string>
-    <string name="choose_goals_list_item_selected_button">I\'LL DO IT</string>
     <string name="goal_image_description">Goal</string>
     <string name="instrument_next">NEXT</string>
     <string name="survey_open_ended_hint">answer</string>
-
-    <!-- MyGoalsFragment -->
-    <string name="default_no_content_title">What are my priorities?</string>
-    <string name="default_no_content_subtitle">Click the button below to begin</string>
-    <string name="category_goals">%1$s goals</string>
-    <string name="category_goals_add">What are my %1$s goals?</string>
-
-    <!-- GoalDetailsActivity -->
-    <string name="goal_title_label">My goal</string>
-    <string name="goal_management">Find more activities</string>
-    <string name="menu_goal_new_behaviors">Choose priorities</string>
-    <string name="menu_goal_view_details">View details</string>
-    <string name="menu_goal_remove">Remove goal</string>
 
     <!-- ActionTriggerActivity -->
     <string name="trigger_default_action_title">Reminders for this action</string>
@@ -121,7 +76,6 @@
 
     <!-- Library -->
     <string name="library_goals_content_header">Compass can help me&#8230;</string>
-    <string name="library_goal_title">I want to %1$s</string>
     <string name="library_behaviors_content_header">You can do it!</string>
     <string name="library_behavior_title">I want to %1$s</string>
     <string name="library_behavior_yes">Yes, I\'m in</string>
@@ -161,33 +115,22 @@
     <string name="settings_notifications_quiet_hours_title">Quiet hours</string>
 
     <!-- Surveys -->
-    <string name="survey_title">GETTING TO KNOW ME</string>
     <string name="survey_no">No</string>
     <string name="survey_yes">Yes</string>
     <string name="button_positive">DONE</string>
     <string name="button_negative">CANCEL</string>
     <string name="survey_default_option">Click to choose</string>
 
-    <!-- MyPrioritiesActivity -->
-    <string name="my_priorities_title">My Activities</string>
-    <string name="my_priorities_edit_activities">Edit my activities</string>
-
     <!-- ActionActivity -->
-    <string name="action_icon_cd">Action icon</string>
-    <string name="action_external_resource_header">Try this resource</string>
-    <string name="action_more_info_header">More info</string>
     <string name="action_do_it_now">Do it now</string>
     <string name="action_snooze">Later</string>
     <string name="action_reschedule">Reschedule</string>
-    <string name="action_cancel">Cancel</string>
     <string name="action_did_it">I did it</string>
-    <string name="action_tick_cd">Action complete tick</string>
     <string name="action_view_goal">View goal</string>
     <string name="action_view_goal_condensed">Goal</string>
     <string name="action_trigger">Change reminder</string>
     <string name="action_trigger_condensed">Reminder</string>
     <string name="action_disable_trigger">Disable reminder</string>
-    <string name="action_detail_header">Here\'s why</string>
 
     <!-- TourFragment -->
     <string name="tour_action_skip">SKIP</string>
@@ -198,7 +141,6 @@
 
     <!-- Category chooser -->
     <string name="choose_categories_error">Uh Oh! There seems to have been an issue finding choices.</string>
-    <string name="choose_categories_header">KNOW YOUR PATH.</string>
     <string name="choose_categories_header_title">Pick the things you care about most.</string>
     <string name="choose_categories_header_onboarding_title">Tell Compass the three to five things you care about most.</string>
     <string name="choose_categories_header_subtitle">You can add or change your choices later.</string>
@@ -218,15 +160,7 @@
     <string name="search_create">I don\'t see my goal</string>
 
     <!-- Action notification -->
-    <string name="action_notification_yes">Got it</string>
     <string name="action_notification_later">Later</string>
-
-    <!-- Didn't do it -->
-    <string name="did_not_do_it_title">Are you sure?</string>
-    <string name="did_not_do_it_header">Try to keep going.</string>
-    <string name="did_not_do_it_ok">OK, I did it.</string>
-    <string name="did_not_do_it_later">Later.</string>
-    <string name="did_not_do_it_no">Not this time.</string>
 
     <!-- Snooze stuff -->
     <string name="later_title">Later</string>
@@ -240,11 +174,7 @@
     <string name="later_location_rationale">Compass needs access to your location in order to send you location-based reminders.</string>
     <string name="later_location_rationale_button">Got it!</string>
 
-    <!-- I did it -->
-    <string name="did_it_title">I did it</string>
-
     <!-- Places -->
-    <string name="places_load_error">There was an error loading the place list</string>
     <string name="places_name_dialog_title">What\'s the name of the place?</string>
     <string name="places_name_dialog_accept">Accept</string>
     <string name="places_name_dialog_cancel">Cancel</string>
@@ -299,7 +229,6 @@
     <string name="card_goal_suggestion_popup_refresh">Refresh</string>
     <!-- Upcoming cards -->
     <string name="card_upcoming_header">Today\'s activities</string>
-    <string name="card_upcoming_goal_title">To %1$s</string>
     <!-- My goals cards -->
     <string name="card_my_goals_header">My goals</string>
     <string name="card_suggestions_header">Recommended for you</string>
@@ -307,11 +236,6 @@
     <string name="card_footer_see_more">SEE MORE</string>
 
     <!-- Check in -->
-    <string name="check_in_review_title">I want to %1$s.</string>
-    <string name="check_in_review_action_header">Today I will:</string>
-    <string name="check_in_review_action_behavior">To %1$s</string>
-    <string name="check_in_empty_review_title">I want to improve my life.</string>
-    <string name="check_in_empty_review_action">Review the Compass app to find new activities to reach my goals.</string>
     <string name="check_in_feedback_title">How am I doing?</string>
     <string name="check_in_feedback_goal">I want to %1$s.</string>
     <string name="check_in_feedback_poor">Poor</string>
@@ -330,9 +254,6 @@
     <string name="check_in_reward_more_cd">Load another item</string>
     <string name="check_in_reward_share_cd">Share the currently displayed item</string>
     <string name="check_in_reward_home_cd">Go back to the feed</string>
-
-    <!-- Menus and popups -->
-    <string name="menu_popup_remove">Remove</string>
 
     <!-- Header content descriptions -->
     <string name="header_hero_cd">Full size category image</string>

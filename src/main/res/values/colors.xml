@@ -9,31 +9,16 @@
     <color name="grow_primary_dark">#1976D2</color>
     <color name="grow_accent">#4A9E94</color>
     <color name="grow_accent_login">#FFFFFF</color>
-    <color name="grow_primary_accent">#BBDEFB</color>
-    <color name="actionbar_main_color">#BD98ED</color>
     <color name="actionbar_text">#FFFFFF</color>
     <color name="app_background">#FFFFFF</color>
     <color name="nav_drawer_color">#FFFFFF</color>
     <color name="login_background">@color/grow_primary_dark</color>
-    <color name="transparent_overlay">#30000000</color>
-    <color name="image_background">#DEDEDE</color>
-    <color name="action_background_opaque">#FFEEEEEE</color>
-    <color name="action_background_transparent">#00EEEEEE</color>
     <color name="grey_placeholder">#888</color>
 
     <color name="tour_color">#3fb3e6</color>
 
-    <color name="delete">#FF0000</color>
-
-    <!-- List Rows -->
-    <color name="list_row_selected_color">#FF4081</color>
-    <color name="list_row_default_color">#FFFFFF</color>
-    <color name="nav_drawer_list_divider_color">#1A2196F3</color>
-    <color name="nav_drawer_list_row_selected_color">#2196F3</color>
-
     <!-- Text -->
     <color name="dark_text_color">#404040</color>
-    <color name="dark_text_color_inverse">#E0E0E0</color>
     <color name="secondary_text_color">#757575</color>
     <color name="white">#FFFFFF</color>
     <color name="light_hint">#CCCCCC</color>
@@ -46,23 +31,17 @@
     <!-- Buttons -->
     <color name="button_paper_flat_text_color">#FFFFFF</color>
     <color name="button_paper_flat_unselected_color">#E91E63</color>
-    <color name="button_paper_flat_label_text_color">#404040</color>
     <color name="button_paper_flat_selected_color">#662196F3</color>
     <color name="button_paper_flat_disabled_color">#1A2196F3</color>
     <color name="button_positive_text_color">#FFFFFF</color>
     <color name="button_positive_selected_color">#662196F3</color>
     <color name="button_positive_unselected_color">#2196F3</color>
     <color name="button_disabled_color">#1ACCCCCC</color>
-    <color name="button_negative_selected_color">#66FF7061</color>
-    <color name="button_negative_unselected_color">#FF7061</color>
-    <color name="button_secondary_selected_color">#66BF55EC</color>
-    <color name="button_secondary_unselected_color">#BF55EC</color>
     <color name="button_paper_fab_color">#2196F3</color>
     <color name="button_paper_fab_selected_color">#662196F3</color>
 
     <color name="signup_hint_color">#61000000</color>
 
     <color name="main_toolbar_background_inactive">@android:color/transparent</color>
-    <color name="main_toolbar_background_focused">@color/white</color>
 
 </resources>
