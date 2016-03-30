@@ -273,9 +273,9 @@ public class MainActivity
         for (int i = 0; i < 2; i++){
             ContextThemeWrapper ctx = new ContextThemeWrapper(this, R.style.MenuButtonStyle);
             FloatingActionButton fab = new FloatingActionButton(ctx);
-            fab.setColorNormalResId(R.color.grow_accent);
-            fab.setColorPressedResId(R.color.grow_accent);
-            fab.setColorRippleResId(R.color.grow_accent);
+            fab.setColorNormalResId(R.color.accent);
+            fab.setColorPressedResId(R.color.accent);
+            fab.setColorRippleResId(R.color.accent);
             fab.setScaleType(ImageView.ScaleType.FIT_CENTER);
             if (i == 0){
                 fab.setId(R.id.fab_search_goals);
@@ -426,7 +426,7 @@ public class MainActivity
 
             case DrawerAdapter.DRAWER_COUNT:
                 //Debug button
-                startActivity(new Intent(this, CheckInActivity.class));
+                startActivity(new Intent(this, PlaygroundActivity.class));
                 break;
         }
         mDrawerLayout.closeDrawers();

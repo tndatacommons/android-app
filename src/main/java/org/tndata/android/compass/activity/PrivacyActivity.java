@@ -23,7 +23,7 @@ public class PrivacyActivity extends AppCompatActivity{
         setContentView(R.layout.activity_privacy);
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.transparent_tool_bar);
-        toolbar.setBackgroundColor(getResources().getColor(R.color.grow_primary));
+        toolbar.setBackgroundColor(getResources().getColor(R.color.primary));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

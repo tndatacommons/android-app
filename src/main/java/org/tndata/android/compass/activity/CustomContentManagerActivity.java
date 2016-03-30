@@ -74,7 +74,7 @@ public class CustomContentManagerActivity
             mAdapter = new CustomContentManagerAdapter(this, mCustomGoal, this);
         }
         setAdapter(mAdapter);
-        setColor(getResources().getColor(R.color.grow_primary));
+        setColor(getResources().getColor(R.color.primary));
 
         View header = inflateHeader(R.layout.header_tile);
         ImageView tile = (ImageView)header.findViewById(R.id.header_tile);

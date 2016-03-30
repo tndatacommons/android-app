@@ -20,17 +20,14 @@
             android:id="@+id/material_header_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAllCaps="true"
-            android:textSize="18sp"
-            android:textColor="@color/dark_text_color" />
+            style="@style/CardTitleText" />
 
         <TextView
             android:id="@+id/material_header_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/dark_text_color" />
+            style="@style/CardContentText" />
 
         <LinearLayout
             android:id="@+id/material_header_button_container"

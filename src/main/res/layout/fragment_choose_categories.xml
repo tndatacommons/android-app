@@ -7,7 +7,7 @@
         android:id="@+id/choose_categories_material_header"
         android:layout_width="match_parent"
         android:layout_height="210dp"
-        android:background="@color/grow_primary_dark" />
+        android:background="@color/primary_dark" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/choose_categories_grid"

@@ -98,7 +98,7 @@ public class UserGoal extends Goal implements Serializable{
     @Override
     public String getColor(Context context){
         if (mPrimaryCategory == null){
-            return String.format("#%06X", 0xFFFFFF & context.getResources().getColor(R.color.grow_primary));
+            return String.format("#%06X", 0xFFFFFF & context.getResources().getColor(R.color.primary));
         }
         return mPrimaryCategory.getColor();
     }

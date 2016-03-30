@@ -9,4 +9,4 @@
     android:layout_marginRight="10dp"
     android:textAllCaps="true"
     android:textAppearance="?android:attr/textAppearanceSmall"
-    android:textColor="@color/grow_primary"/>
+    android:textColor="@color/primary" />

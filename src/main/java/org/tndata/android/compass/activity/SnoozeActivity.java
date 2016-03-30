@@ -295,7 +295,7 @@ public class SnoozeActivity
         NotificationUtil.cancel(this, NotificationUtil.USER_ACTION_TAG, mReminder.getObjectId());
 
         //Start the location service and report the snooze
-        startService(new Intent(this, LocationNotificationService.class));
+        LocationNotificationService.start(this);
         reportSnooze(ActionReportService.LENGTH_LOCATION);
 
         //Kill the activity

@@ -88,9 +88,9 @@ public class TransitionButton extends ImageView implements Animation.AnimationLi
      */
     private void init(AttributeSet attrs){
         //Default color set
-        mColorActive = getResources().getColor(R.color.grow_accent);
+        mColorActive = getResources().getColor(R.color.accent);
         mColorTransition = getResources().getColor(R.color.grey_placeholder);
-        mColorInactive = getResources().getColor(R.color.grow_primary);
+        mColorInactive = getResources().getColor(R.color.primary);
 
         mApplyColorToBackground = false;
 
@@ -131,11 +131,11 @@ public class TransitionButton extends ImageView implements Animation.AnimationLi
         if (ta != null){
             try{
                 mColorActive = ta.getColor(R.styleable.TransitionButton_color_active,
-                        getResources().getColor(R.color.grow_accent));
+                        getResources().getColor(R.color.accent));
                 mColorTransition = ta.getColor(R.styleable.TransitionButton_color_transition,
                         getResources().getColor(R.color.grey_placeholder));
                 mColorInactive = ta.getColor(R.styleable.TransitionButton_color_inactive,
-                        getResources().getColor(R.color.grow_primary));
+                        getResources().getColor(R.color.primary));
                 mApplyColorToBackground = ta.getInt(R.styleable.TransitionButton_color_apply_to, 0) == 1;
             }
             finally{

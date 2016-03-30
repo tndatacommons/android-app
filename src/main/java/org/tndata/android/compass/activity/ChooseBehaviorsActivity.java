@@ -97,7 +97,7 @@ public class ChooseBehaviorsActivity
         if (mGoal == null){
             long goalId = getIntent().getLongExtra(GOAL_ID_KEY, -1);
             mGetGoalRequestCode = HttpRequest.get(this, API.getGoalUrl(goalId));
-            setColor(getResources().getColor(R.color.grow_primary));
+            setColor(getResources().getColor(R.color.primary));
         }
         else{
             setUp();

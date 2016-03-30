@@ -10,7 +10,7 @@
         android:id="@+id/check_in_feedback_header"
         android:layout_width="match_parent"
         android:layout_height="@dimen/material_header_size"
-        android:background="@color/grow_primary">
+        android:background="@color/primary">
 
         <TextView
             android:layout_width="match_parent"

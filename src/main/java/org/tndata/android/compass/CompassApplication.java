@@ -256,7 +256,7 @@ public class CompassApplication extends Application{
         //Add a constant url parameter for API versioning
         HttpRequest.addUrlParameter("version", "2");
 
-        startService(new Intent(this, LocationNotificationService.class));
+        LocationNotificationService.start(this);
         ImageLoader.initialize(getApplicationContext());
     }
 }

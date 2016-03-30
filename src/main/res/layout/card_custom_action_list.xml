@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="15dp"
-            android:background="@color/grow_primary"
+            android:background="@color/primary"
             android:text="@string/custom_action_list_header"
             android:textAllCaps="true"
             android:textSize="18sp"

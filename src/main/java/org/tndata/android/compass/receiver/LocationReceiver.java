@@ -3,9 +3,9 @@ package org.tndata.android.compass.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.location.LocationManager;
 
 import org.tndata.android.compass.service.LocationNotificationService;
+import org.tndata.android.compass.util.CompassUtil;
 
 
 /**
@@ -17,18 +17,13 @@ import org.tndata.android.compass.service.LocationNotificationService;
 public class LocationReceiver extends BroadcastReceiver{
     @Override
     public void onReceive(Context context, Intent intent){
-        LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-        boolean isLocationEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        isLocationEnabled |= lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-        if (isLocationEnabled){
+        if (CompassUtil.isLocationEnabled(context)){
             //Fire up location
-            context.startService(new Intent(context.getApplicationContext(),
-                    LocationNotificationService.class));
+            LocationNotificationService.start(context.getApplicationContext());
         }
         else{
             //Kill location
-            LocationNotificationService.cancel();
+            LocationNotificationService.kill(context.getApplicationContext());
         }
     }
 }

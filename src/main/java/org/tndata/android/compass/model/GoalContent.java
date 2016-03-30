@@ -73,7 +73,7 @@ public class GoalContent extends TDCContent implements Parcelable{
 
     public String getColor(Context context){
         if (mColor == null || mColor.isEmpty()){
-            return String.format("#%06X", 0xFFFFFF & context.getResources().getColor(R.color.grow_primary));
+            return String.format("#%06X", 0xFFFFFF & context.getResources().getColor(R.color.primary));
         }
         return mColor;
     }

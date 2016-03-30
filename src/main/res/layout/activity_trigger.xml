@@ -161,7 +161,7 @@
             android:layout_margin="10dp"
             android:minHeight="@dimen/paper_flat_button_min_height"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/grow_primary"
+            android:textColor="@color/primary"
             android:text="@string/trigger_finished_label"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"

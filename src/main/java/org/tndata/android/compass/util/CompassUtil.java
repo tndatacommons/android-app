@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
@@ -310,6 +311,18 @@ public final class CompassUtil{
         else{
             return Long.class;
         }
+    }
+
+    /**
+     * Tells whether location is enabled.
+     *
+     * @param context a reference to the context.
+     * @return true if location is enabled, false otherwise.
+     */
+    public static boolean isLocationEnabled(Context context){
+        LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        boolean isGpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        return isGpsEnabled | lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
     /**

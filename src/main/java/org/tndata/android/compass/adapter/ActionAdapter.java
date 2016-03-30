@@ -141,7 +141,7 @@ public class ActionAdapter
         if (mAction instanceof UserAction){
             UserAction userAction = (UserAction)mAction;
             if (mCategory == null){
-                holder.setHeaderColor(getContext().getResources().getColor(R.color.grow_primary));
+                holder.setHeaderColor(getContext().getResources().getColor(R.color.primary));
             }
             else{
                 holder.setHeaderColor(Color.parseColor(mCategory.getColor()));
@@ -159,7 +159,7 @@ public class ActionAdapter
             }
         }
         else if (mAction instanceof CustomAction){
-            holder.setHeaderColor(getContext().getResources().getColor(R.color.grow_primary));
+            holder.setHeaderColor(getContext().getResources().getColor(R.color.primary));
             setReward(holder);
         }
     }

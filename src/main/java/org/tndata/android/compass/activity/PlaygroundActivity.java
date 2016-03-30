@@ -26,8 +26,8 @@ public class PlaygroundActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playground);
 
-        button = (TransitionButton)findViewById(R.id.playground_button);
-        button.setOnClickListener(this);
+        //button = (TransitionButton)findViewById(R.id.playground_button);
+        //button.setOnClickListener(this);
 
         state = 0;
 
@@ -36,11 +36,14 @@ public class PlaygroundActivity extends AppCompatActivity implements View.OnClic
         progress.setShowUnit(true);
         progress.setAutoTextSize(true);
         progress.setValueAnimated(0, 100, 1500);
+
+        findViewById(R.id.playground_button_start).setOnClickListener(this);
+        findViewById(R.id.playground_button_kill).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v){
-        if (state == 0){
+        /*if (state == 0){
             button.setTransitioningToActive(true);
             state = 1;
         }
@@ -55,12 +58,15 @@ public class PlaygroundActivity extends AppCompatActivity implements View.OnClic
         else if (state == 3){
             button.setInactive(true);
             state = 0;
-        }
-    }
+        }*/
+        switch (v.getId()){
+            case R.id.playground_button_start:
+                LocationNotificationService.start(this);
+                break;
 
-    @Override
-    protected void onDestroy(){
-        LocationNotificationService.cancel();
-        super.onDestroy();
+            case R.id.playground_button_kill:
+                LocationNotificationService.kill(this);
+                break;
+        }
     }
 }

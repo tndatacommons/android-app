@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:transition="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center" >
 
-    <org.tndata.android.compass.ui.TransitionButton
-        android:id="@+id/playground_button"
-        android:layout_width="50dp"
+    <Button
+        android:id="@+id/playground_button_start"
+        android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:padding="10dp"
-        android:src="@drawable/ic_add_white_36dp"
-        android:background="@drawable/circle_white"
-        transition:color_active="@color/grow_accent"
-        transition:color_transition="#888"
-        transition:color_inactive="@color/grow_primary"
-        transition:color_apply_to="background" />
+        android:text="Start Service" />
+
+    <Button
+        android:id="@+id/playground_button_kill"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:padding="10dp"
+        android:text="Kill Service" />
 
     <at.grabner.circleprogress.CircleProgressView
         xmlns:progress="http://schemas.android.com/apk/res-auto"
@@ -33,6 +34,6 @@
         progress:seekMode="true"
         progress:textColor="#00796B"
         progress:unit="%"
-        progress:unitColor="#009688"/>
+        progress:unitColor="#009688" />
 
 </LinearLayout>

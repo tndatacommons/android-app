@@ -15,7 +15,7 @@
         android:paddingStart="30dp"
         android:paddingRight="20dp"
         android:paddingEnd="20dp"
-        android:background="@color/grow_primary"
+        android:background="@color/primary"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textSize="24sp"
         android:textColor="@color/white"
@@ -109,7 +109,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_refresh"
-                android:tint="@color/grow_primary"
+                android:tint="@color/primary"
                 android:contentDescription="@string/check_in_reward_more_cd" />
 
             <ProgressBar
@@ -126,7 +126,7 @@
             android:layout_marginRight="15dp"
             android:layout_marginEnd="15dp"
             android:src="@drawable/ic_share_white_24dp"
-            android:tint="@color/grow_primary"
+            android:tint="@color/primary"
             android:contentDescription="@string/check_in_reward_share_cd" />
 
         <!-- TODO create a 24dp icon and set the sizes to wrap_content -->
