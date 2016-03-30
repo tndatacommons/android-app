@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.receiver.GcmBroadcastReceiver;
+import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NotificationUtil;
 
 
@@ -77,14 +78,16 @@ public class GcmIntentService extends IntentService{
                 else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)){
                     try{
                         JSONObject jsonObject = new JSONObject(extras.getString("message"));
-                        sendNotification(
-                                jsonObject.optString("id"),
-                                jsonObject.optString("message"),
-                                jsonObject.optString("title"),
-                                jsonObject.optString("object_type"),
-                                jsonObject.optString("object_id"),
-                                jsonObject.optString("user_mapping_id")
-                        );
+                        if (jsonObject.optBoolean("production") == !API.STAGING){
+                            sendNotification(
+                                    jsonObject.optString("id"),
+                                    jsonObject.optString("message"),
+                                    jsonObject.optString("title"),
+                                    jsonObject.optString("object_type"),
+                                    jsonObject.optString("object_id"),
+                                    jsonObject.optString("user_mapping_id")
+                            );
+                        }
                     }
                     catch (JSONException jsonx){
                         jsonx.printStackTrace();
