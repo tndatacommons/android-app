@@ -106,7 +106,9 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
             ParserModels.UserGoalsResultSet set = (ParserModels.UserGoalsResultSet)result;
             String url = set.next;
             if (url != null){
-                url = url.replaceFirst("s", "");
+                if (API.STAGING && url.startsWith("https")){
+                    url = url.replaceFirst("s", "");
+                }
             }
             mFeedData.addGoals(set.results, url);
             sLoader = null;

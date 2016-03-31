@@ -198,6 +198,7 @@
         </ul>
     </string>
     <string name="package_accept">I CONSENT</string>
+    <string name="package_decline">I DECLINE</string>
     <string name="package_info">About the package</string>
     <string name="package_consent">Consent</string>
     <string name="package_load_error">The package information could not be loaded</string>
