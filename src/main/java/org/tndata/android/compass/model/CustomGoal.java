@@ -68,7 +68,7 @@ public class CustomGoal extends Goal implements Parcelable{
 
     @Override
     public String getColor(Context context){
-        return String.format("#%06X", 0xFFFFFF & context.getResources().getColor(R.color.grow_primary));
+        return String.format("#%06X", 0xFFFFFF & context.getResources().getColor(R.color.primary));
     }
 
     @Override

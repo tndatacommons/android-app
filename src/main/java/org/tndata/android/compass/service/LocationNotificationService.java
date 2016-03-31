@@ -2,10 +2,12 @@ package org.tndata.android.compass.service;
 
 import android.Manifest;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -33,19 +35,36 @@ public class LocationNotificationService
         extends Service
         implements LocationRequest.OnLocationAcquiredCallback{
 
-    //Constants
+    //Actions
+    private static final String ACTION_KEY = "org.tndata.compass.LocationNotificationService.Action";
+    private static final String START = "start";
+    private static final String UPDATE = "update";
+    private static final String KILL = "kill";
+
+    //Defaults
     private static final int UPDATE_INTERVAL = 60*1000; //60 seconds
     private static final int CHECKING_INTERVAL = 31*1000; //31 seconds
     private static final int GEOFENCE_RADIUS = 40; //40 meters
 
-    //Cancellation boolean, mainly for testing purposes
-    private static boolean cancelled;
 
     /**
-     * Shuts down the service if it is running.
+     * Starts the service for scan.
+     *
+     * @param context a reference to the context.
      */
-    public static void cancel(){
-        cancelled = true;
+    public static void start(@NonNull Context context){
+        context.startService(new Intent(context, LocationNotificationService.class)
+                .putExtra(ACTION_KEY, START));
+    }
+
+    public static void updateDataSet(@NonNull Context context){
+        context.startService(new Intent(context, LocationNotificationService.class)
+                .putExtra(ACTION_KEY, UPDATE));
+    }
+
+    public static void kill(@NonNull Context context){
+        context.startService(new Intent(context, LocationNotificationService.class)
+                .putExtra(ACTION_KEY, KILL));
     }
 
 
@@ -67,47 +86,74 @@ public class LocationNotificationService
     @Override
     public void onCreate(){
         super.onCreate();
-        cancelled = false;
         mRunning = false;
         mRequestInProgress = false;
     }
 
     @Override
     public synchronized int onStartCommand(Intent intent, int flags, int startId){
-        //Check permission, from this point on, these needn't be checked
-        if (CompassUtil.hasPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)){
-            //Load the list of places, as these might've changed.
-            CompassDbHelper dbHelper = new CompassDbHelper(this);
-            mPlaces = new HashMap<>();
-            for (UserPlace userPlace:dbHelper.getPlaces()){
-                mPlaces.put(userPlace.getId(), userPlace);
-            }
-            mReminders = dbHelper.getReminders();
-            dbHelper.close();
+        //Check permission, from this point on, this needn't be checked, as the app restarts when
+        //  permissions change. Check if location is enabled. Checking if location is enabled is
+        //  a safety measure for whenever the service is started from the BootReceiver,
+        //  SnoozeActivity, or CompassApplication
+        if (CompassUtil.hasPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                && CompassUtil.isLocationEnabled(this)){
 
-            //Instantiate LocationRequest if necessary
-            if (mLocationRequest == null){
-                mLocationRequest = new LocationRequest(this, this, 0);
-            }
+            //Evaluate the action
+            if (intent.getExtras() != null){
+                switch (intent.getExtras().getString(ACTION_KEY, "")){
+                    case START:
+                        //For start actions, if the service is already started, do nothing,
+                        //  otherwise, start it
+                        if (!mRunning){
+                            loadData();
+                            //If there are no reminders, starting the service makes no sense
+                            if (mReminders.isEmpty()){
+                                stopSelf();
+                            }
+                            else{
+                                mRunning = true;
+                                mLocationRequest = new LocationRequest(this, this, 0);
+                                mLocationRequest.onStart();
+                                mLocationRequest.requestLocation();
+                            }
+                        }
+                        break;
 
-            //Start LocationRequest if necessary
-            if (!mRunning){
-                mRunning = true;
-                mLocationRequest.onStart();
-            }
+                    case UPDATE:
+                        //For update actions, if the service was running, load the data,
+                        //  otherwise assume there was a good reason for it to be stopped
+                        //  and stop it.
+                        if (mRunning){
+                            loadData();
+                        }
+                        else{
+                            stopSelf();
+                        }
+                        break;
 
-            //If there are no reminders in the database, the service has no purpose
-            if (mReminders.isEmpty()){
-                mLocationRequest.onStop();
-                mLocationRequest = null;
-                stopSelf();
+                    case KILL:
+                        //If the action is kill, stop the service
+                        if (mRunning){
+                            mLocationRequest.onStop();
+                            mRunning = false;
+                        }
+                        stopSelf();
+                        break;
+
+                    default:
+                        if (!mRunning){
+                            stopSelf();
+                        }
+                }
             }
             else{
-                requestLocation();
+                if (!mRunning){
+                    stopSelf();
+                }
             }
         }
         else{
-            //Die
             stopSelf();
         }
 
@@ -115,22 +161,26 @@ public class LocationNotificationService
     }
 
     /**
+     * Reloads the data set.
+     */
+    private void loadData(){
+        CompassDbHelper dbHelper = new CompassDbHelper(this);
+        mPlaces = new HashMap<>();
+        for (UserPlace userPlace:dbHelper.getPlaces()){
+            mPlaces.put(userPlace.getId(), userPlace);
+        }
+        mReminders = dbHelper.getReminders();
+        dbHelper.close();
+    }
+
+    /**
      * Requests a location from the LocationRequest, but checks if the service should
      * shut down first.
      */
     private void requestLocation(){
-        //If the service was cancelled, clean up and stop
-        if (cancelled){
-            mLocationRequest.onStop();
-            mLocationRequest = null;
-            stopSelf();
-        }
-        //Otherwise, request a location
-        else{
-            if (!mRequestInProgress){
-                mRequestInProgress = true;
-                mLocationRequest.requestLocation();
-            }
+        if (mRunning && !mRequestInProgress){
+            mRequestInProgress = true;
+            mLocationRequest.requestLocation();
         }
     }
 
@@ -185,7 +235,6 @@ public class LocationNotificationService
         //If there are no more reminders, shut down the service
         if (mReminders.size() == 0){
             mLocationRequest.onStop();
-            mLocationRequest = null;
             stopSelf();
         }
         //Otherwise, schedule a timing check
@@ -227,12 +276,14 @@ public class LocationNotificationService
         }
         //Otherwise, schedule another check in 30 seconds
         else{
-            new Handler().postDelayed(new Runnable(){
-                @Override
-                public void run(){
-                    checkTiming();
-                }
-            }, CHECKING_INTERVAL);
+            if (mRunning){
+                new Handler().postDelayed(new Runnable(){
+                    @Override
+                    public void run(){
+                        checkTiming();
+                    }
+                }, CHECKING_INTERVAL);
+            }
         }
     }
 

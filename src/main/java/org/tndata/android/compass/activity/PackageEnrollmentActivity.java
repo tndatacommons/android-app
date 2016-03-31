@@ -77,6 +77,7 @@ public class PackageEnrollmentActivity
         mConsentSummary = (TextView)findViewById(R.id.package_consent_summary);
         mConsent = (TextView)findViewById(R.id.package_consent);
         findViewById(R.id.package_accept).setOnClickListener(this);
+        findViewById(R.id.package_decline).setOnClickListener(this);
 
         //This setting cannot be set from XML
         TextView explanation = (TextView)findViewById(R.id.package_accept_explanation);
@@ -94,8 +95,7 @@ public class PackageEnrollmentActivity
         }
         else if (requestCode == mPutConsentRequestCode){
             //If the acknowledgement was successful, dismiss the notification and kill the activity
-            ((NotificationManager)getSystemService(NOTIFICATION_SERVICE))
-                    .cancel(NotificationUtil.ENROLLMENT_TAG, (int)mPackage.getId());
+            NotificationUtil.cancel(this, NotificationUtil.ENROLLMENT_TAG, (int)mPackage.getId());
             finish();
         }
     }
@@ -165,6 +165,11 @@ public class PackageEnrollmentActivity
                 mPutConsentRequestCode = HttpRequest.put(this,
                         API.getPutConsentAcknowledgementUrl(mPackage),
                         API.getPutConsentAcknowledgementBody());
+                break;
+
+            case R.id.package_decline:
+                NotificationUtil.cancel(this, NotificationUtil.ENROLLMENT_TAG, (int)mPackage.getId());
+                finish();
                 break;
         }
     }

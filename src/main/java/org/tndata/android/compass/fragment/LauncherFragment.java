@@ -54,7 +54,7 @@ public class LauncherFragment extends Fragment implements OnClickListener{
         ProgressBar progressBar = (ProgressBar)root.findViewById(R.id.launcher_progress);
 
         //Set the color of the progress bar to the accent color
-        int color = ContextCompat.getColor(getActivity(), R.color.grow_accent);
+        int color = ContextCompat.getColor(getActivity(), R.color.accent);
         progressBar.getIndeterminateDrawable().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
 
         //Set listeners

@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -527,11 +528,13 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
          */
         public void addButton(@IdRes int id, @StringRes int caption, View.OnClickListener listener){
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            View view = inflater.inflate(R.layout.button_material, mButtonContainer);
-            TextView button = (TextView)view.findViewById(R.id.button_material);
+            View view = inflater.inflate(R.layout.button_flat, mButtonContainer);
+            Button button = (Button)view.findViewById(R.id.button_flat);
             button.setId(id);
             button.setText(caption);
+            button.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Medium.ttf"));
             button.setOnClickListener(listener);
+            mButtonContainer.setVisibility(View.VISIBLE);
         }
     }
 
@@ -585,6 +588,21 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
          */
         public void setTitle(@NonNull String title){
             mHeader.setText(title);
+        }
+
+        /**
+         * Sets the title in the header and a click listener.
+         *
+         * @param id the new id of the header.
+         * @param title the new title.
+         * @param listener the click listener.
+         */
+        public void setTitle(@IdRes int id, @NonNull String title,
+                             @NonNull View.OnClickListener listener){
+
+            mHeader.setId(id);
+            mHeader.setText(title);
+            mHeader.setOnClickListener(listener);
         }
 
         /**

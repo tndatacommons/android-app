@@ -327,7 +327,7 @@ public class PlacesActivity
 
                 //Once a place is saved, start the location notification service to
                 //  update its internal lists of places
-                startService(new Intent(this, LocationNotificationService.class));
+                LocationNotificationService.updateDataSet(this);
             }
         }
     }

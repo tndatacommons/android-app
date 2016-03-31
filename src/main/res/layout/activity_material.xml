@@ -9,7 +9,7 @@
         android:id="@+id/material_header_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/grow_primary" />
+        android:background="@color/primary" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/material_list"
@@ -41,8 +41,8 @@
         android:src="@drawable/ic_add_white_24dp"
         android:visibility="invisible"
         fab:fab_size="normal"
-        fab:fab_colorNormal="@color/grow_primary"
-        fab:fab_colorPressed="@color/grow_primary"
+        fab:fab_colorNormal="@color/primary"
+        fab:fab_colorPressed="@color/primary"
         fab:fab_colorRipple="@color/white" />
 
 </RelativeLayout>

@@ -17,6 +17,6 @@ import org.tndata.android.compass.service.LocationNotificationService;
 public class BootReceiver extends BroadcastReceiver{
     @Override
     public void onReceive(Context context, Intent intent){
-        context.startService(new Intent(context, LocationNotificationService.class));
+        LocationNotificationService.start(context.getApplicationContext());
     }
 }

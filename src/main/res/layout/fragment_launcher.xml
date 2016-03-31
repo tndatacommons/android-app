@@ -80,7 +80,7 @@
                     android:layout_marginEnd="40dp"
                     android:text="@string/launcher_sign_up"
                     android:textSize="16sp"
-                    android:textColor="@color/grow_primary" />
+                    android:textColor="@color/primary" />
 
                 <TextView
                     android:id="@+id/launcher_login"
@@ -90,7 +90,7 @@
                     android:layout_marginStart="40dp"
                     android:text="@string/launcher_login"
                     android:textSize="16sp"
-                    android:textColor="@color/grow_primary" />
+                    android:textColor="@color/primary" />
 
             </LinearLayout>
         </RelativeLayout>

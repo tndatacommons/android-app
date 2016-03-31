@@ -39,7 +39,7 @@
         android:layout_gravity="end"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
-        android:background="@color/grow_primary"
+        android:background="@color/primary"
         android:visibility="gone"
         android:text="@string/search_create"
         android:textAllCaps="true"

@@ -17,9 +17,11 @@ import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.ImageLoader;
-import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.List;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -31,7 +33,7 @@ import java.util.List;
 public class ChooseGoalsActivity
         extends MaterialActivity
         implements
-                NetworkRequest.RequestCallback,
+                HttpRequest.RequestCallback,
                 Parser.ParserCallback,
                 ChooseGoalsAdapter.ChooseGoalsListener{
 
@@ -71,8 +73,13 @@ public class ChooseGoalsActivity
     private void setHeader(){
         View header = inflateHeader(R.layout.header_hero);
         ImageView hero = (ImageView)header.findViewById(R.id.header_hero_image);
-        ImageLoader.Options options = new ImageLoader.Options().setUsePlaceholder(false);
-        ImageLoader.loadBitmap(hero, mCategory.getImageUrl(), options);
+        if (mCategory.getImageUrl() != null && !mCategory.getImageUrl().isEmpty()){
+            ImageLoader.Options options = new ImageLoader.Options().setUsePlaceholder(false);
+            ImageLoader.loadBitmap(hero, mCategory.getImageUrl(), options);
+        }
+        else{
+            hero.setImageResource(R.drawable.compass_master_illustration);
+        }
     }
 
     @Override
@@ -93,8 +100,7 @@ public class ChooseGoalsActivity
         if (API.STAGING && mGetGoalsNextUrl.startsWith("https")){
             mGetGoalsNextUrl = mGetGoalsNextUrl.replaceFirst("s", "");
         }
-        mGetGoalsRequestCode = NetworkRequest.get(this, this, mGetGoalsNextUrl,
-                mApplication.getToken());
+        mGetGoalsRequestCode = HttpRequest.get(this, mGetGoalsNextUrl);
     }
 
     @Override
@@ -105,7 +111,7 @@ public class ChooseGoalsActivity
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
+    public void onRequestFailed(int requestCode, HttpRequestError error){
         mAdapter.displayError("Couldn't load goals");
     }
 

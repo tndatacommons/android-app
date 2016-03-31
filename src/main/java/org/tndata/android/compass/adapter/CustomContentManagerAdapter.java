@@ -166,7 +166,7 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
     @SuppressWarnings("deprecation")
     private void setButtonEnabled(TextView button, boolean enabled){
         if (enabled){
-            button.setTextColor(getContext().getResources().getColor(R.color.grow_primary));
+            button.setTextColor(getContext().getResources().getColor(R.color.primary));
         }
         else{
             button.setTextColor(getContext().getResources().getColor(R.color.secondary_text_color));

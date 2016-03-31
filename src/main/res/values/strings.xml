@@ -86,10 +86,6 @@
     <string name="dialog_behavior_customize">Customize</string>
     <string name="dialog_behavior_ok">Got it</string>
 
-    <!-- ReviewActionsActivity -->
-    <string name="review_actions_header">Ways I can %1$s</string>
-    <string name="review_actions_header_cat">From %1$s</string>
-
     <!-- CustomContentManager -->
     <string name="custom_goal_header">My goal is to&#8230;</string>
     <string name="custom_goal_create">Create</string>
@@ -126,10 +122,9 @@
     <string name="action_snooze">Later</string>
     <string name="action_reschedule">Reschedule</string>
     <string name="action_did_it">I did it</string>
-    <string name="action_view_goal">View goal</string>
-    <string name="action_view_goal_condensed">Goal</string>
-    <string name="action_trigger">Change reminder</string>
-    <string name="action_trigger_condensed">Reminder</string>
+    <string name="action_view_goal">View goal activities</string>
+    <string name="action_view_goal_condensed">Goal activities</string>
+    <string name="action_trigger">Reschedule</string>
     <string name="action_disable_trigger">Disable reminder</string>
 
     <!-- TourFragment -->
@@ -203,6 +198,7 @@
         </ul>
     </string>
     <string name="package_accept">I CONSENT</string>
+    <string name="package_decline">I DECLINE</string>
     <string name="package_info">About the package</string>
     <string name="package_consent">Consent</string>
     <string name="package_load_error">The package information could not be loaded</string>
@@ -230,7 +226,7 @@
     <!-- Upcoming cards -->
     <string name="card_upcoming_header">Today\'s activities</string>
     <!-- My goals cards -->
-    <string name="card_my_goals_header">My goals</string>
+    <string name="card_my_goals_header">Your goals</string>
     <string name="card_suggestions_header">Recommended for you</string>
     <!-- Footer cards -->
     <string name="card_footer_see_more">SEE MORE</string>

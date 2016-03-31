@@ -82,7 +82,7 @@ public class ActionActivity
         mUpcomingAction = null;
         mReminder = null;
 
-        setColor(getResources().getColor(R.color.grow_primary));
+        setColor(getResources().getColor(R.color.primary));
 
         //If the action exists do some initial setup and fetching
         if (mAction != null){
@@ -99,7 +99,7 @@ public class ActionActivity
         //If the action wasn't provided via the intent it needs to be fetched
         if (mAction == null){
             mUpcomingAction = getIntent().getParcelableExtra(UPCOMING_ACTION_KEY);
-            mReminder = (Reminder)getIntent().getSerializableExtra(REMINDER_KEY);
+            mReminder = getIntent().getParcelableExtra(REMINDER_KEY);
             fetchAction();
         }
 

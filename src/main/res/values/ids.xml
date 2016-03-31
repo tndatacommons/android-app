@@ -15,4 +15,6 @@
     <item name="action_do_it_now" type="id" />
     <item name="action_snooze" type="id" />
     <item name="action_reschedule" type="id" />
+
+    <item name="review_title" type="id" />
 </resources>

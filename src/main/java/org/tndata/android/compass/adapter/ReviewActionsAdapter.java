@@ -23,7 +23,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class ReviewActionsAdapter extends MaterialAdapter{
+public class ReviewActionsAdapter extends MaterialAdapter implements View.OnClickListener{
     private ReviewActionsListener mListener;
 
     private String mListTitle;
@@ -58,7 +58,7 @@ public class ReviewActionsAdapter extends MaterialAdapter{
     @Override
     protected void bindListHolder(RecyclerView.ViewHolder rawHolder){
         ListViewHolder holder = (ListViewHolder)rawHolder;
-        holder.setTitle(mListTitle);
+        holder.setTitle(R.id.review_title, mListTitle, this);
         holder.setTitleColor(getContext().getResources().getColor(R.color.black));
         if (mAdapter == null){
             mAdapter = new ActionsAdapter();
@@ -107,6 +107,12 @@ public class ReviewActionsAdapter extends MaterialAdapter{
         }
     }
 
+    @Override
+    public void onClick(View view){
+        if (view.getId() == R.id.review_title){
+            mListener.onHeaderSelected();
+        }
+    }
 
     /**
      * Adapter for the list of actions. Plain and simple.
@@ -202,6 +208,11 @@ public class ReviewActionsAdapter extends MaterialAdapter{
      * @version 1.0.0
      */
     public interface ReviewActionsListener{
+        /**
+         * Called when the user taps the header of the list card.
+         */
+        void onHeaderSelected();
+
         /**
          * Called when an action is tapped.
          *

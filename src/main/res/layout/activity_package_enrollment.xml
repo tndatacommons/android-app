@@ -10,7 +10,7 @@
         android:id="@+id/package_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/grow_primary"
+        android:background="@color/primary"
         android:minHeight="?attr/actionBarSize"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
@@ -62,17 +62,33 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp" >
 
-                    <Button
-                        android:id="@+id/package_accept"
+                    <LinearLayout
+                        android:orientation="horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:paddingTop="5dp"
-                        android:paddingLeft="15dp"
-                        android:paddingBottom="5dp"
-                        android:paddingRight="15dp"
-                        android:text="@string/package_accept" />
+                        android:layout_gravity="center" >
+
+                        <Button
+                            android:id="@+id/package_decline"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="5dp"
+                            android:paddingLeft="15dp"
+                            android:paddingBottom="5dp"
+                            android:paddingRight="15dp"
+                            android:text="@string/package_decline" />
+
+                        <Button
+                            android:id="@+id/package_accept"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="5dp"
+                            android:paddingLeft="15dp"
+                            android:paddingBottom="5dp"
+                            android:paddingRight="15dp"
+                            android:text="@string/package_accept" />
+
+                    </LinearLayout>
 
                     <ProgressBar
                         android:layout_width="30dp"

@@ -59,7 +59,7 @@
             android:text="@string/dialog_behavior_ok"
             android:textAllCaps="true"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/grow_primary" />
+            android:textColor="@color/primary" />
 
     </LinearLayout>
 </LinearLayout>

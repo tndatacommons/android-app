@@ -5,14 +5,10 @@
     <color name="gray600">#99000000</color>
     <color name="black54">#8A000000</color>
 
-    <color name="grow_primary">#2196F3</color>
-    <color name="grow_primary_dark">#1976D2</color>
-    <color name="grow_accent">#4A9E94</color>
-    <color name="grow_accent_login">#FFFFFF</color>
     <color name="actionbar_text">#FFFFFF</color>
     <color name="app_background">#FFFFFF</color>
     <color name="nav_drawer_color">#FFFFFF</color>
-    <color name="login_background">@color/grow_primary_dark</color>
+    <color name="login_background">@color/primary_dark</color>
     <color name="grey_placeholder">#888</color>
 
     <color name="tour_color">#3fb3e6</color>
@@ -43,5 +39,21 @@
     <color name="signup_hint_color">#61000000</color>
 
     <color name="main_toolbar_background_inactive">@android:color/transparent</color>
+
+
+    <!-- I'm re-doing the colors, put the new ones here and remove old ones gradually -->
+
+    <color name="primary">#2196F3</color>
+    <color name="primary_dark">#1976D2</color>
+    <color name="accent">#4A9E94</color>
+    <color name="accent_login">#FFFFFF</color>
+
+    <!-- Text -->
+    <color name="text_primary">#DE000000</color>
+    <color name="text_secondary">#8A000000</color>
+    <color name="text_hint">#61000000</color>
+
+    <!-- Other -->
+    <color name="divider">#1F000000</color>
 
 </resources>

@@ -18,82 +18,76 @@
             android:id="@+id/material_detail_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="18dp"
-            android:paddingLeft="20dp"
-            android:paddingBottom="18dp"
-            android:paddingRight="20dp"
+            android:paddingTop="22dp"
+            android:paddingLeft="24dp"
+            android:paddingBottom="22dp"
+            android:paddingRight="24dp"
             android:textSize="18sp"
             android:textAllCaps="true"
             android:textColor="@color/white" />
 
-        <TextView
-            android:id="@+id/material_detail_description"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginBottom="25dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="15dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/dark_text_color"
-            android:visibility="gone" />
+            android:layout_margin="24dp" >
 
-        <ImageView
-            android:id="@+id/material_detail_separator"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:background="@color/light_gray_text_color"
-            android:visibility="gone" />
+            <TextView
+                android:id="@+id/material_detail_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/dark_text_color"
+                android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/material_detail_more_info_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:text="@string/library_detail_more_info"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="18sp"
-            android:textAllCaps="true"
-            android:visibility="gone" />
+            <ImageView
+                android:id="@+id/material_detail_separator"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/material_detail_more_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/dark_text_color"
-            android:visibility="gone" />
+            <TextView
+                android:id="@+id/material_detail_more_info_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/library_detail_more_info"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="18sp"
+                android:textAllCaps="true"
+                android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/material_detail_resource_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:text="@string/library_detail_more_info"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="18sp"
-            android:textAllCaps="true"
-            android:visibility="gone" />
+            <TextView
+                android:id="@+id/material_detail_more_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/dark_text_color"
+                android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/material_detail_resource"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/dark_text_color"
-            android:visibility="gone" />
+            <TextView
+                android:id="@+id/material_detail_resource_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/library_detail_more_info"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="18sp"
+                android:textAllCaps="true"
+                android:visibility="gone" />
 
+            <TextView
+                android:id="@+id/material_detail_resource"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/dark_text_color"
+                android:visibility="gone" />
+
+        </LinearLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>
