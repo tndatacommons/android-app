@@ -81,15 +81,13 @@ public class ReviewActionsActivity
         if (mUserGoal != null){
             mGoalCategory = mApplication.getPublicCategories().get(mUserGoal.getPrimaryCategoryId());
             if (userBehavior != null){
-                String title = getString(R.string.review_actions_header, userBehavior.getTitle());
-                mAdapter = new ReviewActionsAdapter(this, this, title);
+                mAdapter = new ReviewActionsAdapter(this, this, userBehavior.getTitle());
                 mGetActionsNextUrl = API.getUserActionsUrl(userBehavior.getBehavior());
                 setColor(Color.parseColor(mGoalCategory.getColor()));
                 setBehaviorHeader(userBehavior.getBehavior());
             }
             else{
-                String title = getString(R.string.review_actions_header, mUserGoal.getTitle());
-                mAdapter = new ReviewActionsAdapter(this, this, title);
+                mAdapter = new ReviewActionsAdapter(this, this, mUserGoal.getTitle());
                 mGetActionsNextUrl = API.getUserActionsUrl(mUserGoal.getGoal());
                 if (mGoalCategory != null){
                     setColor(Color.parseColor(mGoalCategory.getColor()));
@@ -103,8 +101,7 @@ public class ReviewActionsActivity
             }
         }
         else if (mUserCategory != null){
-            String title = getString(R.string.review_actions_header_cat, mUserCategory.getTitle());
-            mAdapter = new ReviewActionsAdapter(this, this, title);
+            mAdapter = new ReviewActionsAdapter(this, this, mUserCategory.getTitle());
             mGetActionsNextUrl = API.getUserActionsUrl(mUserCategory.getCategory());
             setColor(Color.parseColor(mUserCategory.getColor()));
             setCategoryHeader(mUserCategory.getCategory());
@@ -165,6 +162,23 @@ public class ReviewActionsActivity
                             .putExtra(ChooseBehaviorsActivity.GOAL_KEY, (Parcelable)mUserGoal.getGoal()));
                 }
                 break;
+        }
+    }
+
+    @Override
+    public void onHeaderSelected(){
+        if (mUserCategory != null){
+            if (!mUserCategory.getCategory().isPackagedContent()){
+                startActivity(new Intent(this, ChooseGoalsActivity.class)
+                        .putExtra(ChooseGoalsActivity.CATEGORY_KEY, mUserCategory.getCategory()));
+            }
+        }
+        else if (mUserGoal != null){
+            if (!mGoalCategory.isPackagedContent()){
+                startActivity(new Intent(this, ChooseBehaviorsActivity.class)
+                        .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, mGoalCategory)
+                        .putExtra(ChooseBehaviorsActivity.GOAL_KEY, (Parcelable)mUserGoal.getGoal()));
+            }
         }
     }
 

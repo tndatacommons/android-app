@@ -86,10 +86,6 @@
     <string name="dialog_behavior_customize">Customize</string>
     <string name="dialog_behavior_ok">Got it</string>
 
-    <!-- ReviewActionsActivity -->
-    <string name="review_actions_header">Ways I can %1$s</string>
-    <string name="review_actions_header_cat">From %1$s</string>
-
     <!-- CustomContentManager -->
     <string name="custom_goal_header">My goal is to&#8230;</string>
     <string name="custom_goal_create">Create</string>
@@ -229,7 +225,7 @@
     <!-- Upcoming cards -->
     <string name="card_upcoming_header">Today\'s activities</string>
     <!-- My goals cards -->
-    <string name="card_my_goals_header">My goals</string>
+    <string name="card_my_goals_header">Your goals</string>
     <string name="card_suggestions_header">Recommended for you</string>
     <!-- Footer cards -->
     <string name="card_footer_see_more">SEE MORE</string>

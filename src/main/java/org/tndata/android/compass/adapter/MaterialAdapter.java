@@ -534,6 +534,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
             button.setText(caption);
             button.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Medium.ttf"));
             button.setOnClickListener(listener);
+            mButtonContainer.setVisibility(View.VISIBLE);
         }
     }
 
@@ -587,6 +588,21 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
          */
         public void setTitle(@NonNull String title){
             mHeader.setText(title);
+        }
+
+        /**
+         * Sets the title in the header and a click listener.
+         *
+         * @param id the new id of the header.
+         * @param title the new title.
+         * @param listener the click listener.
+         */
+        public void setTitle(@IdRes int id, @NonNull String title,
+                             @NonNull View.OnClickListener listener){
+
+            mHeader.setId(id);
+            mHeader.setText(title);
+            mHeader.setOnClickListener(listener);
         }
 
         /**
