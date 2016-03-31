@@ -76,17 +76,17 @@
     <style name="FlatButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginLeft">8dp</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
-        <item name="android:minWidth">0dp</item>
-        <item name="android:minHeight">36dp</item>
+        <item name="android:layout_marginLeft">@dimen/flat_button_margin</item>
+        <item name="android:paddingLeft">@dimen/flat_button_padding</item>
+        <item name="android:paddingRight">@dimen/flat_button_padding</item>
+        <item name="android:minWidth">@dimen/flat_button_min_width</item>
+        <item name="android:minHeight">@dimen/flat_button_min_height</item>
         <item name="android:gravity">center</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">@dimen/flat_button_text_size</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@color/primary</item>
         <item name="android:background">?attr/selectableItemBackground</item>
-        <item name="android:radius">1dp</item>
+        <item name="android:radius">@dimen/flat_button_corner_radius</item>
     </style>
 
 </resources>
