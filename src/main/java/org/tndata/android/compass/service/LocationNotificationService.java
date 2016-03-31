@@ -100,49 +100,57 @@ public class LocationNotificationService
                 && CompassUtil.isLocationEnabled(this)){
 
             //Evaluate the action
-            switch (intent.getExtras().getString(ACTION_KEY, "")){
-                case START:
-                    //For start actions, if the service is already started, do nothing,
-                    //  otherwise, start it
-                    if (!mRunning){
-                        loadData();
-                        //If there are no reminders, starting the service makes no sense
-                        if (mReminders.isEmpty()){
-                            stopSelf();
+            if (intent.getExtras() != null){
+                switch (intent.getExtras().getString(ACTION_KEY, "")){
+                    case START:
+                        //For start actions, if the service is already started, do nothing,
+                        //  otherwise, start it
+                        if (!mRunning){
+                            loadData();
+                            //If there are no reminders, starting the service makes no sense
+                            if (mReminders.isEmpty()){
+                                stopSelf();
+                            }
+                            else{
+                                mRunning = true;
+                                mLocationRequest = new LocationRequest(this, this, 0);
+                                mLocationRequest.onStart();
+                                mLocationRequest.requestLocation();
+                            }
+                        }
+                        break;
+
+                    case UPDATE:
+                        //For update actions, if the service was running, load the data,
+                        //  otherwise assume there was a good reason for it to be stopped
+                        //  and stop it.
+                        if (mRunning){
+                            loadData();
                         }
                         else{
-                            mRunning = true;
-                            mLocationRequest = new LocationRequest(this, this, 0);
-                            mLocationRequest.onStart();
-                            mLocationRequest.requestLocation();
+                            stopSelf();
                         }
-                    }
-                    break;
+                        break;
 
-                case UPDATE:
-                    //For update actions, if the service was running, load the data, otherwise
-                    //  assume there was a good reason for it to be stopped and stop it.
-                    if (mRunning){
-                        loadData();
-                    }
-                    else{
+                    case KILL:
+                        //If the action is kill, stop the service
+                        if (mRunning){
+                            mLocationRequest.onStop();
+                            mRunning = false;
+                        }
                         stopSelf();
-                    }
-                    break;
+                        break;
 
-                case KILL:
-                    //If the action is kill, stop the service
-                    if (mRunning){
-                        mLocationRequest.onStop();
-                        mRunning = false;
-                    }
+                    default:
+                        if (!mRunning){
+                            stopSelf();
+                        }
+                }
+            }
+            else{
+                if (!mRunning){
                     stopSelf();
-                    break;
-
-                default:
-                    if (!mRunning){
-                        stopSelf();
-                    }
+                }
             }
         }
         else{
