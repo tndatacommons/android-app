@@ -81,7 +81,7 @@
     <string name="library_behavior_yes">Yes, I\'m in</string>
     <string name="library_detail_header">Here\'s why</string>
     <string name="library_detail_more_info">More info</string>
-    <string name="dialog_behavior_title">I\'m awesome</string>
+    <string name="dialog_behavior_title">You\'re awesome</string>
     <string name="dialog_behavior_content">Compass will check back in occasionally with activities that can help you reach your goal.</string>
     <string name="dialog_behavior_customize">Customize</string>
     <string name="dialog_behavior_ok">Got it</string>
