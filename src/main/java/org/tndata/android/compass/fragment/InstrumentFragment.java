@@ -13,7 +13,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Instrument;
 import org.tndata.android.compass.model.Survey;
@@ -21,10 +20,12 @@ import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.ui.SurveyView;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.NetworkRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -38,7 +39,7 @@ public class InstrumentFragment
         implements
                 View.OnClickListener,
                 SurveyView.SurveyViewListener,
-                NetworkRequest.RequestCallback,
+                HttpRequest.RequestCallback,
                 Parser.ParserCallback{
 
     private static final String TAG = "InstrumentFragment";
@@ -66,8 +67,8 @@ public class InstrumentFragment
     private Survey mCurrentSurveys[];
 
     //Request codes
-    private int mGetInstrumentRequestCode;
-    private int mPostSurveyRequestCode;
+    private int mGetInstrumentRC;
+    private int mPostSurveyRC;
 
     //Callback interface
     private InstrumentFragmentCallback mCallback;
@@ -157,9 +158,7 @@ public class InstrumentFragment
      */
     private void loadSurveys(){
         mLoading.setVisibility(View.VISIBLE);
-        String token = ((CompassApplication)getActivity().getApplication()).getToken();
-        mGetInstrumentRequestCode = NetworkRequest.get(getActivity(), this,
-                API.getInstrumentUrl(mInstrumentId), token);
+        mGetInstrumentRC = HttpRequest.get(this, API.getInstrumentUrl(mInstrumentId));
     }
 
     /**
@@ -170,18 +169,17 @@ public class InstrumentFragment
         for (int i = 0; i < mSurveyContainer.getChildCount(); i++){
             ((SurveyView)mSurveyContainer.getChildAt(i)).disable();
         }
-        mPostSurveyRequestCode = -1;
-        String token = ((CompassApplication)getActivity().getApplication()).getToken();
+        mPostSurveyRC = -1;
         for (int i = 0; i < mCurrentSurveys.length; i++){
             Survey survey = mCurrentSurveys[i];
             if (survey != null){
                 if (i == mCurrentSurveys.length - 1 || mCurrentSurveys[i+1] == null){
-                    mPostSurveyRequestCode = NetworkRequest.post(getActivity(), this,
-                            API.getPostSurveyUrl(survey), token, API.getPostSurveyBody(survey));
+                    mPostSurveyRC = HttpRequest.post(this, API.getPostSurveyUrl(survey),
+                            API.getPostSurveyBody(survey));
                 }
                 else{
-                    NetworkRequest.post(getActivity(), this, API.getPostSurveyUrl(survey),
-                            token, API.getPostSurveyBody(survey));
+                    HttpRequest.post(this, API.getPostSurveyUrl(survey),
+                            API.getPostSurveyBody(survey));
                 }
             }
         }
@@ -228,10 +226,10 @@ public class InstrumentFragment
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mGetInstrumentRequestCode){
+        if (requestCode == mGetInstrumentRC){
             Parser.parse(result, Instrument.class, this);
         }
-        else if (requestCode == mPostSurveyRequestCode){
+        else if (requestCode == mPostSurveyRC){
             Log.d(TAG, "Survey set saved");
             if (mCurrentSurvey >= mSurveys.size()){
                 mCallback.onInstrumentFinished(mInstrumentId);
@@ -246,12 +244,12 @@ public class InstrumentFragment
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
+    public void onRequestFailed(int requestCode, HttpRequestError error){
         //TODO user feedback
-        if (requestCode == mGetInstrumentRequestCode){
+        if (requestCode == mGetInstrumentRC){
             mLoading.setVisibility(View.GONE);
         }
-        else if (requestCode == mPostSurveyRequestCode){
+        else if (requestCode == mPostSurveyRC){
             if (mCurrentSurvey >= mSurveys.size()){
                 mCallback.onInstrumentFinished(mInstrumentId);
             }
