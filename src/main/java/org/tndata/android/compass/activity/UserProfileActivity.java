@@ -8,7 +8,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.UserProfileAdapter;
 import org.tndata.android.compass.fragment.SurveyDialogFragment;
@@ -17,7 +16,9 @@ import org.tndata.android.compass.model.UserProfile;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.NetworkRequest;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 //TODO this class needs code fixin'
@@ -25,11 +26,9 @@ public class UserProfileActivity
         extends AppCompatActivity
         implements
                 AdapterView.OnItemClickListener,
-                NetworkRequest.RequestCallback,
+                HttpRequest.RequestCallback,
                 Parser.ParserCallback,
                 SurveyDialogFragment.SurveyDialogListener{
-
-    private CompassApplication mApp;
 
     private ProgressBar mProgressBar;
     private ListView mListView;
@@ -45,16 +44,14 @@ public class UserProfileActivity
     private boolean mSurveyShown, mSurveyLoading = false;
 
     //Request codes
-    private int mGetProfileRequestCode;
-    private int mGetSurveyRequestCode;
+    private int mGetProfileRC;
+    private int mGetSurveyRC;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_myself);
-
-        mApp = (CompassApplication)getApplication();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         toolbar.setTitle(R.string.action_my_information);
@@ -72,8 +69,7 @@ public class UserProfileActivity
 
     private void loadUserProfile(){
         mProgressBar.setVisibility(View.VISIBLE);
-        mGetProfileRequestCode = NetworkRequest.get(this, this, API.getUserProfileUrl(),
-                mApp.getToken());
+        mGetProfileRC = HttpRequest.get(this, API.getUserProfileUrl());
     }
 
     private void showSurvey(Survey survey){
@@ -94,8 +90,7 @@ public class UserProfileActivity
         }
         mAdapter.notifyDataSetChanged();
 
-        NetworkRequest.post(this, null, API.getPostSurveyUrl(survey), mApp.getToken(),
-                API.getPostSurveyBody(survey));
+        HttpRequest.post(null, API.getPostSurveyUrl(survey), API.getPostSurveyBody(survey));
         mSurveyDialog.dismiss();
         mSurveyShown = false;
     }
@@ -118,20 +113,20 @@ public class UserProfileActivity
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mGetProfileRequestCode){
+        if (requestCode == mGetProfileRC){
             Parser.parse(result, ParserModels.UserProfileResultSet.class, this);
         }
-        else if (requestCode == mGetSurveyRequestCode){
+        else if (requestCode == mGetSurveyRC){
             Parser.parse(result, Survey.class, this);
         }
     }
 
     @Override
-    public void onRequestFailed(int requestCode, String message){
-        if (requestCode == mGetProfileRequestCode){
+    public void onRequestFailed(int requestCode, HttpRequestError error){
+        if (requestCode == mGetProfileRC){
             mProgressBar.setVisibility(View.GONE);
         }
-        else if (requestCode == mGetSurveyRequestCode){
+        else if (requestCode == mGetSurveyRC){
             mProgressBar.setVisibility(View.GONE);
         }
     }
@@ -167,8 +162,7 @@ public class UserProfileActivity
             mSelectedSurveyResponse = mUserProfile.getSurveyResponses().get(position);
             String surveyUrl = mSelectedSurveyResponse.getQuestionType() + "-"
                     + mSelectedSurveyResponse.getQuestionId() + "/";
-            mGetSurveyRequestCode = NetworkRequest.get(this, this, API.getSurveyUrl(surveyUrl),
-                    mApp.getToken());
+            mGetSurveyRC = HttpRequest.get(this, API.getSurveyUrl(surveyUrl));
             mSurveyLoading = true;
         }
     }
