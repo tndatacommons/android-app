@@ -530,6 +530,27 @@ public final class API{
         return BASE_URL + "users/profile/";
     }
 
+    public static String getPutUserProfileUrl(@NonNull Profile profile){
+        return BASE_URL + "users/profile/" + profile.getId() + "/";
+    }
+
+    public static JSONObject getPutUserProfileBody(@NonNull Profile profile){
+        JSONObject body = new JSONObject();
+        try{
+            body.put("zipcode", profile.getZipCode());
+            body.put("birthday", profile.getBirthday());
+            body.put("sex", profile.getSex().toLowerCase());
+            body.put("employed", profile.isEmployed());
+            body.put("is_parent", profile.isParent());
+            body.put("in_relationship", profile.inRelationship());
+            body.put("has_degree", profile.hasDegree());
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return body;
+    }
+
     public static String getPutUserProfileUrl(@NonNull User user){
         return BASE_URL + "userprofiles/" + user.getUserprofileId() + "/";
     }

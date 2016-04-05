@@ -101,7 +101,7 @@ public class UserProfileActivity
         mProfile.postSurvey(survey);
         mAdapter.notifyItemChanged((int)survey.getId());
 
-        //HttpRequest.post(null, API.getPostSurveyUrl(survey), API.getPostSurveyBody(survey));
+        HttpRequest.put(null, API.getPutUserProfileUrl(mProfile), API.getPutUserProfileBody(mProfile));
         mSurveyDialog.dismiss();
     }
 

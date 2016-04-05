@@ -236,19 +236,19 @@ public class Profile extends TDCBase{
                 break;
 
             case EMPLOYED:
-                mEmployed = survey.getSelectedOption().getId() == 1;
+                mEmployed = survey.getSelectedOption().getId() == 0;
                 break;
 
             case PARENT:
-                mParent = survey.getSelectedOption().getId() == 1;
+                mParent = survey.getSelectedOption().getId() == 0;
                 break;
 
             case RELATIONSHIP:
-                mRelationship = survey.getSelectedOption().getId() == 1;
+                mRelationship = survey.getSelectedOption().getId() == 0;
                 break;
 
             case DEGREE:
-                mDegree = survey.getSelectedOption().getId() == 1;
+                mDegree = survey.getSelectedOption().getId() == 0;
                 break;
 
             default:
