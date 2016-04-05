@@ -52,6 +52,7 @@ public class SurveyView
 
     private static final String TAG = "SurveyView";
     private static final int WRAP_CONTENT = ViewGroup.LayoutParams.WRAP_CONTENT;
+    private static final int MATCH_PARENT = ViewGroup.LayoutParams.MATCH_PARENT;
     private static final int MARGIN = 5;
 
 
@@ -139,21 +140,25 @@ public class SurveyView
                 //Create the group and the buttons
                 RadioGroup group = new RadioGroup(getContext());
                 group.setOrientation(HORIZONTAL);
-                params = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-                params.setMargins(CompassUtil.getPixels(getContext(), MARGIN), 0, 0, 0);
-                group.setLayoutParams(params);
 
                 mBinary1 = new RadioButton(getContext());
+                mBinary1.setLayoutParams(new LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
                 mBinary1.setText(mSurvey.getOptions().get(0).getText());
                 mBinary1.setOnClickListener(this);
 
                 mBinary2 = new RadioButton(getContext());
+                mBinary2.setLayoutParams(new LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
                 mBinary2.setText(mSurvey.getOptions().get(1).getText());
                 mBinary2.setOnClickListener(this);
 
                 //Put everything together and add the group.
                 group.addView(mBinary1);
                 group.addView(mBinary2);
+
+                params = new LayoutParams(MATCH_PARENT, WRAP_CONTENT);
+                params.setMargins(CompassUtil.getPixels(getContext(), MARGIN), 0, 0, 0);
+                group.setLayoutParams(params);
+
                 addView(group);
                 break;
 
