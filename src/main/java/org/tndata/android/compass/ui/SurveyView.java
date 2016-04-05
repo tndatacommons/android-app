@@ -1,12 +1,15 @@
 package org.tndata.android.compass.ui;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
@@ -22,7 +25,6 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.model.SurveyOption;
 import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.Constants;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -70,15 +72,25 @@ public class SurveyView
     private DatePicker mOpenEndedDate;
 
 
+    public SurveyView(Context context){
+        super(context);
+    }
+
+    public SurveyView(Context context, AttributeSet attrs){
+        super(context, attrs);
+    }
+
+    public SurveyView(Context context, AttributeSet attrs, int defStyleRes){
+        super(context, attrs, defStyleRes);
+    }
+
     /**
-     * Constructor.
+     * Sets a survey to this view.
      *
-     * @param context the context.
      * @param survey the survey to be displayed.
      * @param listener the listener object.
      */
-    public SurveyView(Context context, Survey survey, SurveyViewListener listener){
-        super(context);
+    public void setSurvey(Survey survey, @Nullable SurveyViewListener listener){
         mSurvey = survey;
         mListener = listener;
         init();
@@ -121,7 +133,7 @@ public class SurveyView
 
         //Question type specific fields
         switch (mSurvey.getQuestionType()){
-            case Constants.SURVEY_BINARY:
+            case Survey.BINARY:
                 Log.d(TAG, "Binary survey");
 
                 //Create the group and the buttons
@@ -145,7 +157,7 @@ public class SurveyView
                 addView(group);
                 break;
 
-            case Constants.SURVEY_MULTICHOICE:
+            case Survey.MULTIPLE_CHOICE:
                 Log.d(TAG, "Multiple choice survey");
 
                 //Create the spinner
@@ -155,8 +167,8 @@ public class SurveyView
                 mMultipleChoice.setLayoutParams(params);
 
                 //Add a default option to the list
-                SurveyOption defaultOption = new SurveyOption();
-                defaultOption.setText(getContext().getString(R.string.survey_default_option));
+                String defaultOptionString = getContext().getString(R.string.survey_default_option);
+                SurveyOption defaultOption = new SurveyOption(0, defaultOptionString);
                 List<SurveyOption> optionsList = mSurvey.getOptions();
                 optionsList.add(0, defaultOption);
 
@@ -185,7 +197,7 @@ public class SurveyView
                 addView(mMultipleChoice);
                 break;
 
-            case Constants.SURVEY_LIKERT:
+            case Survey.LIKERT:
                 Log.d(TAG, "Likert survey");
 
                 LayoutInflater lInflater = LayoutInflater.from(getContext());
@@ -218,13 +230,13 @@ public class SurveyView
                 addView(rootView);
                 break;
 
-            case Constants.SURVEY_OPENENDED:
+            case Survey.OPEN_ENDED:
                 Log.d(TAG, "Open ended survey");
 
-                if (mSurvey.getInputType().equalsIgnoreCase(Constants.SURVEY_OPENENDED_DATE_TYPE)){
+                if (mSurvey.getInputType().equalsIgnoreCase(Survey.OPEN_ENDED_DATE_TYPE)){
                     Log.d(TAG, "Date");
                     LayoutInflater dInflater = LayoutInflater.from(getContext());
-                    mOpenEndedDate = (DatePicker)dInflater.inflate(R.layout.survey_spinner_picker, this, false);
+                    mOpenEndedDate = (DatePicker)dInflater.inflate(R.layout.survey_date_picker, this, false);
 
                     Calendar c = Calendar.getInstance();
                     int year = c.get(Calendar.YEAR);
@@ -257,6 +269,10 @@ public class SurveyView
                     mOpenEnded.setLayoutParams(params);
                     mOpenEnded.addTextChangedListener(this);
 
+                    if (mSurvey.getInputType().equalsIgnoreCase(Survey.OPEN_ENDED_NUMBER_TYPE)){
+                        mOpenEnded.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+                    }
+
                     addView(mOpenEnded);
                 }
                 break;
@@ -268,21 +284,21 @@ public class SurveyView
      */
     public void disable(){
         switch (mSurvey.getQuestionType()){
-            case Constants.SURVEY_BINARY:
+            case Survey.BINARY:
                 mBinary1.setEnabled(false);
                 mBinary2.setEnabled(false);
                 break;
 
-            case Constants.SURVEY_MULTICHOICE:
+            case Survey.MULTIPLE_CHOICE:
                 mMultipleChoice.setEnabled(false);
                 break;
 
-            case Constants.SURVEY_LIKERT:
+            case Survey.LIKERT:
                 mLikert.setEnabled(false);
                 break;
 
-            case Constants.SURVEY_OPENENDED:
-                if (mSurvey.getInputType().equalsIgnoreCase(Constants.SURVEY_OPENENDED_DATE_TYPE)){
+            case Survey.OPEN_ENDED:
+                if (mSurvey.getInputType().equalsIgnoreCase(Survey.OPEN_ENDED_DATE_TYPE)){
                     mOpenEndedDate.setEnabled(false);
                 }
                 else{
@@ -295,7 +311,7 @@ public class SurveyView
     @Override
     public void onClick(View view){
         switch (mSurvey.getQuestionType()){
-            case Constants.SURVEY_BINARY:
+            case Survey.BINARY:
                 //Mark the selected option
                 mSurvey.setSelectedOption(mSurvey.getOptions().get(view == mBinary1 ? 0 : 1));
                 if (mListener != null){
@@ -307,7 +323,7 @@ public class SurveyView
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
-        if (mSurvey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_LIKERT)){
+        if (mSurvey.getQuestionType().equalsIgnoreCase(Survey.LIKERT)){
             mLikertMin.setVisibility(View.GONE);
             mLikertMax.setVisibility(View.GONE);
             for (SurveyOption option:mSurvey.getOptions()){
@@ -336,7 +352,7 @@ public class SurveyView
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
         switch (mSurvey.getQuestionType()){
-            case Constants.SURVEY_MULTICHOICE:
+            case Survey.MULTIPLE_CHOICE:
                 SurveyOption option = (SurveyOption)mMultipleChoice.getSelectedItem();
                 if (option.getId() == -1){
                     if (mListener != null){
@@ -362,7 +378,7 @@ public class SurveyView
 
     @Override
     public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth){
-        if (mSurvey.getInputType().equalsIgnoreCase(Constants.SURVEY_OPENENDED_DATE_TYPE)){
+        if (mSurvey.getInputType().equalsIgnoreCase(Survey.OPEN_ENDED_DATE_TYPE)){
             Calendar fourteen = Calendar.getInstance();
             fourteen.set(fourteen.get(Calendar.YEAR)-14, fourteen.get(Calendar.MONTH),
                     fourteen.get(Calendar.DAY_OF_MONTH)+1, 0, 0, 0);

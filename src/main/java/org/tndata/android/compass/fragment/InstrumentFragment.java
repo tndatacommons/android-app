@@ -199,7 +199,9 @@ public class InstrumentFragment
             Survey survey = mSurveys.get(mCurrentSurvey);
             Log.d(TAG, survey.toString());
 
-            mSurveyContainer.addView(new SurveyView(getActivity(), survey, this));
+            SurveyView surveyView = new SurveyView(getContext());
+            surveyView.setSurvey(survey, this);
+            mSurveyContainer.addView(surveyView);
             mQuestionReady[mCurrentSurvey%mPageQuestions] = false;
             mCurrentSurveys[mCurrentSurvey%mPageQuestions] = survey;
             mCurrentSurvey++;

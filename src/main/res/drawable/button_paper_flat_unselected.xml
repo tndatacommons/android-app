@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:dither="true"
-    android:shape="rectangle" >
-
-    <!--<solid android:color="@android:color/transparent" />-->
-    <solid android:color="@color/button_paper_flat_unselected_color" />
-
-</shape>

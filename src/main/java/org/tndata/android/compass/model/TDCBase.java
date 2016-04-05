@@ -32,6 +32,10 @@ public abstract class TDCBase implements Serializable, ParserModels.ResultSet{
         //  the TDCBase(Parcel) constructor
     }
 
+    public TDCBase(long id){
+        mId = id;
+    }
+
 
     /*---------*
      * SETTERS *

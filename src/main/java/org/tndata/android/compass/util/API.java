@@ -508,7 +508,7 @@ public final class API{
         JSONObject postSurveyBody = new JSONObject();
         try{
             postSurveyBody.put("question", survey.getId());
-            if (survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_OPENENDED)){
+            if (survey.getQuestionType().equalsIgnoreCase(Survey.OPEN_ENDED)){
                 postSurveyBody.put("response", survey.getResponse());
             }
             else{
@@ -527,7 +527,7 @@ public final class API{
      *--------------*/
 
     public static String getUserProfileUrl(){
-        return BASE_URL + "userprofiles/";
+        return BASE_URL + "users/profile/";
     }
 
     public static String getPutUserProfileUrl(@NonNull User user){

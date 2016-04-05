@@ -1,6 +1,6 @@
 package org.tndata.android.compass.model;
 
-import org.tndata.android.compass.util.Constants;
+import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 import java.util.List;
@@ -8,6 +8,15 @@ import java.util.List;
 
 public class Survey extends TDCBase implements Serializable, Comparable<Survey>{
     private static final long serialVersionUID = 3345647844660418003L;
+
+
+    public static final String LIKERT = "likertquestion";
+    public static final String MULTIPLE_CHOICE = "multiplechoicequestion";
+    public static final String BINARY = "binaryquestion";
+    public static final String OPEN_ENDED = "openendedquestion";
+
+    public static final String OPEN_ENDED_NUMBER_TYPE = "number";
+    public static final String OPEN_ENDED_DATE_TYPE = "datetime";
 
     public static final String TYPE = "survey";
 
@@ -142,7 +151,7 @@ public class Survey extends TDCBase implements Serializable, Comparable<Survey>{
     }
 
     @Override
-    public int compareTo(Survey another) {
+    public int compareTo(@NonNull Survey another) {
         if (getId() == another.getId()) {
             return 0;
         } else if (getId() < another.getId()) {
@@ -156,16 +165,16 @@ public class Survey extends TDCBase implements Serializable, Comparable<Survey>{
         String result = getId() + " (";
 
         switch (question_type){
-            case Constants.SURVEY_BINARY:
+            case BINARY:
                 result += "binary";
                 break;
-            case Constants.SURVEY_MULTICHOICE:
+            case MULTIPLE_CHOICE:
                 result += "multiple choice";
                 break;
-            case Constants.SURVEY_LIKERT:
+            case LIKERT:
                 result += "likert";
                 break;
-            case Constants.SURVEY_OPENENDED:
+            case OPEN_ENDED:
                 result += "open ended";
                 break;
             default:

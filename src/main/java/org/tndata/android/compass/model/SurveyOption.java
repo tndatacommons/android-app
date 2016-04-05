@@ -1,5 +1,7 @@
 package org.tndata.android.compass.model;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -14,6 +16,11 @@ public class SurveyOption extends TDCBase implements Serializable{
     @SerializedName("text")
     private String mText;
 
+
+    public SurveyOption(long id, @NonNull String text){
+        super(id);
+        mText = text;
+    }
 
     public void setText(String text){
         mText = text;
