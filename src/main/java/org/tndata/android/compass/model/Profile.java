@@ -126,22 +126,22 @@ public class Profile extends TDCBase{
         List<SurveyOption> options;
         switch (itemId){
             case ZIP_CODE:
-                survey.setQuestionType(Survey.OPEN_ENDED);
-                survey.setInputType(Survey.OPEN_ENDED_NUMBER_TYPE);
-                survey.setText(context.getString(R.string.profile_zip_question));
+                survey.setQuestionType(Survey.QuestionType.OPEN_ENDED);
+                survey.setInputType(Survey.InputType.NUMBER);
+                survey.setQuestion(context.getString(R.string.profile_zip_question));
                 survey.setResponse(getZipCode());
                 break;
 
             case BIRTHDAY:
-                survey.setQuestionType(Survey.OPEN_ENDED);
-                survey.setInputType(Survey.OPEN_ENDED_DATE_TYPE);
-                survey.setText(context.getString(R.string.profile_birthday_question));
+                survey.setQuestionType(Survey.QuestionType.OPEN_ENDED);
+                survey.setInputType(Survey.InputType.DATE);
+                survey.setQuestion(context.getString(R.string.profile_birthday_question));
                 survey.setResponse(getBirthday());
                 break;
 
             case SEX:
-                survey.setQuestionType(Survey.MULTIPLE_CHOICE);
-                survey.setText(context.getString(R.string.profile_gender_question));
+                survey.setQuestionType(Survey.QuestionType.MULTIPLE_CHOICE);
+                survey.setQuestion(context.getString(R.string.profile_gender_question));
                 options = new ArrayList<>();
                 options.add(new SurveyOption(1, "Male"));
                 options.add(new SurveyOption(2, "Female"));
@@ -155,8 +155,8 @@ public class Profile extends TDCBase{
                 break;
 
             case EMPLOYED:
-                survey.setQuestionType(Survey.BINARY);
-                survey.setText(context.getString(R.string.profile_employed_question));
+                survey.setQuestionType(Survey.QuestionType.BINARY);
+                survey.setQuestion(context.getString(R.string.profile_employed_question));
                 options = new ArrayList<>();
                 options.add(new SurveyOption(0, "Yes"));
                 options.add(new SurveyOption(1, "No"));
@@ -167,8 +167,8 @@ public class Profile extends TDCBase{
                 break;
 
             case PARENT:
-                survey.setQuestionType(Survey.BINARY);
-                survey.setText(context.getString(R.string.profile_offspring_question));
+                survey.setQuestionType(Survey.QuestionType.BINARY);
+                survey.setQuestion(context.getString(R.string.profile_offspring_question));
                 options = new ArrayList<>();
                 options.add(new SurveyOption(0, "Yes"));
                 options.add(new SurveyOption(1, "No"));
@@ -179,8 +179,8 @@ public class Profile extends TDCBase{
                 break;
 
             case RELATIONSHIP:
-                survey.setQuestionType(Survey.BINARY);
-                survey.setText(context.getString(R.string.profile_relationship_question));
+                survey.setQuestionType(Survey.QuestionType.BINARY);
+                survey.setQuestion(context.getString(R.string.profile_relationship_question));
                 options = new ArrayList<>();
                 options.add(new SurveyOption(0, "Yes"));
                 options.add(new SurveyOption(1, "No"));
@@ -191,8 +191,8 @@ public class Profile extends TDCBase{
                 break;
 
             case DEGREE:
-                survey.setQuestionType(Survey.BINARY);
-                survey.setText(context.getString(R.string.profile_education_question));
+                survey.setQuestionType(Survey.QuestionType.BINARY);
+                survey.setQuestion(context.getString(R.string.profile_education_question));
                 options = new ArrayList<>();
                 options.add(new SurveyOption(0, "Yes"));
                 options.add(new SurveyOption(1, "No"));

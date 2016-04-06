@@ -12,12 +12,16 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseInterestsAdapter;
 import org.tndata.android.compass.fragment.ChooseInterestsFragment;
 import org.tndata.android.compass.fragment.InstrumentFragment;
+import org.tndata.android.compass.fragment.ProgressFragment;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.FeedData;
+import org.tndata.android.compass.model.Instrument;
+import org.tndata.android.compass.model.Profile;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserCategory;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.FeedDataLoader;
 
 import java.util.List;
@@ -39,16 +43,20 @@ public class OnBoardingActivity
                 InstrumentFragment.InstrumentFragmentCallback,
                 ChooseInterestsAdapter.OnCategoriesSelectedListener,
                 HttpRequest.RequestCallback,
+                Parser.ParserCallback,
                 FeedDataLoader.Callback{
 
-    private static final int STAGE_PROFILE = 0;
-    private static final int STAGE_CHOOSE_CATEGORIES = 1;
+    private static final int STAGE_LOADING = 0;
+    private static final int STAGE_PROFILE = 1;
+    private static final int STAGE_CHOOSE_CATEGORIES = 2;
 
 
     private CompassApplication mApplication;
     private Fragment mFragment = null;
+    private Instrument mInstrument;
 
     //Request codes
+    private int mGetInstrumentRC;
     private int mInitialPostCategoryRC;
     private int mLastPostCategoryRC;
 
@@ -68,7 +76,9 @@ public class OnBoardingActivity
             getSupportActionBar().hide();
         }
 
-        swapFragments(STAGE_PROFILE);
+        swapFragments(STAGE_LOADING);
+
+        mGetInstrumentRC = HttpRequest.get(this, API.getUserProfileUrl());
     }
 
     /**
@@ -78,8 +88,12 @@ public class OnBoardingActivity
      */
     private void swapFragments(int index){
         switch (index){
+            case STAGE_LOADING:
+                mFragment = new ProgressFragment();
+                break;
+
             case STAGE_PROFILE:
-                mFragment = InstrumentFragment.newInstance(Constants.INITIAL_PROFILE_INSTRUMENT_ID, 3);
+                mFragment = InstrumentFragment.newInstance(mInstrument, 3);
                 break;
 
             case STAGE_CHOOSE_CATEGORIES:
@@ -93,11 +107,8 @@ public class OnBoardingActivity
     }
 
     @Override
-    public void onInstrumentFinished(int instrumentId){
-        //When the user is done with the survey, he is taken to the category picker
-        if (instrumentId == Constants.INITIAL_PROFILE_INSTRUMENT_ID){
-            swapFragments(STAGE_CHOOSE_CATEGORIES);
-        }
+    public void onInstrumentFinished(Instrument instrument){
+        swapFragments(STAGE_CHOOSE_CATEGORIES);
     }
 
     @Override
@@ -123,7 +134,10 @@ public class OnBoardingActivity
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        if (requestCode < mLastPostCategoryRC){
+        if (requestCode == mGetInstrumentRC){
+            Parser.parse(result, ParserModels.ProfileResultSet.class, this);
+        }
+        else if (requestCode < mLastPostCategoryRC){
             mInitialPostCategoryRC++;
             if (mInitialPostCategoryRC == mLastPostCategoryRC){
                 FeedDataLoader.load(this);
@@ -138,6 +152,27 @@ public class OnBoardingActivity
             if (mInitialPostCategoryRC == mLastPostCategoryRC){
                 FeedDataLoader.load(this);
             }
+        }
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.ProfileResultSet){
+            Profile profile = ((ParserModels.ProfileResultSet)result).results.get(0);
+            String title = getString(R.string.onboarding_instrument_title);
+            String description = getString(R.string.onboarding_instrument_description);
+            String instructions = getString(R.string.onboarding_instrument_instructions);
+            mInstrument = new Instrument(title, description, instructions);
+            for (int i = 0; i < Profile.ITEM_COUNT; i++){
+                mInstrument.addSurvey(profile.generateSurvey(this, i));
+            }
+        }
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.ProfileResultSet){
+            swapFragments(STAGE_PROFILE);
         }
     }
 

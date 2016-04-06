@@ -41,7 +41,6 @@ import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.FeedDataLoader;
 import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.OnScrollListenerHub;
@@ -64,7 +63,7 @@ public class MainActivity
         implements
                 SwipeRefreshLayout.OnRefreshListener,
                 DrawerAdapter.OnItemClickListener,
-        MainFeedAdapter.Listener,
+                MainFeedAdapter.Listener,
                 View.OnClickListener,
                 FeedDataLoader.Callback{
 
@@ -74,6 +73,7 @@ public class MainActivity
     private static final int GOAL_SUGGESTION_REQUEST_CODE = 8962;
     private static final int ACTION_REQUEST_CODE = 4582;
     private static final int TRIGGER_REQUEST_CODE = 7631;
+    private static final int SETTINGS_RC = 6542;
 
 
     //A reference to the application class
@@ -402,8 +402,7 @@ public class MainActivity
                 break;
 
             case DrawerAdapter.SETTINGS:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivityForResult(intent, Constants.SETTINGS_REQUEST_CODE);
+                startActivityForResult(new Intent(this, SettingsActivity.class), SETTINGS_RC);
                 break;
 
             case DrawerAdapter.TOUR:
@@ -524,7 +523,7 @@ public class MainActivity
                 mAdapter.updateUpcoming();
             }
         }
-        else if (resultCode == Constants.LOGGED_OUT_RESULT_CODE){
+        else if (resultCode == SettingsActivity.LOGGED_OUT_RESULT_CODE){
             finish();
         }
     }

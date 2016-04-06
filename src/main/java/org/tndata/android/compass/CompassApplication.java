@@ -2,7 +2,6 @@ package org.tndata.android.compass;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -59,7 +58,7 @@ public class CompassApplication extends Application{
     /**
      * GCM registration id getter.
      *
-     * @return the GCM registration id ifone is available, an empty string otherwise.
+     * @return the GCM registration id if one is available, an empty string otherwise.
      */
     public String getGcmRegistrationId(){
         return getSharedPreferences(GcmRegistration.class.getSimpleName(), Context.MODE_PRIVATE)

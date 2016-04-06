@@ -1,6 +1,6 @@
 package org.tndata.android.compass.fragment;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -38,14 +38,15 @@ public class ProgressFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View root = inflater.inflate(R.layout.fragment_progress, container, false);
+        return inflater.inflate(R.layout.fragment_progress, container, false);
+    }
 
+    @Override
+    public void onViewCreated(View root, Bundle savedInstanceState){
         if (!mMessage.isEmpty()){
             TextView message = (TextView)root.findViewById(R.id.progress_message);
             message.setText(mMessage);
             message.setVisibility(View.VISIBLE);
         }
-
-        return root;
     }
 }

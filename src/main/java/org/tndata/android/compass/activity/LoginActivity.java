@@ -25,7 +25,6 @@ import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.Constants;
 import org.tndata.android.compass.util.FeedDataLoader;
 
 import java.util.ArrayList;
@@ -54,6 +53,11 @@ public class LoginActivity
     private static final int LOGIN = SIGN_UP+1;
     private static final int TERMS = LOGIN+1;
     private static final int TOUR = TERMS+1;
+
+    private static final String T_AND_C_URL = "https://app.tndata.org/terms/";
+
+    private static final String PREFERENCES_NAME = "compass_pref";
+    private static final String PREFERENCES_NEW_USER = "new_user_pref";
 
 
     private Toolbar mToolbar;
@@ -91,12 +95,12 @@ public class LoginActivity
 
         mFragmentStack = new ArrayList<>();
 
-        SharedPreferences settings = getSharedPreferences(Constants.PREFERENCES_NAME, 0);
+        SharedPreferences settings = getSharedPreferences(PREFERENCES_NAME, 0);
         swapFragments(DEFAULT, true);
-        if (settings.getBoolean(Constants.PREFERENCES_NEW_USER, true)){
+        if (settings.getBoolean(PREFERENCES_NEW_USER, true)){
             swapFragments(TOUR, true);
             SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean(Constants.PREFERENCES_NEW_USER, false);
+            editor.putBoolean(PREFERENCES_NEW_USER, false);
             editor.apply();
         }
 
@@ -153,7 +157,7 @@ public class LoginActivity
                 fragment = mWebFragment;
                 switchActionBarState(true);
                 mToolbar.setTitle(R.string.terms_title);
-                mWebFragment.setUrl(Constants.TERMS_AND_CONDITIONS_URL);
+                mWebFragment.setUrl(T_AND_C_URL);
                 break;
             case TOUR:
                 if (mTourFragment == null){

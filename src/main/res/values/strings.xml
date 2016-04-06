@@ -66,6 +66,10 @@
     <string name="instrument_next">NEXT</string>
     <string name="survey_open_ended_hint">answer</string>
 
+    <string name="onboarding_instrument_title">On-boarding profile</string>
+    <string name="onboarding_instrument_description">These are quick questions that will help the app create a base of recommendations. These questions will become more granular through the survey cards as the user engages with the app over time.</string>
+    <string name="onboarding_instrument_instructions">Tell Compass a few things about you to improve your recommendations.</string>
+
     <!-- ActionTriggerActivity -->
     <string name="trigger_default_action_title">Reminders for this action</string>
     <string name="trigger_switch_label">Enable reminders</string>

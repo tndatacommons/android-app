@@ -508,7 +508,7 @@ public final class API{
         JSONObject postSurveyBody = new JSONObject();
         try{
             postSurveyBody.put("question", survey.getId());
-            if (survey.getQuestionType().equalsIgnoreCase(Survey.OPEN_ENDED)){
+            if (survey.getQuestionType() == Survey.QuestionType.OPEN_ENDED){
                 postSurveyBody.put("response", survey.getResponse());
             }
             else{
