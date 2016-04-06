@@ -10,12 +10,11 @@ import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.SearchResult;
-import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.model.UserPlace;
-import org.tndata.android.compass.model.UserProfile;
+import org.tndata.android.compass.model.Profile;
 
 import java.util.List;
 
@@ -84,8 +83,8 @@ public final class ParserModels{
         public List<SearchResult> results;
     }
 
-    public final class UserProfileResultSet implements ResultSet{
-        public List<UserProfile> results;
+    public final class ProfileResultSet implements ResultSet{
+        public List<Profile> results;
     }
 
     public final class UserPlacesResultSet implements ResultSet{

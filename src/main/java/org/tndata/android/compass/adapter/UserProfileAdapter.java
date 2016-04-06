@@ -2,75 +2,71 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.UserProfile;
-
-import java.util.List;
+import org.tndata.android.compass.model.Profile;
 
 
-public class UserProfileAdapter extends BaseAdapter{
+public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.ViewHolder>{
     private Context mContext;
-    private List<UserProfile.SurveyResponse> mSurveyResponses;
+    private Profile mProfile;
+    private UserProfileAdapterListener mListener;
 
 
-    public UserProfileAdapter(@NonNull Context context, @NonNull List<UserProfile.SurveyResponse> surveyResponses){
+    public UserProfileAdapter(@NonNull Context context, @NonNull Profile profile,
+                              @NonNull UserProfileAdapterListener listener){
+
         mContext = context;
-        mSurveyResponses = surveyResponses;
+        mProfile = profile;
+        mListener = listener;
     }
 
     @Override
-    public int getCount(){
-        return mSurveyResponses.size();
+    public int getItemCount(){
+        return Profile.ITEM_COUNT;
     }
 
     @Override
-    public UserProfile.SurveyResponse getItem(int position){
-        return mSurveyResponses.get(position);
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        return new ViewHolder(inflater.inflate(R.layout.item_profile_question, parent, false));
     }
 
     @Override
-    public long getItemId(int position){
-        return position;
+    public void onBindViewHolder(ViewHolder holder, int position){
+        holder.bind(mProfile.getStatement(mContext, position));
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent){
-        Holder holder;
-        if (convertView == null){
-            LayoutInflater inflater = LayoutInflater.from(mContext);
-            convertView = inflater.inflate(R.layout.item_user_profile_question, parent, false);
 
-            holder = new Holder();
-            holder.mQuestion = (TextView)convertView.findViewById(R.id.user_profile_question);
-            holder.mResponse = (TextView)convertView.findViewById(R.id.user_profile_response);
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private TextView mQuestion;
 
-            convertView.setTag(holder);
-        }
-        else{
-            holder = (Holder)convertView.getTag();
+
+        public ViewHolder(View rootView){
+            super(rootView);
+
+            mQuestion = (TextView)rootView.findViewById(R.id.profile_item);
+
+            rootView.setOnClickListener(this);
         }
 
-        UserProfile.SurveyResponse surveyResponse = getItem(position);
-
-        holder.mQuestion.setText(surveyResponse.getQuestionText());
-        if (surveyResponse.isOpenEnded()){
-            holder.mResponse.setText(surveyResponse.getResponse());
-        }
-        else{
-            holder.mResponse.setText(surveyResponse.getSelectedOptionText());
+        public void bind(String item){
+            mQuestion.setText(item);
         }
 
-        return convertView;
+        @Override
+        public void onClick(View v){
+            mListener.onQuestionSelected(getAdapterPosition());
+        }
     }
 
-    private static class Holder{
-        TextView mQuestion;
-        TextView mResponse;
+
+    public interface UserProfileAdapterListener{
+        void onQuestionSelected(int index);
     }
 }

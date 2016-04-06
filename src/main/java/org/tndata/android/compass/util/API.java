@@ -508,7 +508,7 @@ public final class API{
         JSONObject postSurveyBody = new JSONObject();
         try{
             postSurveyBody.put("question", survey.getId());
-            if (survey.getQuestionType().equalsIgnoreCase(Constants.SURVEY_OPENENDED)){
+            if (survey.getQuestionType() == Survey.QuestionType.OPEN_ENDED){
                 postSurveyBody.put("response", survey.getResponse());
             }
             else{
@@ -527,7 +527,28 @@ public final class API{
      *--------------*/
 
     public static String getUserProfileUrl(){
-        return BASE_URL + "userprofiles/";
+        return BASE_URL + "users/profile/";
+    }
+
+    public static String getPutUserProfileUrl(@NonNull Profile profile){
+        return BASE_URL + "users/profile/" + profile.getId() + "/";
+    }
+
+    public static JSONObject getPutUserProfileBody(@NonNull Profile profile){
+        JSONObject body = new JSONObject();
+        try{
+            body.put("zipcode", profile.getZipCode());
+            body.put("birthday", profile.getBirthday());
+            body.put("sex", profile.getSex().toLowerCase());
+            body.put("employed", profile.isEmployed());
+            body.put("is_parent", profile.isParent());
+            body.put("in_relationship", profile.inRelationship());
+            body.put("has_degree", profile.hasDegree());
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return body;
     }
 
     public static String getPutUserProfileUrl(@NonNull User user){

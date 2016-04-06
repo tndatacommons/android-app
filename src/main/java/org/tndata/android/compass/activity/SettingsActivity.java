@@ -5,7 +5,6 @@ import org.tndata.android.compass.fragment.NotificationSettingsFragment;
 import org.tndata.android.compass.fragment.SettingsFragment;
 import org.tndata.android.compass.fragment.SettingsFragment.OnSettingsClickListener;
 import org.tndata.android.compass.service.LogOutService;
-import org.tndata.android.compass.util.Constants;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -20,6 +19,8 @@ import android.view.Window;
  * depending on the event triggered by the fragment.
  */
 public class SettingsActivity extends AppCompatActivity implements OnSettingsClickListener{
+    public static final int LOGGED_OUT_RESULT_CODE = 2200;
+
     private Toolbar mToolbar;
 
     private boolean sub;
@@ -74,7 +75,7 @@ public class SettingsActivity extends AppCompatActivity implements OnSettingsCli
     @Override
     public void logOut(){
         startService(new Intent(this, LogOutService.class));
-        setResult(Constants.LOGGED_OUT_RESULT_CODE);
+        setResult(LOGGED_OUT_RESULT_CODE);
         finish();
     }
 

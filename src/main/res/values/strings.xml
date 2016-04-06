@@ -66,6 +66,10 @@
     <string name="instrument_next">NEXT</string>
     <string name="survey_open_ended_hint">answer</string>
 
+    <string name="onboarding_instrument_title">On-boarding profile</string>
+    <string name="onboarding_instrument_description">These are quick questions that will help the app create a base of recommendations. These questions will become more granular through the survey cards as the user engages with the app over time.</string>
+    <string name="onboarding_instrument_instructions">Tell Compass a few things about you to improve your recommendations.</string>
+
     <!-- ActionTriggerActivity -->
     <string name="trigger_default_action_title">Reminders for this action</string>
     <string name="trigger_switch_label">Enable reminders</string>
@@ -257,5 +261,27 @@
     <string name="header_icon_cd">Icon image of a relevant piece of content</string>
 
     <string name="category_image_cd">Cropped category tile</string>
+
+    <!-- User profile -->
+    <string name="profile_zip">My zip code is %1$s</string>
+    <string name="profile_birthday">My birthday is %1$s</string>
+    <string name="profile_gender">I am a %1$s</string>
+    <string name="profile_employed">%1$s employed</string>
+    <string name="profile_offspring">%1$s children</string>
+    <string name="profile_relationship">%1$s in a romantic relationship</string>
+    <string name="profile_education">%1$s a degree</string>
+
+    <string name="profile_statement_am">I\'m</string>
+    <string name="profile_statement_am_not">I\'m not</string>
+    <string name="profile_statement_have">I have</string>
+    <string name="profile_statement_have_not">I don\'t have</string>
+
+    <string name="profile_zip_question">What\'s your ZIP code?</string>
+    <string name="profile_birthday_question">What\'s your birthday?</string>
+    <string name="profile_gender_question">What\'s your sex?</string>
+    <string name="profile_employed_question">Are you employed?</string>
+    <string name="profile_offspring_question">Are you a parent?</string>
+    <string name="profile_relationship_question">Are you in a romantic relationship?</string>
+    <string name="profile_education_question">Do you have a degree?</string>
 
 </resources>

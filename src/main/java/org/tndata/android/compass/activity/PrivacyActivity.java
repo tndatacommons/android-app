@@ -8,7 +8,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.util.Constants;
+
 
 /**
  * Activity used to display the privacy information.
@@ -17,6 +17,9 @@ import org.tndata.android.compass.util.Constants;
  * @version 1.0.0
  */
 public class PrivacyActivity extends AppCompatActivity{
+    private static final String URL = "https://app.tndata.org/privacy/";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -28,7 +31,7 @@ public class PrivacyActivity extends AppCompatActivity{
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         WebView webView = (WebView)findViewById(R.id.privacy_web_view);
-        webView.loadUrl(Constants.PRIVACY_URL);
+        webView.loadUrl(URL);
         webView.setWebViewClient(new WebViewClient(){
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url){
