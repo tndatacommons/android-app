@@ -226,7 +226,7 @@ public class LoginActivity
      * @param password the password.
      */
     private void logUserIn(String email, String password){
-        Log.d("LogIn", "Logging user in");
+        Log.d(TAG, "Logging user in");
         for (Fragment fragment:mFragmentStack){
             if (fragment instanceof LauncherFragment){
                 ((LauncherFragment)fragment).showProgress(true);
@@ -279,7 +279,7 @@ public class LoginActivity
             }
             else{
                 try{
-                    Log.d("LogIn", new JSONObject(result).toString(2));
+                    Log.d(TAG, new JSONObject(result).toString(2));
                 }
                 catch (Exception x){
                     x.printStackTrace();
@@ -298,12 +298,12 @@ public class LoginActivity
     @Override
     public void onRequestFailed(int requestCode, HttpRequestError error){
         if (requestCode == mLogInRC){
-            Log.d("LogIn", "Login request failed");
+            Log.d(TAG, "Login request failed");
             mFragmentStack.clear();
             swapFragments(LOGIN, true);
         }
         else if (requestCode == mGetCategoriesRC){
-            Log.d("LogIn", "Get categories failed");
+            Log.d(TAG, "Get categories failed");
         }
     }
 
@@ -335,7 +335,7 @@ public class LoginActivity
                 transitionToOnBoarding();
             }
             else{
-                Log.d("LogIn", "Fetching user data");
+                Log.d(TAG, "Fetching user data");
                 FeedDataLoader.load(this);
             }
         }

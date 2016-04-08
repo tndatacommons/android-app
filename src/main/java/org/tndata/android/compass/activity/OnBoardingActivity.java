@@ -12,15 +12,12 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseInterestsAdapter;
 import org.tndata.android.compass.fragment.ChooseInterestsFragment;
 import org.tndata.android.compass.fragment.InstrumentFragment;
-import org.tndata.android.compass.fragment.ProgressFragment;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Instrument;
-import org.tndata.android.compass.model.Profile;
+import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserCategory;
-import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.FeedDataLoader;
 
@@ -43,12 +40,10 @@ public class OnBoardingActivity
                 InstrumentFragment.InstrumentFragmentCallback,
                 ChooseInterestsAdapter.OnCategoriesSelectedListener,
                 HttpRequest.RequestCallback,
-                Parser.ParserCallback,
                 FeedDataLoader.Callback{
 
-    private static final int STAGE_LOADING = 0;
-    private static final int STAGE_PROFILE = 1;
-    private static final int STAGE_CHOOSE_CATEGORIES = 2;
+    private static final int STAGE_PROFILE = 0;
+    private static final int STAGE_CHOOSE_CATEGORIES = 1;
 
 
     private CompassApplication mApplication;
@@ -56,7 +51,6 @@ public class OnBoardingActivity
     private Instrument mInstrument;
 
     //Request codes
-    private int mGetInstrumentRC;
     private int mInitialPostCategoryRC;
     private int mLastPostCategoryRC;
 
@@ -76,9 +70,14 @@ public class OnBoardingActivity
             getSupportActionBar().hide();
         }
 
-        swapFragments(STAGE_LOADING);
-
-        mGetInstrumentRC = HttpRequest.get(this, API.getUserProfileUrl());
+        String title = getString(R.string.onboarding_instrument_title);
+        String description = getString(R.string.onboarding_instrument_description);
+        String instructions = getString(R.string.onboarding_instrument_instructions);
+        mInstrument = new Instrument(title, description, instructions);
+        for (int i = 0; i < User.ITEM_COUNT; i++){
+            mInstrument.addSurvey(mApplication.getUser().generateSurvey(this, i));
+        }
+        swapFragments(STAGE_PROFILE);
     }
 
     /**
@@ -88,10 +87,6 @@ public class OnBoardingActivity
      */
     private void swapFragments(int index){
         switch (index){
-            case STAGE_LOADING:
-                mFragment = new ProgressFragment();
-                break;
-
             case STAGE_PROFILE:
                 mFragment = InstrumentFragment.newInstance(mInstrument, 3);
                 break;
@@ -108,13 +103,16 @@ public class OnBoardingActivity
 
     @Override
     public void onInstrumentFinished(Instrument instrument){
+        //There is no need to save the profile here, it gets saved after selecting the categories
+        for (Survey survey:instrument.getQuestions()){
+            mApplication.getUser().postSurvey(survey);
+        }
         swapFragments(STAGE_CHOOSE_CATEGORIES);
     }
 
     @Override
     public void onCategoriesSelected(List<CategoryContent> selection, List<UserCategory> original){
         //Process and log the selection, and save it
-        //int[] categoryIds = new int[selection.size()];
         for (int i = 0; i < selection.size(); i++){
             if (i == 0){
                 mInitialPostCategoryRC = HttpRequest.post(this, API.getUserCategoriesUrl(),
@@ -134,10 +132,7 @@ public class OnBoardingActivity
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mGetInstrumentRC){
-            Parser.parse(result, ParserModels.ProfileResultSet.class, this);
-        }
-        else if (requestCode < mLastPostCategoryRC){
+        if (requestCode < mLastPostCategoryRC){
             mInitialPostCategoryRC++;
             if (mInitialPostCategoryRC == mLastPostCategoryRC){
                 FeedDataLoader.load(this);
@@ -152,27 +147,6 @@ public class OnBoardingActivity
             if (mInitialPostCategoryRC == mLastPostCategoryRC){
                 FeedDataLoader.load(this);
             }
-        }
-    }
-
-    @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.ProfileResultSet){
-            Profile profile = ((ParserModels.ProfileResultSet)result).results.get(0);
-            String title = getString(R.string.onboarding_instrument_title);
-            String description = getString(R.string.onboarding_instrument_description);
-            String instructions = getString(R.string.onboarding_instrument_instructions);
-            mInstrument = new Instrument(title, description, instructions);
-            for (int i = 0; i < Profile.ITEM_COUNT; i++){
-                mInstrument.addSurvey(profile.generateSurvey(this, i));
-            }
-        }
-    }
-
-    @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.ProfileResultSet){
-            swapFragments(STAGE_PROFILE);
         }
     }
 

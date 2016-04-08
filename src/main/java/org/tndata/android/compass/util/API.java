@@ -526,45 +526,27 @@ public final class API{
      * USER PROFILE *
      *--------------*/
 
-    public static String getUserProfileUrl(){
-        return BASE_URL + "users/profile/";
+    public static String getPutUserProfileUrl(@NonNull User user){
+        return BASE_URL + "users/profile/" + user.getProfileId() + "/";
     }
 
-    public static String getPutUserProfileUrl(@NonNull Profile profile){
-        return BASE_URL + "users/profile/" + profile.getId() + "/";
-    }
-
-    public static JSONObject getPutUserProfileBody(@NonNull Profile profile){
+    public static JSONObject getPutUserProfileBody(@NonNull User user){
         JSONObject body = new JSONObject();
         try{
-            body.put("zipcode", profile.getZipCode());
-            body.put("birthday", profile.getBirthday());
-            body.put("sex", profile.getSex().toLowerCase());
-            body.put("employed", profile.isEmployed());
-            body.put("is_parent", profile.isParent());
-            body.put("in_relationship", profile.inRelationship());
-            body.put("has_degree", profile.hasDegree());
+            body.put("timezone", TimeZone.getDefault().getID())
+                    .put("needs_onboarding", user.needsOnBoarding())
+                    .put("zipcode", user.getZipCode())
+                    .put("birthday", user.getBirthday())
+                    .put("sex", user.getSex().toLowerCase())
+                    .put("employed", user.isEmployed())
+                    .put("is_parent", user.isParent())
+                    .put("in_relationship", user.inRelationship())
+                    .put("has_degree", user.hasDegree());
         }
         catch (JSONException jsonx){
             jsonx.printStackTrace();
         }
         return body;
-    }
-
-    public static String getPutUserProfileUrl(@NonNull User user){
-        return BASE_URL + "userprofiles/" + user.getUserprofileId() + "/";
-    }
-
-    public static JSONObject getPutUserProfileBody(@NonNull User user){
-        JSONObject putUserProfileBody = new JSONObject();
-        try{
-            putUserProfileBody.put("timezone", TimeZone.getDefault().getID())
-                    .put("needs_onboarding", user.needsOnBoarding());
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-        }
-        return putUserProfileBody;
     }
 
 
