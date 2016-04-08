@@ -231,9 +231,6 @@ public final class CompassUtil{
         else if (src.equals(UpcomingAction.API_TYPE)){
             return UpcomingAction.class;
         }
-        else if (src.equals(Profile.TYPE)){
-            return Profile.class;
-        }
         //Search
         else if (src.contains("search")){
             return SearchResult.class;

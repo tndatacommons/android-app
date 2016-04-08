@@ -9,26 +9,26 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Profile;
+import org.tndata.android.compass.model.User;
 
 
 public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.ViewHolder>{
     private Context mContext;
-    private Profile mProfile;
+    private User mUser;
     private UserProfileAdapterListener mListener;
 
 
-    public UserProfileAdapter(@NonNull Context context, @NonNull Profile profile,
+    public UserProfileAdapter(@NonNull Context context, @NonNull User user,
                               @NonNull UserProfileAdapterListener listener){
 
         mContext = context;
-        mProfile = profile;
+        mUser = user;
         mListener = listener;
     }
 
     @Override
     public int getItemCount(){
-        return Profile.ITEM_COUNT;
+        return User.ITEM_COUNT;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position){
-        holder.bind(mProfile.getStatement(mContext, position));
+        holder.bind(mUser.getStatement(mContext, position));
     }
 
 

@@ -23,7 +23,7 @@ public class UserTest {
     public void user_setter_userprofile_id_ReturnsTrue() throws NoSuchFieldException, IllegalAccessException {
         User user = new User();
         int value = (int) Math.random();
-        user.setUserprofileId(value);
+        user.setProfileId(value);
         final Field field = user.getClass().getDeclaredField("userprofile_id");
         field.setAccessible(true);
         assertEquals(value, field.get(user));
@@ -127,7 +127,7 @@ public class UserTest {
         final Field field = user.getClass().getDeclaredField("userprofile_id");
         field.setAccessible(true);
         field.set(user, value);
-        final int result = user.getUserprofileId();
+        final int result = user.getProfileId();
         assertEquals(value, result);
     }
 
