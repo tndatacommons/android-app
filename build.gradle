@@ -12,7 +12,7 @@ buildscript {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.5.0'
+        classpath 'com.android.tools.build:gradle:2.0.0'
         classpath 'io.fabric.tools:gradle:1.21.5'
     }
 }
@@ -24,7 +24,7 @@ android {
     def STRING = "String"
     def GCM_SENDER_ID_VAR_NAME = "GCM_SENDER_ID"
     def GCM_SENDER_ID = '"' + GcmSenderId + '"' ?: '"Define a GCM sender id"'
-    def VERSION_NAME = "3.0.0"
+    def VERSION_NAME = "3.0.2"
 
     buildTypes{
         debug{
@@ -86,7 +86,7 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.5.0@aar') {
         transitive = true;
     }
-    compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.2'
+    compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.9'
     compile 'com.github.clans:fab:1.6.2'
     compile 'es.sandwatch:http-requests:1.0.0'
     testCompile 'junit:junit:4.12'
