@@ -25,15 +25,15 @@
         android:id="@+id/playground_circle"
         android:layout_width="277dp"
         android:layout_height="277dp"
-        progress:barColor="#00796B"
-        progress:barWidth="35dp"
-        progress:contourSize="0dp"
-        progress:maxValue="100"
-        progress:rimColor="#B2DFDB"
-        progress:rimWidth="35dp"
-        progress:seekMode="true"
-        progress:textColor="#00796B"
-        progress:unit="%"
-        progress:unitColor="#009688" />
+        progress:cpv_barColor="#00796B"
+        progress:cpv_barWidth="35dp"
+        progress:cpv_contourSize="0dp"
+        progress:cpv_maxValue="100"
+        progress:cpv_rimColor="#B2DFDB"
+        progress:cpv_rimWidth="35dp"
+        progress:cpv_seekMode="true"
+        progress:cpv_textColor="#00796B"
+        progress:cpv_unit="%"
+        progress:cpv_unitColor="#009688" />
 
 </LinearLayout>

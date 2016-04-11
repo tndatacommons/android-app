@@ -34,14 +34,14 @@
                 android:id="@+id/up_next_indicator"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
-                progress:barColor="#00796B"
-                progress:barWidth="8dp"
-                progress:contourSize="0dp"
-                progress:maxValue="100"
-                progress:rimColor="#B2DFDB"
-                progress:rimWidth="8dp"
-                progress:unit="%"
-                progress:seekMode="false" />
+                progress:cpv_barColor="#00796B"
+                progress:cpv_barWidth="8dp"
+                progress:cpv_contourSize="0dp"
+                progress:cpv_maxValue="100"
+                progress:cpv_rimColor="#B2DFDB"
+                progress:cpv_rimWidth="8dp"
+                progress:cpv_unit="%"
+                progress:cpv_seekMode="false" />
 
             <LinearLayout
                 android:id="@+id/up_next_no_actions"
