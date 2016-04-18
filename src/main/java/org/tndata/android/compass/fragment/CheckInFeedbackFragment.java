@@ -114,8 +114,7 @@ public class CheckInFeedbackFragment extends Fragment implements SeekBar.OnSeekB
         }*/
 
         //Header title
-        String title = mUserGoal.getTitle().substring(0, 1).toLowerCase() + mUserGoal.getTitle().substring(1);
-        goalTitle.setText(getResources().getString(R.string.check_in_feedback_goal, title));
+        goalTitle.setText(getResources().getString(R.string.check_in_feedback_goal, mUserGoal.getTitle()));
 
         mBar.setOnSeekBarChangeListener(this);
     }
