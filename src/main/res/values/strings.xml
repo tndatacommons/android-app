@@ -81,7 +81,7 @@
     <!-- Library -->
     <string name="library_goals_content_header">Compass can help me&#8230;</string>
     <string name="library_behaviors_content_header">You can do it!</string>
-    <string name="library_behavior_title">I want to %1$s</string>
+    <string name="library_behavior_title">%1$s</string>
     <string name="library_behavior_yes">Yes, I\'m in</string>
     <string name="library_detail_header">Here\'s why</string>
     <string name="library_detail_more_info">More info</string>
@@ -236,8 +236,8 @@
     <string name="card_footer_see_more">SEE MORE</string>
 
     <!-- Check in -->
-    <string name="check_in_feedback_title">How am I doing?</string>
-    <string name="check_in_feedback_goal">I want to %1$s.</string>
+    <string name="check_in_feedback_title">How are you doing?</string>
+    <string name="check_in_feedback_goal">%1$s.</string>
     <string name="check_in_feedback_poor">Poor</string>
     <string name="check_in_feedback_fair">Fair</string>
     <string name="check_in_feedback_good">Good</string>

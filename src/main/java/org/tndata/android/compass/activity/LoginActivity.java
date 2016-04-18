@@ -326,7 +326,7 @@ public class LoginActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof User){
-            mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl() + "&selected_by_default=0");
+            mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
             mGetPlacesRC = HttpRequest.get(this, API.getUserPlacesUrl());
         }
         else if (result instanceof ParserModels.CategoryContentResultSet){

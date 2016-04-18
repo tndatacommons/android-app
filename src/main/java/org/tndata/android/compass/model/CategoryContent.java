@@ -33,6 +33,9 @@ public class CategoryContent extends TDCContent implements Serializable{
     @SerializedName("packaged_content")
     private boolean mPackagedContent = false;
 
+    @SerializedName("selected_by_default")
+    private boolean mSelectedByDefault = false;
+
 
     /*---------*
      * GETTERS *
@@ -57,6 +60,8 @@ public class CategoryContent extends TDCContent implements Serializable{
     public boolean isPackagedContent(){
         return mPackagedContent;
     }
+
+    public boolean isSelectedByDefault() { return mSelectedByDefault; }
 
     @Override
     protected String getType(){

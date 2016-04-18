@@ -159,7 +159,7 @@ public class ChooseInterestsFragment
         if (result instanceof ParserModels.UserCategoryResultSet){
             List<UserCategory> categories = ((ParserModels.UserCategoryResultSet)result).results;
             if (categories != null){
-                mAdapter.setCategories(mApplication.getPublicCategoryList(), categories);
+                mAdapter.setCategories(mApplication.getFilteredCategoryList(), categories);
             }
         }
     }

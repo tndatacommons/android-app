@@ -142,6 +142,23 @@ public class CompassApplication extends Application{
     }
 
     /**
+     * A filtered list of public categories. At the moment, this method
+     * excludes those categories that are selected for all users by default.
+     *
+     * @return the unordered list of public categories, excluding those selected by default.
+     */
+    public List<CategoryContent> getFilteredCategoryList() {
+        ArrayList filtered_categories = new ArrayList<>();
+        for(CategoryContent category: mPublicCategories.values()) {
+            if(!category.isSelectedByDefault()) {
+                filtered_categories.add(category);
+            }
+        }
+        return filtered_categories;
+    }
+
+
+    /**
      * Feed data setter.
      *
      * @param feedData the user's feed data bundle.
