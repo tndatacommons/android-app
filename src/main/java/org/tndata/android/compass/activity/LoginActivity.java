@@ -261,9 +261,19 @@ public class LoginActivity
         setUser(user);
     }
 
+    /**
+     * Fetches public categories, but excludes those that are pre-selected for the user
+     * by default. This method is only applicable to on-boarding, hence the method
+     * definition here.
+     *
+     */
+    private String getCategoriesUrl() {
+        return API.getCategoriesUrl() + "&selected_by_default=0";
+    }
+
     private void setUser(User user){
         mApplication.setUser(user, true);
-        mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
+        mGetCategoriesRC = HttpRequest.get(this, this.getCategoriesUrl());
     }
 
     @Override
@@ -326,7 +336,7 @@ public class LoginActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof User){
-            mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl() + "&selected_by_default=0");
+            mGetCategoriesRC = HttpRequest.get(this, this.getCategoriesUrl());
             mGetPlacesRC = HttpRequest.get(this, API.getUserPlacesUrl());
         }
         else if (result instanceof ParserModels.CategoryContentResultSet){
