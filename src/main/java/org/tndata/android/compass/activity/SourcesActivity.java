@@ -35,6 +35,7 @@ public class SourcesActivity extends AppCompatActivity implements SourcesAdapter
         }
 
         List<Source> sources = new ArrayList<>();
+        sources.add(new Source("\"Stay strong with Compass\" messaging inspired by the work of the Character Lab. Thanks, Dr. Duckworth!", "https://characterlab.org/resources"));
         sources.add(new Source("Illustrations: Michael Cook (Cookicons)", "http://cookicons.co"));
         sources.add(new Source("Icons: designed by flaticon", "http://www.flaticon.com"));
         sources.add(new Source("Misc art: designed by freepik", "http://www.freepik.com"));
