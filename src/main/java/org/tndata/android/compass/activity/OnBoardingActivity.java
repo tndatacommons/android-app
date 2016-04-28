@@ -45,6 +45,8 @@ public class OnBoardingActivity
     private static final int STAGE_PROFILE = 0;
     private static final int STAGE_CHOOSE_CATEGORIES = 1;
 
+    private static final int PROFILE_ITEMS = 3;
+
 
     private CompassApplication mApplication;
     private Fragment mFragment = null;
@@ -74,7 +76,7 @@ public class OnBoardingActivity
         String description = getString(R.string.onboarding_instrument_description);
         String instructions = getString(R.string.onboarding_instrument_instructions);
         mInstrument = new Instrument(title, description, instructions);
-        for (int i = 0; i < User.ITEM_COUNT; i++){
+        for (int i = 0; i < PROFILE_ITEMS; i++){
             mInstrument.addSurvey(mApplication.getUser().generateSurvey(this, i));
         }
         swapFragments(STAGE_PROFILE);

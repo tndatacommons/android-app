@@ -12,14 +12,14 @@ buildscript {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.0.0'
+        classpath 'com.android.tools.build:gradle:2.1.0'
         classpath 'io.fabric.tools:gradle:1.21.5'
     }
 }
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
 
     def STRING = "String"
     def GCM_SENDER_ID_VAR_NAME = "GCM_SENDER_ID"
@@ -73,12 +73,12 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:recyclerview-v7:23.2.0'
-    compile 'com.android.support:cardview-v7:23.2.0'
-    compile 'com.android.support:support-v4:23.2.0'
-    compile 'com.android.support:appcompat-v7:23.2.0'
+    compile 'com.android.support:recyclerview-v7:23.3.0'
+    compile 'com.android.support:cardview-v7:23.3.0'
+    compile 'com.android.support:support-v4:23.3.0'
+    compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.google.code.gson:gson:2.4'
-    compile 'com.google.android.gms:play-services:7.0.0'
+    compile 'com.google.android.gms:play-services:8.4.0'
     compile 'me.relex:circleindicator:1.1.5@aar'
     compile('com.doomonafireball.betterpickers:library:1.6.0') {
         exclude group: 'com.android.support', module: 'support-v4'
