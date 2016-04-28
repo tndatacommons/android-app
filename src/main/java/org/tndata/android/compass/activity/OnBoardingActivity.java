@@ -109,7 +109,13 @@ public class OnBoardingActivity
         for (Survey survey:instrument.getQuestions()){
             mApplication.getUser().postSurvey(survey);
         }
-        swapFragments(STAGE_CHOOSE_CATEGORIES);
+
+        User user = mApplication.getUser();
+        user.setOnBoardingComplete();
+        HttpRequest.put(null, API.getPutUserProfileUrl(user), API.getPutUserProfileBody(user));
+        FeedDataLoader.load(this);
+
+        //swapFragments(STAGE_CHOOSE_CATEGORIES);
     }
 
     @Override
