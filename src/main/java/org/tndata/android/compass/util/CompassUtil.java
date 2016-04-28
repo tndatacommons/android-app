@@ -211,7 +211,8 @@ public final class CompassUtil{
             return R.drawable.tile_romance;
         }
         else{
-            return 0;
+            // Default to our main hero image.
+            return R.drawable.compass_master_illustration;
         }
     }
 
