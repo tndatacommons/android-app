@@ -126,8 +126,9 @@ public class SearchActivity
     @Override
     public void onSearchResultSelected(SearchResult result){
         if (result.isGoal()){
-            startActivity(new Intent(this, ChooseBehaviorsActivity.class)
-                    .putExtra(ChooseBehaviorsActivity.GOAL_ID_KEY, result.getId()));
+            //TODO do something.
+            /*startActivity(new Intent(this, ChooseBehaviorsActivity.class)
+                    .putExtra(ChooseBehaviorsActivity.GOAL_ID_KEY, result.getId()));*/
         }
     }
 }

@@ -156,34 +156,6 @@
 
         <activity
             android:name=".activity.ChooseGoalsActivity"
-            android:parentActivityName=".activity.ChooseCategoryActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.ChooseCategoryActivity" />
-        </activity>
-
-        <activity
-            android:name=".activity.ChooseBehaviorsActivity"
-            android:parentActivityName=".activity.MainActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.MainActivity" />
-        </activity>
-
-        <activity
-            android:name=".activity.BehaviorActivity"
             android:screenOrientation="portrait" />
 
         <activity

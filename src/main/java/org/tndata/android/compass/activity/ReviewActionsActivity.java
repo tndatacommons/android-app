@@ -43,7 +43,6 @@ public class ReviewActionsActivity
 
     public static final String USER_CATEGORY_KEY = "org.tndata.compass.ReviewActions.Category";
     public static final String USER_GOAL_KEY = "org.tndata.compass.ReviewActions.Goal";
-    public static final String USER_BEHAVIOR_KEY = "org.tndata.compass.ReviewActions.Behavior";
 
     public static final int ACTION_ACTIVITY_RC = 4562;
 
@@ -53,7 +52,6 @@ public class ReviewActionsActivity
 
     private UserCategory mUserCategory;
     private UserGoal mUserGoal;
-    private CategoryContent mGoalCategory;
 
     //Network request codes and urls
     private int mGetUserCategoryRC;
@@ -76,12 +74,13 @@ public class ReviewActionsActivity
         mUserGoal = (UserGoal)getIntent().getSerializableExtra(USER_GOAL_KEY);
 
         if (mUserGoal != null){
-            mGoalCategory = mApplication.getPublicCategories().get(mUserGoal.getPrimaryCategoryId());
+            long catId = mUserGoal.getPrimaryCategoryId();
+            CategoryContent category = mApplication.getPublicCategories().get(catId);
             mAdapter = new ReviewActionsAdapter(this, this, mUserGoal.getTitle());
             mGetActionsNextUrl = API.getUserActionsUrl(mUserGoal.getGoal());
-            if (mGoalCategory != null){
-                setColor(Color.parseColor(mGoalCategory.getColor()));
-                setGoalHeader(mGoalCategory);
+            if (category != null){
+                setColor(Color.parseColor(category.getColor()));
+                setGoalHeader(category);
                 setFAB(R.id.review_fab, this);
             }
             else{
@@ -206,7 +205,7 @@ public class ReviewActionsActivity
             ParserModels.UserActionResultSet set = (ParserModels.UserActionResultSet)result;
             mGetActionsNextUrl = set.next;
             for (Action action:((ParserModels.UserActionResultSet)result).results){
-                //TODO
+                //TODO caching?
                 //mApplication.addAction(action);
             }
             mAdapter.addActions(set.results, mGetActionsNextUrl != null || set.results.isEmpty());
