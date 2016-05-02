@@ -5,8 +5,6 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
-
 
 /**
  * Base class of all Tennessee Data Commons created content,
@@ -14,9 +12,7 @@ import java.io.Serializable;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public abstract class TDCContent extends TDCBase implements Serializable, Comparable<TDCContent>{
-    private static final long serialVersionUID = -7297141782846963404L;
-
+public abstract class TDCContent extends TDCBase implements Comparable<TDCContent>{
     @SerializedName("title")
     private String mTitle;
     @SerializedName("description")

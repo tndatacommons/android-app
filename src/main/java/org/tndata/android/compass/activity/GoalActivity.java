@@ -32,7 +32,7 @@ public class GoalActivity extends MaterialActivity implements GoalAdapter.GoalLi
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        CategoryContent category = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
+        CategoryContent category = getIntent().getParcelableExtra(CATEGORY_KEY);
         GoalContent goal = getIntent().getParcelableExtra(GOAL_KEY);
 
         setHeader(category);

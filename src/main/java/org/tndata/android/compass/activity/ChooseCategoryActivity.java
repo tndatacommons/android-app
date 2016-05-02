@@ -2,6 +2,7 @@ package org.tndata.android.compass.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -54,7 +55,7 @@ public class ChooseCategoryActivity
     @Override
     public void onCategorySelected(CategoryContent category){
         Intent chooseGoals = new Intent(this, ChooseGoalsActivity.class)
-                .putExtra(ChooseGoalsActivity.CATEGORY_KEY, category);
+                .putExtra(ChooseGoalsActivity.CATEGORY_KEY, (Parcelable)category);
         startActivity(chooseGoals);
         setResult(RESULT_OK);
         finish();

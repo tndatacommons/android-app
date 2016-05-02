@@ -137,7 +137,7 @@ public class ReviewActionsActivity
             case R.id.review_fab:
                 if (mUserGoal == null){
                     startActivity(new Intent(this, ChooseGoalsActivity.class)
-                            .putExtra(ChooseGoalsActivity.CATEGORY_KEY, mUserCategory.getCategory()));
+                            .putExtra(ChooseGoalsActivity.CATEGORY_KEY, (Parcelable)mUserCategory.getCategory()));
                 }
                 break;
         }
@@ -148,7 +148,7 @@ public class ReviewActionsActivity
         if (mUserCategory != null){
             if (!mUserCategory.getCategory().isPackagedContent()){
                 startActivity(new Intent(this, ChooseGoalsActivity.class)
-                        .putExtra(ChooseGoalsActivity.CATEGORY_KEY, mUserCategory.getCategory()));
+                        .putExtra(ChooseGoalsActivity.CATEGORY_KEY, (Parcelable)mUserCategory.getCategory()));
             }
         }
     }

@@ -80,7 +80,7 @@ public class ChooseGoalsActivity
         mApplication = (CompassApplication)getApplication();
 
         //Pull the content
-        mCategory = (CategoryContent)getIntent().getSerializableExtra(CATEGORY_KEY);
+        mCategory = getIntent().getParcelableExtra(CATEGORY_KEY);
 
         //Set up the loading process and the adapter
         mGetGoalsNextUrl = API.getGoalsUrl(mCategory);
@@ -114,7 +114,7 @@ public class ChooseGoalsActivity
         mSelectedGoal = goal;
         startActivityForResult(new Intent(this, GoalActivity.class)
                 .putExtra(GoalActivity.GOAL_KEY, (Parcelable)goal)
-                .putExtra(GoalActivity.CATEGORY_KEY, mCategory), GOAL_ACTIVITY_RC);
+                .putExtra(GoalActivity.CATEGORY_KEY, (Parcelable)mCategory), GOAL_ACTIVITY_RC);
     }
 
     @Override
