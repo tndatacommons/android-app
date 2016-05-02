@@ -26,13 +26,13 @@ android {
     def GCM_SENDER_ID = '"' + GcmSenderId + '"' ?: '"Define a GCM sender id"'
     def VERSION_NAME = "3.0.2"
 
-    buildTypes{
-        debug{
+    buildTypes {
+        debug {
             buildConfigField STRING, GCM_SENDER_ID_VAR_NAME, GCM_SENDER_ID
             manifestPlaceholders = [fabricApiKey: FabricApiKey, mapsApiKey: MapsDebugApiKey]
             resValue "string", "version_name", VERSION_NAME + ".debug"
         }
-        release{
+        release {
             buildConfigField STRING, GCM_SENDER_ID_VAR_NAME, GCM_SENDER_ID
             manifestPlaceholders = [fabricApiKey: FabricApiKey, mapsApiKey: MapsApiKey]
             resValue "string", "version_name", VERSION_NAME
@@ -73,24 +73,27 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:recyclerview-v7:23.3.0'
-    compile 'com.android.support:cardview-v7:23.3.0'
-    compile 'com.android.support:support-v4:23.3.0'
-    compile 'com.android.support:appcompat-v7:23.3.0'
-    compile 'com.google.code.gson:gson:2.4'
-    compile 'com.google.android.gms:play-services:8.4.0'
-    compile 'me.relex:circleindicator:1.1.5@aar'
     compile('com.doomonafireball.betterpickers:library:1.6.0') {
         exclude group: 'com.android.support', module: 'support-v4'
     }
     compile('com.crashlytics.sdk.android:crashlytics:2.5.0@aar') {
         transitive = true;
     }
-    compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.9'
-    compile 'com.github.clans:fab:1.6.2'
-    compile 'es.sandwatch:http-requests:1.0.0'
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-library:1.3'
     testCompile 'org.robolectric:robolectric:3.0'
     androidTestCompile 'org.robolectric:robolectric:3.0'
+    compile 'com.android.support:recyclerview-v7:24.0.0-alpha2'
+    compile 'com.android.support:cardview-v7:24.0.0-alpha2'
+    compile 'com.android.support:support-v4:24.0.0-alpha2'
+    compile 'com.android.support:appcompat-v7:24.0.0-alpha2'
+    compile 'com.google.code.gson:gson:2.4'
+    compile 'com.google.android.gms:play-services:8.4.0'
+    compile 'me.relex:circleindicator:1.1.5@aar'
+    compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.9'
+    compile 'com.github.clans:fab:1.6.2'
+    compile 'es.sandwatch:http-requests:1.0.0'
+    compile 'com.google.android.gms:play-services-ads:8.4.0'
+    compile 'com.google.android.gms:play-services-auth:8.4.0'
+    compile 'com.google.android.gms:play-services-gcm:8.4.0'
 }

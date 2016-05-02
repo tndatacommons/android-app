@@ -56,7 +56,7 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
     }
 
     @Override
-    protected boolean isEmpty(){
+    public boolean isEmpty(){
         return mGoals.isEmpty();
     }
 
@@ -101,6 +101,21 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
             prepareListChange();
             mGoalsAdapter.notifyItemRangeInserted(positionStart, goals.size());
             notifyListChanged();
+        }
+    }
+
+    /**
+     * Removes a behavior from the list.
+     *
+     * @param behavior the behavior to be removed.
+     */
+    public void remove(GoalContent behavior){
+        int index = mGoals.indexOf(behavior);
+        prepareListChange();
+        mGoals.remove(index);
+        mGoalsAdapter.notifyItemRemoved(index);
+        if (!mGoals.isEmpty()){
+            mGoalsAdapter.notifyItemChanged(0);
         }
     }
 

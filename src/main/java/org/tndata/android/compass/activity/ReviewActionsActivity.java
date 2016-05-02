@@ -13,9 +13,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ReviewActionsAdapter;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.BehaviorContent;
 import org.tndata.android.compass.model.CategoryContent;
-import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
@@ -76,28 +74,19 @@ public class ReviewActionsActivity
         //  will always be available, so the primary category id can be used to retrieve
         //  it from the Application class list
         mUserGoal = (UserGoal)getIntent().getSerializableExtra(USER_GOAL_KEY);
-        UserBehavior userBehavior = (UserBehavior)getIntent().getSerializableExtra(USER_BEHAVIOR_KEY);
 
         if (mUserGoal != null){
             mGoalCategory = mApplication.getPublicCategories().get(mUserGoal.getPrimaryCategoryId());
-            if (userBehavior != null){
-                mAdapter = new ReviewActionsAdapter(this, this, userBehavior.getTitle());
-                mGetActionsNextUrl = API.getUserActionsUrl(userBehavior.getBehavior());
+            mAdapter = new ReviewActionsAdapter(this, this, mUserGoal.getTitle());
+            mGetActionsNextUrl = API.getUserActionsUrl(mUserGoal.getGoal());
+            if (mGoalCategory != null){
                 setColor(Color.parseColor(mGoalCategory.getColor()));
-                setBehaviorHeader(userBehavior.getBehavior());
+                setGoalHeader(mGoalCategory);
+                setFAB(R.id.review_fab, this);
             }
             else{
-                mAdapter = new ReviewActionsAdapter(this, this, mUserGoal.getTitle());
-                mGetActionsNextUrl = API.getUserActionsUrl(mUserGoal.getGoal());
-                if (mGoalCategory != null){
-                    setColor(Color.parseColor(mGoalCategory.getColor()));
-                    setGoalHeader(mGoalCategory);
-                    setFAB(R.id.review_fab, this);
-                }
-                else{
-                    long categoryId = mUserGoal.getPrimaryCategoryId();
-                    mGetUserCategoryRC = HttpRequest.get(this, API.getUserCategoryUrl(categoryId));
-                }
+                long categoryId = mUserGoal.getPrimaryCategoryId();
+                mGetUserCategoryRC = HttpRequest.get(this, API.getUserCategoryUrl(categoryId));
             }
         }
         else if (mUserCategory != null){
@@ -112,11 +101,6 @@ public class ReviewActionsActivity
         }
 
         setAdapter(mAdapter);
-    }
-
-    private void setBehaviorHeader(BehaviorContent behavior){
-        View header = inflateHeader(R.layout.header_icon);
-        behavior.loadIconIntoView((ImageView)header.findViewById(R.id.header_icon_icon));
     }
 
     private void setGoalHeader(CategoryContent category){
@@ -156,11 +140,6 @@ public class ReviewActionsActivity
                     startActivity(new Intent(this, ChooseGoalsActivity.class)
                             .putExtra(ChooseGoalsActivity.CATEGORY_KEY, mUserCategory.getCategory()));
                 }
-                else{
-                    startActivity(new Intent(this, ChooseBehaviorsActivity.class)
-                            .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, mGoalCategory)
-                            .putExtra(ChooseBehaviorsActivity.GOAL_KEY, (Parcelable)mUserGoal.getGoal()));
-                }
                 break;
         }
     }
@@ -171,13 +150,6 @@ public class ReviewActionsActivity
             if (!mUserCategory.getCategory().isPackagedContent()){
                 startActivity(new Intent(this, ChooseGoalsActivity.class)
                         .putExtra(ChooseGoalsActivity.CATEGORY_KEY, mUserCategory.getCategory()));
-            }
-        }
-        else if (mUserGoal != null){
-            if (!mGoalCategory.isPackagedContent()){
-                startActivity(new Intent(this, ChooseBehaviorsActivity.class)
-                        .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, mGoalCategory)
-                        .putExtra(ChooseBehaviorsActivity.GOAL_KEY, (Parcelable)mUserGoal.getGoal()));
             }
         }
     }

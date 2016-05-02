@@ -20,8 +20,8 @@ import java.util.TimeZone;
  */
 public final class API{
     //Api urls and app configuration
-    public static final boolean STAGING = !BuildConfig.DEBUG;
-    private static final boolean USE_NGROK_TUNNEL = false;
+    public static final boolean STAGING = BuildConfig.DEBUG;
+    private static final boolean USE_NGROK_TUNNEL = true;
     private static final String TNDATA_BASE_URL = "https://app.tndata.org/api/";
     private static final String TNDATA_STAGING_URL = "http://staging.tndata.org/api/";
     private static final String NGROK_TUNNEL_URL = "https://tndata.ngrok.io/api/";
@@ -183,6 +183,21 @@ public final class API{
 
     public static String getUserGoalUrl(long goalId){
         return BASE_URL + "users/goals/?goal=" + goalId;
+    }
+
+    public static String getPostGoalUrl(@NonNull GoalContent goal){
+        return BASE_URL + "users/goals/" + goal.getId() + "/enroll/";
+    }
+
+    public static JSONObject getPostGoalBody(@NonNull CategoryContent category){
+        JSONObject body = new JSONObject();
+        try{
+            body.put("category", category.getId());
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return body;
     }
 
     //Custom goals

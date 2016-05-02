@@ -187,6 +187,10 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".activity.GoalActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".activity.ReviewActionsActivity"
             android:screenOrientation="portrait" />
 
