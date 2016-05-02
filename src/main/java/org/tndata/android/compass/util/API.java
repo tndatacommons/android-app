@@ -186,7 +186,7 @@ public final class API{
     }
 
     public static String getPostGoalUrl(@NonNull GoalContent goal){
-        return BASE_URL + "users/goals/" + goal.getId() + "/enroll/";
+        return BASE_URL + "goals/" + goal.getId() + "/enroll/";
     }
 
     public static JSONObject getPostGoalBody(@NonNull CategoryContent category){
@@ -239,34 +239,6 @@ public final class API{
         else{
             return "";
         }
-    }
-
-
-    //Behaviors
-    public static String getBehaviorsUrl(@NonNull GoalContent goal){
-        return BASE_URL + "behaviors/?goal=" + goal.getId();
-    }
-
-    public static String getPostBehaviorUrl(){
-        return BASE_URL + "users/behaviors/";
-    }
-
-    public static JSONObject getPostBehaviorBody(@NonNull BehaviorContent behavior, @NonNull GoalContent goal,
-                                                 @NonNull CategoryContent category){
-        JSONObject postBehaviorBody = new JSONObject();
-        try{
-            postBehaviorBody.put("behavior", behavior.getId())
-                    .put("goal", goal.getId())
-                    .put("category", category.getId());
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-        }
-        return postBehaviorBody;
-    }
-
-    public static String getDeleteBehaviorUrl(@NonNull UserBehavior userBehavior){
-        return BASE_URL + "users/behaviors/" + userBehavior.getId() + "/";
     }
 
 
