@@ -147,14 +147,21 @@ public class CompassApplication extends Application{
      *
      * @return the unordered list of public categories, excluding those selected by default.
      */
-    public List<CategoryContent> getFilteredCategoryList() {
-        ArrayList filtered_categories = new ArrayList<>();
-        for(CategoryContent category: mPublicCategories.values()) {
-            if(!category.isSelectedByDefault()) {
-                filtered_categories.add(category);
+    public List<CategoryContent> getFilteredCategoryList(){
+        List<CategoryContent> featured = new ArrayList<>();
+        List<CategoryContent> regular = new ArrayList<>();
+        for (CategoryContent category:mPublicCategories.values()){
+            if (!category.isSelectedByDefault()){
+                if (category.isFeatured()){
+                    featured.add(category);
+                }
+                else{
+                    regular.add(category);
+                }
             }
         }
-        return filtered_categories;
+        featured.addAll(regular);
+        return featured;
     }
 
 

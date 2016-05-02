@@ -312,9 +312,6 @@ public class LoginActivity
         if (result instanceof User){
             mApplication.setUser((User)result, false);
         }
-        else if (result instanceof ParserModels.FeedDataResultSet){
-            ((ParserModels.FeedDataResultSet)result).results.get(0).init();
-        }
         else if (result instanceof ParserModels.UserPlacesResultSet){
             CompassDbHelper helper = new CompassDbHelper(this);
             helper.emptyPlacesTable();
