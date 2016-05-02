@@ -6,6 +6,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,12 +106,13 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
     }
 
     /**
-     * Removes a behavior from the list.
+     * Removes a goal from the list.
      *
-     * @param behavior the behavior to be removed.
+     * @param goal the goal to be removed.
      */
-    public void remove(GoalContent behavior){
-        int index = mGoals.indexOf(behavior);
+    public void remove(GoalContent goal){
+        int index = mGoals.indexOf(goal);
+        Log.d("ChooseGoals", "Index: " + index);
         prepareListChange();
         mGoals.remove(index);
         mGoalsAdapter.notifyItemRemoved(index);

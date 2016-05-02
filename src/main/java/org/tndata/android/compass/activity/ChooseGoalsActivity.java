@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ViewSwitcher;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -20,7 +19,6 @@ import org.tndata.android.compass.adapter.ChooseGoalsAdapter;
 import org.tndata.android.compass.model.CategoryContent;
 import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.UserBehavior;
-import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
@@ -68,8 +66,6 @@ public class ChooseGoalsActivity
     private int mGetGoalsRequestCode;
     private int mPostGoalRC;
     private String mGetGoalsNextUrl;
-
-    private UserGoal mAddedGoal;
 
     private AlertDialog mShareDialog;
 
@@ -134,9 +130,8 @@ public class ChooseGoalsActivity
 
             ViewGroup rootView = (ViewGroup)findViewById(android.R.id.content);
             LayoutInflater inflater = LayoutInflater.from(this);
-            View mDialogRootView = inflater.inflate(R.layout.dialog_library_behavior, rootView, false);
-            mDialogRootView.findViewById(R.id.dialog_behavior_activities).setOnClickListener(this);
-            mDialogRootView.findViewById(R.id.dialog_behavior_ok).setOnClickListener(this);
+            View mDialogRootView = inflater.inflate(R.layout.dialog_enrollment, rootView, false);
+            mDialogRootView.findViewById(R.id.dialog_enrollment_ok).setOnClickListener(this);
 
             mShareDialog = new AlertDialog.Builder(this)
                     .setCancelable(true)
@@ -153,9 +148,7 @@ public class ChooseGoalsActivity
     @Override
     public void onClick(View v){
         switch (v.getId()){
-            case R.id.dialog_behavior_activities:
-                showActivities();
-            case R.id.dialog_behavior_ok:
+            case R.id.dialog_enrollment_ok:
                 mShareDialog.cancel();
                 break;
         }
@@ -164,11 +157,6 @@ public class ChooseGoalsActivity
     @Override
     public void onCancel(DialogInterface dialog){
         dismiss();
-    }
-
-    private void showActivities(){
-        startActivity(new Intent(this, ReviewActionsActivity.class)
-                .putExtra(ReviewActionsActivity.USER_GOAL_KEY, mAddedGoal));
     }
 
     private void dismiss(){
@@ -204,20 +192,11 @@ public class ChooseGoalsActivity
         if (requestCode == mGetGoalsRequestCode){
             mAdapter.displayError("Couldn't load goals");
         }
-        else if (requestCode == mPostGoalRC){
-            if (mShareDialog != null){
-                Log.d("ChooseGoals", error.toString());
-                ((ViewSwitcher)mShareDialog.findViewById(R.id.dialog_behavior_switcher)).showNext();
-            }
-        }
     }
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof UserGoal){
-            mAddedGoal = (UserGoal)result;
-            mApplication.addGoal(mAddedGoal);
-        }
+
     }
 
     @Override
@@ -228,11 +207,6 @@ public class ChooseGoalsActivity
             List<GoalContent> goals = set.results;
             if (goals != null && !goals.isEmpty()){
                 mAdapter.add(goals, mGetGoalsNextUrl != null);
-            }
-        }
-        else if (result instanceof UserGoal){
-            if (mShareDialog != null){
-                ((ViewSwitcher)mShareDialog.findViewById(R.id.dialog_behavior_switcher)).showNext();
             }
         }
     }
