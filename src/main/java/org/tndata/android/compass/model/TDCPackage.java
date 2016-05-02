@@ -1,5 +1,8 @@
 package org.tndata.android.compass.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 
@@ -9,10 +12,12 @@ import com.google.gson.annotations.SerializedName;
  * @author Ismael Alonso
  * @version 1.1.0
  */
-public class TDCPackage extends TDCContent{
+public class TDCPackage extends TDCBase implements Parcelable{
     public static final String TYPE = "package";
 
 
+    @SerializedName("accepted")
+    private boolean mAccepted;
     @SerializedName("category")
     private PackageContent mCategory;
 
@@ -50,6 +55,36 @@ public class TDCPackage extends TDCContent{
         return mCategory.mHtmlConsent;
     }
 
+    @Override
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags){
+        super.addToParcel(dest, flags);
+        dest.writeByte((byte)(mAccepted ? 1 : 0));
+        dest.writeParcelable(mCategory, flags);
+    }
+
+    public static final Creator<TDCPackage> CREATOR = new Creator<TDCPackage>(){
+        @Override
+        public TDCPackage createFromParcel(Parcel source){
+            return null;
+        }
+
+        @Override
+        public TDCPackage[] newArray(int size){
+            return new TDCPackage[size];
+        }
+    };
+
+    private TDCPackage(Parcel src){
+        super(src);
+        mAccepted = src.readByte() == 1;
+        mCategory = src.readParcelable(PackageContent.class.getClassLoader());
+    }
+
 
     /**
      * Holder for the inner package data.
@@ -57,7 +92,7 @@ public class TDCPackage extends TDCContent{
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    private class PackageContent{
+    private static class PackageContent extends TDCBase implements Parcelable{
         @SerializedName("title")
         private String mTitle;
         @SerializedName("description")
@@ -72,5 +107,50 @@ public class TDCPackage extends TDCContent{
         private String mConsent;
         @SerializedName("html_consent_more")
         private String mHtmlConsent;
+
+        @Override
+        public int describeContents(){
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags){
+            super.addToParcel(dest, flags);
+            dest.writeString(mTitle);
+            dest.writeString(mDescription);
+            dest.writeString(mHtmlDescription);
+            dest.writeString(mConsentSummary);
+            dest.writeString(mHtmlConsentSummary);
+            dest.writeString(mConsent);
+            dest.writeString(mHtmlConsent);
+        }
+
+        public static final Creator<PackageContent> CREATOR = new Creator<PackageContent>(){
+            @Override
+            public PackageContent createFromParcel(Parcel source){
+                return new PackageContent(source);
+            }
+
+            @Override
+            public PackageContent[] newArray(int size){
+                return new PackageContent[size];
+            }
+        };
+
+        private PackageContent(Parcel src){
+            super(src);
+            mTitle = src.readString();
+            mDescription = src.readString();
+            mHtmlDescription = src.readString();
+            mConsentSummary = src.readString();
+            mHtmlConsentSummary = src.readString();
+            mConsent = src.readString();
+            mHtmlConsent = src.readString();
+        }
+
+        @Override
+        protected String getType(){
+            return "";
+        }
     }
 }

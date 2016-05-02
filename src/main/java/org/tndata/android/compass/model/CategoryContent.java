@@ -1,7 +1,7 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.widget.ImageView;
 
 import com.google.gson.annotations.SerializedName;
@@ -15,7 +15,7 @@ import org.tndata.android.compass.util.ImageLoader;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class CategoryContent extends TDCContent implements Parcelable{
+public class CategoryContent extends TDCContent{
     public static final String TYPE = "category";
 
 
@@ -100,13 +100,8 @@ public class CategoryContent extends TDCContent implements Parcelable{
      *-------------------*/
 
     @Override
-    public int describeContents(){
-        return 0;
-    }
-
-    @Override
     public void writeToParcel(Parcel dest, int flags){
-        super.addToParcel(dest, flags);
+        super.writeToParcel(dest, flags);
         dest.writeInt(mOrder);
         dest.writeByte((byte)(mFeatured ? 1 : 0));
         dest.writeString(getImageUrl());

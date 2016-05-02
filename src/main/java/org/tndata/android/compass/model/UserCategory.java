@@ -3,8 +3,6 @@ package org.tndata.android.compass.model;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -23,9 +21,6 @@ public class UserCategory extends UserContent implements Serializable{
     @SerializedName("category")
     private CategoryContent mCategory;
 
-    //Set during post-processing
-    private List<UserGoal> mUserGoals;
-
 
     /*---------*
      * SETTERS *
@@ -33,10 +28,6 @@ public class UserCategory extends UserContent implements Serializable{
 
     public void setCategory(CategoryContent category){
         this.mCategory = category;
-    }
-
-    public void setGoals(List<UserGoal> userGoals){
-        this.mUserGoals = userGoals;
     }
 
 
@@ -77,10 +68,6 @@ public class UserCategory extends UserContent implements Serializable{
         return mCategory.getColor();
     }
 
-    public List<UserGoal> getGoals(){
-        return mUserGoals;
-    }
-
     @Override
     protected String getType(){
         return TYPE;
@@ -93,21 +80,7 @@ public class UserCategory extends UserContent implements Serializable{
 
     @Override
     public void init(){
-        if (mUserGoals == null){
-            mUserGoals = new ArrayList<>();
-        }
-    }
 
-    public void addGoal(UserGoal goal){
-        if (!mUserGoals.contains(goal)){
-            mUserGoals.add(goal);
-        }
-    }
-
-    public void removeGoal(UserGoal goal){
-        if (mUserGoals.contains(goal)){
-            mUserGoals.remove(goal);
-        }
     }
 
     @Override

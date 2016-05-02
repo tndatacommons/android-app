@@ -1,6 +1,7 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
@@ -12,7 +13,7 @@ import com.google.gson.annotations.SerializedName;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public abstract class TDCContent extends TDCBase implements Comparable<TDCContent>{
+public abstract class TDCContent extends TDCBase implements Parcelable, Comparable<TDCContent>{
     @SerializedName("title")
     private String mTitle;
     @SerializedName("description")
@@ -84,7 +85,13 @@ public abstract class TDCContent extends TDCBase implements Comparable<TDCConten
         return getTitle().compareTo(another.getTitle());
     }
 
-    protected void addToParcel(@NonNull Parcel dst, int flags){
+    @Override
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dst, int flags){
         super.addToParcel(dst, flags);
         dst.writeString(mTitle);
         dst.writeString(mDescription);

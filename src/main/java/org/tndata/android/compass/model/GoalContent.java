@@ -2,7 +2,6 @@ package org.tndata.android.compass.model;
 
 import android.content.Context;
 import android.os.Parcel;
-import android.os.Parcelable;
 import android.widget.ImageView;
 
 import com.google.gson.annotations.SerializedName;
@@ -20,7 +19,7 @@ import java.util.Set;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class GoalContent extends TDCContent implements Parcelable{
+public class GoalContent extends TDCContent{
     public static final String TYPE = "goal";
 
 
@@ -107,13 +106,8 @@ public class GoalContent extends TDCContent implements Parcelable{
     }
 
     @Override
-    public int describeContents(){
-        return 0;
-    }
-
-    @Override
     public void writeToParcel(Parcel dest, int flags){
-        addToParcel(dest, flags);
+        super.writeToParcel(dest, flags);
         dest.writeString(mOutcome);
         dest.writeInt(mCategoryIdSet.size());
         for (Long categoryId:mCategoryIdSet){
