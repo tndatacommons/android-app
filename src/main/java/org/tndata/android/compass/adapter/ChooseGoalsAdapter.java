@@ -6,7 +6,6 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,7 +75,7 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
         holder.setTitleColor(Color.WHITE);
         holder.setTitle(mContext.getString(R.string.library_goals_content_header));
         mGoalsAdapter = new GoalsAdapter();
-        holder.setAdapter(new GoalsAdapter());
+        holder.setAdapter(mGoalsAdapter);
     }
 
     /**
@@ -112,7 +111,6 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
      */
     public void remove(GoalContent goal){
         int index = mGoals.indexOf(goal);
-        Log.d("ChooseGoals", "Index: " + index);
         prepareListChange();
         mGoals.remove(index);
         mGoalsAdapter.notifyItemRemoved(index);
