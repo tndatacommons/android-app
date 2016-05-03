@@ -180,16 +180,10 @@ public class UserAction extends Action implements ParserModels.ResultSet{
 
     @Override
     public void writeToParcel(Parcel dest, int flags){
-        dest.writeLong(getId());
-        dest.writeByte((byte)(isEditable() ? 1 : 0));
+        super.writeToParcel(dest, flags);
         dest.writeParcelable(mAction, flags);
         dest.writeLong(mPrimaryGoalId);
         dest.writeLong(mPrimaryCategoryId);
-        dest.writeParcelable(getTrigger(), flags);
-        dest.writeByte((byte)(getNextReminder() != null ? 1 : 0));
-        if (getNextReminder() != null){
-            dest.writeString(getNextReminder());
-        }
     }
 
     public static final Parcelable.Creator<UserAction> CREATOR = new Parcelable.Creator<UserAction>(){
@@ -207,17 +201,12 @@ public class UserAction extends Action implements ParserModels.ResultSet{
     /**
      * Constructor to create from parcel.
      *
-     * @param in the parcel where the object is stored.
+     * @param src the parcel where the object is stored.
      */
-    private UserAction(Parcel in){
-        setId(in.readLong());
-        setEditable(in.readByte() == 1);
-        mAction = in.readParcelable(TDCAction.class.getClassLoader());
-        mPrimaryGoalId = in.readLong();
-        mPrimaryCategoryId = in.readLong();
-        setTrigger((Trigger)in.readParcelable(Trigger.class.getClassLoader()));
-        if (in.readByte() == 1){
-            setNextReminder(in.readString());
-        }
+    private UserAction(Parcel src){
+        super(src);
+        mAction = src.readParcelable(TDCAction.class.getClassLoader());
+        mPrimaryGoalId = src.readLong();
+        mPrimaryCategoryId = src.readLong();
     }
 }

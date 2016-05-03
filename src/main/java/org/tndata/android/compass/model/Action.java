@@ -1,5 +1,6 @@
 package org.tndata.android.compass.model;
 
+import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
@@ -22,6 +23,10 @@ public abstract class Action extends UserContent implements Parcelable, Comparab
     private String mNextReminder;
 
 
+    protected Action(){
+
+    }
+
     public void setTrigger(Trigger trigger){
         mTrigger = trigger;
     }
@@ -43,7 +48,7 @@ public abstract class Action extends UserContent implements Parcelable, Comparab
     }
 
     public String getNextReminder(){
-        return mNextReminder;
+        return mNextReminder != null ? mNextReminder : "";
     }
 
     public Date getNextReminderDate(){
@@ -113,6 +118,19 @@ public abstract class Action extends UserContent implements Parcelable, Comparab
                 return trigger;
             }
         }
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags){
+        super.addToParcel(dest, flags);
+        dest.writeParcelable(getTrigger(), flags);
+        dest.writeString(getNextReminder());
+    }
+
+    protected Action(Parcel src){
+        super(src);
+        mTrigger = src.readParcelable(Trigger.class.getClassLoader());
+        mNextReminder = src.readString();
     }
 
     public abstract String getTitle();

@@ -331,7 +331,7 @@ public class Trigger extends TDCBase implements Parcelable, Comparable<Trigger>{
 
     @Override
     public void writeToParcel(Parcel dest, int flags){
-        dest.writeLong(getId());
+        super.addToParcel(dest, flags);
         //The getters are used because the values stored may be null
         dest.writeString(getName());
         dest.writeString(getRawTime());
@@ -356,15 +356,15 @@ public class Trigger extends TDCBase implements Parcelable, Comparable<Trigger>{
     /**
      * Constructor to create from parcel.
      *
-     * @param in the parcel where the object is stored.
+     * @param src the parcel where the object is stored.
      */
-    private Trigger(Parcel in){
-        setId(in.readLong());
-        mName = in.readString();
-        mTime = in.readString();
-        mDate = in.readString();
-        mRecurrences = in.readString();
-        mRecurrencesDisplay = in.readString();
-        mDisabled = in.readByte() == 1;
+    private Trigger(Parcel src){
+        super(src);
+        mName = src.readString();
+        mTime = src.readString();
+        mDate = src.readString();
+        mRecurrences = src.readString();
+        mRecurrencesDisplay = src.readString();
+        mDisabled = src.readByte() == 1;
     }
 }
