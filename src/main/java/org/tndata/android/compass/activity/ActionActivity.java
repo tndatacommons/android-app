@@ -367,11 +367,11 @@ public class ActionActivity
         if (mGoal != null){
             if (mGoal instanceof UserGoal){
                 startActivity(new Intent(this, ReviewActionsActivity.class)
-                        .putExtra(ReviewActionsActivity.USER_GOAL_KEY, mGoal));
+                        .putExtra(ReviewActionsActivity.USER_GOAL_KEY, (Parcelable)mGoal));
             }
             else{
                 startActivity(new Intent(this, CustomContentManagerActivity.class)
-                        .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, mGoal));
+                        .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, (Parcelable)mGoal));
             }
         }
     }

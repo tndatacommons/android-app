@@ -61,11 +61,6 @@ public class CustomAction extends Action{
         return mTitle;
     }
 
-    @Override
-    public String getGoalTitle(){
-        return mGoal.getTitle();
-    }
-
     public void setGoal(CustomGoal goal){
         mGoal = goal;
     }

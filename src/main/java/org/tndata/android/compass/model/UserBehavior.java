@@ -24,11 +24,6 @@ public class UserBehavior extends UserContent implements ParserModels.ResultSet{
     @SerializedName("behavior")
     private TDCBehavior mBehavior;
 
-    @SerializedName("parent_usergoal")
-    private UserGoal mParentUserGoal;
-    @SerializedName("parent_usercategory")
-    private UserCategory mParentUserCategory;
-
     //Values set during post-processing
     private List<UserGoal> userGoals = new ArrayList<>();
     private List<UserAction> userActions = new ArrayList<>();
@@ -87,14 +82,6 @@ public class UserBehavior extends UserContent implements ParserModels.ResultSet{
 
     public List<UserAction> getActions(){
         return userActions;
-    }
-
-    public UserGoal getParentUserGoal(){
-        return mParentUserGoal;
-    }
-
-    public UserCategory getParentUserCategory(){
-        return mParentUserCategory;
     }
 
     @Override

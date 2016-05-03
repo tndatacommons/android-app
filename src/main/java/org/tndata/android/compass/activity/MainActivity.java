@@ -466,7 +466,7 @@ public class MainActivity
     public void onGoalSelected(Goal goal){
         if (goal instanceof UserGoal){
             Intent reviewActionsIntent = new Intent(this, ReviewActionsActivity.class)
-                    .putExtra(ReviewActionsActivity.USER_GOAL_KEY, goal);
+                    .putExtra(ReviewActionsActivity.USER_GOAL_KEY, (Parcelable)goal);
             startActivityForResult(reviewActionsIntent, GOAL_RC);
         }
         else if (goal instanceof CustomGoal){

@@ -133,6 +133,4 @@ public abstract class Action extends UserContent implements Comparable<Action>{
     }
 
     public abstract String getTitle();
-    public abstract Goal getGoal();
-    public abstract String getGoalTitle();
 }
