@@ -18,12 +18,14 @@ public class SearchResult extends TDCBase{
     public static final String TYPE = "search_result";
 
 
-    @SerializedName("text")
-    private String mText;
-    @SerializedName("description")
-    private String mDescription;
     @SerializedName("title")
     private String mTitle;
+    @SerializedName("text")
+    private String mText;
+    @SerializedName("goal")
+    private GoalContent mGoal;
+    @SerializedName("description")
+    private String mDescription;
     @SerializedName("highlighted")
     private String mHighlighted;
     @SerializedName("updated_on")
@@ -59,5 +61,9 @@ public class SearchResult extends TDCBase{
 
     public String getHighlighted(){
         return mHighlighted;
+    }
+
+    public GoalContent getGoal(){
+        return mGoal;
     }
 }

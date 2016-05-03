@@ -1,23 +1,33 @@
 package org.tndata.android.compass.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.SearchAdapter;
+import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.GoalContent;
 import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import es.sandwatch.httprequests.HttpRequest;
 import es.sandwatch.httprequests.HttpRequestError;
@@ -34,19 +44,26 @@ public class SearchActivity
         implements
                 SearchView.OnQueryTextListener,
                 View.OnClickListener,
+                DialogInterface.OnCancelListener,
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback,
                 SearchAdapter.SearchAdapterListener{
 
-    //Task request codes
-    private static final int SEARCH_REQUEST_CODE = -1;
+    //Request codes
+    private static final int GOAL_RC = 1528;
 
 
+    private ProgressBar mLoading;
     private TextView mSearchHeader;
     private Button mCreateGoal;
     private SearchAdapter mSearchAdapter;
     private String mLastSearch;
     private int mLastSearchRequestCode;
+
+    private CategoryContent mCategory;
+    private GoalContent mGoal;
+
+    private AlertDialog mFeedbackDialog;
 
 
     @Override
@@ -54,6 +71,7 @@ public class SearchActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        mLoading = (ProgressBar)findViewById(R.id.search_loading);
         SearchView searchView = (SearchView)findViewById(R.id.search_search);
         mSearchHeader = (TextView)findViewById(R.id.search_message);
         RecyclerView searchList = (RecyclerView)findViewById(R.id.search_list);
@@ -62,10 +80,10 @@ public class SearchActivity
         searchView.setOnQueryTextListener(this);
         mCreateGoal.setOnClickListener(this);
         mSearchAdapter = new SearchAdapter(this, this);
-        searchList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        searchList.setLayoutManager(new LinearLayoutManager(this));
         searchList.setAdapter(mSearchAdapter);
 
-        mLastSearchRequestCode = SEARCH_REQUEST_CODE;
+        mLastSearchRequestCode = -1;
     }
 
     @Override
@@ -82,8 +100,10 @@ public class SearchActivity
             mCreateGoal.setVisibility(View.GONE);
             mSearchAdapter.updateDataSet(new ArrayList<SearchResult>());
             mLastSearchRequestCode++;
+            mLoading.setVisibility(View.INVISIBLE);
         }
         else{
+            mLoading.setVisibility(View.VISIBLE);
             mLastSearchRequestCode = HttpRequest.get(this, API.getSearchUrl(newText));
         }
         return false;
@@ -91,10 +111,17 @@ public class SearchActivity
 
     @Override
     public void onClick(View v){
-        startActivity(new Intent(this, CustomContentManagerActivity.class)
-                .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_TITLE_KEY, mLastSearch));
-        setResult(RESULT_OK);
-        finish();
+        if (v.getId() == R.id.dialog_enrollment_ok){
+            if (mFeedbackDialog != null){
+                mFeedbackDialog.cancel();
+            }
+        }
+        else{
+            startActivity(new Intent(this, CustomContentManagerActivity.class)
+                    .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_TITLE_KEY, mLastSearch));
+            setResult(RESULT_OK);
+            finish();
+        }
     }
 
     @Override
@@ -117,18 +144,67 @@ public class SearchActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof ParserModels.SearchResultSet){
-            mSearchAdapter.updateDataSet(((ParserModels.SearchResultSet)result).results);
+            List<SearchResult> results = ((ParserModels.SearchResultSet)result).results;
+            mSearchAdapter.updateDataSet(results);
+            mLoading.setVisibility(View.INVISIBLE);
             mSearchHeader.setVisibility(View.VISIBLE);
             mCreateGoal.setVisibility(View.VISIBLE);
+            if (results.isEmpty()){
+                mSearchHeader.setText(R.string.search_header_empty);
+            }
+            else{
+                mSearchHeader.setText(R.string.search_header);
+            }
         }
     }
 
     @Override
     public void onSearchResultSelected(SearchResult result){
         if (result.isGoal()){
-            //TODO do something.
-            /*startActivity(new Intent(this, ChooseBehaviorsActivity.class)
-                    .putExtra(ChooseBehaviorsActivity.GOAL_ID_KEY, result.getId()));*/
+            mCategory = null;
+            CompassApplication app = (CompassApplication)getApplication();
+            for (long categoryId:result.getGoal().getCategoryIdSet()){
+                mCategory = app.getPublicCategories().get(categoryId);
+                if (mCategory != null){
+                    break;
+                }
+            }
+
+            if (mCategory != null){
+                mGoal = result.getGoal();
+                Intent intent = new Intent(this, GoalActivity.class)
+                        .putExtra(GoalActivity.CATEGORY_KEY, (Parcelable)mCategory)
+                        .putExtra(GoalActivity.GOAL_KEY, (Parcelable)mGoal);
+                startActivityForResult(intent, GOAL_RC);
+            }
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (requestCode == GOAL_RC && resultCode == RESULT_OK){
+            HttpRequest.post(null, API.getPostGoalUrl(mGoal), API.getPostGoalBody(mCategory));
+
+            ViewGroup rootView = (ViewGroup)findViewById(android.R.id.content);
+            LayoutInflater inflater = LayoutInflater.from(this);
+            View dialogRootView = inflater.inflate(R.layout.dialog_enrollment, rootView, false);
+            dialogRootView.findViewById(R.id.dialog_enrollment_ok).setOnClickListener(this);
+
+            mFeedbackDialog = new AlertDialog.Builder(this)
+                    .setCancelable(true)
+                    .setView(dialogRootView)
+                    .setOnCancelListener(this)
+                    .create();
+            mFeedbackDialog.show();
+        }
+        else{
+            mCategory = null;
+            mGoal = null;
+        }
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog){
+        finish();
     }
 }

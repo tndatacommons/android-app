@@ -70,14 +70,9 @@ public abstract class TDCContent extends TDCBase implements Parcelable, Comparab
     }
 
 
-    /*---------*
-     * UTILITY *
-     *---------*/
-
-    @Override
-    public int hashCode(){
-        return 21 + mTitle.hashCode();
-    }
+    /*-------*
+     * OTHER *
+     *-------*/
 
     @Override
     public int compareTo(@NonNull TDCContent another){

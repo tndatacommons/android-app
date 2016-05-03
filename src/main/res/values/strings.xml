@@ -155,6 +155,7 @@
     <!-- Search -->
     <string name="search">Search</string>
     <string name="search_header">These goals are relevant to your search:</string>
+    <string name="search_header_empty">No relevant goals could be found&#8230;</string>
     <string name="search_create">I don\'t see my goal</string>
 
     <!-- Action notification -->

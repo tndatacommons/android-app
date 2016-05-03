@@ -164,7 +164,6 @@ public class CompassApplication extends Application{
         return featured;
     }
 
-
     /**
      * Feed data setter.
      *
