@@ -1,8 +1,9 @@
 package org.tndata.android.compass.model;
 
-import com.google.gson.annotations.SerializedName;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import java.io.Serializable;
+import com.google.gson.annotations.SerializedName;
 
 
 /**
@@ -11,9 +12,7 @@ import java.io.Serializable;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserCategory extends UserContent implements Serializable{
-    private static final long serialVersionUID = 1751646542285854670L;
-
+public class UserCategory extends UserContent implements Parcelable{
     public static final String TYPE = "usercategory";
 
 
@@ -86,5 +85,33 @@ public class UserCategory extends UserContent implements Serializable{
     @Override
     public String toString(){
         return "UserCategory #" + getId() + " (" + mCategory.toString() + ")";
+    }
+
+    @Override
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags){
+        super.addToParcel(dest, flags);
+        dest.writeParcelable(mCategory, flags);
+    }
+
+    public static final Creator<UserCategory> CREATOR = new Creator<UserCategory>(){
+        @Override
+        public UserCategory createFromParcel(Parcel source){
+            return new UserCategory(source);
+        }
+
+        @Override
+        public UserCategory[] newArray(int size){
+            return new UserCategory[size];
+        }
+    };
+
+    private UserCategory(Parcel src){
+        super(src);
+        mCategory = src.readParcelable(TDCCategory.class.getClassLoader());
     }
 }

@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 
 /**
- * Base class for all content. This class forces a type on every model type.
+ * Base class for all content. This class forces an ID and a type on every model type.
  *
  * @author Edited by Ismael Alonso
  * @version 1.0.0

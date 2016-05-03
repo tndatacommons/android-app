@@ -66,7 +66,7 @@ public class ReviewActionsActivity
         mApplication = (CompassApplication)getApplication();
 
         //A UserCategory is all it's needed when a category's actions are to be displayed
-        mUserCategory = (UserCategory)getIntent().getSerializableExtra(USER_CATEGORY_KEY);
+        mUserCategory = getIntent().getParcelableExtra(USER_CATEGORY_KEY);
         //If either a UserGoal's actions or a UserBehavior's actions are to be displayed
         //  the a CategoryContent can be used to populate headers. In this case a UserGoal
         //  will always be available, so the primary category id can be used to retrieve

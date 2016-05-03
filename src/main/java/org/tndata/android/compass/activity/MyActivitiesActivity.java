@@ -2,6 +2,7 @@ package org.tndata.android.compass.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -105,6 +106,6 @@ public class MyActivitiesActivity
     public void onCategorySelected(TDCCategory category){
         UserCategory userCategory = mUserCategoryMap.get(category.getId());
         startActivity(new Intent(this, ReviewActionsActivity.class)
-                .putExtra(ReviewActionsActivity.USER_CATEGORY_KEY, userCategory));
+                .putExtra(ReviewActionsActivity.USER_CATEGORY_KEY, (Parcelable)userCategory));
     }
 }
