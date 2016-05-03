@@ -6,7 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.TDCGoal;
 
 
 /**
@@ -18,7 +18,7 @@ import org.tndata.android.compass.model.GoalContent;
 public class GoalAdapter extends MaterialAdapter implements View.OnClickListener{
     private Context mContext;
     private GoalListener mListener;
-    private GoalContent mGoal;
+    private TDCGoal mGoal;
 
 
     /**
@@ -29,7 +29,7 @@ public class GoalAdapter extends MaterialAdapter implements View.OnClickListener
      * @param goal the goal to be displayed.
      */
     public GoalAdapter(@NonNull Context context, @NonNull GoalListener listener,
-                       @NonNull GoalContent goal){
+                       @NonNull TDCGoal goal){
 
         super(context, ContentType.DETAIL, false);
 

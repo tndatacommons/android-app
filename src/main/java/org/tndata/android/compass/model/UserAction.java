@@ -20,7 +20,7 @@ public class UserAction extends Action implements ParserModels.ResultSet{
 
     //Values retrieved from the API
     @SerializedName("action")
-    private ActionContent mAction;
+    private TDCAction mAction;
     @SerializedName("primary_goal")
     private long mPrimaryGoalId;
     @SerializedName("primary_category")
@@ -40,7 +40,7 @@ public class UserAction extends Action implements ParserModels.ResultSet{
     private UserCategory mPrimaryCategory;
 
 
-    public UserAction(ActionContent action, UserGoal primaryGoal, UserCategory primaryCategory){
+    public UserAction(TDCAction action, UserGoal primaryGoal, UserCategory primaryCategory){
         this.mAction = action;
         this.mPrimaryGoal = primaryGoal;
         this.mPrimaryCategory = primaryCategory;
@@ -68,7 +68,7 @@ public class UserAction extends Action implements ParserModels.ResultSet{
      * GETTERS *
      *---------*/
 
-    public ActionContent getAction(){
+    public TDCAction getAction(){
         return mAction;
     }
 
@@ -212,7 +212,7 @@ public class UserAction extends Action implements ParserModels.ResultSet{
     private UserAction(Parcel in){
         setId(in.readLong());
         setEditable(in.readByte() == 1);
-        mAction = in.readParcelable(ActionContent.class.getClassLoader());
+        mAction = in.readParcelable(TDCAction.class.getClassLoader());
         mPrimaryGoalId = in.readLong();
         mPrimaryCategoryId = in.readLong();
         setTrigger((Trigger)in.readParcelable(Trigger.class.getClassLoader()));

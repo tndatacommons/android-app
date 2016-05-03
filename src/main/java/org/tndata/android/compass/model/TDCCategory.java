@@ -1,7 +1,6 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
-import android.support.annotation.NonNull;
 import android.widget.ImageView;
 
 import com.google.gson.annotations.SerializedName;
@@ -15,7 +14,7 @@ import org.tndata.android.compass.util.ImageLoader;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class CategoryContent extends TDCContent{
+public class TDCCategory extends TDCContent{
     public static final String TYPE = "category";
 
 
@@ -111,19 +110,19 @@ public class CategoryContent extends TDCContent{
         dest.writeByte((byte)(mSelectedByDefault ? 1 : 0));
     }
 
-    public static final Creator<CategoryContent> CREATOR = new Creator<CategoryContent>(){
+    public static final Creator<TDCCategory> CREATOR = new Creator<TDCCategory>(){
         @Override
-        public CategoryContent createFromParcel(Parcel source){
-            return new CategoryContent(source);
+        public TDCCategory createFromParcel(Parcel source){
+            return new TDCCategory(source);
         }
 
         @Override
-        public CategoryContent[] newArray(int size){
-            return new CategoryContent[size];
+        public TDCCategory[] newArray(int size){
+            return new TDCCategory[size];
         }
     };
 
-    private CategoryContent(Parcel src){
+    private TDCCategory(Parcel src){
         super(src);
         mOrder = src.readInt();
         mFeatured = src.readByte() == 1;

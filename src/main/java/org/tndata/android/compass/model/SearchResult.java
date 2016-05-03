@@ -23,7 +23,7 @@ public class SearchResult extends TDCBase{
     @SerializedName("text")
     private String mText;
     @SerializedName("goal")
-    private GoalContent mGoal;
+    private TDCGoal mGoal;
     @SerializedName("description")
     private String mDescription;
     @SerializedName("highlighted")
@@ -63,7 +63,7 @@ public class SearchResult extends TDCBase{
         return mHighlighted;
     }
 
-    public GoalContent getGoal(){
+    public TDCGoal getGoal(){
         return mGoal;
     }
 }

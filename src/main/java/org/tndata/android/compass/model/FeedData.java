@@ -36,7 +36,7 @@ public class FeedData{
     @SerializedName("upcoming")
     private List<UpcomingAction> mUpcomingActions;
     @SerializedName("suggestions")
-    private List<GoalContent> mSuggestions;
+    private List<TDCGoal> mSuggestions;
 
     //Fields set during post-processing or after data retrieval
     private UpcomingAction mUpNextAction;
@@ -155,7 +155,7 @@ public class FeedData{
      *
      * @return the list of suggestions.
      */
-    public List<GoalContent> getSuggestions(){
+    public List<TDCGoal> getSuggestions(){
         return mSuggestions;
     }
 

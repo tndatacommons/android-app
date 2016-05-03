@@ -25,7 +25,7 @@ public class UserGoal extends Goal implements Serializable{
 
     //Values retrieved from the API
     @SerializedName("goal")
-    private GoalContent mGoal;
+    private TDCGoal mGoal;
     @SerializedName("primary_category")
     private long mPrimaryCategoryId;
     @SerializedName("progress")
@@ -37,7 +37,7 @@ public class UserGoal extends Goal implements Serializable{
     private List<UserBehavior> mUserBehaviors = new ArrayList<>();
 
 
-    public UserGoal(GoalContent goal, UserCategory primaryCategory){
+    public UserGoal(TDCGoal goal, UserCategory primaryCategory){
         this.mGoal = goal;
         this.mPrimaryCategory = primaryCategory;
     }
@@ -68,7 +68,7 @@ public class UserGoal extends Goal implements Serializable{
      * GETTERS *
      *---------*/
 
-    public GoalContent getGoal(){
+    public TDCGoal getGoal(){
         return mGoal;
     }
 

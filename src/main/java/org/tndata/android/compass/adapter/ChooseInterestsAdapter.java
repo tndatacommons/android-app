@@ -19,7 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
@@ -47,8 +47,8 @@ public class ChooseInterestsAdapter
     private final OnCategoriesSelectedListener mCallback;
     private final boolean mOnBoarding;
 
-    private List<CategoryContent> mCategories;
-    private List<CategoryContent> mSelectedCategories;
+    private List<TDCCategory> mCategories;
+    private List<TDCCategory> mSelectedCategories;
     private List<UserCategory> mOriginalSelection;
 
     private int mLastAnimation;
@@ -84,7 +84,7 @@ public class ChooseInterestsAdapter
      * @param all the list of all available categories.
      * @param selected the map of user selected categories.
      */
-    public void setCategories(@NonNull List<CategoryContent> all, @NonNull List<UserCategory> selected){
+    public void setCategories(@NonNull List<TDCCategory> all, @NonNull List<UserCategory> selected){
         //Let the GC take care of the previous list and fill a new one
         mCategories = all;
         mSelectedCategories = new ArrayList<>();
@@ -100,7 +100,7 @@ public class ChooseInterestsAdapter
      * @param position the position of the category in the dataset.
      * @return the Category in the requested position.
      */
-    public CategoryContent getItem(int position){
+    public TDCCategory getItem(int position){
         return mCategories.get(position);
     }
 
@@ -144,7 +144,7 @@ public class ChooseInterestsAdapter
         }
         else if (getItemViewType(position) == VIEW_TYPE_CATEGORY){
             CategoryViewHolder holder = (CategoryViewHolder)rawHolder;
-            CategoryContent category = getItem(position - 1);
+            TDCCategory category = getItem(position - 1);
             holder.itemView.setVisibility(View.GONE);
             if (!mSelectedCategories.contains(category)){
                 holder.mOverlay.setVisibility(View.VISIBLE);
@@ -286,7 +286,7 @@ public class ChooseInterestsAdapter
         @Override
         public void onClick(final View view){
             //In any event the Category is needed, so it is fetched
-            CategoryContent category = getItem(getAdapterPosition() - 1);
+            TDCCategory category = getItem(getAdapterPosition() - 1);
 
             //If the tile was clicked
             if (view == itemView){
@@ -403,6 +403,6 @@ public class ChooseInterestsAdapter
          *
          * @param selection the list of selected categories.
          */
-        void onCategoriesSelected(List<CategoryContent> selection, List<UserCategory> original);
+        void onCategoriesSelected(List<TDCCategory> selection, List<UserCategory> original);
     }
 }

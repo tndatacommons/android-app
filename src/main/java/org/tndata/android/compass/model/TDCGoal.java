@@ -19,7 +19,7 @@ import java.util.Set;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class GoalContent extends TDCContent{
+public class TDCGoal extends TDCContent{
     public static final String TYPE = "goal";
 
 
@@ -116,15 +116,15 @@ public class GoalContent extends TDCContent{
         dest.writeInt(mBehaviorCount);
     }
 
-    public static final Creator<GoalContent> CREATOR = new Creator<GoalContent>(){
+    public static final Creator<TDCGoal> CREATOR = new Creator<TDCGoal>(){
         @Override
-        public GoalContent createFromParcel(Parcel source){
-            return new GoalContent(source);
+        public TDCGoal createFromParcel(Parcel source){
+            return new TDCGoal(source);
         }
 
         @Override
-        public GoalContent[] newArray(int size){
-            return new GoalContent[size];
+        public TDCGoal[] newArray(int size){
+            return new TDCGoal[size];
         }
     };
 
@@ -133,7 +133,7 @@ public class GoalContent extends TDCContent{
      *
      * @param src the source parcel.
      */
-    private GoalContent(Parcel src){
+    private TDCGoal(Parcel src){
         super(src);
         mOutcome = src.readString();
         mCategoryIdSet = new HashSet<>();

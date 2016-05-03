@@ -14,7 +14,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.TDCGoal;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
@@ -56,11 +56,11 @@ public class MainFeedAdapter
 
     private FeedData mFeedData;
     private FeedUtil mFeedUtil;
-    private GoalContent mSuggestion;
+    private TDCGoal mSuggestion;
 
     private UpcomingHolder mUpcomingHolder;
     private GoalsHolder<Goal> mMyGoalsHolder;
-    private GoalsHolder<GoalContent> mSuggestionsHolder;
+    private GoalsHolder<TDCGoal> mSuggestionsHolder;
 
     private int mGetMoreGoalsRC;
 
@@ -83,7 +83,7 @@ public class MainFeedAdapter
         }
         else{
             CardTypes.setDataSource(mFeedData);
-            List<GoalContent> suggestions = mFeedData.getSuggestions();
+            List<TDCGoal> suggestions = mFeedData.getSuggestions();
             if (suggestions.isEmpty()){
                 mSuggestion = null;
             }
@@ -338,7 +338,7 @@ public class MainFeedAdapter
      * Refreshes the suggestion card.
      */
     void refreshSuggestion(){
-        List<GoalContent> suggestions = mFeedData.getSuggestions();
+        List<TDCGoal> suggestions = mFeedData.getSuggestions();
         mSuggestion = suggestions.get((int)(Math.random()*suggestions.size()));
         notifyItemChanged(CardTypes.getSuggestionPosition());
     }
@@ -492,7 +492,7 @@ public class MainFeedAdapter
          *
          * @param suggestion the selected goal suggestion.
          */
-        void onSuggestionSelected(GoalContent suggestion);
+        void onSuggestionSelected(TDCGoal suggestion);
 
         /**
          * Called when a goal is selected.

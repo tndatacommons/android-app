@@ -23,7 +23,7 @@ public class UserBehavior extends UserContent implements Serializable, ParserMod
 
     //Values retrieved from the API
     @SerializedName("behavior")
-    private BehaviorContent mBehavior;
+    private TDCBehavior mBehavior;
     @SerializedName("progress")
     private Progress mProgress;
 
@@ -37,7 +37,7 @@ public class UserBehavior extends UserContent implements Serializable, ParserMod
     private List<UserAction> userActions = new ArrayList<>();
 
 
-    public UserBehavior(BehaviorContent behavior){
+    public UserBehavior(TDCBehavior behavior){
         this.mBehavior = behavior;
     }
 
@@ -63,7 +63,7 @@ public class UserBehavior extends UserContent implements Serializable, ParserMod
      * GETTERS *
      *---------*/
 
-    public BehaviorContent getBehavior(){
+    public TDCBehavior getBehavior(){
         return mBehavior;
     }
 

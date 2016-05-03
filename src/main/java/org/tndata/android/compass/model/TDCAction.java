@@ -11,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class ActionContent extends TDCContent{
+public class TDCAction extends TDCContent{
     public static final String TYPE = "action";
 
 
@@ -99,15 +99,15 @@ public class ActionContent extends TDCContent{
         dest.writeLong(mBehaviorId);
     }
 
-    public static final Creator<ActionContent> CREATOR = new Creator<ActionContent>(){
+    public static final Creator<TDCAction> CREATOR = new Creator<TDCAction>(){
         @Override
-        public ActionContent createFromParcel(Parcel in){
-            return new ActionContent(in);
+        public TDCAction createFromParcel(Parcel in){
+            return new TDCAction(in);
         }
 
         @Override
-        public ActionContent[] newArray(int size){
-            return new ActionContent[size];
+        public TDCAction[] newArray(int size){
+            return new TDCAction[size];
         }
     };
 
@@ -116,7 +116,7 @@ public class ActionContent extends TDCContent{
      *
      * @param src the parcel where the object is stored.
      */
-    private ActionContent(Parcel src){
+    private TDCAction(Parcel src){
         super(src);
         mSequenceOrder = src.readInt();
         mMoreInfo = src.readString();

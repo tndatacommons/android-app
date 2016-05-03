@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
-import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.TDCCategory;
 
 
 /**
@@ -53,7 +53,7 @@ public class ChooseCategoryActivity
     }
 
     @Override
-    public void onCategorySelected(CategoryContent category){
+    public void onCategorySelected(TDCCategory category){
         Intent chooseGoals = new Intent(this, ChooseGoalsActivity.class)
                 .putExtra(ChooseGoalsActivity.CATEGORY_KEY, (Parcelable)category);
         startActivity(chooseGoals);

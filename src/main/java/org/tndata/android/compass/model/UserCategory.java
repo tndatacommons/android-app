@@ -19,14 +19,14 @@ public class UserCategory extends UserContent implements Serializable{
 
     //API provided
     @SerializedName("category")
-    private CategoryContent mCategory;
+    private TDCCategory mCategory;
 
 
     /*---------*
      * SETTERS *
      *---------*/
 
-    public void setCategory(CategoryContent category){
+    public void setCategory(TDCCategory category){
         this.mCategory = category;
     }
 
@@ -35,7 +35,7 @@ public class UserCategory extends UserContent implements Serializable{
      * GETTERS *
      *---------*/
 
-    public CategoryContent getCategory(){
+    public TDCCategory getCategory(){
         return mCategory;
     }
 

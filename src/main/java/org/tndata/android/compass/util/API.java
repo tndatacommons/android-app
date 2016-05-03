@@ -152,7 +152,7 @@ public final class API{
         return BASE_URL + "users/categories/?page_size=999999";
     }
 
-    public static JSONObject getPostCategoryBody(@NonNull CategoryContent category){
+    public static JSONObject getPostCategoryBody(@NonNull TDCCategory category){
         JSONObject postCategoriesBody = new JSONObject();
         try{
             postCategoriesBody.put("category", category.getId());
@@ -165,7 +165,7 @@ public final class API{
 
 
     //Goals
-    public static String getGoalsUrl(@NonNull CategoryContent category){
+    public static String getGoalsUrl(@NonNull TDCCategory category){
         return BASE_URL + "goals/?category=" + category.getId();
     }
 
@@ -185,11 +185,11 @@ public final class API{
         return BASE_URL + "users/goals/?goal=" + goalId;
     }
 
-    public static String getPostGoalUrl(@NonNull GoalContent goal){
+    public static String getPostGoalUrl(@NonNull TDCGoal goal){
         return BASE_URL + "goals/" + goal.getId() + "/enroll/";
     }
 
-    public static JSONObject getPostGoalBody(@NonNull CategoryContent category){
+    public static JSONObject getPostGoalBody(@NonNull TDCCategory category){
         JSONObject body = new JSONObject();
         try{
             body.put("category", category.getId());
@@ -243,15 +243,15 @@ public final class API{
 
 
     //Actions
-    public static String getUserActionsUrl(@NonNull CategoryContent category){
+    public static String getUserActionsUrl(@NonNull TDCCategory category){
         return BASE_URL + "users/actions/?category=" + category.getId();
     }
 
-    public static String getUserActionsUrl(@NonNull GoalContent goal){
+    public static String getUserActionsUrl(@NonNull TDCGoal goal){
         return BASE_URL + "users/actions/?goal=" + goal.getId();
     }
 
-    public static String getUserActionsUrl(@NonNull BehaviorContent behavior){
+    public static String getUserActionsUrl(@NonNull TDCBehavior behavior){
         return BASE_URL + "users/actions/?behavior=" + behavior.getId();
     }
 

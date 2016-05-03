@@ -19,8 +19,8 @@ import android.widget.TextView;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.SearchAdapter;
-import org.tndata.android.compass.model.CategoryContent;
-import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.TDCCategory;
+import org.tndata.android.compass.model.TDCGoal;
 import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
@@ -60,8 +60,8 @@ public class SearchActivity
     private String mLastSearch;
     private int mLastSearchRequestCode;
 
-    private CategoryContent mCategory;
-    private GoalContent mGoal;
+    private TDCCategory mCategory;
+    private TDCGoal mGoal;
 
     private AlertDialog mFeedbackDialog;
 

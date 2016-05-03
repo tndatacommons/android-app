@@ -32,11 +32,11 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.TDCGoal;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.util.API;
@@ -448,8 +448,8 @@ public class MainActivity
     }
 
     @Override
-    public void onSuggestionSelected(GoalContent goal){
-        CategoryContent category = null;
+    public void onSuggestionSelected(TDCGoal goal){
+        TDCCategory category = null;
         for (Long categoryId:goal.getCategoryIdSet()){
             if (mApplication.getPublicCategories().containsKey(categoryId)){
                 category = mApplication.getPublicCategories().get(categoryId);

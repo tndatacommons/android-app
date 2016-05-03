@@ -16,8 +16,8 @@ import android.widget.ImageView;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseGoalsAdapter;
-import org.tndata.android.compass.model.CategoryContent;
-import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.TDCCategory;
+import org.tndata.android.compass.model.TDCGoal;
 import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
@@ -58,8 +58,8 @@ public class ChooseGoalsActivity
 
     public CompassApplication mApplication;
 
-    private CategoryContent mCategory;
-    private GoalContent mSelectedGoal;
+    private TDCCategory mCategory;
+    private TDCGoal mSelectedGoal;
     private ChooseGoalsAdapter mAdapter;
 
     //Request codes and urls
@@ -106,7 +106,7 @@ public class ChooseGoalsActivity
     }
 
     @Override
-    public void onGoalSelected(@NonNull GoalContent goal){
+    public void onGoalSelected(@NonNull TDCGoal goal){
         mSelectedGoal = goal;
         startActivityForResult(new Intent(this, GoalActivity.class)
                 .putExtra(GoalActivity.GOAL_KEY, (Parcelable)goal)
@@ -204,7 +204,7 @@ public class ChooseGoalsActivity
         if (result instanceof ParserModels.GoalContentResultSet){
             ParserModels.GoalContentResultSet set = (ParserModels.GoalContentResultSet)result;
             mGetGoalsNextUrl = set.next;
-            List<GoalContent> goals = set.results;
+            List<TDCGoal> goals = set.results;
             if (goals != null && !goals.isEmpty()){
                 mAdapter.add(goals, mGetGoalsNextUrl != null);
             }

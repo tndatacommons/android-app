@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseInterestsAdapter;
 import org.tndata.android.compass.fragment.ChooseInterestsFragment;
-import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.util.API;
 
@@ -31,7 +31,7 @@ public class ChooseInterestsActivity
                 ChooseInterestsAdapter.OnCategoriesSelectedListener,
                 HttpRequest.RequestCallback{
 
-    private List<CategoryContent> mSelection;
+    private List<TDCCategory> mSelection;
     private Map<Long, UserCategory> mSelectedMap;
 
     //Request codes
@@ -55,7 +55,7 @@ public class ChooseInterestsActivity
     }
 
     @Override
-    public void onCategoriesSelected(List<CategoryContent> selection, List<UserCategory> original){
+    public void onCategoriesSelected(List<TDCCategory> selection, List<UserCategory> original){
         mSelection = selection;
 
         mSelectedMap = new HashMap<>();
@@ -63,8 +63,8 @@ public class ChooseInterestsActivity
             mSelectedMap.put(category.getContentId(), category);
         }
 
-        List<CategoryContent> toAdd = new ArrayList<>();
-        for (CategoryContent category:selection){
+        List<TDCCategory> toAdd = new ArrayList<>();
+        for (TDCCategory category:selection){
             if (!mSelectedMap.containsKey(category.getId())){
                 toAdd.add(category);
             }

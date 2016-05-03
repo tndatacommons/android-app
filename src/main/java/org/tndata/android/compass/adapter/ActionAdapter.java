@@ -9,7 +9,7 @@ import android.view.View;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Reward;
@@ -39,7 +39,7 @@ public class ActionAdapter
 
     private ActionAdapterListener mListener;
     private Action mAction;
-    private CategoryContent mCategory;
+    private TDCCategory mCategory;
     private Goal mGoal;
     private boolean mFromNotification;
 
@@ -80,7 +80,7 @@ public class ActionAdapter
         fetchReward();
     }
 
-    public void setCategory(@NonNull CategoryContent category){
+    public void setCategory(@NonNull TDCCategory category){
         mCategory = category;
         if (hasDetails()){
             notifyItemChanged(2);

@@ -9,8 +9,8 @@ import android.widget.ImageView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.GoalAdapter;
-import org.tndata.android.compass.model.CategoryContent;
-import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.TDCCategory;
+import org.tndata.android.compass.model.TDCGoal;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ImageHelper;
 
@@ -32,8 +32,8 @@ public class GoalActivity extends MaterialActivity implements GoalAdapter.GoalLi
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        CategoryContent category = getIntent().getParcelableExtra(CATEGORY_KEY);
-        GoalContent goal = getIntent().getParcelableExtra(GOAL_KEY);
+        TDCCategory category = getIntent().getParcelableExtra(CATEGORY_KEY);
+        TDCGoal goal = getIntent().getParcelableExtra(GOAL_KEY);
 
         setHeader(category);
         setAdapter(new GoalAdapter(this, this, goal));
@@ -46,7 +46,7 @@ public class GoalActivity extends MaterialActivity implements GoalAdapter.GoalLi
      * @param category the category whose tile is to be picked.
      */
     @SuppressWarnings("deprecation")
-    private void setHeader(CategoryContent category){
+    private void setHeader(TDCCategory category){
         View header = inflateHeader(R.layout.header_tile);
         ImageView tile = (ImageView)header.findViewById(R.id.header_tile);
 

@@ -19,10 +19,10 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.TDCGoal;
 import org.tndata.android.compass.model.UserGoal;
 
 import java.util.ArrayList;
@@ -179,9 +179,9 @@ class GoalsHolder<T> extends MainFeedAdapter.ViewHolder implements View.OnClickL
         public void bind(@NonNull T goal){
             CompassApplication app = (CompassApplication)mAdapter.mContext.getApplicationContext();
             GradientDrawable gradientDrawable = (GradientDrawable)mIconContainer.getBackground();
-            if (goal instanceof GoalContent){
-                GoalContent goalContent = (GoalContent)goal;
-                CategoryContent category = null;
+            if (goal instanceof TDCGoal){
+                TDCGoal goalContent = (TDCGoal)goal;
+                TDCCategory category = null;
                 for (Long id:goalContent.getCategoryIdSet()){
                     if (id > 22){
                         category = app.getPublicCategories().get(id);
@@ -204,7 +204,7 @@ class GoalsHolder<T> extends MainFeedAdapter.ViewHolder implements View.OnClickL
             }
             else if (goal instanceof UserGoal){
                 UserGoal userGoal = (UserGoal)goal;
-                CategoryContent category = app.getPublicCategories().get(userGoal.getPrimaryCategoryId());
+                TDCCategory category = app.getPublicCategories().get(userGoal.getPrimaryCategoryId());
                 if (category == null){
                     gradientDrawable.setColor(mAdapter.mContext.getResources().getColor(R.color.primary));
                 }
@@ -236,8 +236,8 @@ class GoalsHolder<T> extends MainFeedAdapter.ViewHolder implements View.OnClickL
         @Override
         public void onClick(View v){
             T goal = mGoals.get(getAdapterPosition());
-            if (goal instanceof GoalContent){
-                mAdapter.mListener.onSuggestionSelected((GoalContent)goal);
+            if (goal instanceof TDCGoal){
+                mAdapter.mListener.onSuggestionSelected((TDCGoal)goal);
             }
             else if (goal instanceof Goal){
                 mAdapter.mListener.onGoalSelected((Goal)goal);

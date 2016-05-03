@@ -13,7 +13,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ReviewActionsAdapter;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
@@ -75,7 +75,7 @@ public class ReviewActionsActivity
 
         if (mUserGoal != null){
             long catId = mUserGoal.getPrimaryCategoryId();
-            CategoryContent category = mApplication.getPublicCategories().get(catId);
+            TDCCategory category = mApplication.getPublicCategories().get(catId);
             mAdapter = new ReviewActionsAdapter(this, this, mUserGoal.getTitle());
             mGetActionsNextUrl = API.getUserActionsUrl(mUserGoal.getGoal());
             if (category != null){
@@ -102,7 +102,7 @@ public class ReviewActionsActivity
         setAdapter(mAdapter);
     }
 
-    private void setGoalHeader(CategoryContent category){
+    private void setGoalHeader(TDCCategory category){
         View header = inflateHeader(R.layout.header_tile);
         ImageView tile = (ImageView)header.findViewById(R.id.header_tile);
 
@@ -113,7 +113,7 @@ public class ReviewActionsActivity
         image.recycle();
     }
 
-    private void setCategoryHeader(CategoryContent category){
+    private void setCategoryHeader(TDCCategory category){
         View header = inflateHeader(R.layout.header_hero);
         ImageView hero = (ImageView)header.findViewById(R.id.header_hero_image);
         if (category.getImageUrl() == null){

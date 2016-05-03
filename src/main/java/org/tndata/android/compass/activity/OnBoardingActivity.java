@@ -12,7 +12,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseInterestsAdapter;
 import org.tndata.android.compass.fragment.ChooseInterestsFragment;
 import org.tndata.android.compass.fragment.InstrumentFragment;
-import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Instrument;
 import org.tndata.android.compass.model.Survey;
@@ -119,7 +119,7 @@ public class OnBoardingActivity
     }
 
     @Override
-    public void onCategoriesSelected(List<CategoryContent> selection, List<UserCategory> original){
+    public void onCategoriesSelected(List<TDCCategory> selection, List<UserCategory> original){
         //Process and log the selection, and save it
         for (int i = 0; i < selection.size(); i++){
             if (i == 0){
@@ -128,7 +128,7 @@ public class OnBoardingActivity
                 mLastPostCategoryRC = mInitialPostCategoryRC +selection.size();
             }
             else{
-                CategoryContent cat = selection.get(i);
+                TDCCategory cat = selection.get(i);
                 HttpRequest.post(this, API.getUserCategoriesUrl(), API.getPostCategoryBody(cat));
             }
         }

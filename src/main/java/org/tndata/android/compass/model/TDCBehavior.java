@@ -17,7 +17,7 @@ import java.util.Set;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class BehaviorContent extends TDCContent{
+public class TDCBehavior extends TDCContent{
     public static final String TYPE = "behavior";
 
 
@@ -105,15 +105,15 @@ public class BehaviorContent extends TDCContent{
         dest.writeInt(mActionCount);
     }
 
-    public static final Creator<BehaviorContent> CREATOR = new Creator<BehaviorContent>(){
+    public static final Creator<TDCBehavior> CREATOR = new Creator<TDCBehavior>(){
         @Override
-        public BehaviorContent createFromParcel(Parcel source){
-            return new BehaviorContent(source);
+        public TDCBehavior createFromParcel(Parcel source){
+            return new TDCBehavior(source);
         }
 
         @Override
-        public BehaviorContent[] newArray(int size){
-            return new BehaviorContent[size];
+        public TDCBehavior[] newArray(int size){
+            return new TDCBehavior[size];
         }
     };
 
@@ -122,7 +122,7 @@ public class BehaviorContent extends TDCContent{
      *
      * @param src the source parcel.
      */
-    private BehaviorContent(Parcel src){
+    private TDCBehavior(Parcel src){
         super(src);
         mMoreInfo = src.readString();
         mHtmlMoreInfo = src.readString();
