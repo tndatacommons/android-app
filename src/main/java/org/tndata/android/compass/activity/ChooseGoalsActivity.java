@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,9 +23,7 @@ import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.ImageLoader;
 
-import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Map;
 
 import es.sandwatch.httprequests.HttpRequest;
 import es.sandwatch.httprequests.HttpRequestError;
@@ -109,22 +106,13 @@ public class ChooseGoalsActivity
     public void onGoalSelected(@NonNull TDCGoal goal){
         mSelectedGoal = goal;
         startActivityForResult(new Intent(this, GoalActivity.class)
-                .putExtra(GoalActivity.GOAL_KEY, (Parcelable)goal)
-                .putExtra(GoalActivity.CATEGORY_KEY, (Parcelable)mCategory), GOAL_ACTIVITY_RC);
+                .putExtra(GoalActivity.GOAL_KEY, goal)
+                .putExtra(GoalActivity.CATEGORY_KEY, mCategory), GOAL_ACTIVITY_RC);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == GOAL_ACTIVITY_RC && resultCode == RESULT_OK){
-            try{
-                Field field = HttpRequest.class.getDeclaredField("sRequestHeaders");
-                field.setAccessible(true);
-                Map<String, String> headerMap = (Map<String, String>)field.get(null);
-                Log.d("ChooseGoals", headerMap.toString());
-            }
-            catch (Exception x){
-                x.printStackTrace();
-            }
             mPostGoalRC = HttpRequest.post(this, API.getPostGoalUrl(mSelectedGoal),
                     API.getPostGoalBody(mCategory));
 

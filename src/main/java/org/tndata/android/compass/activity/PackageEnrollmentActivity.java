@@ -1,6 +1,5 @@
 package org.tndata.android.compass.activity;
 
-import android.app.NotificationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;

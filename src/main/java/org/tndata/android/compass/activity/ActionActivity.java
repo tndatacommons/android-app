@@ -3,7 +3,6 @@ package org.tndata.android.compass.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -353,13 +352,13 @@ public class ActionActivity
 
     @Override
     public void onBackPressed(){
-        setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, (Parcelable)mAction));
+        setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, mAction));
         finish();
     }
 
     @Override
     protected void onHomeTapped(){
-        setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, (Parcelable)mAction));
+        setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, mAction));
         finish();
     }
 
@@ -367,11 +366,11 @@ public class ActionActivity
         if (mGoal != null){
             if (mGoal instanceof UserGoal){
                 startActivity(new Intent(this, ReviewActionsActivity.class)
-                        .putExtra(ReviewActionsActivity.USER_GOAL_KEY, (Parcelable)mGoal));
+                        .putExtra(ReviewActionsActivity.USER_GOAL_KEY, mGoal));
             }
             else{
                 startActivity(new Intent(this, CustomContentManagerActivity.class)
-                        .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, (Parcelable)mGoal));
+                        .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, mGoal));
             }
         }
     }
@@ -380,11 +379,11 @@ public class ActionActivity
     public void onIDidItClick(){
         if (mAction != null){
             startService(new Intent(this, ActionReportService.class)
-                    .putExtra(ActionReportService.ACTION_KEY, (Parcelable)mAction)
+                    .putExtra(ActionReportService.ACTION_KEY, mAction)
                     .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
 
             setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, true)
-                    .putExtra(ACTION_KEY, (Parcelable)mAction));
+                    .putExtra(ACTION_KEY, mAction));
             finish();
         }
     }
@@ -394,7 +393,7 @@ public class ActionActivity
         if (mAction != null){
             Intent reschedule = new Intent(this, TriggerActivity.class)
                     .putExtra(TriggerActivity.GOAL_TITLE_KEY, mGoal.getTitle())
-                    .putExtra(TriggerActivity.ACTION_KEY, (Parcelable)mAction);
+                    .putExtra(TriggerActivity.ACTION_KEY, mAction);
             startActivityForResult(reschedule, RESCHEDULE_REQUEST_CODE);
         }
     }
@@ -414,7 +413,7 @@ public class ActionActivity
     private void disableTrigger(){
         mAction.getTrigger().setEnabled(false);
         HttpRequest.put(null, API.getPutTriggerUrl(mAction), API.getPutTriggerBody(mAction.getTrigger()));
-        setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, (Parcelable)mAction));
+        setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, mAction));
         finish();
     }
 
@@ -424,7 +423,7 @@ public class ActionActivity
             switch (requestCode){
                 case RESCHEDULE_REQUEST_CODE:
                     mAction = data.getParcelableExtra(TriggerActivity.ACTION_KEY);
-                    setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, (Parcelable)mAction));
+                    setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, mAction));
 
                 //In either case, the activity should finish after a second
                 case SNOOZE_REQUEST_CODE:

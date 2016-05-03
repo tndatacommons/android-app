@@ -79,7 +79,7 @@ public class UserGoal extends Goal{
 
     @Override
     public void writeToParcel(Parcel dest, int flags){
-        super.addToParcel(dest, flags);
+        super.writeToParcel(dest, flags);
         dest.writeParcelable(mGoal, flags);
         dest.writeLong(mPrimaryCategoryId);
     }

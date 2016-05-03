@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -71,7 +70,7 @@ public class ReviewActionsActivity
         //  the a CategoryContent can be used to populate headers. In this case a UserGoal
         //  will always be available, so the primary category id can be used to retrieve
         //  it from the Application class list
-        mUserGoal = (UserGoal)getIntent().getSerializableExtra(USER_GOAL_KEY);
+        mUserGoal = getIntent().getParcelableExtra(USER_GOAL_KEY);
 
         if (mUserGoal != null){
             long catId = mUserGoal.getPrimaryCategoryId();
@@ -137,7 +136,7 @@ public class ReviewActionsActivity
             case R.id.review_fab:
                 if (mUserGoal == null){
                     startActivity(new Intent(this, ChooseGoalsActivity.class)
-                            .putExtra(ChooseGoalsActivity.CATEGORY_KEY, (Parcelable)mUserCategory.getCategory()));
+                            .putExtra(ChooseGoalsActivity.CATEGORY_KEY, mUserCategory.getCategory()));
                 }
                 break;
         }
@@ -148,7 +147,7 @@ public class ReviewActionsActivity
         if (mUserCategory != null){
             if (!mUserCategory.getCategory().isPackagedContent()){
                 startActivity(new Intent(this, ChooseGoalsActivity.class)
-                        .putExtra(ChooseGoalsActivity.CATEGORY_KEY, (Parcelable)mUserCategory.getCategory()));
+                        .putExtra(ChooseGoalsActivity.CATEGORY_KEY, mUserCategory.getCategory()));
             }
         }
     }
@@ -156,7 +155,7 @@ public class ReviewActionsActivity
     @Override
     public void onActionSelected(Action action){
         Intent showAction = new Intent(this, ActionActivity.class)
-                .putExtra(ActionActivity.ACTION_KEY, (Parcelable)action);
+                .putExtra(ActionActivity.ACTION_KEY, action);
         startActivityForResult(showAction, ACTION_ACTIVITY_RC);
     }
 

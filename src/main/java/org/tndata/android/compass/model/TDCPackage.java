@@ -1,7 +1,6 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -12,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
  * @author Ismael Alonso
  * @version 1.1.0
  */
-public class TDCPackage extends TDCBase implements Parcelable{
+public class TDCPackage extends TDCBase{
     public static final String TYPE = "package";
 
 
@@ -62,7 +61,7 @@ public class TDCPackage extends TDCBase implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags){
-        super.addToParcel(dest, flags);
+        super.writeToParcel(dest, flags);
         dest.writeByte((byte)(mAccepted ? 1 : 0));
         dest.writeParcelable(mCategory, flags);
     }
@@ -92,7 +91,7 @@ public class TDCPackage extends TDCBase implements Parcelable{
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    private static class PackageContent extends TDCBase implements Parcelable{
+    private static class PackageContent extends TDCBase{
         @SerializedName("title")
         private String mTitle;
         @SerializedName("description")
@@ -115,7 +114,7 @@ public class TDCPackage extends TDCBase implements Parcelable{
 
         @Override
         public void writeToParcel(Parcel dest, int flags){
-            super.addToParcel(dest, flags);
+            super.writeToParcel(dest, flags);
             dest.writeString(mTitle);
             dest.writeString(mDescription);
             dest.writeString(mHtmlDescription);

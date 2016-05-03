@@ -3,6 +3,7 @@ package org.tndata.android.compass.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -208,7 +209,7 @@ public class PlacePickerActivity
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult){
+    public void onConnectionFailed(@NonNull  ConnectionResult connectionResult){
         //Unused
     }
 
@@ -226,7 +227,7 @@ public class PlacePickerActivity
     }
 
     @Override
-    public void onResult(PlaceBuffer placeBuffer){
+    public void onResult(@NonNull PlaceBuffer placeBuffer){
         if (placeBuffer.getStatus().isSuccess()){
             //If the place doesn't exist, create it
             if (mPlace == null){

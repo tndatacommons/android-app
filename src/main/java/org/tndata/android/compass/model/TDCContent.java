@@ -87,7 +87,7 @@ public abstract class TDCContent extends TDCBase implements Parcelable, Comparab
 
     @Override
     public void writeToParcel(Parcel dst, int flags){
-        super.addToParcel(dst, flags);
+        super.writeToParcel(dst, flags);
         dst.writeString(mTitle);
         dst.writeString(mDescription);
         dst.writeString(mHtmlDescription);

@@ -121,7 +121,7 @@ public abstract class Action extends UserContent implements Comparable<Action>{
 
     @Override
     public void writeToParcel(Parcel dest, int flags){
-        super.addToParcel(dest, flags);
+        super.writeToParcel(dest, flags);
         dest.writeParcelable(getTrigger(), flags);
         dest.writeString(getNextReminder());
     }

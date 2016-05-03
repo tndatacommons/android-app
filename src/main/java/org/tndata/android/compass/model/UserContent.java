@@ -1,7 +1,6 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -14,7 +13,7 @@ import com.google.gson.annotations.SerializedName;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public abstract class UserContent extends TDCBase implements Parcelable{
+public abstract class UserContent extends TDCBase{
     @SerializedName("editable")
     private boolean mEditable;
 
@@ -45,7 +44,7 @@ public abstract class UserContent extends TDCBase implements Parcelable{
     }
 
     public void writeToParcel(Parcel dest, int flags){
-        super.addToParcel(dest, flags);
+        super.writeToParcel(dest, flags);
         dest.writeByte((byte)(mEditable ? 1 : 0));
     }
 

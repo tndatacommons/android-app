@@ -456,6 +456,7 @@ public class MainActivity
                 break;
             }
         }
+        //TODO
         /*Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
                 .putExtra(ChooseBehaviorsActivity.GOAL_KEY, (Parcelable)goal)
                 .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, category);
@@ -466,13 +467,12 @@ public class MainActivity
     public void onGoalSelected(Goal goal){
         if (goal instanceof UserGoal){
             Intent reviewActionsIntent = new Intent(this, ReviewActionsActivity.class)
-                    .putExtra(ReviewActionsActivity.USER_GOAL_KEY, (Parcelable)goal);
+                    .putExtra(ReviewActionsActivity.USER_GOAL_KEY, goal);
             startActivityForResult(reviewActionsIntent, GOAL_RC);
         }
         else if (goal instanceof CustomGoal){
-            Parcelable customGoal = (CustomGoal)goal;
             Intent editGoal = new Intent(this, CustomContentManagerActivity.class)
-                    .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, customGoal);
+                    .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, goal);
             startActivityForResult(editGoal, GOAL_RC);
         }
     }
