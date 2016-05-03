@@ -1,12 +1,13 @@
 package org.tndata.android.compass.model;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
 import org.tndata.android.compass.R;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +18,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserGoal extends Goal implements Serializable{
-    private static final long serialVersionUID = 7109406686231550671L;
-
+public class UserGoal extends Goal implements Parcelable{
     public static final String TYPE = "usergoal";
 
 
@@ -28,8 +27,6 @@ public class UserGoal extends Goal implements Serializable{
     private TDCGoal mGoal;
     @SerializedName("primary_category")
     private long mPrimaryCategoryId;
-    @SerializedName("progress")
-    private Progress mProgress;
 
     //Values set during post-processing
     private UserCategory mPrimaryCategory;
@@ -119,10 +116,6 @@ public class UserGoal extends Goal implements Serializable{
         return mUserBehaviors;
     }
 
-    public Progress getProgress(){
-        return mProgress;
-    }
-
     @Override
     protected String getType(){
         return TYPE;
@@ -170,5 +163,35 @@ public class UserGoal extends Goal implements Serializable{
     @Override
     public String toString(){
         return "UserGoal #" + getId() + " (" + mGoal.toString() + ")";
+    }
+
+    @Override
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags){
+        super.addToParcel(dest, flags);
+        dest.writeParcelable(mGoal, flags);
+        dest.writeLong(mPrimaryCategoryId);
+    }
+
+    public static final Creator<UserGoal> CREATOR = new Creator<UserGoal>(){
+        @Override
+        public UserGoal createFromParcel(Parcel source){
+            return new UserGoal(source);
+        }
+
+        @Override
+        public UserGoal[] newArray(int size){
+            return new UserGoal[size];
+        }
+    };
+
+    private UserGoal(Parcel src){
+        super(src);
+        mGoal = src.readParcelable(TDCGoal.class.getClassLoader());
+        mPrimaryCategoryId = src.readLong();
     }
 }

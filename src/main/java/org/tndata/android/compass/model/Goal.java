@@ -1,6 +1,7 @@
 package org.tndata.android.compass.model;
 
 import android.content.Context;
+import android.os.Parcel;
 
 import java.io.Serializable;
 
@@ -13,6 +14,14 @@ import java.io.Serializable;
  */
 public abstract class Goal extends UserContent implements Serializable{
     private static final long serialVersionUID = 6532189438426955496L;
+
+    protected Goal(){
+
+    }
+
+    protected Goal(Parcel src){
+        super(src);
+    }
 
     public abstract String getTitle();
 

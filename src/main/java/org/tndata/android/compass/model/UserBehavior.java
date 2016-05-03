@@ -24,8 +24,6 @@ public class UserBehavior extends UserContent implements Serializable, ParserMod
     //Values retrieved from the API
     @SerializedName("behavior")
     private TDCBehavior mBehavior;
-    @SerializedName("progress")
-    private Progress mProgress;
 
     @SerializedName("parent_usergoal")
     private UserGoal mParentUserGoal;
@@ -45,10 +43,6 @@ public class UserBehavior extends UserContent implements Serializable, ParserMod
     /*---------*
      * SETTERS *
      *---------*/
-
-    public void setProgress(Progress progress){
-        this.mProgress = progress;
-    }
 
     public void setGoals(List<UserGoal> goals) {
         this.userGoals = goals;
@@ -94,10 +88,6 @@ public class UserBehavior extends UserContent implements Serializable, ParserMod
 
     public List<UserAction> getActions(){
         return userActions;
-    }
-
-    public Progress getProgress(){
-        return mProgress;
     }
 
     public UserGoal getParentUserGoal(){
