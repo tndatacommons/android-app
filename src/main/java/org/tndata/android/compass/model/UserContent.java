@@ -1,10 +1,9 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
-
-import java.io.Serializable;
 
 
 /**
@@ -15,10 +14,7 @@ import java.io.Serializable;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public abstract class UserContent extends TDCBase implements Serializable{
-    private static final long serialVersionUID = -8654445236984566619L;
-
-
+public abstract class UserContent extends TDCBase implements Parcelable{
     @SerializedName("editable")
     private boolean mEditable;
 
@@ -48,7 +44,7 @@ public abstract class UserContent extends TDCBase implements Serializable{
         return mEditable;
     }
 
-    protected void addToParcel(Parcel dest, int flags){
+    public void writeToParcel(Parcel dest, int flags){
         super.addToParcel(dest, flags);
         dest.writeByte((byte)(mEditable ? 1 : 0));
     }

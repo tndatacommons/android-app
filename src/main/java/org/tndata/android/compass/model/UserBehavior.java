@@ -1,7 +1,6 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -17,7 +16,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserBehavior extends UserContent implements Parcelable, ParserModels.ResultSet{
+public class UserBehavior extends UserContent implements ParserModels.ResultSet{
     public static final String TYPE = "userbehavior";
 
 

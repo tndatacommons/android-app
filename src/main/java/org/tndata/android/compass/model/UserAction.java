@@ -1,7 +1,6 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -186,10 +185,10 @@ public class UserAction extends Action implements ParserModels.ResultSet{
         dest.writeLong(mPrimaryCategoryId);
     }
 
-    public static final Parcelable.Creator<UserAction> CREATOR = new Parcelable.Creator<UserAction>(){
+    public static final Creator<UserAction> CREATOR = new Creator<UserAction>(){
         @Override
-        public UserAction createFromParcel(Parcel in){
-            return new UserAction(in);
+        public UserAction createFromParcel(Parcel source){
+            return new UserAction(source);
         }
 
         @Override

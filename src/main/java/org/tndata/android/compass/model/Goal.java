@@ -3,8 +3,6 @@ package org.tndata.android.compass.model;
 import android.content.Context;
 import android.os.Parcel;
 
-import java.io.Serializable;
-
 
 /**
  * Model superclass for anything that can be classified as a goal.
@@ -12,9 +10,7 @@ import java.io.Serializable;
  * @author Ismael Alonso.
  * @version 1.0.0
  */
-public abstract class Goal extends UserContent implements Serializable{
-    private static final long serialVersionUID = 6532189438426955496L;
-
+public abstract class Goal extends UserContent{
     protected Goal(){
 
     }
@@ -24,8 +20,6 @@ public abstract class Goal extends UserContent implements Serializable{
     }
 
     public abstract String getTitle();
-
     public abstract String getIconUrl();
-
     public abstract String getColor(Context context);
 }

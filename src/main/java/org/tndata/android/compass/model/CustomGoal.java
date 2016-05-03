@@ -2,7 +2,6 @@ package org.tndata.android.compass.model;
 
 import android.content.Context;
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -18,7 +17,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class CustomGoal extends Goal implements Parcelable{
+public class CustomGoal extends Goal{
     public static final String TYPE = "customgoal";
 
 

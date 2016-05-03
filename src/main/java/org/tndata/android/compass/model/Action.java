@@ -1,7 +1,6 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
@@ -16,7 +15,7 @@ import java.util.Date;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public abstract class Action extends UserContent implements Parcelable, Comparable<Action>{
+public abstract class Action extends UserContent implements Comparable<Action>{
     @SerializedName("trigger")
     private Trigger mTrigger;
     @SerializedName("next_reminder")

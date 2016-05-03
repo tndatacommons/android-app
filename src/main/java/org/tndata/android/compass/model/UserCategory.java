@@ -1,7 +1,6 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -12,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserCategory extends UserContent implements Parcelable{
+public class UserCategory extends UserContent{
     public static final String TYPE = "usercategory";
 
 
