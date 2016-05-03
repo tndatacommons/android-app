@@ -93,7 +93,7 @@ public class UserCategory extends UserContent{
 
     @Override
     public void writeToParcel(Parcel dest, int flags){
-        super.addToParcel(dest, flags);
+        super.writeToParcel(dest, flags);
         dest.writeParcelable(mCategory, flags);
     }
 
