@@ -1,12 +1,8 @@
 package org.tndata.android.compass.model;
 
-import android.content.Context;
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
-
-import org.tndata.android.compass.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +14,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class CustomGoal extends Goal implements Parcelable{
+public class CustomGoal extends Goal{
     public static final String TYPE = "customgoal";
 
 
@@ -59,16 +55,6 @@ public class CustomGoal extends Goal implements Parcelable{
     @Override
     protected String getType(){
         return TYPE;
-    }
-
-    @Override
-    public String getIconUrl(){
-        return "";
-    }
-
-    @Override
-    public String getColor(Context context){
-        return String.format("#%06X", 0xFFFFFF & context.getResources().getColor(R.color.primary));
     }
 
     @Override
@@ -113,7 +99,7 @@ public class CustomGoal extends Goal implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags){
-        dest.writeLong(getId());
+        super.writeToParcel(dest, flags);
         dest.writeString(mTitle);
         dest.writeTypedList(mActions);
     }
@@ -136,13 +122,10 @@ public class CustomGoal extends Goal implements Parcelable{
      * @param src the parcel where the object is stored.
      */
     private CustomGoal(Parcel src){
-        setId(src.readLong());
+        super(src);
         mTitle = src.readString();
         //Retrieve the actions as an array list and assign the parent goal
         mActions = new ArrayList<>();
         src.readTypedList(mActions, CustomAction.CREATOR);
-        for (CustomAction action:mActions){
-            action.setGoal(this);
-        }
     }
 }

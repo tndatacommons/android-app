@@ -11,7 +11,7 @@ import android.widget.ProgressBar;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
-import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
@@ -43,7 +43,7 @@ public class MyActivitiesActivity
     private RecyclerView mList;
     private ProgressBar mLoading;
 
-    private List<CategoryContent> mCategoryList;
+    private List<TDCCategory> mCategoryList;
     private Map<Long, UserCategory> mUserCategoryMap;
     private int mGetCategoriesRC;
 
@@ -102,7 +102,7 @@ public class MyActivitiesActivity
     }
 
     @Override
-    public void onCategorySelected(CategoryContent category){
+    public void onCategorySelected(TDCCategory category){
         UserCategory userCategory = mUserCategoryMap.get(category.getId());
         startActivity(new Intent(this, ReviewActionsActivity.class)
                 .putExtra(ReviewActionsActivity.USER_CATEGORY_KEY, userCategory));

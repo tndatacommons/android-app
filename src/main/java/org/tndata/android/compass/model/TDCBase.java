@@ -1,25 +1,20 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
-import android.support.annotation.NonNull;
+import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
 import org.tndata.android.compass.parser.ParserModels;
 
-import java.io.Serializable;
-
 
 /**
- * Base class for all content. This class forces a type on every model type.
+ * Base class for all content. This class forces an ID and a type on every model type.
  *
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public abstract class TDCBase implements Serializable, ParserModels.ResultSet{
-    private static final long serialVersionUID = 7554126338541297545L;
-
-
+public abstract class TDCBase implements Parcelable, ParserModels.ResultSet{
     @SerializedName("id")
     private long mId;
 
@@ -93,16 +88,14 @@ public abstract class TDCBase implements Serializable, ParserModels.ResultSet{
         return result;
     }
 
-    /**
-     * Adds the contents of this class to a parcel.
-     *
-     * @param dst the destination parcel.
-     * @param flags the parcelable flags.
-     */
-    protected void addToParcel(@NonNull Parcel dst, int flags){
-        //TODO eventually, when all classes are Parcelable-ready, make TDCBase implement Parcelable
-        //TODO and copy these contents to writeToParcel.
-        dst.writeLong(mId);
+    @Override
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags){
+        dest.writeLong(mId);
     }
 
     /**

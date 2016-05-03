@@ -44,7 +44,7 @@ public class SurveyDialogFragment
         SurveyDialogFragment surveyDialogFragment = new SurveyDialogFragment();
 
         Bundle args = new Bundle();
-        args.putSerializable(SURVEY_KEY, survey);
+        args.putParcelable(SURVEY_KEY, survey);
         surveyDialogFragment.setArguments(args);
 
         return surveyDialogFragment;
@@ -53,7 +53,7 @@ public class SurveyDialogFragment
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        mSurvey = (Survey)getArguments().getSerializable(SURVEY_KEY);
+        mSurvey = getArguments().getParcelable(SURVEY_KEY);
     }
 
     /*

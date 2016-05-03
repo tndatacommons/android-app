@@ -18,7 +18,7 @@ import android.widget.Toast;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseInterestsAdapter;
-import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
@@ -180,7 +180,7 @@ public class ChooseInterestsFragment
     }
 
     @Override
-    public void onCategoriesSelected(List<CategoryContent> selection, List<UserCategory> original){
+    public void onCategoriesSelected(List<TDCCategory> selection, List<UserCategory> original){
         mDialog = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.choose_categories_syncing_title)
                 .setCancelable(false)

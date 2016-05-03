@@ -1,7 +1,6 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
@@ -19,7 +18,7 @@ import java.util.Locale;
  * @author Edited by Ismael Alonso
  * @version 2.0.0
  */
-public class Trigger extends TDCBase implements Parcelable, Comparable<Trigger>{
+public class Trigger extends TDCBase implements Comparable<Trigger>{
     public static final String TYPE = "trigger";
 
 
@@ -331,7 +330,7 @@ public class Trigger extends TDCBase implements Parcelable, Comparable<Trigger>{
 
     @Override
     public void writeToParcel(Parcel dest, int flags){
-        dest.writeLong(getId());
+        super.writeToParcel(dest, flags);
         //The getters are used because the values stored may be null
         dest.writeString(getName());
         dest.writeString(getRawTime());
@@ -341,10 +340,10 @@ public class Trigger extends TDCBase implements Parcelable, Comparable<Trigger>{
         dest.writeByte((byte)(mDisabled ? 1 : 0));
     }
 
-    public static final Parcelable.Creator<Trigger> CREATOR = new Parcelable.Creator<Trigger>(){
+    public static final Creator<Trigger> CREATOR = new Creator<Trigger>(){
         @Override
-        public Trigger createFromParcel(Parcel in){
-            return new Trigger(in);
+        public Trigger createFromParcel(Parcel source){
+            return new Trigger(source);
         }
 
         @Override
@@ -356,15 +355,15 @@ public class Trigger extends TDCBase implements Parcelable, Comparable<Trigger>{
     /**
      * Constructor to create from parcel.
      *
-     * @param in the parcel where the object is stored.
+     * @param src the parcel where the object is stored.
      */
-    private Trigger(Parcel in){
-        setId(in.readLong());
-        mName = in.readString();
-        mTime = in.readString();
-        mDate = in.readString();
-        mRecurrences = in.readString();
-        mRecurrencesDisplay = in.readString();
-        mDisabled = in.readByte() == 1;
+    private Trigger(Parcel src){
+        super(src);
+        mName = src.readString();
+        mTime = src.readString();
+        mDate = src.readString();
+        mRecurrences = src.readString();
+        mRecurrencesDisplay = src.readString();
+        mDisabled = src.readByte() == 1;
     }
 }

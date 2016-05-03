@@ -1,10 +1,8 @@
 package org.tndata.android.compass.model;
 
-import com.google.gson.annotations.SerializedName;
+import android.os.Parcel;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gson.annotations.SerializedName;
 
 
 /**
@@ -13,30 +11,21 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class UserCategory extends UserContent implements Serializable{
-    private static final long serialVersionUID = 1751646542285854670L;
-
+public class UserCategory extends UserContent{
     public static final String TYPE = "usercategory";
 
 
     //API provided
     @SerializedName("category")
-    private CategoryContent mCategory;
-
-    //Set during post-processing
-    private List<UserGoal> mUserGoals;
+    private TDCCategory mCategory;
 
 
     /*---------*
      * SETTERS *
      *---------*/
 
-    public void setCategory(CategoryContent category){
+    public void setCategory(TDCCategory category){
         this.mCategory = category;
-    }
-
-    public void setGoals(List<UserGoal> userGoals){
-        this.mUserGoals = userGoals;
     }
 
 
@@ -44,7 +33,7 @@ public class UserCategory extends UserContent implements Serializable{
      * GETTERS *
      *---------*/
 
-    public CategoryContent getCategory(){
+    public TDCCategory getCategory(){
         return mCategory;
     }
 
@@ -77,10 +66,6 @@ public class UserCategory extends UserContent implements Serializable{
         return mCategory.getColor();
     }
 
-    public List<UserGoal> getGoals(){
-        return mUserGoals;
-    }
-
     @Override
     protected String getType(){
         return TYPE;
@@ -93,25 +78,39 @@ public class UserCategory extends UserContent implements Serializable{
 
     @Override
     public void init(){
-        if (mUserGoals == null){
-            mUserGoals = new ArrayList<>();
-        }
-    }
 
-    public void addGoal(UserGoal goal){
-        if (!mUserGoals.contains(goal)){
-            mUserGoals.add(goal);
-        }
-    }
-
-    public void removeGoal(UserGoal goal){
-        if (mUserGoals.contains(goal)){
-            mUserGoals.remove(goal);
-        }
     }
 
     @Override
     public String toString(){
         return "UserCategory #" + getId() + " (" + mCategory.toString() + ")";
+    }
+
+    @Override
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags){
+        super.writeToParcel(dest, flags);
+        dest.writeParcelable(mCategory, flags);
+    }
+
+    public static final Creator<UserCategory> CREATOR = new Creator<UserCategory>(){
+        @Override
+        public UserCategory createFromParcel(Parcel source){
+            return new UserCategory(source);
+        }
+
+        @Override
+        public UserCategory[] newArray(int size){
+            return new UserCategory[size];
+        }
+    };
+
+    private UserCategory(Parcel src){
+        super(src);
+        mCategory = src.readParcelable(TDCCategory.class.getClassLoader());
     }
 }

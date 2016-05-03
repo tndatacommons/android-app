@@ -1,5 +1,7 @@
 package org.tndata.android.compass.activity;
 
+import android.app.AlertDialog;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
@@ -9,9 +11,13 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import org.json.JSONObject;
+import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.database.CompassDbHelper;
@@ -26,6 +32,7 @@ import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.FeedDataLoader;
+import org.tndata.android.compass.util.VersionChecker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +44,8 @@ import es.sandwatch.httprequests.HttpRequestError;
 public class LoginActivity
         extends AppCompatActivity
         implements
+                VersionChecker.VersionCallback,
+                View.OnClickListener,
                 LauncherFragment.LauncherFragmentListener,
                 SignUpFragment.SignUpFragmentListener,
                 LogInFragment.LogInFragmentCallback,
@@ -95,19 +104,55 @@ public class LoginActivity
 
         mFragmentStack = new ArrayList<>();
 
-        SharedPreferences settings = getSharedPreferences(PREFERENCES_NAME, 0);
         swapFragments(DEFAULT, true);
-        if (settings.getBoolean(PREFERENCES_NEW_USER, true)){
-            swapFragments(TOUR, true);
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean(PREFERENCES_NEW_USER, false);
-            editor.apply();
+        for (Fragment fragment:mFragmentStack){
+            if (fragment instanceof LauncherFragment){
+                ((LauncherFragment)fragment).showProgress(true);
+            }
         }
+        new VersionChecker(this).execute();
+    }
 
-        User user = mApplication.getUserLoginInfo();
-        if (!user.getEmail().isEmpty() && !user.getPassword().isEmpty()){
-            logUserIn(user.getEmail(), user.getPassword());
+    @Override
+    public void onVersionRetrieved(String versionName){
+        Log.d(TAG, "Version: " + versionName);
+        if (!BuildConfig.DEBUG && !versionName.equals(getString(R.string.version_name))){
+            ViewGroup rootView = (ViewGroup)findViewById(android.R.id.content);
+            LayoutInflater inflater = LayoutInflater.from(this);
+            View dialogRootView = inflater.inflate(R.layout.dialog_update, rootView, false);
+            dialogRootView.findViewById(R.id.update_get_it).setOnClickListener(this);
+
+            new AlertDialog.Builder(this)
+                    .setCancelable(false)
+                    .setView(dialogRootView)
+                    .create().show();
         }
+        else{
+            SharedPreferences settings = getSharedPreferences(PREFERENCES_NAME, 0);
+            if (settings.getBoolean(PREFERENCES_NEW_USER, true)){
+                swapFragments(TOUR, true);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putBoolean(PREFERENCES_NEW_USER, false);
+                editor.apply();
+            }
+
+            User user = mApplication.getUserLoginInfo();
+            if (!user.getEmail().isEmpty() && !user.getPassword().isEmpty()){
+                logUserIn(user.getEmail(), user.getPassword());
+            }
+            else{
+                for (Fragment fragment:mFragmentStack){
+                    if (fragment instanceof LauncherFragment){
+                        ((LauncherFragment)fragment).showProgress(false);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onClick(View v){
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=org.tndata.android.compass")));
     }
 
     @Override
@@ -311,9 +356,6 @@ public class LoginActivity
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
         if (result instanceof User){
             mApplication.setUser((User)result, false);
-        }
-        else if (result instanceof ParserModels.FeedDataResultSet){
-            ((ParserModels.FeedDataResultSet)result).results.get(0).init();
         }
         else if (result instanceof ParserModels.UserPlacesResultSet){
             CompassDbHelper helper = new CompassDbHelper(this);

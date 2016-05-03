@@ -3,7 +3,6 @@ package org.tndata.android.compass.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.view.Menu;
 import android.view.View;
@@ -113,7 +112,7 @@ public class CustomContentManagerActivity
 
     private void deliverResults(){
         setResult(RESULT_OK);
-        setIntent(new Intent().putExtra(CUSTOM_GOAL_KEY, (Parcelable)mCustomGoal));
+        setIntent(new Intent().putExtra(CUSTOM_GOAL_KEY, mCustomGoal));
     }
 
     @Override
@@ -215,7 +214,7 @@ public class CustomContentManagerActivity
     public void onEditTrigger(@NonNull CustomAction customAction){
         startActivityForResult(new Intent(this, TriggerActivity.class)
                 .putExtra(TriggerActivity.GOAL_TITLE_KEY, customAction.getGoal().getTitle())
-                .putExtra(TriggerActivity.ACTION_KEY, (Parcelable)customAction), TRIGGER_RC);
+                .putExtra(TriggerActivity.ACTION_KEY, customAction), TRIGGER_RC);
     }
 
     @Override

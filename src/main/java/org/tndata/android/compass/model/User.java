@@ -464,7 +464,7 @@ public class User extends TDCBase{
     @Override
     public String toString(){
         return mFullName + " (uid: " + getId() + ", pid: " + mProfileId + "), " + mEmail + ", "
-                + (mNeedsOnboarding ? "needs onboarding" : " doesn't need onboarding");
+                + (mNeedsOnboarding ? "needs on-boarding" : " doesn't need on-boarding");
     }
 
     @Override

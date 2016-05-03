@@ -152,7 +152,7 @@ public final class API{
         return BASE_URL + "users/categories/?page_size=999999";
     }
 
-    public static JSONObject getPostCategoryBody(@NonNull CategoryContent category){
+    public static JSONObject getPostCategoryBody(@NonNull TDCCategory category){
         JSONObject postCategoriesBody = new JSONObject();
         try{
             postCategoriesBody.put("category", category.getId());
@@ -165,7 +165,7 @@ public final class API{
 
 
     //Goals
-    public static String getGoalsUrl(@NonNull CategoryContent category){
+    public static String getGoalsUrl(@NonNull TDCCategory category){
         return BASE_URL + "goals/?category=" + category.getId();
     }
 
@@ -183,6 +183,21 @@ public final class API{
 
     public static String getUserGoalUrl(long goalId){
         return BASE_URL + "users/goals/?goal=" + goalId;
+    }
+
+    public static String getPostGoalUrl(@NonNull TDCGoal goal){
+        return BASE_URL + "goals/" + goal.getId() + "/enroll/";
+    }
+
+    public static JSONObject getPostGoalBody(@NonNull TDCCategory category){
+        JSONObject body = new JSONObject();
+        try{
+            body.put("category", category.getId());
+        }
+        catch (JSONException jsonx){
+            jsonx.printStackTrace();
+        }
+        return body;
     }
 
     //Custom goals
@@ -227,44 +242,16 @@ public final class API{
     }
 
 
-    //Behaviors
-    public static String getBehaviorsUrl(@NonNull GoalContent goal){
-        return BASE_URL + "behaviors/?goal=" + goal.getId();
-    }
-
-    public static String getPostBehaviorUrl(){
-        return BASE_URL + "users/behaviors/";
-    }
-
-    public static JSONObject getPostBehaviorBody(@NonNull BehaviorContent behavior, @NonNull GoalContent goal,
-                                                 @NonNull CategoryContent category){
-        JSONObject postBehaviorBody = new JSONObject();
-        try{
-            postBehaviorBody.put("behavior", behavior.getId())
-                    .put("goal", goal.getId())
-                    .put("category", category.getId());
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-        }
-        return postBehaviorBody;
-    }
-
-    public static String getDeleteBehaviorUrl(@NonNull UserBehavior userBehavior){
-        return BASE_URL + "users/behaviors/" + userBehavior.getId() + "/";
-    }
-
-
     //Actions
-    public static String getUserActionsUrl(@NonNull CategoryContent category){
+    public static String getUserActionsUrl(@NonNull TDCCategory category){
         return BASE_URL + "users/actions/?category=" + category.getId();
     }
 
-    public static String getUserActionsUrl(@NonNull GoalContent goal){
+    public static String getUserActionsUrl(@NonNull TDCGoal goal){
         return BASE_URL + "users/actions/?goal=" + goal.getId();
     }
 
-    public static String getUserActionsUrl(@NonNull BehaviorContent behavior){
+    public static String getUserActionsUrl(@NonNull TDCBehavior behavior){
         return BASE_URL + "users/actions/?behavior=" + behavior.getId();
     }
 

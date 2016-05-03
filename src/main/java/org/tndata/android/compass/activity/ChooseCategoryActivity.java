@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
-import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.TDCCategory;
 
 
 /**
@@ -41,7 +41,7 @@ public class ChooseCategoryActivity
         CompassApplication app = (CompassApplication)getApplication();
 
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.choose_category_list);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new ChooseCategoryAdapter(this, this, app.getFilteredCategoryList()));
     }
 
@@ -52,7 +52,7 @@ public class ChooseCategoryActivity
     }
 
     @Override
-    public void onCategorySelected(CategoryContent category){
+    public void onCategorySelected(TDCCategory category){
         Intent chooseGoals = new Intent(this, ChooseGoalsActivity.class)
                 .putExtra(ChooseGoalsActivity.CATEGORY_KEY, category);
         startActivity(chooseGoals);

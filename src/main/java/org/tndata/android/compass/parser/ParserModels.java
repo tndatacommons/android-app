@@ -1,12 +1,12 @@
 package org.tndata.android.compass.parser;
 
-import org.tndata.android.compass.model.BehaviorContent;
-import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.TDCBehavior;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.DailyProgress;
 import org.tndata.android.compass.model.FeedData;
-import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.TDCGoal;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.SearchResult;
@@ -39,7 +39,7 @@ public final class ParserModels{
     }
 
     public final class CategoryContentResultSet implements ResultSet{
-        public List<CategoryContent> results;
+        public List<TDCCategory> results;
     }
 
     public final class CustomGoalsResultSet extends ListResultSet{
@@ -55,11 +55,11 @@ public final class ParserModels{
     }
 
     public final class GoalContentResultSet extends ListResultSet{
-        public List<GoalContent> results;
+        public List<TDCGoal> results;
     }
 
     public final class BehaviorContentResultSet extends ListResultSet{
-        public List<BehaviorContent> results;
+        public List<TDCBehavior> results;
     }
 
     public final class UserActionResultSet extends ListResultSet{

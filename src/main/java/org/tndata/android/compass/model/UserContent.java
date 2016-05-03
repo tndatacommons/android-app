@@ -1,8 +1,8 @@
 package org.tndata.android.compass.model;
 
-import com.google.gson.annotations.SerializedName;
+import android.os.Parcel;
 
-import java.io.Serializable;
+import com.google.gson.annotations.SerializedName;
 
 
 /**
@@ -13,13 +13,14 @@ import java.io.Serializable;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public abstract class UserContent extends TDCBase implements Serializable{
-    private static final long serialVersionUID = -8654445236984566619L;
-
-
+public abstract class UserContent extends TDCBase{
     @SerializedName("editable")
     private boolean mEditable;
 
+
+    protected UserContent(){
+
+    }
 
     /**
      * Gets the id of the actual piece of content for selected content or the id of the
@@ -40,5 +41,15 @@ public abstract class UserContent extends TDCBase implements Serializable{
 
     public boolean isEditable(){
         return mEditable;
+    }
+
+    public void writeToParcel(Parcel dest, int flags){
+        super.writeToParcel(dest, flags);
+        dest.writeByte((byte)(mEditable ? 1 : 0));
+    }
+
+    protected UserContent(Parcel src){
+        super(src);
+        mEditable = src.readByte() == 1;
     }
 }

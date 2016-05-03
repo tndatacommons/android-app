@@ -1,7 +1,6 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -12,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class ActionContent extends TDCContent implements Parcelable{
+public class TDCAction extends TDCContent{
     public static final String TYPE = "action";
 
 
@@ -87,7 +86,7 @@ public class ActionContent extends TDCContent implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags){
-        addToParcel(dest, flags);
+        super.writeToParcel(dest, flags);
         dest.writeInt(mSequenceOrder);
         dest.writeString(mMoreInfo);
         dest.writeString(mHtmlMoreInfo);
@@ -100,33 +99,33 @@ public class ActionContent extends TDCContent implements Parcelable{
         dest.writeLong(mBehaviorId);
     }
 
-    public static final Parcelable.Creator<ActionContent> CREATOR = new Parcelable.Creator<ActionContent>(){
+    public static final Creator<TDCAction> CREATOR = new Creator<TDCAction>(){
         @Override
-        public ActionContent createFromParcel(Parcel in){
-            return new ActionContent(in);
+        public TDCAction createFromParcel(Parcel in){
+            return new TDCAction(in);
         }
 
         @Override
-        public ActionContent[] newArray(int size){
-            return new ActionContent[size];
+        public TDCAction[] newArray(int size){
+            return new TDCAction[size];
         }
     };
 
     /**
      * Constructor to create from parcel.
      *
-     * @param in the parcel where the object is stored.
+     * @param src the parcel where the object is stored.
      */
-    private ActionContent(Parcel in){
-        super(in);
-        mSequenceOrder = in.readInt();
-        mMoreInfo = in.readString();
-        mHtmlMoreInfo = in.readString();
-        mExternalResource = in.readString();
-        mExternalResourceName = in.readString();
-        if (in.readByte() == 1){
-            mTrigger = in.readParcelable(Trigger.class.getClassLoader());
+    private TDCAction(Parcel src){
+        super(src);
+        mSequenceOrder = src.readInt();
+        mMoreInfo = src.readString();
+        mHtmlMoreInfo = src.readString();
+        mExternalResource = src.readString();
+        mExternalResourceName = src.readString();
+        if (src.readByte() == 1){
+            mTrigger = src.readParcelable(Trigger.class.getClassLoader());
         }
-        mBehaviorId = in.readLong();
+        mBehaviorId = src.readLong();
     }
 }

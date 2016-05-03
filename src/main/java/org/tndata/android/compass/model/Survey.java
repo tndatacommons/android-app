@@ -1,7 +1,6 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
@@ -10,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Survey extends TDCBase implements Parcelable, Comparable<Survey>{
+public class Survey extends TDCBase implements Comparable<Survey>{
     private static final String LIKERT = "likertquestion";
     private static final String MULTIPLE_CHOICE = "multiplechoicequestion";
     private static final String BINARY = "binaryquestion";
@@ -270,7 +269,7 @@ public class Survey extends TDCBase implements Parcelable, Comparable<Survey>{
 
     @Override
     public void writeToParcel(Parcel dest, int flags){
-        super.addToParcel(dest, flags);
+        super.writeToParcel(dest, flags);
         dest.writeInt(mOrder);
         dest.writeString(getQuestion());
         dest.writeByte((byte)(mAvailable ? 1 : 0));
@@ -291,12 +290,12 @@ public class Survey extends TDCBase implements Parcelable, Comparable<Survey>{
     public static final Creator<Survey> CREATOR = new Creator<Survey>(){
         @Override
         public Survey createFromParcel(Parcel source){
-            return null;
+            return new Survey(source);
         }
 
         @Override
         public Survey[] newArray(int size){
-            return new Survey[0];
+            return new Survey[size];
         }
     };
 

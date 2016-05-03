@@ -1,6 +1,6 @@
 package org.tndata.android.compass.model;
 
-import android.os.Parcelable;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
@@ -15,12 +15,16 @@ import java.util.Date;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public abstract class Action extends UserContent implements Parcelable, Comparable<Action>{
+public abstract class Action extends UserContent implements Comparable<Action>{
     @SerializedName("trigger")
     private Trigger mTrigger;
     @SerializedName("next_reminder")
     private String mNextReminder;
 
+
+    protected Action(){
+
+    }
 
     public void setTrigger(Trigger trigger){
         mTrigger = trigger;
@@ -43,7 +47,7 @@ public abstract class Action extends UserContent implements Parcelable, Comparab
     }
 
     public String getNextReminder(){
-        return mNextReminder;
+        return mNextReminder != null ? mNextReminder : "";
     }
 
     public Date getNextReminderDate(){
@@ -115,7 +119,18 @@ public abstract class Action extends UserContent implements Parcelable, Comparab
         }
     }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags){
+        super.writeToParcel(dest, flags);
+        dest.writeParcelable(getTrigger(), flags);
+        dest.writeString(getNextReminder());
+    }
+
+    protected Action(Parcel src){
+        super(src);
+        mTrigger = src.readParcelable(Trigger.class.getClassLoader());
+        mNextReminder = src.readString();
+    }
+
     public abstract String getTitle();
-    public abstract Goal getGoal();
-    public abstract String getGoalTitle();
 }

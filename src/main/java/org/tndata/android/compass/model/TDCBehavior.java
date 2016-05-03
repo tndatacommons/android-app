@@ -1,7 +1,6 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 import android.widget.ImageView;
 
 import com.google.gson.annotations.SerializedName;
@@ -18,7 +17,7 @@ import java.util.Set;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class BehaviorContent extends TDCContent implements Parcelable{
+public class TDCBehavior extends TDCContent{
     public static final String TYPE = "behavior";
 
 
@@ -93,13 +92,8 @@ public class BehaviorContent extends TDCContent implements Parcelable{
     }
 
     @Override
-    public int describeContents(){
-        return 0;
-    }
-
-    @Override
     public void writeToParcel(Parcel dest, int flags){
-        addToParcel(dest, flags);
+        super.writeToParcel(dest, flags);
         dest.writeString(mMoreInfo);
         dest.writeString(mHtmlMoreInfo);
         dest.writeString(mExternalResource);
@@ -111,15 +105,15 @@ public class BehaviorContent extends TDCContent implements Parcelable{
         dest.writeInt(mActionCount);
     }
 
-    public static final Creator<BehaviorContent> CREATOR = new Creator<BehaviorContent>(){
+    public static final Creator<TDCBehavior> CREATOR = new Creator<TDCBehavior>(){
         @Override
-        public BehaviorContent createFromParcel(Parcel source){
-            return new BehaviorContent(source);
+        public TDCBehavior createFromParcel(Parcel source){
+            return new TDCBehavior(source);
         }
 
         @Override
-        public BehaviorContent[] newArray(int size){
-            return new BehaviorContent[size];
+        public TDCBehavior[] newArray(int size){
+            return new TDCBehavior[size];
         }
     };
 
@@ -128,7 +122,7 @@ public class BehaviorContent extends TDCContent implements Parcelable{
      *
      * @param src the source parcel.
      */
-    private BehaviorContent(Parcel src){
+    private TDCBehavior(Parcel src){
         super(src);
         mMoreInfo = src.readString();
         mHtmlMoreInfo = src.readString();

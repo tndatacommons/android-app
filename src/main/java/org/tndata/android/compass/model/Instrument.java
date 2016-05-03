@@ -1,8 +1,6 @@
 package org.tndata.android.compass.model;
 
-
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -18,7 +16,7 @@ import java.util.List;
  * @author Edited by Ismael Alonso
  * @version 1.0.0
  */
-public class Instrument extends TDCBase implements Parcelable, ParserModels.ResultSet{
+public class Instrument extends TDCBase implements ParserModels.ResultSet{
     public static final String TYPE = "instrument";
 
 
@@ -101,7 +99,7 @@ public class Instrument extends TDCBase implements Parcelable, ParserModels.Resu
 
     @Override
     public void writeToParcel(Parcel dest, int flags){
-        super.addToParcel(dest, flags);
+        super.writeToParcel(dest, flags);
         dest.writeString(getTitle());
         dest.writeString(getDescription());
         dest.writeString(getInstructions());
@@ -121,6 +119,7 @@ public class Instrument extends TDCBase implements Parcelable, ParserModels.Resu
     };
 
     public Instrument(Parcel src){
+        super(src);
         mTitle = src.readString();
         mDescription = src.readString();
         mInstructions = src.readString();

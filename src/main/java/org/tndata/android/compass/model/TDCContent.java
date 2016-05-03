@@ -1,11 +1,10 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
-
-import java.io.Serializable;
 
 
 /**
@@ -14,9 +13,7 @@ import java.io.Serializable;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public abstract class TDCContent extends TDCBase implements Serializable, Comparable<TDCContent>{
-    private static final long serialVersionUID = -7297141782846963404L;
-
+public abstract class TDCContent extends TDCBase implements Parcelable, Comparable<TDCContent>{
     @SerializedName("title")
     private String mTitle;
     @SerializedName("description")
@@ -73,14 +70,9 @@ public abstract class TDCContent extends TDCBase implements Serializable, Compar
     }
 
 
-    /*---------*
-     * UTILITY *
-     *---------*/
-
-    @Override
-    public int hashCode(){
-        return 21 + mTitle.hashCode();
-    }
+    /*-------*
+     * OTHER *
+     *-------*/
 
     @Override
     public int compareTo(@NonNull TDCContent another){
@@ -88,8 +80,14 @@ public abstract class TDCContent extends TDCBase implements Serializable, Compar
         return getTitle().compareTo(another.getTitle());
     }
 
-    protected void addToParcel(@NonNull Parcel dst, int flags){
-        super.addToParcel(dst, flags);
+    @Override
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dst, int flags){
+        super.writeToParcel(dst, flags);
         dst.writeString(mTitle);
         dst.writeString(mDescription);
         dst.writeString(mHtmlDescription);

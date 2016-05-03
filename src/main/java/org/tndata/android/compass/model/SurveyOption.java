@@ -1,13 +1,12 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
 
-public class SurveyOption extends TDCBase implements Parcelable{
+public class SurveyOption extends TDCBase{
     public static final String TYPE = "option";
 
 
@@ -44,7 +43,7 @@ public class SurveyOption extends TDCBase implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags){
-        super.addToParcel(dest, flags);
+        super.writeToParcel(dest, flags);
         dest.writeString(getText());
     }
 

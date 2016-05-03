@@ -55,7 +55,7 @@ public class CheckInFeedbackFragment extends Fragment implements SeekBar.OnSeekB
         //Create the argument bundle
         Bundle args = new Bundle();
         args.putInt(INDEX_KEY, index);
-        args.putSerializable(USER_GOAL_KEY, userGoal);
+        args.putParcelable(USER_GOAL_KEY, userGoal);
 
         //Create the fragment and deliver the arguments
         CheckInFeedbackFragment fragment = new CheckInFeedbackFragment();
@@ -70,7 +70,7 @@ public class CheckInFeedbackFragment extends Fragment implements SeekBar.OnSeekB
         //Retrieve the arguments
         Bundle arguments = getArguments();
         mIndex = arguments.getInt(INDEX_KEY);
-        mUserGoal = (UserGoal)arguments.getSerializable(USER_GOAL_KEY);
+        mUserGoal = arguments.getParcelable(USER_GOAL_KEY);
     }
 
     @Override

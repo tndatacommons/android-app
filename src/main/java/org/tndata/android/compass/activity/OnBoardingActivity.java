@@ -12,7 +12,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseInterestsAdapter;
 import org.tndata.android.compass.fragment.ChooseInterestsFragment;
 import org.tndata.android.compass.fragment.InstrumentFragment;
-import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Instrument;
 import org.tndata.android.compass.model.Survey;
@@ -45,6 +45,8 @@ public class OnBoardingActivity
     private static final int STAGE_PROFILE = 0;
     private static final int STAGE_CHOOSE_CATEGORIES = 1;
 
+    private static final int PROFILE_ITEMS = 3;
+
 
     private CompassApplication mApplication;
     private Fragment mFragment = null;
@@ -74,7 +76,7 @@ public class OnBoardingActivity
         String description = getString(R.string.onboarding_instrument_description);
         String instructions = getString(R.string.onboarding_instrument_instructions);
         mInstrument = new Instrument(title, description, instructions);
-        for (int i = 0; i < User.ITEM_COUNT; i++){
+        for (int i = 0; i < PROFILE_ITEMS; i++){
             mInstrument.addSurvey(mApplication.getUser().generateSurvey(this, i));
         }
         swapFragments(STAGE_PROFILE);
@@ -107,11 +109,17 @@ public class OnBoardingActivity
         for (Survey survey:instrument.getQuestions()){
             mApplication.getUser().postSurvey(survey);
         }
-        swapFragments(STAGE_CHOOSE_CATEGORIES);
+
+        User user = mApplication.getUser();
+        user.setOnBoardingComplete();
+        HttpRequest.put(null, API.getPutUserProfileUrl(user), API.getPutUserProfileBody(user));
+        FeedDataLoader.load(this);
+
+        //swapFragments(STAGE_CHOOSE_CATEGORIES);
     }
 
     @Override
-    public void onCategoriesSelected(List<CategoryContent> selection, List<UserCategory> original){
+    public void onCategoriesSelected(List<TDCCategory> selection, List<UserCategory> original){
         //Process and log the selection, and save it
         for (int i = 0; i < selection.size(); i++){
             if (i == 0){
@@ -120,7 +128,7 @@ public class OnBoardingActivity
                 mLastPostCategoryRC = mInitialPostCategoryRC +selection.size();
             }
             else{
-                CategoryContent cat = selection.get(i);
+                TDCCategory cat = selection.get(i);
                 HttpRequest.post(this, API.getUserCategoriesUrl(), API.getPostCategoryBody(cat));
             }
         }

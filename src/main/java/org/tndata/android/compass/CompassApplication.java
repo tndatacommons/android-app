@@ -9,7 +9,7 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.User;
@@ -38,7 +38,7 @@ public class CompassApplication extends Application{
     //The logged-in user
     private User mUser;
     //The list of public categories
-    private Map<Long, CategoryContent> mPublicCategories;
+    private Map<Long, TDCCategory> mPublicCategories;
     //The feed data bundle
     private FeedData mFeedData;
 
@@ -116,9 +116,9 @@ public class CompassApplication extends Application{
      *
      * @param categories the list of public categories.
      */
-    public void setPublicCategories(List<CategoryContent> categories){
+    public void setPublicCategories(List<TDCCategory> categories){
         mPublicCategories = new HashMap<>();
-        for (CategoryContent category:categories){
+        for (TDCCategory category:categories){
             mPublicCategories.put(category.getId(), category);
         }
     }
@@ -128,7 +128,7 @@ public class CompassApplication extends Application{
      *
      * @return A Long->CategoryContent HashMap.
      */
-    public Map<Long, CategoryContent> getPublicCategories(){
+    public Map<Long, TDCCategory> getPublicCategories(){
         return mPublicCategories;
     }
 
@@ -137,7 +137,7 @@ public class CompassApplication extends Application{
      *
      * @return the unordered list of public categories.
      */
-    public List<CategoryContent> getPublicCategoryList(){
+    public List<TDCCategory> getPublicCategoryList(){
         return new ArrayList<>(mPublicCategories.values());
     }
 
@@ -147,16 +147,22 @@ public class CompassApplication extends Application{
      *
      * @return the unordered list of public categories, excluding those selected by default.
      */
-    public List<CategoryContent> getFilteredCategoryList() {
-        ArrayList filtered_categories = new ArrayList<>();
-        for(CategoryContent category: mPublicCategories.values()) {
-            if(!category.isSelectedByDefault()) {
-                filtered_categories.add(category);
+    public List<TDCCategory> getFilteredCategoryList(){
+        List<TDCCategory> featured = new ArrayList<>();
+        List<TDCCategory> regular = new ArrayList<>();
+        for (TDCCategory category:mPublicCategories.values()){
+            if (!category.isSelectedByDefault()){
+                if (category.isFeatured()){
+                    featured.add(category);
+                }
+                else{
+                    regular.add(category);
+                }
             }
         }
-        return filtered_categories;
+        featured.addAll(regular);
+        return featured;
     }
-
 
     /**
      * Feed data setter.

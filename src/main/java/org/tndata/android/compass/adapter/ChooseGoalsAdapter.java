@@ -14,8 +14,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.CategoryContent;
-import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.TDCCategory;
+import org.tndata.android.compass.model.TDCGoal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +30,10 @@ import java.util.List;
 public class ChooseGoalsAdapter extends MaterialAdapter{
     private Context mContext;
     private ChooseGoalsListener mListener;
-    private CategoryContent mCategory;
+    private TDCCategory mCategory;
 
     private GoalsAdapter mGoalsAdapter;
-    private List<GoalContent> mGoals;
+    private List<TDCGoal> mGoals;
 
 
     /**
@@ -44,7 +44,7 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
      * @param category the category from where the goals are pulled.
      */
     public ChooseGoalsAdapter(@NonNull Context context, @NonNull ChooseGoalsListener listener,
-                              @NonNull CategoryContent category){
+                              @NonNull TDCCategory category){
 
         super(context, ContentType.LIST, true);
 
@@ -56,7 +56,7 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
     }
 
     @Override
-    protected boolean isEmpty(){
+    public boolean isEmpty(){
         return mGoals.isEmpty();
     }
 
@@ -75,7 +75,7 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
         holder.setTitleColor(Color.WHITE);
         holder.setTitle(mContext.getString(R.string.library_goals_content_header));
         mGoalsAdapter = new GoalsAdapter();
-        holder.setAdapter(new GoalsAdapter());
+        holder.setAdapter(mGoalsAdapter);
     }
 
     /**
@@ -84,7 +84,7 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
      * @param goals the list of goals to be added.
      * @param showLoading whether the load switch should be kept or removed.
      */
-    public void add(@NonNull List<GoalContent> goals, boolean showLoading){
+    public void add(@NonNull List<TDCGoal> goals, boolean showLoading){
         //If there are no goals, insert the goals card
         if (isEmpty()){
             notifyListInserted();
@@ -101,6 +101,21 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
             prepareListChange();
             mGoalsAdapter.notifyItemRangeInserted(positionStart, goals.size());
             notifyListChanged();
+        }
+    }
+
+    /**
+     * Removes a goal from the list.
+     *
+     * @param goal the goal to be removed.
+     */
+    public void remove(TDCGoal goal){
+        int index = mGoals.indexOf(goal);
+        prepareListChange();
+        mGoals.remove(index);
+        mGoalsAdapter.notifyItemRemoved(index);
+        if (!mGoals.isEmpty()){
+            mGoalsAdapter.notifyItemChanged(0);
         }
     }
 
@@ -166,7 +181,7 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
          * @param goal the behavior to be bound.
          */
         @SuppressWarnings("deprecation")
-        public void bind(@NonNull GoalContent goal){
+        public void bind(@NonNull TDCGoal goal){
             //If this is the first item, do not show the separator
             if (getAdapterPosition() == 0){
                 mSeparator.setVisibility(View.GONE);
@@ -206,7 +221,7 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
          *
          * @param goal the goal whose add was tapped.
          */
-        void onGoalSelected(@NonNull GoalContent goal);
+        void onGoalSelected(@NonNull TDCGoal goal);
 
         /**
          * Called when the user scrolls to the bottom of the page.

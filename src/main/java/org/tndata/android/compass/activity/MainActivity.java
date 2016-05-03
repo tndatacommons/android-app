@@ -32,11 +32,11 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.CategoryContent;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
-import org.tndata.android.compass.model.GoalContent;
+import org.tndata.android.compass.model.TDCGoal;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.util.API;
@@ -448,18 +448,19 @@ public class MainActivity
     }
 
     @Override
-    public void onSuggestionSelected(GoalContent goal){
-        CategoryContent category = null;
+    public void onSuggestionSelected(TDCGoal goal){
+        TDCCategory category = null;
         for (Long categoryId:goal.getCategoryIdSet()){
             if (mApplication.getPublicCategories().containsKey(categoryId)){
                 category = mApplication.getPublicCategories().get(categoryId);
                 break;
             }
         }
-        Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
+        //TODO
+        /*Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
                 .putExtra(ChooseBehaviorsActivity.GOAL_KEY, (Parcelable)goal)
                 .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, category);
-        startActivityForResult(chooseBehaviors, GOAL_SUGGESTION_REQUEST_CODE);
+        startActivityForResult(chooseBehaviors, GOAL_SUGGESTION_REQUEST_CODE);*/
     }
 
     @Override
@@ -470,9 +471,8 @@ public class MainActivity
             startActivityForResult(reviewActionsIntent, GOAL_RC);
         }
         else if (goal instanceof CustomGoal){
-            Parcelable customGoal = (CustomGoal)goal;
             Intent editGoal = new Intent(this, CustomContentManagerActivity.class)
-                    .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, customGoal);
+                    .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, goal);
             startActivityForResult(editGoal, GOAL_RC);
         }
     }

@@ -261,16 +261,16 @@ public final class CompassUtil{
             return TDCPackage.class;
         }
         else if (src.contains("category")){
-            return CategoryContent.class;
+            return TDCCategory.class;
         }
         else if (src.contains("goal")){
-            return GoalContent.class;
+            return TDCGoal.class;
         }
         else if (src.contains("behavior")){
-            return BehaviorContent.class;
+            return TDCBehavior.class;
         }
         else if (src.contains("action")){
-            return ActionContent.class;
+            return TDCAction.class;
         }
         //Places
         else if (src.contains("userplace")){
