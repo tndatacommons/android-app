@@ -31,11 +31,13 @@ android {
             buildConfigField STRING, GCM_SENDER_ID_VAR_NAME, GCM_SENDER_ID
             manifestPlaceholders = [fabricApiKey: FabricApiKey, mapsApiKey: MapsDebugApiKey]
             resValue "string", "version_name", VERSION_NAME + ".debug"
+            resValue "string", "google_app_id", GoogleAPIsProjID
         }
         release {
             buildConfigField STRING, GCM_SENDER_ID_VAR_NAME, GCM_SENDER_ID
             manifestPlaceholders = [fabricApiKey: FabricApiKey, mapsApiKey: MapsApiKey]
             resValue "string", "version_name", VERSION_NAME
+            resValue "string", "google_app_id", GoogleAPIsProjID
         }
     }
 
