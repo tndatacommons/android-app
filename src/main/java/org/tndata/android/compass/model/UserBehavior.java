@@ -6,9 +6,6 @@ import com.google.gson.annotations.SerializedName;
 
 import org.tndata.android.compass.parser.ParserModels;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 /**
  * Model class for user behaviors.
@@ -23,28 +20,6 @@ public class UserBehavior extends UserContent implements ParserModels.ResultSet{
     //Values retrieved from the API
     @SerializedName("behavior")
     private TDCBehavior mBehavior;
-
-    //Values set during post-processing
-    private List<UserGoal> userGoals = new ArrayList<>();
-    private List<UserAction> userActions = new ArrayList<>();
-
-
-    public UserBehavior(TDCBehavior behavior){
-        this.mBehavior = behavior;
-    }
-
-
-    /*---------*
-     * SETTERS *
-     *---------*/
-
-    public void setGoals(List<UserGoal> goals) {
-        this.userGoals = goals;
-    }
-
-    public void setActions(List<UserAction> actions){
-        this.userActions = actions;
-    }
 
 
     /*---------*
@@ -76,14 +51,6 @@ public class UserBehavior extends UserContent implements ParserModels.ResultSet{
         return mBehavior.getIconUrl();
     }
 
-    public List<UserGoal> getGoals(){
-        return userGoals;
-    }
-
-    public List<UserAction> getActions(){
-        return userActions;
-    }
-
     @Override
     protected String getType(){
         return TYPE;
@@ -95,36 +62,7 @@ public class UserBehavior extends UserContent implements ParserModels.ResultSet{
 
     @Override
     public void init(){
-        if (userGoals == null){
-            userGoals = new ArrayList<>();
-        }
-        if (userActions == null){
-            userActions = new ArrayList<>();
-        }
-    }
 
-    public void addGoal(UserGoal goal){
-        if (!userGoals.contains(goal)){
-            userGoals.add(goal);
-        }
-    }
-
-    public void removeGoal(UserGoal goal){
-        if (userGoals.contains(goal)){
-            userGoals.remove(goal);
-        }
-    }
-
-    public void addAction(UserAction action){
-        if (!userActions.contains(action)){
-            userActions.add(action);
-        }
-    }
-
-    public void removeAction(UserAction action){
-        if (userActions.contains(action)){
-            userActions.remove(action);
-        }
     }
 
     @Override
@@ -139,7 +77,7 @@ public class UserBehavior extends UserContent implements ParserModels.ResultSet{
 
     @Override
     public void writeToParcel(Parcel dest, int flags){
-        super.addToParcel(dest, flags);
+        super.writeToParcel(dest, flags);
         dest.writeParcelable(mBehavior, flags);
     }
 
