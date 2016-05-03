@@ -1,14 +1,8 @@
 package org.tndata.android.compass.model;
 
-import android.content.Context;
 import android.os.Parcel;
 
 import com.google.gson.annotations.SerializedName;
-
-import org.tndata.android.compass.R;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -26,38 +20,6 @@ public class UserGoal extends Goal{
     private TDCGoal mGoal;
     @SerializedName("primary_category")
     private long mPrimaryCategoryId;
-
-    //Values set during post-processing
-    private UserCategory mPrimaryCategory;
-    private List<UserCategory> mUserCategories = new ArrayList<>();
-    private List<UserBehavior> mUserBehaviors = new ArrayList<>();
-
-
-    public UserGoal(TDCGoal goal, UserCategory primaryCategory){
-        this.mGoal = goal;
-        this.mPrimaryCategory = primaryCategory;
-    }
-
-
-    /*---------*
-     * SETTERS *
-     *---------*/
-
-    public void setPrimaryCategoryId(int primaryCategory){
-        this.mPrimaryCategoryId = primaryCategory;
-    }
-
-    public void setPrimaryCategory(UserCategory primaryCategory){
-        this.mPrimaryCategory = primaryCategory;
-    }
-
-    public void setCategories(List<UserCategory> categories){
-        this.mUserCategories = categories;
-    }
-
-    public void setBehaviors(List<UserBehavior> behaviors){
-        this.mUserBehaviors = behaviors;
-    }
 
 
     /*---------*
@@ -86,33 +48,8 @@ public class UserGoal extends Goal{
         return mGoal.getHTMLDescription();
     }
 
-    @Override
-    public String getIconUrl(){
-        return mGoal.getIconUrl();
-    }
-
-    @Override
-    public String getColor(Context context){
-        if (mPrimaryCategory == null){
-            return String.format("#%06X", 0xFFFFFF & context.getResources().getColor(R.color.primary));
-        }
-        return mPrimaryCategory.getColor();
-    }
-
     public long getPrimaryCategoryId(){
         return mPrimaryCategoryId;
-    }
-
-    public UserCategory getPrimaryCategory(){
-        return mPrimaryCategory;
-    }
-
-    public List<UserCategory> getCategories(){
-        return mUserCategories;
-    }
-
-    public List<UserBehavior> getBehaviors() {
-        return mUserBehaviors;
     }
 
     @Override
@@ -127,36 +64,7 @@ public class UserGoal extends Goal{
 
     @Override
     public void init(){
-        if (mUserCategories == null){
-            mUserCategories = new ArrayList<>();
-        }
-        if (mUserBehaviors == null){
-            mUserBehaviors = new ArrayList<>();
-        }
-    }
 
-    public void addBehavior(UserBehavior behavior){
-        if (!mUserBehaviors.contains(behavior)){
-            mUserBehaviors.add(behavior);
-        }
-    }
-
-    public void removeBehavior(UserBehavior behavior){
-        if (mUserBehaviors.contains(behavior)){
-            mUserBehaviors.remove(behavior);
-        }
-    }
-
-    public void addCategory(UserCategory category){
-        if (!mUserCategories.contains(category)){
-            mUserCategories.add(category);
-        }
-    }
-
-    public void removeCategory(UserCategory category){
-        if (mUserCategories.contains(category)){
-            mUserCategories.remove(category);
-        }
     }
 
     @Override

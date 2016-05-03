@@ -1,11 +1,8 @@
 package org.tndata.android.compass.model;
 
-import android.content.Context;
 import android.os.Parcel;
 
 import com.google.gson.annotations.SerializedName;
-
-import org.tndata.android.compass.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,16 +58,6 @@ public class CustomGoal extends Goal{
     }
 
     @Override
-    public String getIconUrl(){
-        return "";
-    }
-
-    @Override
-    public String getColor(Context context){
-        return String.format("#%06X", 0xFFFFFF & context.getResources().getColor(R.color.primary));
-    }
-
-    @Override
     public boolean isEditable(){
         return true;
     }
@@ -112,7 +99,7 @@ public class CustomGoal extends Goal{
 
     @Override
     public void writeToParcel(Parcel dest, int flags){
-        dest.writeLong(getId());
+        super.writeToParcel(dest, flags);
         dest.writeString(mTitle);
         dest.writeTypedList(mActions);
     }
@@ -135,13 +122,10 @@ public class CustomGoal extends Goal{
      * @param src the parcel where the object is stored.
      */
     private CustomGoal(Parcel src){
-        setId(src.readLong());
+        super(src);
         mTitle = src.readString();
         //Retrieve the actions as an array list and assign the parent goal
         mActions = new ArrayList<>();
         src.readTypedList(mActions, CustomAction.CREATOR);
-        for (CustomAction action:mActions){
-            action.setGoal(this);
-        }
     }
 }

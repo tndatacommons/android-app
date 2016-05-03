@@ -20,6 +20,4 @@ public abstract class Goal extends UserContent{
     }
 
     public abstract String getTitle();
-    public abstract String getIconUrl();
-    public abstract String getColor(Context context);
 }
