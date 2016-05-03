@@ -93,6 +93,7 @@ dependencies {
     compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.9'
     compile 'com.github.clans:fab:1.6.2'
     compile 'es.sandwatch:http-requests:1.0.0'
+    compile 'org.jsoup:jsoup:1.9.1'
     compile 'com.google.android.gms:play-services-ads:8.4.0'
     compile 'com.google.android.gms:play-services-auth:8.4.0'
     compile 'com.google.android.gms:play-services-gcm:8.4.0'
