@@ -96,15 +96,10 @@ public class CustomAction extends Action{
 
     @Override
     public void writeToParcel(Parcel dest, int flags){
-        dest.writeLong(getId());
+        super.writeToParcel(dest, flags);
         dest.writeString(mTitle);
         dest.writeLong(mCustomGoalId);
         dest.writeString(mNotificationText);
-        dest.writeParcelable(getTrigger(), flags);
-        dest.writeByte((byte)(getNextReminder() != null ? 1 : 0));
-        if (getNextReminder() != null){
-            dest.writeString(getNextReminder());
-        }
     }
 
     public static final Creator<CustomAction> CREATOR = new Creator<CustomAction>(){
@@ -125,13 +120,9 @@ public class CustomAction extends Action{
      * @param src the parcel where the object is stored.
      */
     private CustomAction(Parcel src){
-        setId(src.readLong());
+        super(src);
         mTitle = src.readString();
         mCustomGoalId = src.readLong();
         mNotificationText = src.readString();
-        setTrigger((Trigger)src.readParcelable(Trigger.class.getClassLoader()));
-        if (src.readByte() == 1){
-            setNextReminder(src.readString());
-        }
     }
 }
