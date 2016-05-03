@@ -121,6 +121,7 @@ public class Instrument extends TDCBase implements Parcelable, ParserModels.Resu
     };
 
     public Instrument(Parcel src){
+        super(src);
         mTitle = src.readString();
         mDescription = src.readString();
         mInstructions = src.readString();

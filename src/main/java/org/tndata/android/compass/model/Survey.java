@@ -291,12 +291,12 @@ public class Survey extends TDCBase implements Parcelable, Comparable<Survey>{
     public static final Creator<Survey> CREATOR = new Creator<Survey>(){
         @Override
         public Survey createFromParcel(Parcel source){
-            return null;
+            return new Survey(source);
         }
 
         @Override
         public Survey[] newArray(int size){
-            return new Survey[0];
+            return new Survey[size];
         }
     };
 
