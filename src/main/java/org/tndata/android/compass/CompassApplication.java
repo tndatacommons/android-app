@@ -164,6 +164,16 @@ public class CompassApplication extends Application{
         return featured;
     }
 
+    public List<TDCCategory> getFeaturedCategories(){
+        List<TDCCategory> featured = new ArrayList<>();
+        for (TDCCategory category:mPublicCategories.values()){
+            if (category.isFeatured()){
+                featured.add(category);
+            }
+        }
+        return featured;
+    }
+
     /**
      * Feed data setter.
      *

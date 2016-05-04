@@ -1,5 +1,6 @@
 package org.tndata.android.compass.activity;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
@@ -9,13 +10,18 @@ import android.support.v7.widget.Toolbar;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
+import org.tndata.android.compass.adapter.ChooseGoalAdapter;
 import org.tndata.android.compass.adapter.ChooseInterestsAdapter;
+import org.tndata.android.compass.fragment.ChooseGoalFragment;
 import org.tndata.android.compass.fragment.ChooseInterestsFragment;
 import org.tndata.android.compass.fragment.InstrumentFragment;
+import org.tndata.android.compass.fragment.OnBoardingCategoryFragment;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Instrument;
 import org.tndata.android.compass.model.Survey;
+import org.tndata.android.compass.model.TDCGoal;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.util.API;
@@ -38,12 +44,15 @@ public class OnBoardingActivity
         extends AppCompatActivity
         implements
                 InstrumentFragment.InstrumentFragmentCallback,
+                OnBoardingCategoryFragment.CategoryListener,
+                ChooseGoalAdapter.ChooseGoalListener,
                 ChooseInterestsAdapter.OnCategoriesSelectedListener,
                 HttpRequest.RequestCallback,
                 FeedDataLoader.Callback{
 
     private static final int STAGE_PROFILE = 0;
-    private static final int STAGE_CHOOSE_CATEGORIES = 1;
+    private static final int STAGE_CHOOSE_CATEGORY = 1;
+    private static final int STAGE_CHOOSE_GOAL = 2;
 
     private static final int PROFILE_ITEMS = 3;
 
@@ -51,6 +60,9 @@ public class OnBoardingActivity
     private CompassApplication mApplication;
     private Fragment mFragment = null;
     private Instrument mInstrument;
+    private TDCCategory mCategory;
+
+    private boolean firewall = false;
 
     //Request codes
     private int mInitialPostCategoryRC;
@@ -93,9 +105,14 @@ public class OnBoardingActivity
                 mFragment = InstrumentFragment.newInstance(mInstrument, 3);
                 break;
 
-            case STAGE_CHOOSE_CATEGORIES:
-                mFragment = ChooseInterestsFragment.newInstance(true);
+            case STAGE_CHOOSE_CATEGORY:
+                mFragment = new OnBoardingCategoryFragment();
                 break;
+
+            case STAGE_CHOOSE_GOAL:
+                mFragment = ChooseGoalFragment.newInstance(mCategory);
+                break;
+
         }
 
         if (mFragment != null){
@@ -110,12 +127,21 @@ public class OnBoardingActivity
             mApplication.getUser().postSurvey(survey);
         }
 
+        swapFragments(STAGE_CHOOSE_CATEGORY);
+    }
+
+    @Override
+    public void onCategorySelected(TDCCategory category){
+        mCategory = category;
+        swapFragments(STAGE_CHOOSE_GOAL);
+    }
+
+    @Override
+    public void onSkip(){
         User user = mApplication.getUser();
         user.setOnBoardingComplete();
         HttpRequest.put(null, API.getPutUserProfileUrl(user), API.getPutUserProfileBody(user));
         FeedDataLoader.load(this);
-
-        //swapFragments(STAGE_CHOOSE_CATEGORIES);
     }
 
     @Override
@@ -164,6 +190,18 @@ public class OnBoardingActivity
             mApplication.setFeedData(feedData);
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
+        }
+    }
+
+    @Override
+    public void onGoalSelected(@NonNull TDCGoal goal, TDCCategory category){
+        if (!firewall){
+            firewall = true;
+            HttpRequest.post(null, API.getPostGoalUrl(goal), API.getPostCategoryBody(category));
+            User user = mApplication.getUser();
+            user.setOnBoardingComplete();
+            HttpRequest.put(null, API.getPutUserProfileUrl(user), API.getPutUserProfileBody(user));
+            FeedDataLoader.load(this);
         }
     }
 }

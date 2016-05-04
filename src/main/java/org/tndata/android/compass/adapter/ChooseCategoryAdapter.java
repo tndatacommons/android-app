@@ -38,7 +38,8 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter<ChooseCategoryAd
      * @param listener the listener.
      * @param categories the list of categories to choose from.
      */
-    public ChooseCategoryAdapter(Context context, ChooseCategoryAdapterListener listener, List<TDCCategory> categories){
+    public ChooseCategoryAdapter(Context context, ChooseCategoryAdapterListener listener,
+                                 List<TDCCategory> categories){
         mContext = context;
         mListener = listener;
         mCategories = categories;
