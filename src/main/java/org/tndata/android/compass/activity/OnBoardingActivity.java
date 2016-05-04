@@ -17,6 +17,7 @@ import org.tndata.android.compass.fragment.ChooseGoalFragment;
 import org.tndata.android.compass.fragment.ChooseInterestsFragment;
 import org.tndata.android.compass.fragment.InstrumentFragment;
 import org.tndata.android.compass.fragment.OnBoardingCategoryFragment;
+import org.tndata.android.compass.fragment.ProgressFragment;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Instrument;
@@ -24,6 +25,8 @@ import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.model.TDCGoal;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserCategory;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.FeedDataLoader;
 
@@ -46,13 +49,14 @@ public class OnBoardingActivity
                 InstrumentFragment.InstrumentFragmentCallback,
                 OnBoardingCategoryFragment.CategoryListener,
                 ChooseGoalAdapter.ChooseGoalListener,
-                ChooseInterestsAdapter.OnCategoriesSelectedListener,
                 HttpRequest.RequestCallback,
+                Parser.ParserCallback,
                 FeedDataLoader.Callback{
 
     private static final int STAGE_PROFILE = 0;
     private static final int STAGE_CHOOSE_CATEGORY = 1;
     private static final int STAGE_CHOOSE_GOAL = 2;
+    private static final int STAGE_PROGRESS = 3;
 
     private static final int PROFILE_ITEMS = 3;
 
@@ -61,12 +65,9 @@ public class OnBoardingActivity
     private Fragment mFragment = null;
     private Instrument mInstrument;
     private TDCCategory mCategory;
+    private List<TDCGoal> mGoals;
 
     private boolean firewall = false;
-
-    //Request codes
-    private int mInitialPostCategoryRC;
-    private int mLastPostCategoryRC;
 
 
     @Override
@@ -110,7 +111,11 @@ public class OnBoardingActivity
                 break;
 
             case STAGE_CHOOSE_GOAL:
-                mFragment = ChooseGoalFragment.newInstance(mCategory);
+                mFragment = ChooseGoalFragment.newInstance(mCategory, mGoals);
+                break;
+
+            case STAGE_PROGRESS:
+                mFragment = new ProgressFragment();
                 break;
 
         }
@@ -133,11 +138,13 @@ public class OnBoardingActivity
     @Override
     public void onCategorySelected(TDCCategory category){
         mCategory = category;
-        swapFragments(STAGE_CHOOSE_GOAL);
+        HttpRequest.get(this, API.getGoalsUrl(category) + "&page_size=999");
+        swapFragments(STAGE_PROGRESS);
     }
 
     @Override
     public void onSkip(){
+        swapFragments(STAGE_PROGRESS);
         User user = mApplication.getUser();
         user.setOnBoardingComplete();
         HttpRequest.put(null, API.getPutUserProfileUrl(user), API.getPutUserProfileBody(user));
@@ -145,43 +152,24 @@ public class OnBoardingActivity
     }
 
     @Override
-    public void onCategoriesSelected(List<TDCCategory> selection, List<UserCategory> original){
-        //Process and log the selection, and save it
-        for (int i = 0; i < selection.size(); i++){
-            if (i == 0){
-                mInitialPostCategoryRC = HttpRequest.post(this, API.getUserCategoriesUrl(),
-                        API.getPostCategoryBody(selection.get(i)));
-                mLastPostCategoryRC = mInitialPostCategoryRC +selection.size();
-            }
-            else{
-                TDCCategory cat = selection.get(i);
-                HttpRequest.post(this, API.getUserCategoriesUrl(), API.getPostCategoryBody(cat));
-            }
-        }
-
-        User user = mApplication.getUser();
-        user.setOnBoardingComplete();
-        HttpRequest.put(null, API.getPutUserProfileUrl(user), API.getPutUserProfileBody(user));
-    }
-
-    @Override
     public void onRequestComplete(int requestCode, String result){
-        if (requestCode < mLastPostCategoryRC){
-            mInitialPostCategoryRC++;
-            if (mInitialPostCategoryRC == mLastPostCategoryRC){
-                FeedDataLoader.load(this);
-            }
-        }
+        Parser.parse(result, ParserModels.GoalContentResultSet.class, this);
     }
 
     @Override
     public void onRequestFailed(int requestCode, HttpRequestError error){
-        if (requestCode < mLastPostCategoryRC){
-            mInitialPostCategoryRC++;
-            if (mInitialPostCategoryRC == mLastPostCategoryRC){
-                FeedDataLoader.load(this);
-            }
-        }
+
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        mGoals = ((ParserModels.GoalContentResultSet)result).results;
+        swapFragments(STAGE_CHOOSE_GOAL);
     }
 
     @Override
@@ -196,6 +184,7 @@ public class OnBoardingActivity
     @Override
     public void onGoalSelected(@NonNull TDCGoal goal, TDCCategory category){
         if (!firewall){
+            swapFragments(STAGE_PROGRESS);
             firewall = true;
             HttpRequest.post(null, API.getPostGoalUrl(goal), API.getPostCategoryBody(category));
             User user = mApplication.getUser();

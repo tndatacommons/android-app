@@ -21,6 +21,7 @@ import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import es.sandwatch.httprequests.HttpRequest;
@@ -30,14 +31,16 @@ import es.sandwatch.httprequests.HttpRequestError;
 /**
  * Created by isma on 5/4/16.
  */
-public class ChooseGoalFragment extends Fragment implements HttpRequest.RequestCallback, Parser.ParserCallback, ChooseGoalAdapter.ChooseGoalListener{
-    public static final String KEY = "org.tndata.compass.ChooseGoal.Category";
+public class ChooseGoalFragment extends Fragment implements ChooseGoalAdapter.ChooseGoalListener{
+    public static final String CAT_KEY = "org.tndata.compass.ChooseGoal.Category";
+    public static final String GOALS_KEY = "org.tndata.compass.ChooseGoal.Goals";
 
 
-    public static ChooseGoalFragment newInstance(TDCCategory category){
+    public static ChooseGoalFragment newInstance(TDCCategory category, List<TDCGoal> goalz){
         ChooseGoalFragment fragment = new ChooseGoalFragment();
         Bundle arguments = new Bundle();
-        arguments.putParcelable(KEY, category);
+        arguments.putParcelable(CAT_KEY, category);
+        arguments.putParcelableArrayList(GOALS_KEY, (ArrayList<TDCGoal>)goalz);
         fragment.setArguments(arguments);
         return fragment;
     }
@@ -45,13 +48,15 @@ public class ChooseGoalFragment extends Fragment implements HttpRequest.RequestC
 
     private ChooseGoalAdapter.ChooseGoalListener mListener;
     private TDCCategory category;
+    private List<TDCGoal> goals;
     private RecyclerView recyclerView;
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        category = getArguments().getParcelable(KEY);
+        category = getArguments().getParcelable(CAT_KEY);
+        goals = getArguments().getParcelableArrayList(GOALS_KEY);
     }
 
     @Override
@@ -77,29 +82,6 @@ public class ChooseGoalFragment extends Fragment implements HttpRequest.RequestC
         CompassApplication app = (CompassApplication)getActivity().getApplication();
         recyclerView = (RecyclerView)root.findViewById(R.id.list_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        Log.d("OB", "Getting " + API.getGoalsUrl(category));
-        HttpRequest.get(this, API.getGoalsUrl(category));
-    }
-
-    @Override
-    public void onRequestComplete(int requestCode, String result){
-        Parser.parse(result, ParserModels.GoalContentResultSet.class, this);
-    }
-
-    @Override
-    public void onRequestFailed(int requestCode, HttpRequestError error){
-
-    }
-
-    @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-
-    }
-
-    @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        List<TDCGoal> goals = ((ParserModels.GoalContentResultSet)result).results;
-
         recyclerView.setAdapter(new ChooseGoalAdapter(getContext(), this, category, goals));
     }
 
