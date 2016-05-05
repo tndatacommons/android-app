@@ -46,7 +46,7 @@ public class ActionReportService extends IntentService{
 
     @Override
     protected void onHandleIntent(Intent intent){
-        Action action = (Action)intent.getSerializableExtra(ACTION_KEY);
+        Action action = intent.getParcelableExtra(ACTION_KEY);
         Reminder reminder = intent.getParcelableExtra(NotificationUtil.REMINDER_KEY);
 
         String notificationTag;

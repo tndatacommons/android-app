@@ -211,8 +211,7 @@ public class LoginActivity
                 fragment = mTourFragment;
                 switchActionBarState(false);
                 break;
-            default:
-                break;
+
         }
         if (fragment != null){
             if (addToStack){
@@ -313,6 +312,14 @@ public class LoginActivity
 
     @Override
     public void onTourComplete(){
+        Log.d("LogIn", "tour complete");
+        for (Fragment fragment:mFragmentStack){
+            Log.d("LogIn", "fragment in stack");
+            if (fragment instanceof LauncherFragment){
+                Log.d("LogIn", "is launcher");
+                ((LauncherFragment)fragment).showProgress(false);
+            }
+        }
         handleBackStack();
     }
 

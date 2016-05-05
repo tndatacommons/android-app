@@ -107,6 +107,31 @@ public class PlacesActivity
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu_places, menu);
+        mAdd = menu.findItem(R.id.places_add);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+                return true;
+
+            case R.id.places_add:
+                mCurrentPlace = null;
+                mEdition = false;
+                mName.setText("");
+                mNameDialog.show();
+                return true;
+
+        }
+        return false;
+    }
+
+    @Override
     public void onRequestComplete(int requestCode, String result){
         Parser.parse(result, ParserModels.PlacesResultSet.class, this);
     }
@@ -176,25 +201,6 @@ public class PlacesActivity
         mList.setOnItemClickListener(this);
         mList.setVisibility(View.VISIBLE);
         mAdd.setEnabled(true);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.menu_places, menu);
-        mAdd = menu.findItem(R.id.places_add);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        if (item.getItemId() == R.id.places_add){
-            mCurrentPlace = null;
-            mEdition = false;
-            mName.setText("");
-            mNameDialog.show();
-            return true;
-        }
-        return false;
     }
 
     @Override
