@@ -64,6 +64,7 @@
 
     <!-- OnBoardingActivity -->
     <string name="onboarding_category_done">NEXT</string>
+    <string name="onboarding_category_skip">skip</string>
 
     <string name="goal_image_description">Goal</string>
     <string name="instrument_next">NEXT</string>
@@ -72,6 +73,9 @@
     <string name="onboarding_instrument_title">On-boarding profile</string>
     <string name="onboarding_instrument_description">These are quick questions that will help the app create a base of recommendations. These questions will become more granular through the survey cards as the user engages with the app over time.</string>
     <string name="onboarding_instrument_instructions">Tell Compass a few things about you to improve your recommendations.</string>
+
+    <string name="list_explanation">Choose a category from which you may want to select goals. You may also skip this step.</string>
+    <string name="list_explanation2">Choose a goal you find appealing.</string>
 
     <!-- ActionTriggerActivity -->
     <string name="trigger_default_action_title">Reminders for this action</string>

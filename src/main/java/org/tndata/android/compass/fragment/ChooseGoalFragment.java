@@ -7,25 +7,18 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseGoalAdapter;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.TDCGoal;
-import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserModels;
-import org.tndata.android.compass.util.API;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import es.sandwatch.httprequests.HttpRequest;
-import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -49,7 +42,6 @@ public class ChooseGoalFragment extends Fragment implements ChooseGoalAdapter.Ch
     private ChooseGoalAdapter.ChooseGoalListener mListener;
     private TDCCategory category;
     private List<TDCGoal> goals;
-    private RecyclerView recyclerView;
 
 
     @Override
@@ -79,8 +71,11 @@ public class ChooseGoalFragment extends Fragment implements ChooseGoalAdapter.Ch
 
     @Override
     public void onViewCreated(View root, @Nullable Bundle savedInstanceState){
-        CompassApplication app = (CompassApplication)getActivity().getApplication();
-        recyclerView = (RecyclerView)root.findViewById(R.id.list_recycler_view);
+        TextView explanation = (TextView)root.findViewById(R.id.list_explanation);
+        explanation.setText(R.string.list_explanation2);
+        root.findViewById(R.id.list_explanation_container).setVisibility(View.VISIBLE);
+
+        RecyclerView recyclerView = (RecyclerView)root.findViewById(R.id.list_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new ChooseGoalAdapter(getContext(), this, category, goals));
     }

@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -20,9 +21,14 @@ import org.tndata.android.compass.model.TDCCategory;
 /**
  * Created by isma on 5/4/16.
  */
-public class OnBoardingCategoryFragment extends Fragment
-        implements ChooseCategoryAdapter.ChooseCategoryAdapterListener, View.OnClickListener{
+public class OnBoardingCategoryFragment
+        extends Fragment
+        implements
+                ChooseCategoryAdapter.ChooseCategoryAdapterListener,
+                View.OnClickListener{
+
     private CategoryListener mListener;
+
 
     @Override
     public void onAttach(Context context){
@@ -45,6 +51,11 @@ public class OnBoardingCategoryFragment extends Fragment
     @Override
     public void onViewCreated(View root, @Nullable Bundle savedInstanceState){
         CompassApplication app = (CompassApplication)getActivity().getApplication();
+
+        TextView explanation = (TextView)root.findViewById(R.id.list_explanation);
+        explanation.setText(R.string.list_explanation);
+        root.findViewById(R.id.list_explanation_container).setVisibility(View.VISIBLE);
+
         RecyclerView list = (RecyclerView)root.findViewById(R.id.list_recycler_view);
         list.setLayoutManager(new LinearLayoutManager(getContext()));
         list.setAdapter(new ChooseCategoryAdapter(getContext(), this, app.getFeaturedCategories()));

@@ -5,6 +5,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <LinearLayout
+        android:id="@+id/list_explanation_container"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/list_explanation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:textSize="18sp"
+            android:textColor="@color/white" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/bpDark_gray" />
+
+    </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_recycler_view"
         android:layout_width="match_parent"
@@ -21,7 +44,8 @@
         android:background="@drawable/button_positive_rounded"
         android:minHeight="@dimen/paper_flat_button_min_height"
         android:minWidth="@dimen/paper_flat_login_button_min_width"
-        android:text="@string/onboarding_category_done"
+        android:textAllCaps="true"
+        android:text="@string/onboarding_category_skip"
         android:textColor="@color/button_positive_text_color" />
 
 </LinearLayout>
