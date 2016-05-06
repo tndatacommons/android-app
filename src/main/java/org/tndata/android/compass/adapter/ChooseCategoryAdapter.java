@@ -15,6 +15,7 @@ import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ImageHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -24,9 +25,14 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class ChooseCategoryAdapter extends RecyclerView.Adapter<ChooseCategoryAdapter.CategoryViewHolder>{
+public class ChooseCategoryAdapter extends RecyclerView.Adapter{
+    private static final int TYPE_HEADER = 1;
+    private static final int TYPE_CATEGORY = 2;
+
+
     private Context mContext;
     private ChooseCategoryAdapterListener mListener;
+    private List<TDCCategory> mFeatured;
     private List<TDCCategory> mCategories;
 
     private Bitmap[] mBitmaps;
@@ -42,39 +48,90 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter<ChooseCategoryAd
                                  List<TDCCategory> categories){
         mContext = context;
         mListener = listener;
-        mCategories = categories;
+        mFeatured = new ArrayList<>();
+        mCategories = new ArrayList<>();
 
         mBitmaps = new Bitmap[categories.size()];
-        for (int i = 0; i < mCategories.size(); i++){
-            TDCCategory category = mCategories.get(i);
+        for (int i = 0; i < categories.size(); i++){
+            TDCCategory category = categories.get(i);
             int imageResId = CompassUtil.getCategoryTileResId(category.getTitle());
-            if (imageResId == 0){
-                mCategories.remove(i);
-                i--;
-                continue;
-            }
             Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), imageResId);
             mBitmaps[i] = ImageHelper.getCircleBitmap(bitmap, CompassUtil.getPixels(mContext, 100));
             bitmap.recycle();
+            if (category.isFeatured()){
+                mFeatured.add(category);
+            }
+            else{
+                mCategories.add(category);
+            }
         }
     }
 
     @Override
-    public CategoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        View rootView = inflater.inflate(R.layout.card_category, parent, false);
-        return new CategoryViewHolder(rootView);
-    }
-
-    @Override
-    public void onBindViewHolder(CategoryViewHolder holder, int position){
-        holder.mImage.setImageBitmap(mBitmaps[position]);
-        holder.mCaption.setText(mCategories.get(position).getTitle());
-    }
-
-    @Override
     public int getItemCount(){
-        return mCategories.size();
+        int featuredCount = mCategories.isEmpty() ? 0 : mFeatured.size()+1;
+        int categoryCount = mCategories.isEmpty() ? 0 : mCategories.size()+1;
+        return featuredCount + categoryCount;
+    }
+
+    @Override
+    public int getItemViewType(int position){
+        if (position == 0){
+            return TYPE_HEADER;
+        }
+        if (mFeatured.isEmpty()){
+            return TYPE_CATEGORY;
+        }
+        if (position == mFeatured.size()+1){
+            return TYPE_HEADER;
+        }
+        return TYPE_CATEGORY;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        if (viewType == TYPE_HEADER){
+            View rootView = inflater.inflate(R.layout.item_header, parent, false);
+            return new HeaderHolder(rootView);
+        }
+        else{
+            View rootView = inflater.inflate(R.layout.card_category, parent, false);
+            return new CategoryViewHolder(rootView);
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
+        if (getItemViewType(position) == TYPE_HEADER){
+            HeaderHolder holder = (HeaderHolder)rawHolder;
+            if (position == 0){
+                if (mFeatured.isEmpty()){
+                    holder.bind("Categories");
+                }
+                else{
+                    holder.bind("Featured content");
+                }
+            }
+            else{
+                holder.bind("Categories");
+            }
+        }
+        else{
+            CategoryViewHolder holder = (CategoryViewHolder)rawHolder;
+            position--;
+            if (position < mFeatured.size()){
+                holder.mCaption.setText(mFeatured.get(position).getTitle());
+            }
+            else{
+                if (!mFeatured.isEmpty()){
+                    position--;
+                }
+                int categoryPosition = position-mFeatured.size();
+                holder.mCaption.setText(mCategories.get(categoryPosition).getTitle());
+            }
+            holder.mImage.setImageBitmap(mBitmaps[position]);
+        }
     }
 
 
@@ -106,6 +163,22 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter<ChooseCategoryAd
         @Override
         public void onClick(View v){
             mListener.onCategorySelected(mCategories.get(getAdapterPosition()));
+        }
+    }
+
+
+    protected class HeaderHolder extends RecyclerView.ViewHolder{
+        private TextView mHeader;
+
+
+        public HeaderHolder(View itemView){
+            super(itemView);
+
+            mHeader = (TextView)itemView.findViewById(R.id.header_text);
+        }
+
+        private void bind(String title){
+            mHeader.setText(title);
         }
     }
 

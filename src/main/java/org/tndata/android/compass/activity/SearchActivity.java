@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -77,9 +76,11 @@ public class SearchActivity
         RecyclerView searchList = (RecyclerView)findViewById(R.id.search_list);
         mCreateGoal = (Button)findViewById(R.id.search_create);
 
+        assert searchView != null;
         searchView.setOnQueryTextListener(this);
         mCreateGoal.setOnClickListener(this);
         mSearchAdapter = new SearchAdapter(this, this);
+        assert searchList != null;
         searchList.setLayoutManager(new LinearLayoutManager(this));
         searchList.setAdapter(mSearchAdapter);
 
@@ -173,8 +174,8 @@ public class SearchActivity
             if (mCategory != null){
                 mGoal = result.getGoal();
                 Intent intent = new Intent(this, GoalActivity.class)
-                        .putExtra(GoalActivity.CATEGORY_KEY, (Parcelable)mCategory)
-                        .putExtra(GoalActivity.GOAL_KEY, (Parcelable)mGoal);
+                        .putExtra(GoalActivity.CATEGORY_KEY, mCategory)
+                        .putExtra(GoalActivity.GOAL_KEY, mGoal);
                 startActivityForResult(intent, GOAL_RC);
             }
         }

@@ -4,7 +4,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
