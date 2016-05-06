@@ -101,11 +101,6 @@ public class LoginActivity
         mFragmentStack = new ArrayList<>();
 
         swapFragments(DEFAULT, true);
-        for (Fragment fragment:mFragmentStack){
-            if (fragment instanceof LauncherFragment){
-                ((LauncherFragment)fragment).showProgress(true);
-            }
-        }
         new VersionChecker(this).execute();
     }
 
