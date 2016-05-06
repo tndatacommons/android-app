@@ -1,12 +1,21 @@
 package org.tndata.android.compass.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.model.Reward;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.TDCGoal;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserModels;
+import org.tndata.android.compass.util.API;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -15,10 +24,20 @@ import org.tndata.android.compass.model.TDCGoal;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class GoalAdapter extends MaterialAdapter implements View.OnClickListener{
+public class GoalAdapter
+        extends MaterialAdapter
+        implements
+                View.OnClickListener,
+                HttpRequest.RequestCallback,
+                Parser.ParserCallback{
+
     private Context mContext;
     private GoalListener mListener;
+    private TDCCategory mCategory;
     private TDCGoal mGoal;
+
+    private int mGetRewardRC;
+    private Reward mReward;
 
 
     /**
@@ -26,21 +45,23 @@ public class GoalAdapter extends MaterialAdapter implements View.OnClickListener
      *
      * @param context a reference to the context.
      * @param listener the listener.
+     * @param category the parent category of the goal to be displayed.
      * @param goal the goal to be displayed.
      */
     public GoalAdapter(@NonNull Context context, @NonNull GoalListener listener,
-                       @NonNull TDCGoal goal){
+                       @NonNull TDCCategory category, @NonNull TDCGoal goal){
 
-        super(context, ContentType.DETAIL, false);
+        super(context, ContentType.DETAIL, true);
 
         mContext = context;
         mListener = listener;
+        mCategory = category;
         mGoal = goal;
     }
 
     @Override
     protected boolean hasDetails(){
-        return false;
+        return mReward != null;
     }
 
     @Override
@@ -50,12 +71,66 @@ public class GoalAdapter extends MaterialAdapter implements View.OnClickListener
         holder.setTitleBold();
         holder.setContent(mGoal.getDescription());
         holder.addButton(R.id.behavior_yes, R.string.library_behavior_yes, this);
+
+        fetchReward();
+    }
+
+    @Override
+    protected void bindDetailHolder(DetailViewHolder holder){
+        holder.setHeaderColor(Color.parseColor(mCategory.getColor()));
+        setReward(holder);
+    }
+
+    private void setReward(DetailViewHolder holder){
+        if (mReward.isFortune()){
+            holder.setTitle("Here's a fortune cookie for you");
+        }
+        else if (mReward.isFunFact()){
+            holder.setTitle("Here's a fun fact for you");
+        }
+        else if (mReward.isJoke()){
+            holder.setTitle("Here's a joke for you");
+        }
+        else{
+            holder.setTitle("Here's a nice quote for you");
+        }
+        holder.setDescription(mReward.format());
     }
 
     @Override
     public void onClick(View v){
         if (v.getId() == R.id.behavior_yes){
             mListener.acceptGoal();
+        }
+    }
+
+    private void fetchReward(){
+        mGetRewardRC = HttpRequest.get(this, API.getRandomRewardUrl());
+    }
+
+    @Override
+    public void onRequestComplete(int requestCode, String result){
+        if (requestCode == mGetRewardRC){
+            Parser.parse(result, ParserModels.RewardResultSet.class, this);
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode, HttpRequestError error){
+
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.RewardResultSet){
+            mReward = ((ParserModels.RewardResultSet)result).results.get(0);
+            notifyDetailsInserted();
+            updateLoading(false);
         }
     }
 

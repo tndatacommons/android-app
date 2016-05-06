@@ -36,7 +36,7 @@ public class GoalActivity extends MaterialActivity implements GoalAdapter.GoalLi
         TDCGoal goal = getIntent().getParcelableExtra(GOAL_KEY);
 
         setHeader(category);
-        setAdapter(new GoalAdapter(this, this, goal));
+        setAdapter(new GoalAdapter(this, this, category, goal));
         setColor(Color.parseColor(category.getColor()));
     }
 
