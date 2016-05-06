@@ -138,7 +138,7 @@
     <string name="action_disable_trigger">Disable reminder</string>
 
     <!-- TourFragment -->
-    <string name="tour_action_skip">SKIP</string>
+    <string name="tour_action_skip">Skip</string>
     <string name="tour_page_1_caption">Tell Compass where you want to go.</string>
     <string name="tour_page_2_caption">Compass helps you stay on course.</string>
     <string name="tour_page_3_caption">Browse activities that can help ease your way.</string>

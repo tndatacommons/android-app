@@ -24,7 +24,6 @@ import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.fragment.LauncherFragment;
 import org.tndata.android.compass.fragment.LogInFragment;
 import org.tndata.android.compass.fragment.SignUpFragment;
-import org.tndata.android.compass.fragment.TourFragment;
 import org.tndata.android.compass.fragment.WebFragment;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.User;
@@ -49,7 +48,6 @@ public class LoginActivity
                 LauncherFragment.LauncherFragmentListener,
                 SignUpFragment.SignUpFragmentListener,
                 LogInFragment.LogInFragmentCallback,
-                TourFragment.TourFragmentCallback,
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback,
                 FeedDataLoader.Callback{
@@ -61,7 +59,6 @@ public class LoginActivity
     private static final int SIGN_UP = DEFAULT+1;
     private static final int LOGIN = SIGN_UP+1;
     private static final int TERMS = LOGIN+1;
-    private static final int TOUR = TERMS+1;
 
     private static final String T_AND_C_URL = "https://app.tndata.org/terms/";
 
@@ -75,7 +72,6 @@ public class LoginActivity
     private LauncherFragment mLauncherFragment;
     private LogInFragment mLoginFragment;
     private SignUpFragment mSignUpFragment;
-    private TourFragment mTourFragment;
 
     private List<Fragment> mFragmentStack;
 
@@ -130,21 +126,19 @@ public class LoginActivity
         else{
             SharedPreferences settings = getSharedPreferences(PREFERENCES_NAME, 0);
             if (settings.getBoolean(PREFERENCES_NEW_USER, true)){
-                swapFragments(TOUR, true);
+                startActivity(new Intent(this, TourActivity.class));
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putBoolean(PREFERENCES_NEW_USER, false);
                 editor.apply();
-            }
-
-            User user = mApplication.getUserLoginInfo();
-            if (!user.getEmail().isEmpty() && !user.getPassword().isEmpty()){
-                logUserIn(user.getEmail(), user.getPassword());
+                displayLauncherActivity(false);
             }
             else{
-                for (Fragment fragment:mFragmentStack){
-                    if (fragment instanceof LauncherFragment){
-                        ((LauncherFragment)fragment).showProgress(false);
-                    }
+                User user = mApplication.getUserLoginInfo();
+                if (!user.getEmail().isEmpty() && !user.getPassword().isEmpty()){
+                    logUserIn(user.getEmail(), user.getPassword());
+                }
+                else{
+                    displayLauncherActivity(false);
                 }
             }
         }
@@ -180,6 +174,7 @@ public class LoginActivity
                 fragment = mLauncherFragment;
                 switchActionBarState(false);
                 break;
+
             case LOGIN:
                 if (mLoginFragment == null){
                     mLoginFragment = new LogInFragment();
@@ -187,6 +182,7 @@ public class LoginActivity
                 fragment = mLoginFragment;
                 switchActionBarState(false);
                 break;
+
             case SIGN_UP:
                 if (mSignUpFragment == null){
                     mSignUpFragment = new SignUpFragment();
@@ -194,6 +190,7 @@ public class LoginActivity
                 fragment = mSignUpFragment;
                 switchActionBarState(false);
                 break;
+
             case TERMS:
                 if (mWebFragment == null){
                     mWebFragment = new WebFragment();
@@ -203,13 +200,6 @@ public class LoginActivity
                 switchActionBarState(true);
                 mToolbar.setTitle(R.string.terms_title);
                 mWebFragment.setUrl(T_AND_C_URL);
-                break;
-            case TOUR:
-                if (mTourFragment == null){
-                    mTourFragment = new TourFragment();
-                }
-                fragment = mTourFragment;
-                switchActionBarState(false);
                 break;
 
         }
@@ -271,12 +261,7 @@ public class LoginActivity
      */
     private void logUserIn(String email, String password){
         Log.d(TAG, "Logging user in");
-        for (Fragment fragment:mFragmentStack){
-            if (fragment instanceof LauncherFragment){
-                ((LauncherFragment)fragment).showProgress(true);
-            }
-        }
-
+        displayLauncherActivity(true);
         mLogInRC = HttpRequest.post(this, API.getLogInUrl(), API.getLogInBody(email, password));
     }
 
@@ -308,19 +293,6 @@ public class LoginActivity
     private void setUser(User user){
         mApplication.setUser(user, true);
         mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
-    }
-
-    @Override
-    public void onTourComplete(){
-        Log.d("LogIn", "tour complete");
-        for (Fragment fragment:mFragmentStack){
-            Log.d("LogIn", "fragment in stack");
-            if (fragment instanceof LauncherFragment){
-                Log.d("LogIn", "is launcher");
-                ((LauncherFragment)fragment).showProgress(false);
-            }
-        }
-        handleBackStack();
     }
 
     @Override
@@ -395,6 +367,14 @@ public class LoginActivity
         if (feedData != null){
             mApplication.setFeedData(feedData);
             transitionToMain();
+        }
+    }
+
+    private void displayLauncherActivity(boolean show){
+        for (Fragment fragment:mFragmentStack){
+            if (fragment instanceof LauncherFragment){
+                ((LauncherFragment)fragment).showProgress(show);
+            }
         }
     }
 }
