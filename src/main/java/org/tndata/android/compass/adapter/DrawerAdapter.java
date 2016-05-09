@@ -34,8 +34,7 @@ public class DrawerAdapter extends RecyclerView.Adapter{
     public static final int MY_ACTIVITIES = 0;
     public static final int MYSELF = MY_ACTIVITIES +1;
     public static final int PLACES = MYSELF+1;
-    public static final int MY_PRIVACY = PLACES+1;
-    public static final int TOUR = MY_PRIVACY+1;
+    public static final int TOUR = PLACES+1;
     public static final int SETTINGS = TOUR+1;
     public static final int SUPPORT = SETTINGS+1;
     public static final int DRAWER_COUNT = SUPPORT+1;
@@ -160,10 +159,6 @@ public class DrawerAdapter extends RecyclerView.Adapter{
                 case PLACES:
                     items.add(new DrawerItem(mContext.getString(R.string.action_my_places),
                             R.drawable.ic_place));
-                    break;
-                case MY_PRIVACY:
-                    items.add(new DrawerItem(mContext.getString(R.string.action_my_privacy),
-                            R.drawable.ic_info));
                     break;
                 case SETTINGS:
                     items.add(new DrawerItem(mContext.getString(R.string.action_settings),

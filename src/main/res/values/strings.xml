@@ -114,6 +114,8 @@
     <string name="settings_notifications_title">Notifications</string>
     <string name="settings_logout_summary">Signed in as %1$s</string>
     <string name="settings_logout_title">Sign out</string>
+    <string name="settings_tos_title">Terms of Service</string>
+    <string name="settings_privacy_title">Privacy Policy</string>
     <string name="settings_sources_title">Sources</string>
     <string name="settings_version_title">Version</string>
     <string name="settings_notifications_sound_title">Sound</string>

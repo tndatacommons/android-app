@@ -16,22 +16,29 @@ import org.tndata.android.compass.R;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class PrivacyActivity extends AppCompatActivity{
-    private static final String URL = "https://app.tndata.org/privacy/";
+public class WebActivity extends AppCompatActivity{
+    public static final String TITLE_KEY = "org.tndata.compass.Web.Title";
+    public static final String URL_KEY = "org.tndata.compass.Web.Url";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_privacy);
+        setContentView(R.layout.activity_web);
+
+        String title = getIntent().getExtras().getString(TITLE_KEY, "");
+        String url = getIntent().getStringExtra(URL_KEY);
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.transparent_tool_bar);
         toolbar.setBackgroundColor(getResources().getColor(R.color.primary));
+        toolbar.setTitle(title);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
-        WebView webView = (WebView)findViewById(R.id.privacy_web_view);
-        webView.loadUrl(URL);
+        WebView webView = (WebView)findViewById(R.id.web_web_view);
+        webView.loadUrl(url);
         webView.setWebViewClient(new WebViewClient(){
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url){

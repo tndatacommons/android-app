@@ -396,10 +396,6 @@ public class MainActivity
                 startActivity(new Intent(this, PlacesActivity.class));
                 break;
 
-            case DrawerAdapter.MY_PRIVACY:
-                startActivity(new Intent(this, PrivacyActivity.class));
-                break;
-
             case DrawerAdapter.SETTINGS:
                 startActivityForResult(new Intent(this, SettingsActivity.class), SETTINGS_RC);
                 break;
