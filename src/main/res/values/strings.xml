@@ -34,7 +34,7 @@
     <string name="signup_error">An error occurred when signing up</string>
     <string name="signup_privacy_link">Privacy Policy</string>
     <string name="signup_header_label">CREATE YOUR ACCOUNT</string>
-    <string name="signup_accept_terms">Creating an account indicates that you agree to our terms of service</string>
+    <string name="signup_accept_terms">Creating an account indicates that you agree to our <a href="https://app.tndata.org/terms/">terms of service</a> and <a href="https://app.tndata.org/privacy/">privacy policy</a></string>
 
     <!-- MainActivity -->
     <string name="action_my_information">My information</string>

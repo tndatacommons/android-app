@@ -21,7 +21,7 @@ import android.view.Window;
 public class SettingsActivity extends AppCompatActivity implements OnSettingsClickListener{
     public static final int LOGGED_OUT_RESULT_CODE = 2200;
 
-    private static final String T_AND_C_URL = "https://app.tndata.org/terms/";
+    private static final String TOS_URL = "https://app.tndata.org/terms/";
     private static final String PRIVACY_POLICY_URL = "https://app.tndata.org/privacy/";
 
     private Toolbar mToolbar;
@@ -86,7 +86,7 @@ public class SettingsActivity extends AppCompatActivity implements OnSettingsCli
     public void tos(){
         Intent tos = new Intent(this, WebActivity.class)
                 .putExtra(WebActivity.TITLE_KEY, "Terms of Service")
-                .putExtra(WebActivity.URL_KEY, T_AND_C_URL);
+                .putExtra(WebActivity.URL_KEY, TOS_URL);
         startActivity(tos);
     }
 

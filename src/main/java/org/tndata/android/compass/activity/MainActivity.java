@@ -133,7 +133,7 @@ public class MainActivity
         mDrawerLayout.addDrawerListener(mDrawerToggle);
 
         RecyclerView drawerList = (RecyclerView)findViewById(R.id.main_drawer);
-        drawerList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        drawerList.setLayoutManager(new LinearLayoutManager(this));
         drawerList.setAdapter(new DrawerAdapter(this, this));
         drawerList.addItemDecoration(DrawerAdapter.getItemPadding(this));
 

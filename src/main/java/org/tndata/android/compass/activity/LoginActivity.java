@@ -24,7 +24,6 @@ import org.tndata.android.compass.database.CompassDbHelper;
 import org.tndata.android.compass.fragment.LauncherFragment;
 import org.tndata.android.compass.fragment.LogInFragment;
 import org.tndata.android.compass.fragment.SignUpFragment;
-import org.tndata.android.compass.fragment.WebFragment;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.parser.Parser;
@@ -58,9 +57,6 @@ public class LoginActivity
     private static final int DEFAULT = 0;
     private static final int SIGN_UP = DEFAULT+1;
     private static final int LOGIN = SIGN_UP+1;
-    private static final int TERMS = LOGIN+1;
-
-    private static final String T_AND_C_URL = "https://app.tndata.org/terms/";
 
     private static final String PREFERENCES_NAME = "compass_pref";
     private static final String PREFERENCES_NEW_USER = "new_user_pref";
@@ -68,7 +64,6 @@ public class LoginActivity
 
     private Toolbar mToolbar;
 
-    private WebFragment mWebFragment;
     private LauncherFragment mLauncherFragment;
     private LogInFragment mLoginFragment;
     private SignUpFragment mSignUpFragment;
@@ -186,17 +181,6 @@ public class LoginActivity
                 switchActionBarState(false);
                 break;
 
-            case TERMS:
-                if (mWebFragment == null){
-                    mWebFragment = new WebFragment();
-
-                }
-                fragment = mWebFragment;
-                switchActionBarState(true);
-                mToolbar.setTitle(R.string.terms_title);
-                mWebFragment.setUrl(T_AND_C_URL);
-                break;
-
         }
         if (fragment != null){
             if (addToStack){
@@ -273,11 +257,6 @@ public class LoginActivity
     @Override
     public void onSignUpSuccess(@NonNull User user){
         setUser(user);
-    }
-
-    @Override
-    public void showTermsAndConditions(){
-        swapFragments(TERMS, true);
     }
 
     @Override
