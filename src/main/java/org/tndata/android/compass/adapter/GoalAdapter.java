@@ -67,10 +67,11 @@ public class GoalAdapter
     @Override
     protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
         HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
-        holder.setTitle(mContext.getString(R.string.library_behavior_title, mGoal.getTitle()));
+        holder.setTitle(mContext.getString(R.string.library_goal_title, mGoal.getTitle()));
         holder.setTitleBold();
         holder.setContent(mGoal.getDescription());
-        holder.addButton(R.id.behavior_yes, R.string.library_behavior_yes, this);
+        holder.addButton(R.id.goal_no, R.string.library_goal_no, this);
+        holder.addButton(R.id.goal_yes, R.string.library_goal_yes, this);
 
         fetchReward();
     }
@@ -98,9 +99,15 @@ public class GoalAdapter
     }
 
     @Override
-    public void onClick(View v){
-        if (v.getId() == R.id.behavior_yes){
-            mListener.acceptGoal();
+    public void onClick(View view){
+        switch (view.getId()){
+            case R.id.goal_yes:
+                mListener.acceptGoal();
+                break;
+
+            case R.id.goal_no:
+                mListener.declineGoal();
+                break;
         }
     }
 
@@ -146,5 +153,10 @@ public class GoalAdapter
          * Called when the user taps the 'yes, I'm in' button.
          */
         void acceptGoal();
+
+        /**
+         * Called when the user taps the 'not now' button.
+         */
+        void declineGoal();
     }
 }

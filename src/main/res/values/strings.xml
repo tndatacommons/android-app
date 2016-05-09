@@ -88,8 +88,9 @@
     <!-- Library -->
     <string name="library_goals_content_header">Compass can help me&#8230;</string>
     <string name="library_behaviors_content_header">You can do it!</string>
-    <string name="library_behavior_title">%1$s</string>
-    <string name="library_behavior_yes">Yes, I\'m in</string>
+    <string name="library_goal_title">%1$s</string>
+    <string name="library_goal_yes">Yes, I\'m in</string>
+    <string name="library_goal_no">Not now</string>
     <string name="library_detail_header">Here\'s why</string>
     <string name="library_detail_more_info">More info</string>
     <string name="dialog_enrollment_title">You\'re awesome</string>

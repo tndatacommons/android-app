@@ -64,4 +64,11 @@ public class GoalActivity extends MaterialActivity implements GoalAdapter.GoalLi
         setResult(RESULT_OK);
         finish();
     }
+
+    @Override
+    public void declineGoal(){
+        //Set the result as CANCELLED
+        setResult(RESULT_CANCELED);
+        finish();
+    }
 }
