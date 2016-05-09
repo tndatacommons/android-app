@@ -8,6 +8,7 @@ import org.tndata.android.compass.service.LogOutService;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +21,9 @@ import android.view.Window;
  */
 public class SettingsActivity extends AppCompatActivity implements OnSettingsClickListener{
     public static final int LOGGED_OUT_RESULT_CODE = 2200;
+
+    private static final String TOS_URL = "https://app.tndata.org/terms/";
+    private static final String PRIVACY_POLICY_URL = "https://app.tndata.org/privacy/";
 
     private Toolbar mToolbar;
 
@@ -77,6 +81,16 @@ public class SettingsActivity extends AppCompatActivity implements OnSettingsCli
         startService(new Intent(this, LogOutService.class));
         setResult(LOGGED_OUT_RESULT_CODE);
         finish();
+    }
+
+    @Override
+    public void tos(){
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(TOS_URL)));
+    }
+
+    @Override
+    public void privacy(){
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_POLICY_URL)));
     }
 
     @Override

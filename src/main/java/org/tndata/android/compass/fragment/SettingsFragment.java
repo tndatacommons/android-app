@@ -3,7 +3,7 @@ package org.tndata.android.compass.fragment;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
@@ -16,6 +16,8 @@ import android.preference.PreferenceFragment;
 public class SettingsFragment extends PreferenceFragment implements OnPreferenceClickListener{
     private static final String NOTIFICATIONS_KEY = "settings_notifications";
     private static final String LOGOUT_KEY = "settings_logout";
+    private static final String TOS_KEY = "settings_tos";
+    private static final String PRIVACY_KEY = "settings_privacy";
     private static final String SOURCES_KEY = "settings_sources";
 
 
@@ -42,20 +44,22 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
 
 
         findPreference(NOTIFICATIONS_KEY).setOnPreferenceClickListener(this);
+        findPreference(TOS_KEY).setOnPreferenceClickListener(this);
+        findPreference(PRIVACY_KEY).setOnPreferenceClickListener(this);
         findPreference(SOURCES_KEY).setOnPreferenceClickListener(this);
     }
 
     @Override
-    public void onAttach(Activity activity){
-        super.onAttach(activity);
+    public void onAttach(Context context){
+        super.onAttach(context);
 
         //This makes sure that the container activity has implemented the callback
         //  interface. If not, it throws an exception.
         try{
-            mListener = (OnSettingsClickListener)activity;
+            mListener = (OnSettingsClickListener)context;
         }
         catch (ClassCastException ccx){
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnSettingsClickListener");
         }
     }
@@ -69,6 +73,14 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
 
             case LOGOUT_KEY:
                 mListener.logOut();
+                return true;
+
+            case TOS_KEY:
+                mListener.tos();
+                return true;
+
+            case PRIVACY_KEY:
+                mListener.privacy();
                 return true;
 
             case SOURCES_KEY:
@@ -92,6 +104,16 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
          * Called when the log out preference is clicked.
          */
         void logOut();
+
+        /**
+         * Called when the ToS preference is tapped.
+         */
+        void tos();
+
+        /**
+         * Called when the Privacy Policy preference is tapped.
+         */
+        void privacy();
 
         /**
          * Called when the sources preference is clicked.

@@ -1,8 +1,9 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/tour_color"
-    android:orientation="vertical">
+    android:background="@color/white"
+    android:orientation="vertical" >
 
     <TextView
         android:id="@+id/tour_information_top"
@@ -12,9 +13,8 @@
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
         android:text="@string/tour_page_1_caption"
-        android:textSize="28dp"
-        android:textColor="@color/white" />
-
+        android:textSize="28sp"
+        android:textColor="@color/tour_color" />
 
     <ImageView
         android:id="@+id/tourImageView"
@@ -27,7 +27,6 @@
         android:scaleType="centerInside"
         android:src="@drawable/tour1" />
 
-
     <TextView
         android:id="@+id/tour_information_bottom"
         android:layout_width="wrap_content"
@@ -36,8 +35,8 @@
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
-        android:textSize="28dp"
+        android:textSize="28sp"
         android:text="@string/tour_page_2_caption"
-        android:textColor="@color/white" />
+        android:textColor="@color/tour_color" />
 
 </RelativeLayout>

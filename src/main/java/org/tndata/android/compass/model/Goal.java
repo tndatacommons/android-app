@@ -1,6 +1,5 @@
 package org.tndata.android.compass.model;
 
-import android.content.Context;
 import android.os.Parcel;
 
 

@@ -4,7 +4,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -134,7 +133,7 @@ public class MainActivity
         mDrawerLayout.addDrawerListener(mDrawerToggle);
 
         RecyclerView drawerList = (RecyclerView)findViewById(R.id.main_drawer);
-        drawerList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        drawerList.setLayoutManager(new LinearLayoutManager(this));
         drawerList.setAdapter(new DrawerAdapter(this, this));
         drawerList.addItemDecoration(DrawerAdapter.getItemPadding(this));
 
@@ -397,10 +396,6 @@ public class MainActivity
                 startActivity(new Intent(this, PlacesActivity.class));
                 break;
 
-            case DrawerAdapter.MY_PRIVACY:
-                startActivity(new Intent(this, PrivacyActivity.class));
-                break;
-
             case DrawerAdapter.SETTINGS:
                 startActivityForResult(new Intent(this, SettingsActivity.class), SETTINGS_RC);
                 break;
@@ -524,6 +519,7 @@ public class MainActivity
             }
         }
         else if (resultCode == SettingsActivity.LOGGED_OUT_RESULT_CODE){
+            startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
     }

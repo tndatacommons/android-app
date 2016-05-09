@@ -42,10 +42,6 @@ public abstract class Action extends UserContent implements Comparable<Action>{
         return mTrigger.isEnabled();
     }
 
-    public void setNextReminder(String nextReminder){
-        mNextReminder = nextReminder;
-    }
-
     public String getNextReminder(){
         return mNextReminder != null ? mNextReminder : "";
     }
@@ -55,9 +51,9 @@ public abstract class Action extends UserContent implements Comparable<Action>{
         String temp = mNextReminder.substring(mNextReminder.indexOf("-")+1);
         String month = temp.substring(0, temp.indexOf("-"));
         temp = temp.substring(temp.indexOf("-")+1);
-        String day = temp.substring(0, temp.indexOf("T"));
+        String day = temp.substring(0, temp.indexOf(" "));
 
-        String time = mNextReminder.substring(mNextReminder.indexOf('T')+1);
+        String time = mNextReminder.substring(mNextReminder.indexOf(' ')+1);
         String hour = time.substring(0, time.indexOf(':'));
         time = time.substring(time.indexOf(':')+1);
         String minute = time.substring(0, time.indexOf(':'));
@@ -71,30 +67,6 @@ public abstract class Action extends UserContent implements Comparable<Action>{
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
-    }
-
-    public String getNextReminderDisplay(){
-        if (mNextReminder == null){
-            return "";
-        }
-
-        String time = mNextReminder.substring(mNextReminder.indexOf('T')+1);
-        String hourStr = time.substring(0, time.indexOf(':'));
-        time = time.substring(time.indexOf(':')+1);
-        try{
-            boolean am = true;
-            int hour = Integer.valueOf(hourStr);
-            if (hour > 12){
-                hour -= 12;
-                am = false;
-            }
-
-            return hour + ":" + time.substring(0, time.indexOf(":")) + (am ? " am" : " pm");
-        }
-        catch (NumberFormatException nfx){
-            nfx.printStackTrace();
-            return "";
-        }
     }
 
     @Override

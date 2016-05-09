@@ -12,6 +12,8 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.method.LinkMovementMethod;
+import android.text.method.MovementMethod;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,7 +54,6 @@ public class SignUpFragment
     private TextView mError;
     private ProgressBar mProgress;
     private Button mSignUp;
-    private ImageView mInfo;
 
     //Attributes
     private String mErrorString;
@@ -96,11 +97,12 @@ public class SignUpFragment
         mError = (TextView)rootView.findViewById(R.id.signup_error);
         mProgress = (ProgressBar)rootView.findViewById(R.id.signup_progress);
         mSignUp = (Button)rootView.findViewById(R.id.signup_button);
-        mInfo = (ImageView)rootView.findViewById(R.id.signup_info);
+
+        MovementMethod movementMethod = LinkMovementMethod.getInstance();
+        ((TextView)rootView.findViewById(R.id.signup_terms)).setMovementMethod(movementMethod);
 
         //Set the listeners
         mSignUp.setOnClickListener(this);
-        mInfo.setOnClickListener(this);
 
         mErrorString = "";
     }
@@ -108,10 +110,6 @@ public class SignUpFragment
     @Override
     public void onClick(View view){
         switch (view.getId()){
-            case R.id.signup_info:
-                mListener.showTermsAndConditions();
-                break;
-
             case R.id.signup_button:
                 doSignUp();
         }
@@ -222,7 +220,6 @@ public class SignUpFragment
         mFirstName.setEnabled(enabled);
         mLastName.setEnabled(enabled);
         mSignUp.setEnabled(enabled);
-        mInfo.setEnabled(enabled);
         if (enabled){
             mError.setText(mErrorString);
             mError.setVisibility(View.VISIBLE);
@@ -288,10 +285,5 @@ public class SignUpFragment
          * @param user the newly created user.
          */
         void onSignUpSuccess(@NonNull User user);
-
-        /**
-         * Called when the info button is clicked.
-         */
-        void showTermsAndConditions();
     }
 }

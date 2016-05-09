@@ -130,20 +130,6 @@
         </activity>
 
         <activity
-            android:name=".activity.ChooseInterestsActivity"
-            android:parentActivityName=".activity.MainActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.MainActivity" />
-        </activity>
-
-        <activity
             android:name=".activity.MyActivitiesActivity"
             android:label="@string/my_activities_title"
             android:screenOrientation="portrait"
@@ -176,11 +162,6 @@
 
         <activity
             android:name=".activity.TourActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".activity.PrivacyActivity"
-            android:label="@string/activity_my_privacy"
             android:screenOrientation="portrait" />
 
         <activity

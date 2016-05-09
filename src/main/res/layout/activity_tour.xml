@@ -1,12 +1,47 @@
-<LinearLayout
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@color/white" >
+
+    <org.tndata.android.compass.ui.SwipeOutViewPager
+        android:id="@+id/tour_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/frameLayout" />
 
     <FrameLayout
-        android:id="@+id/my_priorities_fragment_host"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent" />
+        android:layout_width="fill_parent"
+        android:background="@color/tour_color"
+        android:alpha="0.5"
+        android:focusable="false"
+        android:layout_height="1dp"
+        android:layout_above="@+id/tour_indicator"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/frameLayout" />
 
-</LinearLayout>
+    <me.relex.circleindicator.CircleIndicator
+        xmlns:indicator="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/tour_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        indicator:ci_drawable="@drawable/pager_indicator_blue" />
+
+    <TextView
+        android:id="@+id/tour_skip"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/tour_indicator"
+        android:gravity="center"
+        android:text="@string/tour_action_skip"
+        android:textColor="@color/tour_color"
+        android:textAllCaps="true" />
+
+</RelativeLayout>

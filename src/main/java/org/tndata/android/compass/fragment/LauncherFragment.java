@@ -38,7 +38,7 @@ public class LauncherFragment extends Fragment implements OnClickListener{
      */
     public LauncherFragment(){
         mAreViewsLoaded = false;
-        mShouldShowProgressOnLoad = false;
+        mShouldShowProgressOnLoad = true;
     }
 
     @Override

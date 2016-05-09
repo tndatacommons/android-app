@@ -98,7 +98,6 @@ public class ChooseGoalsActivity
 
     @Override
     public void onBackPressed(){
-        setResult(RESULT_OK);
         super.onBackPressed();
     }
 
@@ -127,6 +126,8 @@ public class ChooseGoalsActivity
                     .setOnCancelListener(this)
                     .create();
             mShareDialog.show();
+
+            setResult(RESULT_OK);
         }
         else if (resultCode == RESULT_CANCELED){
             mSelectedGoal = null;
@@ -152,7 +153,6 @@ public class ChooseGoalsActivity
         mAdapter.remove(mSelectedGoal);
         mSelectedGoal = null;
         if (mAdapter.isEmpty()){
-            setResult(RESULT_OK);
             finish();
         }
     }
