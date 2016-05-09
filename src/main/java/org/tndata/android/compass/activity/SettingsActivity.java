@@ -8,6 +8,7 @@ import org.tndata.android.compass.service.LogOutService;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -84,18 +85,12 @@ public class SettingsActivity extends AppCompatActivity implements OnSettingsCli
 
     @Override
     public void tos(){
-        Intent tos = new Intent(this, WebActivity.class)
-                .putExtra(WebActivity.TITLE_KEY, "Terms of Service")
-                .putExtra(WebActivity.URL_KEY, TOS_URL);
-        startActivity(tos);
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(TOS_URL)));
     }
 
     @Override
     public void privacy(){
-        Intent privacy = new Intent(this, WebActivity.class)
-                .putExtra(WebActivity.TITLE_KEY, "Privacy Policy")
-                .putExtra(WebActivity.URL_KEY, PRIVACY_POLICY_URL);
-        startActivity(privacy);
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_POLICY_URL)));
     }
 
     @Override
