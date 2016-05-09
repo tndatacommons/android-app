@@ -65,6 +65,7 @@
     <!-- OnBoardingActivity -->
     <string name="onboarding_category_done">NEXT</string>
     <string name="onboarding_category_skip">skip</string>
+    <string name="onboarding_category_finish">finish</string>
 
     <string name="goal_image_description">Goal</string>
     <string name="instrument_next">NEXT</string>

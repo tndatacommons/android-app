@@ -21,11 +21,6 @@
             android:textSize="18sp"
             android:textColor="@color/white" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/bpDark_gray" />
-
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView

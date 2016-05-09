@@ -523,6 +523,7 @@ public class MainActivity
             }
         }
         else if (resultCode == SettingsActivity.LOGGED_OUT_RESULT_CODE){
+            startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
     }

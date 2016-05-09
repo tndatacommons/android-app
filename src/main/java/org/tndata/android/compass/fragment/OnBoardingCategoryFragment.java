@@ -29,6 +29,8 @@ public class OnBoardingCategoryFragment
 
     private CategoryListener mListener;
 
+    private Button mNext;
+
 
     @Override
     public void onAttach(Context context){
@@ -60,9 +62,15 @@ public class OnBoardingCategoryFragment
         list.setLayoutManager(new LinearLayoutManager(getContext()));
         list.setAdapter(new ChooseCategoryAdapter(getContext(), this, app.getFeaturedCategories()));
 
-        Button skip = (Button)root.findViewById(R.id.list_button);
-        skip.setVisibility(View.VISIBLE);
-        skip.setOnClickListener(this);
+        mNext = (Button)root.findViewById(R.id.list_button);
+        mNext.setVisibility(View.VISIBLE);
+        mNext.setOnClickListener(this);
+    }
+
+    public void onContentSelected(){
+        if (mNext != null){
+            mNext.setText(R.string.onboarding_category_finish);
+        }
     }
 
     @Override
@@ -73,11 +81,11 @@ public class OnBoardingCategoryFragment
     @Override
     public void onClick(View v){
         v.setOnClickListener(null);
-        mListener.onSkip();
+        mListener.onNext();
     }
 
     public interface CategoryListener{
         void onCategorySelected(TDCCategory category);
-        void onSkip();
+        void onNext();
     }
 }

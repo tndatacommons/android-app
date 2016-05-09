@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,11 +66,13 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
                 mCategories.add(category);
             }
         }
+
+        Log.d("ChooseCategoryAdapter", "Total: " + categories.size() + ", Featured: " + mFeatured.size());
     }
 
     @Override
     public int getItemCount(){
-        int featuredCount = mCategories.isEmpty() ? 0 : mFeatured.size()+1;
+        int featuredCount = mFeatured.isEmpty() ? 0 : mFeatured.size()+1;
         int categoryCount = mCategories.isEmpty() ? 0 : mCategories.size()+1;
         return featuredCount + categoryCount;
     }
@@ -162,7 +165,20 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
 
         @Override
         public void onClick(View v){
-            mListener.onCategorySelected(mCategories.get(getAdapterPosition()));
+            //Compensate for the first header
+            int position = getAdapterPosition()-1;
+            if (position < mFeatured.size()){
+                mListener.onCategorySelected(mFeatured.get(position));
+            }
+            else{
+                if (mFeatured.isEmpty()){
+                    mListener.onCategorySelected(mCategories.get(position));
+                }
+                else{
+                    position -= mFeatured.size();
+                    mListener.onCategorySelected(mCategories.get(position-1));
+                }
+            }
         }
     }
 
