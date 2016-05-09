@@ -73,10 +73,9 @@
 
     <string name="onboarding_instrument_title">On-boarding profile</string>
     <string name="onboarding_instrument_description">These are quick questions that will help the app create a base of recommendations. These questions will become more granular through the survey cards as the user engages with the app over time.</string>
-    <string name="onboarding_instrument_instructions">Tell Compass a few things about you to improve your recommendations.</string>
+    <string name="onboarding_instrument_instructions">Tell Compass a few things about you.</string>
 
-    <string name="list_explanation">Choose a category from which you may want to select goals. You may also skip this step.</string>
-    <string name="list_explanation2">Choose a goal you find appealing.</string>
+    <string name="list_explanation">You can try our featured content or you can browse additional goals inside the app.</string>
 
     <!-- ActionTriggerActivity -->
     <string name="trigger_default_action_title">Reminders for this action</string>
@@ -140,10 +139,10 @@
 
     <!-- TourFragment -->
     <string name="tour_action_skip">Skip</string>
-    <string name="tour_page_1_caption">Tell Compass where you want to go.</string>
-    <string name="tour_page_2_caption">Compass helps you stay on course.</string>
-    <string name="tour_page_3_caption">Browse activities that can help ease your way.</string>
-    <string name="tour_page_4_caption">Check in daily to keep yourself on course.</string>
+    <string name="tour_page_1_caption">Compass helps you reach your goals.</string>
+    <string name="tour_page_2_caption">Discover the things that interest you.</string>
+    <string name="tour_page_3_caption">Tell Compass what you want to do.</string>
+    <string name="tour_page_4_caption">That\'s it! Easy!</string>
 
     <!-- Category chooser -->
     <string name="choose_categories_error">Uh Oh! There seems to have been an issue finding choices.</string>
