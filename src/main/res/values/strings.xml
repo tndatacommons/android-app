@@ -86,7 +86,7 @@
     <string name="trigger_finished_label">DONE</string>
 
     <!-- Library -->
-    <string name="library_goals_content_header">Compass can help me&#8230;</string>
+    <string name="library_goals_content_header">Compass can help you&#8230;</string>
     <string name="library_behaviors_content_header">You can do it!</string>
     <string name="library_goal_title">%1$s</string>
     <string name="library_goal_yes">Yes, I\'m in</string>
@@ -233,7 +233,7 @@
     <string name="card_up_next_goal_title">To %1$s</string>
     <string name="card_up_next_indicator_caption">%1$s completed</string>
     <!-- Goal suggestion card -->
-    <string name="card_goal_suggestion_header">Compass can help me&#8230;</string>
+    <string name="card_goal_suggestion_header">Compass can help you&#8230;</string>
     <string name="card_goal_suggestion_later">Maybe later</string>
     <string name="card_goal_suggestion_show_me">Show me</string>
     <string name="card_goal_suggestion_popup_refresh">Refresh</string>
