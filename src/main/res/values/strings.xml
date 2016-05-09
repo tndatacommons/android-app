@@ -63,7 +63,6 @@
     <string name="reminder_failed">Failed to save reminder</string>
 
     <!-- OnBoardingActivity -->
-    <string name="onboarding_category_done">NEXT</string>
     <string name="onboarding_category_skip">skip</string>
     <string name="onboarding_category_finish">finish</string>
 
@@ -146,18 +145,6 @@
     <string name="tour_page_2_caption">Discover the things that interest you.</string>
     <string name="tour_page_3_caption">Tell Compass what you want to do.</string>
     <string name="tour_page_4_caption">That\'s it! Easy!</string>
-
-    <!-- Category chooser -->
-    <string name="choose_categories_error">Uh Oh! There seems to have been an issue finding choices.</string>
-    <string name="choose_categories_header_title">Pick the things you care about most.</string>
-    <string name="choose_categories_header_onboarding_title">Tell Compass the three to five things you care about most.</string>
-    <string name="choose_categories_header_subtitle">You can add or change your choices later.</string>
-    <string name="choose_categories_at_least_three">Pick a minimum of three things you care about most.</string>
-    <string name="choose_categories_at_most_five">Just pick the five things you care about most. You can choose more later.</string>
-    <string name="choose_categories_syncing_title">Synchronizing</string>
-    <string name="choose_categories_syncing">Please wait while Compass updates</string>
-    <string name="choose_categories_tile_cd">Tile image</string>
-    <string name="choose_categories_info_cd">More information</string>
 
     <!-- Search -->
     <string name="search">Search</string>
