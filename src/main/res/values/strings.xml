@@ -4,7 +4,6 @@
     <string name="app_name">Compass</string>
 
     <!-- LoginActivity -->
-    <string name="terms_title">Terms and Conditions</string>
     <string name="launcher_sign_up">SIGN UP</string>
     <string name="launcher_login">LOG IN</string>
     <string name="launcher_compass_image_cd">Compass image</string>
@@ -32,11 +31,10 @@
     <string name="signup_last_name_hint">enter last name</string>
     <string name="signup_confirm_password_label">re-enter password</string>
     <string name="signup_error">An error occurred when signing up</string>
-    <string name="signup_privacy_link">Privacy Policy</string>
     <string name="signup_header_label">CREATE YOUR ACCOUNT</string>
     <string name="signup_accept_terms">Creating an account indicates that you agree to our
         <a href="https://app.tndata.org/terms/">terms of service</a> and
-        <a href="https://app.tndata.org/privacy/">privacy policy.</a>
+        <a href="https://app.tndata.org/privacy/">privacy policy</a>.
     </string>
 
     <!-- MainActivity -->
