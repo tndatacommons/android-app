@@ -51,7 +51,6 @@ public class ActionActivity
 
     public static final String DID_IT_KEY = "org.tndata.compass.ActionActivity.DidIt";
 
-    //private static final int VIEW_GOAL_RC = 4536;
     private static final int SNOOZE_REQUEST_CODE = 61428;
     private static final int RESCHEDULE_REQUEST_CODE = 61429;
 
