@@ -30,6 +30,8 @@ public class TDCAction extends TDCContent{
 
     @SerializedName("behavior")
     private long mBehaviorId;
+    @SerializedName("behavior_title")
+    private String mBehaviorTitle;
 
 
     /*---------*
@@ -62,6 +64,10 @@ public class TDCAction extends TDCContent{
 
     public long getBehaviorId(){
         return mBehaviorId;
+    }
+
+    public String getBehaviorTitle(){
+        return mBehaviorTitle == null ? "" : mBehaviorTitle;
     }
 
     @Override
@@ -97,6 +103,7 @@ public class TDCAction extends TDCContent{
             dest.writeParcelable(mTrigger, flags);
         }
         dest.writeLong(mBehaviorId);
+        dest.writeString(mBehaviorTitle);
     }
 
     public static final Creator<TDCAction> CREATOR = new Creator<TDCAction>(){
@@ -127,5 +134,6 @@ public class TDCAction extends TDCContent{
             mTrigger = src.readParcelable(Trigger.class.getClassLoader());
         }
         mBehaviorId = src.readLong();
+        mBehaviorTitle = src.readString();
     }
 }
