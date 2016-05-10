@@ -54,7 +54,6 @@ public class ActionActivity
 
     //The action in question and the associated reminder
     private Action mAction;
-    //private Goal mGoal;
     private UserCategory mUserCategory;
     private UpcomingAction mUpcomingAction;
     private Reminder mReminder;
