@@ -25,6 +25,7 @@ public abstract class Action extends UserContent implements Comparable<Action>{
     private String mGoalTitle;
 
 
+    //TODO study whether this is actually necessary
     protected Action(){
 
     }
@@ -47,6 +48,13 @@ public abstract class Action extends UserContent implements Comparable<Action>{
     /*---------*
      * GETTERS *
      *---------*/
+
+    /**
+     * Action title getter.
+     *
+     * @return the title of the action.
+     */
+    public abstract String getTitle();
 
     /**
      * Trigger getter.
@@ -148,6 +156,11 @@ public abstract class Action extends UserContent implements Comparable<Action>{
         }
     }
 
+
+    /*------------*
+     * PARCELABLE *
+     *------------*/
+
     @Override
     public void writeToParcel(Parcel dest, int flags){
         super.writeToParcel(dest, flags);
@@ -156,12 +169,15 @@ public abstract class Action extends UserContent implements Comparable<Action>{
         dest.writeString(getGoalTitle());
     }
 
+    /**
+     * Creates an action from a Parcel.
+     *
+     * @param src the Parcel from where the content is to be extracted.
+     */
     protected Action(Parcel src){
         super(src);
         mTrigger = src.readParcelable(Trigger.class.getClassLoader());
         mNextReminder = src.readString();
         mGoalTitle = src.readString();
     }
-
-    public abstract String getTitle();
 }
