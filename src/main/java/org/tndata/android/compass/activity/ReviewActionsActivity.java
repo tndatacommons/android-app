@@ -13,6 +13,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ReviewActionsAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.TDCCategory;
+import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
@@ -42,6 +43,7 @@ public class ReviewActionsActivity
 
     public static final String USER_CATEGORY_KEY = "org.tndata.compass.ReviewActions.Category";
     public static final String USER_GOAL_KEY = "org.tndata.compass.ReviewActions.Goal";
+    public static final String USER_ACTION_KEY = "org.tndata.compass.ReviewActions.Action";
 
     public static final int ACTION_ACTIVITY_RC = 4562;
 
@@ -51,6 +53,7 @@ public class ReviewActionsActivity
 
     private UserCategory mUserCategory;
     private UserGoal mUserGoal;
+    private UserAction mUserAction;
 
     //Network request codes and urls
     private int mGetUserCategoryRC;
@@ -66,24 +69,31 @@ public class ReviewActionsActivity
 
         //A UserCategory is all it's needed when a category's actions are to be displayed
         mUserCategory = getIntent().getParcelableExtra(USER_CATEGORY_KEY);
-        //If either a UserGoal's actions or a UserBehavior's actions are to be displayed
-        //  the a CategoryContent can be used to populate headers. In this case a UserGoal
-        //  will always be available, so the primary category id can be used to retrieve
-        //  it from the Application class list
         mUserGoal = getIntent().getParcelableExtra(USER_GOAL_KEY);
+        //For now, a UserAction indicates display goal actions.
+        mUserAction = getIntent().getParcelableExtra(USER_ACTION_KEY);
 
-        if (mUserGoal != null){
-            long catId = mUserGoal.getPrimaryCategoryId();
-            TDCCategory category = mApplication.getPublicCategories().get(catId);
-            mAdapter = new ReviewActionsAdapter(this, this, mUserGoal.getTitle());
-            mGetActionsNextUrl = API.getUserActionsUrl(mUserGoal.getGoal());
+        if (mUserGoal != null || mUserAction != null){
+            long categoryId, goalId;
+            String goalTitle;
+            if (mUserGoal != null){
+                categoryId = mUserGoal.getPrimaryCategoryId();
+                goalId = mUserGoal.getContentId();
+                goalTitle = mUserGoal.getTitle();
+            }
+            else{
+                categoryId = mUserAction.getPrimaryCategoryId();
+                goalId = mUserAction.getPrimaryGoalId();
+                goalTitle = mUserAction.getGoalTitle();
+            }
+            TDCCategory category = mApplication.getPublicCategories().get(categoryId);
+            mAdapter = new ReviewActionsAdapter(this, this, goalTitle);
+            mGetActionsNextUrl = API.getUserActionsByGoalUrl(goalId);
             if (category != null){
                 setColor(Color.parseColor(category.getColor()));
                 setGoalHeader(category);
-                setFAB(R.id.review_fab, this);
             }
             else{
-                long categoryId = mUserGoal.getPrimaryCategoryId();
                 mGetUserCategoryRC = HttpRequest.get(this, API.getUserCategoryUrl(categoryId));
             }
         }
@@ -134,7 +144,7 @@ public class ReviewActionsActivity
     public void onClick(View view){
         switch (view.getId()){
             case R.id.review_fab:
-                if (mUserGoal == null){
+                if (mUserAction == null && mUserGoal == null){
                     startActivity(new Intent(this, ChooseGoalsActivity.class)
                             .putExtra(ChooseGoalsActivity.CATEGORY_KEY, mUserCategory.getCategory()));
                 }
@@ -203,10 +213,6 @@ public class ReviewActionsActivity
         else if (result instanceof ParserModels.UserActionResultSet){
             ParserModels.UserActionResultSet set = (ParserModels.UserActionResultSet)result;
             mGetActionsNextUrl = set.next;
-            for (Action action:((ParserModels.UserActionResultSet)result).results){
-                //TODO caching?
-                //mApplication.addAction(action);
-            }
             mAdapter.addActions(set.results, mGetActionsNextUrl != null || set.results.isEmpty());
             if (set.results.isEmpty()){
                 mAdapter.displayError("There are no activities");

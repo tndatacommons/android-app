@@ -25,43 +25,78 @@ public class TDCAction extends TDCContent{
     private String mExternalResource;
     @SerializedName("external_resource_name")
     private String mExternalResourceName;
-    @SerializedName("default_trigger")
-    private Trigger mTrigger;
 
     @SerializedName("behavior")
     private long mBehaviorId;
+    @SerializedName("behavior_title")
+    private String mBehaviorTitle;
 
 
     /*---------*
      * GETTERS *
      *---------*/
 
+    /**
+     * Sequence order getter.
+     *
+     * @return the action's sequence order position.
+     */
     public int getSequenceOrder(){
         return mSequenceOrder;
     }
 
+    /**
+     * More info getter.
+     *
+     * @return the action's more info.
+     */
     public String getMoreInfo(){
         return mMoreInfo;
     }
 
+    /**
+     * HTML more info getter.
+     *
+     * @return the action's more info in HTML format.
+     */
     public String getHTMLMoreInfo(){
         return mHtmlMoreInfo;
     }
 
+    /**
+     * External resource getter.
+     *
+     * @return the action's external resource.
+     */
     public String getExternalResource(){
         return mExternalResource;
     }
 
+    /**
+     * External resource name getter.
+     *
+     * @return the action's external resource name.
+     */
     public String getExternalResourceName(){
         return mExternalResourceName;
     }
 
-    public Trigger getTrigger(){
-        return mTrigger;
-    }
-
+    /**
+     * Behavior id getter.
+     *
+     * @return the id of the action's parent behavior.
+     */
     public long getBehaviorId(){
         return mBehaviorId;
+    }
+
+    /**
+     * Behavior title getter.
+     *
+     * @return the title of the action's parent behavior.
+     */
+    public String getBehaviorTitle(){
+        return mBehaviorTitle;
     }
 
     @Override
@@ -80,11 +115,6 @@ public class TDCAction extends TDCContent{
     }
 
     @Override
-    public int describeContents(){
-        return 0;
-    }
-
-    @Override
     public void writeToParcel(Parcel dest, int flags){
         super.writeToParcel(dest, flags);
         dest.writeInt(mSequenceOrder);
@@ -92,11 +122,8 @@ public class TDCAction extends TDCContent{
         dest.writeString(mHtmlMoreInfo);
         dest.writeString(mExternalResource);
         dest.writeString(mExternalResourceName);
-        dest.writeByte((byte)(mTrigger != null ? 1 : 0));
-        if (mTrigger != null){
-            dest.writeParcelable(mTrigger, flags);
-        }
         dest.writeLong(mBehaviorId);
+        dest.writeString(mBehaviorTitle);
     }
 
     public static final Creator<TDCAction> CREATOR = new Creator<TDCAction>(){
@@ -123,9 +150,7 @@ public class TDCAction extends TDCContent{
         mHtmlMoreInfo = src.readString();
         mExternalResource = src.readString();
         mExternalResourceName = src.readString();
-        if (src.readByte() == 1){
-            mTrigger = src.readParcelable(Trigger.class.getClassLoader());
-        }
         mBehaviorId = src.readLong();
+        mBehaviorTitle = src.readString();
     }
 }

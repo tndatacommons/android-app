@@ -64,7 +64,9 @@ public class ChooseCategoryActivity
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case android.R.id.home:
-                setResult(RESULT_OK);
+                setResult(RESULT_CANCELED);
+                finish();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

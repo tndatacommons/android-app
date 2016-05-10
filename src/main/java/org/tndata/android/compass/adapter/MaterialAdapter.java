@@ -478,6 +478,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
         private Context mContext;
 
         private TextView mHeaderTitle;
+        private TextView mHeaderSubtitle;
         private TextView mHeaderContent;
         private LinearLayout mButtonContainer;
 
@@ -493,6 +494,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
             mContext = context;
 
             mHeaderTitle = (TextView)rootView.findViewById(R.id.material_header_title);
+            mHeaderSubtitle = (TextView)rootView.findViewById(R.id.material_header_subtitle);
             mHeaderContent = (TextView)rootView.findViewById(R.id.material_header_content);
             mButtonContainer = (LinearLayout)rootView.findViewById(R.id.material_header_button_container);
         }
@@ -508,6 +510,11 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
 
         public void setTitleBold(){
             mHeaderTitle.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Medium.ttf"));
+        }
+
+        public void setSubtitle(CharSequence subtitle){
+            mHeaderSubtitle.setVisibility(View.VISIBLE);
+            mHeaderSubtitle.setText(subtitle);
         }
 
         /**

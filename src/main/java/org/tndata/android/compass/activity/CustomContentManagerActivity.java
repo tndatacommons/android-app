@@ -40,6 +40,7 @@ public class CustomContentManagerActivity
     private static final String TAG = "CustomContentManager";
 
     public static final String CUSTOM_GOAL_KEY = "org.tndata.compass.CreateGoal.Goal";
+    public static final String CUSTOM_GOAL_ID_KEY = "org.tndata.compass.CreateGoal.GoalId";
     public static final String CUSTOM_GOAL_TITLE_KEY = "org.tndata.compass.CreateGoal.GoalTitle";
 
     private static final int TRIGGER_RC = 1254;
@@ -50,6 +51,7 @@ public class CustomContentManagerActivity
     private CustomContentManagerAdapter mAdapter;
 
     //Request codes
+    private int mGetGoalRequestCode;
     private int mAddGoalRequestCode;
     private int mGetActionsRequestCode;
     private int mAddActionRequestCode;
@@ -64,17 +66,22 @@ public class CustomContentManagerActivity
         String goalTitle = getIntent().getStringExtra(CUSTOM_GOAL_TITLE_KEY);
         if (goalTitle != null){
             mAdapter = new CustomContentManagerAdapter(this, goalTitle, this);
+            setAdapter(mAdapter);
         }
         else{
             mCustomGoal = getIntent().getParcelableExtra(CUSTOM_GOAL_KEY);
             if (mCustomGoal != null){
                 fetchActions(mCustomGoal);
+                mAdapter = new CustomContentManagerAdapter(this, mCustomGoal, this);
+                setAdapter(mAdapter);
             }
-            mAdapter = new CustomContentManagerAdapter(this, mCustomGoal, this);
+            else{
+                long id = getIntent().getLongExtra(CUSTOM_GOAL_ID_KEY, -1L);
+                mGetGoalRequestCode = HttpRequest.get(this, API.getCustomGoalUrl(id));
+            }
         }
-        setAdapter(mAdapter);
-        setColor(getResources().getColor(R.color.primary));
 
+        setColor(getResources().getColor(R.color.primary));
         View header = inflateHeader(R.layout.header_tile);
         ImageView tile = (ImageView)header.findViewById(R.id.header_tile);
         if (mApplication.getUser().isMale()){
@@ -112,12 +119,17 @@ public class CustomContentManagerActivity
 
     private void deliverResults(){
         setResult(RESULT_OK);
-        setIntent(new Intent().putExtra(CUSTOM_GOAL_KEY, mCustomGoal));
+        if (mCustomGoal != null){
+            setIntent(new Intent().putExtra(CUSTOM_GOAL_KEY, mCustomGoal));
+        }
     }
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mAddGoalRequestCode){
+        if (requestCode == mGetGoalRequestCode){
+            Parser.parse(result, CustomGoal.class, this);
+        }
+        else if (requestCode == mAddGoalRequestCode){
             Parser.parse(result, CustomGoal.class, this);
         }
         else if (requestCode == mGetActionsRequestCode){
@@ -139,8 +151,10 @@ public class CustomContentManagerActivity
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
         if (result instanceof CustomGoal){
             mCustomGoal = (CustomGoal)result;
-            mApplication.addGoal(mCustomGoal);
-            mCustomGoal.init();
+            if (mAdapter != null){
+                mApplication.addGoal(mCustomGoal);
+                mCustomGoal.init();
+            }
         }
         else if (result instanceof ParserModels.CustomActionResultSet){
             Collections.sort(((ParserModels.CustomActionResultSet)result).results);
@@ -154,7 +168,14 @@ public class CustomContentManagerActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof CustomGoal){
-            mAdapter.customGoalAdded((CustomGoal)result);
+            if (mAdapter == null){
+                fetchActions(mCustomGoal);
+                mAdapter = new CustomContentManagerAdapter(this, mCustomGoal, this);
+                setAdapter(mAdapter);
+            }
+            else{
+                mAdapter.customGoalAdded((CustomGoal)result);
+            }
         }
         else if (result instanceof ParserModels.CustomActionResultSet){
             mCustomGoal.setActions(((ParserModels.CustomActionResultSet)result).results);

@@ -24,6 +24,17 @@
                 android:layout_height="wrap_content"
                 style="@style/CardTitleText" />
 
+            <!-- This is a temporary thing, what I really want to do is having a universal layout
+                 where I can dynamically add textviews and whatnot -->
+
+            <TextView
+                android:id="@+id/material_header_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"
+                style="@style/CardSubtitleText" />
+
             <TextView
                 android:id="@+id/material_header_content"
                 android:layout_width="match_parent"

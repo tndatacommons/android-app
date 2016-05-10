@@ -13,12 +13,9 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ActionAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
-import org.tndata.android.compass.model.CustomGoal;
-import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserCategory;
-import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.service.ActionReportService;
@@ -51,14 +48,12 @@ public class ActionActivity
 
     public static final String DID_IT_KEY = "org.tndata.compass.ActionActivity.DidIt";
 
-    //private static final int VIEW_GOAL_RC = 4536;
     private static final int SNOOZE_REQUEST_CODE = 61428;
     private static final int RESCHEDULE_REQUEST_CODE = 61429;
 
 
     //The action in question and the associated reminder
     private Action mAction;
-    private Goal mGoal;
     private UserCategory mUserCategory;
     private UpcomingAction mUpcomingAction;
     private Reminder mReminder;
@@ -66,8 +61,6 @@ public class ActionActivity
     private ActionAdapter mAdapter;
 
     private int mGetActionRC;
-    private int mGetCustomGoalRC;
-    private int mGetUserGoalRC;
     private int mGetUserCategoryRC;
 
 
@@ -76,12 +69,18 @@ public class ActionActivity
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        //Retrieve the action and mark the reminder and upcoming action as nonexistent
+        //Get the action, upcoming action and reminder from the intent. Only one of them
+        //  will be actually something other than null
         mAction = getIntent().getParcelableExtra(ACTION_KEY);
-        mUpcomingAction = null;
-        mReminder = null;
+        mUpcomingAction = getIntent().getParcelableExtra(UPCOMING_ACTION_KEY);
+        mReminder = getIntent().getParcelableExtra(REMINDER_KEY);
 
+        //Set a placeholder color
         setColor(getResources().getColor(R.color.primary));
+
+        //Create and set the adapter
+        mAdapter = new ActionAdapter(this, this, mReminder != null);
+        setAdapter(mAdapter);
 
         //If the action exists do some initial setup and fetching
         if (mAction != null){
@@ -92,19 +91,11 @@ public class ActionActivity
             else{
                 setHeader();
             }
-            fetchGoal(mAction);
+            mAdapter.setAction(mAction);
         }
-
-        //If the action wasn't provided via the intent it needs to be fetched
-        if (mAction == null){
-            mUpcomingAction = getIntent().getParcelableExtra(UPCOMING_ACTION_KEY);
-            mReminder = getIntent().getParcelableExtra(REMINDER_KEY);
+        else{
             fetchAction();
         }
-
-        //Create and set the adapter
-        mAdapter = new ActionAdapter(this, this, mReminder != null);
-        setAdapter(mAdapter);
     }
 
     /**
@@ -205,22 +196,6 @@ public class ActionActivity
     }
 
     /**
-     * Fetches a goal from the backend.
-     *
-     * @param action the action whose goal is to be fetched.
-     */
-    private void fetchGoal(Action action){
-        if (action instanceof UserAction){
-            UserAction userAction = (UserAction)action;
-            mGetUserGoalRC = HttpRequest.get(this, API.getUserGoalUrl(userAction.getPrimaryGoalId()));
-        }
-        else{
-            CustomAction customAction = (CustomAction)action;
-            mGetCustomGoalRC = HttpRequest.get(this, API.getCustomGoalUrl(customAction.getCustomGoalId()));
-        }
-    }
-
-    /**
      * Fetches a category from the backend.
      *
      * @param userAction the user action whose category is to be fetched.
@@ -240,12 +215,6 @@ public class ActionActivity
                 Parser.parse(result, CustomAction.class, this);
             }
         }
-        else if (requestCode == mGetCustomGoalRC){
-            Parser.parse(result, CustomGoal.class, this);
-        }
-        else if (requestCode == mGetUserGoalRC){
-            Parser.parse(result, ParserModels.UserGoalsResultSet.class, this);
-        }
         else if (requestCode == mGetUserCategoryRC){
             Parser.parse(result, ParserModels.UserCategoryResultSet.class, this);
         }
@@ -261,12 +230,6 @@ public class ActionActivity
         if (result instanceof Action){
             mAction = (Action)result;
         }
-        else if (result instanceof CustomGoal){
-            mGoal = (CustomGoal)result;
-        }
-        else if (result instanceof ParserModels.UserGoalsResultSet){
-            mGoal = ((ParserModels.UserGoalsResultSet)result).results.get(0);
-        }
         else if (result instanceof ParserModels.UserCategoryResultSet){
             mUserCategory = ((ParserModels.UserCategoryResultSet)result).results.get(0);
         }
@@ -275,30 +238,18 @@ public class ActionActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof UserAction){
-            fetchGoal(mAction);
+            mAdapter.setAction(mAction);
             fetchCategory((UserAction)mAction);
-        }
-        else if (result instanceof CustomAction){
-            fetchGoal(mAction);
-        }
-        else if (result instanceof CustomGoal){
-            setHeader();
-            mAdapter.setAction(mAction, mGoal);
             invalidateOptionsMenu();
         }
-        else if (result instanceof ParserModels.UserGoalsResultSet){
+        else if (result instanceof CustomAction){
             mAdapter.setAction(mAction);
-            if (mUserCategory != null){
-                mAdapter.setCategory(mUserCategory.getCategory());
-            }
             invalidateOptionsMenu();
         }
         else if (result instanceof ParserModels.UserCategoryResultSet){
             setColor(Color.parseColor(mUserCategory.getColor()));
             setHeader();
-            if (mGoal != null){
-                mAdapter.setCategory(mUserCategory.getCategory());
-            }
+            mAdapter.setCategory(mUserCategory.getCategory());
         }
     }
 
@@ -363,15 +314,14 @@ public class ActionActivity
     }
 
     private void viewGoal(){
-        if (mGoal != null){
-            if (mGoal instanceof UserGoal){
-                startActivity(new Intent(this, ReviewActionsActivity.class)
-                        .putExtra(ReviewActionsActivity.USER_GOAL_KEY, mGoal));
-            }
-            else{
-                startActivity(new Intent(this, CustomContentManagerActivity.class)
-                        .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, mGoal));
-            }
+        if (mAction instanceof UserAction){
+            startActivity(new Intent(this, ReviewActionsActivity.class)
+                    .putExtra(ReviewActionsActivity.USER_ACTION_KEY, mAction));
+        }
+        else{
+            long customGoalId = ((CustomAction)mAction).getCustomGoalId();
+            startActivity(new Intent(this, CustomContentManagerActivity.class)
+                    .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_ID_KEY, customGoalId));
         }
     }
 
@@ -392,7 +342,7 @@ public class ActionActivity
     public void onRescheduleClick(){
         if (mAction != null){
             Intent reschedule = new Intent(this, TriggerActivity.class)
-                    .putExtra(TriggerActivity.GOAL_TITLE_KEY, mGoal.getTitle())
+                    .putExtra(TriggerActivity.GOAL_TITLE_KEY, mAction.getGoalTitle())
                     .putExtra(TriggerActivity.ACTION_KEY, mAction);
             startActivityForResult(reschedule, RESCHEDULE_REQUEST_CODE);
         }

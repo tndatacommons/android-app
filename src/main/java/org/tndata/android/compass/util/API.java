@@ -247,8 +247,8 @@ public final class API{
         return BASE_URL + "users/actions/?category=" + category.getId();
     }
 
-    public static String getUserActionsUrl(@NonNull TDCGoal goal){
-        return BASE_URL + "users/actions/?goal=" + goal.getId();
+    public static String getUserActionsByGoalUrl(long goalId){
+        return BASE_URL + "users/actions/?goal=" + goalId;
     }
 
     public static String getUserActionsUrl(@NonNull TDCBehavior behavior){

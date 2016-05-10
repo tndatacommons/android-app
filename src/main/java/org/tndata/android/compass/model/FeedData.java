@@ -314,7 +314,7 @@ public class FeedData{
      * @return true if the action is happening today, false otherwise.
      */
     private boolean happensToday(Action action){
-        if (action.getNextReminder() == null){
+        if (action.getNextReminder().equals("")){
             Log.d(TAG, "happensToday(): next reminder is not set");
             return false;
         }

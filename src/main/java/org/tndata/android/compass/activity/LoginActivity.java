@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -62,15 +61,12 @@ public class LoginActivity
     private static final String PREFERENCES_NEW_USER = "new_user_pref";
 
 
-    private Toolbar mToolbar;
+    private CompassApplication mApplication;
+    private List<Fragment> mFragmentStack;
 
     private LauncherFragment mLauncherFragment;
     private LogInFragment mLoginFragment;
     private SignUpFragment mSignUpFragment;
-
-    private List<Fragment> mFragmentStack;
-
-    private CompassApplication mApplication;
 
     //Request codes
     private int mLogInRC;
@@ -81,22 +77,13 @@ public class LoginActivity
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base_toolbar);
+        setContentView(R.layout.activity_base);
 
         mApplication = (CompassApplication)getApplication();
-
-        mToolbar = (Toolbar) findViewById(R.id.tool_bar);
-        mToolbar.setNavigationIcon(R.drawable.ic_back_white_24dp);
-        setSupportActionBar(mToolbar);
-        if (getSupportActionBar() != null){
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().hide();
-        }
-
         mFragmentStack = new ArrayList<>();
-
         swapFragments(DEFAULT, true);
-        new VersionChecker(this).execute();
+        //new VersionChecker(this).execute();
+        onVersionRetrieved(getString(R.string.version_name));
     }
 
     @Override
@@ -124,8 +111,12 @@ public class LoginActivity
             }
             else{
                 User user = mApplication.getUserLoginInfo();
-                if (!user.getEmail().isEmpty() && !user.getPassword().isEmpty()){
-                    logUserIn(user.getEmail(), user.getPassword());
+                String email = user.getEmail();
+                String password = user.getPassword();
+                if (!email.isEmpty() && !password.isEmpty()){
+                    displayLauncherActivity(true);
+                    mLogInRC = HttpRequest.post(this, API.getLogInUrl(),
+                            API.getLogInBody(email, password));
                 }
                 else{
                     displayLauncherActivity(false);
@@ -162,7 +153,6 @@ public class LoginActivity
                     mLauncherFragment = new LauncherFragment();
                 }
                 fragment = mLauncherFragment;
-                switchActionBarState(false);
                 break;
 
             case LOGIN:
@@ -170,7 +160,6 @@ public class LoginActivity
                     mLoginFragment = new LogInFragment();
                 }
                 fragment = mLoginFragment;
-                switchActionBarState(false);
                 break;
 
             case SIGN_UP:
@@ -178,7 +167,6 @@ public class LoginActivity
                     mSignUpFragment = new SignUpFragment();
                 }
                 fragment = mSignUpFragment;
-                switchActionBarState(false);
                 break;
 
         }
@@ -190,20 +178,9 @@ public class LoginActivity
         }
     }
 
-    private void switchActionBarState(boolean show){
-        if (getSupportActionBar() != null){
-            if (show){
-                getSupportActionBar().show();
-            }
-            else{
-                getSupportActionBar().hide();
-            }
-        }
-    }
-
     private void handleBackStack(){
         if (!mFragmentStack.isEmpty()){
-            mFragmentStack.remove(mFragmentStack.size() - 1);
+            mFragmentStack.remove(mFragmentStack.size()-1);
         }
 
         if (mFragmentStack.isEmpty()){
@@ -212,7 +189,7 @@ public class LoginActivity
             finish();
         }
         else{
-            Fragment fragment = mFragmentStack.get(mFragmentStack.size() - 1);
+            Fragment fragment = mFragmentStack.get(mFragmentStack.size()-1);
 
             if (fragment instanceof LauncherFragment){
                 ((LauncherFragment)fragment).showProgress(false);
@@ -230,18 +207,6 @@ public class LoginActivity
     private void transitionToOnBoarding(){
         startActivity(new Intent(getApplicationContext(), OnBoardingActivity.class));
         finish();
-    }
-
-    /**
-     * Fires up the log in task with the provided parameters.
-     *
-     * @param email the email address.
-     * @param password the password.
-     */
-    private void logUserIn(String email, String password){
-        Log.d(TAG, "Logging user in");
-        displayLauncherActivity(true);
-        mLogInRC = HttpRequest.post(this, API.getLogInUrl(), API.getLogInBody(email, password));
     }
 
     @Override

@@ -118,11 +118,6 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
         return mActionListHolder;
     }
 
-    @Override
-    protected void bindListHolder(RecyclerView.ViewHolder rawHolder){
-        Log.d(TAG, "call to bindListHolder()");
-    }
-
     /**
      * Notifies the adapter that the goal has been added to the user's data set. Displays
      * the action list, which will be empty.
