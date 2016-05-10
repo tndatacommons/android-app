@@ -11,7 +11,6 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.CustomAction;
-import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.parser.Parser;
@@ -40,7 +39,6 @@ public class ActionAdapter
     private ActionAdapterListener mListener;
     private Action mAction;
     private TDCCategory mCategory;
-    private Goal mGoal;
     private boolean mFromNotification;
 
     private int mGetRewardRC;
@@ -71,13 +69,6 @@ public class ActionAdapter
         else{
             fetchReward();
         }
-    }
-
-    public void setAction(@NonNull Action action, @NonNull Goal goal){
-        mAction = action;
-        mGoal = goal;
-        notifyHeaderInserted();
-        fetchReward();
     }
 
     public void setCategory(@NonNull TDCCategory category){
@@ -116,11 +107,14 @@ public class ActionAdapter
         if (mAction instanceof UserAction){
             holder.setTitle(mAction.getTitle());
             holder.setTitleBold();
+            String gt = mAction.getGoalTitle().toLowerCase();
+            String bt = ((UserAction)mAction).getAction().getBehaviorTitle().toLowerCase();
+            holder.setSubtitle(getContext().getString(R.string.action_header_subtitle, bt, gt));
             UserAction userAction = (UserAction)mAction;
             holder.setContent(userAction.getDescription());
         }
         else if (mAction instanceof CustomAction){
-            holder.setTitle("To " + mGoal.getTitle() + ":");
+            holder.setTitle("To " + mAction.getGoalTitle() + ":");
             holder.setContent(mAction.getTitle());
         }
 

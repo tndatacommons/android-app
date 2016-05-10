@@ -138,6 +138,7 @@
     <string name="action_view_goal_condensed">Goal activities</string>
     <string name="action_trigger">Reschedule</string>
     <string name="action_disable_trigger">Disable reminder</string>
+    <string name="action_header_subtitle">It helps to %1$s when you want to %2$s.</string>
 
     <!-- TourFragment -->
     <string name="tour_action_skip">Skip</string>
