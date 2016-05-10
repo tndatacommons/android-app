@@ -13,6 +13,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ActionAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
+import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserCategory;
@@ -315,17 +316,15 @@ public class ActionActivity
     }
 
     private void viewGoal(){
-        //TODO Fix this crap
-        /*if (mGoal != null){
-            if (mGoal instanceof UserGoal){
-                startActivity(new Intent(this, ReviewActionsActivity.class)
-                        .putExtra(ReviewActionsActivity.USER_GOAL_KEY, mGoal));
-            }
-            else{
-                startActivity(new Intent(this, CustomContentManagerActivity.class)
-                        .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, mGoal));
-            }
-        }*/
+        if (mAction instanceof UserAction){
+            startActivity(new Intent(this, ReviewActionsActivity.class)
+                    .putExtra(ReviewActionsActivity.USER_ACTION_KEY, mAction));
+        }
+        else{
+            /*CustomGoal customGoal = ((CustomAction)mAction).getGoal();
+            startActivity(new Intent(this, CustomContentManagerActivity.class)
+                    .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, customGoal));*/
+        }
     }
 
     @Override
