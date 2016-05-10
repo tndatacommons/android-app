@@ -92,7 +92,6 @@ public class ReviewActionsActivity
             if (category != null){
                 setColor(Color.parseColor(category.getColor()));
                 setGoalHeader(category);
-                setFAB(R.id.review_fab, this);
             }
             else{
                 mGetUserCategoryRC = HttpRequest.get(this, API.getUserCategoryUrl(categoryId));
@@ -145,7 +144,7 @@ public class ReviewActionsActivity
     public void onClick(View view){
         switch (view.getId()){
             case R.id.review_fab:
-                if (mUserAction == null && mUserGoal != null){
+                if (mUserAction == null && mUserGoal == null){
                     startActivity(new Intent(this, ChooseGoalsActivity.class)
                             .putExtra(ChooseGoalsActivity.CATEGORY_KEY, mUserCategory.getCategory()));
                 }
