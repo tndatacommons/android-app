@@ -83,6 +83,7 @@ public class LoginActivity
         mFragmentStack = new ArrayList<>();
         swapFragments(DEFAULT, true);
         new VersionChecker(this).execute();
+        //onVersionRetrieved(getString(R.string.version_name));
     }
 
     @Override
