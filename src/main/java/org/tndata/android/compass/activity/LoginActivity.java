@@ -110,8 +110,12 @@ public class LoginActivity
             }
             else{
                 User user = mApplication.getUserLoginInfo();
-                if (!user.getEmail().isEmpty() && !user.getPassword().isEmpty()){
-                    logUserIn(user.getEmail(), user.getPassword());
+                String email = user.getEmail();
+                String password = user.getPassword();
+                if (!email.isEmpty() && !password.isEmpty()){
+                    displayLauncherActivity(true);
+                    mLogInRC = HttpRequest.post(this, API.getLogInUrl(),
+                            API.getLogInBody(email, password));
                 }
                 else{
                     displayLauncherActivity(false);
@@ -175,7 +179,7 @@ public class LoginActivity
 
     private void handleBackStack(){
         if (!mFragmentStack.isEmpty()){
-            mFragmentStack.remove(mFragmentStack.size() - 1);
+            mFragmentStack.remove(mFragmentStack.size()-1);
         }
 
         if (mFragmentStack.isEmpty()){
@@ -184,7 +188,7 @@ public class LoginActivity
             finish();
         }
         else{
-            Fragment fragment = mFragmentStack.get(mFragmentStack.size() - 1);
+            Fragment fragment = mFragmentStack.get(mFragmentStack.size()-1);
 
             if (fragment instanceof LauncherFragment){
                 ((LauncherFragment)fragment).showProgress(false);
@@ -202,18 +206,6 @@ public class LoginActivity
     private void transitionToOnBoarding(){
         startActivity(new Intent(getApplicationContext(), OnBoardingActivity.class));
         finish();
-    }
-
-    /**
-     * Fires up the log in task with the provided parameters.
-     *
-     * @param email the email address.
-     * @param password the password.
-     */
-    private void logUserIn(String email, String password){
-        Log.d(TAG, "Logging user in");
-        displayLauncherActivity(true);
-        mLogInRC = HttpRequest.post(this, API.getLogInUrl(), API.getLogInBody(email, password));
     }
 
     @Override
