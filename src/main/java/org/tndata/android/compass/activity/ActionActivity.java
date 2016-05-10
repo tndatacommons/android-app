@@ -13,7 +13,6 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ActionAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
-import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserCategory;
@@ -321,9 +320,9 @@ public class ActionActivity
                     .putExtra(ReviewActionsActivity.USER_ACTION_KEY, mAction));
         }
         else{
-            /*CustomGoal customGoal = ((CustomAction)mAction).getGoal();
+            long customGoalId = ((CustomAction)mAction).getCustomGoalId();
             startActivity(new Intent(this, CustomContentManagerActivity.class)
-                    .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, customGoal));*/
+                    .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_ID_KEY, customGoalId));
         }
     }
 
