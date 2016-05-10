@@ -82,8 +82,8 @@ public class LoginActivity
         mApplication = (CompassApplication)getApplication();
         mFragmentStack = new ArrayList<>();
         swapFragments(DEFAULT, true);
-        new VersionChecker(this).execute();
-        //onVersionRetrieved(getString(R.string.version_name));
+        //new VersionChecker(this).execute();
+        onVersionRetrieved(getString(R.string.version_name));
     }
 
     @Override
