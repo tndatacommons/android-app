@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -55,17 +54,9 @@ public class OnBoardingActivity
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base_toolbar);
+        setContentView(R.layout.activity_base);
 
         mApplication = (CompassApplication)getApplication();
-
-        Toolbar toolbar = (Toolbar)findViewById(R.id.tool_bar);
-        toolbar.setNavigationIcon(R.drawable.ic_back_white_24dp);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null){
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().hide();
-        }
 
         String title = getString(R.string.onboarding_instrument_title);
         String description = getString(R.string.onboarding_instrument_description);

@@ -3,11 +3,6 @@
 
     <attr name="fontPath" format="string"/>
 
-    <declare-styleable name="SpacingItemDecoration">
-        <attr name="android:verticalSpacing" tools:ignore="ResourceName"/>
-        <attr name="android:horizontalSpacing" tools:ignore="ResourceName"/>
-    </declare-styleable>
-
     <declare-styleable name="TransitionButton">
         <attr name="color_active" format="color" />
         <attr name="color_transition" format="color" />

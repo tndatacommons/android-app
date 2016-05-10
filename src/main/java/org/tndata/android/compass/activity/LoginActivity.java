@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -62,15 +61,12 @@ public class LoginActivity
     private static final String PREFERENCES_NEW_USER = "new_user_pref";
 
 
-    private Toolbar mToolbar;
+    private CompassApplication mApplication;
+    private List<Fragment> mFragmentStack;
 
     private LauncherFragment mLauncherFragment;
     private LogInFragment mLoginFragment;
     private SignUpFragment mSignUpFragment;
-
-    private List<Fragment> mFragmentStack;
-
-    private CompassApplication mApplication;
 
     //Request codes
     private int mLogInRC;
@@ -81,20 +77,10 @@ public class LoginActivity
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base_toolbar);
+        setContentView(R.layout.activity_base);
 
         mApplication = (CompassApplication)getApplication();
-
-        mToolbar = (Toolbar) findViewById(R.id.tool_bar);
-        mToolbar.setNavigationIcon(R.drawable.ic_back_white_24dp);
-        setSupportActionBar(mToolbar);
-        if (getSupportActionBar() != null){
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().hide();
-        }
-
         mFragmentStack = new ArrayList<>();
-
         swapFragments(DEFAULT, true);
         new VersionChecker(this).execute();
     }
@@ -162,7 +148,6 @@ public class LoginActivity
                     mLauncherFragment = new LauncherFragment();
                 }
                 fragment = mLauncherFragment;
-                switchActionBarState(false);
                 break;
 
             case LOGIN:
@@ -170,7 +155,6 @@ public class LoginActivity
                     mLoginFragment = new LogInFragment();
                 }
                 fragment = mLoginFragment;
-                switchActionBarState(false);
                 break;
 
             case SIGN_UP:
@@ -178,7 +162,6 @@ public class LoginActivity
                     mSignUpFragment = new SignUpFragment();
                 }
                 fragment = mSignUpFragment;
-                switchActionBarState(false);
                 break;
 
         }
@@ -187,17 +170,6 @@ public class LoginActivity
                 mFragmentStack.add(fragment);
             }
             getSupportFragmentManager().beginTransaction().replace(R.id.base_content, fragment).commit();
-        }
-    }
-
-    private void switchActionBarState(boolean show){
-        if (getSupportActionBar() != null){
-            if (show){
-                getSupportActionBar().show();
-            }
-            else{
-                getSupportActionBar().hide();
-            }
         }
     }
 
