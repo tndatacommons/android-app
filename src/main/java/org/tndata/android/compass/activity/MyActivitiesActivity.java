@@ -86,6 +86,7 @@ public class MyActivitiesActivity
             mCategoryList = new ArrayList<>();
             mUserCategoryMap = new HashMap<>();
             for (UserCategory userCategory:((ParserModels.UserCategoryResultSet)result).results){
+                if (userCategory.getCategory().isSelectedByDefault()) continue;
                 mCategoryList.add(userCategory.getCategory());
                 mUserCategoryMap.put(userCategory.getContentId(), userCategory);
             }
