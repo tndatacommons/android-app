@@ -7,7 +7,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.squareup.picasso.Picasso;
 
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.TDCCategory;
