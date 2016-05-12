@@ -1,44 +1,33 @@
 package org.tndata.android.compass.util;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 
 import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.R;
 
 
 /**
- * Loads images into ImageViews through a url. The process is made up of three steps, first,
- * the memory cache is checked. If the memory cache lookup misses, then the disk cache is
- * checked. Finally, if the disk lookup  misses, the image is downloaded in the background.
+ * Loads images into ImageViews.
  *
  * @author Ismael Alonso
- * @version 2.0.0
+ * @version 3.0.0
  */
 public final class ImageLoader{
     //The application context, to get paths
     private static Context mContext = null;
 
-    //A placeholder used until the intended image is loaded
-    private static Bitmap mPlaceHolderBitmap;
-
 
     /**
-     * Initializes the caching system.
+     * Initializes the loader
      *
      * @param context the application context.
      */
     public static void initialize(Context context){
-        if (mContext == null){
-            mContext = context;
-
-            mPlaceHolderBitmap = BitmapFactory.decodeResource(mContext.getResources(),
-                    R.drawable.ic_compass_white_50dp);
-        }
+        mContext = context;
     }
 
     /**
@@ -61,7 +50,11 @@ public final class ImageLoader{
     public static void loadBitmap(ImageView view, String url, Options options){
         Picasso picasso = Picasso.with(mContext);
         picasso.setIndicatorsEnabled(BuildConfig.DEBUG);
-        picasso.load(url).into(view);
+        RequestCreator request = picasso.load(url);
+        if (options.mUsePlaceholder){
+            request.placeholder(R.drawable.ic_compass_white_50dp);
+        }
+        request.into(view);
     }
 
 
