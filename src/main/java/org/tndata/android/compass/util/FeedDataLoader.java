@@ -84,11 +84,11 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
             String url = set.next;
             if (url == null){
                 url = API.getUserGoalsUrl();
-                if (set.results.isEmpty()){
+                mFeedData.addGoals(set.results, url);
+                if (set.results.size() < 3){
                     mGetUserGoalsRC = HttpRequest.get(this, url);
                 }
                 else{
-                    mFeedData.addGoals(set.results, url);
                     sLoader = null;
                     mCallback.onFeedDataLoaded(mFeedData);
                 }
