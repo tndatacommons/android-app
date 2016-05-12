@@ -136,31 +136,12 @@ public final class API{
         return BASE_URL + "categories/?page_size=999999";
     }
 
-    public static String getCategoryUrl(long categoryId){
-        return BASE_URL + "categories/" + categoryId + "/";
-    }
-
     public static String getUserCategoryUrl(long categoryId){
         return BASE_URL + "users/categories/?category=" + categoryId;
     }
 
-    public static String getDeleteCategoryUrl(@NonNull UserCategory userCategory){
-        return BASE_URL + "users/categories/" + userCategory.getId() + "/";
-    }
-
     public static String getUserCategoriesUrl(){
         return BASE_URL + "users/categories/?page_size=999999";
-    }
-
-    public static JSONObject getPostCategoryBody(@NonNull TDCCategory category){
-        JSONObject postCategoriesBody = new JSONObject();
-        try{
-            postCategoriesBody.put("category", category.getId());
-        }
-        catch (JSONException jsonx){
-            jsonx.printStackTrace();
-        }
-        return postCategoriesBody;
     }
 
 
@@ -175,14 +156,6 @@ public final class API{
 
     public static String getTodaysGoalsUrl(){
         return BASE_URL + "users/goals/?today=1";
-    }
-
-    public static String getGoalUrl(long goalId){
-        return BASE_URL + "goals/" + goalId + "/";
-    }
-
-    public static String getUserGoalUrl(long goalId){
-        return BASE_URL + "users/goals/?goal=" + goalId;
     }
 
     public static String getPostGoalUrl(@NonNull TDCGoal goal){
@@ -249,10 +222,6 @@ public final class API{
 
     public static String getUserActionsByGoalUrl(long goalId){
         return BASE_URL + "users/actions/?goal=" + goalId;
-    }
-
-    public static String getUserActionsUrl(@NonNull TDCBehavior behavior){
-        return BASE_URL + "users/actions/?behavior=" + behavior.getId();
     }
 
     /**
