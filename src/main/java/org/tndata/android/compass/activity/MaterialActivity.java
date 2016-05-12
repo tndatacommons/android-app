@@ -101,8 +101,7 @@ public abstract class MaterialActivity extends AppCompatActivity{
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.menu_search, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
