@@ -48,13 +48,18 @@ public final class ImageLoader{
      * @param options the option bundle.
      */
     public static void loadBitmap(ImageView view, String url, Options options){
-        Picasso picasso = Picasso.with(mContext);
-        picasso.setIndicatorsEnabled(BuildConfig.DEBUG);
-        RequestCreator request = picasso.load(url);
-        if (options.mUsePlaceholder){
-            request.placeholder(R.drawable.ic_compass_white_50dp);
+        if (url.isEmpty()){
+            view.setImageResource(R.drawable.ic_compass_white_50dp);
         }
-        request.into(view);
+        else{
+            Picasso picasso = Picasso.with(mContext);
+            picasso.setIndicatorsEnabled(BuildConfig.DEBUG);
+            RequestCreator request = picasso.load(url);
+            if (options.mUsePlaceholder){
+                request.placeholder(R.drawable.ic_compass_white_50dp);
+            }
+            request.into(view);
+        }
     }
 
 
