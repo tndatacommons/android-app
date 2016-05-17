@@ -280,9 +280,9 @@
     <string name="profile_education_question">Do you have a degree?</string>
 
     <!-- Reward -->
-    <string name="reward_fortune_header">Here's a fortune cookie for you</string>
-    <string name="reward_fact_header">Here's a fun fact for you</string>
-    <string name="reward_joke_header">Here's a joke for you</string>
+    <string name="reward_fortune_header">Here\'s a fortune cookie for you</string>
+    <string name="reward_fact_header">Here\'s a fun fact for you</string>
+    <string name="reward_joke_header">Here\'s a joke for you</string>
     <string name="reward_quote_header">A thought for the day</string>
 
 </resources>
