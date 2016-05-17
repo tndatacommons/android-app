@@ -65,27 +65,35 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
     }
 
     @Override
+    public void onDetach(){
+        mListener = null;
+        super.onDetach();
+    }
+
+    @Override
     public boolean onPreferenceClick(Preference preference){
-        switch (preference.getKey()){
-            case NOTIFICATIONS_KEY:
-                mListener.notifications();
-                return true;
+        if (mListener != null){
+            switch (preference.getKey()){
+                case NOTIFICATIONS_KEY:
+                    mListener.notifications();
+                    return true;
 
-            case LOGOUT_KEY:
-                mListener.logOut();
-                return true;
+                case LOGOUT_KEY:
+                    mListener.logOut();
+                    return true;
 
-            case TOS_KEY:
-                mListener.tos();
-                return true;
+                case TOS_KEY:
+                    mListener.tos();
+                    return true;
 
-            case PRIVACY_KEY:
-                mListener.privacy();
-                return true;
+                case PRIVACY_KEY:
+                    mListener.privacy();
+                    return true;
 
-            case SOURCES_KEY:
-                mListener.sources();
-                return true;
+                case SOURCES_KEY:
+                    mListener.sources();
+                    return true;
+            }
         }
         return false;
     }

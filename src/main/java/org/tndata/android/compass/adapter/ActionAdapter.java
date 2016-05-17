@@ -161,16 +161,16 @@ public class ActionAdapter
 
     private void setReward(DetailViewHolder holder){
         if (mReward.isFortune()){
-            holder.setTitle("Here's a fortune cookie for you");
+            holder.setTitle(R.string.reward_fortune_header);
         }
         else if (mReward.isFunFact()){
-            holder.setTitle("Here's a fun fact for you");
+            holder.setTitle(R.string.reward_fact_header);
         }
         else if (mReward.isJoke()){
-            holder.setTitle("Here's a joke for you");
+            holder.setTitle(R.string.reward_joke_header);
         }
-        else{
-            holder.setTitle("Here's a nice quote for you");
+        else if (mReward.isQuote()){
+            holder.setTitle(R.string.reward_quote_header);
         }
         holder.setDescription(mReward.format());
     }
