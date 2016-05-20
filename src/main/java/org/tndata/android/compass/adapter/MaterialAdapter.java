@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -479,6 +480,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
 
         private TextView mHeaderTitle;
         private TextView mHeaderSubtitle;
+        private ImageView mHeaderSubtitleIcon;
         private TextView mHeaderContent;
         private LinearLayout mButtonContainer;
 
@@ -495,6 +497,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
 
             mHeaderTitle = (TextView)rootView.findViewById(R.id.material_header_title);
             mHeaderSubtitle = (TextView)rootView.findViewById(R.id.material_header_subtitle);
+            mHeaderSubtitleIcon = (ImageView)rootView.findViewById(R.id.material_header_subtitle_icon);
             mHeaderContent = (TextView)rootView.findViewById(R.id.material_header_content);
             mButtonContainer = (LinearLayout)rootView.findViewById(R.id.material_header_button_container);
         }
@@ -515,6 +518,11 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
         public void setSubtitle(CharSequence subtitle){
             mHeaderSubtitle.setVisibility(View.VISIBLE);
             mHeaderSubtitle.setText(subtitle);
+        }
+
+        public void setSubtitleIconListener(View.OnClickListener listener) {
+            mHeaderSubtitleIcon.setOnClickListener(listener);
+            mHeaderSubtitleIcon.setVisibility(View.VISIBLE);
         }
 
         /**

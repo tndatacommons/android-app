@@ -254,7 +254,7 @@
     <string name="header_hero_cd">Full size category image</string>
     <string name="header_tile_cd">Centered tile, generally circle cropped from a hero</string>
     <string name="header_icon_cd">Icon image of a relevant piece of content</string>
-
+    <string name="material_header_subtitle_icon_cd">Help icon for the sub-title</string>
     <string name="category_image_cd">Cropped category tile</string>
 
     <!-- User profile -->
