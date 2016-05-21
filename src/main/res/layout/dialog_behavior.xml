@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp" >
+
+        <TextView
+            android:id="@+id/dialog_behavior_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAllCaps="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/dark_text_color" />
+
+        <TextView
+            android:id="@+id/dialog_behavior_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/secondary_text_color"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/behavior_dialog_confirm"
+            android:layout_margin="8dp"
+            android:layout_alignParentEnd="true"
+            android:text="@string/behavior_dialog_confirm"
+            style="@style/FlatButton"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/behavior_dialog_disable"
+            android:layout_margin="8dp"
+            android:layout_toLeftOf="@+id/behavior_dialog_ok"
+            android:text="@string/behavior_dialog_disable"
+            style="@style/FlatButton" />
+
+        <Button
+            android:id="@+id/behavior_dialog_ok"
+            android:text="@string/behavior_dialog_ok"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="10dp"
+            android:width="40dp"
+            style="@style/FlatButton"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

@@ -140,6 +140,12 @@
     <string name="action_disable_trigger">Disable reminder</string>
     <string name="action_header_subtitle">It helps to %1$s when you want to %2$s.</string>
 
+    <!-- Behavior Dialog from ActionActivity -->
+    <string name="behavior_dialog_ok">OK</string>
+    <string name="behavior_dialog_disable">Disable</string>
+    <string name="behavior_dialog_confirm">Yes, Remove this</string>
+    <string name="behavior_dialog_confirm_message">This will permanently remove all related notifications. Are you sure you want to do this?</string>
+
     <!-- TourFragment -->
     <string name="tour_action_skip">Skip</string>
     <string name="tour_page_1_caption">Compass helps you reach your goals.</string>
