@@ -9,9 +9,9 @@ import android.view.View;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.Reward;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
@@ -113,6 +113,7 @@ public class ActionAdapter
             holder.setSubtitle(((UserAction)mAction).getAction().getBehaviorTitle());
             UserAction userAction = (UserAction)mAction;
             holder.setContent(userAction.getDescription());
+            holder.setSubtitleIconListener(this);
         }
         else if (mAction instanceof CustomAction){
             holder.setTitle("To " + mAction.getGoalTitle() + ":");
@@ -193,6 +194,10 @@ public class ActionAdapter
             case R.id.action_snooze:
                 mListener.onSnoozeClick();
                 break;
+
+            case R.id.material_header_subtitle_icon:
+                mListener.onBehaviorInfoClick();
+                break;
         }
     }
 
@@ -237,5 +242,6 @@ public class ActionAdapter
         void onIDidItClick();
         void onRescheduleClick();
         void onSnoozeClick();
+        void onBehaviorInfoClick();
     }
 }
