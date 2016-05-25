@@ -1,25 +1,31 @@
 package org.tndata.android.compass.activity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ActionAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
+import org.tndata.android.compass.model.Reminder;
+import org.tndata.android.compass.model.TDCAction;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.service.ActionReportService;
-import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.ImageLoader;
 import org.tndata.android.compass.util.NotificationUtil;
@@ -62,6 +68,7 @@ public class ActionActivity
 
     private int mGetActionRC;
     private int mGetUserCategoryRC;
+    private int mDeleteBehaviorRC;
 
 
     @Override
@@ -218,6 +225,10 @@ public class ActionActivity
         else if (requestCode == mGetUserCategoryRC){
             Parser.parse(result, ParserModels.UserCategoryResultSet.class, this);
         }
+        else if (requestCode == mDeleteBehaviorRC) {
+            // We deleted some content so there's really nothing to show.
+            Log.d("XXX", "Deleted Behavior");
+        }
     }
 
     @Override
@@ -354,6 +365,71 @@ public class ActionActivity
             Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
                     .putExtra(NotificationUtil.REMINDER_KEY, mReminder);
             startActivityForResult(snoozeIntent, SNOOZE_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onBehaviorInfoClick() {
+        if(isUserAction()) {
+            // Display a dialog that show's the behavior's Title & Description, with buttons
+            // to dismiss the dialog or to delete the behavior. If the user chooses to delete
+            // the behavior, we ask for a confirmation before sending the Http request.
+            final long userBehaviorId = ((UserAction)mAction).getUserBehaviorId();
+            TDCAction action = ((UserAction)mAction).getAction();
+
+            ViewGroup rootView = (ViewGroup)findViewById(android.R.id.content);
+            LayoutInflater inflater = LayoutInflater.from(this);
+            View dialogRootView = inflater.inflate(R.layout.dialog_behavior, rootView, false);
+            TextView behaviorTitle = (TextView)dialogRootView.findViewById(R.id.dialog_behavior_title);
+            final TextView behaviorDescription = (TextView)dialogRootView.findViewById(R.id.dialog_behavior_description);
+
+            behaviorTitle.setText(action.getBehaviorTitle());
+            behaviorDescription.setText(action.getBehaviorDescription());
+
+            final Button cancelButton = (Button)dialogRootView.findViewById(R.id.behavior_dialog_cancel);
+            final Button removeButton = (Button)dialogRootView.findViewById(R.id.behavior_dialog_remove);
+            final Button confirmButton = (Button)dialogRootView.findViewById(R.id.behavior_dialog_confirm);
+            final Button cancelConfirmButton = (Button)dialogRootView.findViewById(R.id.behavior_dialog_cancel_confirm);
+
+            final AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setView(dialogRootView)
+                    .create();
+
+            // I want to close this activity if the user deletes the parent behavior, and
+            // I also use this activity as the callback for the Http request.
+            final ActionActivity parent = this;
+
+            View.OnClickListener buttonHandler = new View.OnClickListener() {
+                public void onClick(View v) {
+                    switch(v.getId()) {
+                        case R.id.behavior_dialog_cancel_confirm:
+                        case R.id.behavior_dialog_cancel:
+                            dialog.dismiss();
+                            break;
+                        case R.id.behavior_dialog_remove:
+                            behaviorDescription.setText(getString(R.string.behavior_dialog_confirm_message));
+                            removeButton.setVisibility(View.GONE);
+                            cancelButton.setVisibility(View.GONE);
+                            confirmButton.setVisibility(View.VISIBLE);
+                            cancelConfirmButton.setVisibility(View.VISIBLE);
+                            break;
+                        case R.id.behavior_dialog_confirm:
+                            // Send the Delete http request and close the activity.
+                            String url = API.getDeleteBehaviorUrl(userBehaviorId);
+                            mDeleteBehaviorRC = HttpRequest.delete(parent, url);
+                            dialog.dismiss();
+                            parent.finish();
+                            break;
+                    }
+                }
+            };
+
+            // Handler for buttons in the dialog
+            cancelConfirmButton.setOnClickListener(buttonHandler);
+            confirmButton.setOnClickListener(buttonHandler);
+            removeButton.setOnClickListener(buttonHandler);
+            cancelButton.setOnClickListener(buttonHandler);
+            dialog.show();
         }
     }
 

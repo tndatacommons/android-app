@@ -30,6 +30,8 @@ public class TDCAction extends TDCContent{
     private long mBehaviorId;
     @SerializedName("behavior_title")
     private String mBehaviorTitle;
+    @SerializedName("behavior_description")
+    private String mBehaviorDescription;
 
 
     /*---------*
@@ -97,6 +99,15 @@ public class TDCAction extends TDCContent{
      */
     public String getBehaviorTitle(){
         return mBehaviorTitle;
+    }
+
+    /**
+     * Behavior description getter.
+     *
+     * @return the description of the action's parent behavior.
+     */
+    public String getBehaviorDescription(){
+        return mBehaviorDescription;
     }
 
     @Override

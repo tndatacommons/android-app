@@ -517,6 +517,12 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
             mHeaderSubtitle.setText(subtitle);
         }
 
+        public void setSubtitleListener(View.OnClickListener listener) {
+            if(mHeaderSubtitle != null) {
+                mHeaderSubtitle.setOnClickListener(listener);
+            }
+        }
+
         /**
          * Binds a content to the holder.
          *

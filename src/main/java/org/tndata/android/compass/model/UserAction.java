@@ -20,6 +20,8 @@ public class UserAction extends Action implements ParserModels.ResultSet{
     //Values retrieved from the API
     @SerializedName("action")
     private TDCAction mAction;
+    @SerializedName("userbehavior_id")
+    private long mUserBehaviorId;
     @SerializedName("primary_goal")
     private long mPrimaryGoalId;
     @SerializedName("primary_category")
@@ -70,6 +72,10 @@ public class UserAction extends Action implements ParserModels.ResultSet{
 
     public String getIconUrl(){
         return mAction.getIconUrl();
+    }
+
+    public long getUserBehaviorId(){
+        return mUserBehaviorId;
     }
 
     public long getPrimaryCategoryId(){
