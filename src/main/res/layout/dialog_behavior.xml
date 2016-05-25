@@ -36,7 +36,7 @@
              still position it correctly. It's easier to have two cancel buttons and just
              swap their visibility, rather than having 1 button and trying to position it
              to the left/start of two others. -->
-        
+
         <Button
             android:id="@+id/behavior_dialog_cancel_confirm"
             android:layout_margin="8dp"
