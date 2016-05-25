@@ -32,31 +32,40 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <!-- It's still to have TWO cancel buttons but I can't seem to use only 1 and
+             still position it correctly. It's easier to have two cancel buttons and just
+             swap their visibility, rather than having 1 button and trying to position it
+             to the left/start of two others. -->
+        
+        <Button
+            android:id="@+id/behavior_dialog_cancel_confirm"
+            android:layout_margin="8dp"
+            android:text="@string/behavior_dialog_confirm_cancel"
+            android:layout_toStartOf="@+id/behavior_dialog_confirm"
+            android:visibility="gone"
+            style="@style/FlatButton"/>
+
         <Button
             android:id="@+id/behavior_dialog_confirm"
             android:layout_margin="8dp"
             android:layout_alignParentEnd="true"
             android:text="@string/behavior_dialog_confirm"
-            style="@style/FlatButton"
-            android:visibility="gone"/>
-
-        <Button
-            android:id="@+id/behavior_dialog_disable"
-            android:layout_margin="8dp"
-            android:layout_toLeftOf="@+id/behavior_dialog_ok"
-            android:text="@string/behavior_dialog_disable"
+            android:visibility="gone"
             style="@style/FlatButton" />
 
         <Button
-            android:id="@+id/behavior_dialog_ok"
-            android:text="@string/behavior_dialog_ok"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginLeft="10dp"
-            android:width="40dp"
+            android:id="@+id/behavior_dialog_cancel"
+            android:layout_margin="8dp"
+            android:text="@string/behavior_dialog_confirm_cancel"
+            android:layout_toStartOf="@+id/behavior_dialog_remove"
             style="@style/FlatButton"/>
+
+        <Button
+            android:id="@+id/behavior_dialog_remove"
+            android:layout_margin="8dp"
+            android:text="@string/behavior_dialog_remove"
+            style="@style/FlatButton"
+            android:layout_alignParentEnd="true" />
 
     </RelativeLayout>
 

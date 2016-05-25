@@ -386,9 +386,10 @@ public class ActionActivity
             behaviorTitle.setText(action.getBehaviorTitle());
             behaviorDescription.setText(action.getBehaviorDescription());
 
-            final Button okButton = (Button)dialogRootView.findViewById(R.id.behavior_dialog_ok);
-            final Button disableButton = (Button)dialogRootView.findViewById(R.id.behavior_dialog_disable);
+            final Button cancelButton = (Button)dialogRootView.findViewById(R.id.behavior_dialog_cancel);
+            final Button removeButton = (Button)dialogRootView.findViewById(R.id.behavior_dialog_remove);
             final Button confirmButton = (Button)dialogRootView.findViewById(R.id.behavior_dialog_confirm);
+            final Button cancelConfirmButton = (Button)dialogRootView.findViewById(R.id.behavior_dialog_cancel_confirm);
 
             final AlertDialog dialog = new AlertDialog.Builder(this)
                     .setView(dialogRootView)
@@ -401,14 +402,16 @@ public class ActionActivity
             View.OnClickListener buttonHandler = new View.OnClickListener() {
                 public void onClick(View v) {
                     switch(v.getId()) {
-                        case R.id.behavior_dialog_ok:
+                        case R.id.behavior_dialog_cancel_confirm:
+                        case R.id.behavior_dialog_cancel:
                             dialog.dismiss();
                             break;
-                        case R.id.behavior_dialog_disable:
+                        case R.id.behavior_dialog_remove:
                             behaviorDescription.setText(getString(R.string.behavior_dialog_confirm_message));
-                            okButton.setVisibility(View.GONE);
-                            disableButton.setVisibility(View.GONE);
+                            removeButton.setVisibility(View.GONE);
+                            cancelButton.setVisibility(View.GONE);
                             confirmButton.setVisibility(View.VISIBLE);
+                            cancelConfirmButton.setVisibility(View.VISIBLE);
                             break;
                         case R.id.behavior_dialog_confirm:
                             // Send the Delete http request and close the activity.
@@ -422,9 +425,10 @@ public class ActionActivity
             };
 
             // Handler for buttons in the dialog
+            cancelConfirmButton.setOnClickListener(buttonHandler);
             confirmButton.setOnClickListener(buttonHandler);
-            disableButton.setOnClickListener(buttonHandler);
-            okButton.setOnClickListener(buttonHandler);
+            removeButton.setOnClickListener(buttonHandler);
+            cancelButton.setOnClickListener(buttonHandler);
             dialog.show();
         }
     }

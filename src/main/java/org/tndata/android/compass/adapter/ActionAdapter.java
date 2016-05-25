@@ -113,7 +113,7 @@ public class ActionAdapter
             holder.setSubtitle(((UserAction)mAction).getAction().getBehaviorTitle());
             UserAction userAction = (UserAction)mAction;
             holder.setContent(userAction.getDescription());
-            holder.setSubtitleIconListener(this);
+            holder.setSubtitleListener(this);
         }
         else if (mAction instanceof CustomAction){
             holder.setTitle("To " + mAction.getGoalTitle() + ":");
@@ -195,7 +195,7 @@ public class ActionAdapter
                 mListener.onSnoozeClick();
                 break;
 
-            case R.id.material_header_subtitle_icon:
+            case R.id.material_header_subtitle:
                 mListener.onBehaviorInfoClick();
                 break;
         }
