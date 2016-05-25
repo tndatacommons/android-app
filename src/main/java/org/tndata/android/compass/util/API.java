@@ -105,6 +105,7 @@ public final class API{
         JSONObject postDeviceRegistrationBody = new JSONObject();
         try{
             postDeviceRegistrationBody.put("registration_id", registrationId)
+                    .put("device_type", "android")
                     .put("device_name", Build.MANUFACTURER + " " + Build.PRODUCT);
         }
         catch (JSONException jsonx){
