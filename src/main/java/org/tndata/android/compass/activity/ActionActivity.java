@@ -30,6 +30,12 @@ import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.ImageLoader;
 import org.tndata.android.compass.util.NotificationUtil;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 import es.sandwatch.httprequests.HttpRequest;
 import es.sandwatch.httprequests.HttpRequestError;
 
@@ -430,6 +436,62 @@ public class ActionActivity
             removeButton.setOnClickListener(buttonHandler);
             cancelButton.setOnClickListener(buttonHandler);
             dialog.show();
+        }
+    }
+
+    /**
+     * Detect if the action belongs to a user and has a "datetime" external resource.
+     * See also: sendToCalendar.
+     *
+     * @return boolean
+     */
+    private boolean hasDatetimeExternalResource() {
+        if(isUserAction()) {
+            UserAction userAction = (UserAction) mAction;
+            String externalResource = userAction.getExternalResource();
+            String externalResourceName = userAction.getExternalResourceName();
+
+            // ensure the resource name == "datetime" and the resource value exists.
+            return externalResourceName.equals("datetime") && !externalResource.isEmpty();
+        }
+        return false;
+    }
+
+    /**
+     * If the user is viewing a UserAction whose externalResourceName is "datetime", then the
+     * externalResource is a datetime string (of the form YYYY-mm-dd hh:mm:ss). This is likely
+     * for a specific scheduled event, so we'll give them an option to add to their Calendar.
+     *
+     */
+    public void sendToCalendar() {
+        if(isUserAction() && hasDatetimeExternalResource()) {
+            UserAction userAction = (UserAction) mAction;
+            String externalResource = userAction.getExternalResource();
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss", Locale.getDefault());
+            ParsePosition pos = new ParsePosition(0);
+            Date startDate = (Date) sdf.parseObject(externalResource, pos);
+
+            // Convert the parsed date into milliseconds and generate a duration,
+            // (a default of 2 hours should be good) then ask to save to the calendar.
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(startDate);
+
+            // Generate a start/end duration for the calendar's event.
+            // We'll just make all events a 2-hour duration.
+            long start = cal.getTimeInMillis();
+            cal.add(Calendar.HOUR_OF_DAY, 2);
+            long end = cal.getTimeInMillis();
+
+
+            // launch an intent for the calendar
+            Intent intent = new Intent(Intent.ACTION_EDIT);
+            intent.setType("vnd.android.cursor.item/event");
+            intent.putExtra("title", userAction.getTitle());
+            intent.putExtra("description", userAction.getDescription());
+            intent.putExtra("beginTime", start);
+            intent.putExtra("endTime", end);
+            startActivity(intent);
         }
     }
 

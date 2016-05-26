@@ -126,8 +126,14 @@ public class ActionAdapter
         else{
             holder.addButton(R.id.action_reschedule, R.string.action_reschedule, this);
         }
+
         if (mAction instanceof UserAction && !((UserAction)mAction).getExternalResource().isEmpty()){
-            holder.addButton(R.id.action_do_it_now, R.string.action_do_it_now, this);
+            if(((UserAction)mAction).getExternalResourceName().equals("datetime")){
+                holder.addButton(R.id.action_add_to_calendar, R.string.action_add_to_calendar, this);
+            }
+            else {
+                holder.addButton(R.id.action_do_it_now, R.string.action_do_it_now, this);
+            }
         }
         holder.addButton(R.id.action_did_it, R.string.action_did_it, this);
     }
@@ -198,6 +204,12 @@ public class ActionAdapter
             case R.id.material_header_subtitle:
                 mListener.onBehaviorInfoClick();
                 break;
+
+            case R.id.action_add_to_calendar:
+                // NOTE: Let's save this as a positive action, prior to adding to their calendar.
+                mListener.onIDidItClick();
+                mListener.sendToCalendar();
+                break;
         }
     }
 
@@ -243,5 +255,6 @@ public class ActionAdapter
         void onRescheduleClick();
         void onSnoozeClick();
         void onBehaviorInfoClick();
+        void sendToCalendar();
     }
 }
