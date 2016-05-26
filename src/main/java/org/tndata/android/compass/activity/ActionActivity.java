@@ -111,7 +111,7 @@ public class ActionActivity
     private void setHeader(){
         View header = inflateHeader(R.layout.header_hero);
         ImageView image = (ImageView)header.findViewById(R.id.header_hero_image);
-        if (mUserCategory == null){
+        if (mUserCategory == null || mUserCategory.getCategory().getImageUrl().isEmpty()){
             image.setImageResource(R.drawable.compass_master_illustration);
         }
         else{
