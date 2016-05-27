@@ -449,6 +449,12 @@ public class ActionActivity
         if(isUserAction()) {
             UserAction userAction = (UserAction) mAction;
             if(userAction.getAction().hasDatetimeResource()) {
+
+                // NOTE: Let's save this as a positive action, prior to adding to their calendar.
+                startService(new Intent(this, ActionReportService.class)
+                        .putExtra(ActionReportService.ACTION_KEY, mAction)
+                        .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
+
                 String externalResource = userAction.getExternalResource();
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss", Locale.getDefault());
@@ -465,7 +471,6 @@ public class ActionActivity
                 long start = cal.getTimeInMillis();
                 cal.add(Calendar.HOUR_OF_DAY, 2);
                 long end = cal.getTimeInMillis();
-
 
                 // launch an intent for the calendar
                 Intent intent = new Intent(Intent.ACTION_EDIT);

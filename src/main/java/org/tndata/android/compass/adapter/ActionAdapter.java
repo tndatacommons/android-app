@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 
 import org.tndata.android.compass.R;
@@ -213,8 +214,6 @@ public class ActionAdapter
                 break;
 
             case R.id.action_add_to_calendar:
-                // NOTE: Let's save this as a positive action, prior to adding to their calendar.
-                mListener.onIDidItClick();
                 mListener.sendToCalendar();
                 break;
         }
