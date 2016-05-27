@@ -5,8 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -58,6 +61,7 @@ public class ReviewActionsActivity
     //Network request codes and urls
     private int mGetUserCategoryRC;
     private int mGetActionsRC;
+    private int mDeleteGoalRC;
     private String mGetActionsNextUrl;
 
 
@@ -191,6 +195,10 @@ public class ReviewActionsActivity
         else if (requestCode == mGetActionsRC){
             Parser.parse(result, ParserModels.UserActionResultSet.class, this);
         }
+        else if (requestCode == mDeleteGoalRC){
+            Toast.makeText(this, R.string.goal_removed_toast, Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     @Override
@@ -218,5 +226,27 @@ public class ReviewActionsActivity
                 mAdapter.displayError("There are no activities");
             }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        if (mUserGoal == null){
+            return false;
+        }
+        getMenuInflater().inflate(R.menu.menu_goal_remove, menu);
+        return true;
+    }
+
+    @Override
+    public boolean menuItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.review_actions_remove_goal:
+                String url = API.getDeleteGoalUrl(mUserGoal);
+                mDeleteGoalRC = HttpRequest.delete(this, url);
+                break;
+            default:
+                return false;
+        }
+        return true;
     }
 }
