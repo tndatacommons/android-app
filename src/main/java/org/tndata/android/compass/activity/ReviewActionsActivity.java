@@ -125,7 +125,7 @@ public class ReviewActionsActivity
     private void setCategoryHeader(TDCCategory category){
         View header = inflateHeader(R.layout.header_hero);
         ImageView hero = (ImageView)header.findViewById(R.id.header_hero_image);
-        if (category.getImageUrl() == null){
+        if (category.getImageUrl() == null || category.getImageUrl().isEmpty()){
             hero.setImageResource(R.drawable.compass_master_illustration);
         }
         else{
