@@ -26,7 +26,7 @@ public class TDCAction extends TDCContent{
     @SerializedName("external_resource_name")
     private String mExternalResourceName;
     @SerializedName("external_resource_type")
-    private String getmExternalResourceType;
+    private String mExternalResourceType;
 
     @SerializedName("behavior")
     private long mBehaviorId;
@@ -91,7 +91,7 @@ public class TDCAction extends TDCContent{
      * @return the action's external resource type.
      */
     public String getExternalResourceType(){
-        return getmExternalResourceType;
+        return mExternalResourceType;
     }
 
     /**
@@ -144,20 +144,21 @@ public class TDCAction extends TDCContent{
         dest.writeString(mHtmlMoreInfo);
         dest.writeString(mExternalResource);
         dest.writeString(mExternalResourceName);
+        dest.writeString(mExternalResourceType);
         dest.writeLong(mBehaviorId);
         dest.writeString(mBehaviorTitle);
     }
 
     public boolean hasDatetimeResource() {
-        return getExternalResourceType() == "datetime";
+        return getExternalResourceType().equals("datetime");
     }
 
     public boolean hasPhoneNumberResource() {
-        return getExternalResourceType() == "phone";
+        return getExternalResourceType().equals("phone");
     }
 
     public boolean hasLinkResource() {
-        return getExternalResourceType() == "link";
+        return getExternalResourceType().equals("link");
     }
 
     public static final Creator<TDCAction> CREATOR = new Creator<TDCAction>(){
@@ -184,6 +185,7 @@ public class TDCAction extends TDCContent{
         mHtmlMoreInfo = src.readString();
         mExternalResource = src.readString();
         mExternalResourceName = src.readString();
+        mExternalResourceType = src.readString();
         mBehaviorId = src.readLong();
         mBehaviorTitle = src.readString();
     }

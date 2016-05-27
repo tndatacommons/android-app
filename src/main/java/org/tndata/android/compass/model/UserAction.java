@@ -70,6 +70,8 @@ public class UserAction extends Action implements ParserModels.ResultSet{
         return mAction.getExternalResourceName();
     }
 
+    public String getExternalResourceType() { return mAction.getExternalResourceType(); }
+
     public String getIconUrl(){
         return mAction.getIconUrl();
     }
