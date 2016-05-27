@@ -11,6 +11,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.Reward;
+import org.tndata.android.compass.model.TDCAction;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.parser.Parser;
@@ -190,7 +191,13 @@ public class ActionAdapter
                 break;
 
             case R.id.action_do_it_now:
-                CompassUtil.doItNow(getContext(), ((UserAction)mAction).getExternalResource());
+                TDCAction action = ((UserAction)mAction).getAction();
+                if(action.hasLinkResource()) {
+                    CompassUtil.doItNow(getContext(), action.getExternalResource());
+                }
+                else if(action.hasPhoneNumberResource()){
+                    CompassUtil.callPhoneNumber(getContext(), action.getExternalResource());
+                }
                 break;
 
             case R.id.action_reschedule:
