@@ -25,6 +25,8 @@ public class TDCAction extends TDCContent{
     private String mExternalResource;
     @SerializedName("external_resource_name")
     private String mExternalResourceName;
+    @SerializedName("external_resource_type")
+    private String getmExternalResourceType;
 
     @SerializedName("behavior")
     private long mBehaviorId;
@@ -84,6 +86,15 @@ public class TDCAction extends TDCContent{
     }
 
     /**
+     * External resource type getter.
+     *
+     * @return the action's external resource type.
+     */
+    public String getExternalResourceType(){
+        return getmExternalResourceType;
+    }
+
+    /**
      * Behavior id getter.
      *
      * @return the id of the action's parent behavior.
@@ -135,6 +146,18 @@ public class TDCAction extends TDCContent{
         dest.writeString(mExternalResourceName);
         dest.writeLong(mBehaviorId);
         dest.writeString(mBehaviorTitle);
+    }
+
+    public boolean hasDatetimeResource() {
+        return getExternalResourceType() == "datetime";
+    }
+
+    public boolean hasPhoneNumberResource() {
+        return getExternalResourceType() == "phone";
+    }
+
+    public boolean hasLinkResource() {
+        return getExternalResourceType() == "link";
     }
 
     public static final Creator<TDCAction> CREATOR = new Creator<TDCAction>(){
