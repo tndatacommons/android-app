@@ -135,20 +135,6 @@ public final class CompassUtil{
         return "";
     }
 
-    /**
-     * Checks whether the provided string has one of the following formats, X being a number:
-     * <p/>
-     * (XXX) XXX-XXX
-     * XXX-XXX-XXXX
-     *
-     * @param resource the resource to be checked.
-     * @return true if the resource is a phone number, false otherwise.
-     */
-    public static boolean isPhoneNumber(String resource){
-        return resource.matches("[(][0-9]{3}[)] [0-9]{3}[-][0-9]{4}") ||
-                resource.matches("[0-9]{3}[-][0-9]{3}[-][0-9]{4}");
-    }
-
     public static void doItNow(@NonNull Context context, @NonNull String resource){
         //If a link
         if (resource.startsWith("http")){
@@ -170,18 +156,18 @@ public final class CompassUtil{
                 context.startActivity(new Intent(Intent.ACTION_VIEW, uri));
             }
         }
-        //If a phone number
-        else if (CompassUtil.isPhoneNumber(resource)){
-            //First of all, the number needs to be extracted from the resource
-            String number = "";
-            for (int i = 0; i < resource.length(); i++){
-                char digit = resource.charAt(i);
-                if (digit >= '0' && digit <= '9'){
-                    number += digit;
-                }
+    }
+
+    public static void callPhoneNumber(@NonNull Context context, @NonNull String resource) {
+        //First of all, the number needs to be extracted from the resource
+        String number = "";
+        for (int i = 0; i < resource.length(); i++){
+            char digit = resource.charAt(i);
+            if (digit >= '0' && digit <= '9'){
+                number += digit;
             }
-            context.startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + number)));
         }
+        context.startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + number)));
     }
 
     @DrawableRes

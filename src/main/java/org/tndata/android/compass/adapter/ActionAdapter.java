@@ -5,12 +5,14 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.Reward;
+import org.tndata.android.compass.model.TDCAction;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.parser.Parser;
@@ -126,8 +128,14 @@ public class ActionAdapter
         else{
             holder.addButton(R.id.action_reschedule, R.string.action_reschedule, this);
         }
+
         if (mAction instanceof UserAction && !((UserAction)mAction).getExternalResource().isEmpty()){
-            holder.addButton(R.id.action_do_it_now, R.string.action_do_it_now, this);
+            if(((UserAction)mAction).getExternalResourceName().equals("datetime")){
+                holder.addButton(R.id.action_add_to_calendar, R.string.action_add_to_calendar, this);
+            }
+            else {
+                holder.addButton(R.id.action_do_it_now, R.string.action_do_it_now, this);
+            }
         }
         holder.addButton(R.id.action_did_it, R.string.action_did_it, this);
     }
@@ -184,7 +192,13 @@ public class ActionAdapter
                 break;
 
             case R.id.action_do_it_now:
-                CompassUtil.doItNow(getContext(), ((UserAction)mAction).getExternalResource());
+                TDCAction action = ((UserAction)mAction).getAction();
+                if(action.hasLinkResource()) {
+                    CompassUtil.doItNow(getContext(), action.getExternalResource());
+                }
+                else if(action.hasPhoneNumberResource()){
+                    CompassUtil.callPhoneNumber(getContext(), action.getExternalResource());
+                }
                 break;
 
             case R.id.action_reschedule:
@@ -197,6 +211,10 @@ public class ActionAdapter
 
             case R.id.material_header_subtitle:
                 mListener.onBehaviorInfoClick();
+                break;
+
+            case R.id.action_add_to_calendar:
+                mListener.sendToCalendar();
                 break;
         }
     }
@@ -243,5 +261,6 @@ public class ActionAdapter
         void onRescheduleClick();
         void onSnoozeClick();
         void onBehaviorInfoClick();
+        void sendToCalendar();
     }
 }

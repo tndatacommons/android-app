@@ -135,6 +135,7 @@
     <string name="goal_removed_toast">Your goal has been removed</string>
 
     <!-- ActionActivity -->
+    <string name="action_add_to_calendar">Add to Calendar</string>
     <string name="action_do_it_now">Do it now</string>
     <string name="action_snooze">Later</string>
     <string name="action_reschedule">Reschedule</string>

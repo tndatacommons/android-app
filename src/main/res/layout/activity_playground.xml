@@ -6,6 +6,14 @@
     android:layout_height="match_parent"
     android:gravity="center" >
 
+
+    <Button
+        android:id="@+id/playground_button_calendar"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:padding="10dp"
+        android:text="Share in your Calendar" />
+
     <Button
         android:id="@+id/playground_button_start"
         android:layout_width="wrap_content"
