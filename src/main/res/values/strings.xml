@@ -129,6 +129,11 @@
     <string name="button_negative">CANCEL</string>
     <string name="survey_default_option">Click to choose</string>
 
+    <!-- ReviewActionsActivity -->
+    <string name="goal_remove">Remove Goal</string>
+    <string name="goal_remove_condensed">Remove</string>
+    <string name="goal_removed_toast">Your goal has been removed</string>
+
     <!-- ActionActivity -->
     <string name="action_do_it_now">Do it now</string>
     <string name="action_snooze">Later</string>
