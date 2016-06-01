@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 
 import org.tndata.android.compass.R;
@@ -130,7 +129,7 @@ public class ActionAdapter
         }
 
         if (mAction instanceof UserAction && !((UserAction)mAction).getExternalResource().isEmpty()){
-            if(((UserAction)mAction).getExternalResourceName().equals("datetime")){
+            if(((UserAction)mAction).getExternalResourceType().equals("datetime")){
                 holder.addButton(R.id.action_add_to_calendar, R.string.action_add_to_calendar, this);
             }
             else {
