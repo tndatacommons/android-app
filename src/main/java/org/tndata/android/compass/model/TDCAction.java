@@ -147,6 +147,7 @@ public class TDCAction extends TDCContent{
         dest.writeString(mExternalResourceType);
         dest.writeLong(mBehaviorId);
         dest.writeString(mBehaviorTitle);
+        dest.writeString(mBehaviorDescription);
     }
 
     public boolean hasDatetimeResource() {
@@ -188,5 +189,6 @@ public class TDCAction extends TDCContent{
         mExternalResourceType = src.readString();
         mBehaviorId = src.readLong();
         mBehaviorTitle = src.readString();
+        mBehaviorDescription = src.readString();
     }
 }
