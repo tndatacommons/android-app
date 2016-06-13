@@ -2,9 +2,7 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +11,6 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.TDCCategory;
-import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.ImageHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +32,11 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
     private List<TDCCategory> mFeatured;
     private List<TDCCategory> mCategories;
 
+    private List<List<TDCCategory>> mCategoryLists;
+    private int mGroupCount;
+    private int mDisplayedCategories;
+    private boolean[] mExpandedGroups;
+
     private Bitmap[] mBitmaps;
 
 
@@ -43,7 +44,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
      * Constructor.
      * @param context a reference to the context.
      * @param listener the listener.
-     * @param categories the list of categories to choose from.
+     * @param categories the sorted list of categories to choose from.
      */
     public ChooseCategoryAdapter(Context context, ChooseCategoryAdapterListener listener,
                                  List<TDCCategory> categories){
@@ -52,7 +53,29 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
         mFeatured = new ArrayList<>();
         mCategories = new ArrayList<>();
 
-        mBitmaps = new Bitmap[categories.size()];
+        //Init counts and lists
+        mGroupCount = 0;
+        mDisplayedCategories = 0;
+        mCategoryLists = new ArrayList<>();
+        //This is the only way to ensure the compiler doesn't complain about possible
+        //  missing initialization, I am aware it adds overhead
+        List<TDCCategory> currentList = new ArrayList<>();
+        //Populate the Lists and calculate the group number
+        for (int i = 0, currentGroup = -6; i < mCategories.size(); i++){
+            TDCCategory category = categories.get(i);
+            if (currentGroup != category.getGroup()){
+                mGroupCount++;
+                currentList = new ArrayList<>();
+                mCategoryLists.add(currentList);
+                currentGroup = category.getGroup();
+            }
+            currentList.add(category);
+        }
+        //Initialize the expansion array (defaults to false)
+        mExpandedGroups = new boolean[mGroupCount];
+
+        //Pull this stuff from the Internetz
+        /*mBitmaps = new Bitmap[categories.size()];
         for (int i = 0; i < categories.size(); i++){
             TDCCategory category = categories.get(i);
             int imageResId = CompassUtil.getCategoryTileResId(category.getTitle());
@@ -67,25 +90,49 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
             }
         }
 
-        Log.d("ChooseCategoryAdapter", "Total: " + categories.size() + ", Featured: " + mFeatured.size());
+        Log.d("ChooseCategoryAdapter", "Total: " + categories.size() + ", Featured: " + mFeatured.size());*/
     }
 
     @Override
     public int getItemCount(){
-        int featuredCount = mFeatured.isEmpty() ? 0 : mFeatured.size()+1;
-        int categoryCount = mCategories.isEmpty() ? 0 : mCategories.size()+1;
-        return featuredCount + categoryCount;
+        return mGroupCount+mDisplayedCategories;
+    }
+
+    /**
+     * Gets the display size of a particular group.
+     *
+     * @param group the group whose display size is to be calculated.
+     * @return the display size of the group.
+     */
+    private int getDisplaySize(int group){
+        //If the provided group is out of bounds, return an arbitrarily large number for
+        //  the loop in getRelativePosition() to break the condition
+        if (group >= mGroupCount){
+            return 9999;
+        }
+        return 1 + (mExpandedGroups[group] ? mCategoryLists.get(group).size() : 0);
+    }
+
+    /**
+     * Gets a group/position tuple for a particular recycler view position.
+     *
+     * @param position the position of the item in the recycler view.
+     * @return the requested group/position tuple.
+     */
+    private GroupPositionTuple getGroupPositionTuple(int position){
+        int group = 0, displaySize = getDisplaySize(group);
+        while (position - displaySize >= 0){
+            position -= displaySize;
+            group++;
+            displaySize = getDisplaySize(group);
+        }
+        return new GroupPositionTuple(group, position);
     }
 
     @Override
     public int getItemViewType(int position){
-        if (position == 0){
-            return TYPE_HEADER;
-        }
-        if (mFeatured.isEmpty()){
-            return TYPE_CATEGORY;
-        }
-        if (position == mFeatured.size()+1){
+        GroupPositionTuple tuple = getGroupPositionTuple(position);
+        if (tuple.mPosition == 0){
             return TYPE_HEADER;
         }
         return TYPE_CATEGORY;
@@ -106,21 +153,15 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
-        if (getItemViewType(position) == TYPE_HEADER){
+        GroupPositionTuple tuple = getGroupPositionTuple(position);
+        //Header
+        if (tuple.mPosition == 0){
             HeaderHolder holder = (HeaderHolder)rawHolder;
-            if (position == 0){
-                if (mFeatured.isEmpty()){
-                    holder.bind("Categories");
-                }
-                else{
-                    holder.bind("Featured content");
-                }
-            }
-            else{
-                holder.bind("Categories");
-            }
+            holder.bind(mCategoryLists.get(tuple.mGroup).get(0).getGroupName());
         }
+        //Category
         else{
+            //TODO Not thought trough or adapted yet.
             CategoryViewHolder holder = (CategoryViewHolder)rawHolder;
             position--;
             if (position < mFeatured.size()){
@@ -134,6 +175,30 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
                 holder.mCaption.setText(mCategories.get(categoryPosition).getTitle());
             }
             holder.mImage.setImageBitmap(mBitmaps[position]);
+        }
+    }
+
+
+    /**
+     * A class representing an group/position index tuple.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    private class GroupPositionTuple{
+        private final int mGroup;
+        private final int mPosition;
+
+
+        /**
+         * Constructor.
+         *
+         * @param group the group.
+         * @param position the position.
+         */
+        private GroupPositionTuple(int group, int position){
+            mGroup = group;
+            mPosition = position;
         }
     }
 
@@ -204,7 +269,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
 
             mChevron = (ImageView)rootView.findViewById(R.id.header_chevron);
             mHeader = (TextView)rootView.findViewById(R.id.header_text);
-            
+
             rootView.setOnClickListener(this);
         }
 
