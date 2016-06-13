@@ -95,7 +95,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
         LayoutInflater inflater = LayoutInflater.from(mContext);
         if (viewType == TYPE_HEADER){
-            View rootView = inflater.inflate(R.layout.item_header, parent, false);
+            View rootView = inflater.inflate(R.layout.item_expandable_header, parent, false);
             return new HeaderHolder(rootView);
         }
         else{
@@ -190,6 +190,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
      * @version 1.1.0
      */
     protected class HeaderHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private ImageView mChevron;
         private TextView mHeader;
 
 
@@ -201,7 +202,9 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
         public HeaderHolder(View rootView){
             super(rootView);
 
+            mChevron = (ImageView)rootView.findViewById(R.id.header_chevron);
             mHeader = (TextView)rootView.findViewById(R.id.header_text);
+            
             rootView.setOnClickListener(this);
         }
 
