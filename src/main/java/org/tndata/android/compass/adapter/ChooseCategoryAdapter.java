@@ -183,18 +183,40 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
     }
 
 
-    protected class HeaderHolder extends RecyclerView.ViewHolder{
+    /**
+     * View Holder for a group title header.
+     *
+     * @author Ismael Alonso
+     * @version 1.1.0
+     */
+    protected class HeaderHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mHeader;
 
 
-        public HeaderHolder(View itemView){
-            super(itemView);
+        /**
+         * Creates a holder for a particular view.
+         *
+         * @param rootView the view associated with this holder.
+         */
+        public HeaderHolder(View rootView){
+            super(rootView);
 
-            mHeader = (TextView)itemView.findViewById(R.id.header_text);
+            mHeader = (TextView)rootView.findViewById(R.id.header_text);
+            rootView.setOnClickListener(this);
         }
 
-        private void bind(String title){
-            mHeader.setText(title);
+        /**
+         * Binds a group name to this header.
+         *
+         * @param groupName the name of the group to be set as the header.
+         */
+        private void bind(String groupName){
+            mHeader.setText(groupName);
+        }
+
+        @Override
+        public void onClick(View v){
+
         }
     }
 
