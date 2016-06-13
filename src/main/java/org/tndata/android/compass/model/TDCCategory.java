@@ -18,6 +18,11 @@ public class TDCCategory extends TDCContent{
     public static final String TYPE = "category";
 
 
+    @SerializedName("grouping")
+    private int mGroup;
+    @SerializedName("grouping_name")
+    private String mGroupName;
+
     @SerializedName("order")
     private int mOrder = -1;
     @SerializedName("featured")
@@ -39,6 +44,14 @@ public class TDCCategory extends TDCContent{
     /*---------*
      * GETTERS *
      *---------*/
+
+    public int getGroup(){
+        return mGroup;
+    }
+
+    public String getGroupName(){
+        return mGroupName;
+    }
 
     public int getOrder(){
         return mOrder;
@@ -101,6 +114,8 @@ public class TDCCategory extends TDCContent{
     @Override
     public void writeToParcel(Parcel dest, int flags){
         super.writeToParcel(dest, flags);
+        dest.writeInt(mGroup);
+        dest.writeString(mGroupName);
         dest.writeInt(mOrder);
         dest.writeByte((byte)(mFeatured ? 1 : 0));
         dest.writeString(getImageUrl());
@@ -124,6 +139,8 @@ public class TDCCategory extends TDCContent{
 
     private TDCCategory(Parcel src){
         super(src);
+        mGroup = src.readInt();
+        mGroupName = src.readString();
         mOrder = src.readInt();
         mFeatured = src.readByte() == 1;
         mImageUrl = src.readString();
