@@ -1,6 +1,7 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
+import android.support.annotation.NonNull;
 import android.widget.ImageView;
 
 import com.google.gson.annotations.SerializedName;
@@ -99,6 +100,20 @@ public class TDCCategory extends TDCContent{
                     .setCropToCircle(true);
             ImageLoader.loadBitmap(imageView, url, options);
         }
+    }
+
+    @Override
+    public int compareTo(@NonNull TDCContent another){
+        if (another instanceof TDCCategory){
+            TDCCategory category = (TDCCategory)another;
+            if (mGroup < category.getGroup()){
+                return -1;
+            }
+            if (mGroup > category.getGroup()){
+                return 1;
+            }
+        }
+        return super.compareTo(another);
     }
 
     @Override

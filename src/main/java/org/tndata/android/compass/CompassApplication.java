@@ -18,6 +18,7 @@ import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -148,7 +149,16 @@ public class CompassApplication extends Application{
      * @return the unordered list of public categories, excluding those selected by default.
      */
     public List<TDCCategory> getFilteredCategoryList(){
-        List<TDCCategory> featured = new ArrayList<>();
+        List<TDCCategory> nonDefault = new ArrayList<>();
+        for (TDCCategory category:mPublicCategories.values()){
+            if (!category.isSelectedByDefault()){
+                nonDefault.add(category);
+            }
+        }
+        Collections.sort(nonDefault);
+        return nonDefault;
+
+        /*List<TDCCategory> featured = new ArrayList<>();
         List<TDCCategory> regular = new ArrayList<>();
         for (TDCCategory category:mPublicCategories.values()){
             if (!category.isSelectedByDefault()){
@@ -161,7 +171,7 @@ public class CompassApplication extends Application{
             }
         }
         featured.addAll(regular);
-        return featured;
+        return featured;*/
     }
 
     public List<TDCCategory> getFeaturedCategories(){
