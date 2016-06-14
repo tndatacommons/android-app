@@ -52,7 +52,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
 
         //Init counts and lists
         mGroupCount = 0;
-        mDisplayedCategories = 0;
+        mDisplayedCategories = categories.size();
         mCategoryLists = new ArrayList<>();
         //This is the only way to ensure the compiler doesn't complain about possible
         //  missing initialization, I am aware it adds overhead
@@ -89,7 +89,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
         if (group >= mGroupCount){
             return 9999;
         }
-        return 1 + (mExpandedGroups[group] ? mCategoryLists.get(group).size() : 0);
+        return 1 + (true ? mCategoryLists.get(group).size() : 0);
     }
 
     /**
@@ -133,6 +133,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
         GroupPositionTuple tuple = getGroupPositionTuple(position);
+        Log.d("Tuple", tuple.toString());
         //Header
         if (tuple.mPosition == 0){
             HeaderHolder holder = (HeaderHolder)rawHolder;
@@ -152,7 +153,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
      * @return true if the group was expanded, false if it was collapsed.
      */
     private boolean toggle(int position){
-        int group = getGroupPositionTuple(position).mGroup;
+        /*int group = getGroupPositionTuple(position).mGroup;
         mExpandedGroups[group] = !mExpandedGroups[group];
         if (mExpandedGroups[group]){
             //Expand
@@ -164,7 +165,8 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
             notifyItemRangeRemoved(position+1, mCategoryLists.get(group).size());
             mDisplayedCategories -= mCategoryLists.get(group).size();
         }
-        return mExpandedGroups[group];
+        return mExpandedGroups[group];*/
+        return true;
     }
 
 
@@ -188,6 +190,11 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
         private GroupPositionTuple(int group, int position){
             mGroup = group;
             mPosition = position;
+        }
+
+        @Override
+        public String toString(){
+            return "Position (" + mGroup + ", " + mPosition + ")";
         }
     }
 
