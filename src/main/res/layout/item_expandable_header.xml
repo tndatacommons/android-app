@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
+        android:layout_gravity="center_vertical"
         android:src="@drawable/ic_chevron_right_white_24dp"
         android:tint="@color/dark_text_color" />
 

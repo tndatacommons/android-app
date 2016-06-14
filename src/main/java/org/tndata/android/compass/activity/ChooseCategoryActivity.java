@@ -42,7 +42,7 @@ public class ChooseCategoryActivity
 
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.choose_category_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new ChooseCategoryAdapter(this, this, app.getFilteredCategoryList()));
+        recyclerView.setAdapter(new ChooseCategoryAdapter(this, this, app.getCategoryList()));
     }
 
     @Override

@@ -26,8 +26,6 @@ public class TDCCategory extends TDCContent{
 
     @SerializedName("order")
     private int mOrder = -1;
-    @SerializedName("featured")
-    private boolean mFeatured;
     @SerializedName("image_url")
     private String mImageUrl = "";
     @SerializedName("color")
@@ -59,7 +57,7 @@ public class TDCCategory extends TDCContent{
     }
 
     public boolean isFeatured(){
-        return mFeatured;
+        return mGroup != -1;
     }
 
     public String getImageUrl(){
@@ -118,7 +116,7 @@ public class TDCCategory extends TDCContent{
 
     @Override
     public String toString(){
-        return "CategoryContent #" + getId() + ": " + getTitle();
+        return "CategoryContent #" + getId() + ": " + getTitle() + " (" + getGroupName() + ")";
     }
 
 
@@ -132,7 +130,6 @@ public class TDCCategory extends TDCContent{
         dest.writeInt(mGroup);
         dest.writeString(mGroupName);
         dest.writeInt(mOrder);
-        dest.writeByte((byte)(mFeatured ? 1 : 0));
         dest.writeString(getImageUrl());
         dest.writeString(getColor());
         dest.writeString(getSecondaryColor());
@@ -157,7 +154,6 @@ public class TDCCategory extends TDCContent{
         mGroup = src.readInt();
         mGroupName = src.readString();
         mOrder = src.readInt();
-        mFeatured = src.readByte() == 1;
         mImageUrl = src.readString();
         mColor = src.readString();
         mSecondaryColor = src.readString();

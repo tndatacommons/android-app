@@ -1,8 +1,8 @@
 package org.tndata.android.compass.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.TDCCategory;
+import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,15 +30,11 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
 
     private Context mContext;
     private ChooseCategoryAdapterListener mListener;
-    private List<TDCCategory> mFeatured;
-    private List<TDCCategory> mCategories;
 
     private List<List<TDCCategory>> mCategoryLists;
     private int mGroupCount;
     private int mDisplayedCategories;
     private boolean[] mExpandedGroups;
-
-    private Bitmap[] mBitmaps;
 
 
     /**
@@ -50,8 +47,8 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
                                  List<TDCCategory> categories){
         mContext = context;
         mListener = listener;
-        mFeatured = new ArrayList<>();
-        mCategories = new ArrayList<>();
+
+        Log.d("ChooseCategories", categories.toString());
 
         //Init counts and lists
         mGroupCount = 0;
@@ -61,7 +58,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
         //  missing initialization, I am aware it adds overhead
         List<TDCCategory> currentList = new ArrayList<>();
         //Populate the Lists and calculate the group number
-        for (int i = 0, currentGroup = -6; i < mCategories.size(); i++){
+        for (int i = 0, currentGroup = -6; i < categories.size(); i++){
             TDCCategory category = categories.get(i);
             if (currentGroup != category.getGroup()){
                 mGroupCount++;
@@ -73,24 +70,6 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
         }
         //Initialize the expansion array (defaults to false)
         mExpandedGroups = new boolean[mGroupCount];
-
-        //Pull this stuff from the Internetz
-        /*mBitmaps = new Bitmap[categories.size()];
-        for (int i = 0; i < categories.size(); i++){
-            TDCCategory category = categories.get(i);
-            int imageResId = CompassUtil.getCategoryTileResId(category.getTitle());
-            Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), imageResId);
-            mBitmaps[i] = ImageHelper.getCircleBitmap(bitmap, CompassUtil.getPixels(mContext, 100));
-            bitmap.recycle();
-            if (category.isFeatured()){
-                mFeatured.add(category);
-            }
-            else{
-                mCategories.add(category);
-            }
-        }
-
-        Log.d("ChooseCategoryAdapter", "Total: " + categories.size() + ", Featured: " + mFeatured.size());*/
     }
 
     @Override
@@ -161,21 +140,31 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
         }
         //Category
         else{
-            //TODO Not thought trough or adapted yet.
             CategoryViewHolder holder = (CategoryViewHolder)rawHolder;
-            position--;
-            if (position < mFeatured.size()){
-                holder.mCaption.setText(mFeatured.get(position).getTitle());
-            }
-            else{
-                if (!mFeatured.isEmpty()){
-                    position--;
-                }
-                int categoryPosition = position-mFeatured.size();
-                holder.mCaption.setText(mCategories.get(categoryPosition).getTitle());
-            }
-            holder.mImage.setImageBitmap(mBitmaps[position]);
+            holder.bind(mCategoryLists.get(tuple.mGroup).get(tuple.mPosition-1));
         }
+    }
+
+    /**
+     * Expands or collapse a group.
+     *
+     * @param position the position of the group to be toggled.
+     * @return true if the group was expanded, false if it was collapsed.
+     */
+    private boolean toggle(int position){
+        int group = getGroupPositionTuple(position).mGroup;
+        mExpandedGroups[group] = !mExpandedGroups[group];
+        if (mExpandedGroups[group]){
+            //Expand
+            notifyItemRangeInserted(position+1, mCategoryLists.get(group).size());
+            mDisplayedCategories += mCategoryLists.get(group).size();
+        }
+        else{
+            //Collapse
+            notifyItemRangeRemoved(position+1, mCategoryLists.get(group).size());
+            mDisplayedCategories -= mCategoryLists.get(group).size();
+        }
+        return mExpandedGroups[group];
     }
 
 
@@ -210,6 +199,8 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
      * @version 1.0.0
      */
     protected class CategoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private TDCCategory mCategory;
+
         private ImageView mImage;
         private TextView mCaption;
 
@@ -217,7 +208,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
         /**
          * Constructor.
          *
-         * @param rootView the root view of this holder.
+         * @param rootView the view associated with this holder.
          */
         public CategoryViewHolder(View rootView){
             super(rootView);
@@ -228,22 +219,21 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
             rootView.setOnClickListener(this);
         }
 
+        /**
+         * Binds a category to this holder.
+         *
+         * @param category the category to be bound.
+         */
+        public void bind(TDCCategory category){
+            mCategory = category;
+
+            ImageLoader.loadBitmap(mImage, category.getIconUrl());
+            mCaption.setText(category.getTitle());
+        }
+
         @Override
         public void onClick(View v){
-            //Compensate for the first header
-            int position = getAdapterPosition()-1;
-            if (position < mFeatured.size()){
-                mListener.onCategorySelected(mFeatured.get(position));
-            }
-            else{
-                if (mFeatured.isEmpty()){
-                    mListener.onCategorySelected(mCategories.get(position));
-                }
-                else{
-                    position -= mFeatured.size();
-                    mListener.onCategorySelected(mCategories.get(position-1));
-                }
-            }
+            mListener.onCategorySelected(mCategory);
         }
     }
 
@@ -284,7 +274,12 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
 
         @Override
         public void onClick(View v){
-
+            if (toggle(getAdapterPosition())){
+                mChevron.setImageResource(R.drawable.ic_chevron_down_white_24dp);
+            }
+            else{
+                mChevron.setImageResource(R.drawable.ic_chevron_right_white_24dp);
+            }
         }
     }
 
