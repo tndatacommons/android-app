@@ -2,7 +2,6 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,8 +45,6 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
                                  List<TDCCategory> categories){
         mContext = context;
         mListener = listener;
-
-        Log.d("ChooseCategories", categories.toString());
 
         //Init counts and lists
         mGroupCount = 0;
@@ -130,7 +127,6 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
         GroupPositionTuple tuple = getGroupPositionTuple(position);
-        Log.d("Tuple", tuple.toString());
         //Header
         if (tuple.mPosition == 0){
             HeaderHolder holder = (HeaderHolder)rawHolder;
@@ -208,7 +204,8 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
         public void bind(TDCCategory category){
             mCategory = category;
 
-            ImageLoader.loadBitmap(mImage, category.getIconUrl());
+            ImageLoader.Options options = new ImageLoader.Options().setCropToCircle(true);
+            ImageLoader.loadBitmap(mImage, category.getIconUrl(), options);
             mCaption.setText(category.getTitle());
         }
 
