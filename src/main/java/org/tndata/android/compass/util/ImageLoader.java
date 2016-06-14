@@ -1,10 +1,20 @@
 package org.tndata.android.compass.util;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.media.ThumbnailUtils;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
+import com.squareup.picasso.Transformation;
 
 import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.R;
@@ -57,6 +67,9 @@ public final class ImageLoader{
             RequestCreator request = picasso.load(url);
             if (options.mUsePlaceholder){
                 request.placeholder(R.drawable.ic_compass_white_50dp);
+            }
+            if (options.mCropToCircle){
+                request.transform(new CircleCropTransformation());
             }
             request.into(view);
         }
@@ -115,6 +128,59 @@ public final class ImageLoader{
         public Options setCropToCircle(boolean cropToCircle){
             mCropToCircle = cropToCircle;
             return this;
+        }
+    }
+
+    private static class CircleCropTransformation implements Transformation{
+        /**
+         * Tells whether a bitmap is square or not.
+         *
+         * @param src the test subject.
+         * @return true if the bitmap is a square, false otherwise.
+         */
+        private boolean isSquare(Bitmap src){
+            return src.getWidth() == src.getHeight();
+        }
+
+        @Override
+        public Bitmap transform(Bitmap src){
+            //Get the size and square the bitmap if necessary
+            int size;
+            if (isSquare(src)){
+                size = src.getWidth();
+            }
+            else{
+                size = src.getWidth() < src.getHeight() ? src.getWidth() : src.getHeight();
+                Bitmap thumbnail = ThumbnailUtils.extractThumbnail(src, size, size);
+                if (src != thumbnail){
+                    src.recycle();
+                }
+                src = thumbnail;
+            }
+
+            Bitmap output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(output);
+
+            int color = Color.RED;
+            Paint paint = new Paint();
+            Rect rect = new Rect(0, 0, size, size);
+            RectF rectF = new RectF(rect);
+
+            paint.setAntiAlias(true);
+            canvas.drawARGB(0, 0, 0, 0);
+            paint.setColor(color);
+            canvas.drawOval(rectF, paint);
+
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+            canvas.drawBitmap(src, rect, rect, paint);
+
+            src.recycle();
+            return output;
+        }
+
+        @Override
+        public String key(){
+            return "circleCrop()";
         }
     }
 }

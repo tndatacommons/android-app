@@ -18,6 +18,7 @@ import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -132,45 +133,32 @@ public class CompassApplication extends Application{
         return mPublicCategories;
     }
 
-    /**
-     * Public category list getter.
-     *
-     * @return the unordered list of public categories.
-     */
-    public List<TDCCategory> getPublicCategoryList(){
-        return new ArrayList<>(mPublicCategories.values());
-    }
-
+    //TODO combine the following two methods into one with a filtered parameter
     /**
      * A filtered list of public categories. At the moment, this method
      * excludes those categories that are selected for all users by default.
      *
      * @return the unordered list of public categories, excluding those selected by default.
      */
-    public List<TDCCategory> getFilteredCategoryList(){
-        List<TDCCategory> featured = new ArrayList<>();
-        List<TDCCategory> regular = new ArrayList<>();
+    public List<TDCCategory> getCategoryList(){
+        List<TDCCategory> nonDefault = new ArrayList<>();
         for (TDCCategory category:mPublicCategories.values()){
             if (!category.isSelectedByDefault()){
-                if (category.isFeatured()){
-                    featured.add(category);
-                }
-                else{
-                    regular.add(category);
-                }
+                nonDefault.add(category);
             }
         }
-        featured.addAll(regular);
-        return featured;
+        Collections.sort(nonDefault);
+        return nonDefault;
     }
 
-    public List<TDCCategory> getFeaturedCategories(){
+    public List<TDCCategory> getFilteredCategoryList(){
         List<TDCCategory> featured = new ArrayList<>();
         for (TDCCategory category:mPublicCategories.values()){
-            if (category.isFeatured()){
+            if (!category.isSelectedByDefault() && category.isFeatured()){
                 featured.add(category);
             }
         }
+        Collections.sort(featured);
         return featured;
     }
 

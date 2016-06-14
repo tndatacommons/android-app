@@ -1,6 +1,7 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
+import android.support.annotation.NonNull;
 import android.widget.ImageView;
 
 import com.google.gson.annotations.SerializedName;
@@ -18,10 +19,13 @@ public class TDCCategory extends TDCContent{
     public static final String TYPE = "category";
 
 
+    @SerializedName("grouping")
+    private int mGroup;
+    @SerializedName("grouping_name")
+    private String mGroupName;
+
     @SerializedName("order")
     private int mOrder = -1;
-    @SerializedName("featured")
-    private boolean mFeatured;
     @SerializedName("image_url")
     private String mImageUrl = "";
     @SerializedName("color")
@@ -40,12 +44,20 @@ public class TDCCategory extends TDCContent{
      * GETTERS *
      *---------*/
 
+    public int getGroup(){
+        return mGroup;
+    }
+
+    public String getGroupName(){
+        return mGroupName;
+    }
+
     public int getOrder(){
         return mOrder;
     }
 
     public boolean isFeatured(){
-        return mFeatured;
+        return mGroup != -1;
     }
 
     public String getImageUrl(){
@@ -89,8 +101,22 @@ public class TDCCategory extends TDCContent{
     }
 
     @Override
+    public int compareTo(@NonNull TDCContent another){
+        if (another instanceof TDCCategory){
+            TDCCategory category = (TDCCategory)another;
+            if (mGroup < category.getGroup()){
+                return -1;
+            }
+            if (mGroup > category.getGroup()){
+                return 1;
+            }
+        }
+        return super.compareTo(another);
+    }
+
+    @Override
     public String toString(){
-        return "CategoryContent #" + getId() + ": " + getTitle();
+        return "CategoryContent #" + getId() + ": " + getTitle() + " (" + getGroupName() + ")";
     }
 
 
@@ -101,8 +127,9 @@ public class TDCCategory extends TDCContent{
     @Override
     public void writeToParcel(Parcel dest, int flags){
         super.writeToParcel(dest, flags);
+        dest.writeInt(mGroup);
+        dest.writeString(mGroupName);
         dest.writeInt(mOrder);
-        dest.writeByte((byte)(mFeatured ? 1 : 0));
         dest.writeString(getImageUrl());
         dest.writeString(getColor());
         dest.writeString(getSecondaryColor());
@@ -124,8 +151,9 @@ public class TDCCategory extends TDCContent{
 
     private TDCCategory(Parcel src){
         super(src);
+        mGroup = src.readInt();
+        mGroupName = src.readString();
         mOrder = src.readInt();
-        mFeatured = src.readByte() == 1;
         mImageUrl = src.readString();
         mColor = src.readString();
         mSecondaryColor = src.readString();

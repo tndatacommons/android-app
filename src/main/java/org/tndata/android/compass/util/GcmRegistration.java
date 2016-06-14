@@ -22,6 +22,7 @@ import es.sandwatch.httprequests.HttpRequest;
 /**
  * This is a utility class that encapsulates registering the app with GCM.
  *
+ * TODO all of a sudden all this stuff is deprecated, fix.
  */
 public class GcmRegistration{
     public static final String PROPERTY_REG_ID = "registration_id";
