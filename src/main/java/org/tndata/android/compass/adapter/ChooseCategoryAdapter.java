@@ -34,7 +34,6 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
     private List<List<TDCCategory>> mCategoryLists;
     private int mGroupCount;
     private int mDisplayedCategories;
-    private boolean[] mExpandedGroups;
 
 
     /**
@@ -68,8 +67,6 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
             }
             currentList.add(category);
         }
-        //Initialize the expansion array (defaults to false)
-        mExpandedGroups = new boolean[mGroupCount];
     }
 
     @Override
@@ -89,7 +86,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
         if (group >= mGroupCount){
             return 9999;
         }
-        return 1 + (true ? mCategoryLists.get(group).size() : 0);
+        return mCategoryLists.get(group).size()+1;
     }
 
     /**
@@ -121,7 +118,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
         LayoutInflater inflater = LayoutInflater.from(mContext);
         if (viewType == TYPE_HEADER){
-            View rootView = inflater.inflate(R.layout.item_expandable_header, parent, false);
+            View rootView = inflater.inflate(R.layout.item_section_header, parent, false);
             return new HeaderHolder(rootView);
         }
         else{
@@ -144,29 +141,6 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
             CategoryViewHolder holder = (CategoryViewHolder)rawHolder;
             holder.bind(mCategoryLists.get(tuple.mGroup).get(tuple.mPosition-1));
         }
-    }
-
-    /**
-     * Expands or collapse a group.
-     *
-     * @param position the position of the group to be toggled.
-     * @return true if the group was expanded, false if it was collapsed.
-     */
-    private boolean toggle(int position){
-        /*int group = getGroupPositionTuple(position).mGroup;
-        mExpandedGroups[group] = !mExpandedGroups[group];
-        if (mExpandedGroups[group]){
-            //Expand
-            notifyItemRangeInserted(position+1, mCategoryLists.get(group).size());
-            mDisplayedCategories += mCategoryLists.get(group).size();
-        }
-        else{
-            //Collapse
-            notifyItemRangeRemoved(position+1, mCategoryLists.get(group).size());
-            mDisplayedCategories -= mCategoryLists.get(group).size();
-        }
-        return mExpandedGroups[group];*/
-        return true;
     }
 
 
@@ -194,7 +168,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
 
         @Override
         public String toString(){
-            return "Position (" + mGroup + ", " + mPosition + ")";
+            return "Group: " + mGroup + ", position:" + mPosition;
         }
     }
 
@@ -251,8 +225,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
      * @author Ismael Alonso
      * @version 1.1.0
      */
-    protected class HeaderHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        private ImageView mChevron;
+    protected class HeaderHolder extends RecyclerView.ViewHolder{
         private TextView mHeader;
 
 
@@ -264,10 +237,7 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
         public HeaderHolder(View rootView){
             super(rootView);
 
-            mChevron = (ImageView)rootView.findViewById(R.id.header_chevron);
             mHeader = (TextView)rootView.findViewById(R.id.header_text);
-
-            rootView.setOnClickListener(this);
         }
 
         /**
@@ -277,16 +247,6 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
          */
         private void bind(String groupName){
             mHeader.setText(groupName);
-        }
-
-        @Override
-        public void onClick(View v){
-            if (toggle(getAdapterPosition())){
-                mChevron.setImageResource(R.drawable.ic_chevron_down_white_24dp);
-            }
-            else{
-                mChevron.setImageResource(R.drawable.ic_chevron_right_white_24dp);
-            }
         }
     }
 
