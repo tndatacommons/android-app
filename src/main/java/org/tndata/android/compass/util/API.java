@@ -496,6 +496,7 @@ public final class API{
         try{
             body.put("timezone", TimeZone.getDefault().getID())
                     .put("needs_onboarding", user.needsOnBoarding())
+                    .put("maximum_daily_notifications", user.getDailyNotifications())
                     .put("zipcode", user.getZipCode())
                     .put("birthday", user.getBirthday())
                     .put("sex", user.getSex().toLowerCase())

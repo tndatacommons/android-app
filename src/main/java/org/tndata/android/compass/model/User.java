@@ -61,6 +61,8 @@ public class User extends TDCBase{
     private String mDateJoined;
     @SerializedName("needs_onboarding")
     private boolean mNeedsOnboarding;
+    @SerializedName("maximum_daily_notifications")
+    private int mDailyNotifications;
 
 
     //Profile attributes
@@ -134,6 +136,10 @@ public class User extends TDCBase{
         mNeedsOnboarding = false;
     }
 
+    public void setDailyNotifications(int dailyNotifications){
+        mDailyNotifications = dailyNotifications;
+    }
+
 
     /*---------*
      * GETTERS *
@@ -173,6 +179,10 @@ public class User extends TDCBase{
 
     public boolean needsOnBoarding(){
         return mNeedsOnboarding;
+    }
+
+    public int getDailyNotifications(){
+        return mDailyNotifications;
     }
 
     /**

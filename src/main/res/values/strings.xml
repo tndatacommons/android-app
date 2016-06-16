@@ -120,6 +120,8 @@
     <string name="settings_notifications_sound_title">Sound</string>
     <string name="settings_notifications_vibration_title">Vibration</string>
     <string name="settings_notifications_light_title">Light</string>
+    <string name="settings_notifications_notification_number_title">Daily notification limit</string>
+    <string name="settings_notifications_notification_number_subtitle">Limit is ignored by high-priority notifications</string>
     <string name="settings_notifications_quiet_hours_title">Quiet hours</string>
 
     <!-- Surveys -->
