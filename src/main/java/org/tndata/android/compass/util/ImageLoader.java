@@ -83,7 +83,6 @@ public final class ImageLoader{
      * @version 1.0.0
      */
     public static final class Options{
-        private boolean mFlinging;
         private boolean mUsePlaceholder;
         private boolean mCropToCircle;
 
@@ -92,20 +91,8 @@ public final class ImageLoader{
          * which defaults to true.
          */
         public Options(){
-            mFlinging = false;
             mUsePlaceholder = true;
             mCropToCircle = false;
-        }
-
-        /**
-         * Sets the flinging.
-         *
-         * @param flinging true to avoid downloading on cache miss, false otherwise.
-         * @return this bundle.
-         */
-        public Options setFlinging(boolean flinging){
-            mFlinging = flinging;
-            return this;
         }
 
         /**
