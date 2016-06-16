@@ -20,7 +20,7 @@ import java.util.TimeZone;
  */
 public final class API{
     //Api urls and app configuration
-    public static final boolean STAGING = BuildConfig.DEBUG;
+    public static final boolean STAGING = !BuildConfig.DEBUG;
     private static final boolean USE_NGROK_TUNNEL = false;
     private static final String TNDATA_BASE_URL = "https://app.tndata.org/api/";
     private static final String TNDATA_STAGING_URL = "http://staging.tndata.org/api/";
@@ -496,6 +496,7 @@ public final class API{
         try{
             body.put("timezone", TimeZone.getDefault().getID())
                     .put("needs_onboarding", user.needsOnBoarding())
+                    .put("maximum_daily_notifications", user.getDailyNotifications())
                     .put("zipcode", user.getZipCode())
                     .put("birthday", user.getBirthday())
                     .put("sex", user.getSex().toLowerCase())

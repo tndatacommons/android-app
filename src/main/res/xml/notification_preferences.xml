@@ -19,6 +19,11 @@
             android:defaultValue="true"
             android:title="@string/settings_notifications_light_title" />
 
+        <org.tndata.android.compass.ui.NumberPickerPreference
+            android:key="settings_notifications_daily_number"
+            android:defaultValue="5"
+            android:title="@string/settings_notifications_notification_number_title" />
+
         <org.tndata.android.compass.ui.QuietHoursPreference
             android:key="settings_notifications_quiet_hours"
             android:title="@string/settings_notifications_quiet_hours_title" />

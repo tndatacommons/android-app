@@ -3,6 +3,7 @@ package org.tndata.android.compass.fragment;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -60,6 +61,24 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
         }
         catch (ClassCastException ccx){
             throw new ClassCastException(context.toString()
+                    + " must implement OnSettingsClickListener");
+        }
+    }
+
+    //This method is deprecated, but the method above won't get called in API < 23. The
+    //  absence of this one would render settings useless for anything not M. This is a
+    //  quick and dirty fix, I might do something smarter some day.
+    @Override
+    public void onAttach(Activity activity){
+        super.onAttach(activity);
+
+        //This makes sure that the container activity has implemented the callback
+        //  interface. If not, it throws an exception.
+        try{
+            mListener = (OnSettingsClickListener)activity;
+        }
+        catch (ClassCastException ccx){
+            throw new ClassCastException(activity.toString()
                     + " must implement OnSettingsClickListener");
         }
     }
