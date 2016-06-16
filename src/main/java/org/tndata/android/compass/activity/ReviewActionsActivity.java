@@ -1,8 +1,6 @@
 package org.tndata.android.compass.activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
@@ -22,8 +20,6 @@ import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.ImageHelper;
 import org.tndata.android.compass.util.ImageLoader;
 
 import es.sandwatch.httprequests.HttpRequest;
@@ -119,11 +115,10 @@ public class ReviewActionsActivity
         View header = inflateHeader(R.layout.header_tile);
         ImageView tile = (ImageView)header.findViewById(R.id.header_tile);
 
-        int id = CompassUtil.getCategoryTileResId(category.getTitle());
-        Bitmap image = BitmapFactory.decodeResource(getResources(), id);
-        Bitmap circle = ImageHelper.getCircleBitmap(image, CompassUtil.getPixels(this, 200));
-        tile.setImageBitmap(circle);
-        image.recycle();
+        ImageLoader.Options options = new ImageLoader.Options()
+                .setUseDefaultPlaceholder(false)
+                .setCropToCircle(true);
+        ImageLoader.loadBitmap(tile, category.getIconUrl(), options);
     }
 
     private void setCategoryHeader(TDCCategory category){
@@ -133,7 +128,8 @@ public class ReviewActionsActivity
             hero.setImageResource(R.drawable.compass_master_illustration);
         }
         else{
-            ImageLoader.Options options = new ImageLoader.Options().setUsePlaceholder(false);
+            ImageLoader.Options options = new ImageLoader.Options()
+                    .setPlaceholder(R.drawable.compass_master_illustration);
             ImageLoader.loadBitmap(hero, category.getImageUrl(), options);
         }
     }

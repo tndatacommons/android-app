@@ -2,11 +2,8 @@ package org.tndata.android.compass.model;
 
 import android.os.Parcel;
 import android.support.annotation.NonNull;
-import android.widget.ImageView;
 
 import com.google.gson.annotations.SerializedName;
-
-import org.tndata.android.compass.util.ImageLoader;
 
 
 /**
@@ -89,16 +86,6 @@ public class TDCCategory extends TDCContent{
     /*---------*
      * UTILITY *
      *---------*/
-
-    public void loadImageIntoView(ImageView imageView){
-        String url = getImageUrl();
-        if (!url.isEmpty()){
-            ImageLoader.Options options = new ImageLoader.Options()
-                    .setUsePlaceholder(false)
-                    .setCropToCircle(true);
-            ImageLoader.loadBitmap(imageView, url, options);
-        }
-    }
 
     @Override
     public int compareTo(@NonNull TDCContent another){

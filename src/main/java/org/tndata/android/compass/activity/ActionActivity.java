@@ -125,7 +125,8 @@ public class ActionActivity
                 image.setImageResource(R.drawable.compass_master_illustration);
             }
             else{
-                ImageLoader.Options options = new ImageLoader.Options().setUsePlaceholder(false);
+                ImageLoader.Options options = new ImageLoader.Options()
+                        .setPlaceholder(R.drawable.compass_master_illustration);
                 ImageLoader.loadBitmap(image, mUserCategory.getCategory().getImageUrl(), options);
             }
         }
