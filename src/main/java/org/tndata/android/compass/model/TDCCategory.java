@@ -105,9 +105,15 @@ public class TDCCategory extends TDCContent{
         if (another instanceof TDCCategory){
             TDCCategory category = (TDCCategory)another;
             if (mGroup < category.getGroup()){
+                if (mGroup == -1){
+                    return 1;
+                }
                 return -1;
             }
             if (mGroup > category.getGroup()){
+                if (category.getGroup() == -1){
+                    return -1;
+                }
                 return 1;
             }
         }

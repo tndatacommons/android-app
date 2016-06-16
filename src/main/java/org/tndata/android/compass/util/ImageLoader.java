@@ -63,7 +63,7 @@ public final class ImageLoader{
         }
         else{
             Picasso picasso = Picasso.with(mContext);
-            picasso.setIndicatorsEnabled(BuildConfig.DEBUG);
+            picasso.setIndicatorsEnabled(API.STAGING && BuildConfig.DEBUG);
             RequestCreator request = picasso.load(url);
             if (options.mUsePlaceholder){
                 request.placeholder(R.drawable.ic_compass_white_50dp);
