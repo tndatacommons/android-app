@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -63,11 +62,16 @@ public class LauncherActivity
     private int mGetCategoriesRC;
     private int mGetPlacesRC;
 
+    //Firewall. Cancelling an HttpRequest may not be enough, as the system might be parsing
+    private boolean cancelled;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
+
+        cancelled = false;
 
         displayLauncherActivity(true);
         mApplication = (CompassApplication)getApplication();
@@ -124,21 +128,15 @@ public class LauncherActivity
         popBackStack();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
-            case android.R.id.home:
-                popBackStack();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private  void popBackStack(){
+    /**
+     * Pops a fragment from the back stack and cancels I/O
+     */
+    private void popBackStack(){
         //Cancel common requests/tasks
         HttpRequest.cancel(mGetCategoriesRC);
         HttpRequest.cancel(mGetPlacesRC);
         FeedDataLoader.cancel();
+        cancelled = true;
 
         int count = getSupportFragmentManager().getBackStackEntryCount();
         String name = getSupportFragmentManager().getBackStackEntryAt(count-1).getName();
@@ -152,11 +150,17 @@ public class LauncherActivity
         }
     }
 
+    /**
+     * Triggers a transition to main.
+     */
     private void transitionToMain(){
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
         finish();
     }
 
+    /**
+     * Triggers a transition to on boarding.
+     */
     private void transitionToOnBoarding(){
         startActivity(new Intent(getApplicationContext(), OnBoardingActivity.class));
         finish();
@@ -164,6 +168,7 @@ public class LauncherActivity
 
     @Override
     public void signUp(){
+        cancelled = false;
         if (mSignUpFragment == null){
             mSignUpFragment = new SignUpFragment();
         }
@@ -174,6 +179,7 @@ public class LauncherActivity
 
     @Override
     public void logIn(){
+        cancelled = false;
         if (mLoginFragment == null){
             mLoginFragment = new LogInFragment();
         }
@@ -193,8 +199,10 @@ public class LauncherActivity
     }
 
     private void setUser(User user){
-        mApplication.setUser(user, true);
-        mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
+        if (!cancelled){
+            mApplication.setUser(user, true);
+            mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
+        }
     }
 
     @Override
@@ -247,25 +255,27 @@ public class LauncherActivity
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof User){
-            mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
-            mGetPlacesRC = HttpRequest.get(this, API.getUserPlacesUrl());
-        }
-        else if (result instanceof ParserModels.CategoryContentResultSet){
-            mApplication.setPublicCategories(((ParserModels.CategoryContentResultSet)result).results);
-            if (mApplication.getUser().needsOnBoarding()){
-                transitionToOnBoarding();
+        if (!cancelled){
+            if (result instanceof User){
+                mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
+                mGetPlacesRC = HttpRequest.get(this, API.getUserPlacesUrl());
             }
-            else{
-                Log.d(TAG, "Fetching user data");
-                FeedDataLoader.load(this);
+            else if (result instanceof ParserModels.CategoryContentResultSet){
+                mApplication.setPublicCategories(((ParserModels.CategoryContentResultSet)result).results);
+                if (mApplication.getUser().needsOnBoarding()){
+                    transitionToOnBoarding();
+                }
+                else{
+                    Log.d(TAG, "Fetching user data");
+                    FeedDataLoader.load(this);
+                }
             }
         }
     }
 
     @Override
     public void onFeedDataLoaded(@Nullable FeedData feedData){
-        if (feedData != null){
+        if (!cancelled && feedData != null){
             mApplication.setFeedData(feedData);
             transitionToMain();
         }
