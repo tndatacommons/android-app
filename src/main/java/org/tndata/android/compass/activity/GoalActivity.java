@@ -1,7 +1,5 @@
 package org.tndata.android.compass.activity;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -11,8 +9,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.GoalAdapter;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.TDCGoal;
-import org.tndata.android.compass.util.CompassUtil;
-import org.tndata.android.compass.util.ImageHelper;
+import org.tndata.android.compass.util.ImageLoader;
 
 
 /**
@@ -50,11 +47,10 @@ public class GoalActivity extends MaterialActivity implements GoalAdapter.GoalLi
         View header = inflateHeader(R.layout.header_tile);
         ImageView tile = (ImageView)header.findViewById(R.id.header_tile);
 
-        int id = CompassUtil.getCategoryTileResId(category.getTitle());
-        Bitmap image = BitmapFactory.decodeResource(getResources(), id);
-        Bitmap circle = ImageHelper.getCircleBitmap(image, CompassUtil.getPixels(this, 200));
-        tile.setImageBitmap(circle);
-        image.recycle();
+        ImageLoader.Options options = new ImageLoader.Options()
+                .setUseDefaultPlaceholder(false)
+                .setCropToCircle(true);
+        ImageLoader.loadBitmap(tile, category.getIconUrl(), options);
     }
 
     @Override

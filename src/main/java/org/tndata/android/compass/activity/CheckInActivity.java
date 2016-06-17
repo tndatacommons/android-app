@@ -142,7 +142,7 @@ public class CheckInActivity
 
     @Override
     public void onHomeClick(){
-        startActivity(new Intent(this, LoginActivity.class));
+        startActivity(new Intent(this, LauncherActivity.class));
         finish();
     }
 

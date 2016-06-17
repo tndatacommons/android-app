@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
@@ -16,7 +15,6 @@ import android.view.WindowManager;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.*;
 
 
@@ -168,38 +166,6 @@ public final class CompassUtil{
             }
         }
         context.startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + number)));
-    }
-
-    @DrawableRes
-    public static int getCategoryTileResId(String title){
-        if (title.equalsIgnoreCase("Happiness & fun")){
-            return R.drawable.tile_fun;
-        }
-        else if (title.equalsIgnoreCase("Family & parenting")){
-            return R.drawable.tile_parenting;
-        }
-        else if (title.equalsIgnoreCase("Work & prosperity")){
-            return R.drawable.tile_prosperity;
-        }
-        else if (title.equalsIgnoreCase("Home & safety")){
-            return R.drawable.tile_home;
-        }
-        else if (title.equalsIgnoreCase("Education & skills")){
-            return R.drawable.tile_skills;
-        }
-        else if (title.equalsIgnoreCase("Health & wellness")){
-            return R.drawable.tile_health;
-        }
-        else if (title.equalsIgnoreCase("Community & friendship")){
-            return R.drawable.tile_community;
-        }
-        else if (title.equalsIgnoreCase("Romance & relationships")){
-            return R.drawable.tile_romance;
-        }
-        else{
-            // Default to our main hero image.
-            return R.drawable.compass_master_illustration;
-        }
     }
 
     public static Class getTypeOf(String src){

@@ -10,6 +10,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.media.ThumbnailUtils;
+import android.support.annotation.DrawableRes;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -58,15 +59,18 @@ public final class ImageLoader{
      * @param options the option bundle.
      */
     public static void loadBitmap(ImageView view, String url, Options options){
-        if (url.isEmpty()){
+        if (url == null || url.isEmpty()){
             view.setImageResource(R.drawable.ic_compass_white_50dp);
         }
         else{
             Picasso picasso = Picasso.with(mContext);
             picasso.setIndicatorsEnabled(API.STAGING && BuildConfig.DEBUG);
             RequestCreator request = picasso.load(url);
-            if (options.mUsePlaceholder){
+            if (options.mUseDefaultPlaceholder){
                 request.placeholder(R.drawable.ic_compass_white_50dp);
+            }
+            else if (options.mPlaceholder != 0){
+                request.placeholder(options.mPlaceholder);
             }
             if (options.mCropToCircle){
                 request.transform(new CircleCropTransformation());
@@ -83,39 +87,44 @@ public final class ImageLoader{
      * @version 1.0.0
      */
     public static final class Options{
-        private boolean mFlinging;
-        private boolean mUsePlaceholder;
+        private @DrawableRes int mPlaceholder;
+        private boolean mUseDefaultPlaceholder;
         private boolean mCropToCircle;
+
 
         /**
          * Constructor. Defaults all options to false except for the use of a placeholder,
          * which defaults to true.
          */
         public Options(){
-            mFlinging = false;
-            mUsePlaceholder = true;
+            mPlaceholder = 0;
+            mUseDefaultPlaceholder = true;
             mCropToCircle = false;
         }
 
         /**
-         * Sets the flinging.
+         * Sets the resource id of the image to use as placeholder.
          *
-         * @param flinging true to avoid downloading on cache miss, false otherwise.
+         * @param placeholder the resource id of th placeholder.
          * @return this bundle.
          */
-        public Options setFlinging(boolean flinging){
-            mFlinging = flinging;
+        public Options setPlaceholder(@DrawableRes int placeholder){
+            mPlaceholder = placeholder;
+            mUseDefaultPlaceholder = false;
             return this;
         }
 
         /**
-         * Sets the flag to use a placeholder.
+         * Sets the flag to use the default placeholder. If this is set to false and
+         * {@code setPlaceholder(int)} is not called there will be no placeholder.
          *
-         * @param usePlaceholder true use a placeholder image while loading, false otherwise.
+         * @param usePlaceholder true use the default placeholder image while loading,
+         *                       false otherwise.
          * @return this bundle.
          */
-        public Options setUsePlaceholder(boolean usePlaceholder){
-            mUsePlaceholder = usePlaceholder;
+        public Options setUseDefaultPlaceholder(boolean usePlaceholder){
+            mPlaceholder = 0;
+            mUseDefaultPlaceholder = usePlaceholder;
             return this;
         }
 
@@ -131,6 +140,13 @@ public final class ImageLoader{
         }
     }
 
+
+    /**
+     * Transformation class to turn a Bitmap into a circular one.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     private static class CircleCropTransformation implements Transformation{
         /**
          * Tells whether a bitmap is square or not.

@@ -42,7 +42,6 @@ import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.FeedDataLoader;
 import org.tndata.android.compass.util.GcmRegistration;
-import org.tndata.android.compass.util.OnScrollListenerHub;
 import org.tndata.android.compass.util.ParallaxEffect;
 
 import es.sandwatch.httprequests.HttpRequest;
@@ -151,16 +150,13 @@ public class MainActivity
         mFeed.setAdapter(mAdapter);
         mFeed.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        //Create the hub and add to it all the items that need to be parallaxed
-        OnScrollListenerHub hub = new OnScrollListenerHub();
-
-        hub.addOnScrollListener(new ParallaxEffect(header, 0.5f));
+        mFeed.addOnScrollListener(new ParallaxEffect(header, 0.5f));
 
         ParallaxEffect toolbarEffect = new ParallaxEffect(toolbar, 1);
         toolbarEffect.setParallaxCondition(new ParallaxEffect.ParallaxCondition(){
             @Override
             protected boolean doParallax(){
-                int height = (int)((CompassUtil.getScreenWidth(MainActivity.this) * 2 / 3) * 0.6);
+                int height = (int)((CompassUtil.getScreenWidth(MainActivity.this) * 2 / 3) * 0.55);
                 return -getRecyclerViewOffset() > height;
             }
 
@@ -171,13 +167,13 @@ public class MainActivity
 
             @Override
             protected int getParallaxViewOffset(){
-                int height = (int)((CompassUtil.getScreenWidth(MainActivity.this) * 2 / 3) * 0.6);
+                int height = (int)((CompassUtil.getScreenWidth(MainActivity.this) * 2 / 3) * 0.55);
                 return height + getFixedState() + getRecyclerViewOffset();
             }
         });
-        hub.addOnScrollListener(toolbarEffect);
+        mFeed.addOnScrollListener(toolbarEffect);
 
-        hub.addOnScrollListener(new RecyclerView.OnScrollListener(){
+        mFeed.addOnScrollListener(new RecyclerView.OnScrollListener(){
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy){
                 if (dy > 0){
@@ -194,7 +190,6 @@ public class MainActivity
                 }
             }
         });
-        mFeed.addOnScrollListener(hub);
 
         Animation hideAnimation = new ScaleAnimation(1, 0, 1, 0, Animation.RELATIVE_TO_SELF, 0.5f,
                 Animation.RELATIVE_TO_SELF, 0.5f);
@@ -428,7 +423,7 @@ public class MainActivity
 
     @Override
     public void onNullData(){
-        startActivity(new Intent(this, LoginActivity.class));
+        startActivity(new Intent(this, LauncherActivity.class));
         finish();
     }
 
@@ -519,7 +514,7 @@ public class MainActivity
             }
         }
         else if (resultCode == SettingsActivity.LOGGED_OUT_RESULT_CODE){
-            startActivity(new Intent(this, LoginActivity.class));
+            startActivity(new Intent(this, LauncherActivity.class));
             finish();
         }
     }

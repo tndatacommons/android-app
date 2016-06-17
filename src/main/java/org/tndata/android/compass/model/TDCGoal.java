@@ -1,12 +1,10 @@
 package org.tndata.android.compass.model;
 
-import android.content.Context;
 import android.os.Parcel;
 import android.widget.ImageView;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.tndata.android.compass.R;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.HashSet;
@@ -27,31 +25,6 @@ public class TDCGoal extends TDCContent{
     private String mOutcome = "";
     @SerializedName("categories")
     private Set<Long> mCategoryIdSet;
-    @SerializedName("behaviors_count")
-    private int mBehaviorCount = 0;
-
-    private String mColor;
-
-
-    /*---------*
-     * SETTERS *
-     *---------*/
-
-    public void setOutcome(String outcome){
-        this.mOutcome = outcome;
-    }
-
-    public void setCategories(Set<Long> categories){
-        this.mCategoryIdSet = categories;
-    }
-
-    public void setBehaviorCount(int behaviorCount){
-        this.mBehaviorCount = behaviorCount;
-    }
-
-    public void setColor(String color){
-        mColor = color;
-    }
 
 
     /*---------*
@@ -64,17 +37,6 @@ public class TDCGoal extends TDCContent{
 
     public Set<Long> getCategoryIdSet(){
         return mCategoryIdSet;
-    }
-
-    public int getBehaviorCount(){
-        return mBehaviorCount;
-    }
-
-    public String getColor(Context context){
-        if (mColor == null || mColor.isEmpty()){
-            return String.format("#%06X", 0xFFFFFF & context.getResources().getColor(R.color.primary));
-        }
-        return mColor;
     }
 
     @Override
@@ -91,13 +53,10 @@ public class TDCGoal extends TDCContent{
      * Given a Context and an ImageView, load this Goal's icon (if the user has selected
      * no Behaviors) or load the goal's Progress Icons.
      *
-     * @param imageView: an ImageView
+     * @param target the image view to load the icon into
      */
-    public void loadIconIntoView(ImageView imageView){
-        String iconUrl = getIconUrl();
-        if (iconUrl != null && !iconUrl.isEmpty()){
-            ImageLoader.loadBitmap(imageView, iconUrl);
-        }
+    public void loadIconIntoView(ImageView target){
+        ImageLoader.loadBitmap(target, getIconUrl());
     }
 
     @Override
@@ -113,7 +72,6 @@ public class TDCGoal extends TDCContent{
         for (Long categoryId:mCategoryIdSet){
             dest.writeLong(categoryId);
         }
-        dest.writeInt(mBehaviorCount);
     }
 
     public static final Creator<TDCGoal> CREATOR = new Creator<TDCGoal>(){
@@ -140,6 +98,5 @@ public class TDCGoal extends TDCContent{
         for (int i = 0, length = src.readInt(); i < length; i++){
             mCategoryIdSet.add(src.readLong());
         }
-        mBehaviorCount = src.readInt();
     }
 }

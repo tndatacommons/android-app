@@ -61,9 +61,10 @@
 
 
         <!-- Activities -->
+        <!-- TODO clean up and arrange -->
 
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".activity.LauncherActivity"
             android:label="@string/app_name"
             android:theme="@style/LogInTheme"
             android:screenOrientation="portrait">
@@ -74,6 +75,10 @@
         </activity>
 
         <activity
+            android:name=".activity.OnBoardingActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".activity.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
@@ -82,15 +87,6 @@
             android:name=".activity.CustomContentManagerActivity"
             android:label="Create goal"
             android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".activity.OnBoardingActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
 
         <activity
             android:name=".activity.SettingsActivity"

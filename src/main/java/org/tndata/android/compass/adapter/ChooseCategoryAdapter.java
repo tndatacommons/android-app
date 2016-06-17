@@ -204,7 +204,9 @@ public class ChooseCategoryAdapter extends RecyclerView.Adapter{
         public void bind(TDCCategory category){
             mCategory = category;
 
-            ImageLoader.Options options = new ImageLoader.Options().setCropToCircle(true);
+            ImageLoader.Options options = new ImageLoader.Options()
+                    .setUseDefaultPlaceholder(false)
+                    .setCropToCircle(true);
             ImageLoader.loadBitmap(mImage, category.getIconUrl(), options);
             mCaption.setText(category.getTitle());
         }

@@ -1,7 +1,6 @@
 package org.tndata.android.compass.activity;
 
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -36,19 +35,13 @@ public class OnBoardingActivity
                 OnBoardingCategoryFragment.CategoryListener,
                 FeedDataLoader.Callback{
 
-    private static final int STAGE_PROFILE = 0;
-    private static final int STAGE_CHOOSE_CATEGORY = 1;
-    private static final int STAGE_PROGRESS = 2;
-
     private static final int PROFILE_ITEMS = 3;
 
     private static final int LIBRARY_RC = 6835;
 
 
-    private OnBoardingCategoryFragment mCategoryFragment;
-
     private CompassApplication mApplication;
-    private Instrument mInstrument;
+    private OnBoardingCategoryFragment mCategoryFragment;
 
 
     @Override
@@ -61,51 +54,33 @@ public class OnBoardingActivity
         String title = getString(R.string.onboarding_instrument_title);
         String description = getString(R.string.onboarding_instrument_description);
         String instructions = getString(R.string.onboarding_instrument_instructions);
-        mInstrument = new Instrument(title, description, instructions);
+        Instrument instrument = new Instrument(title, description, instructions);
         for (int i = 0; i < PROFILE_ITEMS; i++){
-            mInstrument.addSurvey(mApplication.getUser().generateSurvey(this, i));
+            instrument.addSurvey(mApplication.getUser().generateSurvey(this, i));
         }
-        swapFragments(STAGE_PROFILE);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.base_content, InstrumentFragment.newInstance(instrument, 3))
+                .commit();
     }
 
-    /**
-     * Replaces the current fragment for a new one.
-     *
-     * @param index the fragment id.
-     */
-    private void swapFragments(int index){
-        Fragment fragment = null;
-        switch (index){
-            case STAGE_PROFILE:
-                fragment = InstrumentFragment.newInstance(mInstrument, 3);
-                break;
-
-            case STAGE_CHOOSE_CATEGORY:
-                if (mCategoryFragment == null){
-                    mCategoryFragment = new OnBoardingCategoryFragment();
-                }
-                fragment = mCategoryFragment;
-                break;
-
-            case STAGE_PROGRESS:
-                fragment = new ProgressFragment();
-                break;
-
-        }
-
-        if (fragment != null){
-            getSupportFragmentManager().beginTransaction().replace(R.id.base_content, fragment).commit();
-        }
+    @Override
+    public void onBackPressed(){
+        FeedDataLoader.cancel();
+        super.onBackPressed();
     }
 
     @Override
     public void onInstrumentFinished(Instrument instrument){
         //There is no need to save the profile here, it gets saved after selecting the categories
         for (Survey survey:instrument.getQuestions()){
+            //This only changes the value the user object stores
             mApplication.getUser().postSurvey(survey);
         }
 
-        swapFragments(STAGE_CHOOSE_CATEGORY);
+        mCategoryFragment = new OnBoardingCategoryFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.base_content, mCategoryFragment)
+                .commit();
     }
 
     @Override
@@ -117,7 +92,9 @@ public class OnBoardingActivity
 
     @Override
     public void onNext(){
-        swapFragments(STAGE_PROGRESS);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.base_content, new ProgressFragment())
+                .commit();
         User user = mApplication.getUser();
         user.setOnBoardingComplete();
         HttpRequest.put(null, API.getPutUserProfileUrl(user), API.getPutUserProfileBody(user));

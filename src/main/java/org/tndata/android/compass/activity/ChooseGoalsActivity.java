@@ -88,7 +88,8 @@ public class ChooseGoalsActivity
         View header = inflateHeader(R.layout.header_hero);
         ImageView hero = (ImageView)header.findViewById(R.id.header_hero_image);
         if (mCategory.getImageUrl() != null && !mCategory.getImageUrl().isEmpty()){
-            ImageLoader.Options options = new ImageLoader.Options().setUsePlaceholder(false);
+            ImageLoader.Options options = new ImageLoader.Options()
+                    .setPlaceholder(R.drawable.compass_master_illustration);
             ImageLoader.loadBitmap(hero, mCategory.getImageUrl(), options);
         }
         else{

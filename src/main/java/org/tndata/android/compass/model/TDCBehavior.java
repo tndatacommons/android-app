@@ -1,18 +1,15 @@
 package org.tndata.android.compass.model;
 
 import android.os.Parcel;
-import android.widget.ImageView;
 
 import com.google.gson.annotations.SerializedName;
-
-import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.HashSet;
 import java.util.Set;
 
 
 /**
- * Model class for behaviors.
+ * Model class for behaviors. Strictly speaking, we aren't using this class any more.
  *
  * @author Edited by Ismael Alonso
  * @version 1.0.0
@@ -73,18 +70,6 @@ public class TDCBehavior extends TDCContent{
     /*---------*
      * UTILITY *
      *---------*/
-
-    /**
-     * Given a Context and an ImageView, load this Behavior's icon into the ImageView.
-     *
-     * @param imageView an ImageView
-     */
-    public void loadIconIntoView(ImageView imageView){
-        String iconUrl = getIconUrl();
-        if(iconUrl != null && !iconUrl.isEmpty()) {
-            ImageLoader.loadBitmap(imageView, iconUrl, new ImageLoader.Options());
-        }
-    }
 
     @Override
     public String toString(){

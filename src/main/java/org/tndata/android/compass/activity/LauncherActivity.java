@@ -3,7 +3,6 @@ package org.tndata.android.compass.activity;
 import android.app.AlertDialog;
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -31,14 +29,11 @@ import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.FeedDataLoader;
 import org.tndata.android.compass.util.VersionChecker;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import es.sandwatch.httprequests.HttpRequest;
 import es.sandwatch.httprequests.HttpRequestError;
 
 
-public class LoginActivity
+public class LauncherActivity
         extends AppCompatActivity
         implements
                 VersionChecker.VersionCallback,
@@ -50,19 +45,13 @@ public class LoginActivity
                 Parser.ParserCallback,
                 FeedDataLoader.Callback{
 
-    private static final String TAG = "LogInActivity";
-
-    //Fragment ids
-    private static final int DEFAULT = 0;
-    private static final int SIGN_UP = DEFAULT+1;
-    private static final int LOGIN = SIGN_UP+1;
+    private static final String TAG = "LauncherActivity";
 
     private static final String PREFERENCES_NAME = "compass_pref";
     private static final String PREFERENCES_NEW_USER = "new_user_pref";
 
 
     private CompassApplication mApplication;
-    private List<Fragment> mFragmentStack;
 
     private LauncherFragment mLauncherFragment;
     private LogInFragment mLoginFragment;
@@ -73,15 +62,19 @@ public class LoginActivity
     private int mGetCategoriesRC;
     private int mGetPlacesRC;
 
+    //Firewall. Cancelling an HttpRequest may not be enough, as the system might be parsing
+    private boolean cancelled;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
 
+        cancelled = false;
+
+        displayLauncherActivity(true);
         mApplication = (CompassApplication)getApplication();
-        mFragmentStack = new ArrayList<>();
-        swapFragments(DEFAULT, true);
         //new VersionChecker(this).execute();
         onVersionRetrieved(getString(R.string.version_name));
     }
@@ -132,91 +125,67 @@ public class LoginActivity
 
     @Override
     public void onBackPressed(){
-        handleBackStack();
+        popBackStack();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
-            case android.R.id.home:
-                handleBackStack();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+    /**
+     * Pops a fragment from the back stack and cancels I/O
+     */
+    private void popBackStack(){
+        //Cancel common requests/tasks
+        HttpRequest.cancel(mGetCategoriesRC);
+        HttpRequest.cancel(mGetPlacesRC);
+        FeedDataLoader.cancel();
+        cancelled = true;
 
-    private void swapFragments(int index, boolean addToStack){
-        Fragment fragment = null;
-        switch (index){
-            case DEFAULT:
-                if (mLauncherFragment == null){
-                    mLauncherFragment = new LauncherFragment();
-                }
-                fragment = mLauncherFragment;
-                break;
-
-            case LOGIN:
-                if (mLoginFragment == null){
-                    mLoginFragment = new LogInFragment();
-                }
-                fragment = mLoginFragment;
-                break;
-
-            case SIGN_UP:
-                if (mSignUpFragment == null){
-                    mSignUpFragment = new SignUpFragment();
-                }
-                fragment = mSignUpFragment;
-                break;
-
-        }
-        if (fragment != null){
-            if (addToStack){
-                mFragmentStack.add(fragment);
-            }
-            getSupportFragmentManager().beginTransaction().replace(R.id.base_content, fragment).commit();
-        }
-    }
-
-    private void handleBackStack(){
-        if (!mFragmentStack.isEmpty()){
-            mFragmentStack.remove(mFragmentStack.size()-1);
-        }
-
-        if (mFragmentStack.isEmpty()){
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+        String name = getSupportFragmentManager().getBackStackEntryAt(count-1).getName();
+        if (name.equals("Launcher")){
             HttpRequest.cancel(mLogInRC);
-            FeedDataLoader.cancel();
             finish();
         }
         else{
-            Fragment fragment = mFragmentStack.get(mFragmentStack.size()-1);
-
-            if (fragment instanceof LauncherFragment){
-                ((LauncherFragment)fragment).showProgress(false);
-            }
-
-            getSupportFragmentManager().beginTransaction().replace(R.id.base_content, fragment).commit();
+            mLauncherFragment.showProgress(false);
+            getSupportFragmentManager().popBackStack();
         }
     }
 
+    /**
+     * Triggers a transition to main.
+     */
     private void transitionToMain(){
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
         finish();
     }
 
+    /**
+     * Triggers a transition to on boarding.
+     */
     private void transitionToOnBoarding(){
         startActivity(new Intent(getApplicationContext(), OnBoardingActivity.class));
         finish();
     }
 
     @Override
-    public void signUp() {
-        swapFragments(SIGN_UP, true);
+    public void signUp(){
+        cancelled = false;
+        if (mSignUpFragment == null){
+            mSignUpFragment = new SignUpFragment();
+        }
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.base_content, mSignUpFragment)
+                .addToBackStack("SignUp").commit();
     }
 
     @Override
-    public void logIn() {
-        swapFragments(LOGIN, true);
+    public void logIn(){
+        cancelled = false;
+        if (mLoginFragment == null){
+            mLoginFragment = new LogInFragment();
+        }
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.base_content, mLoginFragment)
+                .addToBackStack("LogIn").commit();
     }
 
     @Override
@@ -230,15 +199,17 @@ public class LoginActivity
     }
 
     private void setUser(User user){
-        mApplication.setUser(user, true);
-        mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
+        if (!cancelled){
+            mApplication.setUser(user, true);
+            mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
+        }
     }
 
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mLogInRC){
             if (result.contains("\"non_field_errors\"")){
-                swapFragments(LOGIN, true);
+                logIn();
             }
             else{
                 try{
@@ -262,8 +233,7 @@ public class LoginActivity
     public void onRequestFailed(int requestCode, HttpRequestError error){
         if (requestCode == mLogInRC){
             Log.d(TAG, "Login request failed");
-            mFragmentStack.clear();
-            swapFragments(LOGIN, true);
+            logIn();
         }
         else if (requestCode == mGetCategoriesRC){
             Log.d(TAG, "Get categories failed");
@@ -285,35 +255,39 @@ public class LoginActivity
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof User){
-            mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
-            mGetPlacesRC = HttpRequest.get(this, API.getUserPlacesUrl());
-        }
-        else if (result instanceof ParserModels.CategoryContentResultSet){
-            mApplication.setPublicCategories(((ParserModels.CategoryContentResultSet)result).results);
-            if (mApplication.getUser().needsOnBoarding()){
-                transitionToOnBoarding();
+        if (!cancelled){
+            if (result instanceof User){
+                mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
+                mGetPlacesRC = HttpRequest.get(this, API.getUserPlacesUrl());
             }
-            else{
-                Log.d(TAG, "Fetching user data");
-                FeedDataLoader.load(this);
+            else if (result instanceof ParserModels.CategoryContentResultSet){
+                mApplication.setPublicCategories(((ParserModels.CategoryContentResultSet)result).results);
+                if (mApplication.getUser().needsOnBoarding()){
+                    transitionToOnBoarding();
+                }
+                else{
+                    Log.d(TAG, "Fetching user data");
+                    FeedDataLoader.load(this);
+                }
             }
         }
     }
 
     @Override
     public void onFeedDataLoaded(@Nullable FeedData feedData){
-        if (feedData != null){
+        if (!cancelled && feedData != null){
             mApplication.setFeedData(feedData);
             transitionToMain();
         }
     }
 
     private void displayLauncherActivity(boolean show){
-        for (Fragment fragment:mFragmentStack){
-            if (fragment instanceof LauncherFragment){
-                ((LauncherFragment)fragment).showProgress(show);
-            }
+        if (mLauncherFragment == null){
+            mLauncherFragment = new LauncherFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.base_content, mLauncherFragment)
+                    .addToBackStack("Launcher").commit();
         }
+        mLauncherFragment.showProgress(show);
     }
 }
