@@ -34,7 +34,7 @@ import es.sandwatch.httprequests.HttpRequest;
 import es.sandwatch.httprequests.HttpRequestError;
 
 
-public class LoginActivity
+public class LauncherActivity
         extends AppCompatActivity
         implements
                 VersionChecker.VersionCallback,
@@ -46,7 +46,7 @@ public class LoginActivity
                 Parser.ParserCallback,
                 FeedDataLoader.Callback{
 
-    private static final String TAG = "LogInActivity";
+    private static final String TAG = "LauncherActivity";
 
     private static final String PREFERENCES_NAME = "compass_pref";
     private static final String PREFERENCES_NEW_USER = "new_user_pref";

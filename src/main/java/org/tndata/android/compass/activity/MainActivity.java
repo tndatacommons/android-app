@@ -428,7 +428,7 @@ public class MainActivity
 
     @Override
     public void onNullData(){
-        startActivity(new Intent(this, LoginActivity.class));
+        startActivity(new Intent(this, LauncherActivity.class));
         finish();
     }
 
@@ -519,7 +519,7 @@ public class MainActivity
             }
         }
         else if (resultCode == SettingsActivity.LOGGED_OUT_RESULT_CODE){
-            startActivity(new Intent(this, LoginActivity.class));
+            startActivity(new Intent(this, LauncherActivity.class));
             finish();
         }
     }

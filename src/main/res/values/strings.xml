@@ -3,7 +3,7 @@
 
     <string name="app_name">Compass</string>
 
-    <!-- LoginActivity -->
+    <!-- LauncherActivity -->
     <string name="launcher_sign_up">SIGN UP</string>
     <string name="launcher_login">LOG IN</string>
     <string name="launcher_compass_image_cd">Compass image</string>
