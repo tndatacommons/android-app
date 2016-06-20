@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.doomonafireball.betterpickers.calendardatepicker.CalendarDatePickerDialog;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog;
@@ -118,6 +119,7 @@ public class SnoozeActivity
                 NotificationUtil.cancel(this, NotificationUtil.CUSTOM_ACTION_TAG, mReminder.getObjectId());
             }
             setResult(RESULT_OK);
+            Toast.makeText(this, R.string.later_toast, Toast.LENGTH_SHORT).show();
             finish();
         }
     }
@@ -210,6 +212,7 @@ public class SnoozeActivity
 
         //Kill the activity
         setResult(RESULT_OK);
+        Toast.makeText(this, R.string.later_toast, Toast.LENGTH_SHORT).show();
         finish();
     }
 
@@ -300,6 +303,7 @@ public class SnoozeActivity
 
         //Kill the activity
         setResult(RESULT_OK);
+        Toast.makeText(this, R.string.later_toast, Toast.LENGTH_SHORT).show();
         finish();
     }
 
