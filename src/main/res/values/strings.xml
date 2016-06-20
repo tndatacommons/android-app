@@ -183,6 +183,7 @@
     <string name="later_location_rationale_title">Compass needs access to your location</string>
     <string name="later_location_rationale">Compass needs access to your location in order to send you location-based reminders.</string>
     <string name="later_location_rationale_button">Got it!</string>
+    <string name="later_toast">OK, we\'ll remind you later.</string>
 
     <!-- Places -->
     <string name="places_name_dialog_title">What\'s the name of the place?</string>
