@@ -13,7 +13,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ActionAdapter;
 import org.tndata.android.compass.model.Action;
@@ -352,6 +354,14 @@ public class ActionActivity
 
             setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, true)
                     .putExtra(ACTION_KEY, mAction));
+
+            Toast.makeText(this, R.string.action_completed_toast, Toast.LENGTH_SHORT).show();
+            CompassApplication application = (CompassApplication)getApplication();
+            if(application.getFeedData() != null) {
+                startActivity(new Intent(this, MainActivity.class));
+            } else {
+                startActivity(new Intent(this, LauncherActivity.class));
+            }
             finish();
         }
     }
