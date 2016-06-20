@@ -357,9 +357,7 @@ public class ActionActivity
 
             Toast.makeText(this, R.string.action_completed_toast, Toast.LENGTH_SHORT).show();
             CompassApplication application = (CompassApplication)getApplication();
-            if(application.getFeedData() != null) {
-                startActivity(new Intent(this, MainActivity.class));
-            } else {
+            if(application.getFeedData() == null) {
                 startActivity(new Intent(this, LauncherActivity.class));
             }
             finish();
