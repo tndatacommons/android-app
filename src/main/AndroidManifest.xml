@@ -193,6 +193,10 @@
             android:name=".activity.CheckInActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".activity.BadgeActivity"
+            android:screenOrientation="portrait" />
+
 
         <!-- Broadcast receivers -->
 
