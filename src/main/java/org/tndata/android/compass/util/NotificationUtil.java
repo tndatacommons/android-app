@@ -15,6 +15,7 @@ import android.support.v4.app.NotificationCompat;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ActionActivity;
+import org.tndata.android.compass.activity.BadgeActivity;
 import org.tndata.android.compass.activity.CheckInActivity;
 import org.tndata.android.compass.activity.PackageEnrollmentActivity;
 import org.tndata.android.compass.activity.SnoozeActivity;
@@ -41,6 +42,7 @@ public final class NotificationUtil{
     public static final String CUSTOM_ACTION_TAG = "org.tndata.compass.Notification.CustomAction";
     public static final String ENROLLMENT_TAG = "org.tndata.compass.Notification.Enrollment";
     public static final String CHECK_IN_TAG = "org.tndata.compass.Notification.CheckIn";
+    public static final String BADGE_TAG = "org.tndata.compass.Notification.Badge";
 
 
     /**
@@ -197,6 +199,21 @@ public final class NotificationUtil{
 
         ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
                 .notify(CHECK_IN_TAG, 1, notification);
+    }
+
+    public static void putBadgeNotification(Context context, String title, String message, int id){
+        Intent intent = new Intent(context, BadgeActivity.class)
+                .putExtra(BadgeActivity.BADGE_KEY, id);
+        PendingIntent contentIntent = PendingIntent.getActivity(context,
+                (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification notification = getBuilder(context, title, message)
+                .setContentIntent(contentIntent)
+                .setAutoCancel(true)
+                .build();
+
+        ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
+                .notify(BADGE_TAG, id, notification);
     }
 
     public static void cancel(Context context, String tag, long id){

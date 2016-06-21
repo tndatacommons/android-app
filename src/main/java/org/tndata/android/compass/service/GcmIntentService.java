@@ -45,6 +45,7 @@ public class GcmIntentService extends IntentService{
     public static final String MESSAGE_TYPE_CUSTOM_ACTION = "customaction";
     public static final String MESSAGE_TYPE_ENROLLMENT = "package enrollment";
     public static final String MESSAGE_TYPE_CHECK_IN = "checkin";
+    public static final String MESSAGE_TYPE_BADGE = "badge";
 
 
     public GcmIntentService(){
@@ -129,12 +130,11 @@ public class GcmIntentService extends IntentService{
                 break;
 
             case MESSAGE_TYPE_CHECK_IN:
-                try{
-                    NotificationUtil.putCheckInNotification(this, title, msg);
-                }
-                catch (NumberFormatException nfx){
-                    nfx.printStackTrace();
-                }
+                NotificationUtil.putCheckInNotification(this, title, msg);
+                break;
+
+            case MESSAGE_TYPE_BADGE:
+
                 break;
         }
     }
