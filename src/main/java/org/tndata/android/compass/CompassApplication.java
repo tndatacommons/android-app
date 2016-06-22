@@ -2,8 +2,8 @@ package org.tndata.android.compass;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -14,6 +14,7 @@ import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.service.LocationNotificationService;
+import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.ImageLoader;
 
@@ -67,49 +68,40 @@ public class CompassApplication extends Application{
     }
 
     /**
-     * User log in info getter.
-     *
-     * @return a {@code User} object with email and password fields set. If no login information is
-     *         available, these fields will be empty strings.
-     */
-    public User getUserLoginInfo(){
-        SharedPreferences loginInfo = PreferenceManager.getDefaultSharedPreferences(this);
-        return new User(loginInfo.getString("email", ""), loginInfo.getString("password", ""));
-    }
-
-    /**
      * User setter.
      *
      * @param user the user who logged in.
-     * @param setPreferences true to overwrite shared preferences.
      */
-    public void setUser(User user, boolean setPreferences){
+    public void setUser(@NonNull User user){
         Log.d(TAG, "Setting user: " + user);
         mUser = user;
+        mUser.writeToSharedPreferences(this);
 
         //Add the authorization header with the user's token to the requests library
         HttpRequest.addHeader("Authorization", "Token " + getToken());
 
-        if (setPreferences){
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putString("auth_token", mUser.getToken());
-            editor.putString("first_name", mUser.getFirstName());
-            editor.putString("last_name", mUser.getLastName());
-            editor.putString("email", mUser.getEmail());
-            editor.putString("password", mUser.getPassword());
-            editor.putLong("id", mUser.getId());
-            editor.apply();
-        }
+
     }
 
     /**
      * User getter.
      *
-     * @return the currently logged in user.
+     * @return the currently logged in user, null if none.
      */
     public User getUser(){
+        if (mUser == null){
+            mUser = User.getFromPreferences(this);
+        }
         return mUser;
+    }
+
+    public void logOut(){
+        String regId = getGcmRegistrationId();
+        if (regId != null && !regId.isEmpty()){
+            HttpRequest.post(null, API.getLogOutUrl(), API.getLogOutBody(regId));
+        }
+        mUser = null;
+        User.deleteFromPreferences(this);
     }
 
     /**

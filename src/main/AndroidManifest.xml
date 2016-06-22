@@ -230,8 +230,6 @@
 
         <service android:name=".service.SnoozeService" />
 
-        <service android:name=".service.LogOutService" />
-
         <service android:name=".service.LocationNotificationService" />
 
     </application>

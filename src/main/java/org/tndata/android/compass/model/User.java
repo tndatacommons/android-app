@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -499,6 +500,7 @@ public class User extends TDCBase{
         //Open the shared preferences file for the user and check if they exist
         SharedPreferences prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         long id = prefs.getLong("user.id", -1);
+        Log.d("User", "Id: " + id);
         if (id == -1){
             //If not, return null
             return null;
@@ -532,6 +534,6 @@ public class User extends TDCBase{
      * @param context a reference to the context.
      */
     public static void deleteFromPreferences(@NonNull Context context){
-        context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE).edit().clear().apply();
+        context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE).edit().clear().commit();
     }
 }

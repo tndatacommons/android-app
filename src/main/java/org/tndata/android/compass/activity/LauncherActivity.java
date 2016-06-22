@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.json.JSONObject;
 import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -58,7 +57,6 @@ public class LauncherActivity
     private SignUpFragment mSignUpFragment;
 
     //Request codes
-    private int mLogInRC;
     private int mGetCategoriesRC;
     private int mGetPlacesRC;
 
@@ -73,7 +71,7 @@ public class LauncherActivity
 
         cancelled = false;
 
-        displayLauncherActivity(true);
+        displayLauncherFragment(true);
         mApplication = (CompassApplication)getApplication();
         //new VersionChecker(this).execute();
         onVersionRetrieved(getString(R.string.version_name));
@@ -100,19 +98,19 @@ public class LauncherActivity
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putBoolean(PREFERENCES_NEW_USER, false);
                 editor.apply();
-                displayLauncherActivity(false);
+                displayLauncherFragment(false);
             }
             else{
-                User user = mApplication.getUserLoginInfo();
-                String email = user.getEmail();
-                String password = user.getPassword();
-                if (!email.isEmpty() && !password.isEmpty()){
-                    displayLauncherActivity(true);
-                    mLogInRC = HttpRequest.post(this, API.getLogInUrl(),
-                            API.getLogInBody(email, password));
+                User user = mApplication.getUser();
+                if (user == null){
+                    //If there is no user, show the menu
+                    displayLauncherFragment(false);
                 }
                 else{
-                    displayLauncherActivity(false);
+                    //If there is a user, show the loading screen
+                    displayLauncherFragment(true);
+                    mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
+                    mGetPlacesRC = HttpRequest.get(this, API.getUserPlacesUrl());
                 }
             }
         }
@@ -141,7 +139,6 @@ public class LauncherActivity
         int count = getSupportFragmentManager().getBackStackEntryCount();
         String name = getSupportFragmentManager().getBackStackEntryAt(count-1).getName();
         if (name.equals("Launcher")){
-            HttpRequest.cancel(mLogInRC);
             finish();
         }
         else{
@@ -200,28 +197,15 @@ public class LauncherActivity
 
     private void setUser(User user){
         if (!cancelled){
-            mApplication.setUser(user, true);
+            mApplication.setUser(user);
             mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
+            mGetPlacesRC = HttpRequest.get(this, API.getUserPlacesUrl());
         }
     }
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mLogInRC){
-            if (result.contains("\"non_field_errors\"")){
-                logIn();
-            }
-            else{
-                try{
-                    Log.d(TAG, new JSONObject(result).toString(2));
-                }
-                catch (Exception x){
-                    x.printStackTrace();
-                }
-                Parser.parse(result, User.class, this);
-            }
-        }
-        else if (requestCode == mGetCategoriesRC){
+        if (requestCode == mGetCategoriesRC){
             Parser.parse(result, ParserModels.CategoryContentResultSet.class, this);
         }
         else if (requestCode == mGetPlacesRC){
@@ -231,21 +215,14 @@ public class LauncherActivity
 
     @Override
     public void onRequestFailed(int requestCode, HttpRequestError error){
-        if (requestCode == mLogInRC){
-            Log.d(TAG, "Login request failed");
-            logIn();
-        }
-        else if (requestCode == mGetCategoriesRC){
+        if (requestCode == mGetCategoriesRC){
             Log.d(TAG, "Get categories failed");
         }
     }
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof User){
-            mApplication.setUser((User)result, false);
-        }
-        else if (result instanceof ParserModels.UserPlacesResultSet){
+        if (result instanceof ParserModels.UserPlacesResultSet){
             CompassDbHelper helper = new CompassDbHelper(this);
             helper.emptyPlacesTable();
             helper.savePlaces(((ParserModels.UserPlacesResultSet)result).results);
@@ -256,11 +233,7 @@ public class LauncherActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (!cancelled){
-            if (result instanceof User){
-                mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
-                mGetPlacesRC = HttpRequest.get(this, API.getUserPlacesUrl());
-            }
-            else if (result instanceof ParserModels.CategoryContentResultSet){
+            if (result instanceof ParserModels.CategoryContentResultSet){
                 mApplication.setPublicCategories(((ParserModels.CategoryContentResultSet)result).results);
                 if (mApplication.getUser().needsOnBoarding()){
                     transitionToOnBoarding();
@@ -281,13 +254,13 @@ public class LauncherActivity
         }
     }
 
-    private void displayLauncherActivity(boolean show){
+    private void displayLauncherFragment(boolean showProgress){
         if (mLauncherFragment == null){
             mLauncherFragment = new LauncherFragment();
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.base_content, mLauncherFragment)
                     .addToBackStack("Launcher").commit();
         }
-        mLauncherFragment.showProgress(show);
+        mLauncherFragment.showProgress(showProgress);
     }
 }
