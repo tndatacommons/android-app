@@ -10,6 +10,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
+import org.tndata.android.compass.model.Badge;
 import org.tndata.android.compass.receiver.GcmBroadcastReceiver;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NotificationUtil;
@@ -28,15 +29,6 @@ import org.tndata.android.compass.util.NotificationUtil;
  * "object_id":32,
  * "object_type":"action",  // an Action
  * }
- * <p/>
- * A single, daily Behavior notification will arrive, but it does not contain object info:
- * <p/>
- * {
- * "title":"Stay on Course"
- * "message":"some message here...",
- * "object_id": null,
- * "object_type": null,
- * }
  */
 public class GcmIntentService extends IntentService{
     private static final String TAG = "GcmIntentService";
@@ -45,6 +37,7 @@ public class GcmIntentService extends IntentService{
     public static final String MESSAGE_TYPE_CUSTOM_ACTION = "customaction";
     public static final String MESSAGE_TYPE_ENROLLMENT = "package enrollment";
     public static final String MESSAGE_TYPE_CHECK_IN = "checkin";
+    public static final String MESSAGE_TYPE_AWARD = "award";
     public static final String MESSAGE_TYPE_BADGE = "badge";
 
 
@@ -86,7 +79,8 @@ public class GcmIntentService extends IntentService{
                                     jsonObject.optString("title"),
                                     jsonObject.optString("object_type"),
                                     jsonObject.optString("object_id"),
-                                    jsonObject.optString("user_mapping_id")
+                                    jsonObject.optString("user_mapping_id"),
+                                    jsonObject.optString("payload")
                             );
                         }
                     }
@@ -102,7 +96,7 @@ public class GcmIntentService extends IntentService{
 
     // Put the message into a notification and post it.
     private void sendNotification(String id, String msg, String title, String objectType,
-                                  String objectId, String mappingId){
+                                  String objectId, String mappingId, String payload){
 
         Log.d(TAG, "object_type = " + objectType);
         Log.d(TAG, "object_id = " + objectId);
@@ -133,8 +127,9 @@ public class GcmIntentService extends IntentService{
                 NotificationUtil.putCheckInNotification(this, title, msg);
                 break;
 
+            case MESSAGE_TYPE_AWARD:
             case MESSAGE_TYPE_BADGE:
-
+                NotificationUtil.putBadgeNotification(this, new Badge(title, msg, payload));
                 break;
         }
     }

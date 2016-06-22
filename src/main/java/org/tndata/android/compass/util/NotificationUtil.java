@@ -20,6 +20,7 @@ import org.tndata.android.compass.activity.CheckInActivity;
 import org.tndata.android.compass.activity.PackageEnrollmentActivity;
 import org.tndata.android.compass.activity.SnoozeActivity;
 import org.tndata.android.compass.fragment.NotificationSettingsFragment;
+import org.tndata.android.compass.model.Badge;
 import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.ui.QuietHoursPreference;
@@ -201,19 +202,19 @@ public final class NotificationUtil{
                 .notify(CHECK_IN_TAG, 1, notification);
     }
 
-    public static void putBadgeNotification(Context context, String title, String message, int id){
+    public static void putBadgeNotification(Context context, Badge badge){
         Intent intent = new Intent(context, BadgeActivity.class)
-                .putExtra(BadgeActivity.BADGE_KEY, id);
+                .putExtra(BadgeActivity.BADGE_KEY, badge);
         PendingIntent contentIntent = PendingIntent.getActivity(context,
                 (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification notification = getBuilder(context, title, message)
+        Notification notification = getBuilder(context, badge.getName(), badge.getDescription())
                 .setContentIntent(contentIntent)
                 .setAutoCancel(true)
                 .build();
 
         ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
-                .notify(BADGE_TAG, id, notification);
+                .notify(BADGE_TAG, (int)System.currentTimeMillis(), notification);
     }
 
     public static void cancel(Context context, String tag, long id){

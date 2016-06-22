@@ -25,6 +25,13 @@ public class Badge extends TDCBase{
     private int mUserCount;
 
 
+    public Badge(String name, String description, String imageUrl){
+        mName = name;
+        mDescription = description;
+        mImageUrl = imageUrl;
+    }
+
+
     /*---------*
      * GETTERS *
      *---------*/
