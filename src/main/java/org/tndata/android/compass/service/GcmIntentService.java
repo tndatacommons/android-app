@@ -2,15 +2,13 @@ package org.tndata.android.compass.service;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
-
-import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.model.Badge;
+import org.tndata.android.compass.model.GcmMessage;
+import org.tndata.android.compass.parser.ParserMethods;
 import org.tndata.android.compass.receiver.GcmBroadcastReceiver;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NotificationUtil;
@@ -33,6 +31,9 @@ import org.tndata.android.compass.util.NotificationUtil;
 public class GcmIntentService extends IntentService{
     private static final String TAG = "GcmIntentService";
 
+    public static final String FROM_GCM_KEY = "org.tndata.Compass.GcmIntentService.FromGcm";
+    public static final String MESSAGE_KEY = "org.tndata.Compass.GcmIntentService.Message";
+
     public static final String MESSAGE_TYPE_ACTION = "action";
     public static final String MESSAGE_TYPE_CUSTOM_ACTION = "customaction";
     public static final String MESSAGE_TYPE_ENROLLMENT = "package enrollment";
@@ -41,37 +42,25 @@ public class GcmIntentService extends IntentService{
     public static final String MESSAGE_TYPE_BADGE = "badge";
 
 
+    private Intent mIntent;
+    private boolean mIsFromGcm;
+    private String mGcmMessage;
+
+
     public GcmIntentService(){
         super(TAG);
     }
 
     @Override
     protected void onHandleIntent(Intent intent){
-        String token = ((CompassApplication)getApplication()).getToken();
-        if (token != null && !token.equals("")){
-            Bundle extras = intent.getExtras();
-            GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
-            //The getMessageType() intent parameter must be the intent you received
-            //  in your BroadcastReceiver
-            String messageType = gcm.getMessageType(intent);
+        mIntent = intent;
+        mIsFromGcm = intent.getBooleanExtra(FROM_GCM_KEY, false);
+        mGcmMessage = intent.getStringExtra(MESSAGE_KEY);
 
-            if (extras != null && !extras.isEmpty()){  //Has effect of un-parcelling Bundle
-                Log.d(TAG, "GCM message: " + extras.get("message"));
-                /*
-                 * Filter messages based on message type. Since it is likely that GCM
-                 * will be extended in the future with new message types, just ignore
-                 * any message types you're not interested in, or that you don't
-                 * recognize.
-                 */
-                if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)){
-                    Log.d(TAG, "Send error: " + extras.toString());
-                }
-                else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)){
-                    Log.d(TAG, "Deleted messages on server: " + extras.toString());
-                }
-                else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)){
+        //IntentServices are executed in the background, so it is safe to do this
+        GcmMessage message = ParserMethods.sGson.fromJson(mGcmMessage, GcmMessage.class);
                     try{
-                        JSONObject jsonObject = new JSONObject(extras.getString("message"));
+                        JSONObject jsonObject = new JSONObject(mGcmMessage);
                         if (jsonObject.optBoolean("production") == !API.STAGING){
                             sendNotification(
                                     jsonObject.optString("id"),
@@ -87,11 +76,10 @@ public class GcmIntentService extends IntentService{
                     catch (JSONException jsonx){
                         jsonx.printStackTrace();
                     }
-                }
-            }
+
+        if (mIsFromGcm){
+            GcmBroadcastReceiver.completeWakefulIntent(mIntent);
         }
-        //Release the wake lock provided by the WakefulBroadcastReceiver
-        GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
     // Put the message into a notification and post it.

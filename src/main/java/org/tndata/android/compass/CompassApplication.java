@@ -2,7 +2,6 @@ package org.tndata.android.compass;
 
 import android.app.Application;
 import android.content.Context;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -51,10 +50,10 @@ public class CompassApplication extends Application{
      * @return the user token if one is set, otherwise an empty string.
      */
     public String getToken(){
-        if (mUser != null && mUser.getToken() != null && !mUser.getToken().isEmpty()){
+        if (getUser() != null){
             return mUser.getToken();
         }
-        return PreferenceManager.getDefaultSharedPreferences(this).getString("auth_token", "");
+        return "";
     }
 
     /**
@@ -95,6 +94,9 @@ public class CompassApplication extends Application{
         return mUser;
     }
 
+    /**
+     * Deletes all user-related data and lets the backend know the user logged out.
+     */
     public void logOut(){
         String regId = getGcmRegistrationId();
         if (regId != null && !regId.isEmpty()){
