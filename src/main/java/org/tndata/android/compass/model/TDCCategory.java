@@ -37,6 +37,48 @@ public class TDCCategory extends TDCContent{
     private boolean mSelectedByDefault = false;
 
 
+    public TDCCategory(){
+
+    }
+
+
+    /*---------*
+     * SETTERS *
+     *---------*/
+
+    public void setGroup(int group){
+        mGroup = group;
+    }
+
+    public void setGroupName(String groupName){
+        mGroupName = groupName;
+    }
+
+    public void setOrder(int order){
+        mOrder = order;
+    }
+
+    public void setImageUrl(String imageUrl){
+        mImageUrl = imageUrl;
+    }
+
+    public void setColor(String color){
+        mColor = color;
+    }
+
+    public void setSecondaryColor(String secondaryColor){
+        mSecondaryColor = secondaryColor;
+    }
+
+    public void setPackagedContent(boolean isPackagedContent){
+        mPackagedContent = isPackagedContent;
+    }
+
+    public void setSelectedByDefault(boolean isSelectedByDefault){
+        mSelectedByDefault = isSelectedByDefault;
+    }
+
+
     /*---------*
      * GETTERS *
      *---------*/

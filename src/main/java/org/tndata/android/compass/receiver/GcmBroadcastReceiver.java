@@ -42,10 +42,10 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver{
                     intent.putExtra(GcmIntentService.FROM_GCM_KEY, true);
                     intent.putExtra(GcmIntentService.MESSAGE_KEY, message);
 
-                    // Explicitly specify that GcmIntentService will handle the intent.
+                    //Explicitly specify that GcmIntentService will handle the intent
                     ComponentName comp = new ComponentName(context.getPackageName(),
                             GcmIntentService.class.getName());
-                    // Start the service, keeping the device awake while it is launching.
+                    //Start the service, keeping the device awake while it is running
                     startWakefulService(context, intent.setComponent(comp));
                 }
                 else{
@@ -54,7 +54,7 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver{
                 }
             }
         }
-        //This is the only class in the application to receive messages
+        //This is the only class in the application allowed to receive messages
         setResultCode(Activity.RESULT_CANCELED);
     }
 }

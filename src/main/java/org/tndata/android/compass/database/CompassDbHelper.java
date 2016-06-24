@@ -26,7 +26,11 @@ import java.util.List;
  */
 public class CompassDbHelper extends SQLiteOpenHelper{
     private static final String DATABASE_NAME = "compass.db";
-    private static final int CURRENT_VERSION = 1;
+    //Initial version, included the places table and the reminders table.
+    private static final int V1 = 1;
+    //Second version, included the category table
+    private static final int V2 = 2;
+    private static final int CURRENT_VERSION = V1;
 
 
     /**
@@ -59,6 +63,8 @@ public class CompassDbHelper extends SQLiteOpenHelper{
                 + ReminderEntry.SNOOZED + " TINYINT, "
                 + ReminderEntry.LAST_DELIVERED + " INTEGER)";
         db.execSQL(createReminders);
+
+        //db.execSQL(TDCCategoryTableHandler.CREATE_TABLE);
     }
 
     @Override
@@ -201,7 +207,7 @@ public class CompassDbHelper extends SQLiteOpenHelper{
                 userPlaces.add(userPlace);
             }
             //Move on until the cursor is empty
-            while(cursor.moveToNext());
+            while (cursor.moveToNext());
         }
 
         //Close both, the cursor and the database
