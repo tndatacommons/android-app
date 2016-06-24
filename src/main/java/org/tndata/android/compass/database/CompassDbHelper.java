@@ -26,11 +26,14 @@ import java.util.List;
  */
 public class CompassDbHelper extends SQLiteOpenHelper{
     private static final String DATABASE_NAME = "compass.db";
+
     //Initial version, included the places table and the reminders table.
     private static final int V1 = 1;
     //Second version, included the category table
     private static final int V2 = 2;
-    private static final int CURRENT_VERSION = V1;
+
+    //Current version, V2
+    private static final int CURRENT_VERSION = V2;
 
 
     /**
@@ -64,12 +67,17 @@ public class CompassDbHelper extends SQLiteOpenHelper{
                 + ReminderEntry.LAST_DELIVERED + " INTEGER)";
         db.execSQL(createReminders);
 
-        //db.execSQL(TDCCategoryTableHandler.CREATE_TABLE);
+        db.execSQL(TDCCategoryTableHandler.CREATE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
-        //Nothing to do here yet, as this is the first version
+        for (int i = oldVersion; i < newVersion; i++){
+            //From V1 to V2
+            if (i == V1){
+                db.execSQL(TDCCategoryTableHandler.CREATE_TABLE);
+            }
+        }
     }
 
     /**

@@ -39,6 +39,7 @@ public class TDCCategoryTableHandler extends CompassTableHandler{
 
     //These other queries are only accessed from within this class
     private static final String CLEAR = "DELETE FROM " + TDCCategoryEntry.TABLE;
+    private static final String COUNT = "SELECT COUNT(*) FROM " + TDCCategoryEntry.TABLE;
     private static final String SELECT = "SELECT * FROM " + TDCCategoryEntry.TABLE;
     private static final String INSERT = "INSERT INTO " + TDCCategoryEntry.TABLE + " ("
             + TDCCategoryEntry.CLOUD_ID + ", "
@@ -157,5 +158,22 @@ public class TDCCategoryTableHandler extends CompassTableHandler{
         cursor.close();
         db.close();
         return categories;
+    }
+
+    /**
+     * Tells whether the category table is empty.
+     *
+     * @return true if it is empty, false otherwise.
+     */
+    public boolean isCategoryTableEmpty(){
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery(COUNT, null);
+        cursor.moveToFirst();
+
+        int count = cursor.getInt(0);
+
+        cursor.close();
+        db.close();
+        return count == 0;
     }
 }

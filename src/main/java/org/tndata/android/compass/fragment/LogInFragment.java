@@ -2,7 +2,10 @@ package org.tndata.android.compass.fragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.database.TDCCategoryTableHandler;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
@@ -22,6 +25,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.List;
+
 import es.sandwatch.httprequests.HttpRequest;
 import es.sandwatch.httprequests.HttpRequestError;
 
@@ -30,7 +35,7 @@ import es.sandwatch.httprequests.HttpRequestError;
  * Fragment that displays a log in screen.
  *
  * @author Edited and documented by Ismael Alonso
- * @version 1.0.0
+ * @version 1.1.0
  */
 public class LogInFragment
         extends Fragment
@@ -38,6 +43,8 @@ public class LogInFragment
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback,
                 OnClickListener{
+
+    private CompassApplication mApplication;
 
     //Listener interface.
     private LogInFragmentCallback mCallback;
@@ -52,11 +59,16 @@ public class LogInFragment
     //Attributes
     private String mErrorString = "";
     private int mLogInRC;
+    private int mGetCategoriesRC;
 
 
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
+
+        //Get the application class
+        mApplication = (CompassApplication)context.getApplicationContext();
+
         //This makes sure that the host activity has implemented the callback interface.
         //  If not, it throws an exception
         try{
@@ -72,6 +84,7 @@ public class LogInFragment
     public void onDetach(){
         super.onDetach();
         HttpRequest.cancel(mLogInRC);
+        HttpRequest.cancel(mGetCategoriesRC);
         mCallback = null;
     }
 
@@ -166,7 +179,12 @@ public class LogInFragment
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        Parser.parse(result, User.class, this);
+        if (requestCode == mLogInRC){
+            Parser.parse(result, User.class, this);
+        }
+        else if (requestCode == mGetCategoriesRC){
+            Parser.parse(result, ParserModels.CategoryContentResultSet.class, this);
+        }
     }
 
     @Override
@@ -190,15 +208,28 @@ public class LogInFragment
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof User){
+            User user = (User)result;
+            user.setPassword(mPassword.getText().toString().trim());
+            mApplication.setUser(user);
+        }
+        else if (result instanceof ParserModels.CategoryContentResultSet){
+            List<TDCCategory> categories = ((ParserModels.CategoryContentResultSet)result).results;
+            mApplication.setPublicCategories(categories);
 
+            TDCCategoryTableHandler handler = new TDCCategoryTableHandler(getContext());
+            handler.writeCategories(categories);
+            handler.close();
+        }
     }
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof User){
-            User user = (User)result;
-            user.setPassword(mPassword.getText().toString().trim());
-            mCallback.onLoginSuccess(user);
+            mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
+        }
+        else if (result instanceof ParserModels.CategoryContentResultSet){
+            mCallback.onLoginSuccess();
         }
     }
 
@@ -212,9 +243,7 @@ public class LogInFragment
     public interface LogInFragmentCallback{
         /**
          * Called when the user logs in successfully.
-         *
-         * @param user a bundle of data containing the user information.
          */
-        void onLoginSuccess(@NonNull User user);
+        void onLoginSuccess();
     }
 }

@@ -69,9 +69,9 @@ public class CompassContract{
         public static final String DESCRIPTION = "description";
         public static final String HTML_DESCRIPTION = "html_description";
         public static final String ICON_URL = "icon_url";
-        public static final String GROUP = "group";
+        public static final String GROUP = "group_id";
         public static final String GROUP_NAME = "group_name";
-        public static final String ORDER = "order";
+        public static final String ORDER = "order_value";
         public static final String IMAGE_URL = "image_url";
         public static final String COLOR = "color";
         public static final String SECONDARY_COLOR = "secondary_color";

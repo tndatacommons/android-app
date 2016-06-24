@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +16,7 @@ import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.database.CompassDbHelper;
+import org.tndata.android.compass.database.TDCCategoryTableHandler;
 import org.tndata.android.compass.fragment.LauncherFragment;
 import org.tndata.android.compass.fragment.LogInFragment;
 import org.tndata.android.compass.fragment.SignUpFragment;
@@ -57,7 +57,6 @@ public class LauncherActivity
     private SignUpFragment mSignUpFragment;
 
     //Request codes
-    private int mGetCategoriesRC;
     private int mGetPlacesRC;
 
     //Firewall. Cancelling an HttpRequest may not be enough, as the system might be parsing
@@ -109,8 +108,10 @@ public class LauncherActivity
                 else{
                     //If there is a user, show the loading screen
                     displayLauncherFragment(true);
-                    mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
-                    mGetPlacesRC = HttpRequest.get(this, API.getUserPlacesUrl());
+                    TDCCategoryTableHandler handler = new TDCCategoryTableHandler(this);
+                    mApplication.setPublicCategories(handler.readCategories());
+                    handler.close();
+                    fetchData();
                 }
             }
         }
@@ -131,7 +132,6 @@ public class LauncherActivity
      */
     private void popBackStack(){
         //Cancel common requests/tasks
-        HttpRequest.cancel(mGetCategoriesRC);
         HttpRequest.cancel(mGetPlacesRC);
         FeedDataLoader.cancel();
         cancelled = true;
@@ -186,38 +186,37 @@ public class LauncherActivity
     }
 
     @Override
-    public void onSignUpSuccess(@NonNull User user){
-        setUser(user);
+    public void onSignUpSuccess(){
+        fetchData();
     }
 
     @Override
-    public void onLoginSuccess(@NonNull User user){
-        setUser(user);
+    public void onLoginSuccess(){
+        if (mApplication.getUser().needsOnBoarding()){
+            transitionToOnBoarding();
+        }
+        else{
+            fetchData();
+        }
     }
 
-    private void setUser(User user){
+    private void fetchData(){
         if (!cancelled){
-            mApplication.setUser(user);
-            mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
+            FeedDataLoader.load(this);
             mGetPlacesRC = HttpRequest.get(this, API.getUserPlacesUrl());
         }
     }
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mGetCategoriesRC){
-            Parser.parse(result, ParserModels.CategoryContentResultSet.class, this);
-        }
-        else if (requestCode == mGetPlacesRC){
+        if (requestCode == mGetPlacesRC){
             Parser.parse(result, ParserModels.UserPlacesResultSet.class, this);
         }
     }
 
     @Override
     public void onRequestFailed(int requestCode, HttpRequestError error){
-        if (requestCode == mGetCategoriesRC){
-            Log.d(TAG, "Get categories failed");
-        }
+
     }
 
     @Override
@@ -232,18 +231,7 @@ public class LauncherActivity
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (!cancelled){
-            if (result instanceof ParserModels.CategoryContentResultSet){
-                mApplication.setPublicCategories(((ParserModels.CategoryContentResultSet)result).results);
-                if (mApplication.getUser().needsOnBoarding()){
-                    transitionToOnBoarding();
-                }
-                else{
-                    Log.d(TAG, "Fetching user data");
-                    FeedDataLoader.load(this);
-                }
-            }
-        }
+        //Unused
     }
 
     @Override
