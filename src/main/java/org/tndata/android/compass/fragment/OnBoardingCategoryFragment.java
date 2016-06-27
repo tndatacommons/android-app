@@ -60,7 +60,7 @@ public class OnBoardingCategoryFragment
 
         RecyclerView list = (RecyclerView)root.findViewById(R.id.list_recycler_view);
         list.setLayoutManager(new LinearLayoutManager(getContext()));
-        list.setAdapter(new ChooseCategoryAdapter(getContext(), this, app.getFilteredCategoryList()));
+        list.setAdapter(new ChooseCategoryAdapter(getContext(), this, app.getCategoryList(true)));
 
         mNext = (Button)root.findViewById(R.id.list_button);
         mNext.setVisibility(View.VISIBLE);

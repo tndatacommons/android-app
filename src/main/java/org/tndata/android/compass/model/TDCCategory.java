@@ -42,9 +42,9 @@ public class TDCCategory extends TDCContent{
     }
 
 
-    /*---------*
-     * SETTERS *
-     *---------*/
+    /*-----------------------------------------------------------------------------------------*
+     * SETTERS. NOTE: these should only be used by the table handler, categories are read only *
+     *-----------------------------------------------------------------------------------------*/
 
     public void setGroup(int group){
         mGroup = group;

@@ -10,7 +10,7 @@ import android.database.Cursor;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-class CompassTableHandler{
+abstract class CompassTableHandler{
     protected CompassDbHelper mDbHelper;
 
 

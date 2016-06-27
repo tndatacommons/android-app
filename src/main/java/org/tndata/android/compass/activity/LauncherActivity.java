@@ -111,7 +111,13 @@ public class LauncherActivity
                     TDCCategoryTableHandler handler = new TDCCategoryTableHandler(this);
                     mApplication.setPublicCategories(handler.readCategories());
                     handler.close();
-                    fetchData();
+
+                    if (user.needsOnBoarding()){
+                        transitionToOnBoarding();
+                    }
+                    else{
+                        fetchData();
+                    }
                 }
             }
         }
@@ -187,7 +193,12 @@ public class LauncherActivity
 
     @Override
     public void onSignUpSuccess(){
-        fetchData();
+        if (mApplication.getUser().needsOnBoarding()){
+            transitionToOnBoarding();
+        }
+        else{
+            fetchData();
+        }
     }
 
     @Override

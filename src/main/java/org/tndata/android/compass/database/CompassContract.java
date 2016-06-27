@@ -69,8 +69,10 @@ public class CompassContract{
         public static final String DESCRIPTION = "description";
         public static final String HTML_DESCRIPTION = "html_description";
         public static final String ICON_URL = "icon_url";
+        //'group' is a reserved keyword in SQLite
         public static final String GROUP = "group_id";
         public static final String GROUP_NAME = "group_name";
+        //'order' is a reserved keyword as well
         public static final String ORDER = "order_value";
         public static final String IMAGE_URL = "image_url";
         public static final String COLOR = "color";

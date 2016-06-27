@@ -27,7 +27,7 @@ import java.util.List;
 public class CompassDbHelper extends SQLiteOpenHelper{
     private static final String DATABASE_NAME = "compass.db";
 
-    //Initial version, included the places table and the reminders table.
+    //Initial version, included the places table and the reminders table
     private static final int V1 = 1;
     //Second version, included the category table
     private static final int V2 = 2;

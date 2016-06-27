@@ -40,6 +40,7 @@ import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
+import org.tndata.android.compass.util.DataSynchronizer;
 import org.tndata.android.compass.util.FeedDataLoader;
 import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.ParallaxEffect;
@@ -99,6 +100,9 @@ public class MainActivity
         setContentView(R.layout.activity_main);
 
         mApplication = (CompassApplication)getApplication();
+
+        //Synchronize cached data with the back-end. For now, this is a one-way street.
+        DataSynchronizer.sync(getApplicationContext());
 
         //Update the timezone and register with GCM
         HttpRequest.put(null, API.getPutUserProfileUrl(mApplication.getUser()),

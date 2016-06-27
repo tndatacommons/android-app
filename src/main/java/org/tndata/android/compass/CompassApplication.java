@@ -111,8 +111,10 @@ public class CompassApplication extends Application{
      *
      * @param categories the list of public categories.
      */
-    public void setPublicCategories(List<TDCCategory> categories){
+    public synchronized void setPublicCategories(List<TDCCategory> categories){
+        //Create a new Map and trash the old one
         mPublicCategories = new HashMap<>();
+        //Populate the new one
         for (TDCCategory category:categories){
             mPublicCategories.put(category.getId(), category);
         }
@@ -123,37 +125,27 @@ public class CompassApplication extends Application{
      *
      * @return A Long->CategoryContent HashMap.
      */
-    public Map<Long, TDCCategory> getPublicCategories(){
+    public synchronized  Map<Long, TDCCategory> getPublicCategories(){
         return mPublicCategories;
     }
 
-    //TODO combine the following two methods into one with a filtered parameter
     /**
-     * A filtered list of public categories. At the moment, this method
-     * excludes those categories that are selected for all users by default.
+     * Gets an ordered List of categories. Categories selected by default are excluded.
      *
-     * @return the unordered list of public categories, excluding those selected by default.
+     * @param filtered if true, only featured categories are included in the result.
+     * @return a list of categories.
      */
-    public List<TDCCategory> getCategoryList(){
-        List<TDCCategory> nonDefault = new ArrayList<>();
+    public synchronized List<TDCCategory> getCategoryList(boolean filtered){
+        List<TDCCategory> result = new ArrayList<>();
         for (TDCCategory category:mPublicCategories.values()){
             if (!category.isSelectedByDefault()){
-                nonDefault.add(category);
+                if (!filtered || category.isFeatured()){
+                    result.add(category);
+                }
             }
         }
-        Collections.sort(nonDefault);
-        return nonDefault;
-    }
-
-    public List<TDCCategory> getFilteredCategoryList(){
-        List<TDCCategory> featured = new ArrayList<>();
-        for (TDCCategory category:mPublicCategories.values()){
-            if (!category.isSelectedByDefault() && category.isFeatured()){
-                featured.add(category);
-            }
-        }
-        Collections.sort(featured);
-        return featured;
+        Collections.sort(result);
+        return result;
     }
 
     /**

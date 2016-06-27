@@ -59,6 +59,9 @@ public class LogInFragment
     //Attributes
     private String mErrorString = "";
     private int mLogInRC;
+    //TODO the category loading code is duplicated in login and signup, I can't really
+    //TODO think of anything else to do to prevent that short of creating a utility class
+    //TODO that loads certain kinds of data, and I am not sure it is worth the time just yet
     private int mGetCategoriesRC;
 
 
