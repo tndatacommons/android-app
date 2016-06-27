@@ -15,7 +15,7 @@ import android.support.v4.app.NotificationCompat;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.activity.ActionActivity;
-import org.tndata.android.compass.activity.BadgeActivity;
+import org.tndata.android.compass.activity.AwardActivity;
 import org.tndata.android.compass.activity.CheckInActivity;
 import org.tndata.android.compass.activity.PackageEnrollmentActivity;
 import org.tndata.android.compass.activity.SnoozeActivity;
@@ -246,8 +246,8 @@ public final class NotificationUtil{
     }
 
     private static void putBadgeNotification(Context context, GcmMessage message){
-        Intent intent = new Intent(context, BadgeActivity.class)
-                .putExtra(BadgeActivity.BADGE_KEY, message.getBadge());
+        Intent intent = new Intent(context, AwardActivity.class)
+                .putExtra(AwardActivity.BADGE_KEY, message.getBadge());
         PendingIntent contentIntent = PendingIntent.getActivity(context,
                 (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 

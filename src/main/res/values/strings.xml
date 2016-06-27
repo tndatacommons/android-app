@@ -302,6 +302,6 @@
     <string name="reward_quote_header">A thought for the day</string>
 
     <!-- Awards / Badges -->
-    <string name="badge_image_cd">The badge's image asset</string>
+    <string name="award_image_cd">The badge's image asset</string>
 
 </resources>
