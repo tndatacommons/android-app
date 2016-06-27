@@ -6,7 +6,7 @@
     android:layout_height="match_parent" >
 
     <ImageView
-        android:id="@+id/badges_illustration"
+        android:id="@+id/awards_illustration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
@@ -14,7 +14,7 @@
         android:src="@drawable/compass_master_illustration" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/badges_list"
+        android:id="@+id/awards_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

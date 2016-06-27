@@ -158,7 +158,7 @@ public class DrawerAdapter extends RecyclerView.Adapter{
                             R.drawable.ic_profile));
                     break;
                 case AWARDS:
-                    items.add(new DrawerItem(mContext.getString(R.string.action_awards),
+                    items.add(new DrawerItem(mContext.getString(R.string.action_my_awards),
                             R.drawable.ic_award_gray_24dp));
                     break;
                 case PLACES:

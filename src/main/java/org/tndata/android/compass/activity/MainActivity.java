@@ -392,7 +392,7 @@ public class MainActivity
                 break;
 
             case DrawerAdapter.AWARDS:
-                startActivity(new Intent(this, BadgesActivity.class));
+                startActivity(new Intent(this, AwardsActivity.class));
                 break;
 
             case DrawerAdapter.PLACES:

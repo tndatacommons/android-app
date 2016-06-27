@@ -19,13 +19,13 @@ import java.util.List;
 /**
  * Created by isma on 6/27/16.
  */
-public class BadgeAdapter extends RecyclerView.Adapter<BadgeAdapter.BadgeHolder>{
+public class AwardsAdapter extends RecyclerView.Adapter<AwardsAdapter.BadgeHolder>{
     private Context mContext;
     private BadgeAdapterListener mListener;
     private List<Badge> mBadges;
 
 
-    public BadgeAdapter(Context context, BadgeAdapterListener listener){
+    public AwardsAdapter(Context context, BadgeAdapterListener listener){
         mContext = context;
         mListener = listener;
         mBadges = new ArrayList<>();
@@ -65,9 +65,11 @@ public class BadgeAdapter extends RecyclerView.Adapter<BadgeAdapter.BadgeHolder>
         public BadgeHolder(View rootView){
             super(rootView);
 
-            mImage = (ImageView)rootView.findViewById(R.id.badge_image);
-            mName = (TextView)rootView.findViewById(R.id.badge_name);
-            mDescription = (TextView)rootView.findViewById(R.id.badge_description);
+            mImage = (ImageView)rootView.findViewById(R.id.award_badge_image);
+            mName = (TextView)rootView.findViewById(R.id.award_badge_name);
+            mDescription = (TextView)rootView.findViewById(R.id.award_badge_description);
+
+            rootView.setOnClickListener(this);
         }
 
         public void bind(Badge badge){

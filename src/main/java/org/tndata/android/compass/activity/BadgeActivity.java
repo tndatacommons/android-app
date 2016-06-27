@@ -21,10 +21,10 @@ import org.tndata.android.compass.util.ImageLoader;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class AwardActivity extends AppCompatActivity implements ImageLoader.ImageLoaderCallback{
-    private static final String TAG = "AwardActivity";
+public class BadgeActivity extends AppCompatActivity implements ImageLoader.ImageLoaderCallback{
+    private static final String TAG = "BadgeActivity";
 
-    public static final String BADGE_KEY = "org.tndata.compass.AwardActivity.Badge";
+    public static final String BADGE_KEY = "org.tndata.compass.BadgeActivity.Badge";
 
 
     private View mImageFrame;
@@ -34,14 +34,14 @@ public class AwardActivity extends AppCompatActivity implements ImageLoader.Imag
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_award);
+        setContentView(R.layout.activity_badge);
 
         Badge badge = getIntent().getParcelableExtra(BADGE_KEY);
 
-        mImageFrame = findViewById(R.id.award_image_frame);
-        mImage = (ImageView)findViewById(R.id.award_image);
-        TextView name = (TextView)findViewById(R.id.award_name);
-        TextView description = (TextView)findViewById(R.id.award_description);
+        mImageFrame = findViewById(R.id.badge_image_frame);
+        mImage = (ImageView)findViewById(R.id.badge_image);
+        TextView name = (TextView)findViewById(R.id.badge_name);
+        TextView description = (TextView)findViewById(R.id.badge_description);
 
         ImageLoader.Options options = new ImageLoader.Options().setUseDefaultPlaceholder(false);
         ImageLoader.loadBitmap(mImage, badge.getImageUrl(), options, this);

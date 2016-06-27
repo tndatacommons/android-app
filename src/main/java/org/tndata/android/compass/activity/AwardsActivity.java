@@ -12,7 +12,7 @@ import android.view.View;
 import com.google.gson.annotations.SerializedName;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.adapter.BadgeAdapter;
+import org.tndata.android.compass.adapter.AwardsAdapter;
 import org.tndata.android.compass.model.Badge;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
@@ -29,16 +29,16 @@ import es.sandwatch.httprequests.HttpRequestError;
 /**
  * Created by isma on 6/27/16.
  */
-public class BadgesActivity
+public class AwardsActivity
         extends AppCompatActivity
         implements
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback,
-                BadgeAdapter.BadgeAdapterListener{
+                AwardsAdapter.BadgeAdapterListener{
 
-    private static final String TAG = "BadgesActivity";
+    private static final String TAG = "AwardsActivity";
 
-    private BadgeAdapter mAdapter;
+    private AwardsAdapter mAdapter;
 
     private int mGetBadgesUrl;
 
@@ -46,13 +46,13 @@ public class BadgesActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_badges);
+        setContentView(R.layout.activity_awards);
 
-        View header = findViewById(R.id.badges_illustration);
+        View header = findViewById(R.id.awards_illustration);
 
-        mAdapter = new BadgeAdapter(this, this);
+        mAdapter = new AwardsAdapter(this, this);
 
-        RecyclerView list = (RecyclerView)findViewById(R.id.badges_list);
+        RecyclerView list = (RecyclerView)findViewById(R.id.awards_list);
         list.setAdapter(mAdapter);
         list.setLayoutManager(new LinearLayoutManager(this));
         list.addOnScrollListener(new ParallaxEffect(header, 0.5f));
@@ -94,7 +94,7 @@ public class BadgesActivity
 
     @Override
     public void onBadgeSelected(Badge badge){
-        startActivity(new Intent().putExtra(AwardActivity.BADGE_KEY, badge));
+        startActivity(new Intent().putExtra(BadgeActivity.BADGE_KEY, badge));
     }
 
 
