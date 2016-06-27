@@ -115,6 +115,15 @@ public final class API{
     }
 
 
+    /*-------------------*
+     * AWARDS AND BADGES *
+     *-------------------*/
+
+    public static String getBadgesUrl(){
+        return BASE_URL + "awards/";
+    }
+
+
     /*------------------------------*
      * APPLICATION DATA AND LIBRARY *
      *------------------------------*/

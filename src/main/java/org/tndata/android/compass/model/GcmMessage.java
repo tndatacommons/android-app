@@ -15,7 +15,7 @@ public final class GcmMessage{
     private static final String TYPE_CUSTOM_ACTION = "customaction";
     private static final String TYPE_ENROLLMENT = "package enrollment";
     private static final String TYPE_CHECK_IN = "checkin";
-    private static final String TYPE_BADGE = "award";
+    private static final String TYPE_AWARD = "award";
 
 
     //Common fields
@@ -82,6 +82,6 @@ public final class GcmMessage{
     }
 
     public boolean isBadgeMessage(){
-        return mObjectType.equals(TYPE_BADGE);
+        return mObjectType.equals(TYPE_AWARD);
     }
 }

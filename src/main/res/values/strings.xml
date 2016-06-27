@@ -39,6 +39,7 @@
 
     <!-- MainActivity -->
     <string name="action_my_information">My information</string>
+    <string name="action_awards">My awards</string>
     <string name="action_my_places">My places</string>
     <string name="action_my_priorities">My activities</string>
     <string name="action_settings">Settings</string>
@@ -302,6 +303,6 @@
     <string name="reward_quote_header">A thought for the day</string>
 
     <!-- Awards / Badges -->
-    <string name="award_image_cd">The badge's image asset</string>
+    <string name="award_image_cd">The badge\'s image asset</string>
 
 </resources>

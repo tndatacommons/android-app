@@ -15,6 +15,7 @@ import android.view.WindowManager;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.tndata.android.compass.activity.BadgesActivity;
 import org.tndata.android.compass.model.*;
 
 
@@ -183,6 +184,10 @@ public final class CompassUtil{
         }
         else if (src.equals(UpcomingAction.API_TYPE)){
             return UpcomingAction.class;
+        }
+        //Awards
+        else if (src.equals(BadgesActivity.Award.API_TYPE)){
+            return BadgesActivity.Award.class;
         }
         //Search
         else if (src.contains("search")){

@@ -197,6 +197,10 @@
             android:name=".activity.AwardActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".activity.BadgesActivity"
+            android:screenOrientation="portrait" />
+
 
         <!-- Broadcast receivers -->
 

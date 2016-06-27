@@ -1,5 +1,7 @@
 package org.tndata.android.compass.parser;
 
+import org.tndata.android.compass.activity.BadgesActivity;
+import org.tndata.android.compass.model.Badge;
 import org.tndata.android.compass.model.TDCBehavior;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.CustomAction;
@@ -88,6 +90,10 @@ public final class ParserModels{
 
     public final class PlacesResultSet implements ResultSet{
         public List<Place> results;
+    }
+
+    public final class AwardsResultSet implements ResultSet{
+        public List<BadgesActivity.Award> results;
     }
 
     private ParserModels(){

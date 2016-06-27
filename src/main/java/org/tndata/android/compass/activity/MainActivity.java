@@ -391,6 +391,10 @@ public class MainActivity
                 startActivity(new Intent(this, UserProfileActivity.class));
                 break;
 
+            case DrawerAdapter.AWARDS:
+                startActivity(new Intent(this, BadgesActivity.class));
+                break;
+
             case DrawerAdapter.PLACES:
                 startActivity(new Intent(this, PlacesActivity.class));
                 break;
