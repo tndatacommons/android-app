@@ -57,6 +57,10 @@ public class Badge extends TDCBase{
         return TYPE;
     }
 
+    @Override
+    public String toString(){
+        return "Badge #" + getId() + ", " + mName + ": " + mDescription;
+    }
 
     /*------------*
      * PARCELABLE *

@@ -36,7 +36,6 @@ public class GcmIntentService extends IntentService{
     public static final String MESSAGE_TYPE_ACTION = "action";
     public static final String MESSAGE_TYPE_CUSTOM_ACTION = "customaction";
     public static final String MESSAGE_TYPE_ENROLLMENT = "package enrollment";
-    public static final String MESSAGE_TYPE_CHECK_IN = "checkin";
 
 
     public GcmIntentService(){
@@ -61,8 +60,7 @@ public class GcmIntentService extends IntentService{
                                     jsonObject.optString("title"),
                                     jsonObject.optString("object_type"),
                                     jsonObject.optString("object_id"),
-                                    jsonObject.optString("user_mapping_id"),
-                                    jsonObject.optString("payload")
+                                    jsonObject.optString("user_mapping_id")
                             );
                         }
                     }
@@ -77,7 +75,7 @@ public class GcmIntentService extends IntentService{
 
     // Put the message into a notification and post it.
     private void sendNotification(String id, String msg, String title, String objectType,
-                                  String objectId, String mappingId, String payload){
+                                  String objectId, String mappingId){
 
         Log.d(TAG, "object_type = " + objectType);
         Log.d(TAG, "object_id = " + objectId);

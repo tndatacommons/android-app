@@ -301,4 +301,7 @@
     <string name="reward_joke_header">Here\'s a joke for you</string>
     <string name="reward_quote_header">A thought for the day</string>
 
+    <!-- Awards / Badges -->
+    <string name="badge_image_cd">The badge's image asset</string>
+
 </resources>
