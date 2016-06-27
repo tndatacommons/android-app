@@ -6,7 +6,6 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.tndata.android.compass.model.Badge;
 import org.tndata.android.compass.model.GcmMessage;
 import org.tndata.android.compass.parser.ParserMethods;
 import org.tndata.android.compass.receiver.GcmBroadcastReceiver;
@@ -38,13 +37,6 @@ public class GcmIntentService extends IntentService{
     public static final String MESSAGE_TYPE_CUSTOM_ACTION = "customaction";
     public static final String MESSAGE_TYPE_ENROLLMENT = "package enrollment";
     public static final String MESSAGE_TYPE_CHECK_IN = "checkin";
-    public static final String MESSAGE_TYPE_AWARD = "award";
-    public static final String MESSAGE_TYPE_BADGE = "badge";
-
-
-    private Intent mIntent;
-    private boolean mIsFromGcm;
-    private String mGcmMessage;
 
 
     public GcmIntentService(){
@@ -53,14 +45,15 @@ public class GcmIntentService extends IntentService{
 
     @Override
     protected void onHandleIntent(Intent intent){
-        mIntent = intent;
-        mIsFromGcm = intent.getBooleanExtra(FROM_GCM_KEY, false);
-        mGcmMessage = intent.getStringExtra(MESSAGE_KEY);
+        boolean isFromGcm = intent.getBooleanExtra(FROM_GCM_KEY, false);
+        String gcmMessage = intent.getStringExtra(MESSAGE_KEY);
 
         //IntentServices are executed in the background, so it is safe to do this
-        GcmMessage message = ParserMethods.sGson.fromJson(mGcmMessage, GcmMessage.class);
+        GcmMessage message = ParserMethods.sGson.fromJson(gcmMessage, GcmMessage.class);
+        NotificationUtil.generateNotification(this, message);
+
                     try{
-                        JSONObject jsonObject = new JSONObject(mGcmMessage);
+                        JSONObject jsonObject = new JSONObject(gcmMessage);
                         if (jsonObject.optBoolean("production") == !API.STAGING){
                             sendNotification(
                                     jsonObject.optString("id"),
@@ -77,8 +70,8 @@ public class GcmIntentService extends IntentService{
                         jsonx.printStackTrace();
                     }
 
-        if (mIsFromGcm){
-            GcmBroadcastReceiver.completeWakefulIntent(mIntent);
+        if (isFromGcm){
+            GcmBroadcastReceiver.completeWakefulIntent(intent);
         }
     }
 
@@ -109,15 +102,6 @@ public class GcmIntentService extends IntentService{
                 catch (NumberFormatException nfx){
                     nfx.printStackTrace();
                 }
-                break;
-
-            case MESSAGE_TYPE_CHECK_IN:
-                NotificationUtil.putCheckInNotification(this, title, msg);
-                break;
-
-            case MESSAGE_TYPE_AWARD:
-            case MESSAGE_TYPE_BADGE:
-                NotificationUtil.putBadgeNotification(this, new Badge(title, msg, payload));
                 break;
         }
     }

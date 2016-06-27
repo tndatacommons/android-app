@@ -36,7 +36,7 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver{
                 if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(gcm.getMessageType(intent))){
                     //If this is an actual gcm message, handle it
                     String message = extras.getString("message");
-                    Log.d(TAG, "GCM message: " + message);
+                    Log.d(TAG, "GCM message received: " + message);
 
                     //Put the extras with my own keys to avoid conflicts
                     intent.putExtra(GcmIntentService.FROM_GCM_KEY, true);
@@ -54,7 +54,7 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver{
                 }
             }
         }
-        //This is the only class in the application allowed to receive messages
+        //This is the only class in the application allowed to receive and process messages
         setResultCode(Activity.RESULT_CANCELED);
     }
 }

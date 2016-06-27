@@ -4,7 +4,10 @@ import com.google.gson.annotations.SerializedName;
 
 
 /**
- * Model class for a gcm message.
+ * Model class for a gcm message. It will eventually replace {@code Reminder}.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public final class GcmMessage{
     //Message types
