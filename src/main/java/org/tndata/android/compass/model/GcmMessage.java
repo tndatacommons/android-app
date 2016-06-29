@@ -33,6 +33,8 @@ public final class GcmMessage{
     private int mUserMappingId;
 
     //New fields
+    @SerializedName("action")
+    private UserAction mAction;
     @SerializedName("badge")
     private Badge mBadge;
 

@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.tndata.android.compass.database.CompassDbHelper;
+import org.tndata.android.compass.database.PlaceTableHandler;
 import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.model.UserPlace;
 import org.tndata.android.compass.util.CompassUtil;
@@ -164,11 +165,13 @@ public class LocationNotificationService
      * Reloads the data set.
      */
     private void loadData(){
-        CompassDbHelper dbHelper = new CompassDbHelper(this);
+        PlaceTableHandler handler = new PlaceTableHandler(this);
         mPlaces = new HashMap<>();
-        for (UserPlace userPlace:dbHelper.getPlaces()){
+        for (UserPlace userPlace:handler.getPlaces()){
             mPlaces.put(userPlace.getId(), userPlace);
         }
+        handler.close();
+        CompassDbHelper dbHelper = new CompassDbHelper(this);
         mReminders = dbHelper.getReminders();
         dbHelper.close();
     }

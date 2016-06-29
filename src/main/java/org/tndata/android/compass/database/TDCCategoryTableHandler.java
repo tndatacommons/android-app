@@ -165,7 +165,7 @@ public class TDCCategoryTableHandler extends CompassTableHandler{
      *
      * @return true if it is empty, false otherwise.
      */
-    public boolean isCategoryTableEmpty(){
+    public boolean isTableEmpty(){
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery(COUNT, null);
         cursor.moveToFirst();
