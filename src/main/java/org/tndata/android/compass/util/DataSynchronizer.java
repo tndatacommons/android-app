@@ -50,7 +50,7 @@ public final class DataSynchronizer implements HttpRequest.RequestCallback, Pars
     private DataSynchronizer(Context context){
         mApplication = (CompassApplication)context.getApplicationContext();
 
-        mGetUserRC = -1; //HttpRequest.get(this, API.get)
+        mGetUserRC = HttpRequest.get(this, API.getUserAccountUrl());
         mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
     }
 

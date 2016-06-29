@@ -492,9 +492,13 @@ public final class API{
     }
 
 
-    /*--------------*
-     * USER PROFILE *
-     *--------------*/
+    /*--------------------------*
+     * USER ACCOUNT AND PROFILE *
+     *--------------------------*/
+
+    public static String getUserAccountUrl(){
+        return BASE_URL + "users/accounts/";
+    }
 
     public static String getPutUserProfileUrl(@NonNull User user){
         return BASE_URL + "users/profile/" + user.getProfileId() + "/";
