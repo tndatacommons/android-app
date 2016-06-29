@@ -92,16 +92,6 @@ public class GcmIntentService extends IntentService{
                     nfx.printStackTrace();
                 }
                 break;
-
-            case MESSAGE_TYPE_ENROLLMENT:
-                try{
-                    NotificationUtil.putEnrollmentNotification(this, Integer.valueOf(objectId),
-                            title, msg);
-                }
-                catch (NumberFormatException nfx){
-                    nfx.printStackTrace();
-                }
-                break;
         }
     }
 }

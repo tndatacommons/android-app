@@ -202,27 +202,23 @@ public final class NotificationUtil{
     /**
      * Creates a package enrollment notification.
      *
-     * @param context an instance of the context.
-     * @param packageId the package id.
-     * @param title the title of the notification.
-     * @param message the message of the notification.
+     * @param context a reference to the context.
+     * @param message the GCM message that triggered the notification.
      */
-    public static void putEnrollmentNotification(Context context, int packageId, String title,
-                                                 String message){
-
+    public static void putEnrollmentNotification(Context context, GcmMessage message){
         Intent intent = new Intent(context, PackageEnrollmentActivity.class)
-                .putExtra(PackageEnrollmentActivity.PACKAGE_ID_KEY, packageId);
+                .putExtra(PackageEnrollmentActivity.PACKAGE_ID_KEY, message.getObjectId());
         PendingIntent contentIntent = PendingIntent.getActivity(context,
                 (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification notification = getBuilder(context, title, message)
+        Notification notification = getBuilder(context, message)
                 .setContentIntent(contentIntent)
                 .setAutoCancel(false)
                 .build();
 
         notification.flags |= Notification.FLAG_ONGOING_EVENT;
         ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
-                .notify(ENROLLMENT_TAG, packageId, notification);
+                .notify(ENROLLMENT_TAG, message.getObjectId(), notification);
     }
 
     /**
@@ -260,8 +256,23 @@ public final class NotificationUtil{
                 .notify(BADGE_TAG, (int)System.currentTimeMillis(), notification);
     }
 
+    /**
+     * Given a GCM message, decides which kind of notification to generate.
+     *
+     * @param context an instance of the context.
+     * @param message the GCM message that triggered the call.
+     */
     public static void generateNotification(Context context, GcmMessage message){
-        if (message.isCheckInMessage()){
+        if (message.isUserActionMessage()){
+
+        }
+        else if (message.isCustomActionMessage()){
+
+        }
+        else if (message.isPackageEnrollmentMessage()){
+            putEnrollmentNotification(context, message);
+        }
+        else if (message.isCheckInMessage()){
             putCheckInNotification(context, message);
         }
         else if (message.isBadgeMessage()){
@@ -269,6 +280,13 @@ public final class NotificationUtil{
         }
     }
 
+    /**
+     * Cancels a notification.
+     *
+     * @param context a reference to the context.
+     * @param tag the tag of the notification (ie, type).
+     * @param id the id of the notification.
+     */
     public static void cancel(Context context, String tag, long id){
         String service = Context.NOTIFICATION_SERVICE;
         NotificationManager manager = (NotificationManager)context.getSystemService(service);

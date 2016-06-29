@@ -41,6 +41,12 @@ public final class GcmMessage implements Parcelable{
     @SerializedName("badge")
     private Badge mBadge;
 
+    //Support for payloads bigger than 4092KB
+    @SerializedName("object_id")
+    private int mObjectId;
+    @SerializedName("user_mapping_id")
+    private int mUserMappingId;
+
     //Actual message (equivalent to reminder)
     private String mGcmMessage;
 
@@ -61,18 +67,6 @@ public final class GcmMessage implements Parcelable{
         return mContentText;
     }
 
-    public UserAction getUserAction(){
-        return mUserAction;
-    }
-
-    public CustomAction getCustomAction(){
-        return mCustomAction;
-    }
-
-    public Badge getBadge(){
-        return mBadge;
-    }
-
     public boolean isUserActionMessage(){
         return mObjectType.equals(TYPE_USER_ACTION);
     }
@@ -91,6 +85,26 @@ public final class GcmMessage implements Parcelable{
 
     public boolean isBadgeMessage(){
         return mObjectType.equals(TYPE_AWARD);
+    }
+
+    public UserAction getUserAction(){
+        return mUserAction;
+    }
+
+    public CustomAction getCustomAction(){
+        return mCustomAction;
+    }
+
+    public Badge getBadge(){
+        return mBadge;
+    }
+
+    public int getObjectId(){
+        return mObjectId;
+    }
+
+    public int getUserMappingId(){
+        return mUserMappingId;
     }
 
     public String getGcmMessage(){
@@ -124,6 +138,8 @@ public final class GcmMessage implements Parcelable{
             dest.writeParcelable(mBadge, flags);
         }
 
+        dest.writeInt(mObjectId);
+        dest.writeInt(mUserMappingId);
         dest.writeString(mGcmMessage);
     }
 
@@ -160,6 +176,8 @@ public final class GcmMessage implements Parcelable{
             mBadge = src.readParcelable(Badge.class.getClassLoader());
         }
 
+        mObjectId = src.readInt();
+        mUserMappingId = src.readInt();
         mGcmMessage = src.readString();
     }
 }
