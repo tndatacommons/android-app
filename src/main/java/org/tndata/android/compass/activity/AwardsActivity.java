@@ -27,7 +27,10 @@ import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
- * Created by isma on 6/27/16.
+ * Activity that displays the list of awards earned by the user.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class AwardsActivity
         extends AppCompatActivity
@@ -48,11 +51,11 @@ public class AwardsActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_awards);
 
-        View header = findViewById(R.id.awards_illustration);
+        View header = findViewById(R.id.awards_illustration); assert header != null;
 
         mAdapter = new AwardsAdapter(this, this);
 
-        RecyclerView list = (RecyclerView)findViewById(R.id.awards_list);
+        RecyclerView list = (RecyclerView)findViewById(R.id.awards_list); assert list != null;
         list.setAdapter(mAdapter);
         list.setLayoutManager(new LinearLayoutManager(this));
         list.addOnScrollListener(new ParallaxEffect(header, 0.5f));

@@ -19,7 +19,10 @@ import java.util.List;
 
 
 /**
- * Created by isma on 6/27/16.
+ * Adapter for displaying a list of Awards in the form of Badges.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class AwardsAdapter extends RecyclerView.Adapter{
     private static final int TYPE_BLANK = 1;
@@ -31,6 +34,12 @@ public class AwardsAdapter extends RecyclerView.Adapter{
     private List<Badge> mBadges;
 
 
+    /**
+     * Constructor.
+     *
+     * @param context a reference to the context.
+     * @param listener the listener.
+     */
     public AwardsAdapter(Context context, BadgeAdapterListener listener){
         mContext = context;
         mListener = listener;
@@ -77,21 +86,42 @@ public class AwardsAdapter extends RecyclerView.Adapter{
         }
     }
 
+    /**
+     * Sets the backing badge list. Does not update the data set.
+     *
+     * @param badges the lust of badges to be displayed.
+     */
     public void setBadges(List<Badge> badges){
         mBadges = badges;
     }
 
+    /**
+     * Lets the listener know a badge has been tapped.
+     *
+     * @param position the position of the badge in the list.
+     */
     private void onBadgeTapped(int position){
         mListener.onBadgeSelected(mBadges.get(position));
     }
 
 
+    /**
+     * View holder for a Badge.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     class BadgeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private ImageView mImage;
         private TextView mName;
         private TextView mDescription;
 
 
+        /**
+         * Constructor.
+         *
+         * @param rootView the root of the view hierarchy associated with the holder.
+         */
         public BadgeHolder(View rootView){
             super(rootView);
 
@@ -102,6 +132,11 @@ public class AwardsAdapter extends RecyclerView.Adapter{
             rootView.setOnClickListener(this);
         }
 
+        /**
+         * Binds a badge to the holder.
+         *
+         * @param badge the badge to be bound.
+         */
         public void bind(Badge badge){
             ImageLoader.Options options = new ImageLoader.Options().setUseDefaultPlaceholder(false);
             ImageLoader.loadBitmap(mImage, badge.getImageUrl(), options);
@@ -117,7 +152,18 @@ public class AwardsAdapter extends RecyclerView.Adapter{
     }
 
 
+    /**
+     * Listener interface for the adapter.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface BadgeAdapterListener{
+        /**
+         * Called when a badge is tapped.
+         *
+         * @param badge the badge that was tapped.
+         */
         void onBadgeSelected(Badge badge);
     }
 }
