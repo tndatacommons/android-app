@@ -28,13 +28,15 @@ public final class GcmMessage implements Parcelable{
     private String mContentTitle;
     @SerializedName("message")
     private String mContentText;
+    @SerializedName("production")
+    private boolean mProduction;
 
     //Type
     @SerializedName("object_type")
     private String mObjectType;
 
     //New fields
-    @SerializedName("action")
+    @SerializedName("user_action")
     private UserAction mUserAction;
     @SerializedName("custom_action")
     private CustomAction mCustomAction;
@@ -87,6 +89,10 @@ public final class GcmMessage implements Parcelable{
         return mObjectType.equals(TYPE_AWARD);
     }
 
+    public boolean isProduction(){
+        return mProduction;
+    }
+
     public UserAction getUserAction(){
         return mUserAction;
     }
@@ -127,6 +133,7 @@ public final class GcmMessage implements Parcelable{
         dest.writeString(mContentTitle);
         dest.writeString(mContentText);
         dest.writeString(mObjectType);
+        dest.writeByte((byte)(mProduction ? 1 : 0));
 
         if (isUserActionMessage()){
             dest.writeParcelable(mUserAction, flags);
@@ -165,6 +172,7 @@ public final class GcmMessage implements Parcelable{
         mContentTitle = src.readString();
         mContentText = src.readString();
         mObjectType = src.readString();
+        mProduction = src.readByte() == 1;
 
         if (isUserActionMessage()){
             mUserAction = src.readParcelable(UserAction.class.getClassLoader());

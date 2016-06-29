@@ -200,12 +200,65 @@ public final class NotificationUtil{
     }
 
     /**
+     * Creates an action notification.
+     *
+     * @param context a reference to the context.
+     * @param message the GCM message that triggered the notification.
+     */
+    private static void putActionNotification(Context context, GcmMessage message){
+        Reminder reminder = new Reminder((int)message.getId(), -1, message.getContentTitle(),
+                message.getContentText(), message.getObjectId(), message.getUserMappingId());
+
+        //Action intent; what happens when the user taps the notification
+        Intent intent = new Intent(context, ActionActivity.class)
+                .putExtra(ActionActivity.REMINDER_KEY, reminder)
+                .putExtra(ActionActivity.GCM_MESSAGE_KEY, message);
+
+        PendingIntent contentIntent = PendingIntent.getActivity(context,
+                (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //Dismiss intent; what happens when the user dismisses the notification
+        Intent dismissIntent = new Intent(context, ActionReportService.class)
+                .putExtra(REMINDER_KEY, reminder)
+                .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_DISMISSED);
+
+        PendingIntent dismissedPendingIntent = PendingIntent.getService(context,
+                (int)System.currentTimeMillis(), dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //Snooze intent; what happens when the user taps the "later" action
+        Intent snoozeIntent = new Intent(context, SnoozeActivity.class)
+                .putExtra(REMINDER_KEY, reminder);
+
+        PendingIntent snoozePendingIntent = PendingIntent.getActivity(context,
+                (int)System.currentTimeMillis(), snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        String later = context.getString(R.string.action_notification_later);
+
+        //Generate the notification and push it
+        Notification notification = getBuilder(context, message)
+                .addAction(R.drawable.ic_snooze, later, snoozePendingIntent)
+                .setContentIntent(contentIntent)
+                .setDeleteIntent(dismissedPendingIntent)
+                .setAutoCancel(false)
+                .build();
+
+        if (message.isUserActionMessage()){
+            ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
+                    .notify(USER_ACTION_TAG, message.getUserMappingId(), notification);
+        }
+        else{
+            ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
+                    .notify(CUSTOM_ACTION_TAG, message.getObjectId(), notification);
+        }
+    }
+
+    /**
      * Creates a package enrollment notification.
      *
      * @param context a reference to the context.
      * @param message the GCM message that triggered the notification.
      */
-    public static void putEnrollmentNotification(Context context, GcmMessage message){
+    private static void putEnrollmentNotification(Context context, GcmMessage message){
         Intent intent = new Intent(context, PackageEnrollmentActivity.class)
                 .putExtra(PackageEnrollmentActivity.PACKAGE_ID_KEY, message.getObjectId());
         PendingIntent contentIntent = PendingIntent.getActivity(context,
@@ -263,11 +316,8 @@ public final class NotificationUtil{
      * @param message the GCM message that triggered the call.
      */
     public static void generateNotification(Context context, GcmMessage message){
-        if (message.isUserActionMessage()){
-
-        }
-        else if (message.isCustomActionMessage()){
-
+        if (message.isUserActionMessage() || message.isCustomActionMessage()){
+            putActionNotification(context, message);
         }
         else if (message.isPackageEnrollmentMessage()){
             putEnrollmentNotification(context, message);

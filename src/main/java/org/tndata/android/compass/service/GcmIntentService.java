@@ -2,10 +2,7 @@ package org.tndata.android.compass.service;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.util.Log;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.tndata.android.compass.model.GcmMessage;
 import org.tndata.android.compass.parser.ParserMethods;
 import org.tndata.android.compass.receiver.GcmBroadcastReceiver;
@@ -33,10 +30,6 @@ public class GcmIntentService extends IntentService{
     public static final String FROM_GCM_KEY = "org.tndata.Compass.GcmIntentService.FromGcm";
     public static final String MESSAGE_KEY = "org.tndata.Compass.GcmIntentService.Message";
 
-    public static final String MESSAGE_TYPE_ACTION = "action";
-    public static final String MESSAGE_TYPE_CUSTOM_ACTION = "customaction";
-    public static final String MESSAGE_TYPE_ENROLLMENT = "package enrollment";
-
 
     public GcmIntentService(){
         super(TAG);
@@ -50,48 +43,12 @@ public class GcmIntentService extends IntentService{
         //IntentServices are executed in the background, so it is safe to do this
         GcmMessage message = ParserMethods.sGson.fromJson(gcmMessage, GcmMessage.class);
         message.setGcmMessage(gcmMessage);
-        NotificationUtil.generateNotification(this, message);
-
-                    try{
-                        JSONObject jsonObject = new JSONObject(gcmMessage);
-                        if (jsonObject.optBoolean("production") == !API.STAGING){
-                            sendNotification(
-                                    jsonObject.optString("id"),
-                                    jsonObject.optString("message"),
-                                    jsonObject.optString("title"),
-                                    jsonObject.optString("object_type"),
-                                    jsonObject.optString("object_id"),
-                                    jsonObject.optString("user_mapping_id")
-                            );
-                        }
-                    }
-                    catch (JSONException jsonx){
-                        jsonx.printStackTrace();
-                    }
+        if (message.isProduction() == !API.STAGING){
+            NotificationUtil.generateNotification(this, message);
+        }
 
         if (isFromGcm){
             GcmBroadcastReceiver.completeWakefulIntent(intent);
-        }
-    }
-
-    // Put the message into a notification and post it.
-    private void sendNotification(String id, String msg, String title, String objectType,
-                                  String objectId, String mappingId){
-
-        Log.d(TAG, "object_type = " + objectType);
-        Log.d(TAG, "object_id = " + objectId);
-
-        switch (objectType.toLowerCase()){
-            case MESSAGE_TYPE_ACTION:
-            case MESSAGE_TYPE_CUSTOM_ACTION:
-                try{
-                    NotificationUtil.putActionNotification(this,Integer.valueOf(id), title, msg,
-                            Integer.valueOf(objectId), Integer.valueOf(mappingId));
-                }
-                catch (NumberFormatException nfx){
-                    nfx.printStackTrace();
-                }
-                break;
         }
     }
 }
