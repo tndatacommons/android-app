@@ -49,6 +49,7 @@ public class GcmIntentService extends IntentService{
 
         //IntentServices are executed in the background, so it is safe to do this
         GcmMessage message = ParserMethods.sGson.fromJson(gcmMessage, GcmMessage.class);
+        message.setGcmMessage(gcmMessage);
         NotificationUtil.generateNotification(this, message);
 
                     try{
