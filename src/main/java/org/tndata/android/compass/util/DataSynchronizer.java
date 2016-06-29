@@ -6,7 +6,6 @@ import android.util.Log;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.database.TDCCategoryTableHandler;
 import org.tndata.android.compass.model.TDCCategory;
-import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 
@@ -57,7 +56,8 @@ public final class DataSynchronizer implements HttpRequest.RequestCallback, Pars
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetUserRC){
-            Parser.parse(result, User.class, this);
+            Log.d(TAG, result);
+            Parser.parse(result, ParserModels.UserResultSet.class, this);
         }
         else if (requestCode == mGetCategoriesRC){
             Parser.parse(result, ParserModels.CategoryContentResultSet.class, this);
@@ -76,8 +76,8 @@ public final class DataSynchronizer implements HttpRequest.RequestCallback, Pars
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof User){
-            mApplication.setUser((User)result);
+        if (result instanceof ParserModels.UserResultSet){
+            mApplication.setUser(((ParserModels.UserResultSet)result).results.get(0));
             Log.i(TAG, "User synchronized");
         }
         else if (result instanceof ParserModels.CategoryContentResultSet){

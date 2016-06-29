@@ -2,6 +2,7 @@ package org.tndata.android.compass.util;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.parser.Parser;
@@ -50,6 +51,7 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetFeedDataRC){
+            Log.d("FeedDataLoader", result);
             Parser.parse(result, ParserModels.FeedDataResultSet.class, this);
         }
         else if (requestCode == mGetCustomGoalsRC){

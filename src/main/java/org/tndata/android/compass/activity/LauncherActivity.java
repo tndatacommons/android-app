@@ -78,8 +78,10 @@ public class LauncherActivity
 
     @Override
     public void onVersionRetrieved(String versionName){
-        Log.d(TAG, "Version: " + versionName);
-        if (!BuildConfig.DEBUG && !versionName.equals(getString(R.string.version_name))){
+        String appVersionName = getString(R.string.version_name);
+        Log.i(TAG, "App version name: " + appVersionName);
+        Log.i(TAG, "Play store version name: " + versionName);
+        if (!BuildConfig.DEBUG && !versionName.equals(appVersionName)){
             ViewGroup rootView = (ViewGroup)findViewById(android.R.id.content);
             LayoutInflater inflater = LayoutInflater.from(this);
             View dialogRootView = inflater.inflate(R.layout.dialog_update, rootView, false);
@@ -103,9 +105,11 @@ public class LauncherActivity
                 User user = mApplication.getUser();
                 if (user == null){
                     //If there is no user, show the menu
+                    Log.e(TAG, "No user was found, displaying menu.");
                     displayLauncherFragment(false);
                 }
                 else{
+                    Log.i(TAG, "User was found.");
                     //If there is a user, show the loading screen
                     displayLauncherFragment(true);
                     TDCCategoryTableHandler handler = new TDCCategoryTableHandler(this);
@@ -113,9 +117,12 @@ public class LauncherActivity
                     handler.close();
 
                     if (user.needsOnBoarding()){
+                        Log.i(TAG, "User needs on-boarding.");
                         transitionToOnBoarding();
                     }
                     else{
+                        Log.i(TAG, "Retrieving data.");
+                        Log.d(TAG, "Token: " + user.getToken());
                         fetchData();
                     }
                 }
