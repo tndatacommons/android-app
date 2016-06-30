@@ -4,7 +4,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.database.TDCCategoryTableHandler;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.parser.Parser;
@@ -282,10 +281,6 @@ public class SignUpFragment
         else if (result instanceof ParserModels.CategoryContentResultSet){
             List<TDCCategory> categories = ((ParserModels.CategoryContentResultSet)result).results;
             mApplication.setPublicCategories(categories);
-
-            TDCCategoryTableHandler handler = new TDCCategoryTableHandler(getContext());
-            handler.writeCategories(categories);
-            handler.close();
         }
     }
 

@@ -5,7 +5,6 @@ import android.util.Log;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.database.PlaceTableHandler;
-import org.tndata.android.compass.database.TDCCategoryTableHandler;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
@@ -98,10 +97,6 @@ public final class DataSynchronizer implements HttpRequest.RequestCallback, Pars
         else if (result instanceof ParserModels.CategoryContentResultSet){
             List<TDCCategory> categories = ((ParserModels.CategoryContentResultSet)result).results;
             mApplication.setPublicCategories(categories);
-
-            TDCCategoryTableHandler handler = new TDCCategoryTableHandler(mApplication);
-            handler.writeCategories(categories);
-            handler.close();
             Log.i(TAG, "Categories synchronized");
         }
     }

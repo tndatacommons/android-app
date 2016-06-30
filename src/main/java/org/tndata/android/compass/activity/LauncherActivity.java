@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.database.TDCCategoryTableHandler;
 import org.tndata.android.compass.fragment.LauncherFragment;
 import org.tndata.android.compass.fragment.LogInFragment;
 import org.tndata.android.compass.fragment.SignUpFragment;
@@ -100,9 +99,6 @@ public class LauncherActivity
                     Log.i(TAG, "User was found.");
                     //If there is a user, show the loading screen
                     displayLauncherFragment(true);
-                    TDCCategoryTableHandler handler = new TDCCategoryTableHandler(this);
-                    mApplication.setPublicCategories(handler.readCategories());
-                    handler.close();
 
                     if (user.needsOnBoarding()){
                         Log.i(TAG, "User needs on-boarding.");

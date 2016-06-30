@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 
+import org.tndata.android.compass.database.TDCCategoryTableHandler;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.FeedData;
@@ -107,25 +108,47 @@ public class CompassApplication extends Application{
     }
 
     /**
-     * Public category setter. The data is kept internally as a Long->CategoryContent HashMap.
+     * Public category setter. Categories set using this method are written to the database.
+     * The data is kept internally as a Long->CategoryContent HashMap.
      *
      * @param categories the list of public categories.
      */
     public synchronized void setPublicCategories(List<TDCCategory> categories){
+        setPublicCategories(categories, true);
+    }
+
+    /**
+     * Public category setter. The data is kept internally as a Long->CategoryContent HashMap.
+     *
+     * @param categories the list of public categories.
+     * @param writeToDb true if the list of categories should be written to the database.
+     */
+    private synchronized void setPublicCategories(List<TDCCategory> categories, boolean writeToDb){
         //Create a new Map and trash the old one
         mPublicCategories = new HashMap<>();
         //Populate the new one
         for (TDCCategory category:categories){
             mPublicCategories.put(category.getId(), category);
         }
+        //Write them to the database if requested
+        if (writeToDb){
+            TDCCategoryTableHandler handler = new TDCCategoryTableHandler(this);
+            handler.writeCategories(categories);
+            handler.close();
+        }
     }
 
     /**
-     * Public category getter.
+     * Public category map getter.
      *
      * @return A Long->CategoryContent HashMap.
      */
-    public synchronized  Map<Long, TDCCategory> getPublicCategories(){
+    public synchronized Map<Long, TDCCategory> getPublicCategories(){
+        if (mPublicCategories == null){
+            TDCCategoryTableHandler handler = new TDCCategoryTableHandler(this);
+            setPublicCategories(handler.readCategories(), false);
+            handler.close();
+        }
         return mPublicCategories;
     }
 
