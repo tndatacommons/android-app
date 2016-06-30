@@ -107,12 +107,14 @@
                     android:layout_marginRight="20dp" />
 
                 <TextView
+                    android:id="@+id/package_consent_summary_header"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:paddingBottom="10dp"
-                    android:text="@string/package_info" />
+                    android:text="@string/package_info"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/package_consent_summary"
@@ -120,15 +122,18 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp" />
+                    android:layout_marginRight="20dp"
+                    android:visibility="gone" />
 
                 <TextView
+                    android:id="@+id/package_consent_header"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:layout_marginBottom="10dp"
-                    android:text="@string/package_consent" />
+                    android:text="@string/package_consent"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/package_consent"
@@ -136,7 +141,8 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp" />
+                    android:layout_marginRight="20dp"
+                    android:visibility="gone" />
 
             </LinearLayout>
         </ScrollView>

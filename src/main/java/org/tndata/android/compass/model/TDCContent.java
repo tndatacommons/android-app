@@ -28,6 +28,7 @@ public abstract class TDCContent extends TDCBase implements Parcelable, Comparab
 
     }
 
+
     /*---------*
      * SETTERS *
      *---------*/

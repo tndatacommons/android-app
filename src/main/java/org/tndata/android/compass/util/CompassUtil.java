@@ -15,6 +15,7 @@ import android.view.WindowManager;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.tndata.android.compass.activity.AwardsActivity;
 import org.tndata.android.compass.model.*;
 
 
@@ -175,6 +176,9 @@ public final class CompassUtil{
         if (src == null){
             return Long.class;
         }
+        else if (src.equals("user")){
+            return User.class;
+        }
         else if (src.equals(DailyProgress.API_TYPE)){
             return DailyProgress.class;
         }
@@ -183,6 +187,10 @@ public final class CompassUtil{
         }
         else if (src.equals(UpcomingAction.API_TYPE)){
             return UpcomingAction.class;
+        }
+        //Awards
+        else if (src.equals(AwardsActivity.Award.API_TYPE)){
+            return AwardsActivity.Award.class;
         }
         //Search
         else if (src.contains("search")){

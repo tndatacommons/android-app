@@ -2,18 +2,19 @@ package org.tndata.android.compass;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 
+import org.tndata.android.compass.database.TDCCategoryTableHandler;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.service.LocationNotificationService;
+import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.ImageLoader;
 
@@ -50,10 +51,10 @@ public class CompassApplication extends Application{
      * @return the user token if one is set, otherwise an empty string.
      */
     public String getToken(){
-        if (mUser != null && mUser.getToken() != null && !mUser.getToken().isEmpty()){
+        if (getUser() != null){
             return mUser.getToken();
         }
-        return PreferenceManager.getDefaultSharedPreferences(this).getString("auth_token", "");
+        return "";
     }
 
     /**
@@ -67,99 +68,107 @@ public class CompassApplication extends Application{
     }
 
     /**
-     * User log in info getter.
-     *
-     * @return a {@code User} object with email and password fields set. If no login information is
-     *         available, these fields will be empty strings.
-     */
-    public User getUserLoginInfo(){
-        SharedPreferences loginInfo = PreferenceManager.getDefaultSharedPreferences(this);
-        return new User(loginInfo.getString("email", ""), loginInfo.getString("password", ""));
-    }
-
-    /**
      * User setter.
      *
      * @param user the user who logged in.
-     * @param setPreferences true to overwrite shared preferences.
      */
-    public void setUser(User user, boolean setPreferences){
+    public void setUser(@NonNull User user){
         Log.d(TAG, "Setting user: " + user);
         mUser = user;
+        mUser.writeToSharedPreferences(this);
 
         //Add the authorization header with the user's token to the requests library
         HttpRequest.addHeader("Authorization", "Token " + getToken());
 
-        if (setPreferences){
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putString("auth_token", mUser.getToken());
-            editor.putString("first_name", mUser.getFirstName());
-            editor.putString("last_name", mUser.getLastName());
-            editor.putString("email", mUser.getEmail());
-            editor.putString("password", mUser.getPassword());
-            editor.putLong("id", mUser.getId());
-            editor.apply();
-        }
+
     }
 
     /**
      * User getter.
      *
-     * @return the currently logged in user.
+     * @return the currently logged in user, null if none.
      */
     public User getUser(){
+        if (mUser == null){
+            mUser = User.getFromPreferences(this);
+        }
         return mUser;
+    }
+
+    /**
+     * Deletes all user-related data and lets the backend know the user logged out.
+     */
+    public void logOut(){
+        String regId = getGcmRegistrationId();
+        if (regId != null && !regId.isEmpty()){
+            HttpRequest.post(null, API.getLogOutUrl(), API.getLogOutBody(regId));
+        }
+        mUser = null;
+        User.deleteFromPreferences(this);
+    }
+
+    /**
+     * Public category setter. Categories set using this method are written to the database.
+     * The data is kept internally as a Long->CategoryContent HashMap.
+     *
+     * @param categories the list of public categories.
+     */
+    public synchronized void setPublicCategories(List<TDCCategory> categories){
+        setPublicCategories(categories, true);
     }
 
     /**
      * Public category setter. The data is kept internally as a Long->CategoryContent HashMap.
      *
      * @param categories the list of public categories.
+     * @param writeToDb true if the list of categories should be written to the database.
      */
-    public void setPublicCategories(List<TDCCategory> categories){
+    private synchronized void setPublicCategories(List<TDCCategory> categories, boolean writeToDb){
+        //Create a new Map and trash the old one
         mPublicCategories = new HashMap<>();
+        //Populate the new one
         for (TDCCategory category:categories){
             mPublicCategories.put(category.getId(), category);
         }
+        //Write them to the database if requested
+        if (writeToDb){
+            TDCCategoryTableHandler handler = new TDCCategoryTableHandler(this);
+            handler.writeCategories(categories);
+            handler.close();
+        }
     }
 
     /**
-     * Public category getter.
+     * Public category map getter.
      *
      * @return A Long->CategoryContent HashMap.
      */
-    public Map<Long, TDCCategory> getPublicCategories(){
+    public synchronized Map<Long, TDCCategory> getPublicCategories(){
+        if (mPublicCategories == null){
+            TDCCategoryTableHandler handler = new TDCCategoryTableHandler(this);
+            setPublicCategories(handler.readCategories(), false);
+            handler.close();
+        }
         return mPublicCategories;
     }
 
-    //TODO combine the following two methods into one with a filtered parameter
     /**
-     * A filtered list of public categories. At the moment, this method
-     * excludes those categories that are selected for all users by default.
+     * Gets an ordered List of categories. Categories selected by default are excluded.
      *
-     * @return the unordered list of public categories, excluding those selected by default.
+     * @param filtered if true, only featured categories are included in the result.
+     * @return a list of categories.
      */
-    public List<TDCCategory> getCategoryList(){
-        List<TDCCategory> nonDefault = new ArrayList<>();
+    public synchronized List<TDCCategory> getCategoryList(boolean filtered){
+        List<TDCCategory> result = new ArrayList<>();
         for (TDCCategory category:mPublicCategories.values()){
             if (!category.isSelectedByDefault()){
-                nonDefault.add(category);
+                if (!filtered || category.isFeatured()){
+                    result.add(category);
+                }
             }
         }
-        Collections.sort(nonDefault);
-        return nonDefault;
-    }
-
-    public List<TDCCategory> getFilteredCategoryList(){
-        List<TDCCategory> featured = new ArrayList<>();
-        for (TDCCategory category:mPublicCategories.values()){
-            if (!category.isSelectedByDefault() && category.isFeatured()){
-                featured.add(category);
-            }
-        }
-        Collections.sort(featured);
-        return featured;
+        Collections.sort(result);
+        return result;
     }
 
     /**

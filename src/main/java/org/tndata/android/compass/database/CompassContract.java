@@ -50,4 +50,34 @@ public class CompassContract{
         public static final String SNOOZED = "snoozed";
         public static final String LAST_DELIVERED = "last_delivered";
     }
+
+
+    /**
+     * Definition of TDCCategory tables.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    public static abstract class TDCCategoryEntry implements BaseColumns{
+        //Table name information
+        public static final String TABLE = "TDCCategory";
+
+        //Column information
+        public static final String LOCAL_ID = _ID;
+        public static final String CLOUD_ID = "cloud_id";
+        public static final String TITLE = "title";
+        public static final String DESCRIPTION = "description";
+        public static final String HTML_DESCRIPTION = "html_description";
+        public static final String ICON_URL = "icon_url";
+        //'group' is a reserved keyword in SQLite
+        public static final String GROUP = "group_id";
+        public static final String GROUP_NAME = "group_name";
+        //'order' is a reserved keyword as well
+        public static final String ORDER = "order_value";
+        public static final String IMAGE_URL = "image_url";
+        public static final String COLOR = "color";
+        public static final String SECONDARY_COLOR = "secondary_color";
+        public static final String PACKAGED_CONTENT = "packaged_content";
+        public static final String SELECTED_BY_DEFAULT = "selected_by_default";
+    }
 }

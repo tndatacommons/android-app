@@ -50,7 +50,9 @@ public class PackageEnrollmentActivity
     private TextView mTitle;
     private ViewSwitcher mAcceptSwitcher;
     private TextView mDescription;
+    private TextView mConsentSummaryHeader;
     private TextView mConsentSummary;
+    private TextView mConsentHeader;
     private TextView mConsent;
 
     //Request codes
@@ -73,7 +75,9 @@ public class PackageEnrollmentActivity
         mTitle = (TextView)findViewById(R.id.package_title);
         mAcceptSwitcher = (ViewSwitcher)findViewById(R.id.package_accept_switcher);
         mDescription = (TextView)findViewById(R.id.package_description);
+        mConsentSummaryHeader = (TextView)findViewById(R.id.package_consent_summary_header);
         mConsentSummary = (TextView)findViewById(R.id.package_consent_summary);
+        mConsentHeader = (TextView)findViewById(R.id.package_consent_header);
         mConsent = (TextView)findViewById(R.id.package_consent);
         findViewById(R.id.package_accept).setOnClickListener(this);
         findViewById(R.id.package_decline).setOnClickListener(this);
@@ -135,23 +139,37 @@ public class PackageEnrollmentActivity
         mContent.setVisibility(View.VISIBLE);
         CompassTagHandler tagHandler = new CompassTagHandler(this);
         mTitle.setText(myPackage.getTitle());
+
+        //Package description
         if (myPackage.getHtmlDescription().isEmpty()){
             mDescription.setText(myPackage.getDescription());
         }
         else{
             mDescription.setText(Html.fromHtml(myPackage.getHtmlDescription(), null, tagHandler));
         }
-        if (myPackage.getHtmlConsentSummary().isEmpty()){
-            mConsentSummary.setText(myPackage.getConsentSummary());
-        }
-        else{
+
+        //Consent summary
+        if (!myPackage.getHtmlConsentSummary().isEmpty()){
             mConsentSummary.setText(Html.fromHtml(myPackage.getHtmlConsentSummary(), null, tagHandler));
-        }
-        if (myPackage.getHtmlConsent().isEmpty()){
-            mConsent.setText(myPackage.getConsent());
+            mConsentSummaryHeader.setVisibility(View.VISIBLE);
+            mConsentSummary.setVisibility(View.VISIBLE);
         }
         else{
+            mConsentSummary.setText(myPackage.getConsentSummary());
+            mConsentSummaryHeader.setVisibility(View.VISIBLE);
+            mConsentSummary.setVisibility(View.VISIBLE);
+        }
+
+        //More on the consent
+        if (!myPackage.getHtmlConsent().isEmpty()){
             mConsent.setText(Html.fromHtml(myPackage.getHtmlConsent(), null, tagHandler));
+            mConsentHeader.setVisibility(View.VISIBLE);
+            mConsent.setVisibility(View.VISIBLE);
+        }
+        else if (!myPackage.getConsent().isEmpty()){
+            mConsent.setText(myPackage.getConsent());
+            mConsentHeader.setVisibility(View.VISIBLE);
+            mConsent.setVisibility(View.VISIBLE);
         }
     }
 

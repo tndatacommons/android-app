@@ -20,6 +20,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ActionAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
+import org.tndata.android.compass.model.GcmMessage;
 import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.model.TDCAction;
 import org.tndata.android.compass.model.UpcomingAction;
@@ -59,6 +60,7 @@ public class ActionActivity
     public static final String ACTION_KEY = "org.tndata.compass.ActionActivity.Action";
     public static final String UPCOMING_ACTION_KEY = "org.tndata.compass.ActionActivity.Upcoming";
     public static final String REMINDER_KEY = "org.tndata.compass.ActionActivity.Reminder";
+    public static final String GCM_MESSAGE_KEY = "org.tndata.compass.ActionActivity.GcmMessage";
 
     public static final String DID_IT_KEY = "org.tndata.compass.ActionActivity.DidIt";
 
@@ -71,6 +73,7 @@ public class ActionActivity
     private UserCategory mUserCategory;
     private UpcomingAction mUpcomingAction;
     private Reminder mReminder;
+    private GcmMessage mGcmMessage;
 
     private ActionAdapter mAdapter;
 
@@ -89,6 +92,7 @@ public class ActionActivity
         mAction = getIntent().getParcelableExtra(ACTION_KEY);
         mUpcomingAction = getIntent().getParcelableExtra(UPCOMING_ACTION_KEY);
         mReminder = getIntent().getParcelableExtra(REMINDER_KEY);
+        mGcmMessage = getIntent().getParcelableExtra(GCM_MESSAGE_KEY);
 
         //Set a placeholder color
         setColor(getResources().getColor(R.color.primary));
@@ -96,6 +100,15 @@ public class ActionActivity
         //Create and set the adapter
         mAdapter = new ActionAdapter(this, this, mReminder != null);
         setAdapter(mAdapter);
+
+        if (mAction == null && mGcmMessage != null){
+            if (mGcmMessage.isUserActionMessage()){
+                mAction = mGcmMessage.getUserAction();
+            }
+            else if (mGcmMessage.isCustomActionMessage()){
+                mAction = mGcmMessage.getCustomAction();
+            }
+        }
 
         //If the action exists do some initial setup and fetching
         if (mAction != null){

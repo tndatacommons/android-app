@@ -1,8 +1,10 @@
 package org.tndata.android.compass.model;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -25,6 +27,7 @@ import java.util.Locale;
  */
 public class User extends TDCBase{
     public static final String TYPE = "user";
+    private static final String PREFERENCES_NAME = "CompassUserPreferences";
 
     //Indices/IDs
     public static final int ZIP_CODE = 0;
@@ -44,7 +47,7 @@ public class User extends TDCBase{
 
     //User attributes
     @SerializedName("userprofile_id")
-    private int mProfileId;
+    private long mProfileId;
     @SerializedName("email")
     private String mEmail;
     //Password ain't ever sent from the API
@@ -83,6 +86,13 @@ public class User extends TDCBase{
 
 
     /**
+     * Explicit default constructor.
+     */
+    public User(){
+
+    }
+
+    /**
      * Constructor.
      *
      * @param email the email.
@@ -98,38 +108,8 @@ public class User extends TDCBase{
      * SETTERS *
      *---------*/
 
-    public void setProfileId(int userProfileId){
-        mProfileId = userProfileId;
-    }
-
-    public void setEmail(String email){
-        mEmail = email;
-    }
-
     public void setPassword(String password){
         mPassword = password;
-    }
-
-    public void setFirstName(String firstName){
-        mFirstName = firstName;
-        setFullName(getFirstName() + " " + getLastName());
-    }
-
-    public void setLastName(String lastName){
-        mLastName = lastName;
-        setFullName(getFirstName() + " " + getLastName());
-    }
-
-    public void setFullName(String fullName){
-        mFullName = fullName;
-    }
-
-    public void setToken(String token){
-        mToken = token;
-    }
-
-    public void setDateJoined(String dateJoined){
-        mDateJoined = dateJoined;
     }
 
     public void setOnBoardingComplete(){
@@ -145,7 +125,7 @@ public class User extends TDCBase{
      * GETTERS *
      *---------*/
 
-    public int getProfileId(){
+    public long getProfileId(){
         return mProfileId;
     }
 
@@ -480,5 +460,80 @@ public class User extends TDCBase{
     @Override
     protected String getType(){
         return TYPE;
+    }
+
+    /**
+     * Writes this user to shared preferences.
+     *
+     * @param context a reference to the context.
+     */
+    public void writeToSharedPreferences(@NonNull Context context){
+        SharedPreferences user = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = user.edit();
+        editor.putLong("user.id", getId());
+        editor.putLong("user.profileId", mProfileId);
+        editor.putString("user.email", mEmail);
+        editor.putString("user.password", mPassword);
+        editor.putString("user.firstName", mFirstName);
+        editor.putString("user.lastName", mLastName);
+        editor.putString("user.token", mToken);
+        editor.putString("user.dateJoined", mDateJoined);
+        editor.putBoolean("user.needsOnBoarding", mNeedsOnboarding);
+        editor.putInt("user.dailyNotifications", mDailyNotifications);
+        editor.putString("user.zipCode", mZipCode);
+        editor.putString("user.birthday", mBirthday);
+        editor.putString("user.sex", mSex);
+        editor.putBoolean("user.employed", mEmployed);
+        editor.putBoolean("user.parent", mParent);
+        editor.putBoolean("user.relationship", mRelationship);
+        editor.putBoolean("user.degree", mDegree);
+        editor.apply();
+    }
+
+    /**
+     * Reads a user from its shared preferences file.
+     *
+     * @param context a reference to the context.
+     * @return the user if it exists, null if it doesn't.
+     */
+    public static User getFromPreferences(@NonNull Context context){
+        //Open the shared preferences file for the user and check if they exist
+        SharedPreferences prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        long id = prefs.getLong("user.id", -1);
+        Log.d("User", "Id: " + id);
+        if (id == -1){
+            //If not, return null
+            return null;
+        }
+
+        User user = new User();
+        user.setId(id);
+        user.mProfileId = prefs.getLong("user.profileId", -1);
+        user.mEmail = prefs.getString("user.email", "");
+        user.mPassword = prefs.getString("user.password", "");
+        user.mFirstName = prefs.getString("user.firstName", "");
+        user.mLastName = prefs.getString("user.lastName", "");
+        user.mFullName = user.mFirstName + " " + user.mLastName;
+        user.mToken = prefs.getString("user.token", "");
+        user.mDateJoined = prefs.getString("user.dateJoined", "");
+        user.mNeedsOnboarding = prefs.getBoolean("user.needsOnBoarding", true);
+        user.mDailyNotifications = prefs.getInt("user.dailyNotifications", 5);
+        user.mZipCode = prefs.getString("user.zipCode", "");
+        user.mBirthday = prefs.getString("user.birthday", "");
+        user.mSex = prefs.getString("user.sex", "");
+        user.mEmployed = prefs.getBoolean("user.employed", false);
+        user.mParent = prefs.getBoolean("user.parent", false);
+        user.mRelationship = prefs.getBoolean("user.relationship", false);
+        user.mDegree = prefs.getBoolean("user.degree", false);
+        return user;
+    }
+
+    /**
+     * Deletes a user from shared preference.
+     *
+     * @param context a reference to the context.
+     */
+    public static void deleteFromPreferences(@NonNull Context context){
+        context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE).edit().clear().commit();
     }
 }

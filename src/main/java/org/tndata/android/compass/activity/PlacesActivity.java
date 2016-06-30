@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.PlacesAdapter;
-import org.tndata.android.compass.database.CompassDbHelper;
+import org.tndata.android.compass.database.PlaceTableHandler;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.UserPlace;
 import org.tndata.android.compass.parser.Parser;
@@ -150,9 +150,9 @@ public class PlacesActivity
         //Two lists are used to sort the list
         List<UserPlace> places = new ArrayList<>();
         List<UserPlace> userPlaces = new ArrayList<>();
-        CompassDbHelper helper = new CompassDbHelper(this);
-        List<UserPlace> currentPlaces = helper.getPlaces();
-        helper.close();
+        PlaceTableHandler handler = new PlaceTableHandler(this);
+        List<UserPlace> currentPlaces = handler.getPlaces();
+        handler.close();
 
         //The user places are added to the list in the appropriate order
         for (UserPlace userPlace:currentPlaces){
@@ -243,9 +243,9 @@ public class PlacesActivity
                             API.getPostPutPlaceBody(mCurrentPlace));
 
                     //Update the place in the database
-                    CompassDbHelper dbHelper = new CompassDbHelper(this);
-                    dbHelper.updatePlace(mCurrentPlace);
-                    dbHelper.close();
+                    PlaceTableHandler handler = new PlaceTableHandler(this);
+                    handler.updatePlace(mCurrentPlace);
+                    handler.close();
                 }
                 //Otherwise this is a new place request, fire the place picker
                 else{
@@ -305,9 +305,9 @@ public class PlacesActivity
                     place.getPlace().setName(mName.getText().toString().trim());
 
                     //Write the place to the database
-                    CompassDbHelper dbHelper = new CompassDbHelper(this);
-                    dbHelper.savePlace(place);
-                    dbHelper.close();
+                    PlaceTableHandler handler = new PlaceTableHandler(this);
+                    handler.savePlace(place);
+                    handler.close();
 
                     mAdapter.addPlace(place);
                 }
@@ -316,16 +316,16 @@ public class PlacesActivity
                     mCurrentPlace.setLatitude(place.getLocation().latitude);
                     mCurrentPlace.setLongitude(place.getLocation().longitude);
 
-                    CompassDbHelper dbHelper = new CompassDbHelper(this);
+                    PlaceTableHandler handler = new PlaceTableHandler(this);
                     //If the place is primary and not set it won't be in the database, so save
                     if (mCurrentPlace.isPrimary() && !mCurrentPlace.isSet()){
-                        dbHelper.savePlace(mCurrentPlace);
+                        handler.savePlace(mCurrentPlace);
                     }
                     //Otherwise it will, so update
                     else{
-                        dbHelper.updatePlace(mCurrentPlace);
+                        handler.updatePlace(mCurrentPlace);
                     }
-                    dbHelper.close();
+                    handler.close();
                     
                     mCurrentPlace.getPlace().setSet(true);
                     mAdapter.notifyDataSetChanged();

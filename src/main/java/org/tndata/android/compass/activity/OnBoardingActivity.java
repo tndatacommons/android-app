@@ -97,6 +97,7 @@ public class OnBoardingActivity
                 .commit();
         User user = mApplication.getUser();
         user.setOnBoardingComplete();
+        user.writeToSharedPreferences(this);
         HttpRequest.put(null, API.getPutUserProfileUrl(user), API.getPutUserProfileBody(user));
         FeedDataLoader.load(this);
     }

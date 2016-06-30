@@ -21,6 +21,7 @@ import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.SnoozeAdapter;
 import org.tndata.android.compass.database.CompassDbHelper;
+import org.tndata.android.compass.database.PlaceTableHandler;
 import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.model.UserPlace;
 import org.tndata.android.compass.service.ActionReportService;
@@ -76,9 +77,9 @@ public class SnoozeActivity
         list.setAdapter(new SnoozeAdapter(this));
         list.setOnItemClickListener(this);
 
-        CompassDbHelper dbHelper = new CompassDbHelper(this);
-        mPlaces = dbHelper.getPlaces();
-        dbHelper.close();
+        PlaceTableHandler handler = new PlaceTableHandler(this);
+        mPlaces = handler.getPlaces();
+        handler.close();
     }
 
     @Override
@@ -311,9 +312,9 @@ public class SnoozeActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == PLACES_REQUEST_CODE){
             //Reload the list of places
-            CompassDbHelper dbHelper = new CompassDbHelper(this);
-            mPlaces = dbHelper.getPlaces();
-            dbHelper.close();
+            PlaceTableHandler handler = new PlaceTableHandler(this);
+            mPlaces = handler.getPlaces();
+            handler.close();
 
             //Create the dialog
             displayPlacesDialog();

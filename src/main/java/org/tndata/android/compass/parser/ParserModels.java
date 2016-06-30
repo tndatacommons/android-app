@@ -1,5 +1,6 @@
 package org.tndata.android.compass.parser;
 
+import org.tndata.android.compass.activity.AwardsActivity;
 import org.tndata.android.compass.model.TDCBehavior;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.CustomAction;
@@ -10,6 +11,7 @@ import org.tndata.android.compass.model.TDCGoal;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.SearchResult;
+import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.model.UserGoal;
@@ -32,6 +34,10 @@ public final class ParserModels{
         public int count;
         public String previous;
         public String next;
+    }
+
+    public final class UserResultSet implements ResultSet{
+        public List<User> results;
     }
 
     public final class FeedDataResultSet implements ResultSet{
@@ -88,6 +94,10 @@ public final class ParserModels{
 
     public final class PlacesResultSet implements ResultSet{
         public List<Place> results;
+    }
+
+    public final class AwardsResultSet implements ResultSet{
+        public List<AwardsActivity.Award> results;
     }
 
     private ParserModels(){

@@ -11,8 +11,11 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.media.ThumbnailUtils;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.squareup.picasso.Transformation;
@@ -47,8 +50,8 @@ public final class ImageLoader{
      * @param view the view to where the bitmap shall be set.
      * @param url the urk of the bitmap. This acts as a key for the cache.
      */
-    public static void loadBitmap(ImageView view, String url){
-        loadBitmap(view, url, new Options());
+    public static void loadBitmap(@NonNull ImageView view, @Nullable String url){
+        loadBitmap(view, url, new Options(), null);
     }
 
     /**
@@ -58,7 +61,34 @@ public final class ImageLoader{
      * @param url the urk of the bitmap. This acts as a key for the cache.
      * @param options the option bundle.
      */
-    public static void loadBitmap(ImageView view, String url, Options options){
+    public static void loadBitmap(@NonNull ImageView view, @Nullable String url,
+                                  @NonNull Options options){
+        loadBitmap(view, url, options, null);
+    }
+
+    /**
+     * Loads the bitmap at the provided url, but checks the cache first.
+     *
+     * @param view the view to where the bitmap shall be set.
+     * @param url the urk of the bitmap. This acts as a key for the cache.
+     * @param callback an optional callback.
+     */
+    public static void loadBitmap(@NonNull ImageView view, @Nullable String url,
+                                  @Nullable ImageLoaderCallback callback){
+        loadBitmap(view, url, new Options(), callback);
+    }
+
+    /**
+     * Loads the bitmap at the provided url, but checks the cache first.
+     *
+     * @param view the view to where the bitmap shall be set.
+     * @param url the urk of the bitmap. This acts as a key for the cache.
+     * @param options the option bundle.
+     * @param callback an optional callback.
+     */
+    public static void loadBitmap(@NonNull ImageView view, @Nullable String url,
+                                  @NonNull Options options,
+                                  @Nullable final ImageLoaderCallback callback){
         if (url == null || url.isEmpty()){
             view.setImageResource(R.drawable.ic_compass_white_50dp);
         }
@@ -75,7 +105,21 @@ public final class ImageLoader{
             if (options.mCropToCircle){
                 request.transform(new CircleCropTransformation());
             }
-            request.into(view);
+            request.into(view, new Callback(){
+                @Override
+                public void onSuccess(){
+                    if (callback != null){
+                        callback.onImageLoadSuccess();
+                    }
+                }
+
+                @Override
+                public void onError(){
+                    if (callback != null){
+                        callback.onImageLoadFailure();
+                    }
+                }
+            });
         }
     }
 
@@ -198,5 +242,24 @@ public final class ImageLoader{
         public String key(){
             return "circleCrop()";
         }
+    }
+
+
+    /**
+     * Callback for image loads.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    public interface ImageLoaderCallback{
+        /**
+         * Called when loading an image succeeds.
+         */
+        void onImageLoadSuccess();
+
+        /**
+         * Called when loading an image fails.
+         */
+        void onImageLoadFailure();
     }
 }

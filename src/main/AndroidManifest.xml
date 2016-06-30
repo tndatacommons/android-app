@@ -193,6 +193,14 @@
             android:name=".activity.CheckInActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".activity.BadgeActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activity.AwardsActivity"
+            android:screenOrientation="portrait" />
+
 
         <!-- Broadcast receivers -->
 
@@ -225,8 +233,6 @@
         <service android:name=".service.ActionReportService" />
 
         <service android:name=".service.SnoozeService" />
-
-        <service android:name=".service.LogOutService" />
 
         <service android:name=".service.LocationNotificationService" />
 
