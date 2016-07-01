@@ -43,15 +43,14 @@ public class BadgeActivity extends AppCompatActivity implements ImageLoader.Imag
         TextView name = (TextView)findViewById(R.id.badge_name);
         TextView description = (TextView)findViewById(R.id.badge_description);
 
+        assert name != null;
+        assert description != null;
+
         ImageLoader.Options options = new ImageLoader.Options().setUseDefaultPlaceholder(false);
         ImageLoader.loadBitmap(mImage, badge.getImageUrl(), options, this);
-        //I give up... I know these fields are never going to be null though.
-        if (name != null){
-            name.setText(badge.getName());
-        }
-        if (description != null){
-            description.setText(badge.getDescription());
-        }
+
+        name.setText(getString(R.string.badge_header, badge.getName().toUpperCase()));
+        description.setText(badge.getDescription());
     }
 
     @Override

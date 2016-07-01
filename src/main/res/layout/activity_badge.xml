@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:gravity="center"
-                android:textSize="28sp" />
+                android:textSize="22sp" />
 
             <View
                 android:layout_width="match_parent"
