@@ -97,7 +97,8 @@ public class AwardsActivity
 
     @Override
     public void onBadgeSelected(Badge badge){
-        startActivity(new Intent().putExtra(BadgeActivity.BADGE_KEY, badge));
+        startActivity(new Intent(this, BadgeActivity.class)
+                .putExtra(BadgeActivity.BADGE_KEY, badge));
     }
 
 
