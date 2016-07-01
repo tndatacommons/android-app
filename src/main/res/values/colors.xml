@@ -47,6 +47,7 @@
     <color name="primary_dark">#1976D2</color>
     <color name="accent">#4A9E94</color>
     <color name="accent_login">#FFFFFF</color>
+    <color name="primary_dark_badge">#78909c</color>
 
     <!-- Text -->
     <color name="text_primary">#DE000000</color>
