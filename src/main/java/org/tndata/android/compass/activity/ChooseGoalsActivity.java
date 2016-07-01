@@ -17,7 +17,6 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseGoalsAdapter;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.TDCGoal;
-import org.tndata.android.compass.model.UserBehavior;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
@@ -49,6 +48,8 @@ public class ChooseGoalsActivity
     //  if it exists it can be retrieved from the UserData bundle
     public static final String CATEGORY_KEY = "org.tndata.compass.ChooseGoalsActivity.Category";
 
+    private static final String TAG = "ChooseGoalsActivity";
+
     //Activity request codes
     private static final int GOAL_ACTIVITY_RC = 5173;
 
@@ -60,7 +61,7 @@ public class ChooseGoalsActivity
     private ChooseGoalsAdapter mAdapter;
 
     //Request codes and urls
-    private int mGetGoalsRequestCode;
+    private int mGetGoalsRC;
     private int mPostGoalRC;
     private String mGetGoalsNextUrl;
 
@@ -98,12 +99,8 @@ public class ChooseGoalsActivity
     }
 
     @Override
-    public void onBackPressed(){
-        super.onBackPressed();
-    }
-
-    @Override
     public void onGoalSelected(@NonNull TDCGoal goal){
+        Log.i(TAG, "Selected: " + goal.toString());
         mSelectedGoal = goal;
         startActivityForResult(new Intent(this, GoalActivity.class)
                 .putExtra(GoalActivity.GOAL_KEY, goal)
@@ -113,6 +110,7 @@ public class ChooseGoalsActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == GOAL_ACTIVITY_RC && resultCode == RESULT_OK){
+            Log.i(TAG, "Accepted: " + mSelectedGoal.toString());
             mPostGoalRC = HttpRequest.post(this, API.getPostGoalUrl(mSelectedGoal),
                     API.getPostGoalBody(mCategory));
 
@@ -131,6 +129,7 @@ public class ChooseGoalsActivity
             setResult(RESULT_OK);
         }
         else if (resultCode == RESULT_CANCELED){
+            Log.i(TAG, "Rejected: " + mSelectedGoal.toString());
             mSelectedGoal = null;
         }
     }
@@ -150,7 +149,6 @@ public class ChooseGoalsActivity
     }
 
     private void dismiss(){
-        Log.d("ChooseBehaviorsActivity", "dismiss() called");
         mAdapter.remove(mSelectedGoal);
         mSelectedGoal = null;
         if (mAdapter.isEmpty()){
@@ -163,24 +161,29 @@ public class ChooseGoalsActivity
         if (API.STAGING && mGetGoalsNextUrl.startsWith("https")){
             mGetGoalsNextUrl = mGetGoalsNextUrl.replaceFirst("s", "");
         }
-        mGetGoalsRequestCode = HttpRequest.get(this, mGetGoalsNextUrl);
+        mGetGoalsRC = HttpRequest.get(this, mGetGoalsNextUrl);
     }
 
     @Override
     public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mGetGoalsRequestCode){
+        if (requestCode == mGetGoalsRC){
             Parser.parse(result, ParserModels.GoalContentResultSet.class, this);
         }
         else if (requestCode == mPostGoalRC){
-            Parser.parse(result, UserBehavior.class, this);
+            Log.i(TAG, "Goal POSTed successfully");
         }
     }
 
     @Override
     public void onRequestFailed(int requestCode, HttpRequestError error){
-        if (requestCode == mGetGoalsRequestCode){
+        if (requestCode == mGetGoalsRC){
+            Log.e(TAG, "GET goals failed");
             mAdapter.displayError("Couldn't load goals");
         }
+        else if (requestCode == mPostGoalRC){
+            Log.e(TAG, "POST goal failed");
+        }
+        Log.e(TAG, error.toString());
     }
 
     @Override
@@ -196,6 +199,9 @@ public class ChooseGoalsActivity
             List<TDCGoal> goals = set.results;
             if (goals != null && !goals.isEmpty()){
                 mAdapter.add(goals, mGetGoalsNextUrl != null);
+            }
+            else{
+                mAdapter.displayError("You have selected all content");
             }
         }
     }

@@ -114,28 +114,16 @@ public class CompassApplication extends Application{
      * @param categories the list of public categories.
      */
     public synchronized void setPublicCategories(List<TDCCategory> categories){
-        setPublicCategories(categories, true);
-    }
-
-    /**
-     * Public category setter. The data is kept internally as a Long->CategoryContent HashMap.
-     *
-     * @param categories the list of public categories.
-     * @param writeToDb true if the list of categories should be written to the database.
-     */
-    private synchronized void setPublicCategories(List<TDCCategory> categories, boolean writeToDb){
         //Create a new Map and trash the old one
         mPublicCategories = new HashMap<>();
         //Populate the new one
         for (TDCCategory category:categories){
             mPublicCategories.put(category.getId(), category);
         }
-        //Write them to the database if requested
-        if (writeToDb){
-            TDCCategoryTableHandler handler = new TDCCategoryTableHandler(this);
-            handler.writeCategories(categories);
-            handler.close();
-        }
+        //Write them to the database
+        TDCCategoryTableHandler handler = new TDCCategoryTableHandler(this);
+        handler.writeCategories(categories);
+        handler.close();
     }
 
     /**
@@ -146,7 +134,7 @@ public class CompassApplication extends Application{
     public synchronized Map<Long, TDCCategory> getPublicCategories(){
         if (mPublicCategories == null){
             TDCCategoryTableHandler handler = new TDCCategoryTableHandler(this);
-            setPublicCategories(handler.readCategories(), false);
+            mPublicCategories = handler.readCategories();
             handler.close();
         }
         return mPublicCategories;
@@ -160,7 +148,7 @@ public class CompassApplication extends Application{
      */
     public synchronized List<TDCCategory> getCategoryList(boolean filtered){
         List<TDCCategory> result = new ArrayList<>();
-        for (TDCCategory category:mPublicCategories.values()){
+        for (TDCCategory category:getPublicCategories().values()){
             if (!category.isSelectedByDefault()){
                 if (!filtered || category.isFeatured()){
                     result.add(category);
