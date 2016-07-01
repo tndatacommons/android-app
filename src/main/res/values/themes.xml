@@ -13,7 +13,7 @@
     </style>
 
     <style name="BadgeTheme" parent="CustomActionBarTheme">
-        <item name="colorPrimaryDark">@color/primary_dark_badge</item>
+        <item name="colorPrimaryDark">@color/badge_primary_dark</item>
     </style>
 
     <style name="LogInTheme" parent="CustomActionBarTheme">
