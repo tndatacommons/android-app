@@ -8,8 +8,9 @@ import android.database.sqlite.SQLiteStatement;
 import org.tndata.android.compass.database.CompassContract.TDCCategoryEntry;
 import org.tndata.android.compass.model.TDCCategory;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -120,12 +121,12 @@ public class TDCCategoryTableHandler extends CompassTableHandler{
      *
      * @return the list of stored categories.
      */
-    public List<TDCCategory> readCategories(){
+    public Map<Long, TDCCategory> readCategories(){
         //Open a readable database and execute the query
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery(SELECT, null);
 
-        List<TDCCategory> categories = new ArrayList<>();
+        Map<Long, TDCCategory> categories = new HashMap<>();
 
         //If there are rows in the cursor returned by the query
         if (cursor.moveToFirst()){
@@ -148,7 +149,7 @@ public class TDCCategoryTableHandler extends CompassTableHandler{
                 category.setSelectedByDefault(getBoolean(cursor, TDCCategoryEntry.SELECTED_BY_DEFAULT));
 
                 //Add the place to the target list
-                categories.add(category);
+                categories.put(category.getId(), category);
             }
             //Move on until the cursor is empty
             while (cursor.moveToNext());
