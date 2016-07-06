@@ -50,6 +50,7 @@ public class SearchActivity
 
     //Request codes
     private static final int GOAL_RC = 1528;
+    private static final int CUSTOM_GOAL_RC = 4576;
 
 
     private ProgressBar mLoading;
@@ -118,10 +119,9 @@ public class SearchActivity
             }
         }
         else{
-            startActivity(new Intent(this, CustomContentManagerActivity.class)
-                    .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_TITLE_KEY, mLastSearch));
-            setResult(RESULT_OK);
-            finish();
+            Intent custom = new Intent(this, CustomContentActivity.class)
+                    .putExtra(CustomContentActivity.CUSTOM_GOAL_TITLE_KEY, mLastSearch);
+            startActivityForResult(custom, CUSTOM_GOAL_RC);
         }
     }
 
@@ -197,6 +197,10 @@ public class SearchActivity
                     .setOnCancelListener(this)
                     .create();
             mFeedbackDialog.show();
+        }
+        else if (requestCode == CUSTOM_GOAL_RC){
+            setResult(resultCode, data);
+            finish();
         }
         else{
             mCategory = null;

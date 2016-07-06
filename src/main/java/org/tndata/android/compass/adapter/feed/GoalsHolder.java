@@ -132,6 +132,13 @@ class GoalsHolder<T> extends MainFeedAdapter.ViewHolder implements View.OnClickL
         return mGoalsAdapter.getItemCount();
     }
 
+    void notifyGoalRemoved(int position){
+        //<= because the goal has already been removed
+        if (position >= 0 && position <= mGoalsAdapter.getItemCount()){
+            mGoalsAdapter.notifyItemRemoved(position);
+        }
+    }
+
 
     private class GoalsAdapter extends RecyclerView.Adapter<GoalsItemHolder>{
         @Override

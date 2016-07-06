@@ -31,7 +31,6 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
@@ -67,11 +66,9 @@ public class MainActivity
                 FeedDataLoader.Callback{
 
     //Activity request codes
-    private static final int CATEGORIES_REQUEST_CODE = 4821;
+    private static final int ACTION_RC = 4582;
     private static final int GOAL_RC = 3486;
-    private static final int GOAL_SUGGESTION_REQUEST_CODE = 8962;
-    private static final int ACTION_REQUEST_CODE = 4582;
-    private static final int TRIGGER_REQUEST_CODE = 7631;
+    private static final int GOAL_SUGGESTION_RC = 8962;
     private static final int SETTINGS_RC = 6542;
 
 
@@ -447,18 +444,7 @@ public class MainActivity
 
     @Override
     public void onSuggestionSelected(TDCGoal goal){
-        TDCCategory category = null;
-        for (Long categoryId:goal.getCategoryIdSet()){
-            if (mApplication.getPublicCategories().containsKey(categoryId)){
-                category = mApplication.getPublicCategories().get(categoryId);
-                break;
-            }
-        }
-        //TODO
-        /*Intent chooseBehaviors = new Intent(this, ChooseBehaviorsActivity.class)
-                .putExtra(ChooseBehaviorsActivity.GOAL_KEY, (Parcelable)goal)
-                .putExtra(ChooseBehaviorsActivity.CATEGORY_KEY, category);
-        startActivityForResult(chooseBehaviors, GOAL_SUGGESTION_REQUEST_CODE);*/
+
     }
 
     @Override
@@ -469,8 +455,8 @@ public class MainActivity
             startActivityForResult(reviewActionsIntent, GOAL_RC);
         }
         else if (goal instanceof CustomGoal){
-            Intent editGoal = new Intent(this, CustomContentManagerActivity.class)
-                    .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_KEY, goal);
+            Intent editGoal = new Intent(this, CustomContentActivity.class)
+                    .putExtra(CustomContentActivity.CUSTOM_GOAL_KEY, goal);
             startActivityForResult(editGoal, GOAL_RC);
         }
     }
@@ -483,7 +469,7 @@ public class MainActivity
             startActivityForResult(goalActivityIntent, GOAL_RC);*/
         }
         else if (feedback.hasCustomGoal()){
-            //TODO
+            //
         }
     }
 
@@ -491,22 +477,32 @@ public class MainActivity
     public void onActionSelected(UpcomingAction action){
         Intent actionIntent = new Intent(this, ActionActivity.class)
                 .putExtra(ActionActivity.UPCOMING_ACTION_KEY, action);
-        startActivityForResult(actionIntent, ACTION_REQUEST_CODE);
+        startActivityForResult(actionIntent, ACTION_RC);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        if (resultCode == RESULT_OK){
-            if (requestCode == CATEGORIES_REQUEST_CODE){
-                mAdapter.notifyDataSetChanged();
+        //TODO transition from RESULT_OK to custom result codes
+        if (requestCode == GOAL_RC){
+            if (resultCode == CustomContentActivity.GOAL_REMOVED_RC){
+                CustomGoal customGoal = data.getParcelableExtra(CustomContentActivity.REMOVED_GOAL_KEY);
+                mAdapter.notifyGoalRemoved(mApplication.removeGoal(customGoal));
+                Toast.makeText(this, R.string.goal_removed_toast, Toast.LENGTH_SHORT).show();
             }
-            else if (requestCode == GOAL_SUGGESTION_REQUEST_CODE){
-                mAdapter.dismissSuggestion();
+            else if (resultCode == ReviewActionsActivity.GOAL_REMOVED_RC){
+                UserGoal userGoal = data.getParcelableExtra(ReviewActionsActivity.REMOVED_GOAL_KEY);
+                mAdapter.notifyGoalRemoved(mApplication.removeGoal(userGoal));
+                Toast.makeText(this, R.string.goal_removed_toast, Toast.LENGTH_SHORT).show();
             }
-            else if (requestCode == GOAL_RC){
+            else{
                 mAdapter.updateDataSet();
             }
-            else if (requestCode == ACTION_REQUEST_CODE){
+        }
+        if (resultCode == RESULT_OK){
+            if (requestCode == GOAL_SUGGESTION_RC){
+                mAdapter.dismissSuggestion();
+            }
+            else if (requestCode == ACTION_RC){
                 if (data.getBooleanExtra(ActionActivity.DID_IT_KEY, false)){
                     Action action = data.getParcelableExtra(ActionActivity.ACTION_KEY);
                     mAdapter.didIt(mApplication.getFeedData().getAction(action));
@@ -516,9 +512,6 @@ public class MainActivity
                     mApplication.updateAction((Action)data.getParcelableExtra(ActionActivity.ACTION_KEY));
                     mAdapter.updateUpcoming();
                 }
-            }
-            else if (requestCode == TRIGGER_REQUEST_CODE){
-                mAdapter.updateUpcoming();
             }
         }
         else if (resultCode == SettingsActivity.LOGGED_OUT_RESULT_CODE){

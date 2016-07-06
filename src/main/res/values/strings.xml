@@ -101,6 +101,8 @@
     <string name="custom_goal_header">My goal is to&#8230;</string>
     <string name="custom_goal_create">Create</string>
     <string name="custom_goal_edit_cd">Edition mode toggle button</string>
+    <string name="custom_goal_remove">Remove</string>
+    <string name="custom_goal_remove_condensed">Remove</string>
     <string name="custom_action_list_header">Here\'s how I\'ll reach my goal</string>
     <string name="custom_action_list_sub_header">I will&#8230;</string>
     <string name="custom_action_list_create">Create</string>

@@ -5,12 +5,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.adapter.CustomContentManagerAdapter;
+import org.tndata.android.compass.adapter.CustomContentAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.CustomGoal;
@@ -30,25 +31,31 @@ import es.sandwatch.httprequests.HttpRequestError;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class CustomContentManagerActivity
+public class CustomContentActivity
         extends MaterialActivity
         implements
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback,
-                CustomContentManagerAdapter.CustomContentManagerListener{
+                CustomContentAdapter.CustomContentManagerListener{
 
-    private static final String TAG = "CustomContentManager";
+    private static final String TAG = "CustomContentActivity";
 
-    public static final String CUSTOM_GOAL_KEY = "org.tndata.compass.CreateGoal.Goal";
-    public static final String CUSTOM_GOAL_ID_KEY = "org.tndata.compass.CreateGoal.GoalId";
-    public static final String CUSTOM_GOAL_TITLE_KEY = "org.tndata.compass.CreateGoal.GoalTitle";
+    //Bundle keys
+    public static final String CUSTOM_GOAL_KEY = "org.tndata.compass.CustomContent.Goal";
+    public static final String CUSTOM_GOAL_ID_KEY = "org.tndata.compass.CustomContent.GoalId";
+    public static final String CUSTOM_GOAL_TITLE_KEY = "org.tndata.compass.CustomContent.GoalTitle";
 
+    //Result codes and keys
+    public static final int GOAL_REMOVED_RC = 4562;
+    public static final String REMOVED_GOAL_KEY = "org.tndata.compass.CustomContent.RemovedGoal";
+
+    //Request codes
     private static final int TRIGGER_RC = 1254;
 
 
     private CompassApplication mApplication;
     private CustomGoal mCustomGoal;
-    private CustomContentManagerAdapter mAdapter;
+    private CustomContentAdapter mAdapter;
 
     //Request codes
     private int mGetGoalRequestCode;
@@ -65,14 +72,14 @@ public class CustomContentManagerActivity
 
         String goalTitle = getIntent().getStringExtra(CUSTOM_GOAL_TITLE_KEY);
         if (goalTitle != null){
-            mAdapter = new CustomContentManagerAdapter(this, goalTitle, this);
+            mAdapter = new CustomContentAdapter(this, goalTitle, this);
             setAdapter(mAdapter);
         }
         else{
             mCustomGoal = getIntent().getParcelableExtra(CUSTOM_GOAL_KEY);
             if (mCustomGoal != null){
                 fetchActions(mCustomGoal);
-                mAdapter = new CustomContentManagerAdapter(this, mCustomGoal, this);
+                mAdapter = new CustomContentAdapter(this, mCustomGoal, this);
                 setAdapter(mAdapter);
             }
             else{
@@ -103,7 +110,23 @@ public class CustomContentManagerActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-        return true;
+        if (mCustomGoal != null){
+            getMenuInflater().inflate(R.menu.menu_custom_content, menu);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected boolean menuItemSelected(MenuItem item){
+        if (item.getItemId() == R.id.custom_goal_remove){
+            HttpRequest.delete(null, API.getDeleteGoalUrl(mCustomGoal));
+            Intent result = new Intent().putExtra(REMOVED_GOAL_KEY, mCustomGoal);
+            setResult(GOAL_REMOVED_RC, result);
+            finish();
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -155,6 +178,7 @@ public class CustomContentManagerActivity
                 mApplication.addGoal(mCustomGoal);
                 mCustomGoal.init();
             }
+            invalidateOptionsMenu();
         }
         else if (result instanceof ParserModels.CustomActionResultSet){
             Collections.sort(((ParserModels.CustomActionResultSet)result).results);
@@ -170,7 +194,7 @@ public class CustomContentManagerActivity
         if (result instanceof CustomGoal){
             if (mAdapter == null){
                 fetchActions(mCustomGoal);
-                mAdapter = new CustomContentManagerAdapter(this, mCustomGoal, this);
+                mAdapter = new CustomContentAdapter(this, mCustomGoal, this);
                 setAdapter(mAdapter);
             }
             else{
@@ -204,13 +228,6 @@ public class CustomContentManagerActivity
         mApplication.updateGoal(customGoal);
         HttpRequest.put(null, API.getPutCustomGoalUrl(customGoal),
                 API.getPostPutCustomGoalBody(customGoal));
-    }
-
-    public void onDeleteGoal(@NonNull CustomGoal customGoal){
-        mApplication.removeGoal(customGoal);
-        HttpRequest.delete(null, API.getDeleteGoalUrl(customGoal));
-        setResult(RESULT_OK);
-        finish();
     }
 
     @Override

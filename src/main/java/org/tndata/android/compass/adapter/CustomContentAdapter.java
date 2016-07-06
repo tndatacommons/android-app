@@ -34,7 +34,7 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class CustomContentManagerAdapter extends MaterialAdapter{
+public class CustomContentAdapter extends MaterialAdapter{
     private static final String TAG = "CustomActionAdapter";
 
 
@@ -54,8 +54,8 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
      * @param customGoal the custom goal to be managed or {@code null} if this is a new goal
      * @param listener a listener.
      */
-    public CustomContentManagerAdapter(@NonNull Context context, @Nullable CustomGoal customGoal,
-                                       @NonNull CustomContentManagerListener listener){
+    public CustomContentAdapter(@NonNull Context context, @Nullable CustomGoal customGoal,
+                                @NonNull CustomContentManagerListener listener){
 
         super(context, ContentType.LIST, customGoal != null);
 
@@ -72,8 +72,8 @@ public class CustomContentManagerAdapter extends MaterialAdapter{
      * @param title the title of the input in search when the user fired the manager.
      * @param listener a listener.
      */
-    public CustomContentManagerAdapter(@NonNull Context context, @NonNull String title,
-                                       @NonNull CustomContentManagerListener listener){
+    public CustomContentAdapter(@NonNull Context context, @NonNull String title,
+                                @NonNull CustomContentManagerListener listener){
 
         super(context, ContentType.LIST, false);
 
