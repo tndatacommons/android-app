@@ -194,11 +194,12 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".activity.BadgeActivity"
+            android:name=".activity.AwardsActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".activity.AwardsActivity"
+            android:name=".activity.BadgeActivity"
+            android:theme="@style/BadgeTheme"
             android:screenOrientation="portrait" />
 
 

@@ -305,6 +305,10 @@
     <string name="reward_quote_header">A thought for the day</string>
 
     <!-- Awards / Badges -->
+    <string name="awards_default_text">Keep using Compass to unlock badges!</string>
     <string name="badge_image_cd">The badge\'s image asset</string>
+    <string name="badge_header">You\'ve earned the\n%1$s badge!</string>
+    <string name="badge_footer">Go check out all the badges you\'ve earned.</string>
+    <string name="badge_share">I\'ve earned the %1$s badge on Compass!</string>
 
 </resources>

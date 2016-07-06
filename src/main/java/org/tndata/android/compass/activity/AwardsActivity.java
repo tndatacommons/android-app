@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -42,9 +43,16 @@ public class AwardsActivity
     private static final String TAG = "AwardsActivity";
 
     private AwardsAdapter mAdapter;
+    private TextView mDefaultTextView;
 
     private int mGetBadgesUrl;
 
+    private void hideDefaultText() {
+        // If we have any awards, hide the default text view.
+        if(mAdapter.getItemCount() > 0 && mDefaultTextView != null) {
+            mDefaultTextView.setVisibility(View.GONE);
+        }
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState){
@@ -52,6 +60,7 @@ public class AwardsActivity
         setContentView(R.layout.activity_awards);
 
         View header = findViewById(R.id.awards_illustration); assert header != null;
+        mDefaultTextView = (TextView) findViewById(R.id.awards_default_text);
 
         mAdapter = new AwardsAdapter(this, this);
 
@@ -93,11 +102,13 @@ public class AwardsActivity
         if (result instanceof ParserModels.AwardsResultSet){
             mAdapter.notifyDataSetChanged();
         }
+        hideDefaultText();
     }
 
     @Override
     public void onBadgeSelected(Badge badge){
-        startActivity(new Intent().putExtra(BadgeActivity.BADGE_KEY, badge));
+        startActivity(new Intent(this, BadgeActivity.class)
+                .putExtra(BadgeActivity.BADGE_KEY, badge));
     }
 
 
