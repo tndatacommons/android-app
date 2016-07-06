@@ -325,6 +325,12 @@ public class MainFeedAdapter
      * GOAL RELATED METHODS *
      *----------------------*/
 
+    public void notifyGoalRemoved(int position){
+        if (mMyGoalsHolder != null){
+            mMyGoalsHolder.notifyGoalRemoved(position);
+        }
+    }
+
     /**
      * Shows the suggestion card popup menu.
      *

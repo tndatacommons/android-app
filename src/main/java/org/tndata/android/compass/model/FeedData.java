@@ -296,15 +296,17 @@ public class FeedData{
      * Removes a goal from the data set.
      *
      * @param goal the goal to be removed.
+     * @return the index of the goal in the backing list prior to removal, -1 if not found.
      */
-    public void removeGoal(Goal goal){
+    public int removeGoal(Goal goal){
         for (int i = 0; i < mDisplayedGoals.size(); i++){
             if (mDisplayedGoals.get(i).equals(goal)){
                 Log.d(TAG, "Removing goal: " + goal);
                 mDisplayedGoals.remove(i);
-                break;
+                return i;
             }
         }
+        return -1;
     }
 
     /**

@@ -353,8 +353,8 @@ public class ActionActivity
         }
         else{
             long customGoalId = ((CustomAction)mAction).getCustomGoalId();
-            startActivity(new Intent(this, CustomContentManagerActivity.class)
-                    .putExtra(CustomContentManagerActivity.CUSTOM_GOAL_ID_KEY, customGoalId));
+            startActivity(new Intent(this, CustomContentActivity.class)
+                    .putExtra(CustomContentActivity.CUSTOM_GOAL_ID_KEY, customGoalId));
         }
     }
 

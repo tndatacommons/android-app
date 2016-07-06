@@ -7,7 +7,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -44,7 +43,12 @@ public class ReviewActionsActivity
     public static final String USER_GOAL_KEY = "org.tndata.compass.ReviewActions.Goal";
     public static final String USER_ACTION_KEY = "org.tndata.compass.ReviewActions.Action";
 
+    //Request codes
     public static final int ACTION_ACTIVITY_RC = 4562;
+
+    //Result codes and keys
+    public static final int GOAL_REMOVED_RC = 9652;
+    public static final String REMOVED_GOAL_KEY = "org.tndata.compass.ReviewActions.RemovedGoal";
 
 
     private CompassApplication mApplication;
@@ -57,7 +61,6 @@ public class ReviewActionsActivity
     //Network request codes and urls
     private int mGetUserCategoryRC;
     private int mGetActionsRC;
-    private int mDeleteGoalRC;
     private String mGetActionsNextUrl;
 
 
@@ -191,10 +194,6 @@ public class ReviewActionsActivity
         else if (requestCode == mGetActionsRC){
             Parser.parse(result, ParserModels.UserActionResultSet.class, this);
         }
-        else if (requestCode == mDeleteGoalRC){
-            Toast.makeText(this, R.string.goal_removed_toast, Toast.LENGTH_SHORT).show();
-            finish();
-        }
     }
 
     @Override
@@ -226,23 +225,23 @@ public class ReviewActionsActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-        if (mUserGoal == null){
-            return false;
+        if (mUserGoal != null){
+            getMenuInflater().inflate(R.menu.menu_goal_remove, menu);
+            return true;
         }
-        getMenuInflater().inflate(R.menu.menu_goal_remove, menu);
-        return true;
+        return false;
     }
 
     @Override
     public boolean menuItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.review_actions_remove_goal:
-                String url = API.getDeleteGoalUrl(mUserGoal);
-                mDeleteGoalRC = HttpRequest.delete(this, url);
-                break;
-            default:
-                return false;
+                HttpRequest.delete(null, API.getDeleteGoalUrl(mUserGoal));
+                Intent result = new Intent().putExtra(REMOVED_GOAL_KEY, mUserGoal);
+                setResult(GOAL_REMOVED_RC, result);
+                finish();
+                return true;
         }
-        return true;
+        return false;
     }
 }

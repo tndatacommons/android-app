@@ -204,9 +204,10 @@ public class CompassApplication extends Application{
      * Removes a goal from the global FeedData bundle.
      *
      * @param goal the goal to be removed.
+     * @return the index of the goal in the backing list prior to removal, -1 if not found.
      */
-    public void removeGoal(Goal goal){
-        mFeedData.removeGoal(goal);
+    public int removeGoal(Goal goal){
+        return mFeedData.removeGoal(goal);
     }
 
     /**
