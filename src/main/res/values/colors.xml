@@ -49,7 +49,7 @@
     <color name="accent_login">#FFFFFF</color>
     <color name="badge_primary">#B0BEC5</color>
     <color name="badge_primary_dark">#78909C</color>
-    <color name="badge_gold">#F2F5A9</color>
+    <color name="badge_gold">#FFFFFF</color>
 
     <!-- Text -->
     <color name="text_primary">#DE000000</color>
