@@ -243,9 +243,10 @@ public class CustomContentActivity
                 API.getPostPutCustomActionBody(customAction, customAction.getGoal()));
     }
 
+    @Override
     public void onRemoveAction(@NonNull CustomAction customAction){
         mApplication.removeAction(customAction);
-        HttpRequest.delete(this, API.getDeleteActionUrl(customAction));
+        HttpRequest.delete(null, API.getDeleteActionUrl(customAction));
     }
 
     @Override
