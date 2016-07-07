@@ -1,15 +1,15 @@
 package org.tndata.android.compass.activity;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.SourcesAdapter;
+import org.tndata.android.compass.databinding.ActivitySourcesBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +25,12 @@ public class SourcesActivity extends AppCompatActivity implements SourcesAdapter
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sources);
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.sources_tool_bar);
-        toolbar.setTitle("Sources");
-        setSupportActionBar(toolbar);
+        ActivitySourcesBinding binding;
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_sources);
+
+        binding.sourcesToolBar.toolbar.setTitle("Sources");
+        setSupportActionBar(binding.sourcesToolBar.toolbar);
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -46,10 +47,8 @@ public class SourcesActivity extends AppCompatActivity implements SourcesAdapter
         sources.add(new Source("HTTP-Requests", "https://github.com/Sandwatch/HTTP-Requests"));
         sources.add(new Source("FloatingActionButton", "https://github.com/Clans/FloatingActionButton"));
 
-
-        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.sources_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        recyclerView.setAdapter(new SourcesAdapter(this, sources, this));
+        binding.sourcesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        binding.sourcesRecyclerView.setAdapter(new SourcesAdapter(this, sources, this));
     }
 
     @Override
