@@ -49,7 +49,8 @@ public class AwardsActivity
 
     private void hideDefaultText() {
         // If we have any awards, hide the default text view.
-        if(mAdapter.getItemCount() > 0 && mDefaultTextView != null) {
+        // NOTE: getItemCount() returns number of badges + 1, so we need to ensure it's value > 1
+        if(mAdapter.getItemCount() > 1 && mDefaultTextView != null) {
             mDefaultTextView.setVisibility(View.GONE);
         }
     }
