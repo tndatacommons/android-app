@@ -1,6 +1,8 @@
 package org.tndata.android.compass.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -443,7 +445,8 @@ public class CustomContentAdapter extends MaterialAdapter{
             implements
                     TextWatcher,
                     TextView.OnEditorActionListener,
-                    View.OnClickListener{
+                    View.OnClickListener,
+                    DialogInterface.OnClickListener{
 
         private CustomAction mCustomAction;
 
@@ -539,29 +542,11 @@ public class CustomContentAdapter extends MaterialAdapter{
 
                 //When the user enters edition mode
                 case R.id.custom_action_edit:
-                    Log.d(TAG, "Editing the title of " + mCustomAction);
-                    //Set the title click listener to null to avoid going into the trigger editor
-                    mTitle.setOnClickListener(null);
-                    //Background and focus
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-                        mTitle.setBackground(mTitleDefaultBackground);
-                    }
-                    else{
-                        mTitle.setBackgroundDrawable(mTitleDefaultBackground);
-                    }
-                    mTitle.setFocusable(true);
-                    mTitle.setFocusableInTouchMode(true);
-                    mTitle.requestFocus();
-                    //Put the cursor at the end and open the keyboard
-                    mTitle.setSelection(mTitle.getText().length());
-                    InputMethodManager imm = (InputMethodManager)getContext()
-                            .getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-
-                    //Switch the edit button for the save button
-                    mEditTrigger.setVisibility(View.GONE);
-                    mEditAction.setVisibility(View.GONE);
-                    mSaveAction.setVisibility(View.VISIBLE);
+                    AlertDialog dialog = new AlertDialog.Builder(getContext())
+                            .setTitle(R.string.custom_action_edit_dialog_title)
+                            .setItems(R.array.custom_action_edit_dialog_options, this)
+                            .create();
+                    dialog.show();
                     break;
 
                 //When the user saves a currently existing goal (only from edition)
@@ -592,6 +577,42 @@ public class CustomContentAdapter extends MaterialAdapter{
                         mSaveAction.setVisibility(View.GONE);
                     }
                     break;
+            }
+        }
+
+        @Override //for the edition dialog
+        public void onClick(DialogInterface dialog, int which){
+            //Edit the title
+            if (which == 0){
+                Log.d(TAG, "Editing the title of " + mCustomAction);
+                //Set the title click listener to null to avoid going into the trigger editor
+                mTitle.setOnClickListener(null);
+                //Background and focus
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+                    mTitle.setBackground(mTitleDefaultBackground);
+                }
+                else{
+                    mTitle.setBackgroundDrawable(mTitleDefaultBackground);
+                }
+                mTitle.setFocusable(true);
+                mTitle.setFocusableInTouchMode(true);
+                mTitle.requestFocus();
+                //Put the cursor at the end and open the keyboard
+                mTitle.setSelection(mTitle.getText().length());
+                InputMethodManager imm = (InputMethodManager)getContext()
+                        .getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+
+                //Switch the edit button for the save button
+                mEditTrigger.setVisibility(View.GONE);
+                mEditAction.setVisibility(View.GONE);
+                mSaveAction.setVisibility(View.VISIBLE);
+            }
+            //Remove the action
+            else if (which == 1){
+                mListener.onRemoveAction(mCustomAction);
+                mCustomActions.remove(getAdapterPosition());
+                mActionListHolder.mAdapter.notifyItemRemoved(getAdapterPosition());
             }
         }
     }
@@ -631,6 +652,13 @@ public class CustomContentAdapter extends MaterialAdapter{
          * @param customAction the custom action to be saved.
          */
         void onSaveAction(@NonNull CustomAction customAction);
+
+        /**
+         * Called when the user chooses to remove an action.
+         *
+         * @param customAction the action to be removed.
+         */
+        void onRemoveAction(@NonNull CustomAction customAction);
 
         /**
          * Called when the user taps the edi trigger button.

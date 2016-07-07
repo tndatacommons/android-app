@@ -107,7 +107,12 @@
     <string name="custom_action_list_sub_header">I will&#8230;</string>
     <string name="custom_action_list_create">Create</string>
     <string name="custom_action_trigger_cd">Enter trigger edition mode</string>
-    <string name="custom_action_edit_cd">Enter action edition mode</string>
+    <string name="custom_action_edit_cd">Open the edition dialog</string>
+    <string name="custom_action_edit_dialog_title">Select an option</string>
+    <string-array name="custom_action_edit_dialog_options">
+        <item>Change the title</item>
+        <item>Remove action</item>
+    </string-array>
     <string name="custom_action_save_cd">Save the title of an action in edition mode</string>
 
     <!-- SettingsActivity -->
