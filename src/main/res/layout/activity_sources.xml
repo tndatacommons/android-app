@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-    <include
-        android:id="@+id/sources_tool_bar"
-        layout="@layout/tool_bar" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/sources_recycler_view"
+<layout>
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" >
 
-</LinearLayout>
+        <include
+            android:id="@+id/sources_tool_bar"
+            layout="@layout/tool_bar" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/sources_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+</layout>
