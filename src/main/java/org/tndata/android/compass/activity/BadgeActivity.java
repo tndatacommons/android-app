@@ -1,6 +1,8 @@
 package org.tndata.android.compass.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -36,6 +38,7 @@ public class BadgeActivity
     private Badge mBadge;
 
     private View mImageFrame;
+    private View mImageWrapper;
     private ImageView mImage;
 
 
@@ -47,6 +50,7 @@ public class BadgeActivity
         mBadge = getIntent().getParcelableExtra(BADGE_KEY);
 
         mImageFrame = findViewById(R.id.badge_image_frame);
+        mImageWrapper = findViewById(R.id.badge_image_wrapper);
         mImage = (ImageView)findViewById(R.id.badge_image);
         TextView name = (TextView)findViewById(R.id.badge_name);
         TextView description = (TextView)findViewById(R.id.badge_description);
@@ -81,11 +85,22 @@ public class BadgeActivity
     public void onImageLoadSuccess(){
         Log.i(TAG, "Image loaded");
 
-        int width = mImageFrame.getWidth();
-        int height = mImageFrame.getHeight();
+        // We need the bitmap images size here, because the view will be
+        // 0x0 until after the animation.
+        Bitmap imageBitmap = ((BitmapDrawable)mImage.getDrawable()).getBitmap();
+        int width = imageBitmap.getWidth();
+        int height = imageBitmap.getHeight();
+        Log.d(TAG, "Image size: (" + width + ", " + height + ")");
+
+        mImageWrapper.setAlpha(0f);
+        mImageWrapper.setVisibility(View.VISIBLE);
+        mImageWrapper.animate()
+                .alpha(1f)
+                .setDuration(2000)
+                .setListener(null);
 
         Animation scale = new ScaleAnimation(0, 1 ,0, 1, width/2, height/2);
-        scale.setDuration(400);
+        scale.setDuration(1000);
         mImage.startAnimation(scale);
     }
 

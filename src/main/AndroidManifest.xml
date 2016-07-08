@@ -199,8 +199,8 @@
 
         <activity
             android:name=".activity.BadgeActivity"
-            android:theme="@style/BadgeTheme"
             android:screenOrientation="portrait" />
+        <!--android:theme="@style/BadgeTheme"-->
 
 
         <!-- Broadcast receivers -->
