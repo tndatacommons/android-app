@@ -9,18 +9,13 @@
     android:layout_marginRight="12dp"
     card_view:cardCornerRadius="@dimen/card_view_corner_radius" >
 
+    <!-- TODO: Bar Charts for each day, for the past 7 days -->
+
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="12dp" >
-
-        <ImageView
-            android:id="@+id/card_feedback_icon"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
-            android:layout_gravity="center_vertical"
-            android:scaleType="fitCenter" />
 
         <LinearLayout
             android:orientation="vertical"
@@ -31,20 +26,33 @@
             android:layout_marginStart="8dp" >
 
             <TextView
-                android:id="@+id/card_feedback_title"
+                android:id="@+id/card_streaks_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/dark_text_color"
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/card_feedback_subtitle"
+                android:id="@+id/card_streaks_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="italic"
                 android:textSize="16sp" />
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp" >
+
+            <TextView
+                android:id="@+id/card_streaks_days"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
         </LinearLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>

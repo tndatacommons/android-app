@@ -1,7 +1,6 @@
 package org.tndata.android.compass.adapter.feed;
 
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
@@ -19,9 +18,9 @@ import java.util.List;
 class StreaksHolder extends MainFeedAdapter.ViewHolder implements View.OnClickListener{
     private List<FeedData.Streak> mStreaks;
 
-    private ImageView mIcon;
     private TextView mTitle;
     private TextView mSubtitle;
+    private TextView days;
 
 
     /**
@@ -34,9 +33,9 @@ class StreaksHolder extends MainFeedAdapter.ViewHolder implements View.OnClickLi
         super(adapter, rootView);
 
         // TODO: revise layout file, and bind card's components here
-        mIcon = (ImageView)rootView.findViewById(R.id.card_feedback_icon);
-        mTitle = (TextView)rootView.findViewById(R.id.card_feedback_title);
-        mSubtitle = (TextView)rootView.findViewById(R.id.card_feedback_subtitle);
+        mTitle = (TextView)rootView.findViewById(R.id.card_streaks_title);
+        mSubtitle = (TextView)rootView.findViewById(R.id.card_streaks_subtitle);
+        days = (TextView)rootView.findViewById(R.id.card_streaks_days);
 
         rootView.setOnClickListener(this);
     }
@@ -53,6 +52,12 @@ class StreaksHolder extends MainFeedAdapter.ViewHolder implements View.OnClickLi
 //        mIcon.setImageResource(feedback.getFeedbackIcon());
         mTitle.setText("Wooooo Streaks");
         mSubtitle.setText("oh yeah, man!");
+
+        String dayContent = "";
+        for(int i = 0; i < mStreaks.size(); i++) {
+            dayContent += mStreaks.get(i).getDayAbbrev() + "-" + mStreaks.get(i).getCount() + " ";
+        }
+        days.setText(dayContent);
     }
 
     @Override
