@@ -179,6 +179,9 @@ final class CardTypes{
         if (hasFeedback()){
             return getFeedbackPosition()+1;
         }
+        if (hasStreaks()){
+            return getStreaksPosition()+1;
+        }
         if (hasSuggestion()){
             return getSuggestionPosition()+1;
         }
@@ -274,6 +277,9 @@ final class CardTypes{
         }
         if (hasFeedback()){
             return getFeedbackPosition()+1;
+        }
+        if (hasStreaks()){
+            return getStreaksPosition()+1;
         }
         if (hasSuggestion()){
             return getSuggestionPosition()+1;
