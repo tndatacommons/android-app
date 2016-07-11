@@ -91,7 +91,7 @@ final class CardTypes{
         if (hasSuggestion()){
             return getSuggestionPosition()+1;
         }
-        return getUpNextPosition()+1;
+        return getStreaksPosition()+1;
     }
 
     /**
@@ -102,6 +102,34 @@ final class CardTypes{
      */
     static boolean isFeedback(int position){
         return hasFeedback() && getFeedbackPosition() == position;
+    }
+
+    /**
+     * Gets the position of the streaks card.
+     *
+     * @return the position of the streaks card.
+     */
+    static int getStreaksPosition(){
+        return getUpNextPosition()+1;
+    }
+
+    /**
+     * Tells whether the feed should display a streaks card.
+     *
+     * @return true if there is a streaks card, false otherwise.
+     */
+    static boolean hasStreaks(){
+        return sFeedData.hasStreaks();
+    }
+
+    /**
+     * Tells whether a position is that of the streaks card.
+     *
+     * @param position the position to be checked.
+     * @return true if it is the position of the streaks, false otherwise.
+     */
+    static boolean isStreaks(int position){
+        return hasStreaks() && getStreaksPosition() == position;
     }
 
     /**
@@ -119,7 +147,7 @@ final class CardTypes{
      * @return the position of the suggestion in the feed.
      */
     static int getSuggestionPosition(){
-        return getUpNextPosition()+1;
+        return getStreaksPosition()+1;
     }
 
     /**

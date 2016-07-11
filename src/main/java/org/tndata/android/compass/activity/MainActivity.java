@@ -44,6 +44,8 @@ import org.tndata.android.compass.util.FeedDataLoader;
 import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.ParallaxEffect;
 
+import java.util.List;
+
 import es.sandwatch.httprequests.HttpRequest;
 
 
@@ -470,6 +472,13 @@ public class MainActivity
         }
         else if (feedback.hasCustomGoal()){
             //
+        }
+    }
+
+    @Override
+    public void onStreaksSelected(List<FeedData.Streak> streaks){
+        if(streaks != null && streaks.size() > 0){
+            Toast.makeText(this, R.string.toast_streaks, Toast.LENGTH_SHORT).show();
         }
     }
 
