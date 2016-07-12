@@ -28,7 +28,7 @@ android {
     def STRING = "String"
     def GCM_SENDER_ID_VAR_NAME = "GCM_SENDER_ID"
     def GCM_SENDER_ID = '"' + GcmSenderId + '"' ?: '"Define a GCM sender id"'
-    def VERSION_NAME = "3.3.1"
+    def VERSION_NAME = "3.4.0"
 
     buildTypes {
         debug {
