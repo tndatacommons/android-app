@@ -12,47 +12,47 @@
     <!-- TODO: Bar Charts for each day, for the past 7 days -->
 
     <LinearLayout
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="12dp" >
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal|bottom"
+        android:measureWithLargestChild="true">
 
-        <LinearLayout
-            android:orientation="vertical"
+        <org.tndata.android.compass.ui.StreakView
+            android:id="@+id/streak_day0"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="5dp"
-            android:layout_marginStart="8dp" >
-
-            <TextView
-                android:id="@+id/card_streaks_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/dark_text_color"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/card_streaks_subtitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="italic"
-                android:textSize="16sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp" >
-
-            <TextView
-                android:id="@+id/card_streaks_days"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
-        </LinearLayout>
+            android:layout_height="wrap_content">
+        </org.tndata.android.compass.ui.StreakView>
+        <org.tndata.android.compass.ui.StreakView
+            android:id="@+id/streak_day1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </org.tndata.android.compass.ui.StreakView>
+        <org.tndata.android.compass.ui.StreakView
+            android:id="@+id/streak_day2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </org.tndata.android.compass.ui.StreakView>
+        <org.tndata.android.compass.ui.StreakView
+            android:id="@+id/streak_day3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </org.tndata.android.compass.ui.StreakView>
+        <org.tndata.android.compass.ui.StreakView
+            android:id="@+id/streak_day4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </org.tndata.android.compass.ui.StreakView>
+        <org.tndata.android.compass.ui.StreakView
+            android:id="@+id/streak_day5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </org.tndata.android.compass.ui.StreakView>
+        <org.tndata.android.compass.ui.StreakView
+            android:id="@+id/streak_day6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </org.tndata.android.compass.ui.StreakView>
     </LinearLayout>
 </android.support.v7.widget.CardView>

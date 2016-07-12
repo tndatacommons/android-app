@@ -1,10 +1,10 @@
 package org.tndata.android.compass.adapter.feed;
 
 import android.view.View;
-import android.widget.TextView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.FeedData;
+import org.tndata.android.compass.ui.StreakView;
 
 import java.util.List;
 
@@ -18,9 +18,14 @@ import java.util.List;
 class StreaksHolder extends MainFeedAdapter.ViewHolder implements View.OnClickListener{
     private List<FeedData.Streak> mStreaks;
 
-    private TextView mTitle;
-    private TextView mSubtitle;
-    private TextView days;
+    // TODO: just hard-coding 7 of these for now.
+    private StreakView day0;
+    private StreakView day1;
+    private StreakView day2;
+    private StreakView day3;
+    private StreakView day4;
+    private StreakView day5;
+    private StreakView day6;
 
 
     /**
@@ -31,12 +36,13 @@ class StreaksHolder extends MainFeedAdapter.ViewHolder implements View.OnClickLi
      */
     StreaksHolder(MainFeedAdapter adapter, View rootView){
         super(adapter, rootView);
-
-        // TODO: revise layout file, and bind card's components here
-        mTitle = (TextView)rootView.findViewById(R.id.card_streaks_title);
-        mSubtitle = (TextView)rootView.findViewById(R.id.card_streaks_subtitle);
-        days = (TextView)rootView.findViewById(R.id.card_streaks_days);
-
+        day0 = (StreakView) rootView.findViewById(R.id.streak_day0);
+        day1 = (StreakView) rootView.findViewById(R.id.streak_day1);
+        day2 = (StreakView) rootView.findViewById(R.id.streak_day2);
+        day3 = (StreakView) rootView.findViewById(R.id.streak_day3);
+        day4 = (StreakView) rootView.findViewById(R.id.streak_day4);
+        day5 = (StreakView) rootView.findViewById(R.id.streak_day5);
+        day6 = (StreakView) rootView.findViewById(R.id.streak_day6);
         rootView.setOnClickListener(this);
     }
 
@@ -47,17 +53,15 @@ class StreaksHolder extends MainFeedAdapter.ViewHolder implements View.OnClickLi
      */
     void bind(List<FeedData.Streak> streaks){
         mStreaks = streaks;
-
-        // TODO: Set the layout's values from data in streaks
-//        mIcon.setImageResource(feedback.getFeedbackIcon());
-        mTitle.setText("Wooooo Streaks");
-        mSubtitle.setText("oh yeah, man!");
-
-        String dayContent = "";
-        for(int i = 0; i < mStreaks.size(); i++) {
-            dayContent += mStreaks.get(i).getDayAbbrev() + "-" + mStreaks.get(i).getCount() + " ";
+        if(streaks.size() == 7) {
+            day0.setStreak(streaks.get(0));
+            day1.setStreak(streaks.get(1));
+            day2.setStreak(streaks.get(2));
+            day3.setStreak(streaks.get(3));
+            day4.setStreak(streaks.get(4));
+            day5.setStreak(streaks.get(5));
+            day6.setStreak(streaks.get(6));
         }
-        days.setText(dayContent);
     }
 
     @Override
