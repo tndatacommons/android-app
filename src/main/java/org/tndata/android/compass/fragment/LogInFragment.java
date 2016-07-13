@@ -4,12 +4,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.databinding.FragmentLoginBinding;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 
+import android.databinding.DataBindingUtil;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -19,10 +22,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import java.util.List;
 
@@ -48,12 +47,8 @@ public class LogInFragment
     //Listener interface.
     private LogInFragmentCallback mCallback;
 
-    //UI components
-    private EditText mEmail;
-    private EditText mPassword;
-    private TextView mError;
-    private ProgressBar mProgress;
-    private Button mLogIn;
+    //Binding
+    private FragmentLoginBinding mBinding;
 
     //Attributes
     private String mErrorString = "";
@@ -92,17 +87,13 @@ public class LogInFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false);
+        return mBinding.getRoot();
+    }
 
-        mEmail = (EditText)rootView.findViewById(R.id.login_email);
-        mPassword = (EditText)rootView.findViewById(R.id.login_password);
-        mError = (TextView)rootView.findViewById(R.id.login_error);
-        mProgress = (ProgressBar)rootView.findViewById(R.id.login_progress);
-        mLogIn = (Button)rootView.findViewById(R.id.login_button);
-
-        mLogIn.setOnClickListener(this);
-
-        return rootView;
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState){
+        mBinding.loginButton.setOnClickListener(this);
     }
 
     @Override
@@ -117,8 +108,8 @@ public class LogInFragment
      * Checks the fields and starts the log in process if everything checks.
      */
     private void doLogin(){
-        String email = mEmail.getText().toString().trim();
-        String password = mPassword.getText().toString().trim();
+        String email = mBinding.loginEmail.getText().toString().trim();
+        String password = mBinding.loginPassword.getText().toString().trim();
         if (isValidEmail(email) && isValidPassword(password)){
             setFormEnabled(false);
 
@@ -165,17 +156,17 @@ public class LogInFragment
      * @param enabled true if the form should be enabled, false otherwise.
      */
     private void setFormEnabled(boolean enabled){
-        mEmail.setEnabled(enabled);
-        mPassword.setEnabled(enabled);
-        mLogIn.setEnabled(enabled);
+        mBinding.loginEmail.setEnabled(enabled);
+        mBinding.loginPassword.setEnabled(enabled);
+        mBinding.loginButton.setEnabled(enabled);
         if (enabled){
-            mProgress.setVisibility(View.GONE);
-            mError.setVisibility(View.VISIBLE);
-            mError.setText(mErrorString);
+            mBinding.loginProgress.setVisibility(View.GONE);
+            mBinding.loginError.setVisibility(View.VISIBLE);
+            mBinding.loginError.setText(mErrorString);
         }
         else{
-            mProgress.setVisibility(View.VISIBLE);
-            mError.setVisibility(View.INVISIBLE);
+            mBinding.loginProgress.setVisibility(View.VISIBLE);
+            mBinding.loginError.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -212,7 +203,7 @@ public class LogInFragment
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
         if (result instanceof User){
             User user = (User)result;
-            user.setPassword(mPassword.getText().toString().trim());
+            user.setPassword(mBinding.loginPassword.getText().toString().trim());
             mApplication.setUser(user);
         }
         else if (result instanceof ParserModels.CategoryContentResultSet){

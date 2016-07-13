@@ -1,24 +1,19 @@
 package org.tndata.android.compass.activity;
 
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewSwitcher;
 
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.databinding.ActivityPackageEnrollmentBinding;
 import org.tndata.android.compass.model.TDCPackage;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.NotificationUtil;
 
 import es.sandwatch.httprequests.HttpRequest;
@@ -42,18 +37,9 @@ public class PackageEnrollmentActivity
     //Keys
     public static final String PACKAGE_ID_KEY = "org.tndata.compass.PackageId";
 
+    //Data and binding
     private TDCPackage mPackage;
-
-    //UI components
-    private ProgressBar mProgressBar;
-    private ScrollView mContent;
-    private TextView mTitle;
-    private ViewSwitcher mAcceptSwitcher;
-    private TextView mDescription;
-    private TextView mConsentSummaryHeader;
-    private TextView mConsentSummary;
-    private TextView mConsentHeader;
-    private TextView mConsent;
+    private ActivityPackageEnrollmentBinding mBinding;
 
     //Request codes
     private int mGetPackageRequestCode;
@@ -63,28 +49,19 @@ public class PackageEnrollmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_package_enrollment);
+        //setContentView(R.layout.activity_package_enrollment);
 
-        //Get and set the toolbar
-        Toolbar toolbar = (Toolbar)findViewById(R.id.package_toolbar);
-        setSupportActionBar(toolbar);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_package_enrollment);
 
-        //Retrieve the UI components and set the button's listener
-        mProgressBar = (ProgressBar)findViewById(R.id.package_progress);
-        mContent = (ScrollView)findViewById(R.id.package_content);
-        mTitle = (TextView)findViewById(R.id.package_title);
-        mAcceptSwitcher = (ViewSwitcher)findViewById(R.id.package_accept_switcher);
-        mDescription = (TextView)findViewById(R.id.package_description);
-        mConsentSummaryHeader = (TextView)findViewById(R.id.package_consent_summary_header);
-        mConsentSummary = (TextView)findViewById(R.id.package_consent_summary);
-        mConsentHeader = (TextView)findViewById(R.id.package_consent_header);
-        mConsent = (TextView)findViewById(R.id.package_consent);
-        findViewById(R.id.package_accept).setOnClickListener(this);
-        findViewById(R.id.package_decline).setOnClickListener(this);
+        //Toolbar
+        setSupportActionBar(mBinding.packageToolbar);
+
+        //Listeners
+        mBinding.packageAccept.setOnClickListener(this);
+        mBinding.packageDecline.setOnClickListener(this);
 
         //This setting cannot be set from XML
-        TextView explanation = (TextView)findViewById(R.id.package_accept_explanation);
-        explanation.setMovementMethod(LinkMovementMethod.getInstance());
+        mBinding.packageAcceptExplanation.setMovementMethod(LinkMovementMethod.getInstance());
 
         //Fetch the package
         int packageId = getIntent().getIntExtra(PACKAGE_ID_KEY, -1);
@@ -106,7 +83,7 @@ public class PackageEnrollmentActivity
     @Override
     public void onRequestFailed(int requestCode, HttpRequestError error){
         if (requestCode == mGetPackageRequestCode){
-            mProgressBar.setVisibility(View.GONE);
+            mBinding.packageProgress.setVisibility(View.GONE);
             Toast.makeText(this, R.string.package_load_error, Toast.LENGTH_SHORT).show();
             new Handler().postDelayed(new Runnable(){
                 @Override
@@ -117,7 +94,7 @@ public class PackageEnrollmentActivity
         }
         else if (requestCode == mPutConsentRequestCode){
             //If the acknowledgement failed let the user know
-            mAcceptSwitcher.showPrevious();
+            mBinding.packageAcceptSwitcher.showPrevious();
             Toast.makeText(this, R.string.package_consent_error, Toast.LENGTH_SHORT).show();
         }
     }
@@ -132,45 +109,12 @@ public class PackageEnrollmentActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         populateUI(mPackage);
-        mProgressBar.setVisibility(View.GONE);
+        mBinding.packageProgress.setVisibility(View.GONE);
     }
 
     private void populateUI(TDCPackage myPackage){
-        mContent.setVisibility(View.VISIBLE);
-        CompassTagHandler tagHandler = new CompassTagHandler(this);
-        mTitle.setText(myPackage.getTitle());
-
-        //Package description
-        if (myPackage.getHtmlDescription().isEmpty()){
-            mDescription.setText(myPackage.getDescription());
-        }
-        else{
-            mDescription.setText(Html.fromHtml(myPackage.getHtmlDescription(), null, tagHandler));
-        }
-
-        //Consent summary
-        if (!myPackage.getHtmlConsentSummary().isEmpty()){
-            mConsentSummary.setText(Html.fromHtml(myPackage.getHtmlConsentSummary(), null, tagHandler));
-            mConsentSummaryHeader.setVisibility(View.VISIBLE);
-            mConsentSummary.setVisibility(View.VISIBLE);
-        }
-        else{
-            mConsentSummary.setText(myPackage.getConsentSummary());
-            mConsentSummaryHeader.setVisibility(View.VISIBLE);
-            mConsentSummary.setVisibility(View.VISIBLE);
-        }
-
-        //More on the consent
-        if (!myPackage.getHtmlConsent().isEmpty()){
-            mConsent.setText(Html.fromHtml(myPackage.getHtmlConsent(), null, tagHandler));
-            mConsentHeader.setVisibility(View.VISIBLE);
-            mConsent.setVisibility(View.VISIBLE);
-        }
-        else if (!myPackage.getConsent().isEmpty()){
-            mConsent.setText(myPackage.getConsent());
-            mConsentHeader.setVisibility(View.VISIBLE);
-            mConsent.setVisibility(View.VISIBLE);
-        }
+        mBinding.packageContent.setVisibility(View.VISIBLE);
+        mBinding.setTdcPackage(myPackage);
     }
 
     @Override
@@ -178,7 +122,7 @@ public class PackageEnrollmentActivity
         switch (view.getId()){
             case R.id.package_accept:
                 //Show the progress bar and fire up the acknowledgement task
-                mAcceptSwitcher.showNext();
+                mBinding.packageAcceptSwitcher.showNext();
                 mPutConsentRequestCode = HttpRequest.put(this,
                         API.getPutConsentAcknowledgementUrl(mPackage),
                         API.getPutConsentAcknowledgementBody());

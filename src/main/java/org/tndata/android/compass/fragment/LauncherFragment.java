@@ -1,6 +1,7 @@
 package org.tndata.android.compass.fragment;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.support.v4.app.Fragment;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -9,9 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.databinding.FragmentLauncherBinding;
 
 
 /**
@@ -24,46 +25,42 @@ public class LauncherFragment extends Fragment implements OnClickListener{
     //Listener
     private LauncherFragmentListener mListener;
 
-    //UI components
-    private View mSplash;
-    private View mMenu;
+    //Binding
+    private FragmentLauncherBinding mBinding;
 
     //Flags
-    private boolean mAreViewsLoaded;
-    private boolean mShouldShowProgressOnLoad;
+    private boolean mIsLoaded;
+    private boolean mShowProgressOnLoad;
 
 
     /**
      * Constructor.
      */
     public LauncherFragment(){
-        mAreViewsLoaded = false;
-        mShouldShowProgressOnLoad = true;
+        mIsLoaded = false;
+        mShowProgressOnLoad = true;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        return inflater.inflate(R.layout.fragment_launcher, container, false);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_launcher, container, false);
+        return mBinding.getRoot();
     }
 
     @Override
     public void onViewCreated(View root, Bundle savedInstanceState){
-        //Fetch UI components
-        mSplash = root.findViewById(R.id.launcher_splash);
-        mMenu = root.findViewById(R.id.launcher_menu);
-        ProgressBar progressBar = (ProgressBar)root.findViewById(R.id.launcher_progress);
-
         //Set the color of the progress bar to the accent color
         int color = ContextCompat.getColor(getActivity(), R.color.accent);
-        progressBar.getIndeterminateDrawable().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+        mBinding.launcherProgress.getIndeterminateDrawable()
+                .setColorFilter(color, PorterDuff.Mode.MULTIPLY);
 
         //Set listeners
-        root.findViewById(R.id.launcher_sign_up).setOnClickListener(this);
-        root.findViewById(R.id.launcher_login).setOnClickListener(this);
+        mBinding.launcherSignUp.setOnClickListener(this);
+        mBinding.launcherLogin.setOnClickListener(this);
 
         //Update the flags and show progress if necessary
-        mAreViewsLoaded = true;
-        showProgress(mShouldShowProgressOnLoad);
+        mIsLoaded = true;
+        showProgress(mShowProgressOnLoad);
     }
 
     @Override
@@ -85,17 +82,17 @@ public class LauncherFragment extends Fragment implements OnClickListener{
      * @param show true to show the splash screen, false to show the switch.
      */
     public void showProgress(boolean show){
-        if (mAreViewsLoaded){
+        if (mIsLoaded){
             if (show){
-                mSplash.setVisibility(View.VISIBLE);
-                mMenu.setVisibility(View.GONE);
+                mBinding.launcherSplash.setVisibility(View.VISIBLE);
+                mBinding.launcherMenu.setVisibility(View.GONE);
             }
             else{
-                mSplash.setVisibility(View.GONE);
-                mMenu.setVisibility(View.VISIBLE);
+                mBinding.launcherSplash.setVisibility(View.GONE);
+                mBinding.launcherMenu.setVisibility(View.VISIBLE);
             }
         }
-        mShouldShowProgressOnLoad = show;
+        mShowProgressOnLoad = show;
     }
 
     @Override

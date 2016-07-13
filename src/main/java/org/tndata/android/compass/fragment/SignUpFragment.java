@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.databinding.FragmentSignupBinding;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.parser.Parser;
@@ -11,6 +12,7 @@ import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,10 +23,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import java.util.List;
 
@@ -50,15 +48,8 @@ public class SignUpFragment
     //Listener interface
     private SignUpFragmentListener mListener;
 
-    //UI components
-    private EditText mEmail;
-    private EditText mPassword;
-    private EditText mConfirmPassword;
-    private EditText mFirstName;
-    private EditText mLastName;
-    private TextView mError;
-    private ProgressBar mProgress;
-    private Button mSignUp;
+    //Binding
+    private FragmentSignupBinding mBinding;
 
     //Attributes
     private String mErrorString;
@@ -94,26 +85,17 @@ public class SignUpFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        return inflater.inflate(R.layout.fragment_signup, container, false);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_signup, container, false);
+        return mBinding.getRoot();
     }
 
     @Override
     public void onViewCreated(View rootView, Bundle savedInstanceState){
-        //Fetch UI components
-        mEmail = (EditText)rootView.findViewById(R.id.signup_email);
-        mPassword = (EditText)rootView.findViewById(R.id.signup_password);
-        mConfirmPassword = (EditText)rootView.findViewById(R.id.signup_confirm_password);
-        mFirstName = (EditText)rootView.findViewById(R.id.signup_first_name);
-        mLastName = (EditText)rootView.findViewById(R.id.signup_last_name);
-        mError = (TextView)rootView.findViewById(R.id.signup_error);
-        mProgress = (ProgressBar)rootView.findViewById(R.id.signup_progress);
-        mSignUp = (Button)rootView.findViewById(R.id.signup_button);
-
         MovementMethod movementMethod = LinkMovementMethod.getInstance();
-        ((TextView)rootView.findViewById(R.id.signup_terms)).setMovementMethod(movementMethod);
+        mBinding.signupTerms.setMovementMethod(movementMethod);
 
         //Set the listeners
-        mSignUp.setOnClickListener(this);
+        mBinding.signupButton.setOnClickListener(this);
 
         mErrorString = "";
     }
@@ -132,11 +114,11 @@ public class SignUpFragment
      */
     private void doSignUp(){
         //Retrieve the values
-        String emailAddress = mEmail.getText().toString().trim();
-        String password = mPassword.getText().toString().trim();
-        String confirmPassword = mConfirmPassword.getText().toString().trim();
-        String firstName = mFirstName.getText().toString().trim();
-        String lastName = mLastName.getText().toString().trim();
+        String emailAddress = mBinding.signupEmail.getText().toString().trim();
+        String password = mBinding.signupPassword.getText().toString().trim();
+        String confirmPassword = mBinding.signupConfirmPassword.getText().toString().trim();
+        String firstName = mBinding.signupFirstName.getText().toString().trim();
+        String lastName = mBinding.signupLastName.getText().toString().trim();
 
         //If the values check, proceed to signup
         if (checkFields(emailAddress, password, confirmPassword, firstName, lastName)){
@@ -225,20 +207,20 @@ public class SignUpFragment
      * @param enabled true if the form should enable, false if the form should disable.
      */
     private void setFormEnabled(boolean enabled){
-        mEmail.setEnabled(enabled);
-        mPassword.setEnabled(enabled);
-        mConfirmPassword.setEnabled(enabled);
-        mFirstName.setEnabled(enabled);
-        mLastName.setEnabled(enabled);
-        mSignUp.setEnabled(enabled);
+        mBinding.signupEmail.setEnabled(enabled);
+        mBinding.signupPassword.setEnabled(enabled);
+        mBinding.signupConfirmPassword.setEnabled(enabled);
+        mBinding.signupFirstName.setEnabled(enabled);
+        mBinding.signupLastName.setEnabled(enabled);
+        mBinding.signupButton.setEnabled(enabled);
         if (enabled){
-            mError.setText(mErrorString);
-            mError.setVisibility(View.VISIBLE);
-            mProgress.setVisibility(View.GONE);
+            mBinding.signupError.setText(mErrorString);
+            mBinding.signupError.setVisibility(View.VISIBLE);
+            mBinding.signupProgress.setVisibility(View.GONE);
         }
         else{
-            mError.setVisibility(View.INVISIBLE);
-            mProgress.setVisibility(View.VISIBLE);
+            mBinding.signupError.setVisibility(View.INVISIBLE);
+            mBinding.signupProgress.setVisibility(View.VISIBLE);
         }
     }
 
@@ -275,7 +257,7 @@ public class SignUpFragment
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
         if (result instanceof User){
             User user = (User)result;
-            user.setPassword(mPassword.getText().toString().trim());
+            user.setPassword(mBinding.signupPassword.getText().toString().trim());
             mApplication.setUser(user);
         }
         else if (result instanceof ParserModels.CategoryContentResultSet){
