@@ -1,8 +1,12 @@
 package org.tndata.android.compass.model;
 
+import android.content.Context;
 import android.os.Parcel;
+import android.text.Html;
 
 import com.google.gson.annotations.SerializedName;
+
+import org.tndata.android.compass.util.CompassTagHandler;
 
 
 /**
@@ -26,32 +30,53 @@ public class TDCPackage extends TDCBase{
         return TYPE;
     }
 
-    public String getTitle(){
+    public CharSequence getTitle(){
         return mCategory.mTitle;
     }
 
-    public String getDescription(){
-        return mCategory.mDescription;
+    public CharSequence getDescription(Context context){
+        if (mCategory.mHtmlDescription.isEmpty()){
+            return mCategory.mDescription;
+        }
+        else{
+            return Html.fromHtml(mCategory.mHtmlDescription, null, new CompassTagHandler(context));
+        }
     }
 
-    public String getHtmlDescription(){
-        return mCategory.mHtmlDescription;
+    public boolean hasConsentSummary(){
+        return !mCategory.mConsentSummary.isEmpty() || !mCategory.mHtmlConsentSummary.isEmpty();
     }
 
-    public String getConsentSummary(){
-        return mCategory.mConsentSummary;
+    public CharSequence getConsentSummary(Context context){
+        if (!hasConsentSummary()){
+            return "";
+        }
+
+        if (mCategory.mHtmlConsentSummary.isEmpty()){
+            return mCategory.mConsentSummary;
+        }
+        else{
+            CompassTagHandler tagHandler = new CompassTagHandler(context);
+            return Html.fromHtml(mCategory.mHtmlConsentSummary, null, tagHandler);
+        }
     }
 
-    public String getHtmlConsentSummary(){
-        return mCategory.mHtmlConsentSummary;
+    public boolean hasConsent(){
+        return !mCategory.mConsent.isEmpty() || !mCategory.mHtmlConsent.isEmpty();
     }
 
-    public String getConsent(){
-        return mCategory.mConsent;
-    }
+    public CharSequence getConsent(Context context){
+        if (!hasConsent()){
+            return "";
+        }
 
-    public String getHtmlConsent(){
-        return mCategory.mHtmlConsent;
+        if (mCategory.mHtmlConsent.isEmpty()){
+            return mCategory.mConsent;
+        }
+        else{
+            CompassTagHandler tagHandler = new CompassTagHandler(context);
+            return Html.fromHtml(mCategory.mHtmlConsent, null, tagHandler);
+        }
     }
 
     @Override

@@ -16,7 +16,7 @@ public final class GcmMessage implements Parcelable{
     //Message types
     private static final String TYPE_USER_ACTION = "action";
     private static final String TYPE_CUSTOM_ACTION = "customaction";
-    private static final String TYPE_ENROLLMENT = "package enrollment";
+    private static final String TYPE_ENROLLMENT = "packageenrollment";
     private static final String TYPE_CHECK_IN = "checkin";
     private static final String TYPE_AWARD = "award";
 
