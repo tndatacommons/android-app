@@ -1,123 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
+<layout>
     <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" >
+        android:layout_height="match_parent" >
 
-        <!-- I am giving up performance here, but as far as I know there is
-             no other way I can distribute white space that I know of -->
-        <Space
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="1" >
+
+            <!-- I am giving up performance here, but as far as I know there is
+                 no other way I can distribute white space that I know of -->
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/launcher_compass_image_cd"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/compass" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/launcher_compass_logo_cd"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/compass_type" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" >
+
+                <LinearLayout
+                    android:id="@+id/launcher_splash"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center" >
+
+                    <ProgressBar
+                        android:id="@+id/launcher_progress"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/launcher_menu"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:visibility="gone" >
+
+                    <TextView
+                        android:id="@+id/launcher_sign_up"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="40dp"
+                        android:layout_marginEnd="40dp"
+                        android:text="@string/launcher_sign_up"
+                        android:textSize="16sp"
+                        android:textColor="@color/primary" />
+
+                    <TextView
+                        android:id="@+id/launcher_login"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="40dp"
+                        android:layout_marginStart="40dp"
+                        android:text="@string/launcher_login"
+                        android:textSize="16sp"
+                        android:textColor="@color/primary" />
+
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal">
+            android:layout_marginBottom="35dp"
+            android:gravity="center_horizontal" >
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
                 android:adjustViewBounds="true"
-                android:contentDescription="@string/launcher_compass_image_cd"
+                android:contentDescription="@string/launcher_de_soto_bridge_cd"
                 android:scaleType="fitCenter"
-                android:src="@drawable/compass" />
+                android:src="@drawable/de_soto_bridge" />
 
-            <ImageView
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:adjustViewBounds="true"
-                android:contentDescription="@string/launcher_compass_logo_cd"
-                android:scaleType="fitCenter"
-                android:src="@drawable/compass_type" />
+                android:text="@string/launcher_made_in_memphis"
+                android:textSize="12sp"
+                android:textColor="@color/black54" />
 
         </LinearLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" >
-
-            <LinearLayout
-                android:id="@+id/launcher_splash"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center" >
-
-                <ProgressBar
-                    android:id="@+id/launcher_progress"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/launcher_menu"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:visibility="gone" >
-
-                <TextView
-                    android:id="@+id/launcher_sign_up"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="40dp"
-                    android:layout_marginEnd="40dp"
-                    android:text="@string/launcher_sign_up"
-                    android:textSize="16sp"
-                    android:textColor="@color/primary" />
-
-                <TextView
-                    android:id="@+id/launcher_login"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="40dp"
-                    android:layout_marginStart="40dp"
-                    android:text="@string/launcher_login"
-                    android:textSize="16sp"
-                    android:textColor="@color/primary" />
-
-            </LinearLayout>
-        </RelativeLayout>
     </LinearLayout>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="35dp"
-        android:gravity="center_horizontal" >
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/launcher_de_soto_bridge_cd"
-            android:scaleType="fitCenter"
-            android:src="@drawable/de_soto_bridge" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:text="@string/launcher_made_in_memphis"
-            android:textSize="12sp"
-            android:textColor="@color/black54" />
-
-    </LinearLayout>
-</LinearLayout>
+</layout>
