@@ -53,11 +53,11 @@ public class StreakView extends LinearLayout {
             mImageContainer = (RelativeLayout) mLayoutContainer.getChildAt(1);
             mStreakCheckImage = (ImageView) mImageContainer.getChildAt(0);
             mStreakDay = (TextView) mLayoutContainer.getChildAt(2);
-
             mStreakDay.setText(mStreak.getDayAbbrev());
 
-            if (mStreak.completed()) {
-                // TODO: Only use checkmark if the item was completed.
+            // Only display the check mark if the item was completed.
+            if (!mStreak.completed()) {
+                mStreakCheckImage.setVisibility(View.INVISIBLE);
             }
         }
     }

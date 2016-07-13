@@ -3,28 +3,28 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="wrap_content"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_gravity="bottom"
     android:layout_marginEnd="5dp"
     android:padding="2dp"
     android:layout_weight="1"
     android:gravity="center_horizontal"
-    android:background="@color/light_hint"
-    android:measureWithLargestChild="true">
+    android:background="#EEEEEE"
+    android:measureWithLargestChild="false">
 
     <RelativeLayout
         android:id="@+id/streak_bar_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="22dp"
+        android:layout_height="100dp"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="1dp"
-        android:gravity="center"
-        android:layout_weight="1">
+        android:layout_marginBottom="5dp"
+        android:gravity="center_horizontal|bottom">
         <View
             android:id="@+id/streak_bar"
-            android:layout_width="25dp"
-            android:layout_height="50dp"
-            android:background="@color/primary">
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/primary"
+            android:layout_alignParentBottom="true">
         </View>
     </RelativeLayout>
 
@@ -32,23 +32,25 @@
         android:id="@+id/streak_check"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/light_hint"
+        android:layout_margin="1dp"
+        android:background="@drawable/circle_white_edged"
         android:layout_weight="1">
         <ImageView
             android:id="@+id/streak_check_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:src="@drawable/ic_check_dark_disabled"
-            android:background="@drawable/circle_white"
             android:contentDescription="Daily Streak met" />
     </RelativeLayout>
 
     <TextView
         android:id="@+id/streak_day"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
         android:layout_weight="1"
         android:gravity="center_horizontal"
-        android:background="@color/primary_dark"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+
 </LinearLayout>
