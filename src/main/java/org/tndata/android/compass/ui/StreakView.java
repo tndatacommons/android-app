@@ -2,10 +2,11 @@ package org.tndata.android.compass.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -63,20 +64,16 @@ public class StreakView extends LinearLayout {
     }
 
     public void setBarHeight(int count) {
-        // TODO: This is probably a terrible idea, find a better way.
-        int h = mStreakBar.getLayoutParams().height;
-        int w = mStreakBar.getLayoutParams().width;
-
-        Log.d(TAG, "Bar WxH = (" + w + ", " + h +")");
-
         if(mStreakBar != null) {
             final float scale = getContext().getResources().getDisplayMetrics().density;
+            int width = mStreakBar.getLayoutParams().width;
             int pixels = (int) ((count * 20) * scale + 2.0f);
-            Log.d(TAG, "- size = " + count);
-            Log.d(TAG, "- scale = " + scale);
-            Log.d(TAG, "- pixels = " + pixels);
-            mStreakBar.getLayoutParams().height = pixels + 5;
-        }
+            int height = pixels + 5;
 
+            mStreakBar.getLayoutParams().height = height;
+            Animation animation = new ScaleAnimation(0, 1, 0, 1, width, height);
+            animation.setDuration(1000);
+            mStreakBar.startAnimation(animation);
+        }
     }
 }

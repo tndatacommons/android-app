@@ -9,7 +9,6 @@
     android:padding="2dp"
     android:layout_weight="1"
     android:gravity="center_horizontal"
-    android:background="#EEEEEE"
     android:measureWithLargestChild="false">
 
     <RelativeLayout
@@ -23,7 +22,7 @@
             android:id="@+id/streak_bar"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/primary"
+            android:background="@drawable/streak_bar"
             android:layout_alignParentBottom="true">
         </View>
     </RelativeLayout>
