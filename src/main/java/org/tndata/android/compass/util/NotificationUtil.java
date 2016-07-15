@@ -326,7 +326,10 @@ public final class NotificationUtil{
             putCheckInNotification(context, message);
         }
         else if (message.isBadgeMessage()){
-            putBadgeNotification(context, message);
+            //Unfortunately, the web app cannot guarantee that a badge will be delivered
+            if (message.getBadge() != null){
+                putBadgeNotification(context, message);
+            }
         }
     }
 
