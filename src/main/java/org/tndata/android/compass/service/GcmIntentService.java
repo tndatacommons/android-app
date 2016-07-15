@@ -3,7 +3,9 @@ package org.tndata.android.compass.service;
 import android.app.IntentService;
 import android.content.Intent;
 
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.model.GcmMessage;
+import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.parser.ParserMethods;
 import org.tndata.android.compass.receiver.GcmBroadcastReceiver;
 import org.tndata.android.compass.util.API;
@@ -42,9 +44,12 @@ public class GcmIntentService extends IntentService{
 
         //IntentServices are executed in the background, so it is safe to do this
         GcmMessage message = ParserMethods.sGson.fromJson(gcmMessage, GcmMessage.class);
-        message.setGcmMessage(gcmMessage);
         if (message.isProduction() == !API.STAGING){
-            NotificationUtil.generateNotification(this, message);
+            User user = ((CompassApplication)getApplicationContext()).getUser();
+            if (user.getId() == message.getRecipient()){
+                message.setGcmMessage(gcmMessage);
+                NotificationUtil.generateNotification(this, message);
+            }
         }
 
         if (isFromGcm){
