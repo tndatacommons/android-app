@@ -24,6 +24,8 @@ public final class GcmMessage implements Parcelable{
     //Common fields
     @SerializedName("id")
     private long mId;
+    @SerializedName("to")
+    private long mRecipient;
     @SerializedName("title")
     private String mContentTitle;
     @SerializedName("message")
@@ -59,6 +61,10 @@ public final class GcmMessage implements Parcelable{
 
     public long getId(){
         return mId;
+    }
+
+    public long getRecipient(){
+        return mRecipient;
     }
 
     public String getContentTitle(){
@@ -130,6 +136,7 @@ public final class GcmMessage implements Parcelable{
     @Override
     public void writeToParcel(Parcel dest, int flags){
         dest.writeLong(mId);
+        dest.writeLong(mRecipient);
         dest.writeString(mContentTitle);
         dest.writeString(mContentText);
         dest.writeString(mObjectType);
@@ -169,6 +176,7 @@ public final class GcmMessage implements Parcelable{
      */
     public GcmMessage(Parcel src){
         mId = src.readLong();
+        mRecipient = src.readLong();
         mContentTitle = src.readString();
         mContentText = src.readString();
         mObjectType = src.readString();
