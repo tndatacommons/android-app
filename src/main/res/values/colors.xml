@@ -47,9 +47,10 @@
     <color name="primary_dark">#1976D2</color>
     <color name="accent">#4A9E94</color>
     <color name="accent_login">#FFFFFF</color>
+    <color name="badge_light">#C9C9C9</color>
     <color name="badge_primary">#B0BEC5</color>
-    <color name="badge_primary_dark">#78909C</color>
-    <color name="badge_gold">#FFFFFF</color>
+    <color name="badge_primary_dark">#979A9A</color>
+
 
     <!-- Text -->
     <color name="text_primary">#DE000000</color>
