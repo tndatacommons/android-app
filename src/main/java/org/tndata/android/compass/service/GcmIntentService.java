@@ -2,6 +2,7 @@ package org.tndata.android.compass.service;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.model.GcmMessage;
@@ -50,6 +51,16 @@ public class GcmIntentService extends IntentService{
                 message.setGcmMessage(gcmMessage);
                 NotificationUtil.generateNotification(this, message);
             }
+            else{
+                long recipient = message.getRecipient();
+                long receiver = user.getId();
+                Log.e(TAG, "The message was intended for " + recipient + ", received by " + receiver);
+            }
+        }
+        else{
+            String sender = message.isProduction() ? "production" : "staging";
+            String running = API.STAGING ? "staging" : "production";
+            Log.e(TAG, "The message was delivered from " + sender + ", running " + running);
         }
 
         if (isFromGcm){
