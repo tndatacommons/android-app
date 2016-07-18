@@ -35,10 +35,9 @@ public class BadgeActivity
     public static final String BADGE_KEY = "org.tndata.compass.BadgeActivity.Badge";
 
 
+    private ImageView mImage;
     private Badge mBadge;
 
-    private View mImageFrame;
-    private ImageView mImage;
 
 
     @Override
@@ -48,7 +47,6 @@ public class BadgeActivity
 
         mBadge = getIntent().getParcelableExtra(BADGE_KEY);
 
-        mImageFrame = findViewById(R.id.badge_image_frame);
         mImage = (ImageView)findViewById(R.id.badge_image);
         TextView name = (TextView)findViewById(R.id.badge_name);
         TextView description = (TextView)findViewById(R.id.badge_description);
