@@ -35,11 +35,9 @@ public class BadgeActivity
     public static final String BADGE_KEY = "org.tndata.compass.BadgeActivity.Badge";
 
 
+    private ImageView mImage;
     private Badge mBadge;
 
-    private View mImageFrame;
-    private View mImageWrapper;
-    private ImageView mImage;
 
 
     @Override
@@ -49,8 +47,6 @@ public class BadgeActivity
 
         mBadge = getIntent().getParcelableExtra(BADGE_KEY);
 
-        mImageFrame = findViewById(R.id.badge_image_frame);
-        mImageWrapper = findViewById(R.id.badge_image_wrapper);
         mImage = (ImageView)findViewById(R.id.badge_image);
         TextView name = (TextView)findViewById(R.id.badge_name);
         TextView description = (TextView)findViewById(R.id.badge_description);
@@ -92,15 +88,8 @@ public class BadgeActivity
         int height = imageBitmap.getHeight();
         Log.d(TAG, "Image size: (" + width + ", " + height + ")");
 
-        mImageWrapper.setAlpha(0f);
-        mImageWrapper.setVisibility(View.VISIBLE);
-        mImageWrapper.animate()
-                .alpha(1f)
-                .setDuration(2000)
-                .setListener(null);
-
         Animation scale = new ScaleAnimation(0, 1 ,0, 1, width/2, height/2);
-        scale.setDuration(1000);
+        scale.setDuration(900);
         mImage.startAnimation(scale);
     }
 
