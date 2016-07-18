@@ -30,7 +30,6 @@ import es.sandwatch.httprequests.HttpRequestError;
 public class PackageEnrollmentActivity
         extends AppCompatActivity
         implements
-                View.OnClickListener,
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback{
 
@@ -52,13 +51,10 @@ public class PackageEnrollmentActivity
         //setContentView(R.layout.activity_package_enrollment);
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_package_enrollment);
+        mBinding.setActivity(this);
 
         //Toolbar
         setSupportActionBar(mBinding.packageToolbar);
-
-        //Listeners
-        mBinding.packageAccept.setOnClickListener(this);
-        mBinding.packageDecline.setOnClickListener(this);
 
         //This setting cannot be set from XML
         mBinding.packageAcceptExplanation.setMovementMethod(LinkMovementMethod.getInstance());
@@ -117,21 +113,16 @@ public class PackageEnrollmentActivity
         mBinding.setTdcPackage(myPackage);
     }
 
-    @Override
-    public void onClick(View view){
-        switch (view.getId()){
-            case R.id.package_accept:
-                //Show the progress bar and fire up the acknowledgement task
-                mBinding.packageAcceptSwitcher.showNext();
-                mPutConsentRequestCode = HttpRequest.put(this,
-                        API.getPutConsentAcknowledgementUrl(mPackage),
-                        API.getPutConsentAcknowledgementBody());
-                break;
+    public void accept(){
+        //Show the progress bar and fire the acknowledgement request
+        mBinding.packageAcceptSwitcher.showNext();
+        mPutConsentRequestCode = HttpRequest.put(this,
+                API.getPutConsentAcknowledgementUrl(mPackage),
+                API.getPutConsentAcknowledgementBody());
+    }
 
-            case R.id.package_decline:
-                NotificationUtil.cancel(this, NotificationUtil.ENROLLMENT_TAG, (int)mPackage.getId());
-                finish();
-                break;
-        }
+    public void decline(){
+        NotificationUtil.cancel(this, NotificationUtil.ENROLLMENT_TAG, (int)mPackage.getId());
+        finish();
     }
 }
