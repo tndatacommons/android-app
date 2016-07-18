@@ -185,6 +185,9 @@ public final class CompassUtil{
         else if (src.equals(FeedData.API_TYPE)){
             return FeedData.class;
         }
+        else if (src.equals("feed_streak")){
+            return FeedData.Streak.class;
+        }
         else if (src.equals(UpcomingAction.API_TYPE)){
             return UpcomingAction.class;
         }

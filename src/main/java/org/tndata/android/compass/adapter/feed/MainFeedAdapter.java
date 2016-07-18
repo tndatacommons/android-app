@@ -48,7 +48,8 @@ public class MainFeedAdapter
     private static final int TYPE_UPCOMING = TYPE_SUGGESTION+1;
     private static final int TYPE_MY_GOALS = TYPE_UPCOMING +1;
     private static final int TYPE_GOAL_SUGGESTIONS = TYPE_MY_GOALS+1;
-    private static final int TYPE_OTHER = TYPE_GOAL_SUGGESTIONS+1;
+    private static final int TYPE_STREAKS = TYPE_MY_GOALS+1;
+    private static final int TYPE_OTHER = TYPE_STREAKS+1;
 
 
     final Context mContext;
@@ -132,6 +133,9 @@ public class MainFeedAdapter
         if (CardTypes.isFeedback(position)){
             return TYPE_FEEDBACK;
         }
+        if (CardTypes.isStreaks(position)){
+            return TYPE_STREAKS;
+        }
         if (CardTypes.isSuggestion(position)){
             return TYPE_SUGGESTION;
         }
@@ -170,6 +174,10 @@ public class MainFeedAdapter
         else if (viewType == TYPE_FEEDBACK){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             return new FeedbackHolder(this, inflater.inflate(R.layout.card_feedback, parent, false));
+        }
+        else if (viewType == TYPE_STREAKS){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            return new StreaksHolder(this, inflater.inflate(R.layout.card_streaks, parent, false));
         }
         else if (viewType == TYPE_SUGGESTION){
             LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -224,6 +232,10 @@ public class MainFeedAdapter
         //Up next
         else if (CardTypes.isUpNext(position)){
             ((UpNextHolder)rawHolder).bind(mFeedData.getUpNextAction(), mFeedData.getProgress());
+        }
+        //Streaks
+        else if (CardTypes.isStreaks(position)){
+            ((StreaksHolder)rawHolder).bind(mFeedData.getStreaks());
         }
         //Feedback
         else if (CardTypes.isFeedback(position)){
@@ -513,6 +525,13 @@ public class MainFeedAdapter
          * @param feedback bundle containing information about the feedback goal.
          */
         void onFeedbackSelected(FeedData.ActionFeedback feedback);
+
+        /**
+         * Called when the streaks card is tapped.
+         *
+         * @param streaks list of Feedback streaks data.
+         */
+        void onStreaksSelected(List<FeedData.Streak> streaks);
 
         /**
          * Called when an action card is tapped.

@@ -37,6 +37,8 @@ public class FeedData{
     private List<UpcomingAction> mUpcomingActions;
     @SerializedName("suggestions")
     private List<TDCGoal> mSuggestions;
+    @SerializedName("streaks")
+    private List<Streak> mStreaks;
 
     //Fields set during post-processing or after data retrieval
     private UpcomingAction mUpNextAction;
@@ -86,7 +88,17 @@ public class FeedData{
      * @return true if there is action feedback, false otherwise.
      */
     public boolean hasFeedback(){
-        return mActionFeedback != null;
+        return false; // TODO: remove this?
+//        return mActionFeedback != null;
+    }
+
+    /**
+     * Tells whether there are any streaks.
+     *
+     * @return true if there are streaks, false otherwise.
+     */
+    public boolean hasStreaks(){
+        return mStreaks != null && mStreaks.size() > 0;
     }
 
     /**
@@ -96,6 +108,15 @@ public class FeedData{
      */
     public ActionFeedback getFeedback(){
         return mActionFeedback;
+    }
+
+    /**
+     * Streaks getter.
+     *
+     * @return the streaks data.
+     */
+    public List<Streak> getStreaks(){
+        return mStreaks;
     }
 
     /**
@@ -600,6 +621,40 @@ public class FeedData{
          */
         public String getProgressFraction(){
             return mCompletedActions + "/" + mTotalActions;
+        }
+    }
+
+    /**
+     * Model for the user's daily progress streaks.
+     *
+     * @author Brad Montgomery
+     * @version 1.0.0
+     */
+    public class Streak {
+        @SerializedName("day")
+        private String mDay;
+        @SerializedName("date")
+        private String mDate;
+        @SerializedName("count")
+        private int mCount = 0;
+
+        public boolean completed() {
+            return mCount > 0;
+        }
+        public String getDay() {
+            return mDay;
+        }
+
+        public String getDayAbbrev() {
+            return mDay.substring(0, 1);
+        }
+
+        public String getDate() {
+            return mDate;
+        }
+
+        public int getCount() {
+            return mCount;
         }
     }
 }
