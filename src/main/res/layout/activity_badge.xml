@@ -4,32 +4,21 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primary" >
+    android:background="@color/badge_light" >
 
     <FrameLayout
         android:id="@+id/badge_image_frame"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <!-- Experiment: Wrap the ImageView in a RelativeLayout that's a circle & animated -->
-        <FrameLayout
-            android:id="@+id/badge_image_wrapper"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/badge_image"
+            android:contentDescription="@string/badge_image_cd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/circle_gold"
-            android:layout_margin="10dp"
-            android:padding="1dp"
-            android:foregroundGravity="center_horizontal"
-            android:layout_gravity="center_horizontal">
-
-            <ImageView
-                android:id="@+id/badge_image"
-                android:contentDescription="@string/badge_image_cd"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="36dp"
-                android:scaleType="centerInside" />
-        </FrameLayout>
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:scaleType="center"
+            android:layout_gravity="center"/>
     </FrameLayout>
 
     <android.support.v7.widget.CardView
