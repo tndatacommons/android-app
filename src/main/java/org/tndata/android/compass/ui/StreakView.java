@@ -31,6 +31,9 @@ public class StreakView extends LinearLayout {
     public StreakView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        inflater.inflate(R.layout.streak, this, true);
     }
 
     public void setStreak(FeedData.Streak streak) {
@@ -42,9 +45,6 @@ public class StreakView extends LinearLayout {
         if(mStreak != null) {
             setOrientation(LinearLayout.VERTICAL);
             setGravity(Gravity.CENTER_VERTICAL);
-
-            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            inflater.inflate(R.layout.streak, this, true);
 
             mLayoutContainer = (LinearLayout) getChildAt(0);
             mStreakBarContainer = (RelativeLayout) mLayoutContainer.getChildAt(0);
