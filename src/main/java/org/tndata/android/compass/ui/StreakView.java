@@ -38,10 +38,6 @@ public class StreakView extends LinearLayout {
 
     public void setStreak(FeedData.Streak streak) {
         mStreak = streak;
-        init();
-    }
-
-    public void init() {
         if(mStreak != null) {
             setOrientation(LinearLayout.VERTICAL);
             setGravity(Gravity.CENTER_VERTICAL);
