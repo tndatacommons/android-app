@@ -1,9 +1,16 @@
 package org.tndata.android.compass.activity;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -57,11 +64,16 @@ public class PlacePickerActivity
                 ResultCallback<PlaceBuffer>,
                 AdapterView.OnItemClickListener,
                 OnMapReadyCallback,
-                HttpRequest.RequestCallback{
+                HttpRequest.RequestCallback,
+                DialogInterface.OnClickListener{
 
     //Data keys
     public static final String PLACE_KEY = "org.tndata.compass.Place";
     public static final String PLACE_RESULT_KEY = "org.tndata.compass.ResultPlace";
+
+    private static final String FIRST_PERMISSION_REQUEST_KEY = "first_place_picker_permission_request";
+
+    private static final int LOCATION_PERMISSION_RC = 2;
 
 
     private UserPlace mPlace;
@@ -76,6 +88,8 @@ public class PlacePickerActivity
     private Marker mMarker;
 
     private MenuItem mSave;
+
+    private AlertDialog mRationaleDialog;
 
 
     @Override
@@ -100,12 +114,6 @@ public class PlacePickerActivity
         mResults.setAdapter(mAdapter);
         mResults.setOnItemClickListener(this);
 
-        //Show the keyboard only if no place is being edited
-        if (mPlace.getId() == -1){
-            ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE))
-                    .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-        }
-
         //Retrieve the map
         mMapContainer = (FrameLayout)findViewById(R.id.place_picker_map_container);
         ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.place_picker_map))
@@ -120,6 +128,31 @@ public class PlacePickerActivity
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+
+        //Check whether this is M or post M, we don't need to display permissions dialogs for pre M
+        boolean postM = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+
+        //The first time the user fires the place picker the location permission should be requested
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean firstTime = preferences.getBoolean(FIRST_PERMISSION_REQUEST_KEY, true);
+        preferences.edit().putBoolean(FIRST_PERMISSION_REQUEST_KEY, false).apply();
+
+        //Additionally, the permission should be requested if the user previously denied the request
+        String permission = Manifest.permission.ACCESS_FINE_LOCATION;
+        boolean rationale = ActivityCompat.shouldShowRequestPermissionRationale(this, permission);
+
+        if (postM && (firstTime || rationale)){
+            firePermissionRequest();
+        }
+        else{
+            //Show the keyboard only if no place is being edited
+            if (mPlace.getId() == -1){
+                mResults.requestFocus();
+                ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE))
+                        .toggleSoftInput(InputMethodManager.SHOW_FORCED,
+                                InputMethodManager.HIDE_IMPLICIT_ONLY);
+            }
+        }
     }
 
     @Override
@@ -170,7 +203,7 @@ public class PlacePickerActivity
             setResult(RESULT_OK, data);
             finish();
         }
-        catch (JSONException jsonx){
+        catch (JSONException jx){
             Toast.makeText(this, R.string.places_save_error, Toast.LENGTH_SHORT).show();
         }
     }
@@ -258,6 +291,55 @@ public class PlacePickerActivity
         mMarker = mMap.addMarker(new MarkerOptions().position(position));
         if (mSave != null){
             mSave.setEnabled(true);
+        }
+    }
+
+    /**
+     * Fires the permission rationale dialog or the permission request dialog.
+     */
+    private void firePermissionRequest(){
+        if (mRationaleDialog == null){
+            //Show the rationale dialog
+            mRationaleDialog = new AlertDialog.Builder(this)
+                    .setTitle(R.string.place_picker_location_rationale_title)
+                    .setMessage(R.string.place_picker_location_rationale)
+                    .setPositiveButton(R.string.place_picker_location_rationale_button, this)
+                    .create();
+            mRationaleDialog.show();
+        }
+        else{
+            //Request permissions
+            String locationPermission = Manifest.permission.ACCESS_FINE_LOCATION;
+            ActivityCompat.requestPermissions(this, new String[]{locationPermission},
+                    LOCATION_PERMISSION_RC);
+            mRationaleDialog = null;
+        }
+    }
+
+    @Override
+    public void onClick(DialogInterface dialog, int i){
+        if (dialog == mRationaleDialog){
+            firePermissionRequest();
+        }
+    }
+
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults){
+        switch (requestCode){
+            case LOCATION_PERMISSION_RC:
+                //Show the keyboard only if no place is being edited
+                if (mPlace.getId() == -1){
+                    Log.d("PlacePickerActivity", "Permission result, place id is -1");
+                    mResults.requestFocus();
+                    //TODO this doesn't work, fix
+                    ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .toggleSoftInput(InputMethodManager.SHOW_FORCED,
+                                    InputMethodManager.HIDE_IMPLICIT_ONLY);
+                }
+                break;
         }
     }
 }

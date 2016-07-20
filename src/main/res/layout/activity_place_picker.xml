@@ -22,7 +22,6 @@
             android:layout_gravity="center_vertical"
             android:hint="@string/places_picker_hint"
             android:singleLine="true"
-            android:layout_below="@id/place_picker_toolbar"
             android:completionThreshold="1" />
 
     </android.support.v7.widget.Toolbar>

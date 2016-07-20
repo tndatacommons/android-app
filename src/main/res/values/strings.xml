@@ -209,6 +209,9 @@
     <string name="places_picker_hint">Search a place or address</string>
     <string name="place_picker_save">Save place</string>
     <string name="place_picker_save_condensed">Save</string>
+    <string name="place_picker_location_rationale_title">Compass needs access to your location</string>
+    <string name="place_picker_location_rationale">Compass needs access to your location in order to provide closer results first.</string>
+    <string name="place_picker_location_rationale_button">Got it!</string>
 
     <!-- Package consent -->
     <string name="package_enrollment_consent_title">Package Enrollment Consent</string>
