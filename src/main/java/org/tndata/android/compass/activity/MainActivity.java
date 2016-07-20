@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -92,6 +93,7 @@ public class MainActivity
     private FloatingActionMenu mMenu;
 
     private boolean mSuggestionDismissed;
+    private boolean mFirstResume;
 
 
     @Override
@@ -180,7 +182,7 @@ public class MainActivity
         mFeed.addOnScrollListener(new RecyclerView.OnScrollListener(){
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy){
-                Log.e("Main", "onScrolled(), why?");
+                Log.e("Main", "onScrolled(): (" + dx + ", " + dy + "), why?");
                 Thread.dumpStack();
                 super.onScrolled(recyclerView, dx, dy);
             }
@@ -188,24 +190,6 @@ public class MainActivity
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState){
                 super.onScrollStateChanged(recyclerView, newState);
-            }
-        });
-
-        mFeed.addOnScrollListener(new RecyclerView.OnScrollListener(){
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
-                if (dy > 0){
-                    mMenu.hideMenuButton(true);
-                }
-                else if (dy < 0){
-                    mMenu.showMenuButton(true);
-                }
-                if (recyclerView.canScrollVertically(-1)){
-                    mRefresh.setEnabled(false);
-                }
-                else{
-                    mRefresh.setEnabled(true);
-                }
             }
         });
 
@@ -243,6 +227,7 @@ public class MainActivity
         populateMenu();
 
         mSuggestionDismissed = false;
+        mFirstResume = true;
     }
 
     @Override
@@ -273,9 +258,42 @@ public class MainActivity
 
     @Override
     protected void onResume(){
+        Log.d("Main", "onResume()");
         super.onResume();
         mAdapter.notifyDataSetChanged();
-        mMenu.showMenuButton(false);
+        if (mFirstResume){
+            new Handler().postDelayed(new Runnable(){
+                @Override
+                public void run(){
+                    Log.d("Main", "OnResume()'s scroll");
+                    mFeed.scrollToPosition(0);
+
+                    new Handler().postDelayed(new Runnable(){
+                        @Override
+                        public void run(){
+                            mFeed.addOnScrollListener(new RecyclerView.OnScrollListener(){
+                                @Override
+                                public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+                                    if (dy > 0){
+                                        mMenu.hideMenuButton(true);
+                                    }
+                                    else if (dy < 0){
+                                        mMenu.showMenuButton(true);
+                                    }
+                                    if (recyclerView.canScrollVertically(-1)){
+                                        mRefresh.setEnabled(false);
+                                    }
+                                    else{
+                                        mRefresh.setEnabled(true);
+                                    }
+                                }
+                            });
+                        }
+                    }, 500);
+                }
+            }, 500);
+            mFirstResume = true;
+        }
     }
 
     /**
