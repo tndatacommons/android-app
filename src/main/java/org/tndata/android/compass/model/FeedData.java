@@ -1,13 +1,10 @@
 package org.tndata.android.compass.model;
 
-import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
-
-import org.tndata.android.compass.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,8 +26,6 @@ public class FeedData{
 
 
     //API delivered fields
-    @SerializedName("action_feedback")
-    private ActionFeedback mActionFeedback;
     @SerializedName("progress")
     private Progress mProgress;
     @SerializedName("upcoming")
@@ -53,9 +48,6 @@ public class FeedData{
         mDisplayedGoals = new ArrayList<>();
         if (!mUpcomingActions.isEmpty()){
             mUpNextAction = mUpcomingActions.remove(0);
-            if (hasFeedback()){
-                mActionFeedback.setFeedbackGoal(mUpNextAction);
-            }
         }
     }
 
@@ -83,31 +75,12 @@ public class FeedData{
     }
 
     /**
-     * Tells whether there is an action feedback object.
-     *
-     * @return true if there is action feedback, false otherwise.
-     */
-    public boolean hasFeedback(){
-        return false; // TODO: remove this?
-//        return mActionFeedback != null;
-    }
-
-    /**
      * Tells whether there are any streaks.
      *
      * @return true if there are streaks, false otherwise.
      */
     public boolean hasStreaks(){
         return mStreaks != null && mStreaks.size() > 0;
-    }
-
-    /**
-     * Action feedback getter.
-     *
-     * @return the action feedback object.
-     */
-    public ActionFeedback getFeedback(){
-        return mActionFeedback;
     }
 
     /**
@@ -471,88 +444,6 @@ public class FeedData{
             }
         }
         return null;
-    }
-
-
-    /**
-     * Model for an action feedback. Also contains information about which goal's feedback
-     * is being displayed and the type of such goal.
-     *
-     * @author Ismael Alonso
-     * @version 1.0.0
-     */
-    public class ActionFeedback{
-        @SerializedName("title")
-        private String mFeedbackTitle;
-        @SerializedName("subtitle")
-        private String mFeedbackSubtitle;
-        @SerializedName("icon")
-        private int mFeedbackIconId;
-
-        private long mFeedbackGoalIdX;
-        private String mFeedbackGoalTypeX;
-
-
-        /**
-         * Gets the feedback title.
-         *
-         * @return the feedback title.
-         */
-        public String getFeedbackTitle(){
-            return mFeedbackTitle;
-        }
-
-        /**
-         * Gets the feedback subtitle.
-         *
-         * @return the feedback subtitle.
-         */
-        public String getFeedbackSubtitle(){
-            return mFeedbackSubtitle;
-        }
-
-        /**
-         * Gets the feedback icon resource id.
-         *
-         * @return the feedback icon resource id.
-         */
-        @DrawableRes
-        public int getFeedbackIcon(){
-            switch (mFeedbackIconId){
-                case 1:
-                    return R.drawable.feedback1;
-                case 2:
-                    return R.drawable.feedback2;
-                case 3:
-                    return R.drawable.feedback3;
-                case 4:
-                    return R.drawable.feedback4;
-                default:
-                    return 0;
-            }
-        }
-
-        private void setFeedbackGoal(UpcomingAction action){
-            mFeedbackGoalIdX = action.getGoalId();
-            if (action.isUserAction()){
-                mFeedbackGoalTypeX = "usergoal";
-            }
-            else if (action.isCustomAction()){
-                mFeedbackGoalTypeX = "customgoal";
-            }
-        }
-
-        public long getFeedbackGoalId(){
-            return mFeedbackGoalIdX;
-        }
-
-        public boolean hasUserGoal(){
-            return mFeedbackGoalTypeX.equals("usergoal");
-        }
-
-        public boolean hasCustomGoal(){
-            return mFeedbackGoalTypeX.equals("customgoal");
-        }
     }
 
 

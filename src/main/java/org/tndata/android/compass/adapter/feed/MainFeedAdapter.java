@@ -43,13 +43,12 @@ public class MainFeedAdapter
     private static final int TYPE_BLANK = 0;
     private static final int TYPE_WELCOME = TYPE_BLANK+1;
     private static final int TYPE_UP_NEXT = TYPE_WELCOME+1;
-    private static final int TYPE_FEEDBACK = TYPE_UP_NEXT+1;
-    private static final int TYPE_SUGGESTION = TYPE_FEEDBACK+1;
-    private static final int TYPE_UPCOMING = TYPE_SUGGESTION+1;
+    private static final int TYPE_SUGGESTION = TYPE_UP_NEXT+1;
+    private static final int TYPE_STREAKS = TYPE_SUGGESTION+1;
+    private static final int TYPE_UPCOMING = TYPE_STREAKS+1;
     private static final int TYPE_MY_GOALS = TYPE_UPCOMING +1;
     private static final int TYPE_GOAL_SUGGESTIONS = TYPE_MY_GOALS+1;
-    private static final int TYPE_STREAKS = TYPE_MY_GOALS+1;
-    private static final int TYPE_OTHER = TYPE_STREAKS+1;
+    private static final int TYPE_OTHER = TYPE_MY_GOALS+1;
 
 
     final Context mContext;
@@ -130,9 +129,6 @@ public class MainFeedAdapter
         if (CardTypes.isUpNext(position)){
             return TYPE_UP_NEXT;
         }
-        if (CardTypes.isFeedback(position)){
-            return TYPE_FEEDBACK;
-        }
         if (CardTypes.isStreaks(position)){
             return TYPE_STREAKS;
         }
@@ -170,10 +166,6 @@ public class MainFeedAdapter
         else if (viewType == TYPE_UP_NEXT){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             return new UpNextHolder(this, inflater.inflate(R.layout.card_up_next, parent, false));
-        }
-        else if (viewType == TYPE_FEEDBACK){
-            LayoutInflater inflater = LayoutInflater.from(mContext);
-            return new FeedbackHolder(this, inflater.inflate(R.layout.card_feedback, parent, false));
         }
         else if (viewType == TYPE_STREAKS){
             LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -236,10 +228,6 @@ public class MainFeedAdapter
         //Streaks
         else if (CardTypes.isStreaks(position)){
             ((StreaksHolder)rawHolder).bind(mFeedData.getStreaks());
-        }
-        //Feedback
-        else if (CardTypes.isFeedback(position)){
-            ((FeedbackHolder)rawHolder).bind(mFeedData.getFeedback());
         }
         //Goal suggestion card
         else if (CardTypes.isSuggestion(position)){
@@ -518,13 +506,6 @@ public class MainFeedAdapter
          * @param goal the selected goal.
          */
         void onGoalSelected(Goal goal);
-
-        /**
-         * Called when the feedback card is tapped.
-         *
-         * @param feedback bundle containing information about the feedback goal.
-         */
-        void onFeedbackSelected(FeedData.ActionFeedback feedback);
 
         /**
          * Called when the streaks card is tapped.

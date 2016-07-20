@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -175,6 +176,20 @@ public class MainActivity
             }
         });
         mFeed.addOnScrollListener(toolbarEffect);
+
+        mFeed.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+                Log.e("Main", "onScrolled(), why?");
+                Thread.dumpStack();
+                super.onScrolled(recyclerView, dx, dy);
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState){
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
 
         mFeed.addOnScrollListener(new RecyclerView.OnScrollListener(){
             @Override
@@ -460,18 +475,6 @@ public class MainActivity
             Intent editGoal = new Intent(this, CustomContentActivity.class)
                     .putExtra(CustomContentActivity.CUSTOM_GOAL_KEY, goal);
             startActivityForResult(editGoal, GOAL_RC);
-        }
-    }
-
-    @Override
-    public void onFeedbackSelected(FeedData.ActionFeedback feedback){
-        if (feedback.hasUserGoal()){
-            /*Intent goalActivityIntent = new Intent(this, GoalActivity.class)
-                    .putExtra(GoalActivity.USER_GOAL_KEY, goal);
-            startActivityForResult(goalActivityIntent, GOAL_RC);*/
-        }
-        else if (feedback.hasCustomGoal()){
-            //
         }
     }
 
