@@ -5,10 +5,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -44,6 +42,7 @@ import org.tndata.android.compass.adapter.PlacePickerAdapter;
 import org.tndata.android.compass.model.Place;
 import org.tndata.android.compass.model.UserPlace;
 import org.tndata.android.compass.util.API;
+import org.tndata.android.compass.util.SharedPreferencesManager;
 
 import es.sandwatch.httprequests.HttpRequest;
 import es.sandwatch.httprequests.HttpRequestError;
@@ -70,8 +69,6 @@ public class PlacePickerActivity
     //Data keys
     public static final String PLACE_KEY = "org.tndata.compass.Place";
     public static final String PLACE_RESULT_KEY = "org.tndata.compass.ResultPlace";
-
-    private static final String FIRST_PERMISSION_REQUEST_KEY = "first_place_picker_permission_request";
 
     private static final int LOCATION_PERMISSION_RC = 2;
 
@@ -133,9 +130,7 @@ public class PlacePickerActivity
         boolean postM = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
 
         //The first time the user fires the place picker the location permission should be requested
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean firstTime = preferences.getBoolean(FIRST_PERMISSION_REQUEST_KEY, true);
-        preferences.edit().putBoolean(FIRST_PERMISSION_REQUEST_KEY, false).apply();
+        boolean firstTime = SharedPreferencesManager.isFirstLocationPermissionRequest(this);
 
         //Additionally, the permission should be requested if the user previously denied the request
         String permission = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -309,6 +304,7 @@ public class PlacePickerActivity
         }
         else{
             //Request permissions
+            SharedPreferencesManager.locationPermissionRequested(this);
             String locationPermission = Manifest.permission.ACCESS_FINE_LOCATION;
             ActivityCompat.requestPermissions(this, new String[]{locationPermission},
                     LOCATION_PERMISSION_RC);
