@@ -8,6 +8,7 @@ import org.tndata.android.compass.database.PlaceTableHandler;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
+import org.tndata.android.compass.service.LocationNotificationService;
 
 import java.util.List;
 
@@ -103,6 +104,9 @@ public final class DataSynchronizer implements HttpRequest.RequestCallback, Pars
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        //Nothing to do in the foreground
+        if (requestCode == mGetPlacesRC){
+            //Places might've changed, notify the location notification service to update the set
+            LocationNotificationService.updateDataSet(mApplication.getApplicationContext());
+        }
     }
 }

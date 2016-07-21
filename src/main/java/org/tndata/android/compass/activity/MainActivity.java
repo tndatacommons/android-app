@@ -179,7 +179,7 @@ public class MainActivity
         });
         mFeed.addOnScrollListener(toolbarEffect);
 
-        mFeed.addOnScrollListener(new RecyclerView.OnScrollListener(){
+        /*mFeed.addOnScrollListener(new RecyclerView.OnScrollListener(){
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy){
                 Log.e("Main", "onScrolled(): (" + dx + ", " + dy + "), why?");
@@ -191,7 +191,7 @@ public class MainActivity
             public void onScrollStateChanged(RecyclerView recyclerView, int newState){
                 super.onScrollStateChanged(recyclerView, newState);
             }
-        });
+        });*/
 
         Animation hideAnimation = new ScaleAnimation(1, 0, 1, 0, Animation.RELATIVE_TO_SELF, 0.5f,
                 Animation.RELATIVE_TO_SELF, 0.5f);
