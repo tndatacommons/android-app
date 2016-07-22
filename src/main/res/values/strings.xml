@@ -194,7 +194,7 @@
     <string name="later_location_rationale_button">Got it!</string>
     <string name="later_toast">OK, we\'ll remind you later.</string>
     <string name="later_location_disabled_title">Compass needs access to your location</string>
-    <string name="later_location_disabled">Location based reminders requires location permissions, please enable location for Compass</string>
+    <string name="later_location_disabled">Location-based reminders require location permissions. Please enable location for Compass.</string>
     <string name="later_location_disabled_button_positive">Settings</string>
     <string name="later_location_disabled_button_negative">Cancel</string>
 
@@ -214,7 +214,7 @@
     <string name="place_picker_save">Save place</string>
     <string name="place_picker_save_condensed">Save</string>
     <string name="place_picker_location_rationale_title">Compass needs access to your location</string>
-    <string name="place_picker_location_rationale">Compass needs access to your location in order to provide closer results first.</string>
+    <string name="place_picker_location_rationale">Compass needs access to your location in order to provide nearby results.</string>
     <string name="place_picker_location_rationale_button">Got it!</string>
 
     <!-- Package consent -->
