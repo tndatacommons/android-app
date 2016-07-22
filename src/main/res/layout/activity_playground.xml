@@ -28,20 +28,4 @@
         android:padding="10dp"
         android:text="Kill Service" />
 
-    <at.grabner.circleprogress.CircleProgressView
-        xmlns:progress="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/playground_circle"
-        android:layout_width="277dp"
-        android:layout_height="277dp"
-        progress:cpv_barColor="#00796B"
-        progress:cpv_barWidth="35dp"
-        progress:cpv_contourSize="0dp"
-        progress:cpv_maxValue="100"
-        progress:cpv_rimColor="#B2DFDB"
-        progress:cpv_rimWidth="35dp"
-        progress:cpv_seekMode="true"
-        progress:cpv_textColor="#00796B"
-        progress:cpv_unit="%"
-        progress:cpv_unitColor="#009688" />
-
 </LinearLayout>

@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -36,8 +37,10 @@ public class LocationNotificationService
         extends Service
         implements LocationRequest.OnLocationAcquiredCallback{
 
-    //Actions
-    private static final String ACTION_KEY = "org.tndata.compass.LocationNotificationService.Action";
+    private static final String TAG = "LocationNotificationSvc";
+
+    //Commands
+    private static final String COMMAND_KEY = "org.tndata.compass.LocationNotificationSvc.Command";
     private static final String START = "start";
     private static final String UPDATE = "update";
     private static final String KILL = "kill";
@@ -54,18 +57,21 @@ public class LocationNotificationService
      * @param context a reference to the context.
      */
     public static void start(@NonNull Context context){
+        Log.i(TAG, "Start request. Service will start shortly.");
         context.startService(new Intent(context, LocationNotificationService.class)
-                .putExtra(ACTION_KEY, START));
+                .putExtra(COMMAND_KEY, START));
     }
 
     public static void updateDataSet(@NonNull Context context){
+        Log.i(TAG, "Update request. Service's data set will update shortly.");
         context.startService(new Intent(context, LocationNotificationService.class)
-                .putExtra(ACTION_KEY, UPDATE));
+                .putExtra(COMMAND_KEY, UPDATE));
     }
 
     public static void kill(@NonNull Context context){
+        Log.i(TAG, "Kill request. Service will stop shortly.");
         context.startService(new Intent(context, LocationNotificationService.class)
-                .putExtra(ACTION_KEY, KILL));
+                .putExtra(COMMAND_KEY, KILL));
     }
 
 
@@ -100,16 +106,21 @@ public class LocationNotificationService
         if (CompassUtil.hasPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 && CompassUtil.isLocationEnabled(this)){
 
-            //Evaluate the action
-            if (intent.getExtras() != null){
-                switch (intent.getExtras().getString(ACTION_KEY, "")){
+            if (intent == null){
+                start(getApplicationContext());
+            }
+            else{
+                //Evaluate the action
+                switch (intent.getExtras().getString(COMMAND_KEY, "")){
                     case START:
                         //For start actions, if the service is already started, do nothing,
                         //  otherwise, start it
                         if (!mRunning){
+                            Log.i(TAG, "Starting service");
                             loadData();
                             //If there are no reminders, starting the service makes no sense
                             if (mReminders.isEmpty()){
+                                Log.i(TAG, "There are no reminders, killing service");
                                 stopSelf();
                             }
                             else{
@@ -119,6 +130,9 @@ public class LocationNotificationService
                                 mLocationRequest.requestLocation();
                             }
                         }
+                        else{
+                            Log.i(TAG, "Service was already running");
+                        }
                         break;
 
                     case UPDATE:
@@ -126,35 +140,39 @@ public class LocationNotificationService
                         //  otherwise assume there was a good reason for it to be stopped
                         //  and stop it.
                         if (mRunning){
+                            Log.i(TAG, "Updating service's data set");
                             loadData();
                         }
                         else{
-                            stopSelf();
+                            Log.e(TAG, "Can't update, service is not running");
+                            Log.i(TAG, "Trying to start the service");
+                            start(getApplicationContext());
                         }
                         break;
 
                     case KILL:
                         //If the action is kill, stop the service
                         if (mRunning){
+                            Log.i(TAG, "Killing service");
                             mLocationRequest.onStop();
                             mRunning = false;
+                        }
+                        else{
+                            Log.i(TAG, "Service was not running");
                         }
                         stopSelf();
                         break;
 
                     default:
+                        Log.w(TAG, "Unrecognized command");
                         if (!mRunning){
                             stopSelf();
                         }
                 }
             }
-            else{
-                if (!mRunning){
-                    stopSelf();
-                }
-            }
         }
         else{
+            Log.e(TAG, "Permissions not granted or location disabled. Aborting.");
             stopSelf();
         }
 
@@ -165,6 +183,7 @@ public class LocationNotificationService
      * Reloads the data set.
      */
     private void loadData(){
+        Log.i(TAG, "Loading data");
         PlaceTableHandler handler = new PlaceTableHandler(this);
         mPlaces = new HashMap<>();
         for (UserPlace userPlace:handler.getPlaces()){
@@ -174,6 +193,14 @@ public class LocationNotificationService
         CompassDbHelper dbHelper = new CompassDbHelper(this);
         mReminders = dbHelper.getReminders();
         dbHelper.close();
+        Log.i(TAG, mPlaces.size() + " places found");
+        for (UserPlace place:mPlaces.values()){
+            Log.i(TAG, place.toString());
+        }
+        Log.i(TAG, mReminders.size() + " reminders found");
+        for (Reminder reminder:mReminders){
+            Log.i(TAG, reminder.getTitle());
+        }
     }
 
     /**
@@ -182,6 +209,7 @@ public class LocationNotificationService
      */
     private void requestLocation(){
         if (mRunning && !mRequestInProgress){
+            Log.i(TAG, "Requesting location");
             mRequestInProgress = true;
             mLocationRequest.requestLocation();
         }
@@ -194,6 +222,8 @@ public class LocationNotificationService
         //The maximum surface distance between two points in the planet is about 20Mm
         double minDistance = 20*1000*1000;
         LatLng current = new LatLng(location.getLatitude(), location.getLongitude());
+        Log.i(TAG, "Geofence radius: " + GEOFENCE_RADIUS);
+        Log.d(TAG, "Location acquired: " + current.toString());
 
         //To avoid concurrent modification exceptions, the list of reminders to be
         //  removed are put into a separate list and removed from the main list
@@ -202,11 +232,25 @@ public class LocationNotificationService
 
         //For every location based reminder in sight
         for (Reminder reminder:mReminders){
-            //The place is retrieved from the map and the distance calculated
+            Log.i(TAG, "Reminder: " + reminder.getTitle());
+            //The place is retrieved from the map
             UserPlace place = mPlaces.get(reminder.getPlaceId());
-            //This shouldn't happen in production, but just in case
-            if (place != null){
+            //If the place was removed or this is me switching from staging to production
+            //  or vice-versa, remove the reminder, because otherwise the service won't
+            //  operate as expected
+            if (place == null){
+                Log.e(TAG, "The reminder is not associated with an existing place, removing");
+                CompassDbHelper dbHelper = new CompassDbHelper(this);
+                dbHelper.deleteReminder(reminder);
+                dbHelper.close();
+                remindersToRemove.add(reminder);
+            }
+            else{
+                //Calculate distance and log data
                 double distance = CompassUtil.getDistance(place.getLocation(), current);
+                Log.i(TAG, place.toString());
+                Log.i(TAG, "Current location: " + current);
+                Log.i(TAG, "Distance: " + distance);
 
                 //If the pone is within the geofence a notification is created
                 if (distance < GEOFENCE_RADIUS){
@@ -237,6 +281,7 @@ public class LocationNotificationService
 
         //If there are no more reminders, shut down the service
         if (mReminders.size() == 0){
+            Log.d(TAG, "There are no more reminders, killing service");
             mLocationRequest.onStop();
             stopSelf();
         }
@@ -266,6 +311,7 @@ public class LocationNotificationService
             estimate = UPDATE_INTERVAL;
         }
         mNextUpdateTime = System.currentTimeMillis() + estimate;
+        Log.d(TAG, "The next location update will happen in " + (estimate/1000) + " seconds");
         //Toast.makeText(this, distance + ", " + estimate, Toast.LENGTH_SHORT).show();
     }
 

@@ -1,8 +1,12 @@
 package org.tndata.android.compass.adapter;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +44,9 @@ public class PlacePickerAdapter
         implements
                 Filterable,
                 ResultCallback<AutocompletePredictionBuffer>{
+
+    private static final String TAG = "PlacePickerAdapter";
+
 
     private Context mContext;
     private GoogleApiClient mGoogleApiClient;
@@ -158,17 +165,20 @@ public class PlacePickerAdapter
      */
     private void getPlacePredictions(String query){
         //If there is a location available use it with a ~20 Km radius
-        LatLngBounds bounds;
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (location == null){
-            bounds = new LatLngBounds(new LatLng(-90, -180), new LatLng(90, 180));
-            Log.d("PlacePicker", "No location");
-        }
-        else{
-            LatLng sw = new LatLng(location.getLatitude()-0.2, location.getLongitude()-0.2);
-            LatLng ne = new LatLng(location.getLatitude()+0.2, location.getLongitude()+0.2);
-            bounds = new LatLngBounds(sw, ne);
-            Log.d("PlacePicker", location.toString());
+        LatLngBounds bounds = new LatLngBounds(new LatLng(-90, -180), new LatLng(90, 180));
+        String permission = Manifest.permission.ACCESS_FINE_LOCATION;
+        int granted = PackageManager.PERMISSION_GRANTED;
+        if (ContextCompat.checkSelfPermission(mContext, permission) == granted){
+            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (location == null){
+                Log.e(TAG, "No location could be provided");
+            }
+            else{
+                LatLng sw = new LatLng(location.getLatitude() - 0.2, location.getLongitude() - 0.2);
+                LatLng ne = new LatLng(location.getLatitude() + 0.2, location.getLongitude() + 0.2);
+                bounds = new LatLngBounds(sw, ne);
+                Log.i(TAG, "Approximated location: " + location.toString());
+            }
         }
 
         Places.GeoDataApi.getAutocompletePredictions(mGoogleApiClient, query, bounds, null)
@@ -176,20 +186,17 @@ public class PlacePickerAdapter
     }
 
     @Override
-    public void onResult(final AutocompletePredictionBuffer autocompletePredictions){
+    public void onResult(@NonNull final AutocompletePredictionBuffer autocompletePredictions){
         //Update the list with the results in the UI thread
         ((Activity)mContext).runOnUiThread(new Runnable(){
             @Override
             public void run(){
-                if (autocompletePredictions == null){
-                    return;
-                }
-
                 if (autocompletePredictions.getStatus().isSuccess()){
                     mPlaces.clear();
                     for (AutocompletePrediction prediction:autocompletePredictions){
                         //Add as a new item to avoid IllegalArgumentsException when buffer is released
-                        mPlaces.add(new GooglePlace(prediction.getPlaceId(), prediction.getDescription()));
+                        String description = prediction.getPrimaryText(null).toString();
+                        mPlaces.add(new GooglePlace(prediction.getPlaceId(), description));
                     }
                     notifyDataSetChanged();
                 }

@@ -74,37 +74,6 @@ final class CardTypes{
     }
 
     /**
-     * Tells whether the feed should display a feedback card.
-     *
-     * @return true if there is a feedback card, false otherwise.
-     */
-    static boolean hasFeedback(){
-        return hasUpNextAction() && sFeedData.hasFeedback();
-    }
-
-    /**
-     * Gets the position of the feedback card.
-     *
-     * @return the position of the feedback card.
-     */
-    static int getFeedbackPosition(){
-        if (hasSuggestion()){
-            return getSuggestionPosition()+1;
-        }
-        return getStreaksPosition()+1;
-    }
-
-    /**
-     * Tells whether a position is that of the feedback card.
-     *
-     * @param position the position to be checked.
-     * @return true if it is the position of the feedback, false otherwise.
-     */
-    static boolean isFeedback(int position){
-        return hasFeedback() && getFeedbackPosition() == position;
-    }
-
-    /**
      * Gets the position of the streaks card.
      *
      * @return the position of the streaks card.
@@ -175,10 +144,6 @@ final class CardTypes{
      * @return the position of the upcoming header card.
      */
     static int getUpcomingPosition(){
-        //TEMP: There might be up-next but no feedback
-        if (hasFeedback()){
-            return getFeedbackPosition()+1;
-        }
         if (hasStreaks()){
             return getStreaksPosition()+1;
         }
@@ -274,9 +239,6 @@ final class CardTypes{
         }
         if (hasUpcoming()){
             return getUpcomingPosition()+1;
-        }
-        if (hasFeedback()){
-            return getFeedbackPosition()+1;
         }
         if (hasStreaks()){
             return getStreaksPosition()+1;

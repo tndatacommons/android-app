@@ -5,7 +5,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +31,7 @@ import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.service.SnoozeService;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.NotificationUtil;
+import org.tndata.android.compass.util.SharedPreferencesManager;
 
 import java.util.Calendar;
 import java.util.List;
@@ -47,13 +50,15 @@ public class SnoozeActivity
                 AdapterView.OnItemClickListener,
                 CalendarDatePickerDialog.OnDateSetListener,
                 RadialTimePickerDialog.OnTimeSetListener,
-                DialogInterface.OnClickListener{
+                DialogInterface.OnClickListener,
+                DialogInterface.OnCancelListener{
 
     private static final String TAG = "SnoozeActivity";
 
     //Request codes
     private static final int PLACES_REQUEST_CODE = 600;
     private static final int LOCATION_PERMISSION_RC = 1;
+    private static final int SETTINGS_REQUEST_CODE = 5378;
 
 
     private Reminder mReminder;
@@ -63,6 +68,7 @@ public class SnoozeActivity
     private UserPlace mPickedPlace;
 
     private AlertDialog mRationaleDialog;
+    private AlertDialog mLocationDisabledDialog;
 
 
     @Override
@@ -223,6 +229,17 @@ public class SnoozeActivity
         if (dialog == mRationaleDialog){
             firePermissionRequest();
         }
+        else if (dialog == mLocationDisabledDialog){
+            if (which == DialogInterface.BUTTON_POSITIVE){
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                intent.setData(Uri.fromParts("package", getPackageName(), null));
+                startActivityForResult(intent, SETTINGS_REQUEST_CODE);
+            }
+            else{
+                displayPlacesDialog();
+            }
+        }
         //Otherwise, the user tapped one of the places in the place list dialog
         else{
             //If the user tapped the add a place item, fire the place picker activity
@@ -249,18 +266,45 @@ public class SnoozeActivity
      */
     private void firePermissionRequest(){
         String locationPermission = Manifest.permission.ACCESS_FINE_LOCATION;
-        boolean rationale = ActivityCompat.shouldShowRequestPermissionRationale(this, locationPermission);
-        if (rationale && mRationaleDialog == null){
-            //Show the rationale dialog
-            mRationaleDialog = new AlertDialog.Builder(this)
-                    .setTitle(R.string.later_location_rationale_title)
-                    .setMessage(R.string.later_location_rationale)
-                    .setPositiveButton(R.string.later_location_rationale_button, this)
-                    .create();
-            mRationaleDialog.show();
+        if (mRationaleDialog == null){
+            boolean rationale = ActivityCompat.shouldShowRequestPermissionRationale(this, locationPermission);
+            if (rationale){
+                //Show the rationale dialog
+                mRationaleDialog = new AlertDialog.Builder(this)
+                        .setTitle(R.string.later_location_rationale_title)
+                        .setMessage(R.string.later_location_rationale)
+                        .setPositiveButton(R.string.later_location_rationale_button, this)
+                        .setOnCancelListener(this)
+                        .create();
+                mRationaleDialog.show();
+            }
+            else{
+                if (SharedPreferencesManager.isFirstLocationPermissionRequest(this)){
+                    //Request permissions
+                    SharedPreferencesManager.locationPermissionRequested(this);
+                    ActivityCompat.requestPermissions(this, new String[]{locationPermission},
+                            LOCATION_PERMISSION_RC);
+                    mRationaleDialog = null;
+                }
+                else{
+                    //If this is not the first time but rationale is false, it means that the
+                    //  user has tapped never ask again. In this case, if the user really
+                    //  wants this feature he will have to go to settings and enable location
+                    //  manually, otherwise, this will not work at all.
+                    mLocationDisabledDialog = new AlertDialog.Builder(this)
+                            .setTitle(R.string.later_location_disabled_title)
+                            .setMessage(R.string.later_location_disabled)
+                            .setPositiveButton(R.string.later_location_disabled_button_positive, this)
+                            .setNegativeButton(R.string.later_location_disabled_button_negative, this)
+                            .setOnCancelListener(this)
+                            .create();
+                    mLocationDisabledDialog.show();
+                }
+            }
         }
         else{
             //Request permissions
+            SharedPreferencesManager.locationPermissionRequested(this);
             ActivityCompat.requestPermissions(this, new String[]{locationPermission},
                     LOCATION_PERMISSION_RC);
             mRationaleDialog = null;
@@ -319,6 +363,14 @@ public class SnoozeActivity
             //Create the dialog
             displayPlacesDialog();
         }
+        else if (requestCode == SETTINGS_REQUEST_CODE){
+            if (CompassUtil.hasPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)){
+                snooze(mPickedPlace);
+            }
+            else{
+                displayPlacesDialog();
+            }
+        }
     }
 
     /**
@@ -332,5 +384,14 @@ public class SnoozeActivity
                 .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_SNOOZED)
                 .putExtra(ActionReportService.LENGTH_KEY, length);
         startService(report);
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog){
+        if (dialog == mRationaleDialog || dialog == mLocationDisabledDialog){
+            mRationaleDialog = null;
+            mLocationDisabledDialog = null;
+            displayPlacesDialog();
+        }
     }
 }

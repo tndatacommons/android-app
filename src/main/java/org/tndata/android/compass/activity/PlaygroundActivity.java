@@ -17,8 +17,6 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import at.grabner.circleprogress.CircleProgressView;
-
 
 /**
  * An activity to test new features without compromising the integrity of the
@@ -39,12 +37,6 @@ public class PlaygroundActivity extends AppCompatActivity implements View.OnClic
         //button.setOnClickListener(this);
 
         state = 0;
-
-        CircleProgressView progress = (CircleProgressView)findViewById(R.id.playground_circle);
-        progress.setValue(0);
-        //progress.setShowUnit(true);
-        progress.setAutoTextSize(true);
-        progress.setValueAnimated(0, 100, 1500);
 
         findViewById(R.id.playground_button_start).setOnClickListener(this);
         findViewById(R.id.playground_button_kill).setOnClickListener(this);
