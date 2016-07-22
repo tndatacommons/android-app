@@ -106,7 +106,10 @@ public class OrganizationsFragment
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof ParserModels.OrganizationsResultSet){
             mOrganizations = ((ParserModels.OrganizationsResultSet)result).results;
-            if (mBinding != null){
+            if (mOrganizations.size() == 0){
+                mListener.onOrganizationSelected(null);
+            }
+            else if (mBinding != null){
                 bindCategories();
             }
         }
@@ -118,6 +121,7 @@ public class OrganizationsFragment
         OrganizationsAdapter adapter = new OrganizationsAdapter(context, mOrganizations, mListener);
         mBinding.organizationsList.setAdapter(adapter);
         mBinding.organizationsList.addItemDecoration(new CardItemDecoration());
+        mBinding.organizationsHeader.setVisibility(View.VISIBLE);
         mBinding.organizationsList.setVisibility(View.VISIBLE);
         mBinding.organizationsSkip.setVisibility(View.VISIBLE);
         mBinding.organizationsSkip.setOnClickListener(this);
