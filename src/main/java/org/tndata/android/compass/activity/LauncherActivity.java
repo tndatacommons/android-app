@@ -185,12 +185,7 @@ public class LauncherActivity
     @Override
     public void onSignUpSuccess(){
         Log.d(TAG, mApplication.getUser().toString());
-        if (mApplication.getUser().needsOnBoarding()){
-            transitionToOnBoarding();
-        }
-        else{
-            fetchData();
-        }
+        transitionToOnBoarding();
     }
 
     @Override
