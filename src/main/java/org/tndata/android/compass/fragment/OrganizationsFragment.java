@@ -35,15 +35,14 @@ public class OrganizationsFragment
         extends Fragment
         implements
                 HttpRequest.RequestCallback,
-                Parser.ParserCallback,
-                OrganizationsAdapter.OrganizationsAdapterListener{
+                Parser.ParserCallback{
 
     private FragmentOrganizationsBinding mBinding;
 
     private List<Organization> mOrganizations;
     private int mGetOrganizationsRC;
 
-    private OrganizationsFragmentListener mListener;
+    private OrganizationsListener mListener;
 
 
     public static OrganizationsFragment newInstance(){
@@ -60,9 +59,8 @@ public class OrganizationsFragment
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
-
         try{
-            mListener = (OrganizationsFragmentListener)context;
+            mListener = (OrganizationsListener)context;
         }
         catch (ClassCastException ccx){
             throw new ClassCastException(context.toString()
@@ -114,20 +112,16 @@ public class OrganizationsFragment
     }
 
     private void bindCategories(){
-        mBinding.organizationsList.setLayoutManager(new LinearLayoutManager(getContext()));
-        OrganizationsAdapter adapter = new OrganizationsAdapter(getContext(), mOrganizations, this);
+        Context context = getContext();
+        mBinding.organizationsList.setLayoutManager(new LinearLayoutManager(context));
+        OrganizationsAdapter adapter = new OrganizationsAdapter(context, mOrganizations, mListener);
         mBinding.organizationsList.setAdapter(adapter);
         mBinding.organizationsList.setVisibility(View.VISIBLE);
         mBinding.organizationsProgress.setVisibility(View.GONE);
     }
 
-    @Override
-    public void onOrganizationSelected(@NonNull Organization organization){
-        mListener.onOrganizationSelected(organization);
-    }
 
-
-    public interface OrganizationsFragmentListener{
+    public interface OrganizationsListener{
         void onOrganizationSelected(@NonNull Organization organization);
     }
 }

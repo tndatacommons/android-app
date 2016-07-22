@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.databinding.CardOrganizationBinding;
+import org.tndata.android.compass.fragment.OrganizationsFragment.OrganizationsListener;
 import org.tndata.android.compass.model.Organization;
 
 import java.util.List;
@@ -24,11 +25,11 @@ import java.util.List;
 public class OrganizationsAdapter extends RecyclerView.Adapter<OrganizationsAdapter.OrganizationHolder>{
     private Context mContext;
     private List<Organization> mOrganizations;
-    private OrganizationsAdapterListener mListener;
+    private OrganizationsListener mListener;
 
 
     public OrganizationsAdapter(@NonNull Context context, @NonNull List<Organization> organizations,
-                                @NonNull OrganizationsAdapterListener listener){
+                                @NonNull OrganizationsListener listener){
 
         mContext = context;
         mOrganizations = organizations;
@@ -73,10 +74,5 @@ public class OrganizationsAdapter extends RecyclerView.Adapter<OrganizationsAdap
         public void onClick(View view){
             mListener.onOrganizationSelected(mBinding.getOrganization());
         }
-    }
-
-
-    public interface OrganizationsAdapterListener{
-        void onOrganizationSelected(@NonNull Organization organization);
     }
 }
