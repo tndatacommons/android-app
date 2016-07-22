@@ -106,8 +106,11 @@ public class LocationNotificationService
         if (CompassUtil.hasPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 && CompassUtil.isLocationEnabled(this)){
 
-            //Evaluate the action
-            if (intent.getExtras() != null){
+            if (intent == null){
+                start(getApplicationContext());
+            }
+            else{
+                //Evaluate the action
                 switch (intent.getExtras().getString(COMMAND_KEY, "")){
                     case START:
                         //For start actions, if the service is already started, do nothing,
@@ -167,14 +170,9 @@ public class LocationNotificationService
                         }
                 }
             }
-            else{
-                if (!mRunning){
-                    stopSelf();
-                }
-            }
         }
         else{
-            Log.e(TAG, "Permissions not granted. Aborting.");
+            Log.e(TAG, "Permissions not granted or location disabled. Aborting.");
             stopSelf();
         }
 
