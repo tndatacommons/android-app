@@ -3,7 +3,6 @@ package org.tndata.android.compass.fragment;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -35,7 +34,8 @@ public class OrganizationsFragment
         extends Fragment
         implements
                 HttpRequest.RequestCallback,
-                Parser.ParserCallback{
+                Parser.ParserCallback,
+                View.OnClickListener{
 
     private FragmentOrganizationsBinding mBinding;
 
@@ -117,11 +117,18 @@ public class OrganizationsFragment
         OrganizationsAdapter adapter = new OrganizationsAdapter(context, mOrganizations, mListener);
         mBinding.organizationsList.setAdapter(adapter);
         mBinding.organizationsList.setVisibility(View.VISIBLE);
+        mBinding.organizationsSkip.setVisibility(View.VISIBLE);
+        mBinding.organizationsSkip.setOnClickListener(this);
         mBinding.organizationsProgress.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onClick(View view){
+        mListener.onOrganizationSelected(null);
     }
 
 
     public interface OrganizationsListener{
-        void onOrganizationSelected(@NonNull Organization organization);
+        void onOrganizationSelected(@Nullable Organization organization);
     }
 }

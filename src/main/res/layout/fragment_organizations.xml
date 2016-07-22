@@ -5,11 +5,34 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/organizations_list"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/organizations_list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/organizations_skip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
+                android:visibility="gone"
+                android:background="@drawable/button_positive_rounded"
+                android:minHeight="@dimen/paper_flat_button_min_height"
+                android:minWidth="@dimen/paper_flat_login_button_min_width"
+                android:textAllCaps="true"
+                android:text="@string/onboarding_category_skip"
+                android:textColor="@color/button_positive_text_color" />
+
+        </LinearLayout>
 
         <ProgressBar
             android:id="@+id/organizations_progress"

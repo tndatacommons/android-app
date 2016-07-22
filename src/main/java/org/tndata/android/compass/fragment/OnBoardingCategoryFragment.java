@@ -17,6 +17,9 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
 import org.tndata.android.compass.model.TDCCategory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Created by isma on 5/4/16.
@@ -26,6 +29,8 @@ public class OnBoardingCategoryFragment
         implements
                 ChooseCategoryAdapter.ChooseCategoryAdapterListener,
                 View.OnClickListener{
+
+    private List<TDCCategory> mCategories;
 
     private CategoryListener mListener;
 
@@ -58,13 +63,22 @@ public class OnBoardingCategoryFragment
         explanation.setText(R.string.list_explanation);
         root.findViewById(R.id.list_explanation_container).setVisibility(View.VISIBLE);
 
+        if (mCategories == null){
+            mCategories = new ArrayList<>();
+        }
+        mCategories.addAll(app.getCategoryList(true));
+
         RecyclerView list = (RecyclerView)root.findViewById(R.id.list_recycler_view);
         list.setLayoutManager(new LinearLayoutManager(getContext()));
-        list.setAdapter(new ChooseCategoryAdapter(getContext(), this, app.getCategoryList(true)));
+        list.setAdapter(new ChooseCategoryAdapter(getContext(), this, mCategories));
 
         mNext = (Button)root.findViewById(R.id.list_button);
         mNext.setVisibility(View.VISIBLE);
         mNext.setOnClickListener(this);
+    }
+
+    public void addCategories(List<TDCCategory> categories){
+        mCategories = categories;
     }
 
     public void onContentSelected(){
