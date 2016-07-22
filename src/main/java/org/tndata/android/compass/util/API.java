@@ -554,7 +554,12 @@ public final class API{
         private URL(){
 
         }
+
+
         //URL getters
+        public static String getOrganizations(){
+            return BASE_URL + "organizations/";
+        }
     }
 
     public static final class BODY{
