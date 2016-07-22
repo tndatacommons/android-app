@@ -105,7 +105,7 @@ public class OrganizationsFragment
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof ParserModels.OrganizationsResultSet){
             mOrganizations = ((ParserModels.OrganizationsResultSet)result).results;
-            if (mBinding == null){
+            if (mBinding != null){
                 bindCategories();
             }
         }

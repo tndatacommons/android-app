@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -115,6 +116,7 @@ public class OnBoardingActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mPostOrganizationRC){
+            Log.d("OB", result);
             Parser.parse(result, ParserModels.CategoryContentResultSet.class, this);
         }
     }

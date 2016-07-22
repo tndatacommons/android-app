@@ -176,6 +176,9 @@ public final class CompassUtil{
         if (src == null){
             return Long.class;
         }
+        else if (src.equals(Organization.TYPE)){
+            return Organization.class;
+        }
         else if (src.equals("user")){
             return User.class;
         }
