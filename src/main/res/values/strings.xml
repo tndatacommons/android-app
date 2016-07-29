@@ -250,6 +250,8 @@
     <string name="card_up_next_subtitle_empty">Select a goal to get started.</string>
     <string name="card_up_next_goal_title">To %1$s</string>
     <string name="card_up_next_indicator_caption">%1$s completed</string>
+    <!-- Progress/Streaks card -->
+    <string name="progress_header">Weekly progress</string>
     <!-- Goal suggestion card -->
     <string name="card_goal_suggestion_header">Compass can help you&#8230;</string>
     <string name="card_goal_suggestion_later">Maybe later</string>
