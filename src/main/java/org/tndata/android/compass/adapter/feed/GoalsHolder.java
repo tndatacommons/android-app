@@ -191,7 +191,7 @@ class GoalsHolder<T> extends MainFeedAdapter.ViewHolder implements View.OnClickL
                 TDCCategory category = null;
                 for (Long id:goalContent.getCategoryIdSet()){
                     if (id > 22){
-                        category = app.getPublicCategories().get(id);
+                        category = app.getAvailableCategories().get(id);
                     }
                 }
                 if (category == null){
@@ -211,7 +211,7 @@ class GoalsHolder<T> extends MainFeedAdapter.ViewHolder implements View.OnClickL
             }
             else if (goal instanceof UserGoal){
                 UserGoal userGoal = (UserGoal)goal;
-                TDCCategory category = app.getPublicCategories().get(userGoal.getPrimaryCategoryId());
+                TDCCategory category = app.getAvailableCategories().get(userGoal.getPrimaryCategoryId());
                 if (category == null){
                     gradientDrawable.setColor(mAdapter.mContext.getResources().getColor(R.color.primary));
                 }

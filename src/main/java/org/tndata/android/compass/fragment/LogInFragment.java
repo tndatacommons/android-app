@@ -208,7 +208,7 @@ public class LogInFragment
         }
         else if (result instanceof ParserModels.CategoryContentResultSet){
             List<TDCCategory> categories = ((ParserModels.CategoryContentResultSet)result).results;
-            mApplication.setPublicCategories(categories);
+            mApplication.setAvailableCategories(categories);
         }
     }
 
