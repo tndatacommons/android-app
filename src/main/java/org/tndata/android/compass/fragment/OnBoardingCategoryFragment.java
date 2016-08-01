@@ -19,7 +19,10 @@ import org.tndata.android.compass.model.TDCCategory;
 
 
 /**
- * Created by isma on 5/4/16.
+ * Fragment used to display a list of categories during OnBoarding.
+ *
+ * @author Ismael Alonso
+ * @version 1.1.0
  */
 public class OnBoardingCategoryFragment
         extends Fragment
@@ -28,7 +31,6 @@ public class OnBoardingCategoryFragment
                 View.OnClickListener{
 
     private CategoryListener mListener;
-
     private Button mNext;
 
 
@@ -67,7 +69,10 @@ public class OnBoardingCategoryFragment
         mNext.setOnClickListener(this);
     }
 
-    public void onContentSelected(){
+    /**
+     * When this method gets called, the text of the skip button becomes "finish."
+     */
+    public void notifyContentSelected(){
         if (mNext != null){
             mNext.setText(R.string.onboarding_category_finish);
         }
@@ -84,8 +89,24 @@ public class OnBoardingCategoryFragment
         mListener.onNext();
     }
 
+
+    /**
+     * Category selection listener interface.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface CategoryListener{
+        /**
+         * Called when a category is selected.
+         *
+         * @param category the selected category.
+         */
         void onCategorySelected(TDCCategory category);
+
+        /**
+         * Called when the next button (whether skip or finish) is tapped.
+         */
         void onNext();
     }
 }

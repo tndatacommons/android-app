@@ -554,13 +554,34 @@ public final class API{
         private URL(){
 
         }
+
+
         //URL getters
+        public static String getOrganizations(){
+            return BASE_URL + "organizations/";
+        }
+
+        public static String postOrganization(){
+            return BASE_URL + "organizations/members/";
+        }
     }
 
     public static final class BODY{
         private BODY(){
 
         }
+
+
         //Body getters
+        public static JSONObject postOrganization(Organization organization){
+            JSONObject body = new JSONObject();
+            try{
+                body.put("organization", organization.getId());
+            }
+            catch (JSONException jx){
+                jx.printStackTrace();
+            }
+            return body;
+        }
     }
 }

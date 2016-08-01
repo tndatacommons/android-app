@@ -89,7 +89,7 @@ public class ReviewActionsActivity
                 goalId = mUserAction.getPrimaryGoalId();
                 goalTitle = mUserAction.getGoalTitle();
             }
-            TDCCategory category = mApplication.getPublicCategories().get(categoryId);
+            TDCCategory category = mApplication.getAvailableCategories().get(categoryId);
             mAdapter = new ReviewActionsAdapter(this, this, goalTitle);
             mGetActionsNextUrl = API.getUserActionsByGoalUrl(goalId);
             if (category != null){

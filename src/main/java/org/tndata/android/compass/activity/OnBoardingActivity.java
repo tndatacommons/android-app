@@ -7,18 +7,26 @@ import android.support.v7.app.AppCompatActivity;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.adapter.OrganizationsAdapter;
 import org.tndata.android.compass.fragment.InstrumentFragment;
 import org.tndata.android.compass.fragment.OnBoardingCategoryFragment;
+import org.tndata.android.compass.fragment.OrganizationsFragment;
 import org.tndata.android.compass.fragment.ProgressFragment;
+import org.tndata.android.compass.model.Organization;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Instrument;
 import org.tndata.android.compass.model.Survey;
 import org.tndata.android.compass.model.User;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.FeedDataLoader;
 
+import java.util.List;
+
 import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -32,6 +40,9 @@ public class OnBoardingActivity
         extends AppCompatActivity
         implements
                 InstrumentFragment.InstrumentFragmentCallback,
+                OrganizationsAdapter.OrganizationsListener,
+                HttpRequest.RequestCallback,
+                Parser.ParserCallback,
                 OnBoardingCategoryFragment.CategoryListener,
                 FeedDataLoader.Callback{
 
@@ -42,6 +53,9 @@ public class OnBoardingActivity
 
     private CompassApplication mApplication;
     private OnBoardingCategoryFragment mCategoryFragment;
+
+    private int mPostOrganizationRC;
+    private int mGetCategoriesRC;
 
 
     @Override
@@ -77,10 +91,60 @@ public class OnBoardingActivity
             mApplication.getUser().postSurvey(survey);
         }
 
-        mCategoryFragment = new OnBoardingCategoryFragment();
+        OrganizationsFragment organizationsFragment = OrganizationsFragment.newInstance();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.base_content, mCategoryFragment)
+                .replace(R.id.base_content, organizationsFragment)
                 .commit();
+    }
+
+    @Override
+    public void onOrganizationSelected(@Nullable Organization organization){
+        if (organization == null){
+            mCategoryFragment = new OnBoardingCategoryFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.base_content, mCategoryFragment)
+                    .commit();
+        }
+        else{
+            mPostOrganizationRC = HttpRequest.post(this, API.URL.postOrganization(),
+                    API.BODY.postOrganization(organization));
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.base_content, new ProgressFragment())
+                    .commit();
+        }
+    }
+
+    @Override
+    public void onRequestComplete(int requestCode, String result){
+        if (requestCode == mPostOrganizationRC){
+            mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
+        }
+        else if (requestCode == mGetCategoriesRC){
+            Parser.parse(result, ParserModels.CategoryContentResultSet.class, this);
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode, HttpRequestError error){
+
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.CategoryContentResultSet){
+            List<TDCCategory> categories = ((ParserModels.CategoryContentResultSet)result).results;
+            mApplication.setAvailableCategories(categories);
+        }
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.CategoryContentResultSet){
+            mCategoryFragment = new OnBoardingCategoryFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.base_content, mCategoryFragment)
+                    .commit();
+        }
     }
 
     @Override
@@ -114,7 +178,7 @@ public class OnBoardingActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == LIBRARY_RC && resultCode == RESULT_OK){
-            mCategoryFragment.onContentSelected();
+            mCategoryFragment.notifyContentSelected();
         }
     }
 }

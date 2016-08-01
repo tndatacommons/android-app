@@ -39,8 +39,8 @@ public class CompassApplication extends Application{
 
     //The logged-in user
     private User mUser;
-    //The list of public categories
-    private Map<Long, TDCCategory> mPublicCategories;
+    //The list of available categories
+    private Map<Long, TDCCategory> mAvailableCategories;
     //The feed data bundle
     private FeedData mFeedData;
 
@@ -108,17 +108,17 @@ public class CompassApplication extends Application{
     }
 
     /**
-     * Public category setter. Categories set using this method are written to the database.
+     * Available category setter. Categories set using this method are written to the database.
      * The data is kept internally as a Long->CategoryContent HashMap.
      *
-     * @param categories the list of public categories.
+     * @param categories the list of categories available to the user at fetch time.
      */
-    public synchronized void setPublicCategories(List<TDCCategory> categories){
+    public synchronized void setAvailableCategories(List<TDCCategory> categories){
         //Create a new Map and trash the old one
-        mPublicCategories = new HashMap<>();
+        mAvailableCategories = new HashMap<>();
         //Populate the new one
         for (TDCCategory category:categories){
-            mPublicCategories.put(category.getId(), category);
+            mAvailableCategories.put(category.getId(), category);
         }
         //Write them to the database
         TDCCategoryTableHandler handler = new TDCCategoryTableHandler(this);
@@ -131,13 +131,13 @@ public class CompassApplication extends Application{
      *
      * @return A Long->CategoryContent HashMap.
      */
-    public synchronized Map<Long, TDCCategory> getPublicCategories(){
-        if (mPublicCategories == null){
+    public synchronized Map<Long, TDCCategory> getAvailableCategories(){
+        if (mAvailableCategories == null){
             TDCCategoryTableHandler handler = new TDCCategoryTableHandler(this);
-            mPublicCategories = handler.readCategories();
+            mAvailableCategories = handler.readCategories();
             handler.close();
         }
-        return mPublicCategories;
+        return mAvailableCategories;
     }
 
     /**
@@ -148,7 +148,7 @@ public class CompassApplication extends Application{
      */
     public synchronized List<TDCCategory> getCategoryList(boolean filtered){
         List<TDCCategory> result = new ArrayList<>();
-        for (TDCCategory category:getPublicCategories().values()){
+        for (TDCCategory category: getAvailableCategories().values()){
             if (!category.isSelectedByDefault()){
                 if (!filtered || category.isFeatured()){
                     result.add(category);

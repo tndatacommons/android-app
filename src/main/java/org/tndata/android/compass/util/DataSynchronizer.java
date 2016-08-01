@@ -97,7 +97,7 @@ public final class DataSynchronizer implements HttpRequest.RequestCallback, Pars
         }
         else if (result instanceof ParserModels.CategoryContentResultSet){
             List<TDCCategory> categories = ((ParserModels.CategoryContentResultSet)result).results;
-            mApplication.setPublicCategories(categories);
+            mApplication.setAvailableCategories(categories);
             Log.i(TAG, "Categories synchronized");
         }
     }

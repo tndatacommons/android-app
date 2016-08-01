@@ -76,6 +76,8 @@
     <string name="onboarding_instrument_description">These are quick questions that will help the app create a base of recommendations. These questions will become more granular through the survey cards as the user engages with the app over time.</string>
     <string name="onboarding_instrument_instructions">Tell Compass a few things about you.</string>
 
+    <string name="organizations_header">Are you part of one of these Compass partners? (this step is optional).</string>
+
     <string name="list_explanation">What do you want to do? You can browse more goals inside the app.</string>
 
     <!-- ActionTriggerActivity -->

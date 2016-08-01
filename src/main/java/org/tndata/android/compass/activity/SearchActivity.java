@@ -165,7 +165,7 @@ public class SearchActivity
             mCategory = null;
             CompassApplication app = (CompassApplication)getApplication();
             for (long categoryId:result.getGoal().getCategoryIdSet()){
-                mCategory = app.getPublicCategories().get(categoryId);
+                mCategory = app.getAvailableCategories().get(categoryId);
                 if (mCategory != null){
                     break;
                 }

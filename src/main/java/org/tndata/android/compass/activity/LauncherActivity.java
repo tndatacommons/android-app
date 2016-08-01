@@ -103,6 +103,7 @@ public class LauncherActivity
                     if (user.needsOnBoarding()){
                         Log.i(TAG, "User needs on-boarding.");
                         transitionToOnBoarding();
+                        Log.d(TAG, "Token: " + user.getToken());
                     }
                     else{
                         Log.i(TAG, "Retrieving data.");
@@ -185,12 +186,7 @@ public class LauncherActivity
     @Override
     public void onSignUpSuccess(){
         Log.d(TAG, mApplication.getUser().toString());
-        if (mApplication.getUser().needsOnBoarding()){
-            transitionToOnBoarding();
-        }
-        else{
-            fetchData();
-        }
+        transitionToOnBoarding();
     }
 
     @Override
