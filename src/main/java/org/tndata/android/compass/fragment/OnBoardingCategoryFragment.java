@@ -17,12 +17,12 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
 import org.tndata.android.compass.model.TDCCategory;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 /**
- * Created by isma on 5/4/16.
+ * Fragment used to display a list of categories during OnBoarding.
+ *
+ * @author Ismael Alonso
+ * @version 1.1.0
  */
 public class OnBoardingCategoryFragment
         extends Fragment
@@ -30,10 +30,7 @@ public class OnBoardingCategoryFragment
                 ChooseCategoryAdapter.ChooseCategoryAdapterListener,
                 View.OnClickListener{
 
-    private List<TDCCategory> mCategories;
-
     private CategoryListener mListener;
-
     private Button mNext;
 
 
@@ -63,25 +60,19 @@ public class OnBoardingCategoryFragment
         explanation.setText(R.string.list_explanation);
         root.findViewById(R.id.list_explanation_container).setVisibility(View.VISIBLE);
 
-        if (mCategories == null){
-            mCategories = new ArrayList<>();
-        }
-        mCategories.addAll(app.getCategoryList(true));
-
         RecyclerView list = (RecyclerView)root.findViewById(R.id.list_recycler_view);
         list.setLayoutManager(new LinearLayoutManager(getContext()));
-        list.setAdapter(new ChooseCategoryAdapter(getContext(), this, mCategories));
+        list.setAdapter(new ChooseCategoryAdapter(getContext(), this, app.getCategoryList(true)));
 
         mNext = (Button)root.findViewById(R.id.list_button);
         mNext.setVisibility(View.VISIBLE);
         mNext.setOnClickListener(this);
     }
 
-    public void addCategories(List<TDCCategory> categories){
-        mCategories = categories;
-    }
-
-    public void onContentSelected(){
+    /**
+     * When this method gets called, the text of the skip button becomes "finish."
+     */
+    public void notifyContentSelected(){
         if (mNext != null){
             mNext.setText(R.string.onboarding_category_finish);
         }
@@ -98,8 +89,24 @@ public class OnBoardingCategoryFragment
         mListener.onNext();
     }
 
+
+    /**
+     * Category selection listener interface.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface CategoryListener{
+        /**
+         * Called when a category is selected.
+         *
+         * @param category the selected category.
+         */
         void onCategorySelected(TDCCategory category);
+
+        /**
+         * Called when the next button (whether skip or finish) is tapped.
+         */
         void onNext();
     }
 }

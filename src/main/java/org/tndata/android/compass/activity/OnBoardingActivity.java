@@ -129,15 +129,16 @@ public class OnBoardingActivity
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-
+        if (result instanceof ParserModels.CategoryContentResultSet){
+            List<TDCCategory> categories = ((ParserModels.CategoryContentResultSet)result).results;
+            mApplication.setAvailableCategories(categories);
+        }
     }
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof ParserModels.CategoryContentResultSet){
-            List<TDCCategory> categories = ((ParserModels.CategoryContentResultSet)result).results;
             mCategoryFragment = new OnBoardingCategoryFragment();
-            mCategoryFragment.addCategories(categories);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.base_content, mCategoryFragment)
                     .commit();
@@ -175,7 +176,7 @@ public class OnBoardingActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == LIBRARY_RC && resultCode == RESULT_OK){
-            mCategoryFragment.onContentSelected();
+            mCategoryFragment.notifyContentSelected();
         }
     }
 }
