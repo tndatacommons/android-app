@@ -3,6 +3,7 @@ package org.tndata.android.compass.adapter;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +11,6 @@ import android.view.ViewGroup;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.databinding.CardOrganizationBinding;
-import org.tndata.android.compass.fragment.OrganizationsFragment.OrganizationsListener;
 import org.tndata.android.compass.model.Organization;
 
 import java.util.List;
@@ -28,6 +28,13 @@ public class OrganizationsAdapter extends RecyclerView.Adapter<OrganizationsAdap
     private OrganizationsListener mListener;
 
 
+    /**
+     * Constructor.
+     *
+     * @param context a reference to the context.
+     * @param organizations the list of organizations to choose from.
+     * @param listener the organization selection listener.
+     */
     public OrganizationsAdapter(@NonNull Context context, @NonNull List<Organization> organizations,
                                 @NonNull OrganizationsListener listener){
 
@@ -57,15 +64,32 @@ public class OrganizationsAdapter extends RecyclerView.Adapter<OrganizationsAdap
     }
 
 
+    /**
+     * Holder for an organization item.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     class OrganizationHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        CardOrganizationBinding mBinding;
+        private CardOrganizationBinding mBinding;
 
-        OrganizationHolder(CardOrganizationBinding binding){
+
+        /**
+         * Constructor.
+         *
+         * @param binding the binding class containing references to the views.
+         */
+        private OrganizationHolder(CardOrganizationBinding binding){
             super(binding.getRoot());
             mBinding = binding;
             itemView.setOnClickListener(this);
         }
 
+        /**
+         * Binds an organization to the holder.
+         *
+         * @param organization the organization to be bound.
+         */
         void bind(Organization organization){
             mBinding.setOrganization(organization);
         }
@@ -74,5 +98,21 @@ public class OrganizationsAdapter extends RecyclerView.Adapter<OrganizationsAdap
         public void onClick(View view){
             mListener.onOrganizationSelected(mBinding.getOrganization());
         }
+    }
+
+
+    /**
+     * Listener interface for the organization selection process.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    public interface OrganizationsListener{
+        /**
+         * Called when the user selects an organization.
+         *
+         * @param organization the organization that was selected.
+         */
+        void onOrganizationSelected(@Nullable Organization organization);
     }
 }

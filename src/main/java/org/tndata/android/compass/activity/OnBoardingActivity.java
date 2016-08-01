@@ -8,6 +8,7 @@ import android.util.Log;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.adapter.OrganizationsAdapter;
 import org.tndata.android.compass.fragment.InstrumentFragment;
 import org.tndata.android.compass.fragment.OnBoardingCategoryFragment;
 import org.tndata.android.compass.fragment.OrganizationsFragment;
@@ -40,7 +41,7 @@ public class OnBoardingActivity
         extends AppCompatActivity
         implements
                 InstrumentFragment.InstrumentFragmentCallback,
-                OrganizationsFragment.OrganizationsListener,
+                OrganizationsAdapter.OrganizationsListener,
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback,
                 OnBoardingCategoryFragment.CategoryListener,

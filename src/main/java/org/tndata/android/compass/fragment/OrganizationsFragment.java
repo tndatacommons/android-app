@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.OrganizationsAdapter;
+import org.tndata.android.compass.adapter.OrganizationsAdapter.OrganizationsListener;
 import org.tndata.android.compass.databinding.FragmentOrganizationsBinding;
 import org.tndata.android.compass.model.Organization;
 import org.tndata.android.compass.parser.Parser;
@@ -46,6 +47,11 @@ public class OrganizationsFragment
     private OrganizationsListener mListener;
 
 
+    /**
+     * Method to create a new instance of this fragment.
+     *
+     * @return an instance of the fragment.
+     */
     public static OrganizationsFragment newInstance(){
         return new OrganizationsFragment();
     }
@@ -81,7 +87,7 @@ public class OrganizationsFragment
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState){
         if (mOrganizations != null){
-            bindCategories();
+            bindOrganizations();
         }
     }
 
@@ -110,12 +116,16 @@ public class OrganizationsFragment
                 mListener.onOrganizationSelected(null);
             }
             else if (mBinding != null){
-                bindCategories();
+                bindOrganizations();
             }
         }
     }
 
-    private void bindCategories(){
+    /**
+     * Creates the adapter with the proper information and changes the visibility of the
+     * layouts components.
+     */
+    private void bindOrganizations(){
         Context context = getContext();
         mBinding.organizationsList.setLayoutManager(new LinearLayoutManager(context));
         OrganizationsAdapter adapter = new OrganizationsAdapter(context, mOrganizations, mListener);
@@ -131,10 +141,5 @@ public class OrganizationsFragment
     @Override
     public void onClick(View view){
         mListener.onOrganizationSelected(null);
-    }
-
-
-    public interface OrganizationsListener{
-        void onOrganizationSelected(@Nullable Organization organization);
     }
 }
