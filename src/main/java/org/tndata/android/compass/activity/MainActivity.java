@@ -485,9 +485,14 @@ public class MainActivity
     @Override
     public void onGoalSelected(Goal goal){
         if (goal instanceof UserGoal){
-            Intent reviewActionsIntent = new Intent(this, ReviewActionsActivity.class)
-                    .putExtra(ReviewActionsActivity.USER_GOAL_KEY, goal);
-            startActivityForResult(reviewActionsIntent, GOAL_RC);
+            if (mApplication.getAvailableCategories().get(((UserGoal)goal).getPrimaryCategoryId()) != null){
+                Intent reviewActionsIntent = new Intent(this, ReviewActionsActivity.class)
+                        .putExtra(ReviewActionsActivity.USER_GOAL_KEY, goal);
+                startActivityForResult(reviewActionsIntent, GOAL_RC);
+            }
+            else{
+                Toast.makeText(this, "The content is currently unavailable", Toast.LENGTH_SHORT).show();
+            }
         }
         else if (goal instanceof CustomGoal){
             Intent editGoal = new Intent(this, CustomContentActivity.class)
