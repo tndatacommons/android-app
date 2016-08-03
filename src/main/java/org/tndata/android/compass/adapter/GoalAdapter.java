@@ -112,7 +112,7 @@ public class GoalAdapter
     }
 
     private void fetchReward(){
-        mGetRewardRC = HttpRequest.get(this, API.getRandomRewardUrl());
+        mGetRewardRC = HttpRequest.get(this, API.URL.getRandomReward());
     }
 
     @Override

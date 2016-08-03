@@ -112,8 +112,7 @@ public class LogInFragment
         String password = mBinding.loginPassword.getText().toString().trim();
         if (isValidEmail(email) && isValidPassword(password)){
             setFormEnabled(false);
-
-            mLogInRC = HttpRequest.post(this, API.getLogInUrl(), API.getLogInBody(email, password));
+            mLogInRC = HttpRequest.post(this, API.URL.logIn(), API.BODY.logIn(email, password));
         }
         else{
             setFormEnabled(true);
@@ -215,7 +214,7 @@ public class LogInFragment
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof User){
-            mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
+            mGetCategoriesRC = HttpRequest.get(this, API.URL.getCategories());
         }
         else if (result instanceof ParserModels.CategoryContentResultSet){
             mCallback.onLoginSuccess();

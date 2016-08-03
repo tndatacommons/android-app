@@ -45,8 +45,7 @@ public class SnoozeService extends IntentService{
 
         //If the notification id is not -1, create the request
         if (notificationId != -1){
-            HttpRequest.put(null, API.getPutSnoozeUrl(notificationId),
-                    API.getPutSnoozeBody(date, time));
+            HttpRequest.put(null, API.URL.putSnooze(notificationId), API.BODY.putSnooze(date, time));
         }
     }
 }

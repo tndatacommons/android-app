@@ -193,7 +193,7 @@ public class CheckInRewardFragment
      * Fires the request to get a new reward.
      */
     private void fetchReward(){
-        HttpRequest.get(this, API.getRandomRewardUrl());
+        HttpRequest.get(this, API.URL.getRandomReward());
     }
 
     @Override

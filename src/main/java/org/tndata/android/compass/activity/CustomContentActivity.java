@@ -84,7 +84,7 @@ public class CustomContentActivity
             }
             else{
                 long id = getIntent().getLongExtra(CUSTOM_GOAL_ID_KEY, -1L);
-                mGetGoalRequestCode = HttpRequest.get(this, API.getCustomGoalUrl(id));
+                mGetGoalRequestCode = HttpRequest.get(this, API.URL.getCustomGoal(id));
             }
         }
 
@@ -105,7 +105,7 @@ public class CustomContentActivity
      * @param customGoal the goal whose actions are to be fetched.
      */
     private void fetchActions(@NonNull CustomGoal customGoal){
-        mGetActionsRequestCode = HttpRequest.get(this, API.getCustomActionsUrl(customGoal));
+        mGetActionsRequestCode = HttpRequest.get(this, API.URL.getCustomActions(customGoal));
     }
 
     @Override
@@ -120,7 +120,7 @@ public class CustomContentActivity
     @Override
     protected boolean menuItemSelected(MenuItem item){
         if (item.getItemId() == R.id.custom_goal_remove){
-            HttpRequest.delete(null, API.getDeleteGoalUrl(mCustomGoal));
+            HttpRequest.delete(null, API.URL.deleteGoal(mCustomGoal));
             Intent result = new Intent().putExtra(REMOVED_GOAL_KEY, mCustomGoal);
             setResult(GOAL_REMOVED_RC, result);
             finish();
@@ -219,34 +219,34 @@ public class CustomContentActivity
 
     @Override
     public void onCreateGoal(@NonNull CustomGoal customGoal){
-        mAddGoalRequestCode = HttpRequest.post(this, API.getPostCustomGoalUrl(),
-                API.getPostPutCustomGoalBody(customGoal));
+        mAddGoalRequestCode = HttpRequest.post(this, API.URL.postCustomGoal(),
+                API.BODY.postPutCustomGoal(customGoal));
     }
 
     @Override
     public void onSaveGoal(@NonNull CustomGoal customGoal){
         mApplication.updateGoal(customGoal);
-        HttpRequest.put(null, API.getPutCustomGoalUrl(customGoal),
-                API.getPostPutCustomGoalBody(customGoal));
+        HttpRequest.put(null, API.URL.putCustomGoal(customGoal),
+                API.BODY.postPutCustomGoal(customGoal));
     }
 
     @Override
     public void onCreateAction(@NonNull CustomAction customAction){
-        mAddActionRequestCode = HttpRequest.post(this, API.getPostCustomActionUrl(),
-                API.getPostPutCustomActionBody(customAction, customAction.getGoal()));
+        mAddActionRequestCode = HttpRequest.post(this, API.URL.postCustomAction(),
+                API.BODY.postPutCustomAction(customAction, customAction.getGoal()));
     }
 
     @Override
     public void onSaveAction(@NonNull CustomAction customAction){
         mApplication.updateAction(mCustomGoal, customAction);
-        HttpRequest.put(null, API.getPutCustomActionUrl(customAction),
-                API.getPostPutCustomActionBody(customAction, customAction.getGoal()));
+        HttpRequest.put(null, API.URL.putCustomAction(customAction),
+                API.BODY.postPutCustomAction(customAction, customAction.getGoal()));
     }
 
     @Override
     public void onRemoveAction(@NonNull CustomAction customAction){
         mApplication.removeAction(customAction);
-        HttpRequest.delete(null, API.getDeleteActionUrl(customAction));
+        HttpRequest.delete(null, API.URL.deleteAction(customAction));
     }
 
     @Override

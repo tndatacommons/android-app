@@ -117,7 +117,7 @@ public class OnBoardingActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mPostOrganizationRC){
-            mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
+            mGetCategoriesRC = HttpRequest.get(this, API.URL.getCategories());
         }
         else if (requestCode == mGetCategoriesRC){
             Parser.parse(result, ParserModels.CategoryContentResultSet.class, this);
@@ -162,7 +162,7 @@ public class OnBoardingActivity
         User user = mApplication.getUser();
         user.setOnBoardingComplete();
         user.writeToSharedPreferences(this);
-        HttpRequest.put(null, API.getPutUserProfileUrl(user), API.getPutUserProfileBody(user));
+        HttpRequest.put(null, API.URL.putUserProfile(user), API.BODY.putUserProfile(user));
         FeedDataLoader.load(this);
     }
 

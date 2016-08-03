@@ -151,8 +151,8 @@ public class CheckInFeedbackFragment extends Fragment implements SeekBar.OnSeekB
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar){
-        HttpRequest.post(null, API.getPostUserProgressUrl(),
-                API.getPostUserProgressBody(mUserGoal, mBar.getProgress() + 1));
+        HttpRequest.post(null, API.URL.postUserProgress(),
+                API.BODY.postUserProgress(mUserGoal, mBar.getProgress() + 1));
         mListener.onProgressChanged(mIndex, mBar.getProgress()+1);
     }
 

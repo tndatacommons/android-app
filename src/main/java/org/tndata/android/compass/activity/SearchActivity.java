@@ -106,7 +106,7 @@ public class SearchActivity
         }
         else{
             mLoading.setVisibility(View.VISIBLE);
-            mLastSearchRequestCode = HttpRequest.get(this, API.getSearchUrl(newText));
+            mLastSearchRequestCode = HttpRequest.get(this, API.URL.search(newText));
         }
         return false;
     }
@@ -184,7 +184,7 @@ public class SearchActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == GOAL_RC && resultCode == RESULT_OK){
-            HttpRequest.post(null, API.getPostGoalUrl(mGoal), API.getPostGoalBody(mCategory));
+            HttpRequest.post(null, API.URL.postGoal(mGoal), API.BODY.postGoal(mCategory));
 
             ViewGroup rootView = (ViewGroup)findViewById(android.R.id.content);
             LayoutInflater inflater = LayoutInflater.from(this);

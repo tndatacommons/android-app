@@ -61,7 +61,7 @@ public class PackageEnrollmentActivity
 
         //Fetch the package
         int packageId = getIntent().getIntExtra(PACKAGE_ID_KEY, -1);
-        mGetPackageRequestCode = HttpRequest.get(this, API.getPackageUrl(packageId));
+        mGetPackageRequestCode = HttpRequest.get(this, API.URL.getPackage(packageId));
     }
 
     @Override
@@ -116,9 +116,8 @@ public class PackageEnrollmentActivity
     public void accept(){
         //Show the progress bar and fire the acknowledgement request
         mBinding.packageAcceptSwitcher.showNext();
-        mPutConsentRequestCode = HttpRequest.put(this,
-                API.getPutConsentAcknowledgementUrl(mPackage),
-                API.getPutConsentAcknowledgementBody());
+        mPutConsentRequestCode = HttpRequest.put(this, API.URL.putConsentAcknowledgement(mPackage),
+                API.BODY.putConsentAcknowledgement());
     }
 
     public void decline(){

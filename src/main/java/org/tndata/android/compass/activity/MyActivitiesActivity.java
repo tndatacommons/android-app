@@ -66,7 +66,7 @@ public class MyActivitiesActivity
 
         mList.setLayoutManager(new LinearLayoutManager(this));
 
-        mGetCategoriesRC = HttpRequest.get(this, API.getUserCategoriesUrl());
+        mGetCategoriesRC = HttpRequest.get(this, API.URL.getUserCategories());
     }
 
     @Override

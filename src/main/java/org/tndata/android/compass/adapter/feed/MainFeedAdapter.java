@@ -421,7 +421,7 @@ public class MainFeedAdapter
             ParserModels.CustomGoalsResultSet set = (ParserModels.CustomGoalsResultSet)result;
             String url = set.next;
             if (url == null){
-                url = API.getUserGoalsUrl();
+                url = API.URL.getUserGoals();
             }
             if (API.STAGING && url.startsWith("https")){
                 url = url.replaceFirst("s", "");

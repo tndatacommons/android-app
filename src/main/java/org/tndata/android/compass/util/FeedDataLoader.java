@@ -45,7 +45,7 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
 
     private FeedDataLoader(@NonNull Callback callback){
         mCallback = callback;
-        mGetFeedDataRC = HttpRequest.get(this, API.getFeedDataUrl());
+        mGetFeedDataRC = HttpRequest.get(this, API.URL.getFeedData());
     }
 
     @Override
@@ -79,13 +79,13 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof ParserModels.FeedDataResultSet){
             mFeedData = ((ParserModels.FeedDataResultSet)result).results.get(0);
-            mGetCustomGoalsRC = HttpRequest.get(this, API.getCustomGoalsUrl());
+            mGetCustomGoalsRC = HttpRequest.get(this, API.URL.getCustomGoals());
         }
         else if (result instanceof ParserModels.CustomGoalsResultSet){
             ParserModels.CustomGoalsResultSet set = (ParserModels.CustomGoalsResultSet)result;
             String url = set.next;
             if (url == null){
-                url = API.getUserGoalsUrl();
+                url = API.URL.getUserGoals();
                 mFeedData.addGoals(set.results, url);
                 if (set.results.size() < 3){
                     mGetUserGoalsRC = HttpRequest.get(this, url);

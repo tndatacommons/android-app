@@ -101,7 +101,7 @@ public class CompassApplication extends Application{
     public void logOut(){
         String regId = getGcmRegistrationId();
         if (regId != null && !regId.isEmpty()){
-            HttpRequest.post(null, API.getLogOutUrl(), API.getLogOutBody(regId));
+            HttpRequest.post(null, API.URL.logOut(), API.BODY.logOut(regId));
         }
         mUser = null;
         User.deleteFromPreferences(this);

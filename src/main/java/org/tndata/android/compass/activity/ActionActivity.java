@@ -216,11 +216,11 @@ public class ActionActivity
         int id = getActionId();
         if (isUserAction()){
             Log.d("ActionActivity", "Fetching UserAction: " + id);
-            mGetActionRC = HttpRequest.get(this, API.getActionUrl(id));
+            mGetActionRC = HttpRequest.get(this, API.URL.getAction(id));
         }
         else if (isCustomAction()){
             Log.d("ActionActivity", "Fetching CustomAction: " + id);
-            mGetActionRC = HttpRequest.get(this, API.getCustomActionUrl(id));
+            mGetActionRC = HttpRequest.get(this, API.URL.getCustomAction(id));
         }
     }
 
@@ -231,7 +231,7 @@ public class ActionActivity
      */
     private void fetchCategory(UserAction userAction){
         long userCategoryId = userAction.getPrimaryCategoryId();
-        mGetUserCategoryRC = HttpRequest.get(this, API.getUserCategoryUrl(userCategoryId));
+        mGetUserCategoryRC = HttpRequest.get(this, API.URL.getUserCategory(userCategoryId));
     }
 
     @Override
@@ -443,7 +443,7 @@ public class ActionActivity
                             break;
                         case R.id.behavior_dialog_confirm:
                             // Send the Delete http request and close the activity.
-                            String url = API.getDeleteBehaviorUrl(userBehaviorId);
+                            String url = API.URL.deleteBehavior(userBehaviorId);
                             mDeleteBehaviorRC = HttpRequest.delete(parent, url);
                             dialog.dismiss();
                             parent.finish();
@@ -511,7 +511,7 @@ public class ActionActivity
      */
     private void disableTrigger(){
         mAction.getTrigger().setEnabled(false);
-        HttpRequest.put(null, API.getPutTriggerUrl(mAction), API.getPutTriggerBody(mAction.getTrigger()));
+        HttpRequest.put(null, API.URL.putTrigger(mAction), API.BODY.putTrigger(mAction.getTrigger()));
         setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, mAction));
         finish();
     }

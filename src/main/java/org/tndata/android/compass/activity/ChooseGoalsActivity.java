@@ -77,7 +77,7 @@ public class ChooseGoalsActivity
         mCategory = getIntent().getParcelableExtra(CATEGORY_KEY);
 
         //Set up the loading process and the adapter
-        mGetGoalsNextUrl = API.getGoalsUrl(mCategory);
+        mGetGoalsNextUrl = API.URL.getGoals(mCategory);
         mAdapter = new ChooseGoalsAdapter(this, this, mCategory);
 
         setColor(Color.parseColor(mCategory.getColor()));
@@ -111,8 +111,8 @@ public class ChooseGoalsActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == GOAL_ACTIVITY_RC && resultCode == RESULT_OK){
             Log.i(TAG, "Accepted: " + mSelectedGoal.toString());
-            mPostGoalRC = HttpRequest.post(this, API.getPostGoalUrl(mSelectedGoal),
-                    API.getPostGoalBody(mCategory));
+            mPostGoalRC = HttpRequest.post(this, API.URL.postGoal(mSelectedGoal),
+                    API.BODY.postGoal(mCategory));
 
             ViewGroup rootView = (ViewGroup)findViewById(android.R.id.content);
             LayoutInflater inflater = LayoutInflater.from(this);

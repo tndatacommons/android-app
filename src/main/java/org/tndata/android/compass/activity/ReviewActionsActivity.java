@@ -91,18 +91,18 @@ public class ReviewActionsActivity
             }
             TDCCategory category = mApplication.getAvailableCategories().get(categoryId);
             mAdapter = new ReviewActionsAdapter(this, this, goalTitle);
-            mGetActionsNextUrl = API.getUserActionsByGoalUrl(goalId);
+            mGetActionsNextUrl = API.URL.getUserActionsByGoal(goalId);
             if (category != null){
                 setColor(Color.parseColor(category.getColor()));
                 setGoalHeader(category);
             }
             else{
-                mGetUserCategoryRC = HttpRequest.get(this, API.getUserCategoryUrl(categoryId));
+                mGetUserCategoryRC = HttpRequest.get(this, API.URL.getUserCategory(categoryId));
             }
         }
         else if (mUserCategory != null){
             mAdapter = new ReviewActionsAdapter(this, this, mUserCategory.getTitle());
-            mGetActionsNextUrl = API.getUserActionsUrl(mUserCategory.getCategory());
+            mGetActionsNextUrl = API.URL.getUserActions(mUserCategory.getCategory());
             setColor(Color.parseColor(mUserCategory.getColor()));
             setCategoryHeader(mUserCategory.getCategory());
             setFAB(R.id.review_fab, this);
@@ -236,7 +236,7 @@ public class ReviewActionsActivity
     public boolean menuItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.review_actions_remove_goal:
-                HttpRequest.delete(null, API.getDeleteGoalUrl(mUserGoal));
+                HttpRequest.delete(null, API.URL.deleteGoal(mUserGoal));
                 Intent result = new Intent().putExtra(REMOVED_GOAL_KEY, mUserGoal);
                 setResult(GOAL_REMOVED_RC, result);
                 finish();

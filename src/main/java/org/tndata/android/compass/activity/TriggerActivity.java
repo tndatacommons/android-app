@@ -446,8 +446,8 @@ public class TriggerActivity
             Log.d(TAG, "RRULE: " + rrule);
 
             Trigger trigger = new Trigger(time, date, rrule);
-            mPutTriggerRequestCode = HttpRequest.put(this, API.getPutTriggerUrl(action),
-                    API.getPutTriggerBody(trigger));
+            mPutTriggerRequestCode = HttpRequest.put(this, API.URL.putTrigger(action),
+                    API.BODY.putTrigger(trigger));
         }
         else{
             setResult(RESULT_CANCELED);

@@ -78,9 +78,9 @@ public class CheckInActivity
 
         //API requests
         mCompletedRequests = 0;
-        mGetGoalsRequestCode = HttpRequest.get(this, API.getTodaysGoalsUrl());
-        mGetRewardRequestCode = HttpRequest.get(this, API.getRandomRewardUrl());
-        mGetProgressRequestCode = HttpRequest.get(this, API.getUserProgressUrl());
+        mGetGoalsRequestCode = HttpRequest.get(this, API.URL.getTodaysGoals());
+        mGetRewardRequestCode = HttpRequest.get(this, API.URL.getRandomReward());
+        mGetProgressRequestCode = HttpRequest.get(this, API.URL.getUserProgress());
     }
 
     @Override
