@@ -323,7 +323,7 @@
 
     <!-- Awards / Badges -->
     <string name="awards_no_badges">Keep using Compass to unlock badges!</string>
-    <string name="awards_error">Couldn\'t load your awards.</string>
+    <string name="awards_error">Couldn\'t load your awards, tap to retry.</string>
     <string name="awards_header_cd">Compass master illustration</string>
     <string name="badge_image_cd">The badge\'s image asset</string>
     <string name="badge_header">You\'ve earned the\n%1$s badge!</string>

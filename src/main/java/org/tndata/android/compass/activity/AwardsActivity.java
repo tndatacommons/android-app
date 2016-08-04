@@ -38,6 +38,7 @@ public class AwardsActivity
         implements
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback,
+                View.OnClickListener,
                 AwardsAdapter.BadgeAdapterListener{
 
     private static final String TAG = "AwardsActivity";
@@ -69,6 +70,7 @@ public class AwardsActivity
     public void onRequestFailed(int requestCode, HttpRequestError error){
         Log.e(TAG, "GET badges failed");
         mBinding.awardsMessage.setText(R.string.awards_error);
+        mBinding.awardsMessage.setOnClickListener(this);
         mBinding.awardsMessage.setVisibility(View.VISIBLE);
         mBinding.awardsProgress.setVisibility(View.GONE);
     }
@@ -99,11 +101,19 @@ public class AwardsActivity
     }
 
     @Override
+    public void onClick(View view){
+        view.setOnClickListener(null);
+        mBinding.awardsMessage.setVisibility(View.GONE);
+        mBinding.awardsProgress.setVisibility(View.VISIBLE);
+
+        mGetBadgesUrl = HttpRequest.get(this, API.URL.getBadges());
+    }
+
+    @Override
     public void onBadgeSelected(Badge badge){
         startActivity(new Intent(this, BadgeActivity.class)
                 .putExtra(BadgeActivity.BADGE_KEY, badge));
     }
-
 
     public class Award implements ParserModels.ResultSet{
         public static final String API_TYPE = "award";
