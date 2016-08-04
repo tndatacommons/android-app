@@ -59,6 +59,7 @@ final class ParserWorker<T extends ResultSet> extends AsyncTask<Void, Void, Resu
         //  went south. Catching a generic exception is good enough. I am not sorry,
         //  you Java freaks.
         catch (Exception x){
+            x.printStackTrace();
             return null;
         }
     }
