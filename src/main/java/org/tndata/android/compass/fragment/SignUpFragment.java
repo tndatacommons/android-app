@@ -109,7 +109,7 @@ public class SignUpFragment
     }
 
     /**
-     * Starts the signup process, makes sure that the values are correct, disables the form,
+     * Starts the sign up process, makes sure that the values are correct, disables the form,
      * and sends a request to the API. If the values are not correct, then displays an error.
      */
     private void doSignUp(){
@@ -120,14 +120,14 @@ public class SignUpFragment
         String firstName = mBinding.signupFirstName.getText().toString().trim();
         String lastName = mBinding.signupLastName.getText().toString().trim();
 
-        //If the values check, proceed to signup
+        //If the values check, proceed to sign up
         if (checkFields(emailAddress, password, confirmPassword, firstName, lastName)){
             //Change visibility and disable components
             mErrorString = "";
             setFormEnabled(false);
 
-            JSONObject body = API.getSignUpBody(emailAddress, password, firstName, lastName);
-            mSignUpRC = HttpRequest.post(this, API.getSignUpUrl(), body);
+            JSONObject body = API.BODY.signUp(emailAddress, password, firstName, lastName);
+            mSignUpRC = HttpRequest.post(this, API.URL.signUp(), body);
         }
         else{
             setFormEnabled(true);
@@ -242,8 +242,8 @@ public class SignUpFragment
                     mErrorString = new JSONObject(error.getMessage()).
                             getJSONArray("email").getString(0);
                 }
-                catch (JSONException jsonx){
-                    jsonx.printStackTrace();
+                catch (JSONException jx){
+                    jx.printStackTrace();
                 }
             }
         }
@@ -269,7 +269,7 @@ public class SignUpFragment
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof User){
-            mGetCategoriesRC = HttpRequest.get(this, API.getCategoriesUrl());
+            mGetCategoriesRC = HttpRequest.get(this, API.URL.getCategories());
         }
         else if (result instanceof ParserModels.CategoryContentResultSet){
             mListener.onSignUpSuccess();

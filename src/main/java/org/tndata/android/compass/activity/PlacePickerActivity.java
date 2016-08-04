@@ -174,12 +174,12 @@ public class PlacePickerActivity
     public boolean onOptionsItemSelected(MenuItem item){
         if (item.getItemId() == R.id.place_picker_save){
             if (mPlace.getId() == -1){
-                HttpRequest.post(this, API.getPostPutPlaceUrl(mPlace),
-                        API.getPostPutPlaceBody(mPlace));
+                HttpRequest.post(this, API.URL.postPutPlace(mPlace),
+                        API.BODY.postPutPlace(mPlace));
             }
             else{
-                HttpRequest.put(this, API.getPostPutPlaceUrl(mPlace),
-                        API.getPostPutPlaceBody(mPlace));
+                HttpRequest.put(this, API.URL.postPutPlace(mPlace),
+                        API.BODY.postPutPlace(mPlace));
             }
             return true;
         }

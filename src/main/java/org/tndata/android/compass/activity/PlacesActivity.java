@@ -103,7 +103,7 @@ public class PlacesActivity
         mNameDialog.setOnShowListener(this);
 
         //Load the primary places
-        HttpRequest.get(this, API.getPrimaryPlacesUrl());
+        HttpRequest.get(this, API.URL.getPrimaryPlaces());
     }
 
     @Override
@@ -239,8 +239,8 @@ public class PlacesActivity
                 if (mEdition){
                     mCurrentPlace.getPlace().setName(mName.getText().toString().trim());
                     mAdapter.notifyDataSetChanged();
-                    HttpRequest.put(null, API.getPostPutPlaceUrl(mCurrentPlace),
-                            API.getPostPutPlaceBody(mCurrentPlace));
+                    HttpRequest.put(null, API.URL.postPutPlace(mCurrentPlace),
+                            API.BODY.postPutPlace(mCurrentPlace));
 
                     //Update the place in the database
                     PlaceTableHandler handler = new PlaceTableHandler(this);

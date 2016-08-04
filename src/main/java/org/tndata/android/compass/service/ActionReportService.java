@@ -27,7 +27,6 @@ public class ActionReportService extends IntentService{
     public static final String LENGTH_KEY = "org.tndata.compass.ActionReport.Length";
 
     public static final String STATE_COMPLETED = "completed";
-    public static final String STATE_UNCOMPLETED = "uncompleted";
     public static final String STATE_SNOOZED = "snoozed";
     public static final String STATE_DISMISSED = "dismissed";
 
@@ -53,7 +52,7 @@ public class ActionReportService extends IntentService{
         long actionId;
         String url;
         if (reminder != null){
-            url = API.getPostActionReportUrl(reminder);
+            url = API.URL.postActionReport(reminder);
             if (reminder.isUserAction()){
                 notificationTag = NotificationUtil.USER_ACTION_TAG;
                 actionId = reminder.getUserMappingId();
@@ -65,7 +64,7 @@ public class ActionReportService extends IntentService{
         }
         else{
             actionId = action.getId();
-            url = API.getPostActionReportUrl(action);
+            url = API.URL.postActionReport(action);
             if (action instanceof UserAction){
                 notificationTag = NotificationUtil.USER_ACTION_TAG;
             }
@@ -78,12 +77,7 @@ public class ActionReportService extends IntentService{
 
         JSONObject body;
         String state = intent.getStringExtra(STATE_KEY);
-        if (state.equals(STATE_SNOOZED)){
-            body = API.getPostActionReportBody(state, intent.getStringExtra(LENGTH_KEY));
-        }
-        else{
-            body = API.getPostActionReportBody(state);
-        }
+        body = API.BODY.postActionReport(state, intent.getStringExtra(LENGTH_KEY));
 
         HttpRequest.post(null, url, body);
     }

@@ -70,7 +70,7 @@ public class AwardsActivity
         list.setLayoutManager(new LinearLayoutManager(this));
         list.addOnScrollListener(new ParallaxEffect(header, 0.5f));
 
-        mGetBadgesUrl = HttpRequest.get(this, API.getBadgesUrl());
+        mGetBadgesUrl = HttpRequest.get(this, API.URL.getBadges());
     }
 
     @Override

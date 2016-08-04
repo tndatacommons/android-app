@@ -107,8 +107,8 @@ public class MainActivity
         DataSynchronizer.sync(getApplicationContext());
 
         //Update the timezone and register with GCM
-        HttpRequest.put(null, API.getPutUserProfileUrl(mApplication.getUser()),
-                API.getPutUserProfileBody(mApplication.getUser()));
+        HttpRequest.put(null, API.URL.putUserProfile(mApplication.getUser()),
+                API.BODY.putUserProfile(mApplication.getUser()));
         new GcmRegistration(this);
 
         //Set up the toolbar

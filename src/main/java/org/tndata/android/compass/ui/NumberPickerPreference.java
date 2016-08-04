@@ -97,7 +97,7 @@ public class NumberPickerPreference extends DialogPreference implements NumberPi
             persistInt(mValue);
             User user = ((CompassApplication)getContext().getApplicationContext()).getUser();
             user.setDailyNotifications(mValue);
-            HttpRequest.put(null, API.getPutUserProfileUrl(user), API.getPutUserProfileBody(user));
+            HttpRequest.put(null, API.URL.putUserProfile(user), API.BODY.putUserProfile(user));
         }
         else{
             mValue = parsePreference(getKey(), getContext());

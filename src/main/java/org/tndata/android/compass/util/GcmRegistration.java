@@ -163,8 +163,8 @@ public class GcmRegistration{
     }
 
     private void sendRegistrationIdToBackend(String registration_id){
-        HttpRequest.post(null, API.getPostDeviceRegistrationUrl(),
-                API.getPostDeviceRegistrationBody(registration_id));
+        HttpRequest.post(null, API.URL.postDeviceRegistration(),
+                API.BODY.postDeviceRegistration(registration_id));
     }
 
     /**
