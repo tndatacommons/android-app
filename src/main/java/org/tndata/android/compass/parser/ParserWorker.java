@@ -44,19 +44,32 @@ final class ParserWorker<T extends ResultSet> extends AsyncTask<Void, Void, Resu
      * @param src the source object.
      */
     private ResultSet parse(String src){
-        ResultSet result;
-        if (mType == null){
-            result = (ResultSet)ParserMethods.sGson.fromJson(src, CompassUtil.getTypeOf(src));
+        try{
+            ResultSet result;
+            if (mType == null){
+                result = (ResultSet)ParserMethods.sGson.fromJson(src, CompassUtil.getTypeOf(src));
+            }
+            else{
+                result = ParserMethods.sGson.fromJson(src, mType);
+            }
+            mCallback.onProcessResult(mRequestCode, result);
+            return result;
         }
-        else{
-            result = ParserMethods.sGson.fromJson(src, mType);
+        //I ain't trying to recover from an exception, but to identify that something
+        //  went south. Catching a generic exception is good enough. I am not sorry,
+        //  you Java freaks.
+        catch (Exception x){
+            return null;
         }
-        mCallback.onProcessResult(mRequestCode, result);
-        return result;
     }
 
     @Override
     protected void onPostExecute(ResultSet result){
-        mCallback.onParseSuccess(mRequestCode, result);
+        if (result == null){
+            //Call onParseFailed.
+        }
+        else{
+            mCallback.onParseSuccess(mRequestCode, result);
+        }
     }
 }
