@@ -1,20 +1,19 @@
 package org.tndata.android.compass.adapter;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.databinding.CardBadgeBinding;
 import org.tndata.android.compass.model.Badge;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ImageLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -38,12 +37,13 @@ public class AwardsAdapter extends RecyclerView.Adapter{
      * Constructor.
      *
      * @param context a reference to the context.
+     * @param badges the list of badges earned by the user.
      * @param listener the listener.
      */
-    public AwardsAdapter(Context context, BadgeAdapterListener listener){
+    public AwardsAdapter(Context context, List<Badge> badges, BadgeAdapterListener listener){
         mContext = context;
         mListener = listener;
-        mBadges = new ArrayList<>();
+        mBadges = badges;
     }
 
     @Override
@@ -66,7 +66,11 @@ public class AwardsAdapter extends RecyclerView.Adapter{
         }
         else{ //if (viewType == TYPE_AWARD){
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            return new BadgeHolder(inflater.inflate(R.layout.card_badge, parent, false));
+            return new BadgeHolder(
+                    DataBindingUtil.<CardBadgeBinding>inflate(
+                            inflater, R.layout.card_badge, parent, false
+                    )
+            );
         }
     }
 
@@ -86,24 +90,6 @@ public class AwardsAdapter extends RecyclerView.Adapter{
         }
     }
 
-    /**
-     * Sets the backing badge list. Does not update the data set.
-     *
-     * @param badges the lust of badges to be displayed.
-     */
-    public void setBadges(List<Badge> badges){
-        mBadges = badges;
-    }
-
-    /**
-     * Lets the listener know a badge has been tapped.
-     *
-     * @param position the position of the badge in the list.
-     */
-    private void onBadgeTapped(int position){
-        mListener.onBadgeSelected(mBadges.get(position));
-    }
-
 
     /**
      * View holder for a Badge.
@@ -112,24 +98,19 @@ public class AwardsAdapter extends RecyclerView.Adapter{
      * @version 1.0.0
      */
     class BadgeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        private ImageView mImage;
-        private TextView mName;
-        private TextView mDescription;
+        private CardBadgeBinding mBinding;
 
 
         /**
          * Constructor.
          *
-         * @param rootView the root of the view hierarchy associated with the holder.
+         * @param binding the binding object
          */
-        public BadgeHolder(View rootView){
-            super(rootView);
+        public BadgeHolder(CardBadgeBinding binding){
+            super(binding.getRoot());
 
-            mImage = (ImageView)rootView.findViewById(R.id.award_badge_image);
-            mName = (TextView)rootView.findViewById(R.id.award_badge_name);
-            mDescription = (TextView)rootView.findViewById(R.id.award_badge_description);
-
-            rootView.setOnClickListener(this);
+            mBinding = binding;
+            itemView.setOnClickListener(this);
         }
 
         /**
@@ -139,15 +120,13 @@ public class AwardsAdapter extends RecyclerView.Adapter{
          */
         public void bind(Badge badge){
             ImageLoader.Options options = new ImageLoader.Options().setUseDefaultPlaceholder(false);
-            ImageLoader.loadBitmap(mImage, badge.getImageUrl(), options);
-
-            mName.setText(badge.getName());
-            mDescription.setText(badge.getDescription());
+            ImageLoader.loadBitmap(mBinding.awardBadgeImage, badge.getImageUrl(), options);
+            mBinding.setBadge(badge);
         }
 
         @Override
         public void onClick(View v){
-            onBadgeTapped(getAdapterPosition()-1);
+            mListener.onBadgeSelected(mBinding.getBadge());
         }
     }
 

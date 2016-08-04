@@ -53,7 +53,7 @@ public class OrganizationsAdapter extends RecyclerView.Adapter<OrganizationsAdap
         LayoutInflater inflater = LayoutInflater.from(mContext);
         return new OrganizationHolder(
                 DataBindingUtil.<CardOrganizationBinding>inflate(
-                        inflater, R.layout.card_organization,parent, false
+                        inflater, R.layout.card_organization, parent, false
                 )
         );
     }
