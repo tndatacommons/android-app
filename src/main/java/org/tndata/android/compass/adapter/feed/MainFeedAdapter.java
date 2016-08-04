@@ -447,6 +447,10 @@ public class MainFeedAdapter
         }
     }
 
+    @Override
+    public void onParseFailed(int requestCode){
+
+    }
 
     /**
      * Parent class of all the view holders in for the main feed adapter. Provides a reference

@@ -109,4 +109,9 @@ public final class DataSynchronizer implements HttpRequest.RequestCallback, Pars
             LocationNotificationService.updateDataSet(mApplication.getApplicationContext());
         }
     }
+
+    @Override
+    public void onParseFailed(int requestCode){
+
+    }
 }

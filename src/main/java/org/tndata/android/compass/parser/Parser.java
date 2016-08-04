@@ -78,5 +78,12 @@ public final class Parser{
          * @param result the result set.
          */
         void onParseSuccess(int requestCode, ParserModels.ResultSet result);
+
+        /**
+         * Called in the foreground when parsing fails
+         *
+         * @param requestCode the request code.
+         */
+        void onParseFailed(int requestCode);
     }
 }

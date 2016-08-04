@@ -160,6 +160,11 @@ public class SearchActivity
     }
 
     @Override
+    public void onParseFailed(int requestCode){
+
+    }
+
+    @Override
     public void onSearchResultSelected(SearchResult result){
         if (result.isGoal()){
             mCategory = null;

@@ -141,6 +141,11 @@ public class GoalAdapter
         }
     }
 
+    @Override
+    public void onParseFailed(int requestCode){
+
+    }
+
 
     /**
      * Listener interface for the adapter.

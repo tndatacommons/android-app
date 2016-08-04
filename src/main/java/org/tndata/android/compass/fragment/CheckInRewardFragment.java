@@ -221,6 +221,11 @@ public class CheckInRewardFragment
         }
     }
 
+    @Override
+    public void onParseFailed(int requestCode){
+
+    }
+
 
     /**
      * Listener interface for the reward fragment.

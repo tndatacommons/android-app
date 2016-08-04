@@ -118,6 +118,10 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
         }
     }
 
+    @Override
+    public void onParseFailed(int requestCode){
+
+    }
 
     public interface Callback{
         void onFeedDataLoaded(@Nullable FeedData feedData);

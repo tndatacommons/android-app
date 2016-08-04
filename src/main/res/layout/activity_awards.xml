@@ -32,6 +32,7 @@
             android:id="@+id/awards_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/awards_header"
             android:layout_marginTop="@dimen/header_to_next"
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"

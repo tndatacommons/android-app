@@ -108,6 +108,11 @@ public class PackageEnrollmentActivity
         mBinding.packageProgress.setVisibility(View.GONE);
     }
 
+    @Override
+    public void onParseFailed(int requestCode){
+
+    }
+
     private void populateUI(TDCPackage myPackage){
         mBinding.packageContent.setVisibility(View.VISIBLE);
         mBinding.setTdcPackage(myPackage);

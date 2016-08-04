@@ -66,7 +66,7 @@ final class ParserWorker<T extends ResultSet> extends AsyncTask<Void, Void, Resu
     @Override
     protected void onPostExecute(ResultSet result){
         if (result == null){
-            //Call onParseFailed.
+            mCallback.onParseFailed(mRequestCode);
         }
         else{
             mCallback.onParseSuccess(mRequestCode, result);

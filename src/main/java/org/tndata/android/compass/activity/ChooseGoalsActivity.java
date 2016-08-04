@@ -205,4 +205,9 @@ public class ChooseGoalsActivity
             }
         }
     }
+
+    @Override
+    public void onParseFailed(int requestCode){
+
+    }
 }

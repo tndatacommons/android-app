@@ -148,6 +148,11 @@ public class OnBoardingActivity
     }
 
     @Override
+    public void onParseFailed(int requestCode){
+
+    }
+
+    @Override
     public void onCategorySelected(TDCCategory category){
         Intent library = new Intent(this, ChooseGoalsActivity.class)
                 .putExtra(ChooseGoalsActivity.CATEGORY_KEY, category);

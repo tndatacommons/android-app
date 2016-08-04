@@ -69,10 +69,7 @@ public class AwardsActivity
     @Override
     public void onRequestFailed(int requestCode, HttpRequestError error){
         Log.e(TAG, "GET badges failed");
-        mBinding.awardsMessage.setText(R.string.awards_error);
-        mBinding.awardsMessage.setOnClickListener(this);
-        mBinding.awardsMessage.setVisibility(View.VISIBLE);
-        mBinding.awardsProgress.setVisibility(View.GONE);
+        requestFailed();
     }
 
     @Override
@@ -98,6 +95,22 @@ public class AwardsActivity
             }
             mBinding.awardsProgress.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onParseFailed(int requestCode){
+        Log.e(TAG, "Parsing badges failed");
+        requestFailed();
+    }
+
+    /**
+     * Called when there is an error in the process of retrieving the user's awards.
+     */
+    private void requestFailed(){
+        mBinding.awardsMessage.setText(R.string.awards_error);
+        mBinding.awardsMessage.setOnClickListener(this);
+        mBinding.awardsMessage.setVisibility(View.VISIBLE);
+        mBinding.awardsProgress.setVisibility(View.GONE);
     }
 
     @Override

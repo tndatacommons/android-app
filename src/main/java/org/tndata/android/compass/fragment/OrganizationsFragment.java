@@ -121,6 +121,11 @@ public class OrganizationsFragment
         }
     }
 
+    @Override
+    public void onParseFailed(int requestCode){
+
+    }
+
     /**
      * Creates the adapter with the proper information and changes the visibility of the
      * layouts components.

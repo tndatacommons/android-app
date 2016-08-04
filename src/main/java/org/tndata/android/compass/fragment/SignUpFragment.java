@@ -276,6 +276,11 @@ public class SignUpFragment
         }
     }
 
+    @Override
+    public void onParseFailed(int requestCode){
+
+    }
+
 
     /**
      * Listener interface for events triggered from this fragment.

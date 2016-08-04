@@ -221,6 +221,11 @@ public class LogInFragment
         }
     }
 
+    @Override
+    public void onParseFailed(int requestCode){
+
+    }
+
 
     /**
      * Callback interface for the LogInFragment.
