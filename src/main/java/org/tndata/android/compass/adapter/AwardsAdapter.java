@@ -97,7 +97,7 @@ public class AwardsAdapter extends RecyclerView.Adapter{
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    class BadgeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class BadgeHolder extends RecyclerView.ViewHolder{
         private CardBadgeBinding mBinding;
 
 
@@ -110,7 +110,7 @@ public class AwardsAdapter extends RecyclerView.Adapter{
             super(binding.getRoot());
 
             mBinding = binding;
-            itemView.setOnClickListener(this);
+            mBinding.setListener(mListener);
         }
 
         /**
@@ -122,11 +122,6 @@ public class AwardsAdapter extends RecyclerView.Adapter{
             ImageLoader.Options options = new ImageLoader.Options().setUseDefaultPlaceholder(false);
             ImageLoader.loadBitmap(mBinding.awardBadgeImage, badge.getImageUrl(), options);
             mBinding.setBadge(badge);
-        }
-
-        @Override
-        public void onClick(View v){
-            mListener.onBadgeSelected(mBinding.getBadge());
         }
     }
 

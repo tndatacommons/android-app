@@ -2,6 +2,10 @@
 <layout>
     <data>
         <variable
+            name="listener"
+            type="org.tndata.android.compass.adapter.AwardsAdapter.BadgeAdapterListener" />
+
+        <variable
             name="badge"
             type="org.tndata.android.compass.model.Badge" />
     </data>
@@ -14,6 +18,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginBottom="8dp"
         android:layout_marginRight="8dp"
+        android:onClick="@{()->listener.onBadgeSelected(badge)}"
         card:cardCornerRadius="@dimen/card_view_corner_radius" >
 
         <LinearLayout
