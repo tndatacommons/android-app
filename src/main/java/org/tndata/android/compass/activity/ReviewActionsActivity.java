@@ -224,6 +224,11 @@ public class ReviewActionsActivity
     }
 
     @Override
+    public void onParseFailed(int requestCode){
+
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu){
         if (mUserGoal != null){
             getMenuInflater().inflate(R.menu.menu_goal_remove, menu);

@@ -287,6 +287,11 @@ public class ActionActivity
     }
 
     @Override
+    public void onParseFailed(int requestCode){
+
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu){
         //We need to check for null action here because sometimes the action needs to
         //  be fetched from the backend. If the action has not been fetched yet, the

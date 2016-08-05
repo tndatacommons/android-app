@@ -132,6 +132,11 @@ public class CheckInActivity
         }
     }
 
+    @Override
+    public void onParseFailed(int requestCode){
+
+    }
+
     private void setAdapter(){
         mAdapter = new CheckInPagerAdapter(getSupportFragmentManager(), mGoals, mReward);
         mPager.setAdapter(mAdapter);

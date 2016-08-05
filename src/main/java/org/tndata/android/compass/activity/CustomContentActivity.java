@@ -218,6 +218,11 @@ public class CustomContentActivity
     }
 
     @Override
+    public void onParseFailed(int requestCode){
+
+    }
+
+    @Override
     public void onCreateGoal(@NonNull CustomGoal customGoal){
         mAddGoalRequestCode = HttpRequest.post(this, API.URL.postCustomGoal(),
                 API.BODY.postPutCustomGoal(customGoal));

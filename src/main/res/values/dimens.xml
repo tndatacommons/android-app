@@ -9,7 +9,6 @@
     <dimen name="login_header_size">175dp</dimen>
     <dimen name="fab_size_normal">56dp</dimen>
     <dimen name="fab_size_mini">40dp</dimen>
-    <dimen name="survey_likert_choice_max_width">150dp</dimen>
     <dimen name="material_header_size">235dp</dimen>
 
     <dimen name="flat_button_margin">8dp</dimen>
@@ -18,5 +17,8 @@
     <dimen name="flat_button_min_height">36dp</dimen>
     <dimen name="flat_button_text_size">14sp</dimen>
     <dimen name="flat_button_corner_radius">1dp</dimen>
+
+    <dimen name="progrss_bar_size">35dp</dimen>
+    <dimen name="header_to_next">50dp</dimen>
 
 </resources>

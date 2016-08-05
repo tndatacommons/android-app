@@ -1,30 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-    <ImageView
-        android:id="@+id/awards_illustration"
+<layout>
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scaleType="centerCrop"
-        android:adjustViewBounds="true"
-        android:src="@drawable/compass_master_illustration" />
+        android:layout_height="match_parent" >
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/awards_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        <ImageView
+            android:id="@+id/awards_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+            android:src="@drawable/compass_master_illustration"
+            android:contentDescription="@string/awards_header_cd" />
 
-    <TextView
-        android:id="@+id/awards_default_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/awards_default_text"
-        android:layout_marginTop="300dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_centerHorizontal="true"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/awards_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true" />
 
-</RelativeLayout>
+        <ProgressBar
+            android:id="@+id/awards_progress"
+            android:layout_width="@dimen/progrss_bar_size"
+            android:layout_height="@dimen/progrss_bar_size"
+            android:layout_below="@id/awards_header"
+            android:layout_marginTop="@dimen/header_to_next"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:id="@+id/awards_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/awards_header"
+            android:layout_marginTop="@dimen/header_to_next"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_centerHorizontal="true"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+</layout>

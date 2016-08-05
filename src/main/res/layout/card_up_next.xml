@@ -25,7 +25,7 @@
                 android:layout_height="80dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_location_gray_48dp" />
+                android:src="@drawable/ic_up_next" />
 
             <LinearLayout
                 android:id="@+id/up_next_no_actions"

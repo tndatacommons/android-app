@@ -204,6 +204,11 @@ public class PlacesActivity
     }
 
     @Override
+    public void onParseFailed(int requestCode){
+
+    }
+
+    @Override
     public void onShow(DialogInterface dialog){
         //We need to override the default dismissal effect when a dialog button is clicked.
         //  The solution is to set an onClick listener to the button itself to deprive the

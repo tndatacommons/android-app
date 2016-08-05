@@ -489,7 +489,10 @@ public class TriggerActivity
         }
     }
 
+    @Override
+    public void onParseFailed(int requestCode){
 
+    }
 
     public void updateTimeView(String time){
         timePickerTextView.setText(time);

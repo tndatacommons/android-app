@@ -70,7 +70,6 @@
 
     <string name="goal_image_description">Goal</string>
     <string name="instrument_next">NEXT</string>
-    <string name="survey_open_ended_hint">answer</string>
 
     <string name="onboarding_instrument_title">On-boarding profile</string>
     <string name="onboarding_instrument_description">These are quick questions that will help the app create a base of recommendations. These questions will become more granular through the survey cards as the user engages with the app over time.</string>
@@ -90,11 +89,9 @@
 
     <!-- Library -->
     <string name="library_goals_content_header">Compass can help you&#8230;</string>
-    <string name="library_behaviors_content_header">You can do it!</string>
     <string name="library_goal_title">%1$s</string>
     <string name="library_goal_yes">Yes, I\'m in</string>
     <string name="library_goal_no">Not now</string>
-    <string name="library_detail_header">Here\'s why</string>
     <string name="library_detail_more_info">More info</string>
     <string name="dialog_enrollment_title">You\'re awesome</string>
     <string name="dialog_enrollment_content">Compass will check back in occasionally with activities that can help you reach your goal.</string>
@@ -136,8 +133,6 @@
     <string name="settings_notifications_quiet_hours_title">Quiet hours</string>
 
     <!-- Surveys -->
-    <string name="survey_no">No</string>
-    <string name="survey_yes">Yes</string>
     <string name="button_positive">DONE</string>
     <string name="button_negative">CANCEL</string>
     <string name="survey_default_option">Click to choose</string>
@@ -157,11 +152,9 @@
     <string name="action_view_goal_condensed">Goal activities</string>
     <string name="action_trigger">Reschedule</string>
     <string name="action_disable_trigger">Disable reminder</string>
-    <string name="action_header_subtitle">It helps to %1$s when you want to %2$s.</string>
     <string name="action_completed_toast">You\'re awesome!</string>
 
     <!-- Behavior Dialog from ActionActivity -->
-    <string name="behavior_dialog_ok">OK</string>
     <string name="behavior_dialog_remove">Remove</string>
     <string name="behavior_dialog_confirm">Yes, Remove this</string>
     <string name="behavior_dialog_confirm_cancel">Cancel</string>
@@ -244,14 +237,11 @@
     <string name="card_welcome_subtitle">You want good things for yourself. Compass helps you know your goals, do things to achieve them, and track your progress over time.</string>
     <string name="card_welcome_instructions"><i>Instructions</i>: Select a goal that Compass has recommended for you, or touch the big round button at the bottom right of the screen to discover your own goal.</string>
     <!-- Up next card -->
-    <string name="card_up_next_header_completed">All done!</string>
-    <string name="card_up_next_header">Up next</string>
     <string name="card_up_next_title_completed">No activities remaining today.</string>
     <string name="card_up_next_title_empty">No activities selected for today.</string>
     <string name="card_up_next_subtitle_completed">See you tomorrow!</string>
     <string name="card_up_next_subtitle_empty">Select a goal to get started.</string>
     <string name="card_up_next_goal_title">To %1$s</string>
-    <string name="card_up_next_indicator_caption">%1$s completed</string>
     <!-- Progress/Streaks card -->
     <string name="progress_header">Weekly progress</string>
     <!-- Goal suggestion card -->
@@ -290,7 +280,6 @@
     <!-- Header content descriptions -->
     <string name="header_hero_cd">Full size category image</string>
     <string name="header_tile_cd">Centered tile, generally circle cropped from a hero</string>
-    <string name="header_icon_cd">Icon image of a relevant piece of content</string>
     <string name="category_image_cd">Cropped category tile</string>
 
     <!-- User profile -->
@@ -322,9 +311,10 @@
     <string name="reward_quote_header">A thought for the day</string>
 
     <!-- Awards / Badges -->
-    <string name="awards_default_text">Keep using Compass to unlock badges!</string>
+    <string name="awards_no_badges">Keep using Compass to unlock badges!</string>
+    <string name="awards_error">Couldn\'t load your awards, tap to retry.</string>
+    <string name="awards_header_cd">Compass master illustration</string>
     <string name="badge_image_cd">The badge\'s image asset</string>
-    <string name="badge_header">You\'ve earned the\n%1$s badge!</string>
     <string name="badge_footer">Go check out all the badges you\'ve earned.</string>
     <string name="badge_share">I\'ve earned the %1$s badge on Compass!</string>
 

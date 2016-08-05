@@ -40,6 +40,10 @@ public class Badge extends TDCBase{
         return mName;
     }
 
+    public String getUpperCaseName(){
+        return mName.toUpperCase();
+    }
+
     public String getDescription(){
         return mDescription;
     }

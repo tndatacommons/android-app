@@ -115,6 +115,11 @@ public class MyActivitiesActivity
     }
 
     @Override
+    public void onParseFailed(int requestCode){
+
+    }
+
+    @Override
     public void onCategorySelected(TDCCategory category){
         UserCategory userCategory = mUserCategoryMap.get(category.getId());
         startActivity(new Intent(this, ReviewActionsActivity.class)

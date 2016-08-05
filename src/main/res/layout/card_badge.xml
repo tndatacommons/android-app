@@ -1,56 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="8dp"
-    android:layout_marginBottom="8dp"
-    android:layout_marginRight="8dp"
-    card:cardCornerRadius="@dimen/card_view_corner_radius" >
+<layout>
+    <data>
+        <variable
+            name="listener"
+            type="org.tndata.android.compass.adapter.AwardsAdapter.BadgeAdapterListener" />
 
-    <LinearLayout
-        android:orientation="horizontal"
+        <variable
+            name="badge"
+            type="org.tndata.android.compass.model.Badge" />
+    </data>
+
+    <android.support.v7.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:card="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp" >
-
-        <ImageView
-            android:id="@+id/award_badge_image"
-            android:contentDescription="@string/badge_image_cd"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_gravity="center_vertical"
-            android:adjustViewBounds="true" />
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        android:onClick="@{()->listener.onBadgeSelected(badge)}"
+        card:cardCornerRadius="@dimen/card_view_corner_radius" >
 
         <LinearLayout
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_gravity="center_vertical" >
+            android:padding="8dp" >
 
-            <TextView
-                android:id="@+id/award_badge_name"
+            <ImageView
+                android:id="@+id/award_badge_image"
+                android:contentDescription="@string/badge_image_cd"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_gravity="center_vertical"
+                android:adjustViewBounds="true" />
+
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:textSize="20sp" />
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_gravity="center_vertical" >
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/light_gray_text_color" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:textSize="20sp"
+                    android:text="@{badge.getName()}" />
 
-            <TextView
-                android:id="@+id/award_badge_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textSize="16sp" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/light_gray_text_color" />
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textSize="16sp"
+                    android:text="@{badge.getDescription()}" />
+
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-</android.support.v7.widget.CardView>
+    </android.support.v7.widget.CardView>
+</layout>
