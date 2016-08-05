@@ -9,7 +9,6 @@
     <dimen name="login_header_size">175dp</dimen>
     <dimen name="fab_size_normal">56dp</dimen>
     <dimen name="fab_size_mini">40dp</dimen>
-    <dimen name="survey_likert_choice_max_width">150dp</dimen>
     <dimen name="material_header_size">235dp</dimen>
 
     <dimen name="flat_button_margin">8dp</dimen>

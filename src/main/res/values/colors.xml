@@ -19,16 +19,10 @@
     <color name="white">#FFFFFF</color>
     <color name="light_hint">#CCCCCC</color>
     <color name="light_gray_text_color">#D3D3D3</color>
-    <color name="disabled_text_color">#E3E3E3</color>
 
-    <color name="light_text_color">#999</color>
     <color name="ltd_text_color">#505050</color>
 
     <!-- Buttons -->
-    <color name="button_paper_flat_text_color">#FFFFFF</color>
-    <color name="button_paper_flat_unselected_color">#E91E63</color>
-    <color name="button_paper_flat_selected_color">#662196F3</color>
-    <color name="button_paper_flat_disabled_color">#1A2196F3</color>
     <color name="button_positive_text_color">#FFFFFF</color>
     <color name="button_positive_selected_color">#662196F3</color>
     <color name="button_positive_unselected_color">#2196F3</color>
@@ -54,8 +48,6 @@
 
     <!-- Text -->
     <color name="text_primary">#DE000000</color>
-    <color name="text_secondary">#8A000000</color>
-    <color name="text_hint">#61000000</color>
 
     <!-- Other -->
     <color name="divider">#1F000000</color>
