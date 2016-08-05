@@ -69,6 +69,8 @@ public class MainActivity
                 View.OnClickListener,
                 FeedDataLoader.Callback{
 
+    private static final String TAG = "MainActivity";
+
     //Activity request codes
     private static final int ACTION_RC = 4582;
     private static final int GOAL_RC = 3486;
@@ -228,6 +230,8 @@ public class MainActivity
 
         mSuggestionDismissed = false;
         mFirstResume = true;
+
+        Log.d(TAG, "End of onCreate()");
     }
 
     @Override
@@ -258,7 +262,7 @@ public class MainActivity
 
     @Override
     protected void onResume(){
-        Log.d("Main", "onResume()");
+        Log.d(TAG, "onResume()");
         super.onResume();
         mAdapter.notifyDataSetChanged();
         if (mFirstResume){
@@ -294,6 +298,8 @@ public class MainActivity
             }, 500);
             mFirstResume = true;
         }
+
+        Log.d(TAG, "End of onResume()");
     }
 
     /**
