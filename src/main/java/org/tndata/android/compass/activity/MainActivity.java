@@ -113,6 +113,8 @@ public class MainActivity
                 API.BODY.putUserProfile(mApplication.getUser()));
         new GcmRegistration(this);
 
+        //TODO it is all fixed up until here
+
         //Set up the toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.main_toolbar);
         toolbar.setTitle("");
@@ -122,7 +124,7 @@ public class MainActivity
         }
 
         //Set up the drawer
-        mDrawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
+        /*mDrawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.string.nav_drawer_action, R.string.nav_drawer_action){
             @Override
@@ -195,7 +197,7 @@ public class MainActivity
             }
         });*/
 
-        Animation hideAnimation = new ScaleAnimation(1, 0, 1, 0, Animation.RELATIVE_TO_SELF, 0.5f,
+        /*Animation hideAnimation = new ScaleAnimation(1, 0, 1, 0, Animation.RELATIVE_TO_SELF, 0.5f,
                 Animation.RELATIVE_TO_SELF, 0.5f);
         hideAnimation.setDuration(200);
         Animation showAnimation = new ScaleAnimation(0, 1, 0, 1, Animation.RELATIVE_TO_SELF, 0.5f,
@@ -226,7 +228,7 @@ public class MainActivity
         });
 
         //Set up the FAB menu
-        populateMenu();
+        populateMenu();*/
 
         mSuggestionDismissed = false;
         mFirstResume = true;
@@ -238,9 +240,9 @@ public class MainActivity
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_search, menu);
         MenuItem searchItem = menu.findItem(R.id.search);
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+        /*if (mDrawerLayout.isDrawerOpen(GravityCompat.START)){
             searchItem.setVisible(false);
-        }
+        }*/
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -260,7 +262,7 @@ public class MainActivity
         }
     }
 
-    @Override
+    /*@Override
     protected void onResume(){
         Log.d(TAG, "onResume()");
         super.onResume();
@@ -300,7 +302,7 @@ public class MainActivity
         }
 
         Log.d(TAG, "End of onResume()");
-    }
+    }*/
 
     /**
      * Creates the FAB menu.
@@ -392,7 +394,7 @@ public class MainActivity
         mStopper.startAnimation(animation);
     }
 
-    @Override
+    /*@Override
     public void onBackPressed(){
         //Order: drawer, FAB menu, application
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)){
@@ -404,18 +406,18 @@ public class MainActivity
         else{
             super.onBackPressed();
         }
-    }
+    }*/
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState){
         super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
+        //mDrawerToggle.syncState();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig){
         super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
+        //mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
