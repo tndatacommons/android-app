@@ -149,7 +149,7 @@ public class LauncherActivity
      * Triggers a transition to main.
      */
     private void transitionToMain(){
-        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        startActivity(new Intent(getApplicationContext(), FeedActivity.class));
         finish();
     }
 

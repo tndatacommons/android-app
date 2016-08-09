@@ -171,7 +171,7 @@ public class GcmRegistration{
      * Stores the registration ID and app versionCode in the application's
      * {@code SharedPreferences}.
      */
-    private void storeRegistrationId(String regId) {
+    private void storeRegistrationId(String regId){
         final SharedPreferences prefs = getGCMPreferences();
         int appVersion = getAppVersion();
         Log.i(TAG, "Saving regId on app version " + appVersion);

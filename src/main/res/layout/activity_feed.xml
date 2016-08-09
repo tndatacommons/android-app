@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <android.support.v4.widget.DrawerLayout
+            android:id="@+id/feed_drawer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/app_background" >
+
+            <RelativeLayout
+                android:id="@+id/feed_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <android.support.v4.widget.SwipeRefreshLayout
+                    android:id="@+id/feed_refresh"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" >
+
+                        <ImageView
+                            android:id="@+id/feed_illustration"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:scaleType="centerCrop"
+                            android:adjustViewBounds="true"
+                            android:contentDescription="@string/feed_illustration_cd"
+                            android:src="@drawable/compass_master_illustration" />
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/feed_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                    </RelativeLayout>
+                </android.support.v4.widget.SwipeRefreshLayout>
+
+                <View
+                    android:id="@+id/feed_stopper"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/feed_menu_background"
+                    android:visibility="gone" />
+
+                <com.github.clans.fab.FloatingActionMenu
+                    xmlns:fab="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/feed_menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
+                    fab:menu_fab_size="normal"
+                    fab:menu_showShadow="true"
+                    fab:menu_shadowColor="#66000000"
+                    fab:menu_colorNormal="@color/button_paper_fab_color"
+                    fab:menu_colorPressed="@color/button_paper_fab_selected_color"
+                    fab:menu_colorRipple="@color/white"
+                    fab:menu_animationDelayPerItem="50"
+                    fab:menu_labels_style="@style/MenuLabelStyle" />
+
+            </RelativeLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/feed_drawer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:choiceMode="singleChoice"
+                android:background="@color/nav_drawer_color" />
+
+        </android.support.v4.widget.DrawerLayout>
+
+        <android.support.v7.widget.Toolbar
+            xmlns:toolbar="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/feed_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@color/main_toolbar_background_inactive"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            toolbar:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    </RelativeLayout>
+</layout>
