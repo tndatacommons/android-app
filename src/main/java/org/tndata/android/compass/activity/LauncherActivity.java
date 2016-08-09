@@ -149,7 +149,7 @@ public class LauncherActivity
      * Triggers a transition to main.
      */
     private void transitionToMain(){
-        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        startActivity(new Intent(getApplicationContext(), FeedActivity.class));
         finish();
     }
 
@@ -207,7 +207,11 @@ public class LauncherActivity
 
     @Override
     public void onFeedDataLoaded(@Nullable FeedData feedData){
-        if (!cancelled && feedData != null){
+        if (feedData == null){
+            User.deleteFromPreferences(getApplicationContext());
+            displayLauncherFragment(false);
+        }
+        else if (!cancelled){
             mApplication.setFeedData(feedData);
             transitionToMain();
         }

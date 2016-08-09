@@ -175,7 +175,7 @@ public class OnBoardingActivity
     public void onFeedDataLoaded(@Nullable FeedData feedData){
         if (feedData != null){
             mApplication.setFeedData(feedData);
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            startActivity(new Intent(getApplicationContext(), FeedActivity.class));
             finish();
         }
     }

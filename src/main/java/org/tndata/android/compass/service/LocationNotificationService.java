@@ -5,6 +5,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -77,6 +78,7 @@ public class LocationNotificationService
 
     //Running boolean, to work around some LocationRequest edge cases
     private boolean mRunning;
+    private boolean mDataSetLoaded;
 
     //The location request
     private LocationRequest mLocationRequest;
@@ -94,6 +96,7 @@ public class LocationNotificationService
     public void onCreate(){
         super.onCreate();
         mRunning = false;
+        mDataSetLoaded = false;
         mRequestInProgress = false;
     }
 
@@ -116,18 +119,23 @@ public class LocationNotificationService
                         //For start actions, if the service is already started, do nothing,
                         //  otherwise, start it
                         if (!mRunning){
-                            Log.i(TAG, "Starting service");
-                            loadData();
-                            //If there are no reminders, starting the service makes no sense
-                            if (mReminders.isEmpty()){
-                                Log.i(TAG, "There are no reminders, killing service");
-                                stopSelf();
+                            if (!mDataSetLoaded){
+                                Log.i(TAG, "The dataset ain't loaded. Load will start shortly");
+                                loadData();
                             }
                             else{
-                                mRunning = true;
-                                mLocationRequest = new LocationRequest(this, this, 0);
-                                mLocationRequest.onStart();
-                                mLocationRequest.requestLocation();
+                                Log.i(TAG, "Starting service");
+                                //If there are no reminders, starting the service makes no sense
+                                if (mReminders.isEmpty()){
+                                    Log.i(TAG, "There are no reminders, killing service");
+                                    stopSelf();
+                                }
+                                else{
+                                    mRunning = true;
+                                    mLocationRequest = new LocationRequest(this, this, 0);
+                                    mLocationRequest.onStart();
+                                    mLocationRequest.requestLocation();
+                                }
                             }
                         }
                         else{
@@ -180,27 +188,10 @@ public class LocationNotificationService
     }
 
     /**
-     * Reloads the data set.
+     * Triggers a reload of the data set.
      */
     private void loadData(){
-        Log.i(TAG, "Loading data");
-        PlaceTableHandler handler = new PlaceTableHandler(this);
-        mPlaces = new HashMap<>();
-        for (UserPlace userPlace:handler.getPlaces()){
-            mPlaces.put(userPlace.getId(), userPlace);
-        }
-        handler.close();
-        CompassDbHelper dbHelper = new CompassDbHelper(this);
-        mReminders = dbHelper.getReminders();
-        dbHelper.close();
-        Log.i(TAG, mPlaces.size() + " places found");
-        for (UserPlace place:mPlaces.values()){
-            Log.i(TAG, place.toString());
-        }
-        Log.i(TAG, mReminders.size() + " reminders found");
-        for (Reminder reminder:mReminders){
-            Log.i(TAG, reminder.getTitle());
-        }
+        new DataLoader().execute();
     }
 
     /**
@@ -340,5 +331,43 @@ public class LocationNotificationService
     @Override
     public IBinder onBind(Intent intent){
         return null;
+    }
+
+
+    /**
+     * Loads the data set in the background.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    private class DataLoader extends AsyncTask<Void, Void, Void>{
+        @Override
+        protected Void doInBackground(Void... unused){
+            Log.i(TAG, "Loading data");
+            PlaceTableHandler handler = new PlaceTableHandler(LocationNotificationService.this);
+            mPlaces = new HashMap<>();
+            for (UserPlace userPlace:handler.getPlaces()){
+                mPlaces.put(userPlace.getId(), userPlace);
+            }
+            handler.close();
+            CompassDbHelper dbHelper = new CompassDbHelper(LocationNotificationService.this);
+            mReminders = dbHelper.getReminders();
+            dbHelper.close();
+            Log.i(TAG, mPlaces.size() + " places found");
+            for (UserPlace place:mPlaces.values()){
+                Log.i(TAG, place.toString());
+            }
+            Log.i(TAG, mReminders.size() + " reminders found");
+            for (Reminder reminder:mReminders){
+                Log.i(TAG, reminder.getTitle());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused){
+            mDataSetLoaded = true;
+            LocationNotificationService.start(LocationNotificationService.this.getApplicationContext());
+        }
     }
 }

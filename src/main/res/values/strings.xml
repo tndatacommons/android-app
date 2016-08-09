@@ -37,7 +37,7 @@
         <a href="https://app.tndata.org/privacy/">privacy policy</a>.
     </string>
 
-    <!-- MainActivity -->
+    <!-- FeedActivity -->
     <string name="action_my_information">My information</string>
     <string name="action_my_awards">My awards</string>
     <string name="action_my_places">My places</string>
@@ -51,6 +51,7 @@
     <string name="fab_search_goals">Search goals</string>
     <string name="fab_browse_goals">Browse goals</string>
     <string name="toast_streaks">Keep checking your notifications to keep your streaks alive!</string>
+    <string name="feed_illustration_cd">Compass\' main illustration</string>
 
     <!-- MyActivitiesActivity -->
     <string name="my_activities_title">Customize my activities</string>

@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,8 @@ public class MainFeedAdapter
         implements
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback{
+
+    private static final String TAG = "MainFeedAdapter";
 
     //Item view types
     private static final int TYPE_BLANK = 0;
@@ -149,6 +152,7 @@ public class MainFeedAdapter
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        Log.d(TAG, "onCreateViewHolder(): " + viewType);
         if (viewType == TYPE_BLANK){
             return new RecyclerView.ViewHolder(new CardView(mContext)){};
         }
@@ -207,6 +211,7 @@ public class MainFeedAdapter
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
+        Log.d(TAG, "onBindViewHolder(): " + position);
         //This is a possible fix to a crash where the application gets destroyed and the
         //  user data gets invalidated. In such a case, the app should restart and fetch
         //  the user data again. Bottomline, do not keep going

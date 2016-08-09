@@ -3,18 +3,15 @@ package org.tndata.android.compass.activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +29,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.DrawerAdapter;
 import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
+import org.tndata.android.compass.databinding.ActivityFeedBinding;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.FeedData;
@@ -60,7 +58,7 @@ import es.sandwatch.httprequests.HttpRequest;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class MainActivity
+public class FeedActivity
         extends AppCompatActivity
         implements
                 SwipeRefreshLayout.OnRefreshListener,
@@ -76,30 +74,22 @@ public class MainActivity
     private static final int SETTINGS_RC = 6542;
 
 
-    //A reference to the application class
+    //A reference to the application class and the binding object
     private CompassApplication mApplication;
+    private ActivityFeedBinding mBinding;
 
-    //Drawer components
-    private DrawerLayout mDrawerLayout;
+    //Drawer and feed components
     private ActionBarDrawerToggle mDrawerToggle;
-
-    //Feed components
-    private SwipeRefreshLayout mRefresh;
-    private RecyclerView mFeed;
     private MainFeedAdapter mAdapter;
 
-    //Floating action menu components
-    private View mStopper;
-    private FloatingActionMenu mMenu;
-
+    //Flags
     private boolean mSuggestionDismissed;
-    private boolean mFirstResume;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_feed);
 
         mApplication = (CompassApplication)getApplication();
 
@@ -112,16 +102,14 @@ public class MainActivity
         new GcmRegistration(this);
 
         //Set up the toolbar
-        Toolbar toolbar = (Toolbar)findViewById(R.id.main_toolbar);
-        toolbar.setTitle("");
-        setSupportActionBar(toolbar);
+        mBinding.feedToolbar.setTitle("");
+        setSupportActionBar(mBinding.feedToolbar);
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         //Set up the drawer
-        mDrawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+        mDrawerToggle = new ActionBarDrawerToggle(this, mBinding.feedDrawerLayout,
                 R.string.nav_drawer_action, R.string.nav_drawer_action){
             @Override
             public void onDrawerClosed(View view){
@@ -135,64 +123,64 @@ public class MainActivity
                 invalidateOptionsMenu();
             }
         };
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
+        mBinding.feedDrawerLayout.addDrawerListener(mDrawerToggle);
 
-        RecyclerView drawerList = (RecyclerView)findViewById(R.id.main_drawer);
-        drawerList.setLayoutManager(new LinearLayoutManager(this));
-        drawerList.setAdapter(new DrawerAdapter(this, this));
-        drawerList.addItemDecoration(DrawerAdapter.getItemPadding(this));
+        mBinding.feedDrawer.setLayoutManager(new LinearLayoutManager(this));
+        mBinding.feedDrawer.setAdapter(new DrawerAdapter(this, this));
+        mBinding.feedDrawer.addItemDecoration(DrawerAdapter.getItemPadding(this));
 
         //Refresh functionality
-        mRefresh = (SwipeRefreshLayout)findViewById(R.id.main_refresh);
-        mRefresh.setColorSchemeColors(0xFFFF0000, 0xFFFFE900, 0xFF572364);
-        mRefresh.setOnRefreshListener(this);
-
-        View header = findViewById(R.id.main_illustration);
+        mBinding.feedRefresh.setColorSchemeColors(0xFFFF0000, 0xFFFFE900, 0xFF572364);
+        mBinding.feedRefresh.setOnRefreshListener(this);
 
         //Create the adapter and set the feed
         mAdapter = new MainFeedAdapter(this, this, false);
 
-        mFeed = (RecyclerView)findViewById(R.id.main_feed);
-        mFeed.setAdapter(mAdapter);
-        mFeed.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        RecyclerView feed = mBinding.feedList;
+        feed.setAdapter(mAdapter);
+        feed.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        feed.addOnScrollListener(new ParallaxEffect(mBinding.feedIllustration, 0.5f));
 
-        mFeed.addOnScrollListener(new ParallaxEffect(header, 0.5f));
-
-        ParallaxEffect toolbarEffect = new ParallaxEffect(toolbar, 1);
+        ParallaxEffect toolbarEffect = new ParallaxEffect(mBinding.feedToolbar, 1);
         toolbarEffect.setParallaxCondition(new ParallaxEffect.ParallaxCondition(){
             @Override
             protected boolean doParallax(){
-                int height = (int)((CompassUtil.getScreenWidth(MainActivity.this) * 2 / 3) * 0.55);
+                int height = (int)((CompassUtil.getScreenWidth(FeedActivity.this) * 2 / 3) * 0.55);
                 return -getRecyclerViewOffset() > height;
             }
 
             @Override
             protected int getFixedState(){
-                return CompassUtil.getPixels(MainActivity.this, 10);
+                return CompassUtil.getPixels(FeedActivity.this, 10);
             }
 
             @Override
             protected int getParallaxViewOffset(){
-                int height = (int)((CompassUtil.getScreenWidth(MainActivity.this) * 2 / 3) * 0.55);
+                int height = (int)((CompassUtil.getScreenWidth(FeedActivity.this) * 2 / 3) * 0.55);
                 return height + getFixedState() + getRecyclerViewOffset();
             }
         });
-        mFeed.addOnScrollListener(toolbarEffect);
+        feed.addOnScrollListener(toolbarEffect);
 
-        /*mFeed.addOnScrollListener(new RecyclerView.OnScrollListener(){
+        feed.addOnScrollListener(new RecyclerView.OnScrollListener(){
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy){
-                Log.e("Main", "onScrolled(): (" + dx + ", " + dy + "), why?");
-                Thread.dumpStack();
-                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0){
+                    mBinding.feedMenu.hideMenuButton(true);
+                }
+                else if (dy < 0){
+                    mBinding.feedMenu.showMenuButton(true);
+                }
+                if (recyclerView.canScrollVertically(-1)){
+                    mBinding.feedRefresh.setEnabled(false);
+                }
+                else{
+                    mBinding.feedRefresh.setEnabled(true);
+                }
             }
+        });
 
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState){
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-        });*/
-
+        //FAB menu related init
         Animation hideAnimation = new ScaleAnimation(1, 0, 1, 0, Animation.RELATIVE_TO_SELF, 0.5f,
                 Animation.RELATIVE_TO_SELF, 0.5f);
         hideAnimation.setDuration(200);
@@ -200,21 +188,19 @@ public class MainActivity
                 Animation.RELATIVE_TO_SELF, 0.5f);
         showAnimation.setDuration(200);
 
-        mStopper = findViewById(R.id.main_stopper);
-        mMenu = (FloatingActionMenu)findViewById(R.id.main_fab_menu);
-        mMenu.setMenuButtonHideAnimation(hideAnimation);
-        mMenu.setMenuButtonShowAnimation(showAnimation);
-        mMenu.setClosedOnTouchOutside(true);
-        mMenu.setOnMenuButtonClickListener(new View.OnClickListener(){
+        mBinding.feedMenu.setMenuButtonHideAnimation(hideAnimation);
+        mBinding.feedMenu.setMenuButtonShowAnimation(showAnimation);
+        mBinding.feedMenu.setClosedOnTouchOutside(true);
+        mBinding.feedMenu.setOnMenuButtonClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                if (!mMenu.isOpened()){
+                if (!mBinding.feedMenu.isOpened()){
                     animateBackground(true);
                 }
-                mMenu.toggle(true);
+                mBinding.feedMenu.toggle(true);
             }
         });
-        mMenu.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener(){
+        mBinding.feedMenu.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener(){
             @Override
             public void onMenuToggle(boolean opened){
                 if (!opened){
@@ -223,18 +209,17 @@ public class MainActivity
             }
         });
 
-        //Set up the FAB menu
+        //Set up the FAB menu items
         populateMenu();
 
         mSuggestionDismissed = false;
-        mFirstResume = true;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_search, menu);
         MenuItem searchItem = menu.findItem(R.id.search);
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+        if (mBinding.feedDrawerLayout.isDrawerOpen(GravityCompat.START)){
             searchItem.setVisible(false);
         }
         return super.onCreateOptionsMenu(menu);
@@ -258,42 +243,8 @@ public class MainActivity
 
     @Override
     protected void onResume(){
-        Log.d("Main", "onResume()");
         super.onResume();
         mAdapter.notifyDataSetChanged();
-        if (mFirstResume){
-            new Handler().postDelayed(new Runnable(){
-                @Override
-                public void run(){
-                    Log.d("Main", "OnResume()'s scroll");
-                    mFeed.scrollToPosition(0);
-
-                    new Handler().postDelayed(new Runnable(){
-                        @Override
-                        public void run(){
-                            mFeed.addOnScrollListener(new RecyclerView.OnScrollListener(){
-                                @Override
-                                public void onScrolled(RecyclerView recyclerView, int dx, int dy){
-                                    if (dy > 0){
-                                        mMenu.hideMenuButton(true);
-                                    }
-                                    else if (dy < 0){
-                                        mMenu.showMenuButton(true);
-                                    }
-                                    if (recyclerView.canScrollVertically(-1)){
-                                        mRefresh.setEnabled(false);
-                                    }
-                                    else{
-                                        mRefresh.setEnabled(true);
-                                    }
-                                }
-                            });
-                        }
-                    }, 500);
-                }
-            }, 500);
-            mFirstResume = true;
-        }
     }
 
     /**
@@ -318,13 +269,13 @@ public class MainActivity
                 fab.setImageResource(R.drawable.ic_list_white_24dp);
             }
             fab.setOnClickListener(this);
-            mMenu.addMenuButton(fab);
+            mBinding.feedMenu.addMenuButton(fab);
         }
     }
 
     @Override
     public void onClick(View v){
-        mMenu.toggle(true);
+        mBinding.feedMenu.toggle(true);
         switch (v.getId()){
             case R.id.fab_search_goals:
                 search();
@@ -368,13 +319,13 @@ public class MainActivity
         animation.setAnimationListener(new Animation.AnimationListener(){
             @Override
             public void onAnimationStart(Animation animation){
-                mStopper.setVisibility(View.VISIBLE);
+                mBinding.feedStopper.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onAnimationEnd(Animation animation){
                 if (!opening){
-                    mStopper.setVisibility(View.GONE);
+                    mBinding.feedStopper.setVisibility(View.GONE);
                 }
             }
 
@@ -383,17 +334,17 @@ public class MainActivity
                 //Unused
             }
         });
-        mStopper.startAnimation(animation);
+        mBinding.feedStopper.startAnimation(animation);
     }
 
     @Override
     public void onBackPressed(){
         //Order: drawer, FAB menu, application
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)){
-            mDrawerLayout.closeDrawers();
+        if (mBinding.feedDrawerLayout.isDrawerOpen(GravityCompat.START)){
+            mBinding.feedDrawerLayout.closeDrawers();
         }
-        else if (mMenu.isOpened()){
-            mMenu.toggle(true);
+        else if (mBinding.feedMenu.isOpened()){
+            mBinding.feedMenu.toggle(true);
         }
         else{
             super.onBackPressed();
@@ -449,7 +400,7 @@ public class MainActivity
                     startActivity(Intent.createChooser(emailIntent, getText(R.string.action_support_share_title)));
                 }
                 catch (ActivityNotFoundException anfx){
-                    Toast.makeText(MainActivity.this, "There is no email client installed.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FeedActivity.this, "There is no email client installed.", Toast.LENGTH_SHORT).show();
                 }
                 break;
 
@@ -458,7 +409,7 @@ public class MainActivity
                 startActivity(new Intent(this, PlaygroundActivity.class));
                 break;
         }
-        mDrawerLayout.closeDrawers();
+        mBinding.feedDrawerLayout.closeDrawers();
     }
 
     @Override
@@ -469,7 +420,8 @@ public class MainActivity
 
     @Override
     public void onInstructionsSelected(){
-        ((LinearLayoutManager)mFeed.getLayoutManager()).scrollToPositionWithOffset(mAdapter.getGoalsPosition(), 10);
+        ((LinearLayoutManager)mBinding.feedList.getLayoutManager())
+                .scrollToPositionWithOffset(mAdapter.getGoalsPosition(), 10);
     }
 
     @Override
@@ -566,12 +518,12 @@ public class MainActivity
             mApplication.setFeedData(feedData);
 
             mAdapter = new MainFeedAdapter(this, this, !mSuggestionDismissed);
-            mFeed.setAdapter(mAdapter);
+            mBinding.feedList.setAdapter(mAdapter);
 
             mSuggestionDismissed = false;
 
-            if (mRefresh.isRefreshing()){
-                mRefresh.setRefreshing(false);
+            if (mBinding.feedRefresh.isRefreshing()){
+                mBinding.feedRefresh.setRefreshing(false);
             }
         }
     }
