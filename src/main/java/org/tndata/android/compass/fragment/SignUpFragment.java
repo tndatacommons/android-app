@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.method.LinkMovementMethod;
 import android.text.method.MovementMethod;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +43,9 @@ public class SignUpFragment
                 OnClickListener,
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback{
+
+    private static final String TAG = "SignUpFragment";
+
 
     private CompassApplication mApplication;
 
@@ -250,6 +254,7 @@ public class SignUpFragment
         else{
             mErrorString = getActivity().getResources().getString(R.string.signup_error);
         }
+        Log.e(TAG, error.toString());
         setFormEnabled(true);
     }
 
