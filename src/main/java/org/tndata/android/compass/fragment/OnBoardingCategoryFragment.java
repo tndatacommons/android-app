@@ -16,6 +16,14 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
 import org.tndata.android.compass.model.TDCCategory;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserModels;
+import org.tndata.android.compass.util.API;
+
+import java.util.List;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -27,12 +35,39 @@ import org.tndata.android.compass.model.TDCCategory;
 public class OnBoardingCategoryFragment
         extends Fragment
         implements
+                HttpRequest.RequestCallback,
+                Parser.ParserCallback,
                 ChooseCategoryAdapter.ChooseCategoryAdapterListener,
                 View.OnClickListener{
 
+    private static final String LOAD_KEY = "org.tndata.compass.CategoryFragment.Load";
+
+
+    private int mGetCategoriesRC;
+
     private CategoryListener mListener;
+    private View mContent;
+    private View mProgress;
+    private RecyclerView mList;
     private Button mNext;
 
+    private boolean mLoad;
+
+
+    public static OnBoardingCategoryFragment newInstance(boolean loadCategories){
+        Bundle args = new Bundle();
+        args.putBoolean(LOAD_KEY, loadCategories);
+
+        OnBoardingCategoryFragment frag = new OnBoardingCategoryFragment();
+        frag.setArguments(args);
+        return frag;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        mLoad = getArguments().getBoolean(LOAD_KEY, false);
+    }
 
     @Override
     public void onAttach(Context context){
@@ -60,13 +95,63 @@ public class OnBoardingCategoryFragment
         explanation.setText(R.string.list_explanation);
         root.findViewById(R.id.list_explanation_container).setVisibility(View.VISIBLE);
 
-        RecyclerView list = (RecyclerView)root.findViewById(R.id.list_recycler_view);
-        list.setLayoutManager(new LinearLayoutManager(getContext()));
-        list.setAdapter(new ChooseCategoryAdapter(getContext(), this, app.getCategoryList(true)));
+        mContent = root.findViewById(R.id.list_content);
+        mProgress = root.findViewById(R.id.list_progress);
+
+        mList = (RecyclerView)root.findViewById(R.id.list_recycler_view);
+        mList.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        if (mLoad){
+            mGetCategoriesRC = HttpRequest.get(this, API.URL.getCategories());
+            mContent.setVisibility(View.GONE);
+            mProgress.setVisibility(View.VISIBLE);
+        }
+        else{
+            mList.setAdapter(new ChooseCategoryAdapter(getContext(), this, app.getCategoryList(true)));
+            mContent.setVisibility(View.VISIBLE);
+            mProgress.setVisibility(View.GONE);
+        }
+
 
         mNext = (Button)root.findViewById(R.id.list_button);
         mNext.setVisibility(View.VISIBLE);
         mNext.setOnClickListener(this);
+    }
+
+    @Override
+    public void onRequestComplete(int requestCode, String result){
+        if (requestCode == mGetCategoriesRC){
+            Parser.parse(result, ParserModels.CategoryContentResultSet.class, this);
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode, HttpRequestError error){
+
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.CategoryContentResultSet){
+            List<TDCCategory> categories = ((ParserModels.CategoryContentResultSet)result).results;
+            ((CompassApplication)getActivity().getApplication()).setAvailableCategories(categories);
+        }
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof ParserModels.CategoryContentResultSet){
+            CompassApplication app = (CompassApplication)getActivity().getApplication();
+            List<TDCCategory> filtered = app.getCategoryList(true);
+            mList.setAdapter(new ChooseCategoryAdapter(getContext(), this, filtered));
+            mContent.setVisibility(View.VISIBLE);
+            mProgress.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onParseFailed(int requestCode){
+
     }
 
     /**

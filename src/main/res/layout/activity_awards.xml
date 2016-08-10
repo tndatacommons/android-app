@@ -22,8 +22,8 @@
 
         <ProgressBar
             android:id="@+id/awards_progress"
-            android:layout_width="@dimen/progrss_bar_size"
-            android:layout_height="@dimen/progrss_bar_size"
+            android:layout_width="@dimen/progress_bar_size"
+            android:layout_height="@dimen/progress_bar_size"
             android:layout_below="@id/awards_header"
             android:layout_marginTop="@dimen/header_to_next"
             android:layout_centerHorizontal="true" />
