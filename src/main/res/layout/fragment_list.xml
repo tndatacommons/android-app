@@ -1,47 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
     <LinearLayout
-        android:id="@+id/list_explanation_container"
+        android:id="@+id/list_content"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/primary"
-        android:visibility="gone" >
+        android:layout_height="match_parent" >
 
-        <TextView
-            android:id="@+id/list_explanation"
+        <LinearLayout
+            android:id="@+id/list_explanation_container"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:textSize="18sp"
-            android:textColor="@color/white" />
+            android:background="@color/primary"
+            android:visibility="gone" >
+
+            <TextView
+                android:id="@+id/list_explanation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:textSize="18sp"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/list_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:visibility="gone"
+            android:background="@drawable/button_positive_rounded"
+            android:minHeight="@dimen/paper_flat_button_min_height"
+            android:minWidth="@dimen/paper_flat_login_button_min_width"
+            android:textAllCaps="true"
+            android:text="@string/onboarding_category_skip"
+            android:textColor="@color/button_positive_text_color" />
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/list_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+    <ProgressBar
+        android:id="@+id/list_progress"
+        android:layout_width="@dimen/progress_bar_size"
+        android:layout_height="@dimen/progress_bar_size"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
 
-    <Button
-        android:id="@+id/list_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="5dp"
-        android:visibility="gone"
-        android:background="@drawable/button_positive_rounded"
-        android:minHeight="@dimen/paper_flat_button_min_height"
-        android:minWidth="@dimen/paper_flat_login_button_min_width"
-        android:textAllCaps="true"
-        android:text="@string/onboarding_category_skip"
-        android:textColor="@color/button_positive_text_color" />
-
-</LinearLayout>
+</RelativeLayout>

@@ -3,7 +3,6 @@ package org.tndata.android.compass.adapter;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +24,7 @@ import java.util.List;
 public class OrganizationsAdapter extends RecyclerView.Adapter<OrganizationsAdapter.OrganizationHolder>{
     private Context mContext;
     private List<Organization> mOrganizations;
-    private OrganizationsListener mListener;
+    private OrganizationsAdapterListener mListener;
 
 
     /**
@@ -36,7 +35,7 @@ public class OrganizationsAdapter extends RecyclerView.Adapter<OrganizationsAdap
      * @param listener the organization selection listener.
      */
     public OrganizationsAdapter(@NonNull Context context, @NonNull List<Organization> organizations,
-                                @NonNull OrganizationsListener listener){
+                                @NonNull OrganizationsAdapterListener listener){
 
         mContext = context;
         mOrganizations = organizations;
@@ -105,14 +104,14 @@ public class OrganizationsAdapter extends RecyclerView.Adapter<OrganizationsAdap
      * Listener interface for the organization selection process.
      *
      * @author Ismael Alonso
-     * @version 1.0.0
+     * @version 1.0.1
      */
-    public interface OrganizationsListener{
+    public interface OrganizationsAdapterListener{
         /**
          * Called when the user selects an organization.
          *
          * @param organization the organization that was selected.
          */
-        void onOrganizationSelected(@Nullable Organization organization);
+        void onOrganizationSelected(@NonNull Organization organization);
     }
 }

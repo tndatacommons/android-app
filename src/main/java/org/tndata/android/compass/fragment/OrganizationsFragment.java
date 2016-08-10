@@ -3,6 +3,7 @@ package org.tndata.android.compass.fragment;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,7 +13,6 @@ import android.view.ViewGroup;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.OrganizationsAdapter;
-import org.tndata.android.compass.adapter.OrganizationsAdapter.OrganizationsListener;
 import org.tndata.android.compass.databinding.FragmentOrganizationsBinding;
 import org.tndata.android.compass.model.Organization;
 import org.tndata.android.compass.parser.Parser;
@@ -37,12 +37,14 @@ public class OrganizationsFragment
         implements
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback,
+                OrganizationsAdapter.OrganizationsAdapterListener,
                 View.OnClickListener{
 
     private FragmentOrganizationsBinding mBinding;
 
     private List<Organization> mOrganizations;
     private int mGetOrganizationsRC;
+    private int mPostOrganizationRC;
 
     private OrganizationsListener mListener;
 
@@ -96,6 +98,9 @@ public class OrganizationsFragment
         if (requestCode == mGetOrganizationsRC){
             Parser.parse(result, ParserModels.OrganizationsResultSet.class, this);
         }
+        else if (requestCode == mPostOrganizationRC){
+            mListener.onOrganizationSelected(true);
+        }
     }
 
     @Override
@@ -113,7 +118,7 @@ public class OrganizationsFragment
         if (result instanceof ParserModels.OrganizationsResultSet){
             mOrganizations = ((ParserModels.OrganizationsResultSet)result).results;
             if (mOrganizations.size() == 0){
-                mListener.onOrganizationSelected(null);
+                mListener.onOrganizationSelected(false);
             }
             else if (mBinding != null){
                 bindOrganizations();
@@ -133,7 +138,7 @@ public class OrganizationsFragment
     private void bindOrganizations(){
         Context context = getContext();
         mBinding.organizationsList.setLayoutManager(new LinearLayoutManager(context));
-        OrganizationsAdapter adapter = new OrganizationsAdapter(context, mOrganizations, mListener);
+        OrganizationsAdapter adapter = new OrganizationsAdapter(context, mOrganizations, this);
         mBinding.organizationsList.setAdapter(adapter);
         mBinding.organizationsList.addItemDecoration(new CardItemDecoration());
         mBinding.organizationsHeader.setVisibility(View.VISIBLE);
@@ -144,7 +149,28 @@ public class OrganizationsFragment
     }
 
     @Override
+    public void onOrganizationSelected(@NonNull Organization organization){
+        mPostOrganizationRC = HttpRequest.post(this, API.URL.postOrganization(),
+                API.BODY.postOrganization(organization));
+        mBinding.organizationsHeader.setVisibility(View.GONE);
+        mBinding.organizationsList.setVisibility(View.GONE);
+        mBinding.organizationsSkip.setVisibility(View.GONE);
+        mBinding.organizationsProgress.setVisibility(View.VISIBLE);
+    }
+
+    @Override
     public void onClick(View view){
-        mListener.onOrganizationSelected(null);
+        mListener.onOrganizationSelected(false);
+    }
+
+
+    /**
+     * Listener for the OrganizationsFragment.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    public interface OrganizationsListener{
+        void onOrganizationSelected(boolean organizationAdded);
     }
 }
