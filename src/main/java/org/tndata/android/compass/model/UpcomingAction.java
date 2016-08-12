@@ -2,11 +2,15 @@ package org.tndata.android.compass.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Calendar;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 
 /**
@@ -99,27 +103,14 @@ public class UpcomingAction implements Parcelable{
      * @return a Date object set to the trigger time.
      */
     public Date getTriggerDate(){
-        //TODO parse with DateTime?
-        String year = mTrigger.substring(0, mTrigger.indexOf("-"));
-        String temp = mTrigger.substring(mTrigger.indexOf("-")+1);
-        String month = temp.substring(0, temp.indexOf("-"));
-        temp = temp.substring(temp.indexOf("-")+1);
-        String day = temp.substring(0, temp.indexOf(" "));
-
-        String time = mTrigger.substring(mTrigger.indexOf(' ')+1);
-        String hour = time.substring(0, time.indexOf(':'));
-        time = time.substring(time.indexOf(':')+1);
-        String minute = time.substring(0, time.indexOf(':'));
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, Integer.valueOf(year));
-        calendar.set(Calendar.MONTH, Integer.valueOf(month)-1);
-        calendar.set(Calendar.DAY_OF_MONTH, Integer.valueOf(day));
-        calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(hour));
-        calendar.set(Calendar.MINUTE, Integer.valueOf(minute));
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ssZ", Locale.getDefault());
+        try{
+            return format.parse(mTrigger);
+        }
+        catch (ParseException px){
+            px.printStackTrace();
+            return new Date();
+        }
     }
 
     /**
@@ -128,23 +119,10 @@ public class UpcomingAction implements Parcelable{
      * @return a string with the display format of the trigger.
      */
     public String getTriggerDisplay(){
-        String time = mTrigger.substring(mTrigger.indexOf(' ')+1, mTrigger.lastIndexOf('-'));
-        String hourStr = time.substring(0, time.indexOf(':'));
-        time = time.substring(time.indexOf(':')+1);
-        try{
-            boolean am = true;
-            int hour = Integer.valueOf(hourStr);
-            if (hour > 12){
-                hour -= 12;
-                am = false;
-            }
+        Log.d("UpcomingAction", "getTriggerDisplay on: " + mTrigger);
 
-            return hour + ":" + time.substring(0, time.indexOf(":")) + (am ? " am" : " pm");
-        }
-        catch (NumberFormatException nfx){
-            nfx.printStackTrace();
-            return "";
-        }
+        DateFormat format = new SimpleDateFormat("h:mm a", Locale.getDefault());
+        return format.format(getTriggerDate()).toLowerCase();
     }
 
     /**

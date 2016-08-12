@@ -2,11 +2,16 @@ package org.tndata.android.compass.model;
 
 import android.os.Parcel;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 
 /**
@@ -80,6 +85,15 @@ public abstract class Action extends UserContent implements Comparable<Action>{
      * @return a Date object with the date of the next reminder.
      */
     public Date getNextReminderDate(){
+        Log.d("Action", "Raw date: " + mNextReminder);
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ssZ", Locale.getDefault());
+        try{
+            return format.parse(mNextReminder);
+        }
+        catch (ParseException px){
+            px.printStackTrace();
+        }
+
         String year = mNextReminder.substring(0, mNextReminder.indexOf("-"));
         String temp = mNextReminder.substring(mNextReminder.indexOf("-")+1);
         String month = temp.substring(0, temp.indexOf("-"));
