@@ -62,12 +62,13 @@ public abstract class MaterialActivity extends AppCompatActivity{
 
         //Add the parallax effect to the header
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.addOnScrollListener(new ParallaxEffect(mHeaderContainer, 0.5f));
+        new ParallaxEffect(mHeaderContainer, 0.5f).attachToRecyclerView(mRecyclerView);
 
         //Add the toolbar effect
+        int startState = (int)((CompassUtil.getScreenWidth(MaterialActivity.this) * 2 / 3) * 0.6);
         ParallaxEffect toolbarEffect = new ParallaxEffect(toolbar, 1);
-        toolbarEffect.setCondition(new ParallaxEffect.Condition((int)((CompassUtil.getScreenWidth(MaterialActivity.this) * 2 / 3) * 0.6)));
-        mRecyclerView.addOnScrollListener(toolbarEffect);
+        toolbarEffect.setCondition(new ParallaxEffect.Condition(startState));
+        toolbarEffect.attachToRecyclerView(mRecyclerView);
     }
 
     @Override

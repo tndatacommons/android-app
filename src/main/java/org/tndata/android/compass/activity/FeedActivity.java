@@ -140,29 +140,12 @@ public class FeedActivity
         RecyclerView feed = mBinding.feedList;
         feed.setAdapter(mAdapter);
         feed.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        feed.addOnScrollListener(new ParallaxEffect(mBinding.feedIllustration, 0.5f));
+        new ParallaxEffect(mBinding.feedIllustration, 0.5f).attachToRecyclerView(feed);
 
+        int startState = (int)((CompassUtil.getScreenWidth(FeedActivity.this) * 2 / 3) * 0.5);
         ParallaxEffect toolbarEffect = new ParallaxEffect(mBinding.feedToolbar, 1);
-        toolbarEffect.setCondition(new ParallaxEffect.Condition((int)((CompassUtil.getScreenWidth(FeedActivity.this) * 2 / 3) * 0.55)));
-        /*toolbarEffect.setParallaxCondition(new ParallaxEffect.ParallaxCondition(){
-            @Override
-            protected boolean doParallax(){
-                int height = (int)((CompassUtil.getScreenWidth(FeedActivity.this) * 2 / 3) * 0.55);
-                return -getRecyclerViewOffset() > height;
-            }
-
-            @Override
-            protected int getFixedState(){
-                return CompassUtil.getPixels(FeedActivity.this, 10);
-            }
-
-            @Override
-            protected int getParallaxViewOffset(){
-                int height = (int)((CompassUtil.getScreenWidth(FeedActivity.this) * 2 / 3) * 0.55);
-                return height + getFixedState() + getRecyclerViewOffset();
-            }
-        });*/
-        feed.addOnScrollListener(toolbarEffect);
+        toolbarEffect.setCondition(new ParallaxEffect.Condition(startState));
+        toolbarEffect.attachToRecyclerView(feed);
 
         feed.addOnScrollListener(new RecyclerView.OnScrollListener(){
             @Override

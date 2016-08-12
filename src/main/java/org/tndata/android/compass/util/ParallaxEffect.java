@@ -4,7 +4,6 @@ import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.RelativeLayout;
@@ -22,22 +21,20 @@ import java.util.Stack;
  * @author Ismael Alonso
  * @version 3.0.0
  */
-public final class ParallaxEffect extends RecyclerView.OnScrollListener{
+public final class ParallaxEffect{
     //The view to which the parallax should be applied and the parallax factor
     private View mParallaxView;
     private float mParallaxFactor;
-
     //A condition to the parallax
     private Condition mCondition;
-
+    //The scroll listener
+    private RvScrollListener mListener;
     //The decoration specification, to calculate margins
     private RecyclerView.ItemDecoration mItemDecoration;
-
     //A stack of heights needs to be kept
     private Stack<Integer> mHeightStack;
     private Stack<Integer> mTopMarginStack;
     private Stack<Integer> mBottomMarginStack;
-
     //The combined height of the rows that are off-screen. NOTE: This number will either
     //  be 0 or negative because the origin of coordinates is the top left corner
     private int mPreviousMargin;
@@ -48,16 +45,14 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
     private int mInitialMargin;
     //The top margin of the view that's being parallaxed needs to be taken into account as well
     private int mParallaxViewInitialMargin;
-
     //Current item and last recorded item
     private int mCurrent;
     private int mLastRecorded;
 
-
     /**
      * Constructor.
      *
-     * @param parallaxView the view to which the parallax should be applied.
+     * @param parallaxView   the view to which the parallax should be applied.
      * @param parallaxFactor the parallax effect factor.
      */
     public ParallaxEffect(@NonNull View parallaxView, float parallaxFactor){
@@ -77,9 +72,6 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
 
         //Retrieve the top margin of the view being parallaxed
         mParallaxViewInitialMargin = ((MarginLayoutParams)mParallaxView.getLayoutParams()).topMargin;
-
-        Thread.dumpStack();
-        Log.d("ParallaxEffect", "Initial margin: " + mParallaxViewInitialMargin);
     }
 
     public void setCondition(@NonNull Condition condition){
@@ -87,13 +79,21 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
         mCondition = condition;
     }
 
-    public void attachToRecyclerView(@NonNull RecyclerView recyclerView,
-                                     @Nullable RecyclerView.ItemDecoration itemDecoration){
-        //TODO
+    public void attachToRecyclerView(@NonNull RecyclerView recyclerView){
+        attachToRecyclerView(recyclerView, null);
     }
 
-    @Override
-    public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+    public void attachToRecyclerView(@NonNull RecyclerView recyclerView,
+                                     @Nullable RecyclerView.ItemDecoration itemDecoration){
+        if (mListener != null){
+            recyclerView.removeOnScrollListener(mListener);
+        }
+        mListener = new RvScrollListener();
+        recyclerView.addOnScrollListener(mListener);
+        mItemDecoration = itemDecoration;
+    }
+
+    public void onScrolled(RecyclerView recyclerView){
         //If this is the first call
         if (mLastRecorded == 0){
             //The initial margin is recorded
@@ -118,7 +118,7 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
         }
 
         //While there are views above the current (scrolling up)
-        while (mCurrent > 0 && recyclerView.findViewHolderForLayoutPosition(mCurrent-1) != null){
+        while (mCurrent > 0 && recyclerView.findViewHolderForLayoutPosition(mCurrent - 1) != null){
             mCurrent -= 1;
             mPreviousMargin += mHeightStack.get(mCurrent);
             mPreviousMargin += mTopMarginStack.get(mCurrent);
@@ -139,14 +139,10 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
         RelativeLayout.LayoutParams params;
         params = (RelativeLayout.LayoutParams)mParallaxView.getLayoutParams();
         if (!mCondition.scrolls()){
-            params.topMargin = mParallaxViewInitialMargin;// mCondition.getFixedState();
+            params.topMargin = mParallaxViewInitialMargin;
         }
         else{
             params.topMargin = getParallaxViewOffset();
-            Log.d("ParallaxEffect", "Top margin: " + params.topMargin);
-            /*if (mParallaxCondition != null){
-                params.topMargin = mParallaxCondition.getParallaxViewOffset();
-            }*/
         }
         mParallaxView.setLayoutParams(params);
     }
@@ -161,6 +157,22 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
 
 
     /**
+     * Listener class that acts as an interface between RecyclerView and ParallaxEffect instances.
+     * The rationale of this class is to avoid having ParallaxEffect extend OnScrollListener
+     * and have the programmer attach it to a RecyclerView by using the proper methods.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
+    private class RvScrollListener extends RecyclerView.OnScrollListener{
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+            ParallaxEffect.this.onScrolled(recyclerView);
+        }
+    }
+
+
+    /**
      * A condition to scrolling. Evaluates whether the View subject to this effect should
      * scroll or not.
      *
@@ -171,10 +183,8 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
         //The start state is the amount of scrolling needed to be done by the scrollable view
         //  triggering the effect before the view on which the effect acts upon starts scrolling.
         private final int mStartState;
-
         //The effect this condition is associated to
         private ParallaxEffect mParallaxEffect;
-
 
         /**
          * Constructor.
