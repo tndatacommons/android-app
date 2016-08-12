@@ -2,7 +2,6 @@ package org.tndata.android.compass.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -119,8 +118,6 @@ public class UpcomingAction implements Parcelable{
      * @return a string with the display format of the trigger.
      */
     public String getTriggerDisplay(){
-        Log.d("UpcomingAction", "getTriggerDisplay on: " + mTrigger);
-
         DateFormat format = new SimpleDateFormat("h:mm a", Locale.getDefault());
         return format.format(getTriggerDate()).toLowerCase();
     }
@@ -152,8 +149,7 @@ public class UpcomingAction implements Parcelable{
         else if (isCustomAction()){
             result = "CustomAction ";
         }
-        result += "#" + mId + ": " + mTitle;
-        return result;
+        return result + "#" + mId + ": " + mTitle + ", " + getTriggerDisplay();
     }
 
     @Override

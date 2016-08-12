@@ -9,7 +9,6 @@ import com.google.gson.annotations.SerializedName;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -92,28 +91,8 @@ public abstract class Action extends UserContent implements Comparable<Action>{
         }
         catch (ParseException px){
             px.printStackTrace();
+            return new Date();
         }
-
-        String year = mNextReminder.substring(0, mNextReminder.indexOf("-"));
-        String temp = mNextReminder.substring(mNextReminder.indexOf("-")+1);
-        String month = temp.substring(0, temp.indexOf("-"));
-        temp = temp.substring(temp.indexOf("-")+1);
-        String day = temp.substring(0, temp.indexOf(" "));
-
-        String time = mNextReminder.substring(mNextReminder.indexOf(' ')+1);
-        String hour = time.substring(0, time.indexOf(':'));
-        time = time.substring(time.indexOf(':')+1);
-        String minute = time.substring(0, time.indexOf(':'));
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, Integer.valueOf(year));
-        calendar.set(Calendar.MONTH, Integer.valueOf(month)-1);
-        calendar.set(Calendar.DAY_OF_MONTH, Integer.valueOf(day));
-        calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(hour));
-        calendar.set(Calendar.MINUTE, Integer.valueOf(minute));
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
     }
 
     /**
