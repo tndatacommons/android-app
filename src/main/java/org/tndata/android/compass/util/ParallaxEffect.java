@@ -20,7 +20,7 @@ import java.util.Stack;
  * TODO and extended scrollable types support.
  *
  * @author Ismael Alonso
- * @version 2.0.0
+ * @version 3.0.0
  */
 public final class ParallaxEffect extends RecyclerView.OnScrollListener{
     //The view to which the parallax should be applied and the parallax factor
@@ -160,25 +160,46 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
     }
 
 
+    /**
+     * A condition to scrolling. Evaluates whether the View subject to this effect should
+     * scroll or not.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public static class Condition{
         //The start state is the amount of scrolling needed to be done by the scrollable view
         //  triggering the effect before the view on which the effect acts upon starts scrolling.
         private final int mStartState;
 
+        //The effect this condition is associated to
         private ParallaxEffect mParallaxEffect;
 
 
         /**
-         * Constructor. Defaults the fixed state and the start state both to 0.
+         * Constructor.
+         *
+         * @param startScrollingAt the amount of scrolling done by the scrollable view before
+         *                         the subject starts scrolling.
          */
         public Condition(int startScrollingAt){
             mStartState = startScrollingAt;
         }
 
+        /**
+         * Sets the parallax effect this condition is associated with.
+         *
+         * @param parallaxEffect the parallax effect this condition is associated with.
+         */
         private void setParallaxEffect(@NonNull ParallaxEffect parallaxEffect){
             mParallaxEffect = parallaxEffect;
         }
 
+        /**
+         * Tells whether a view should scroll given a start state.
+         *
+         * @return true if it should scroll, false otherwise.
+         */
         private boolean scrolls(){
             return mParallaxEffect.getScrollableOffset() >= mStartState;
         }
