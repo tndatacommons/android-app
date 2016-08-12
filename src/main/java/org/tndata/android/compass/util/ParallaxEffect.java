@@ -4,6 +4,7 @@ import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.RelativeLayout;
@@ -27,12 +28,10 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
     private float mParallaxFactor;
 
     //A condition to the parallax
-    private ParallaxCondition mParallaxCondition;
+    private Condition mCondition;
 
     //The decoration specification, to calculate margins
     private RecyclerView.ItemDecoration mItemDecoration;
-
-    private ScrollListener mScrollListener;
 
     //A stack of heights needs to be kept
     private Stack<Integer> mHeightStack;
@@ -65,7 +64,8 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
         mParallaxView = parallaxView;
         mParallaxFactor = parallaxFactor > 1 ? 1 : parallaxFactor;
 
-        mParallaxCondition = null;
+        mCondition = new Condition(0);
+        mCondition.setParallaxEffect(this);
 
         mHeightStack = new Stack<>();
         mTopMarginStack = new Stack<>();
@@ -77,21 +77,19 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
 
         //Retrieve the top margin of the view being parallaxed
         mParallaxViewInitialMargin = ((MarginLayoutParams)mParallaxView.getLayoutParams()).topMargin;
+
+        Thread.dumpStack();
+        Log.d("ParallaxEffect", "Initial margin: " + mParallaxViewInitialMargin);
     }
 
-    public void setParallaxCondition(@Nullable ParallaxCondition parallaxCondition){
-        mParallaxCondition = parallaxCondition;
-        if (mParallaxCondition != null){
-            mParallaxCondition.mParallaxEffect = this;
-        }
+    public void setCondition(@NonNull Condition condition){
+        condition.setParallaxEffect(this);
+        mCondition = condition;
     }
 
-    public void setItemDecoration(@Nullable RecyclerView.ItemDecoration itemDecoration){
-        mItemDecoration = itemDecoration;
-    }
-
-    public void setScrollListener(@NonNull ScrollListener listener){
-        mScrollListener = listener;
+    public void attachToRecyclerView(@NonNull RecyclerView recyclerView,
+                                     @Nullable RecyclerView.ItemDecoration itemDecoration){
+        //TODO
     }
 
     @Override
@@ -140,66 +138,49 @@ public final class ParallaxEffect extends RecyclerView.OnScrollListener{
 
         RelativeLayout.LayoutParams params;
         params = (RelativeLayout.LayoutParams)mParallaxView.getLayoutParams();
-        if (mParallaxCondition != null && !mParallaxCondition.doParallax()){
-            params.topMargin = mParallaxCondition.getFixedState();
-            mParallaxCondition.onStateChanged(params.topMargin);
+        if (!mCondition.scrolls()){
+            params.topMargin = mParallaxViewInitialMargin;// mCondition.getFixedState();
         }
         else{
             params.topMargin = getParallaxViewOffset();
-            if (mParallaxCondition != null){
+            Log.d("ParallaxEffect", "Top margin: " + params.topMargin);
+            /*if (mParallaxCondition != null){
                 params.topMargin = mParallaxCondition.getParallaxViewOffset();
-                mParallaxCondition.onStateChanged(params.topMargin);
-            }
+            }*/
         }
         mParallaxView.setLayoutParams(params);
-
-        if (mScrollListener != null){
-            int offset = -getParallaxViewOffset();
-            if (offset/mParallaxFactor > mParallaxView.getHeight()){
-                mScrollListener.onScroll(1);
-            }
-            else{
-                float percentage = (offset/mParallaxFactor)/mParallaxView.getHeight();
-                mScrollListener.onScroll(percentage);
-            }
-        }
     }
 
     private int getParallaxViewOffset(){
-        return (int)((mPreviousMargin + mTopState - mInitialMargin) * mParallaxFactor) + mParallaxViewInitialMargin;
+        return (int)((mPreviousMargin + mTopState + mCondition.mStartState - mInitialMargin) * mParallaxFactor) + mParallaxViewInitialMargin;
     }
 
-    public static abstract class ParallaxCondition{
+    private int getScrollableOffset(){
+        return -(mPreviousMargin + mTopState);
+    }
+
+
+    public static class Condition{
+        //The start state is the amount of scrolling needed to be done by the scrollable view
+        //  triggering the effect before the view on which the effect acts upon starts scrolling.
+        private final int mStartState;
+
         private ParallaxEffect mParallaxEffect;
 
-        protected int getParallaxViewOffset(){
-            return mParallaxEffect.getParallaxViewOffset();
+
+        /**
+         * Constructor. Defaults the fixed state and the start state both to 0.
+         */
+        public Condition(int startScrollingAt){
+            mStartState = startScrollingAt;
         }
 
-        protected final int getParallaxViewInitialOffset(){
-            return mParallaxEffect.mParallaxViewInitialMargin;
+        private void setParallaxEffect(@NonNull ParallaxEffect parallaxEffect){
+            mParallaxEffect = parallaxEffect;
         }
 
-        protected final int getRecyclerViewOffset(){
-            return mParallaxEffect.mPreviousMargin+mParallaxEffect.mTopState;
+        private boolean scrolls(){
+            return mParallaxEffect.getScrollableOffset() >= mStartState;
         }
-
-        protected abstract boolean doParallax();
-
-        protected int getFixedState(){
-            return 0;
-        }
-
-        protected void onStateChanged(int newMargin){
-
-        }
-
-        protected View getParallaxView(){
-            return mParallaxEffect.mParallaxView;
-        }
-    }
-
-    public interface ScrollListener{
-        void onScroll(float percentage);
     }
 }

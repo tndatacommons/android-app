@@ -143,7 +143,8 @@ public class FeedActivity
         feed.addOnScrollListener(new ParallaxEffect(mBinding.feedIllustration, 0.5f));
 
         ParallaxEffect toolbarEffect = new ParallaxEffect(mBinding.feedToolbar, 1);
-        toolbarEffect.setParallaxCondition(new ParallaxEffect.ParallaxCondition(){
+        toolbarEffect.setCondition(new ParallaxEffect.Condition((int)((CompassUtil.getScreenWidth(FeedActivity.this) * 2 / 3) * 0.55)));
+        /*toolbarEffect.setParallaxCondition(new ParallaxEffect.ParallaxCondition(){
             @Override
             protected boolean doParallax(){
                 int height = (int)((CompassUtil.getScreenWidth(FeedActivity.this) * 2 / 3) * 0.55);
@@ -160,7 +161,7 @@ public class FeedActivity
                 int height = (int)((CompassUtil.getScreenWidth(FeedActivity.this) * 2 / 3) * 0.55);
                 return height + getFixedState() + getRecyclerViewOffset();
             }
-        });
+        });*/
         feed.addOnScrollListener(toolbarEffect);
 
         feed.addOnScrollListener(new RecyclerView.OnScrollListener(){
