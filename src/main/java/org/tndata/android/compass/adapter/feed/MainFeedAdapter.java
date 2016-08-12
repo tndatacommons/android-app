@@ -152,7 +152,7 @@ public class MainFeedAdapter
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        Log.d(TAG, "onCreateViewHolder(): " + viewType);
+        //Log.d(TAG, "onCreateViewHolder(): " + viewType);
         if (viewType == TYPE_BLANK){
             return new RecyclerView.ViewHolder(new CardView(mContext)){};
         }
@@ -211,7 +211,7 @@ public class MainFeedAdapter
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
-        Log.d(TAG, "onBindViewHolder(): " + position);
+        //Log.d(TAG, "onBindViewHolder(): " + position);
         //This is a possible fix to a crash where the application gets destroyed and the
         //  user data gets invalidated. In such a case, the app should restart and fetch
         //  the user data again. Bottomline, do not keep going

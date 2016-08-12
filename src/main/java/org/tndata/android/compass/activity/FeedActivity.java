@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -491,11 +492,13 @@ public class FeedActivity
             }
             else if (requestCode == ACTION_RC){
                 if (data.getBooleanExtra(ActionActivity.DID_IT_KEY, false)){
+                    Log.d("FeedActivity", "removing action");
                     Action action = data.getParcelableExtra(ActionActivity.ACTION_KEY);
                     mAdapter.didIt(mApplication.getFeedData().getAction(action));
                     mAdapter.updateUpcoming();
                 }
                 else{
+                    Log.d("FeedActivity", "updating action");
                     mApplication.updateAction((Action)data.getParcelableExtra(ActionActivity.ACTION_KEY));
                     mAdapter.updateUpcoming();
                 }
