@@ -127,8 +127,9 @@ public final class ParallaxEffect{
                 mBottomMarginStack.push(rect.bottom);
             }
             else{
-                mTopMarginStack.push(0);
-                mBottomMarginStack.push(0);
+                MarginLayoutParams params = (MarginLayoutParams)itemView.getLayoutParams();
+                mTopMarginStack.push(params.topMargin);
+                mBottomMarginStack.push(params.bottomMargin);
             }
             mLastRecorded++;
         }
