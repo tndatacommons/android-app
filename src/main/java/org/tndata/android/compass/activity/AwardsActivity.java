@@ -53,7 +53,7 @@ public class AwardsActivity
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_awards);
 
         mBinding.awardsList.setLayoutManager(new LinearLayoutManager(this));
-        mBinding.awardsList.addOnScrollListener(new ParallaxEffect(mBinding.awardsHeader, 0.5f));
+        new ParallaxEffect(mBinding.awardsHeader, 0.5f).attachToRecyclerView(mBinding.awardsList);
 
         mGetBadgesUrl = HttpRequest.get(this, API.URL.getBadges());
     }
