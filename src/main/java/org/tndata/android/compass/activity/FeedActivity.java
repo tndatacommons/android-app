@@ -236,7 +236,7 @@ public class FeedActivity
      * Creates the FAB menu.
      */
     private void populateMenu(){
-        for (int i = 0; i < 2; i++){
+        for (int i = 0; i < 3; i++){
             ContextThemeWrapper ctx = new ContextThemeWrapper(this, R.style.MenuButtonStyle);
             FloatingActionButton fab = new FloatingActionButton(ctx);
             fab.setColorNormalResId(R.color.accent);
@@ -252,6 +252,11 @@ public class FeedActivity
                 fab.setId(R.id.fab_browse_goals);
                 fab.setLabelText(getString(R.string.fab_browse_goals));
                 fab.setImageResource(R.drawable.ic_list_white_24dp);
+            }
+            else if (i == 2){
+                fab.setId(R.id.fab_custom_goal);
+                fab.setLabelText(getString(R.string.fab_custom_goal));
+                fab.setImageResource(R.drawable.ic_add_white_24dp);
             }
             fab.setOnClickListener(this);
             mBinding.feedMenu.addMenuButton(fab);
@@ -269,6 +274,10 @@ public class FeedActivity
             case R.id.fab_browse_goals:
                 browseGoals();
                 break;
+
+            case R.id.fab_custom_goal:
+                createGoal();
+                break;
         }
     }
 
@@ -280,10 +289,17 @@ public class FeedActivity
     }
 
     /**
-     * Called when the browse Goals FAB is clicked.
+     * Called when the browse goals FAB is clicked.
      */
     private void browseGoals(){
         startActivityForResult(new Intent(this, ChooseCategoryActivity.class), GOAL_RC);
+    }
+
+    /**
+     * Called when the create a goal FAB is clicked.
+     */
+    private void createGoal(){
+        startActivityForResult(new Intent(this, CustomContentActivity.class), GOAL_RC);
     }
 
     /**

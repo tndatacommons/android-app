@@ -50,6 +50,7 @@
     <string name="nav_drawer_action">Compass</string>
     <string name="fab_search_goals">Search goals</string>
     <string name="fab_browse_goals">Browse goals</string>
+    <string name="fab_custom_goal">Create a goal</string>
     <string name="toast_streaks">Keep checking your notifications to keep your streaks alive!</string>
     <string name="feed_illustration_cd">Compass\' main illustration</string>
 
