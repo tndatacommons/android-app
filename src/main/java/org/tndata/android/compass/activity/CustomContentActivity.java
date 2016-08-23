@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -72,19 +73,29 @@ public class CustomContentActivity
 
         String goalTitle = getIntent().getStringExtra(CUSTOM_GOAL_TITLE_KEY);
         if (goalTitle != null){
+            Log.i(TAG, "A goal title was provided, create mode...");
             mAdapter = new CustomContentAdapter(this, goalTitle, this);
             setAdapter(mAdapter);
         }
         else{
             mCustomGoal = getIntent().getParcelableExtra(CUSTOM_GOAL_KEY);
             if (mCustomGoal != null){
+                Log.i(TAG, "A custom goal was provided, edition mode...");
                 fetchActions(mCustomGoal);
                 mAdapter = new CustomContentAdapter(this, mCustomGoal, this);
                 setAdapter(mAdapter);
             }
             else{
                 long id = getIntent().getLongExtra(CUSTOM_GOAL_ID_KEY, -1L);
-                mGetGoalRequestCode = HttpRequest.get(this, API.URL.getCustomGoal(id));
+                if (id == -1){
+                    Log.i(TAG, "No input, blank mode...");
+                    mAdapter = new CustomContentAdapter(this, "", this);
+                    setAdapter(mAdapter);
+                }
+                else{
+                    Log.i(TAG, "A goal id was provided, fetching...");
+                    mGetGoalRequestCode = HttpRequest.get(this, API.URL.getCustomGoal(id));
+                }
             }
         }
 
