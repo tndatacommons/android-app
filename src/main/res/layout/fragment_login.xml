@@ -62,7 +62,7 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
+                android:layout_gravity="end"
                 android:gravity="center_vertical" >
 
                 <TextView
@@ -83,22 +83,14 @@
                     android:visibility="gone" />
 
                 <LinearLayout
-                    android:id="@+id/login_button_container"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginLeft="10dp">
-
-                    <TextView
-                        android:id="@+id/login_forgotten_password"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:minWidth="@dimen/paper_flat_login_button_min_width"
-                        android:text="@string/login_forgotten_password"
-                        android:textColor="@color/white" />
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
+                    android:padding="5dp" >
 
                     <Button
                         android:id="@+id/login_button"
@@ -109,6 +101,16 @@
                         android:minWidth="@dimen/paper_flat_login_button_min_width"
                         android:text="@string/launcher_login"
                         android:textColor="@color/button_positive_text_color" />
+
+                    <TextView
+                        android:id="@+id/login_forgotten_password"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:minWidth="@dimen/paper_flat_login_button_min_width"
+                        android:gravity="center"
+                        android:text="@string/login_forgotten_password"
+                        android:textColor="@color/white" />
 
                 </LinearLayout>
             </LinearLayout>

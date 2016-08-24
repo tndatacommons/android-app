@@ -2,7 +2,7 @@
 
     <!-- TODO Need to start using these in a smarter way -->
     <dimen name="paper_flat_button_min_height">36dp</dimen>
-    <dimen name="paper_flat_login_button_min_width">140dp</dimen>
+    <dimen name="paper_flat_login_button_min_width">120dp</dimen>
     <dimen name="goal_icon_image_size">65dp</dimen>
     <dimen name="header_content_size">150dp</dimen>
     <dimen name="card_view_corner_radius">2dp</dimen>
