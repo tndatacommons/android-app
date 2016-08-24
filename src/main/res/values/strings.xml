@@ -22,6 +22,7 @@
     <string name="login_first_name_error">Please enter your first name</string>
     <string name="login_last_name_error">Please enter your last name</string>
     <string name="login_error">An error occurred when logging in</string>
+    <string name="login_forgotten_password">Forgot password?</string>
     <string name="login_header_label">LOG IN</string>
     <string name="signup_password_mismatch_error">Passwords must match</string>
     <string name="signup_password_length_error">Password must be at least 5 characters</string>
