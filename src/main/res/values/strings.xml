@@ -26,8 +26,11 @@
     <string name="login_header_label">LOG IN</string>
     <string name="reset_password_header">RESET PASSWORD</string>
     <string name="reset_password_email">What\'s your email address?</string>
+    <string name="reset_password_error_email">Please, introduce a valid email address</string>
+    <string name="reset_password_error_request">Password recovery failed</string>
     <string name="reset_password_explanation">An email with a password recovery link will be sent to this address.</string>
     <string name="reset_password_reset">RESET</string>
+    <string name="reset_password_icon_cd">Success icon</string>
     <string name="signup_password_mismatch_error">Passwords must match</string>
     <string name="signup_password_length_error">Password must be at least 5 characters</string>
     <string name="signup_first_name_label">first name</string>
