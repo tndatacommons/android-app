@@ -17,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,13 +95,20 @@ public class LogInFragment
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState){
         mBinding.loginButton.setOnClickListener(this);
+        mBinding.loginForgottenPassword.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view){
+        Log.d("Login", "clicked " + view.getClass().toString());
         switch (view.getId()){
             case R.id.login_button:
                 doLogin();
+                break;
+
+            case R.id.login_forgotten_password:
+                mCallback.onForgottenPassword();
+                break;
         }
     }
 
@@ -158,6 +166,7 @@ public class LogInFragment
         mBinding.loginEmail.setEnabled(enabled);
         mBinding.loginPassword.setEnabled(enabled);
         mBinding.loginButton.setEnabled(enabled);
+        mBinding.loginForgottenPassword.setEnabled(enabled);
         if (enabled){
             mBinding.loginProgress.setVisibility(View.GONE);
             mBinding.loginError.setVisibility(View.VISIBLE);
@@ -238,5 +247,10 @@ public class LogInFragment
          * Called when the user logs in successfully.
          */
         void onLoginSuccess();
+
+        /**
+         * Called when the user taps "Forgot password?"
+         */
+        void onForgottenPassword();
     }
 }

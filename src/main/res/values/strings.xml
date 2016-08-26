@@ -24,6 +24,10 @@
     <string name="login_error">An error occurred when logging in</string>
     <string name="login_forgotten_password">Forgot password?</string>
     <string name="login_header_label">LOG IN</string>
+    <string name="reset_password_header">RESET PASSWORD</string>
+    <string name="reset_password_email">What\'s your email address?</string>
+    <string name="reset_password_explanation">An email with a password recovery link will be sent to this address.</string>
+    <string name="reset_password_reset">RESET</string>
     <string name="signup_password_mismatch_error">Passwords must match</string>
     <string name="signup_password_length_error">Password must be at least 5 characters</string>
     <string name="signup_first_name_label">first name</string>

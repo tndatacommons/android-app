@@ -107,7 +107,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:minWidth="@dimen/paper_flat_login_button_min_width"
                         android:gravity="center"
                         android:text="@string/login_forgotten_password"
                         android:textColor="@color/white" />
