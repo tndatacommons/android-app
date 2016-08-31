@@ -37,6 +37,12 @@
         <a href="https://app.tndata.org/privacy/">privacy policy</a>.
     </string>
 
+    <!-- Tour Stuffs -->
+    <string name="tour_org_general_title">Organization</string>
+    <string name="tour_org_general_description">Review this list and tap your organization name</string>
+    <string name="tour_org_skip_title">Skip</string>
+    <string name="tour_org_skip_description">Tap here to omit this step</string>
+
     <!-- FeedActivity -->
     <string name="action_my_information">My information</string>
     <string name="action_my_awards">My awards</string>

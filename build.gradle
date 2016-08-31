@@ -76,6 +76,9 @@ repositories {
     }
     maven { url 'https://maven.fabric.io/public' }
     maven { url "https://jitpack.io" }
+    maven(){
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
 }
 
 dependencies {
@@ -84,6 +87,9 @@ dependencies {
     }
     compile('com.crashlytics.sdk.android:crashlytics:2.5.0@aar') {
         transitive = true;
+    }
+    compile ('com.github.worker8:tourguide:1.0.17-SNAPSHOT@aar'){
+        transitive=true
     }
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-library:1.3'

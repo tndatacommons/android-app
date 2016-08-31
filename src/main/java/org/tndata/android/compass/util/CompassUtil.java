@@ -51,6 +51,20 @@ public final class CompassUtil{
     }
 
     /**
+     * Getter for the screen width in pixels.
+     *
+     * @param context a reference to the context.
+     * @return the screen width in pixels.
+     */
+    public static int getScreenHeight(Context context){
+        WindowManager manager = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = manager.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return size.y;
+    }
+
+    /**
      * Converts density pixels into pixels.
      *
      * @param context the application context.

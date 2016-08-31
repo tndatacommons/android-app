@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +18,22 @@ import org.tndata.android.compass.databinding.FragmentOrganizationsBinding;
 import org.tndata.android.compass.model.Organization;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
+import org.tndata.android.compass.tour.CoachMark;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CardItemDecoration;
+import org.tndata.android.compass.tour.Tour;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import es.sandwatch.httprequests.HttpRequest;
 import es.sandwatch.httprequests.HttpRequestError;
+import tourguide.tourguide.ChainTourGuide;
+import tourguide.tourguide.Overlay;
+import tourguide.tourguide.Sequence;
+import tourguide.tourguide.ToolTip;
 
 
 /**
@@ -45,6 +55,8 @@ public class OrganizationsFragment
     private List<Organization> mOrganizations;
     private int mGetOrganizationsRC;
     private int mPostOrganizationRC;
+
+    public ChainTourGuide mTourGuideHandler;
 
     private OrganizationsListener mListener;
 
@@ -146,6 +158,69 @@ public class OrganizationsFragment
         mBinding.organizationsSkip.setVisibility(View.VISIBLE);
         mBinding.organizationsSkip.setOnClickListener(this);
         mBinding.organizationsProgress.setVisibility(View.GONE);
+
+        fireTour();
+    }
+
+    private void fireTour(){
+        Queue<CoachMark> marks = new LinkedList<>();
+        marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
+                .setCutawayType(CoachMark.CutawayType.NONE)
+                .setTooltip(Tour.Tooltip.ORG_GENERAL));
+        marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
+                .setCutawayType(CoachMark.CutawayType.CIRCLE)
+                .setTooltip(Tour.Tooltip.ORG_SKIP)
+                .setCutawayRadius(100)
+                .setTarget(mBinding.organizationsSkip));
+        Tour.display(getActivity(), marks);
+
+        /*List<ChainTourGuide> guides = new ArrayList<>();
+        for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.ORGANIZATION)){
+            ChainTourGuide guide = ChainTourGuide.init(getActivity())
+                    .setToolTip(new ToolTip()
+                            .setTitle(tooltip.getTitle())
+                            .setDescription(tooltip.getDescription())
+                            .setGravity(Gravity.CENTER|Gravity.TOP)
+                            .setOnClickListener(new View.OnClickListener(){
+                                @Override
+                                public void onClick(View view){
+                                    mTourGuideHandler.next();
+                                }
+                            })
+                    );
+
+            if (tooltip == Tour.Tooltip.ORG_GENERAL){
+                guide.setOverlay(new Overlay()
+                        .setBackgroundColor(getContext().getResources().getColor(R.color.tour_overlay))
+                        .setStyle(Overlay.Style.Circle)
+                        .setHoleRadius(55)
+                        .disableClick(true)
+                        .disableClickThroughHole(true)
+                )
+                .playLater(mBinding.getRoot());
+            }
+            else if (tooltip == Tour.Tooltip.ORG_SKIP){
+                guide.setOverlay(new Overlay()
+                        .setBackgroundColor(getContext().getResources().getColor(R.color.tour_overlay))
+                        .setStyle(Overlay.Style.Circle)
+                        .disableClick(true)
+                        .disableClickThroughHole(true)
+                )
+                .playLater(mBinding.organizationsSkip);
+            }
+            guides.add(guide);
+        }
+        ChainTourGuide guideArray[] = new ChainTourGuide[guides.size()];
+        guides.toArray(guideArray);
+
+        Sequence sequence = new Sequence.SequenceBuilder()
+                .add(guideArray)
+                .setDefaultPointer(null)
+                .setContinueMethod(Sequence.ContinueMethod.Overlay)
+                .build();
+
+        mTourGuideHandler = ChainTourGuide.init(getActivity()).playInSequence(sequence);
+        //mTourGuideHandler.getToolTip().setTranslationY(CompassUtil.getScreenHeight(getContext())/2);*/
     }
 
     @Override

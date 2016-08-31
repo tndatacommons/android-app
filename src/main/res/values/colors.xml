@@ -46,6 +46,9 @@
     <color name="badge_primary_dark">#979A9A</color>
 
 
+    <!-- Tour -->
+    <color name="tour_overlay">#802196F3</color>
+
     <!-- Text -->
     <color name="text_primary">#DE000000</color>
 
