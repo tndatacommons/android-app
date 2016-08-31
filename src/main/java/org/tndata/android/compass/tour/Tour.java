@@ -59,7 +59,8 @@ public class Tour{
         mActivity = activity;
         mCoachMarkView = new CoachMarkView(activity, new TourListener(){
             @Override
-            public void onTooltipClick(){
+            public void onTooltipClick(Tooltip tooltip){
+                markSeen(tooltip);
                 next();
             }
         });
@@ -102,7 +103,7 @@ public class Tour{
 
 
     interface TourListener{
-        void onTooltipClick();
+        void onTooltipClick(Tooltip tooltip);
     }
 
 

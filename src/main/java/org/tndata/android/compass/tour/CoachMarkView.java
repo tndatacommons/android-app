@@ -53,7 +53,7 @@ class CoachMarkView extends FrameLayout implements View.OnClickListener{
         setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View view){
-
+                //Unused
             }
         });
     }
@@ -68,7 +68,17 @@ class CoachMarkView extends FrameLayout implements View.OnClickListener{
         ((TextView)mCurrentTooltip.findViewById(R.id.tooltip_title)).setText(coachMark.getTooltip().getTitle());
         ((TextView)mCurrentTooltip.findViewById(R.id.tooltip_description)).setText(coachMark.getTooltip().getDescription());
 
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        int scrWid = getContext().getResources().getDisplayMetrics().widthPixels;
+        int scrHgt = getContext().getResources().getDisplayMetrics().heightPixels;
+
+        int wms = MeasureSpec.makeMeasureSpec(scrWid, MeasureSpec.AT_MOST);
+        int hms = MeasureSpec.makeMeasureSpec(scrHgt, MeasureSpec.AT_MOST);
+        mCurrentTooltip.measure(wms, hms);
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
         if (mCoachMark.getTarget() == null){
             params.gravity = Gravity.CENTER;
         }
@@ -77,11 +87,23 @@ class CoachMarkView extends FrameLayout implements View.OnClickListener{
             View target = mCoachMark.getTarget();
             float y = target.getY();
             float hgt = getContext().getResources().getDisplayMetrics().heightPixels;
-            if (y < hgt/2){
-                params.topMargin = (int)(y+200);
+            if (mCoachMark.getCutawayType() == CoachMark.CutawayType.CIRCLE){
+                if (y < hgt / 2){
+                    params.topMargin = (int)(y + 200);
+                }
+                else{
+                    params.topMargin = (int)(y - 200);
+                }
             }
-            else{
-                params.topMargin = (int)(y-200);
+            else if (mCoachMark.getCutawayType() == CoachMark.CutawayType.SQUARE){
+                if (y < hgt / 2){
+                    Log.d("CoachMarkView", "Tooltip height: " + mCurrentTooltip.getMeasuredHeight());
+                    params.topMargin = (int)(y + target.getHeight() + 10);
+                }
+                else{
+                    Log.d("CoachMarkView", "Tooltip height: " + mCurrentTooltip.getMeasuredHeight());
+                    params.topMargin = (int)(y - mCurrentTooltip.getMeasuredHeight() - 16);
+                }
             }
         }
         addView(mCurrentTooltip, params);
@@ -89,20 +111,15 @@ class CoachMarkView extends FrameLayout implements View.OnClickListener{
         mCurrentTooltip.setOnClickListener(this);
     }
 
-    void clear(){
-
-    }
-
     @Override
     protected void onDraw(Canvas canvas){
-        Log.d("CoachMarkView", "onDraw()");
         super.onDraw(canvas);
         if (mCoachMark != null){
             mCutawayBitmap.eraseColor(Color.TRANSPARENT);
             mCutawayCanvas.drawColor(mCoachMark.getOverlayColor());
             if (mCoachMark.getCutawayType() != CoachMark.CutawayType.NONE){
+                View target = mCoachMark.getTarget();
                 if (mCoachMark.getCutawayType() == CoachMark.CutawayType.CIRCLE){
-                    View target = mCoachMark.getTarget();
                     float x = target.getX() + target.getWidth()/2;
                     float y = target.getY() + target.getHeight()/2;
                     float radius = mCoachMark.getCutawayRadius();
@@ -116,9 +133,16 @@ class CoachMarkView extends FrameLayout implements View.OnClickListener{
                             radius = hgt;
                         }
                     }
-                    int x2 = getContext().getResources().getDisplayMetrics().widthPixels;
-                    int y2 = getContext().getResources().getDisplayMetrics().heightPixels;
                     mCutawayCanvas.drawCircle(x, y, radius, mCutawayPaint);
+                }
+                else if (mCoachMark.getCutawayType() == CoachMark.CutawayType.SQUARE){
+                    mCutawayCanvas.drawRect(
+                            target.getX() - 10,
+                            target.getY() - 10,
+                            target.getX() + target.getWidth() + 10,
+                            target.getY() + target.getHeight() + 10,
+                            mCutawayPaint
+                    );
                 }
             }
             canvas.drawBitmap(mCutawayBitmap, 0, 0, null);
@@ -127,6 +151,6 @@ class CoachMarkView extends FrameLayout implements View.OnClickListener{
 
     @Override
     public void onClick(View view){
-        mListener.onTooltipClick();
+        mListener.onTooltipClick(mCoachMark.getTooltip());
     }
 }
