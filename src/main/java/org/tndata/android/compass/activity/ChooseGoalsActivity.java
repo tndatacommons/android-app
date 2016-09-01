@@ -228,7 +228,7 @@ public class ChooseGoalsActivity
                     break;
             }
         }
-        Tour.display(this, marks);
+        Tour.display(this, marks, null);
     }
 
     private void firePostTour(){
@@ -242,6 +242,6 @@ public class ChooseGoalsActivity
                     break;
             }
         }
-        Tour.display(this, marks);
+        Tour.display(this, marks, null);
     }
 }

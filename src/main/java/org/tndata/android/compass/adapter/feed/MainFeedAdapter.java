@@ -1,6 +1,7 @@
 package org.tndata.android.compass.adapter.feed;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewTreeObserver;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -45,9 +47,9 @@ public class MainFeedAdapter
     //Item view types
     private static final int TYPE_BLANK = 0;
     private static final int TYPE_WELCOME = TYPE_BLANK+1;
-    private static final int TYPE_UP_NEXT = TYPE_WELCOME+1;
+    public static final int TYPE_UP_NEXT = TYPE_WELCOME+1;
     private static final int TYPE_SUGGESTION = TYPE_UP_NEXT+1;
-    private static final int TYPE_STREAKS = TYPE_SUGGESTION+1;
+    public static final int TYPE_STREAKS = TYPE_SUGGESTION+1;
     private static final int TYPE_UPCOMING = TYPE_STREAKS+1;
     private static final int TYPE_MY_GOALS = TYPE_UPCOMING +1;
     private static final int TYPE_GOAL_SUGGESTIONS = TYPE_MY_GOALS+1;
@@ -151,10 +153,11 @@ public class MainFeedAdapter
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, final int viewType){
+        RecyclerView.ViewHolder holder = null;
         //Log.d(TAG, "onCreateViewHolder(): " + viewType);
         if (viewType == TYPE_BLANK){
-            return new RecyclerView.ViewHolder(new CardView(mContext)){};
+            holder = new RecyclerView.ViewHolder(new CardView(mContext)){};
         }
         else if (viewType == TYPE_WELCOME){
             LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -165,19 +168,19 @@ public class MainFeedAdapter
                     mListener.onInstructionsSelected();
                 }
             });
-            return new RecyclerView.ViewHolder(view){};
+            holder = new RecyclerView.ViewHolder(view){};
         }
         else if (viewType == TYPE_UP_NEXT){
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            return new UpNextHolder(this, inflater.inflate(R.layout.card_up_next, parent, false));
+            holder = new UpNextHolder(this, inflater.inflate(R.layout.card_up_next, parent, false));
         }
         else if (viewType == TYPE_STREAKS){
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            return new StreaksHolder(this, inflater.inflate(R.layout.card_streaks, parent, false));
+            holder = new StreaksHolder(this, inflater.inflate(R.layout.card_streaks, parent, false));
         }
         else if (viewType == TYPE_SUGGESTION){
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            return new GoalSuggestionHolder(this, inflater.inflate(R.layout.card_goal_suggestion, parent, false));
+            holder = new GoalSuggestionHolder(this, inflater.inflate(R.layout.card_goal_suggestion, parent, false));
         }
         else if (viewType == TYPE_UPCOMING){
             if (mUpcomingHolder == null){
@@ -185,7 +188,7 @@ public class MainFeedAdapter
                 View rootView = inflater.inflate(R.layout.card_upcoming, parent, false);
                 mUpcomingHolder = new UpcomingHolder(this, rootView);
             }
-            return mUpcomingHolder;
+            holder = mUpcomingHolder;
         }
         else if (viewType == TYPE_MY_GOALS){
             if (mMyGoalsHolder == null){
@@ -193,7 +196,7 @@ public class MainFeedAdapter
                 View rootView = inflater.inflate(R.layout.card_goals, parent, false);
                 mMyGoalsHolder = new GoalsHolder<>(this, rootView);
             }
-            return mMyGoalsHolder;
+            holder = mMyGoalsHolder;
         }
         else if (viewType == TYPE_GOAL_SUGGESTIONS){
             if (mSuggestionsHolder == null){
@@ -201,12 +204,24 @@ public class MainFeedAdapter
                 View rootView = inflater.inflate(R.layout.card_goals, parent, false);
                 mSuggestionsHolder = new GoalsHolder<>(this, rootView);
             }
-            return mSuggestionsHolder;
+            holder = mSuggestionsHolder;
         }
-        else if (viewType == TYPE_OTHER){
-            return new RecyclerView.ViewHolder(new CardView(mContext)){};
-        }
-        return null;
+
+        final RecyclerView.ViewHolder vtHolder = holder;
+        ViewTreeObserver vto = vtHolder.itemView.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
+            @Override
+            public void onGlobalLayout(){
+                if (Build.VERSION.SDK_INT < 16){
+                    vtHolder.itemView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+                else{
+                    vtHolder.itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+                mListener.onItemLoaded(vtHolder.itemView, viewType);
+            }
+        });
+        return holder;
     }
 
     @Override
@@ -487,6 +502,14 @@ public class MainFeedAdapter
      * @version 1.0.0
      */
     public interface Listener{
+        /**
+         * Called when items are created.
+         *
+         * @param view the root view of the item that was loaded.
+         * @param type the type of the item that was loaded.
+         */
+        void onItemLoaded(View view, int type);
+
         /**
          * Called when the user data is null.
          */

@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -162,23 +163,26 @@ public class OnBoardingCategoryFragment
 
     private void fireTour(){
         Queue<CoachMark> marks = new LinkedList<>();
-        for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.ORGANIZATION)){
+        for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.CATEGORY)){
             switch (tooltip){
-                case ORG_GENERAL:
+                case CAT_GENERAL:
                     marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
                             .setCutawayType(CoachMark.CutawayType.NONE)
                             .setTooltip(Tour.Tooltip.CAT_GENERAL));
                     break;
-                case ORG_SKIP:
+
+                case CAT_SKIP:
                     marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
                             .setCutawayType(CoachMark.CutawayType.SQUARE)
                             .setTooltip(Tour.Tooltip.CAT_SKIP)
                             .setCutawayRadius(100)
                             .setTarget(mNext));
                     break;
+
             }
         }
-        Tour.display(getActivity(), marks);
+        Log.d("OBCat", "Tooltips: " + marks.size());
+        Tour.display(getActivity(), marks, null);
     }
 
     /**

@@ -76,7 +76,7 @@ public class GoalActivity extends MaterialActivity implements GoalAdapter.GoalLi
                     break;
             }
         }
-        Tour.display(this, marks);
+        Tour.display(this, marks, null);
     }
 
     @Override

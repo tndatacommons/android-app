@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.StringRes;
-import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
@@ -53,7 +52,7 @@ public class Tour{
         editor.apply();
     }
 
-    public static void display(Activity activity, Queue<CoachMark> marks){
+    public static void display(Activity activity, Queue<CoachMark> marks, final TourListener listener){
         if (!marks.isEmpty()){
             mCoachMarks = marks;
             mActivity = activity;
@@ -62,6 +61,9 @@ public class Tour{
                 public void onTooltipClick(Tooltip tooltip){
                     markSeen(tooltip);
                     next();
+                    if (listener != null){
+                        listener.onTooltipClick(tooltip);
+                    }
                 }
             });
             mCoachMarkView.setCoachMark(marks.remove().setHost(activity));
@@ -112,7 +114,7 @@ public class Tour{
     }
 
 
-    interface TourListener{
+    public interface TourListener{
         void onTooltipClick(Tooltip tooltip);
     }
 

@@ -97,10 +97,15 @@ class CoachMarkView extends FrameLayout implements View.OnClickListener{
             float hgt = getContext().getResources().getDisplayMetrics().heightPixels;
             if (mCoachMark.getCutawayType() == CoachMark.CutawayType.CIRCLE){
                 if (y < hgt / 2){
-                    params.topMargin = (int)(y + 200);
+                    if (mCoachMark.getCutawayRadius() != -1){
+                        params.topMargin = (int)(y + mCoachMark.getCutawayRadius() + 16);
+                    }
+                    else{
+                        params.topMargin = (int)(y + target.getHeight() + 16);
+                    }
                 }
                 else{
-                    params.topMargin = (int)(y - 200);
+                    params.topMargin = (int)(y - mCoachMark.getCutawayRadius() - mCurrentTooltip.getMeasuredHeight() - 16);
                 }
             }
             else if (mCoachMark.getCutawayType() == CoachMark.CutawayType.SQUARE){

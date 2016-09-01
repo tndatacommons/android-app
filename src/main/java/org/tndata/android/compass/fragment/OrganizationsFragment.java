@@ -172,7 +172,7 @@ public class OrganizationsFragment
                     break;
             }
         }
-        Tour.display(getActivity(), marks);
+        Tour.display(getActivity(), marks, null);
     }
 
     @Override
