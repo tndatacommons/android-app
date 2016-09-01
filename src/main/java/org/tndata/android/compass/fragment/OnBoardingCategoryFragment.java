@@ -18,9 +18,13 @@ import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
+import org.tndata.android.compass.tour.CoachMark;
+import org.tndata.android.compass.tour.Tour;
 import org.tndata.android.compass.util.API;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import es.sandwatch.httprequests.HttpRequest;
 import es.sandwatch.httprequests.HttpRequestError;
@@ -146,12 +150,35 @@ public class OnBoardingCategoryFragment
             mList.setAdapter(new ChooseCategoryAdapter(getContext(), this, filtered));
             mContent.setVisibility(View.VISIBLE);
             mProgress.setVisibility(View.GONE);
+
+            fireTour();
         }
     }
 
     @Override
     public void onParseFailed(int requestCode){
 
+    }
+
+    private void fireTour(){
+        Queue<CoachMark> marks = new LinkedList<>();
+        for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.ORGANIZATION)){
+            switch (tooltip){
+                case ORG_GENERAL:
+                    marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
+                            .setCutawayType(CoachMark.CutawayType.NONE)
+                            .setTooltip(Tour.Tooltip.CAT_GENERAL));
+                    break;
+                case ORG_SKIP:
+                    marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
+                            .setCutawayType(CoachMark.CutawayType.SQUARE)
+                            .setTooltip(Tour.Tooltip.CAT_SKIP)
+                            .setCutawayRadius(100)
+                            .setTarget(mNext));
+                    break;
+            }
+        }
+        Tour.display(getActivity(), marks);
     }
 
     /**

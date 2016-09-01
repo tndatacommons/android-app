@@ -54,22 +54,23 @@ public class Tour{
     }
 
     public static void display(Activity activity, Queue<CoachMark> marks){
-        Log.d("Tour", "display()");
-        mCoachMarks = marks;
-        mActivity = activity;
-        mCoachMarkView = new CoachMarkView(activity, new TourListener(){
-            @Override
-            public void onTooltipClick(Tooltip tooltip){
-                markSeen(tooltip);
-                next();
-            }
-        });
-        mCoachMarkView.setCoachMark(marks.remove());
-        ViewGroup container = (ViewGroup)activity.findViewById(android.R.id.content);
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT);
-        container.addView(mCoachMarkView, params);
-        container.invalidate();
+        if (!marks.isEmpty()){
+            mCoachMarks = marks;
+            mActivity = activity;
+            mCoachMarkView = new CoachMarkView(activity, new TourListener(){
+                @Override
+                public void onTooltipClick(Tooltip tooltip){
+                    markSeen(tooltip);
+                    next();
+                }
+            });
+            mCoachMarkView.setCoachMark(marks.remove().setHost(activity));
+            ViewGroup container = (ViewGroup)activity.findViewById(android.R.id.content);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT);
+            container.addView(mCoachMarkView, params);
+            container.invalidate();
+        }
     }
 
     private static void next(){
@@ -78,8 +79,17 @@ public class Tour{
             container.removeView(mCoachMarkView);
         }
         else{
-            mCoachMarkView.setCoachMark(mCoachMarks.remove());
+            mCoachMarkView.setCoachMark(mCoachMarks.remove().setHost(mActivity));
         }
+    }
+
+    public static void reset(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(sContext);
+        SharedPreferences.Editor editor = preferences.edit();
+        for (Tooltip tooltip:Tooltip.values()){
+            editor.putBoolean(tooltip.getKey(), false);
+        }
+        editor.apply();
     }
 
 
@@ -90,7 +100,7 @@ public class Tour{
         GOAL(Tooltip.GOAL_GENERAL),
         LIBRARY_POST(Tooltip.LIB_GOAL_ADDED),
         FEED(Tooltip.FEED_GENERAL, Tooltip.FEED_UP_NEXT, Tooltip.FEED_PROGRESS, Tooltip.FEED_FAB),
-        ACTION(Tooltip.ACTION_GENERAL);
+        ACTION(Tooltip.ACTION_GOT_IT);
 
 
         private final Tooltip[] mTooltips;
@@ -110,16 +120,16 @@ public class Tour{
     public enum Tooltip{
         ORG_GENERAL("org_general", R.string.tour_org_general_title, R.string.tour_org_general_description),
         ORG_SKIP("org_skip", R.string.tour_org_skip_title, R.string.tour_org_skip_description),
-        CAT_GENERAL("cat_general", -1, -1),
-        CAT_SKIP("cat_skip", -1, -1),
-        LIB_GENERAL("lib_general", -1, -1),
-        GOAL_GENERAL("goal_general", -1, -1),
-        LIB_GOAL_ADDED("lib_goal_added", -1, -1),
-        FEED_GENERAL("feed_general", -1, -1),
-        FEED_UP_NEXT("feed_up_next", -1, -1),
-        FEED_PROGRESS("feed_progress", -1, -1),
-        FEED_FAB("feed_fab", -1, -1),
-        ACTION_GENERAL("action_general", -1, -1);
+        CAT_GENERAL("cat_general", R.string.tour_cat_general_title, R.string.tour_cat_general_description),
+        CAT_SKIP("cat_skip", R.string.tour_cat_skip_title, R.string.tour_cat_skip_description),
+        LIB_GENERAL("lib_general", R.string.tour_lib_general_title, R.string.tour_lib_general_description),
+        GOAL_GENERAL("goal_general", R.string.tour_goal_add_title, R.string.tour_goal_add_description),
+        LIB_GOAL_ADDED("lib_goal_added", R.string.tour_lib_added_title, R.string.tour_lib_added_description),
+        FEED_GENERAL("feed_general", R.string.tour_feed_general_title, R.string.tour_feed_general_description),
+        FEED_UP_NEXT("feed_up_next", R.string.tour_feed_up_next_title, R.string.tour_feed_up_next_description),
+        FEED_PROGRESS("feed_progress", R.string.tour_feed_progress_title, R.string.tour_feed_progress_description),
+        FEED_FAB("feed_fab", R.string.tour_feed_fab_title, R.string.tour_feed_fab_description),
+        ACTION_GOT_IT("action_got_it", R.string.tour_action_got_it_title, R.string.tour_action_got_it_description);
 
 
         private final String mKey;

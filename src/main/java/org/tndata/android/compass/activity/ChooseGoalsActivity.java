@@ -19,10 +19,14 @@ import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.TDCGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
+import org.tndata.android.compass.tour.CoachMark;
+import org.tndata.android.compass.tour.Tour;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.ImageLoader;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import es.sandwatch.httprequests.HttpRequest;
 import es.sandwatch.httprequests.HttpRequestError;
@@ -154,6 +158,7 @@ public class ChooseGoalsActivity
         if (mAdapter.isEmpty()){
             finish();
         }
+        firePostTour();
     }
 
     @Override
@@ -203,11 +208,40 @@ public class ChooseGoalsActivity
             else{
                 mAdapter.displayError("You have selected all content");
             }
+            firePreTour();
         }
     }
 
     @Override
     public void onParseFailed(int requestCode){
 
+    }
+
+    private void firePreTour(){
+        Queue<CoachMark> marks = new LinkedList<>();
+        for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.LIBRARY_PRE)){
+            switch (tooltip){
+                case LIB_GENERAL:
+                    marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
+                            .setCutawayType(CoachMark.CutawayType.NONE)
+                            .setTooltip(Tour.Tooltip.LIB_GENERAL));
+                    break;
+            }
+        }
+        Tour.display(this, marks);
+    }
+
+    private void firePostTour(){
+        Queue<CoachMark> marks = new LinkedList<>();
+        for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.LIBRARY_POST)){
+            switch (tooltip){
+                case LIB_GOAL_ADDED:
+                    marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
+                            .setCutawayType(CoachMark.CutawayType.NONE)
+                            .setTooltip(Tour.Tooltip.LIB_GOAL_ADDED));
+                    break;
+            }
+        }
+        Tour.display(this, marks);
     }
 }

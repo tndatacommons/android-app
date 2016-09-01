@@ -9,7 +9,12 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.GoalAdapter;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.TDCGoal;
+import org.tndata.android.compass.tour.CoachMark;
+import org.tndata.android.compass.tour.Tour;
 import org.tndata.android.compass.util.ImageLoader;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 
 /**
@@ -25,6 +30,9 @@ public class GoalActivity extends MaterialActivity implements GoalAdapter.GoalLi
     public static final String GOAL_KEY = "org.tndata.compass.Goal.Goal";
 
 
+    private GoalAdapter mAdapter;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -32,9 +40,12 @@ public class GoalActivity extends MaterialActivity implements GoalAdapter.GoalLi
         TDCCategory category = getIntent().getParcelableExtra(CATEGORY_KEY);
         TDCGoal goal = getIntent().getParcelableExtra(GOAL_KEY);
 
+        mAdapter = new GoalAdapter(this, this, category, goal);
         setHeader(category);
-        setAdapter(new GoalAdapter(this, this, category, goal));
+        setAdapter(mAdapter);
         setColor(Color.parseColor(category.getColor()));
+
+        getRecyclerView().scrollToPosition(1);
     }
 
     /**
@@ -51,6 +62,26 @@ public class GoalActivity extends MaterialActivity implements GoalAdapter.GoalLi
                 .setUseDefaultPlaceholder(false)
                 .setCropToCircle(true);
         ImageLoader.loadBitmap(tile, category.getIconUrl(), options);
+    }
+
+    private void fireTour(View target){
+        Queue<CoachMark> marks = new LinkedList<>();
+        for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.GOAL)){
+            switch (tooltip){
+                case GOAL_GENERAL:
+                    marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
+                            .setCutawayType(CoachMark.CutawayType.SQUARE)
+                            .setTarget(target)
+                            .setTooltip(Tour.Tooltip.GOAL_GENERAL));
+                    break;
+            }
+        }
+        Tour.display(this, marks);
+    }
+
+    @Override
+    public void onGoalCardLoaded(){
+        fireTour(mAdapter.getSignMeUpButton());
     }
 
     @Override

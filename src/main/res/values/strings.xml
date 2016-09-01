@@ -53,8 +53,8 @@
     <string name="tour_lib_added_title">Goal library</string>
     <string name="tour_lib_added_description">You can choose more content or hit back to go to Compass</string>
 
-    <string name="tour_goal_added_title">Goal</string>
-    <string name="tour_goal_added_description">Tap "SIGN ME UP" to begin receiving Compass tips</string>
+    <string name="tour_goal_add_title">Goal</string>
+    <string name="tour_goal_add_description">Tap "SIGN ME UP" to begin receiving Compass tips</string>
 
     <string name="tour_feed_general_title">Feed</string>
     <string name="tour_feed_general_description">This is your feed. Check in occasionally for tips and to track your progress</string>
@@ -62,8 +62,8 @@
     <string name="tour_feed_up_next_description">This is a tip to help you succeed. Tap and read!</string>
     <string name="tour_feed_progress_title">Progress</string>
     <string name="tour_feed_progress_description">This is your daily progress. It helps you stay engaged with your success</string>
-    <string name="tour_feed_added_title">More goals</string>
-    <string name="tour_feed_added_description">Tap the (+) button to browse for more goals</string>
+    <string name="tour_feed_fab_title">More goals</string>
+    <string name="tour_feed_fab_description">Tap the (+) button to browse for more goals</string>
 
     <string name="tour_action_got_it_title">Action</string>
     <string name="tour_action_got_it_description">Tap here to keep track of your actions</string>
@@ -123,7 +123,7 @@
     <!-- Library -->
     <string name="library_goals_content_header">Compass can help you&#8230;</string>
     <string name="library_goal_title">%1$s</string>
-    <string name="library_goal_yes">Yes, I\'m in</string>
+    <string name="library_goal_yes">Sign me up</string>
     <string name="library_goal_no">Not now</string>
     <string name="library_detail_more_info">More info</string>
     <string name="dialog_enrollment_title">You\'re awesome</string>

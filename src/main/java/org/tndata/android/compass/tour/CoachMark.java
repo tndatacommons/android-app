@@ -1,6 +1,7 @@
 package org.tndata.android.compass.tour;
 
 
+import android.app.Activity;
 import android.view.View;
 
 
@@ -13,6 +14,7 @@ public class CoachMark{
     private int mOverlayColor;
     private CutawayType mCutawayType;
     private int mCutawayRadius;
+    private Activity mHost;
 
 
     public CoachMark(){
@@ -44,6 +46,11 @@ public class CoachMark{
         return this;
     }
 
+    CoachMark setHost(Activity host){
+        mHost = host;
+        return this;
+    }
+
     public View getTarget(){
         return mTarget;
     }
@@ -62,6 +69,10 @@ public class CoachMark{
 
     public int getCutawayRadius(){
         return mCutawayRadius;
+    }
+
+    public Activity getHost(){
+        return mHost;
     }
 
     boolean isValid(){

@@ -156,14 +156,22 @@ public class OrganizationsFragment
 
     private void fireTour(){
         Queue<CoachMark> marks = new LinkedList<>();
-        marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
-                .setCutawayType(CoachMark.CutawayType.NONE)
-                .setTooltip(Tour.Tooltip.ORG_GENERAL));
-        marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
-                .setCutawayType(CoachMark.CutawayType.SQUARE)
-                .setTooltip(Tour.Tooltip.ORG_SKIP)
-                .setCutawayRadius(100)
-                .setTarget(mBinding.organizationsSkip));
+        for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.ORGANIZATION)){
+            switch (tooltip){
+                case ORG_GENERAL:
+                    marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
+                            .setCutawayType(CoachMark.CutawayType.NONE)
+                            .setTooltip(Tour.Tooltip.ORG_GENERAL));
+                    break;
+                case ORG_SKIP:
+                    marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
+                            .setCutawayType(CoachMark.CutawayType.SQUARE)
+                            .setTooltip(Tour.Tooltip.ORG_SKIP)
+                            .setCutawayRadius(100)
+                            .setTarget(mBinding.organizationsSkip));
+                    break;
+            }
+        }
         Tour.display(getActivity(), marks);
     }
 

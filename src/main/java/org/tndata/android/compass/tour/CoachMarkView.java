@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -85,7 +86,14 @@ class CoachMarkView extends FrameLayout implements View.OnClickListener{
         else{
             params.gravity = Gravity.CENTER_HORIZONTAL;
             View target = mCoachMark.getTarget();
-            float y = target.getY();
+            int pos[] = new int[2];
+            target.getLocationInWindow(pos);
+            Log.d("Target", "(" + pos[0] + ", " + pos[1] + ")");
+
+            Rect rect = new Rect();
+            mCoachMark.getHost().getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+
+            float y = pos[1]-rect.top;//target.getY();
             float hgt = getContext().getResources().getDisplayMetrics().heightPixels;
             if (mCoachMark.getCutawayType() == CoachMark.CutawayType.CIRCLE){
                 if (y < hgt / 2){
@@ -119,6 +127,12 @@ class CoachMarkView extends FrameLayout implements View.OnClickListener{
             mCutawayCanvas.drawColor(mCoachMark.getOverlayColor());
             if (mCoachMark.getCutawayType() != CoachMark.CutawayType.NONE){
                 View target = mCoachMark.getTarget();
+                int pos[] = new int[2];
+                target.getLocationInWindow(pos);
+
+                Rect rect = new Rect();
+                mCoachMark.getHost().getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+
                 if (mCoachMark.getCutawayType() == CoachMark.CutawayType.CIRCLE){
                     float x = target.getX() + target.getWidth()/2;
                     float y = target.getY() + target.getHeight()/2;
@@ -137,10 +151,10 @@ class CoachMarkView extends FrameLayout implements View.OnClickListener{
                 }
                 else if (mCoachMark.getCutawayType() == CoachMark.CutawayType.SQUARE){
                     mCutawayCanvas.drawRect(
-                            target.getX() - 10,
-                            target.getY() - 10,
-                            target.getX() + target.getWidth() + 10,
-                            target.getY() + target.getHeight() + 10,
+                            pos[0] - 10,
+                            pos[1] - 10 - rect.top,
+                            pos[0] + target.getWidth() + 10,
+                            pos[1] + target.getHeight() + 10 -rect.top,
                             mCutawayPaint
                     );
                 }

@@ -276,6 +276,7 @@ public class CompassApplication extends Application{
         HttpRequest.addUrlParameter("version", "2");
 
         Tour.init(this);
+        Tour.reset();
         LocationNotificationService.start(this);
         ImageLoader.initialize(getApplicationContext());
     }
