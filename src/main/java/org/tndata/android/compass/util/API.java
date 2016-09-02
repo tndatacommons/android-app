@@ -331,6 +331,10 @@ public final class API{
             return BASE_URL + "organizations/members/";
         }
 
+        public static String postRemoveOrganizationMember(@NonNull long organizationId) {
+            return BASE_URL + "organizations/" + organizationId + "/remove-member/";
+        }
+
 
         /*---------------*
          * MISCELLANEOUS *
@@ -622,6 +626,17 @@ public final class API{
             JSONObject body = new JSONObject();
             try{
                 body.put("email", address);
+            }
+            catch (JSONException jx){
+                jx.printStackTrace();
+            }
+            return body;
+        }
+
+        public static JSONObject postRemoveOrganizationMember(long organizationId){
+            JSONObject body = new JSONObject();
+            try{
+                body.put("organization", organizationId);
             }
             catch (JSONException jx){
                 jx.printStackTrace();
