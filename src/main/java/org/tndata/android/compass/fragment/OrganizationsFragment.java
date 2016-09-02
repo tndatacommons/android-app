@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,8 @@ public class OrganizationsFragment
     private List<Organization> mOrganizations;
     private int mGetOrganizationsRC;
     private int mPostOrganizationRC;
+    private int mPostRemoveMembershipRC;
+    private long mSelectedOrganizationId = 0;
 
     private OrganizationsListener mListener;
 
@@ -90,6 +93,24 @@ public class OrganizationsFragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState){
         if (mOrganizations != null){
             bindOrganizations();
+        }
+        Log.d("OrgFrag", "onViewCreated");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("OrgFrag", "--- RESUMED");
+        // TODO: HOW TO KNKOW IF WE'RE RESUMING AFTER HITTING BACK?
+        // The first time thru, mOrganziations will be null, so when onViewCreated gets called (after
+        // this method), bindOrganizations will get called.
+        // When a user hits the back button, we should already have those.
+        if(mOrganizations != null) {
+            Log.d("OrgFrag", "---> from back button?");
+            Log.d("OrgFrag", "---> org id? " + mSelectedOrganizationId);
+            removeSelectedOrganizationMembership();
+        } else {
+            Log.d("OrgFrag", "---> mOrganizations is null");
         }
     }
 
@@ -146,6 +167,7 @@ public class OrganizationsFragment
         mBinding.organizationsSkip.setVisibility(View.VISIBLE);
         mBinding.organizationsSkip.setOnClickListener(this);
         mBinding.organizationsProgress.setVisibility(View.GONE);
+        Log.d("OrgFrag", "bindOrganizations");
     }
 
     @Override
@@ -156,6 +178,18 @@ public class OrganizationsFragment
         mBinding.organizationsList.setVisibility(View.GONE);
         mBinding.organizationsSkip.setVisibility(View.GONE);
         mBinding.organizationsProgress.setVisibility(View.VISIBLE);
+        Log.d("OrgFrag", "onOrganizationSelected with org: " + organization.toString());
+        mSelectedOrganizationId = organization.getId();
+        Log.d("OrgFrag", "Organization.id = " + mSelectedOrganizationId);
+    }
+
+    private void removeSelectedOrganizationMembership() {
+        if(mSelectedOrganizationId > 0) {
+            mPostRemoveMembershipRC = HttpRequest.post(this,
+                    API.URL.postRemoveOrganizationMember(mSelectedOrganizationId),
+                    API.BODY.postRemoveOrganizationMember(mSelectedOrganizationId));
+            Log.d("OrgFrag", "Removed Org membership, response: " + mPostRemoveMembershipRC);
+        }
     }
 
     @Override
