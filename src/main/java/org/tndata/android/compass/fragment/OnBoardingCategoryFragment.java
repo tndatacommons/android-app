@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
-import org.tndata.android.compass.tour.CoachMark;
 import org.tndata.android.compass.tour.Tour;
 import org.tndata.android.compass.util.API;
 
@@ -162,27 +160,14 @@ public class OnBoardingCategoryFragment
     }
 
     private void fireTour(){
-        Queue<CoachMark> marks = new LinkedList<>();
+        Queue<Tour.Tooltip> tooltips = new LinkedList<>();
         for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.CATEGORY)){
-            switch (tooltip){
-                case CAT_GENERAL:
-                    marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
-                            .setCutawayType(CoachMark.CutawayType.NONE)
-                            .setTooltip(Tour.Tooltip.CAT_GENERAL));
-                    break;
-
-                case CAT_SKIP:
-                    marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
-                            .setCutawayType(CoachMark.CutawayType.SQUARE)
-                            .setTooltip(Tour.Tooltip.CAT_SKIP)
-                            .setCutawayRadius(100)
-                            .setTarget(mNext));
-                    break;
-
+            if (tooltip == Tour.Tooltip.CAT_SKIP){
+                tooltip.setTarget(mNext);
             }
+            tooltips.add(tooltip);
         }
-        Log.d("OBCat", "Tooltips: " + marks.size());
-        Tour.display(getActivity(), marks, null);
+        Tour.display(getActivity(), tooltips);
     }
 
     /**

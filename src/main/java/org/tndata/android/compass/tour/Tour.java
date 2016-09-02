@@ -5,12 +5,20 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.StringRes;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
+import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 import org.tndata.android.compass.R;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
 
@@ -18,12 +26,9 @@ import java.util.Queue;
 /**
  * Created by isma on 8/30/16.
  */
-public class Tour{
+public class Tour implements OnShowcaseEventListener{
     private static Context sContext;
-
-    private static Queue<CoachMark> mCoachMarks;
-    private static Activity mActivity;
-    private static CoachMarkView mCoachMarkView;
+    private static Tour sTour;
 
 
     public static void init(Context context){
@@ -45,44 +50,28 @@ public class Tour{
         return preferences.getBoolean(tooltip.getKey(), false);
     }
 
-    public static void markSeen(Tooltip tooltip){
+    private static void markSeen(Tooltip tooltip){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(sContext);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(tooltip.getKey(), true);
         editor.apply();
     }
 
-    public static void display(Activity activity, Queue<CoachMark> marks, final TourListener listener){
-        if (!marks.isEmpty()){
-            mCoachMarks = marks;
-            mActivity = activity;
-            mCoachMarkView = new CoachMarkView(activity, new TourListener(){
-                @Override
-                public void onTooltipClick(Tooltip tooltip){
-                    markSeen(tooltip);
-                    next();
-                    if (listener != null){
-                        listener.onTooltipClick(tooltip);
-                    }
-                }
-            });
-            mCoachMarkView.setCoachMark(marks.remove().setHost(activity));
-            ViewGroup container = (ViewGroup)activity.findViewById(android.R.id.content);
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.MATCH_PARENT);
-            container.addView(mCoachMarkView, params);
-            container.invalidate();
+    public static void display(Activity activity, Queue<Tooltip> tooltips){
+        display(activity, tooltips, null);
+    }
+
+    public static void display(Activity activity, Queue<Tooltip> tooltips, TourListener listener){
+        if (tooltips.size() != 0){
+            if (sTour == null){
+                sTour = new Tour();
+            }
+            sTour.displayTooltips(activity, tooltips, listener);
         }
     }
 
-    private static void next(){
-        if (mCoachMarks.isEmpty()){
-            ViewGroup container = (ViewGroup)mActivity.findViewById(android.R.id.content);
-            container.removeView(mCoachMarkView);
-        }
-        else{
-            mCoachMarkView.setCoachMark(mCoachMarks.remove().setHost(mActivity));
-        }
+    public static void display(Activity activity, Collection<CoachMark> marks, final TourListener listener){
+
     }
 
     public static void reset(){
@@ -92,6 +81,68 @@ public class Tour{
             editor.putBoolean(tooltip.getKey(), false);
         }
         editor.apply();
+    }
+
+
+    private Activity mActivity;
+    private Queue<Tooltip> mTooltips;
+    private TourListener mListener;
+
+
+    private void displayTooltips(Activity activity, Queue<Tooltip> tooltips, TourListener listener){
+        mActivity = activity;
+        mTooltips = tooltips;
+        mListener = listener;
+        displayNextTooltip();
+    }
+
+    private void displayNextTooltip(){
+        Log.d("Tour", "displayNextTooltip(), " + mTooltips.size() + " tooltips left.");
+        if (!mTooltips.isEmpty()){
+            Tooltip nextTooltip = mTooltips.peek();
+
+            ShowcaseView.Builder builder = new ShowcaseView.Builder(mActivity)
+                    .setStyle(R.style.CompassShowcaseView)
+                    .setContentTitle(nextTooltip.getTitleId())
+                    .setContentText(nextTooltip.getDescriptionId())
+                    .setShowcaseEventListener(this)
+                    .blockAllTouches()
+                    .hideOnTouchOutside()
+                    .withMaterialShowcase();
+
+            if (nextTooltip.getTarget() != null){
+                builder.setTarget(new ViewTarget(nextTooltip.getTarget()));
+            }
+            builder.build();
+        }
+    }
+
+    @Override
+    public void onShowcaseViewHide(ShowcaseView showcaseView){
+        //First off the tooltip being hidden is removed from the queue for displayNext
+        //  to work properly
+        Tooltip clickedTooltip = mTooltips.remove();
+        displayNextTooltip();
+        //The tooltip is marked seen before the listener is notified
+        markSeen(clickedTooltip);
+        if (mListener != null){
+            mListener.onTooltipClick(clickedTooltip);
+        }
+    }
+
+    @Override
+    public void onShowcaseViewDidHide(ShowcaseView showcaseView){
+
+    }
+
+    @Override
+    public void onShowcaseViewShow(ShowcaseView showcaseView){
+
+    }
+
+    @Override
+    public void onShowcaseViewTouchBlocked(MotionEvent motionEvent){
+
     }
 
 
@@ -137,12 +188,18 @@ public class Tour{
         private final String mKey;
         private final int mTitleId;
         private final int mDescriptionId;
+        private View mTarget;
 
 
         Tooltip(String key, @StringRes int titleId, @StringRes int descriptionId){
             mKey = key;
             mTitleId = titleId;
             mDescriptionId = descriptionId;
+            mTarget = null;
+        }
+
+        public void setTarget(View target){
+            mTarget = target;
         }
 
         public String getKey(){
@@ -163,6 +220,10 @@ public class Tour{
 
         public String getDescription(){
             return sContext.getString(mDescriptionId);
+        }
+
+        public View getTarget(){
+            return mTarget;
         }
     }
 }

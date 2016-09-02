@@ -73,4 +73,20 @@
         <item name="android:radius">@dimen/flat_button_corner_radius</item>
     </style>
 
+    <style name="CompassShowcaseView" parent="ShowcaseView">
+        <item name="sv_backgroundColor">#AA607d8b</item>
+        <item name="sv_showcaseColor">#25467A</item>
+        <item name="sv_buttonText">OK</item>
+        <item name="sv_titleTextAppearance">@style/CompassShowcaseTitle</item>
+        <item name="sv_detailTextAppearance">@style/CompassShowcaseDetail</item>
+    </style>
+
+    <style name="CompassShowcaseTitle" parent="TextAppearance.ShowcaseView.Title">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="CompassShowcaseDetail" parent="TextAppearance.ShowcaseView.Detail">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
 </resources>

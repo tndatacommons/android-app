@@ -17,7 +17,6 @@ import org.tndata.android.compass.databinding.FragmentOrganizationsBinding;
 import org.tndata.android.compass.model.Organization;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
-import org.tndata.android.compass.tour.CoachMark;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CardItemDecoration;
 import org.tndata.android.compass.tour.Tour;
@@ -155,24 +154,14 @@ public class OrganizationsFragment
     }
 
     private void fireTour(){
-        Queue<CoachMark> marks = new LinkedList<>();
+        Queue<Tour.Tooltip> tooltips = new LinkedList<>();
         for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.ORGANIZATION)){
-            switch (tooltip){
-                case ORG_GENERAL:
-                    marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
-                            .setCutawayType(CoachMark.CutawayType.NONE)
-                            .setTooltip(Tour.Tooltip.ORG_GENERAL));
-                    break;
-                case ORG_SKIP:
-                    marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
-                            .setCutawayType(CoachMark.CutawayType.SQUARE)
-                            .setTooltip(Tour.Tooltip.ORG_SKIP)
-                            .setCutawayRadius(100)
-                            .setTarget(mBinding.organizationsSkip));
-                    break;
+            if (tooltip == Tour.Tooltip.ORG_SKIP){
+                tooltip.setTarget(mBinding.organizationsSkip);
             }
+            tooltips.add(tooltip);
         }
-        Tour.display(getActivity(), marks, null);
+        Tour.display(getActivity(), tooltips);
     }
 
     @Override

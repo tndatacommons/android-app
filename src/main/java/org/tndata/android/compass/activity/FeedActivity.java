@@ -426,38 +426,31 @@ public class FeedActivity
     }
 
     private void fireTour(Tour.Tooltip tooltipToShow){
-        Queue<CoachMark> marks = new LinkedList<>();
+        Queue<Tour.Tooltip> tooltips = new LinkedList<>();
         for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.FEED)){
             if (tooltip == tooltipToShow && tooltip == Tour.Tooltip.FEED_GENERAL){
-                marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
-                        .setCutawayType(CoachMark.CutawayType.NONE)
-                        .setTooltip(Tour.Tooltip.FEED_GENERAL));
+                tooltips.add(tooltip);
             }
             else if (tooltip == tooltipToShow && tooltip == Tour.Tooltip.FEED_UP_NEXT){
-                marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
-                        .setCutawayType(CoachMark.CutawayType.SQUARE)
-                        .setTarget(mUpNextView)
-                        .setTooltip(Tour.Tooltip.FEED_UP_NEXT));
+                tooltip.setTarget(mUpNextView);
+                tooltips.add(tooltip);
             }
             else if (tooltip == tooltipToShow && tooltip == Tour.Tooltip.FEED_PROGRESS){
-                marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
-                        .setCutawayType(CoachMark.CutawayType.SQUARE)
-                        .setTarget(mStreaksView)
-                        .setTooltip(Tour.Tooltip.FEED_PROGRESS));
-                marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
-                        .setCutawayType(CoachMark.CutawayType.CIRCLE)
-                        .setTarget(mBinding.feedMenu.getMenuIconView())
-                        .setCutawayRadius(CompassUtil.getPixels(this, 36))
-                        .setTooltip(Tour.Tooltip.FEED_FAB));
+                tooltip.setTarget(mStreaksView);
+                tooltips.add(tooltip);
+                tooltip = Tour.Tooltip.FEED_FAB;
+                tooltip.setTarget(mBinding.feedMenu.getMenuIconView());
+                tooltips.add(tooltip);
             }
         }
-        Tour.display(this, marks, this);
+        Tour.display(this, tooltips, this);
     }
 
     @Override
     public void onTooltipClick(Tour.Tooltip tooltip){
         switch (tooltip){
             case FEED_GENERAL:
+                Log.d("FeedTour", "general just clicked");
                 mBinding.feedList.scrollToPosition(MainFeedAdapter.TYPE_UP_NEXT);
                 if (mUpNextView != null){
                     fireTour(Tour.Tooltip.FEED_UP_NEXT);
