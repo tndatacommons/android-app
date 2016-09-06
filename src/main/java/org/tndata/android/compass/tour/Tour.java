@@ -9,13 +9,14 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.util.CompassUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -113,7 +114,21 @@ public class Tour implements OnShowcaseEventListener{
             if (nextTooltip.getTarget() != null){
                 builder.setTarget(new ViewTarget(nextTooltip.getTarget()));
             }
-            builder.build();
+
+            if (nextTooltip == Tooltip.FEED_UP_NEXT || nextTooltip == Tooltip.FEED_PROGRESS){
+                builder.setShowcaseDrawer(new SquareShowcaseDrawer(nextTooltip.getTarget()));
+            }
+
+            ShowcaseView scv = builder.build();
+
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            params.leftMargin = CompassUtil.getPixels(sContext, 16);
+            params.bottomMargin = CompassUtil.getPixels(sContext, 16);
+            scv.setButtonPosition(params);
         }
     }
 
