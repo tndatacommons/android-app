@@ -343,6 +343,10 @@ public final class API{
         public static String getRandomReward(){
             return BASE_URL + "rewards/?random=1";
         }
+
+        public static String postResetEmailUrl(){
+            return BASE_URL + "reset-password/";
+        }
     }
 
 
@@ -602,6 +606,22 @@ public final class API{
             JSONObject body = new JSONObject();
             try{
                 body.put("organization", organization.getId());
+            }
+            catch (JSONException jx){
+                jx.printStackTrace();
+            }
+            return body;
+        }
+
+
+        /*---------------*
+         * MISCELLANEOUS *
+         *---------------*/
+
+        public static JSONObject postResetEmail(@NonNull String address){
+            JSONObject body = new JSONObject();
+            try{
+                body.put("email", address);
             }
             catch (JSONException jx){
                 jx.printStackTrace();

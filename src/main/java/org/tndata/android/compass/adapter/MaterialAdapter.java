@@ -38,7 +38,7 @@ import org.tndata.android.compass.util.CompassUtil;
  * @version 1.0.0
  */
 public abstract class MaterialAdapter extends RecyclerView.Adapter{
-    private static final String TAG = "LibraryAdapter";
+    private static final String TAG = "MaterialAdapter";
 
     private static final int TYPE_BLANK = 0;
     private static final int TYPE_HEADER = TYPE_BLANK+1;

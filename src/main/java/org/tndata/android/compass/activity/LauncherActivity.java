@@ -17,6 +17,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.LauncherFragment;
 import org.tndata.android.compass.fragment.LogInFragment;
+import org.tndata.android.compass.fragment.ResetPasswordFragment;
 import org.tndata.android.compass.fragment.SignUpFragment;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.User;
@@ -44,6 +45,7 @@ public class LauncherActivity
 
     private LauncherFragment mLauncherFragment;
     private LogInFragment mLoginFragment;
+    private ResetPasswordFragment mResetPasswordFragment;
     private SignUpFragment mSignUpFragment;
 
     //Firewall. Cancelling an HttpRequest may not be enough, as the system might be parsing
@@ -197,6 +199,16 @@ public class LauncherActivity
         else{
             fetchData();
         }
+    }
+
+    @Override
+    public void onForgottenPassword(){
+        if (mResetPasswordFragment == null){
+            mResetPasswordFragment = new ResetPasswordFragment();
+        }
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.base_content, mResetPasswordFragment)
+                .addToBackStack("Reset").commit();
     }
 
     private void fetchData(){
