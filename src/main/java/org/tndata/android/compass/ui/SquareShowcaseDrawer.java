@@ -27,6 +27,11 @@ public class SquareShowcaseDrawer implements ShowcaseDrawer{
     private Paint mBasicPaint;
 
 
+    /**
+     * Constructor.
+     *
+     * @param target the target view, necessary for dimension calculations.
+     */
     public SquareShowcaseDrawer(@NonNull View target){
         mTarget = target;
 

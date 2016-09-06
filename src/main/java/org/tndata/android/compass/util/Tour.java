@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.StringRes;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,10 +33,21 @@ public class Tour implements OnShowcaseEventListener{
     private static Tour sTour;
 
 
+    /**
+     * Initializer method.
+     *
+     * @param context a reference to the app's context.
+     */
     public static void init(Context context){
         sContext = context.getApplicationContext();
     }
 
+    /**
+     * Returns all the unseen tooltips for a particular section.
+     *
+     * @param section the section whose tooltips are to be compiled.
+     * @return the list of unseen tooltips within the requested section.
+     */
     public static List<Tooltip> getTooltipsFor(Section section){
         List<Tooltip> tooltips = new ArrayList<>();
         for (Tooltip tooltip:section.mTooltips){
@@ -48,11 +58,22 @@ public class Tour implements OnShowcaseEventListener{
         return tooltips;
     }
 
+    /**
+     * Tells whether a particular tooltip has been seen.
+     *
+     * @param tooltip the tooltip to be evaluated.
+     * @return true if such tooltip has been seen, false otherwise.
+     */
     private static boolean hasBeenSeen(Tooltip tooltip){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(sContext);
         return preferences.getBoolean(tooltip.getKey(), false);
     }
 
+    /**
+     * Marks a tooltip seen.
+     *
+     * @param tooltip the tooltip to be marked as seen.
+     */
     private static void markSeen(Tooltip tooltip){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(sContext);
         SharedPreferences.Editor editor = preferences.edit();
@@ -60,10 +81,23 @@ public class Tour implements OnShowcaseEventListener{
         editor.apply();
     }
 
+    /**
+     * Displays a queue of tooltips.
+     *
+     * @param activity the host activity.
+     * @param tooltips the tooltips to be displayed.
+     */
     public static void display(Activity activity, Queue<Tooltip> tooltips){
         display(activity, tooltips, null);
     }
 
+    /**
+     * Displays a queue of tooltips.
+     *
+     * @param activity the host activity.
+     * @param tooltips the tooltips to be displayed.
+     * @param listener a listener to be called every time a tooltip is dismissed.
+     */
     public static void display(Activity activity, Queue<Tooltip> tooltips, TourListener listener){
         if (tooltips.size() != 0){
             if (sTour == null){
@@ -73,6 +107,9 @@ public class Tour implements OnShowcaseEventListener{
         }
     }
 
+    /**
+     * Marks all the tooltips unseen.
+     */
     public static void reset(){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(sContext);
         SharedPreferences.Editor editor = preferences.edit();
@@ -88,6 +125,13 @@ public class Tour implements OnShowcaseEventListener{
     private TourListener mListener;
 
 
+    /**
+     * Internal method to display a queue of tooltips.
+     *
+     * @param activity the host activity.
+     * @param tooltips the tooltips to be displayed.
+     * @param listener a listener to be called every time a tooltip is dismissed.
+     */
     private void displayTooltips(Activity activity, Queue<Tooltip> tooltips, TourListener listener){
         mActivity = activity;
         mTooltips = tooltips;
@@ -95,8 +139,10 @@ public class Tour implements OnShowcaseEventListener{
         displayNextTooltip();
     }
 
+    /**
+     * Displays the next tooltip in the queue.
+     */
     private void displayNextTooltip(){
-        Log.d("Tour", "displayNextTooltip(), " + mTooltips.size() + " tooltips left.");
         if (!mTooltips.isEmpty()){
             Tooltip nextTooltip = mTooltips.peek();
 
