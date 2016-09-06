@@ -45,6 +45,8 @@ public class OrganizationsFragment
     private List<Organization> mOrganizations;
     private int mGetOrganizationsRC;
     private int mPostOrganizationRC;
+    private int mPostRemoveMembershipRC;
+    private long mSelectedOrganizationId = 0;
 
     private OrganizationsListener mListener;
 
@@ -90,6 +92,18 @@ public class OrganizationsFragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState){
         if (mOrganizations != null){
             bindOrganizations();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // The first time we load this Fragment, mOrganziations will be null,
+        // so when onViewCreated gets called (after this method), bindOrganizations
+        // will get called. Then, if/when a user hits the back button, we should
+        // already have those.
+        if(mOrganizations != null) {
+            removeSelectedOrganizationMembership();
         }
     }
 
@@ -156,6 +170,17 @@ public class OrganizationsFragment
         mBinding.organizationsList.setVisibility(View.GONE);
         mBinding.organizationsSkip.setVisibility(View.GONE);
         mBinding.organizationsProgress.setVisibility(View.VISIBLE);
+
+        // Keep a record of the last organization we selected.
+        mSelectedOrganizationId = organization.getId();
+    }
+
+    private void removeSelectedOrganizationMembership() {
+        if(mSelectedOrganizationId > 0) {
+            mPostRemoveMembershipRC = HttpRequest.post(this,
+                    API.URL.postRemoveOrganizationMember(mSelectedOrganizationId),
+                    API.BODY.postRemoveOrganizationMember(mSelectedOrganizationId));
+        }
     }
 
     @Override
