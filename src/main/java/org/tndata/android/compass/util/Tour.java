@@ -1,4 +1,4 @@
-package org.tndata.android.compass.tour;
+package org.tndata.android.compass.util;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,16 +16,18 @@ import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.util.CompassUtil;
+import org.tndata.android.compass.ui.SquareShowcaseDrawer;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
 
 
 /**
- * Created by isma on 8/30/16.
+ * Utility class to display tour tooltips.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class Tour implements OnShowcaseEventListener{
     private static Context sContext;
@@ -69,10 +71,6 @@ public class Tour implements OnShowcaseEventListener{
             }
             sTour.displayTooltips(activity, tooltips, listener);
         }
-    }
-
-    public static void display(Activity activity, Collection<CoachMark> marks, final TourListener listener){
-
     }
 
     public static void reset(){

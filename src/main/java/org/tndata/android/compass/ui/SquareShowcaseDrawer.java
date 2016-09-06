@@ -1,4 +1,4 @@
-package org.tndata.android.compass.tour;
+package org.tndata.android.compass.ui;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -15,7 +15,10 @@ import org.tndata.android.compass.util.CompassUtil;
 
 
 /**
- * Created by isma on 9/6/16.
+ * Custom drawer for a square cutaway in the showcase style tour.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class SquareShowcaseDrawer implements ShowcaseDrawer{
     private int mBackgroundColor;
@@ -32,7 +35,7 @@ public class SquareShowcaseDrawer implements ShowcaseDrawer{
         mEraserPaint.setAlpha(0);
         mEraserPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
         mEraserPaint.setAntiAlias(true);
-        
+
         mBasicPaint = new Paint();
     }
 
@@ -43,7 +46,7 @@ public class SquareShowcaseDrawer implements ShowcaseDrawer{
 
     @Override
     public void drawShowcase(Bitmap buffer, float x, float y, float scaleMultiplier){
-        int margin = CompassUtil.getPixels(mTarget.getContext(), 10);
+        int margin = CompassUtil.getPixels(mTarget.getContext(), 8);
         float left = x - getShowcaseWidth()/2 - margin;
         float top = y - getShowcaseHeight()/2 - margin;
         float right = x + getShowcaseWidth()/2 + margin;

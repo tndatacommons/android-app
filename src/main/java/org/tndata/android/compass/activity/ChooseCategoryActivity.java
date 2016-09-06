@@ -12,8 +12,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
 import org.tndata.android.compass.model.TDCCategory;
-import org.tndata.android.compass.tour.CoachMark;
-import org.tndata.android.compass.tour.Tour;
+import org.tndata.android.compass.util.Tour;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -59,17 +58,13 @@ public class ChooseCategoryActivity
     }
 
     private void fireTour(){
-        Queue<CoachMark> marks = new LinkedList<>();
+        Queue<Tour.Tooltip> tooltips = new LinkedList<>();
         for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.CATEGORY)){
-            switch (tooltip){
-                case ORG_GENERAL:
-                    marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
-                            .setCutawayType(CoachMark.CutawayType.NONE)
-                            .setTooltip(Tour.Tooltip.CAT_GENERAL));
-                    break;
+            if (tooltip == Tour.Tooltip.CAT_GENERAL){
+                tooltips.add(tooltip);
             }
         }
-        Tour.display(this, marks, null);
+        Tour.display(this, tooltips);
     }
 
     @Override

@@ -17,7 +17,7 @@ import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.ImageLoader;
-import org.tndata.android.compass.tour.Tour;
+import org.tndata.android.compass.util.Tour;
 
 import java.util.ArrayList;
 import java.util.Collections;

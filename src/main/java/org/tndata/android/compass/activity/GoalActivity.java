@@ -9,8 +9,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.GoalAdapter;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.TDCGoal;
-import org.tndata.android.compass.tour.CoachMark;
-import org.tndata.android.compass.tour.Tour;
+import org.tndata.android.compass.util.Tour;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.LinkedList;
@@ -65,18 +64,14 @@ public class GoalActivity extends MaterialActivity implements GoalAdapter.GoalLi
     }
 
     private void fireTour(View target){
-        Queue<CoachMark> marks = new LinkedList<>();
+        Queue<Tour.Tooltip> tooltips = new LinkedList<>();
         for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.GOAL)){
-            switch (tooltip){
-                case GOAL_GENERAL:
-                    marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
-                            .setCutawayType(CoachMark.CutawayType.SQUARE)
-                            .setTarget(target)
-                            .setTooltip(Tour.Tooltip.GOAL_GENERAL));
-                    break;
+            if (tooltip == Tour.Tooltip.GOAL_GENERAL){
+                tooltip.setTarget(target);
+                tooltips.add(tooltip);
             }
         }
-        Tour.display(this, marks, null);
+        Tour.display(this, tooltips);
     }
 
     @Override

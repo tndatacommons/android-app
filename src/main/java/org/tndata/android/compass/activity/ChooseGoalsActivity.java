@@ -19,8 +19,7 @@ import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.TDCGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
-import org.tndata.android.compass.tour.CoachMark;
-import org.tndata.android.compass.tour.Tour;
+import org.tndata.android.compass.util.Tour;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.ImageLoader;
 
@@ -218,30 +217,22 @@ public class ChooseGoalsActivity
     }
 
     private void firePreTour(){
-        Queue<CoachMark> marks = new LinkedList<>();
+        Queue<Tour.Tooltip> tooltips = new LinkedList<>();
         for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.LIBRARY_PRE)){
-            switch (tooltip){
-                case LIB_GENERAL:
-                    marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
-                            .setCutawayType(CoachMark.CutawayType.NONE)
-                            .setTooltip(Tour.Tooltip.LIB_GENERAL));
-                    break;
+            if (tooltip == Tour.Tooltip.LIB_GENERAL){
+                tooltips.add(tooltip);
             }
         }
-        Tour.display(this, marks, null);
+        Tour.display(this, tooltips);
     }
 
     private void firePostTour(){
-        Queue<CoachMark> marks = new LinkedList<>();
+        Queue<Tour.Tooltip> tooltips = new LinkedList<>();
         for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.LIBRARY_POST)){
-            switch (tooltip){
-                case LIB_GOAL_ADDED:
-                    marks.add(new CoachMark().setOverlayColor(getResources().getColor(R.color.tour_overlay))
-                            .setCutawayType(CoachMark.CutawayType.NONE)
-                            .setTooltip(Tour.Tooltip.LIB_GOAL_ADDED));
-                    break;
+            if (tooltip == Tour.Tooltip.LIB_GOAL_ADDED){
+                tooltips.add(tooltip);
             }
         }
-        Tour.display(this, marks, null);
+        Tour.display(this, tooltips);
     }
 }

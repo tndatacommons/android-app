@@ -18,7 +18,7 @@ import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
-import org.tndata.android.compass.tour.Tour;
+import org.tndata.android.compass.util.Tour;
 import org.tndata.android.compass.util.API;
 
 import java.util.LinkedList;

@@ -19,7 +19,7 @@ import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CardItemDecoration;
-import org.tndata.android.compass.tour.Tour;
+import org.tndata.android.compass.util.Tour;
 
 import java.util.LinkedList;
 import java.util.List;
