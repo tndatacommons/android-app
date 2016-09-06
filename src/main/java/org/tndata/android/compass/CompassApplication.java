@@ -106,6 +106,7 @@ public class CompassApplication extends Application{
         }
         mUser = null;
         User.deleteFromPreferences(this);
+        Tour.reset();
     }
 
     /**
@@ -276,7 +277,7 @@ public class CompassApplication extends Application{
         HttpRequest.addUrlParameter("version", "2");
 
         Tour.init(this);
-        Tour.reset();
+        //Tour.reset();
         LocationNotificationService.start(this);
         ImageLoader.initialize(getApplicationContext());
     }
