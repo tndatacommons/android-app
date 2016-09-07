@@ -39,34 +39,34 @@
 
     <!-- Tour Stuffs -->
     <string name="tour_org_general_title">Organization</string>
-    <string name="tour_org_general_description">Review this list and tap your organization name</string>
+    <string name="tour_org_general_description">Review this list and tap your organization name.</string>
     <string name="tour_org_skip_title">Skip</string>
-    <string name="tour_org_skip_description">Tap here to omit this step</string>
+    <string name="tour_org_skip_description">Tap here to omit this step.</string>
 
     <string name="tour_cat_general_title">Categories</string>
-    <string name="tour_cat_general_description">Tap the card that describes what you want to do</string>
+    <string name="tour_cat_general_description">Tap the card that describes what you want to do.</string>
     <string name="tour_cat_skip_title">Skip</string>
-    <string name="tour_cat_skip_description">Tap here to omit this step</string>
+    <string name="tour_cat_skip_description">Tap here to omit this step.</string>
 
     <string name="tour_lib_general_title">Goal Library</string>
-    <string name="tour_lib_general_description">Tap the card that describes what you want to do</string>
+    <string name="tour_lib_general_description">Tap the card that describes what you want to do.</string>
     <string name="tour_lib_added_title">Goal library</string>
-    <string name="tour_lib_added_description">You can choose more content or hit back to go to Compass</string>
+    <string name="tour_lib_added_description">You can choose more content or hit back to go to Compass.</string>
 
     <string name="tour_goal_add_title">Goal</string>
-    <string name="tour_goal_add_description">Tap "SIGN ME UP" to begin receiving Compass tips</string>
+    <string name="tour_goal_add_description">Tap "SIGN ME UP" to begin receiving Compass tips.</string>
 
     <string name="tour_feed_general_title">Feed</string>
-    <string name="tour_feed_general_description">This is your feed. Check in occasionally for tips and to track your progress</string>
+    <string name="tour_feed_general_description">This is your feed. Check in occasionally for tips and to track your progress.</string>
     <string name="tour_feed_up_next_title">Up next</string>
     <string name="tour_feed_up_next_description">This is a tip to help you succeed. Tap and read!</string>
     <string name="tour_feed_progress_title">Progress</string>
-    <string name="tour_feed_progress_description">This is your daily progress. It helps you stay engaged with your success</string>
+    <string name="tour_feed_progress_description">This is your daily progress. It helps you stay engaged with your success.</string>
     <string name="tour_feed_fab_title">More goals</string>
-    <string name="tour_feed_fab_description">Tap the (+) button to browse for more goals</string>
+    <string name="tour_feed_fab_description">Tap the (+) button to browse for more goals.</string>
 
     <string name="tour_action_got_it_title">Action</string>
-    <string name="tour_action_got_it_description">Tap here to keep track of your actions</string>
+    <string name="tour_action_got_it_description">Tap here to keep track of your actions.</string>
 
     <!-- FeedActivity -->
     <string name="action_my_information">My information</string>

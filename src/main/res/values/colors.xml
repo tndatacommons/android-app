@@ -45,7 +45,7 @@
 
 
     <!-- Tour -->
-    <color name="tour_overlay">#AA607D8B</color>
+    <color name="tour_overlay">#EE607D8B</color>
 
     <!-- Text -->
     <color name="text_primary">#DE000000</color>
