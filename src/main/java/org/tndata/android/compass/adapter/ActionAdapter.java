@@ -2,10 +2,13 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.Button;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Action;
@@ -44,6 +47,8 @@ public class ActionAdapter
 
     private int mGetRewardRC;
     private Reward mReward;
+
+    private Button mDidItButton;
 
 
     /**
@@ -103,7 +108,7 @@ public class ActionAdapter
 
     @Override
     protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
-        HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
+        final HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
 
         if (mAction instanceof UserAction){
             holder.setTitle(mAction.getTitle());
@@ -136,7 +141,21 @@ public class ActionAdapter
                 holder.addButton(R.id.action_do_it_now, R.string.action_do_it_now, this);
             }
         }
-        holder.addButton(R.id.action_did_it, R.string.action_did_it, this);
+        mDidItButton = holder.addButton(R.id.action_did_it, R.string.action_did_it, this);
+
+        ViewTreeObserver vto = holder.itemView.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
+            @Override
+            public void onGlobalLayout(){
+                if (Build.VERSION.SDK_INT < 16){
+                    holder.itemView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+                else{
+                    holder.itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+                mListener.onActionCardLoaded();
+            }
+        });
     }
 
     @Override
@@ -253,6 +272,10 @@ public class ActionAdapter
 
     }
 
+    public Button getDidItButton(){
+        return mDidItButton;
+    }
+
 
     /**
      * Listener interface for the adapter.
@@ -261,6 +284,7 @@ public class ActionAdapter
      * @version 1.0.0
      */
     public interface ActionAdapterListener{
+        void onActionCardLoaded();
         void onIDidItClick();
         void onRescheduleClick();
         void onSnoozeClick();

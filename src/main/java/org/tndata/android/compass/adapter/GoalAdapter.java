@@ -3,14 +3,12 @@ package org.tndata.android.compass.adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 
-import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.TDCCategory;
