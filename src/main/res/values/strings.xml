@@ -74,7 +74,6 @@
     <string name="action_my_places">My places</string>
     <string name="action_my_priorities">My activities</string>
     <string name="action_settings">Settings</string>
-    <string name="action_tour">Tour</string>
     <string name="action_support">Feedback</string>
     <string name="action_support_share_title">Select your email client</string>
     <string name="action_support_subject">Compass Feedback</string>
@@ -192,13 +191,6 @@
     <string name="behavior_dialog_confirm">Yes, Remove this</string>
     <string name="behavior_dialog_confirm_cancel">Cancel</string>
     <string name="behavior_dialog_confirm_message">This activity will help you reach your goals. By removing, you will no longer receive notifications about this activity. Are you sure you want to continue?</string>
-
-    <!-- TourFragment -->
-    <string name="tour_action_skip">Skip</string>
-    <string name="tour_page_1_caption">Compass helps you reach your goals.</string>
-    <string name="tour_page_2_caption">Discover the things that interest you.</string>
-    <string name="tour_page_3_caption">Tell Compass what you want to do.</string>
-    <string name="tour_page_4_caption">That\'s it! Easy!</string>
 
     <!-- Search -->
     <string name="search">Search</string>

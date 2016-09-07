@@ -74,7 +74,7 @@
     </style>
 
     <style name="CompassShowcaseView" parent="ShowcaseView">
-        <item name="sv_backgroundColor">#AA607d8b</item>
+        <item name="sv_backgroundColor">@color/tour_overlay</item>
         <item name="sv_showcaseColor">#25467A</item>
         <item name="sv_buttonText">OK</item>
         <item name="sv_titleTextAppearance">@style/CompassShowcaseTitle</item>

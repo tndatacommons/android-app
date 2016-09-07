@@ -398,10 +398,6 @@ public class FeedActivity
                 startActivityForResult(new Intent(this, SettingsActivity.class), SETTINGS_RC);
                 break;
 
-            case DrawerAdapter.TOUR:
-                startActivity(new Intent(this, TourActivity.class));
-                break;
-
             case DrawerAdapter.SUPPORT:
                 //Ask the user to open their default email client
                 Intent emailIntent = new Intent(Intent.ACTION_SEND)
