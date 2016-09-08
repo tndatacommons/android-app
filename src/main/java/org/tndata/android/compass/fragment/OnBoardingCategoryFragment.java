@@ -18,9 +18,12 @@ import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
+import org.tndata.android.compass.util.Tour;
 import org.tndata.android.compass.util.API;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import es.sandwatch.httprequests.HttpRequest;
 import es.sandwatch.httprequests.HttpRequestError;
@@ -146,12 +149,25 @@ public class OnBoardingCategoryFragment
             mList.setAdapter(new ChooseCategoryAdapter(getContext(), this, filtered));
             mContent.setVisibility(View.VISIBLE);
             mProgress.setVisibility(View.GONE);
+
+            fireTour();
         }
     }
 
     @Override
     public void onParseFailed(int requestCode){
 
+    }
+
+    private void fireTour(){
+        Queue<Tour.Tooltip> tooltips = new LinkedList<>();
+        for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.CATEGORY)){
+            if (tooltip == Tour.Tooltip.CAT_SKIP){
+                tooltip.setTarget(mNext);
+            }
+            tooltips.add(tooltip);
+        }
+        Tour.display(getActivity(), tooltips);
     }
 
     /**

@@ -11,8 +11,6 @@
     <color name="login_background">@color/primary_dark</color>
     <color name="grey_placeholder">#888</color>
 
-    <color name="tour_color">#3fb3e6</color>
-
     <!-- Text -->
     <color name="dark_text_color">#404040</color>
     <color name="secondary_text_color">#757575</color>
@@ -45,6 +43,9 @@
     <color name="badge_primary">#B0BEC5</color>
     <color name="badge_primary_dark">#979A9A</color>
 
+
+    <!-- Tour -->
+    <color name="tour_overlay">#EE607D8B</color>
 
     <!-- Text -->
     <color name="text_primary">#DE000000</color>

@@ -135,4 +135,8 @@ public abstract class MaterialActivity extends AppCompatActivity{
         mFAB.setOnClickListener(listener);
         mFAB.setVisibility(View.VISIBLE);
     }
+
+    protected final RecyclerView getRecyclerView(){
+        return mRecyclerView;
+    }
 }

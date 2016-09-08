@@ -38,6 +38,7 @@ import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.TDCGoal;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserGoal;
+import org.tndata.android.compass.util.Tour;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.DataSynchronizer;
@@ -45,7 +46,9 @@ import org.tndata.android.compass.util.FeedDataLoader;
 import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.ParallaxEffect;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import es.sandwatch.httprequests.HttpRequest;
 
@@ -65,6 +68,7 @@ public class FeedActivity
                 SwipeRefreshLayout.OnRefreshListener,
                 DrawerAdapter.OnItemClickListener,
                 MainFeedAdapter.Listener,
+                Tour.TourListener,
                 View.OnClickListener,
                 FeedDataLoader.Callback{
 
@@ -83,8 +87,13 @@ public class FeedActivity
     private ActionBarDrawerToggle mDrawerToggle;
     private MainFeedAdapter mAdapter;
 
+    private View mUpNextView;
+    private View mStreaksView;
+
     //Flags
     private boolean mSuggestionDismissed;
+    private boolean mShowUpNextTooltip;
+    private boolean mShowStreaksTooltip;
 
 
     @Override
@@ -198,6 +207,8 @@ public class FeedActivity
         populateMenu();
 
         mSuggestionDismissed = false;
+
+        fireTour(Tour.Tooltip.FEED_GENERAL);
     }
 
     @Override
@@ -387,10 +398,6 @@ public class FeedActivity
                 startActivityForResult(new Intent(this, SettingsActivity.class), SETTINGS_RC);
                 break;
 
-            case DrawerAdapter.TOUR:
-                startActivity(new Intent(this, TourActivity.class));
-                break;
-
             case DrawerAdapter.SUPPORT:
                 //Ask the user to open their default email client
                 Intent emailIntent = new Intent(Intent.ACTION_SEND)
@@ -411,6 +418,74 @@ public class FeedActivity
                 break;
         }
         mBinding.feedDrawerLayout.closeDrawers();
+    }
+
+    private void fireTour(Tour.Tooltip tooltipToShow){
+        Queue<Tour.Tooltip> tooltips = new LinkedList<>();
+        for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.FEED)){
+            if (tooltip == tooltipToShow && tooltip == Tour.Tooltip.FEED_GENERAL){
+                tooltips.add(tooltip);
+            }
+            else if (tooltip == tooltipToShow && tooltip == Tour.Tooltip.FEED_UP_NEXT){
+                tooltip.setTarget(mUpNextView);
+                tooltips.add(tooltip);
+            }
+            else if (tooltip == tooltipToShow && tooltip == Tour.Tooltip.FEED_PROGRESS){
+                tooltip.setTarget(mStreaksView);
+                tooltips.add(tooltip);
+            }
+            else if (tooltip == tooltipToShow && tooltip == Tour.Tooltip.FEED_FAB){
+                tooltip.setTarget(mBinding.feedMenu.getMenuIconView());
+                tooltips.add(tooltip);
+            }
+        }
+        Tour.display(this, tooltips, this);
+    }
+
+    @Override
+    public void onTooltipClick(Tour.Tooltip tooltip){
+        switch (tooltip){
+            case FEED_GENERAL:
+                Log.d("FeedTour", "general just clicked");
+                mBinding.feedList.scrollToPosition(MainFeedAdapter.TYPE_UP_NEXT);
+                if (mUpNextView != null){
+                    fireTour(Tour.Tooltip.FEED_UP_NEXT);
+                }
+                else{
+                    mShowUpNextTooltip = true;
+                }
+                break;
+
+            case FEED_UP_NEXT:
+                if (mStreaksView != null){
+                    fireTour(Tour.Tooltip.FEED_PROGRESS);
+                }
+                else{
+                    mShowStreaksTooltip = true;
+                }
+                break;
+
+            case FEED_PROGRESS:
+                mBinding.feedMenu.showMenuButton(false);
+                fireTour(Tour.Tooltip.FEED_FAB);
+                break;
+        }
+    }
+
+    @Override
+    public void onItemLoaded(View view, int type){
+        if (type == MainFeedAdapter.TYPE_UP_NEXT){
+            mUpNextView = view;
+            if (mShowUpNextTooltip){
+                fireTour(Tour.Tooltip.FEED_UP_NEXT);
+            }
+        }
+        else if (type == MainFeedAdapter.TYPE_STREAKS){
+            mStreaksView = view;
+            if (mShowStreaksTooltip){
+                fireTour(Tour.Tooltip.FEED_PROGRESS);
+            }
+        }
     }
 
     @Override

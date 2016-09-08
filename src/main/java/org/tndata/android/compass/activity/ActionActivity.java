@@ -32,12 +32,15 @@ import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.ImageLoader;
 import org.tndata.android.compass.util.NotificationUtil;
+import org.tndata.android.compass.util.Tour;
 
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Locale;
+import java.util.Queue;
 
 import es.sandwatch.httprequests.HttpRequest;
 import es.sandwatch.httprequests.HttpRequestError;
@@ -224,6 +227,17 @@ public class ActionActivity
         }
     }
 
+    private void fireTour(View target){
+        Queue<Tour.Tooltip> tooltips = new LinkedList<>();
+        for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.ACTION)){
+            if (tooltip == Tour.Tooltip.ACTION_GOT_IT){
+                tooltip.setTarget(target);
+                tooltips.add(tooltip);
+            }
+        }
+        Tour.display(this, tooltips);
+    }
+
     /**
      * Fetches a category from the backend.
      *
@@ -361,6 +375,11 @@ public class ActionActivity
             startActivity(new Intent(this, CustomContentActivity.class)
                     .putExtra(CustomContentActivity.CUSTOM_GOAL_ID_KEY, customGoalId));
         }
+    }
+
+    @Override
+    public void onActionCardLoaded(){
+        fireTour(mAdapter.getDidItButton());
     }
 
     @Override

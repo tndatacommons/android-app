@@ -19,8 +19,11 @@ import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CardItemDecoration;
+import org.tndata.android.compass.util.Tour;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import es.sandwatch.httprequests.HttpRequest;
 import es.sandwatch.httprequests.HttpRequestError;
@@ -160,6 +163,19 @@ public class OrganizationsFragment
         mBinding.organizationsSkip.setVisibility(View.VISIBLE);
         mBinding.organizationsSkip.setOnClickListener(this);
         mBinding.organizationsProgress.setVisibility(View.GONE);
+
+        fireTour();
+    }
+
+    private void fireTour(){
+        Queue<Tour.Tooltip> tooltips = new LinkedList<>();
+        for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.ORGANIZATION)){
+            if (tooltip == Tour.Tooltip.ORG_SKIP){
+                tooltip.setTarget(mBinding.organizationsSkip);
+            }
+            tooltips.add(tooltip);
+        }
+        Tour.display(getActivity(), tooltips);
     }
 
     @Override

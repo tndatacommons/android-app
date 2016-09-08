@@ -2,9 +2,12 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.Button;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.model.Reward;
@@ -39,6 +42,8 @@ public class GoalAdapter
     private int mGetRewardRC;
     private Reward mReward;
 
+    private Button mSignMeUp;
+
 
     /**
      * Constructor.
@@ -66,12 +71,26 @@ public class GoalAdapter
 
     @Override
     protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
-        HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
+        final HeaderViewHolder holder = (HeaderViewHolder)rawHolder;
         holder.setTitle(mContext.getString(R.string.library_goal_title, mGoal.getTitle()));
         holder.setTitleBold();
         holder.setContent(mGoal.getDescription());
         holder.addButton(R.id.goal_no, R.string.library_goal_no, this);
-        holder.addButton(R.id.goal_yes, R.string.library_goal_yes, this);
+        mSignMeUp = holder.addButton(R.id.goal_yes, R.string.library_goal_yes, this);
+
+        ViewTreeObserver vto = holder.itemView.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
+            @Override
+            public void onGlobalLayout(){
+                if (Build.VERSION.SDK_INT < 16){
+                    holder.itemView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+                else{
+                    holder.itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+                mListener.onGoalCardLoaded();
+            }
+        });
 
         fetchReward();
     }
@@ -146,6 +165,10 @@ public class GoalAdapter
 
     }
 
+    public Button getSignMeUpButton(){
+        return mSignMeUp;
+    }
+
 
     /**
      * Listener interface for the adapter.
@@ -154,6 +177,11 @@ public class GoalAdapter
      * @version 1.0.0
      */
     public interface GoalListener{
+        /**
+         * Called when the goal card has loaded.
+         */
+        void onGoalCardLoaded();
+
         /**
          * Called when the user taps the 'yes, I'm in' button.
          */

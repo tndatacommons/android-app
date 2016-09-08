@@ -17,6 +17,7 @@ import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.GcmRegistration;
 import org.tndata.android.compass.util.ImageLoader;
+import org.tndata.android.compass.util.Tour;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -105,6 +106,7 @@ public class CompassApplication extends Application{
         }
         mUser = null;
         User.deleteFromPreferences(this);
+        Tour.reset();
     }
 
     /**
@@ -274,6 +276,8 @@ public class CompassApplication extends Application{
         //Add a constant url parameter for API versioning
         HttpRequest.addUrlParameter("version", "2");
 
+        Tour.init(this);
+        //Tour.reset();
         LocationNotificationService.start(this);
         ImageLoader.initialize(getApplicationContext());
     }

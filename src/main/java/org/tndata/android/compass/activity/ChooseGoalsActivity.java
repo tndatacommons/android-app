@@ -19,10 +19,13 @@ import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.TDCGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
+import org.tndata.android.compass.util.Tour;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.ImageLoader;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import es.sandwatch.httprequests.HttpRequest;
 import es.sandwatch.httprequests.HttpRequestError;
@@ -154,6 +157,7 @@ public class ChooseGoalsActivity
         if (mAdapter.isEmpty()){
             finish();
         }
+        firePostTour();
     }
 
     @Override
@@ -203,11 +207,32 @@ public class ChooseGoalsActivity
             else{
                 mAdapter.displayError("You have selected all content");
             }
+            firePreTour();
         }
     }
 
     @Override
     public void onParseFailed(int requestCode){
 
+    }
+
+    private void firePreTour(){
+        Queue<Tour.Tooltip> tooltips = new LinkedList<>();
+        for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.LIBRARY_PRE)){
+            if (tooltip == Tour.Tooltip.LIB_GENERAL){
+                tooltips.add(tooltip);
+            }
+        }
+        Tour.display(this, tooltips);
+    }
+
+    private void firePostTour(){
+        Queue<Tour.Tooltip> tooltips = new LinkedList<>();
+        for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.LIBRARY_POST)){
+            if (tooltip == Tour.Tooltip.LIB_GOAL_ADDED){
+                tooltips.add(tooltip);
+            }
+        }
+        Tour.display(this, tooltips);
     }
 }

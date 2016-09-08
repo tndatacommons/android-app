@@ -12,6 +12,10 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
 import org.tndata.android.compass.model.TDCCategory;
+import org.tndata.android.compass.util.Tour;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 
 /**
@@ -43,12 +47,24 @@ public class ChooseCategoryActivity
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.choose_category_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new ChooseCategoryAdapter(this, this, app.getCategoryList(false)));
+
+        fireTour();
     }
 
     @Override
     protected void onResume(){
         super.onResume();
         mToolbar.getBackground().setAlpha(255);
+    }
+
+    private void fireTour(){
+        Queue<Tour.Tooltip> tooltips = new LinkedList<>();
+        for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.CATEGORY)){
+            if (tooltip == Tour.Tooltip.CAT_GENERAL){
+                tooltips.add(tooltip);
+            }
+        }
+        Tour.display(this, tooltips);
     }
 
     @Override

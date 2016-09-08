@@ -538,8 +538,10 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
          * @param id the id of the new button.
          * @param caption the resource of the caption of the new button.
          * @param listener the listener to set to the new button.
+         *
+         * @return the newly created button
          */
-        public void addButton(@IdRes int id, @StringRes int caption, View.OnClickListener listener){
+        public Button addButton(@IdRes int id, @StringRes int caption, View.OnClickListener listener){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             View view = inflater.inflate(R.layout.button_flat, mButtonContainer);
             Button button = (Button)view.findViewById(R.id.button_flat);
@@ -548,6 +550,8 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
             button.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Medium.ttf"));
             button.setOnClickListener(listener);
             mButtonContainer.setVisibility(View.VISIBLE);
+
+            return button;
         }
     }
 

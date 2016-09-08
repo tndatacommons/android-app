@@ -157,10 +157,6 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".activity.TourActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
             android:name=".activity.PlaygroundActivity"
             android:screenOrientation="portrait" />
 

@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -36,9 +35,6 @@ public class LauncherActivity
                 FeedDataLoader.Callback{
 
     private static final String TAG = "LauncherActivity";
-
-    private static final String PREFERENCES_NAME = "compass_pref";
-    private static final String PREFERENCES_NEW_USER = "new_user_pref";
 
 
     private CompassApplication mApplication;
@@ -82,36 +78,26 @@ public class LauncherActivity
                     .create().show();
         }
         else{
-            SharedPreferences settings = getSharedPreferences(PREFERENCES_NAME, 0);
-            if (settings.getBoolean(PREFERENCES_NEW_USER, true)){
-                startActivity(new Intent(this, TourActivity.class));
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putBoolean(PREFERENCES_NEW_USER, false);
-                editor.apply();
+            User user = mApplication.getUser();
+            if (user == null){
+                //If there is no user, show the menu
+                Log.e(TAG, "No user was found, displaying menu.");
                 displayLauncherFragment(false);
             }
             else{
-                User user = mApplication.getUser();
-                if (user == null){
-                    //If there is no user, show the menu
-                    Log.e(TAG, "No user was found, displaying menu.");
-                    displayLauncherFragment(false);
+                Log.i(TAG, "User was found.");
+                //If there is a user, show the loading screen
+                displayLauncherFragment(true);
+
+                if (user.needsOnBoarding()){
+                    Log.i(TAG, "User needs on-boarding.");
+                    transitionToOnBoarding();
+                    Log.d(TAG, "Token: " + user.getToken());
                 }
                 else{
-                    Log.i(TAG, "User was found.");
-                    //If there is a user, show the loading screen
-                    displayLauncherFragment(true);
-
-                    if (user.needsOnBoarding()){
-                        Log.i(TAG, "User needs on-boarding.");
-                        transitionToOnBoarding();
-                        Log.d(TAG, "Token: " + user.getToken());
-                    }
-                    else{
-                        Log.i(TAG, "Retrieving data.");
-                        Log.d(TAG, "Token: " + user.getToken());
-                        fetchData();
-                    }
+                    Log.i(TAG, "Retrieving data.");
+                    Log.d(TAG, "Token: " + user.getToken());
+                    fetchData();
                 }
             }
         }
