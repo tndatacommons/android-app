@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,9 +23,9 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.GcmMessage;
 import org.tndata.android.compass.model.TDCAction;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserAction;
-import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.service.ActionReportService;
@@ -69,16 +70,16 @@ public class ActionActivity
     private static final int RESCHEDULE_REQUEST_CODE = 61429;
 
 
+    private CompassApplication mApp;
+
     //The action in question and the associated reminder
     private Action mAction;
-    private UserCategory mUserCategory;
     private UpcomingAction mUpcomingAction;
     private GcmMessage mGcmMessage;
 
     private ActionAdapter mAdapter;
 
     private int mGetActionRC;
-    private int mGetUserCategoryRC;
     private int mDeleteBehaviorRC;
 
 
@@ -87,7 +88,9 @@ public class ActionActivity
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        //Get the action, upcoming action and reminder from the intent. Only one of them
+        mApp = (CompassApplication)getApplication();
+
+        //Get the action, upcoming action and message from the intent. Only one of them
         //  will be actually something other than null
         mAction = getIntent().getParcelableExtra(ACTION_KEY);
         mUpcomingAction = getIntent().getParcelableExtra(UPCOMING_ACTION_KEY);
@@ -101,22 +104,17 @@ public class ActionActivity
         setAdapter(mAdapter);
 
         if (mGcmMessage != null){
-            if (mGcmMessage.isUserActionMessage()){
-                mAction = mGcmMessage.getUserAction();
-            }
-            else if (mGcmMessage.isCustomActionMessage()){
-                mAction = mGcmMessage.getCustomAction();
-            }
+            mAction = mGcmMessage.getAction();
         }
 
         //If the action exists do some initial setup and fetching
         if (mAction != null){
             if (mAction instanceof UserAction){
                 UserAction userAction = (UserAction)mAction;
-                fetchCategory(userAction);
+                setCategory(mApp.getAvailableCategories().get(userAction.getPrimaryCategoryId()));
             }
             else{
-                setHeader();
+                setCategory(null);
             }
             mAdapter.setAction(mAction);
         }
@@ -125,24 +123,24 @@ public class ActionActivity
         }
     }
 
-    /**
-     * Sets up the header of the activity
-     */
-    private void setHeader(){
+    private void setCategory(@Nullable TDCCategory category){
         View header = inflateHeader(R.layout.header_hero);
         ImageView image = (ImageView)header.findViewById(R.id.header_hero_image);
-        if (mUserCategory == null || mUserCategory.getCategory().getImageUrl().isEmpty()){
-            image.setImageResource(R.drawable.compass_master_illustration);
-        }
-        else{
-            if (mUserCategory.getCategory().getImageUrl() == null){
+
+        if (category != null){
+            mAdapter.setCategory(category);
+            setColor(Color.parseColor(category.getColor()));
+            if (category.getImageUrl() == null || category.getImageUrl().isEmpty()){
                 image.setImageResource(R.drawable.compass_master_illustration);
             }
             else{
                 ImageLoader.Options options = new ImageLoader.Options()
                         .setPlaceholder(R.drawable.compass_master_illustration);
-                ImageLoader.loadBitmap(image, mUserCategory.getCategory().getImageUrl(), options);
+                ImageLoader.loadBitmap(image, category.getImageUrl(), options);
             }
+        }
+        else{
+            image.setImageResource(R.drawable.compass_master_illustration);
         }
     }
 
@@ -230,16 +228,6 @@ public class ActionActivity
         Tour.display(this, tooltips);
     }
 
-    /**
-     * Fetches a category from the backend.
-     *
-     * @param userAction the user action whose category is to be fetched.
-     */
-    private void fetchCategory(UserAction userAction){
-        long userCategoryId = userAction.getPrimaryCategoryId();
-        mGetUserCategoryRC = HttpRequest.get(this, API.URL.getUserCategory(userCategoryId));
-    }
-
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetActionRC){
@@ -249,9 +237,6 @@ public class ActionActivity
             else if (isCustomAction()){
                 Parser.parse(result, CustomAction.class, this);
             }
-        }
-        else if (requestCode == mGetUserCategoryRC){
-            Parser.parse(result, ParserModels.UserCategoryResultSet.class, this);
         }
         else if (requestCode == mDeleteBehaviorRC) {
             // We deleted some content so there's really nothing to show.
@@ -269,26 +254,19 @@ public class ActionActivity
         if (result instanceof Action){
             mAction = (Action)result;
         }
-        else if (result instanceof ParserModels.UserCategoryResultSet){
-            mUserCategory = ((ParserModels.UserCategoryResultSet)result).results.get(0);
-        }
     }
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof UserAction){
             mAdapter.setAction(mAction);
-            fetchCategory((UserAction)mAction);
+            UserAction userAction = (UserAction)mAction;
+            setCategory(mApp.getAvailableCategories().get(userAction.getPrimaryCategoryId()));
             invalidateOptionsMenu();
         }
         else if (result instanceof CustomAction){
             mAdapter.setAction(mAction);
             invalidateOptionsMenu();
-        }
-        else if (result instanceof ParserModels.UserCategoryResultSet){
-            setColor(Color.parseColor(mUserCategory.getColor()));
-            setHeader();
-            mAdapter.setCategory(mUserCategory.getCategory());
         }
     }
 
