@@ -126,6 +126,10 @@ public abstract class MaterialActivity extends AppCompatActivity{
         mRecyclerView.setAdapter(adapter);
     }
 
+    protected final void setAdapter(RecyclerView.Adapter adapter){
+        mRecyclerView.setAdapter(adapter);
+    }
+
     protected final View inflateHeader(@LayoutRes int layoutResId){
         return LayoutInflater.from(this).inflate(layoutResId, mHeaderContainer);
     }

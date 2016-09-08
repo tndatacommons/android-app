@@ -1,6 +1,8 @@
 package org.tndata.android.compass.service;
 
 import android.app.IntentService;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
@@ -66,5 +68,23 @@ public class GcmIntentService extends IntentService{
         if (isFromGcm){
             GcmBroadcastReceiver.completeWakefulIntent(intent);
         }
+    }
+
+
+    public static Intent getIntent(Context context, String message){
+        return new Intent(context, GcmIntentService.class)
+                .putExtra(MESSAGE_KEY, message)
+                .putExtra(FROM_GCM_KEY, false);
+    }
+
+    public static Intent populateIntent(Context context, Intent intent, String message){
+        return intent.putExtra(MESSAGE_KEY, message)
+                .putExtra(FROM_GCM_KEY, true)
+                .setComponent(
+                        new ComponentName(
+                                context.getPackageName(),
+                                GcmIntentService.class.getName()
+                        )
+                );
     }
 }

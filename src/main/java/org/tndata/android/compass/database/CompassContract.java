@@ -29,26 +29,13 @@ public class CompassContract{
     }
 
 
-    /**
-     * The definition of all the Reminder tables.
-     *
-     * @author Ismael Alonso
-     * @version 1.0.0
-     */
-    public static abstract class ReminderEntry implements BaseColumns{
-        //Table name information
-        public static final String TABLE = "Reminder";
+    public static abstract class LocationReminderEntry implements BaseColumns{
+        public static final String TABLE = "LocationReminder";
 
         //Column information
         public static final String ID = _ID;
-        public static final String NOTIFICATION_ID = "notification_id";
         public static final String PLACE_ID = "place_id";
-        public static final String TITLE = "title";
-        public static final String MESSAGE = "message";
-        public static final String OBJECT_ID = "object_id";
-        public static final String USER_MAPPING_ID = "user_mapping_id";
-        public static final String SNOOZED = "snoozed";
-        public static final String LAST_DELIVERED = "last_delivered";
+        public static final String GCM_MESSAGE = "gcm_message";
     }
 
 

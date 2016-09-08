@@ -21,7 +21,6 @@ import org.tndata.android.compass.adapter.ActionAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.GcmMessage;
-import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.model.TDCAction;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserAction;
@@ -62,7 +61,6 @@ public class ActionActivity
 
     public static final String ACTION_KEY = "org.tndata.compass.ActionActivity.Action";
     public static final String UPCOMING_ACTION_KEY = "org.tndata.compass.ActionActivity.Upcoming";
-    public static final String REMINDER_KEY = "org.tndata.compass.ActionActivity.Reminder";
     public static final String GCM_MESSAGE_KEY = "org.tndata.compass.ActionActivity.GcmMessage";
 
     public static final String DID_IT_KEY = "org.tndata.compass.ActionActivity.DidIt";
@@ -75,7 +73,6 @@ public class ActionActivity
     private Action mAction;
     private UserCategory mUserCategory;
     private UpcomingAction mUpcomingAction;
-    private Reminder mReminder;
     private GcmMessage mGcmMessage;
 
     private ActionAdapter mAdapter;
@@ -94,17 +91,16 @@ public class ActionActivity
         //  will be actually something other than null
         mAction = getIntent().getParcelableExtra(ACTION_KEY);
         mUpcomingAction = getIntent().getParcelableExtra(UPCOMING_ACTION_KEY);
-        mReminder = getIntent().getParcelableExtra(REMINDER_KEY);
         mGcmMessage = getIntent().getParcelableExtra(GCM_MESSAGE_KEY);
 
         //Set a placeholder color
         setColor(getResources().getColor(R.color.primary));
 
         //Create and set the adapter
-        mAdapter = new ActionAdapter(this, this, mReminder != null);
+        mAdapter = new ActionAdapter(this, this, mGcmMessage != null);
         setAdapter(mAdapter);
 
-        if (mAction == null && mGcmMessage != null){
+        if (mGcmMessage != null){
             if (mGcmMessage.isUserActionMessage()){
                 mAction = mGcmMessage.getUserAction();
             }
@@ -163,7 +159,7 @@ public class ActionActivity
         if (mUpcomingAction != null && mUpcomingAction.isUserAction()){
             return true;
         }
-        if (mReminder != null && mReminder.isUserAction()){
+        if (mGcmMessage != null && mGcmMessage.isUserActionMessage()){
             return true;
         }
         return false;
@@ -182,7 +178,7 @@ public class ActionActivity
         if (mUpcomingAction != null && mUpcomingAction.isCustomAction()){
             return true;
         }
-        if (mReminder != null && mReminder.isCustomAction()){
+        if (mGcmMessage != null && mGcmMessage.isCustomActionMessage()){
             return true;
         }
         return false;
@@ -194,19 +190,16 @@ public class ActionActivity
      *
      * @return the relevant id for the action.
      */
-    private int getActionId(){
-        if (mAction != null){
-            return (int)mAction.getId();
-        }
+    private long getActionId(){
         if (mUpcomingAction != null){
-            return (int)mUpcomingAction.getId();
+            return mUpcomingAction.getId();
         }
-        if (mReminder != null){
-            if (mReminder.isUserAction()){
-                return mReminder.getUserMappingId();
+        if (mGcmMessage != null){
+            if (mGcmMessage.isUserActionMessage()){
+                return mGcmMessage.getUserAction().getId();
             }
-            else if (mReminder.isCustomAction()){
-                return mReminder.getObjectId();
+            else if (mGcmMessage.isCustomActionMessage()){
+                return mGcmMessage.getCustomAction().getId();
             }
         }
         return -1;
@@ -216,14 +209,13 @@ public class ActionActivity
      * Retrieves an action from the API
      */
     private void fetchAction(){
-        int id = getActionId();
         if (isUserAction()){
-            Log.d("ActionActivity", "Fetching UserAction: " + id);
-            mGetActionRC = HttpRequest.get(this, API.URL.getAction(id));
+            Log.d("ActionActivity", "Fetching UserAction: " + mUpcomingAction.getId());
+            mGetActionRC = HttpRequest.get(this, API.URL.getAction(mUpcomingAction.getId()));
         }
         else if (isCustomAction()){
-            Log.d("ActionActivity", "Fetching CustomAction: " + id);
-            mGetActionRC = HttpRequest.get(this, API.URL.getCustomAction(id));
+            Log.d("ActionActivity", "Fetching CustomAction: " + mUpcomingAction.getId());
+            mGetActionRC = HttpRequest.get(this, API.URL.getCustomAction(mUpcomingAction.getId()));
         }
     }
 
@@ -313,7 +305,7 @@ public class ActionActivity
         if (mAction == null || !mAction.isEditable()){
             return false;
         }
-        if (mReminder != null){
+        if (mGcmMessage != null){
             if (mAction.hasTrigger() && mAction.getTrigger().isEnabled()){
                 getMenuInflater().inflate(R.menu.menu_action_reminder, menu);
             }
@@ -415,7 +407,7 @@ public class ActionActivity
     public void onSnoozeClick(){
         if (mAction != null){
             Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
-                    .putExtra(NotificationUtil.REMINDER_KEY, mReminder);
+                    .putExtra(SnoozeActivity.GCM_MESSAGE_KEY, mGcmMessage);
             startActivityForResult(snoozeIntent, SNOOZE_REQUEST_CODE);
         }
     }
