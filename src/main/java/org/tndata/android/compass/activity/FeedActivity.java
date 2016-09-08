@@ -433,7 +433,8 @@ public class FeedActivity
             else if (tooltip == tooltipToShow && tooltip == Tour.Tooltip.FEED_PROGRESS){
                 tooltip.setTarget(mStreaksView);
                 tooltips.add(tooltip);
-                tooltip = Tour.Tooltip.FEED_FAB;
+            }
+            else if (tooltip == tooltipToShow && tooltip == Tour.Tooltip.FEED_FAB){
                 tooltip.setTarget(mBinding.feedMenu.getMenuIconView());
                 tooltips.add(tooltip);
             }
@@ -462,6 +463,11 @@ public class FeedActivity
                 else{
                     mShowStreaksTooltip = true;
                 }
+                break;
+
+            case FEED_PROGRESS:
+                mBinding.feedMenu.showMenuButton(false);
+                fireTour(Tour.Tooltip.FEED_FAB);
                 break;
         }
     }
