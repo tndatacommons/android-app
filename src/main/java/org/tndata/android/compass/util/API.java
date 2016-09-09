@@ -162,7 +162,7 @@ public final class API{
             return BASE_URL + "users/actions/?goal=" + goalId;
         }
 
-        public static String getAction(long actionMappingId){
+        public static String getUserAction(long actionMappingId){
             return BASE_URL + "users/actions/" + actionMappingId + "/";
         }
 

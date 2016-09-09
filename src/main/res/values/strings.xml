@@ -351,4 +351,7 @@
     <string name="badge_footer">Go check out all the badges you\'ve earned.</string>
     <string name="badge_share">I\'ve earned the %1$s badge on Compass!</string>
 
+    <!-- Goal card -->
+    <string name="card_goal_title">Your goal</string>
+
 </resources>

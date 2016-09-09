@@ -16,9 +16,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ActionAdapter;
+import org.tndata.android.compass.adapter.NewActionAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.GcmMessage;
@@ -26,6 +29,7 @@ import org.tndata.android.compass.model.TDCAction;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.service.ActionReportService;
@@ -60,6 +64,8 @@ public class ActionActivity
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback{
 
+    private static final String TAG = "ActionActivity";
+
     public static final String ACTION_KEY = "org.tndata.compass.ActionActivity.Action";
     public static final String UPCOMING_ACTION_KEY = "org.tndata.compass.ActionActivity.Upcoming";
     public static final String GCM_MESSAGE_KEY = "org.tndata.compass.ActionActivity.GcmMessage";
@@ -77,7 +83,7 @@ public class ActionActivity
     private UpcomingAction mUpcomingAction;
     private GcmMessage mGcmMessage;
 
-    private ActionAdapter mAdapter;
+    private NewActionAdapter mAdapter;
 
     private int mGetActionRC;
     private int mDeleteBehaviorRC;
@@ -96,18 +102,15 @@ public class ActionActivity
         mUpcomingAction = getIntent().getParcelableExtra(UPCOMING_ACTION_KEY);
         mGcmMessage = getIntent().getParcelableExtra(GCM_MESSAGE_KEY);
 
-        //Set a placeholder color
-        setColor(getResources().getColor(R.color.primary));
-
         //Create and set the adapter
-        mAdapter = new ActionAdapter(this, this, mGcmMessage != null);
+        mAdapter = new NewActionAdapter(this);
         setAdapter(mAdapter);
 
         if (mGcmMessage != null){
             mAction = mGcmMessage.getAction();
         }
 
-        //If the action exists do some initial setup and fetching
+        //If the action exists do some initial setup
         if (mAction != null){
             if (mAction instanceof UserAction){
                 UserAction userAction = (UserAction)mAction;
@@ -116,10 +119,21 @@ public class ActionActivity
             else{
                 setCategory(null);
             }
-            mAdapter.setAction(mAction);
+            //mAdapter.setAction(mAction);
         }
+        //Otherwise fetch it
         else{
-            fetchAction();
+            setColor(getResources().getColor(R.color.primary));
+
+            //At this point the only possible scenario is they being an upcoming action
+            if (mUpcomingAction.isUserAction()){
+                Log.d(TAG, "Fetching UserAction: " + mUpcomingAction.getId());
+                mGetActionRC = HttpRequest.get(this, API.URL.getUserAction(mUpcomingAction.getId()));
+            }
+            else if (mUpcomingAction.isCustomAction()){
+                Log.d(TAG, "Fetching CustomAction: " + mUpcomingAction.getId());
+                mGetActionRC = HttpRequest.get(this, API.URL.getCustomAction(mUpcomingAction.getId()));
+            }
         }
     }
 
@@ -128,7 +142,7 @@ public class ActionActivity
         ImageView image = (ImageView)header.findViewById(R.id.header_hero_image);
 
         if (category != null){
-            mAdapter.setCategory(category);
+            //mAdapter.setCategory(category);
             setColor(Color.parseColor(category.getColor()));
             if (category.getImageUrl() == null || category.getImageUrl().isEmpty()){
                 image.setImageResource(R.drawable.compass_master_illustration);
@@ -203,20 +217,6 @@ public class ActionActivity
         return -1;
     }
 
-    /**
-     * Retrieves an action from the API
-     */
-    private void fetchAction(){
-        if (isUserAction()){
-            Log.d("ActionActivity", "Fetching UserAction: " + mUpcomingAction.getId());
-            mGetActionRC = HttpRequest.get(this, API.URL.getAction(mUpcomingAction.getId()));
-        }
-        else if (isCustomAction()){
-            Log.d("ActionActivity", "Fetching CustomAction: " + mUpcomingAction.getId());
-            mGetActionRC = HttpRequest.get(this, API.URL.getCustomAction(mUpcomingAction.getId()));
-        }
-    }
-
     private void fireTour(View target){
         Queue<Tour.Tooltip> tooltips = new LinkedList<>();
         for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.ACTION)){
@@ -246,7 +246,7 @@ public class ActionActivity
 
     @Override
     public void onRequestFailed(int requestCode, HttpRequestError error){
-        mAdapter.displayError("Couldn't retrieve activity information");
+        //mAdapter.displayError("Couldn't retrieve activity information");
     }
 
     @Override
@@ -259,13 +259,13 @@ public class ActionActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof UserAction){
-            mAdapter.setAction(mAction);
+            //mAdapter.setAction(mAction);
             UserAction userAction = (UserAction)mAction;
             setCategory(mApp.getAvailableCategories().get(userAction.getPrimaryCategoryId()));
             invalidateOptionsMenu();
         }
         else if (result instanceof CustomAction){
-            mAdapter.setAction(mAction);
+            //mAdapter.setAction(mAction);
             invalidateOptionsMenu();
         }
     }
@@ -349,7 +349,7 @@ public class ActionActivity
 
     @Override
     public void onActionCardLoaded(){
-        fireTour(mAdapter.getDidItButton());
+        //fireTour(mAdapter.getDidItButton());
     }
 
     @Override
@@ -522,6 +522,39 @@ public class ActionActivity
                 case SNOOZE_REQUEST_CODE:
                     NotificationUtil.cancel(this, NotificationUtil.USER_ACTION_TAG, getActionId());
                     finish();
+            }
+        }
+    }
+
+
+    private class EndpointData{
+        @SerializedName("user_action")
+        private UserAction mUserAction;
+        @SerializedName("user_goal")
+        private UserGoal mUserGoal;
+        @SerializedName("user_behavior")
+        private UserAction mBehavior;
+
+        @SerializedName("custom_action")
+        private CustomAction mCustomAction;
+        @SerializedName("custom_goal")
+        private UserGoal mCustomGoal;
+
+
+        public boolean isUserAction(){
+            return mUserAction != null;
+        }
+
+        public boolean isCustomAction(){
+            return mCustomAction != null;
+        }
+
+        public void setAction(Action action){
+            if (action instanceof UserAction){
+                mUserAction = (UserAction)action;
+            }
+            else if (action instanceof  CustomAction){
+                mCustomAction = (CustomAction)action;
             }
         }
     }

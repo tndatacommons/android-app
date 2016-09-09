@@ -114,7 +114,7 @@ public class ActionAdapter
             holder.setTitle(mAction.getTitle());
             holder.setTitleBold();
             /*String gt = mAction.getGoalTitle().toLowerCase();
-            String bt = ((UserAction)mAction).getAction().getBehaviorTitle().toLowerCase();
+            String bt = ((UserAction)mAction).getUserAction().getBehaviorTitle().toLowerCase();
             holder.setSubtitle(getContext().getString(R.string.action_header_subtitle, bt, gt));*/
             holder.setSubtitle(((UserAction)mAction).getAction().getBehaviorTitle());
             UserAction userAction = (UserAction)mAction;

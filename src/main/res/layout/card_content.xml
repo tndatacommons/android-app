@@ -19,6 +19,8 @@
                 android:layout_height="wrap_content"
                 android:padding="24dp"
                 android:background="@color/primary"
+                android:text="Title"
+                android:textAllCaps="true"
                 style="@style/CardTitleText" />
 
             <TextView
@@ -26,6 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="24dp"
+                android:text="Content"
                 style="@style/CardContentText" />
 
             <LinearLayout
