@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <android.support.v7.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="@dimen/card_view_corner_radius" >
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="24dp" >
+
+                <TextView
+                    android:id="@+id/detail_header"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="header"
+                    android:textSize="18sp"
+                    android:textAllCaps="true" />
+
+                <ImageView
+                    android:id="@+id/detail_overflow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:tint="@color/black"
+                    android:src="@drawable/ic_overflow_vertical_white" />
+
+            </LinearLayout>
+
+            <include layout="@layout/separator_soft" />
+
+            <TextView
+                android:id="@+id/detail_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="24dp"
+                android:text="Description"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/dark_text_color" />
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</layout>

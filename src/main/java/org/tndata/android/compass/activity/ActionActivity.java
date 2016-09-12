@@ -35,6 +35,7 @@ import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.ImageLoader;
+import org.tndata.android.compass.util.ItemSpacing;
 import org.tndata.android.compass.util.NotificationUtil;
 import org.tndata.android.compass.util.Tour;
 
@@ -105,6 +106,7 @@ public class ActionActivity
         //Create and set the adapter
         mAdapter = new NewActionAdapter(this);
         setAdapter(mAdapter);
+        getRecyclerView().addItemDecoration(new ItemSpacing(this, 8));
 
         if (mGcmMessage != null){
             mAction = mGcmMessage.getAction();

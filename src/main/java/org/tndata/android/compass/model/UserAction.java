@@ -50,16 +50,8 @@ public class UserAction extends Action implements ParserModels.ResultSet{
         return mAction.getDescription();
     }
 
-    public String getHTMLDescription(){
-        return mAction.getHTMLDescription();
-    }
-
     public String getMoreInfo(){
         return mAction.getMoreInfo();
-    }
-
-    public String getHTMLMoreInfo(){
-        return mAction.getHTMLMoreInfo();
     }
 
     public String getExternalResource(){

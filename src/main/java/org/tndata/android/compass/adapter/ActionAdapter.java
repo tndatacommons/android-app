@@ -94,7 +94,7 @@ public class ActionAdapter
         if (mAction != null){
             if (mAction instanceof UserAction){
                 UserAction userAction = (UserAction)mAction;
-                if (!userAction.getMoreInfo().isEmpty() || !userAction.getHTMLMoreInfo().isEmpty()){
+                if (!userAction.getMoreInfo().isEmpty()){
                     return true;
                 }
                 return mReward != null;
@@ -169,11 +169,7 @@ public class ActionAdapter
                 holder.setHeaderColor(Color.parseColor(mCategory.getColor()));
             }
             holder.setTitle("More info");
-            if (!userAction.getHTMLMoreInfo().isEmpty()){
-                holder.setDescription(Html.fromHtml(userAction.getHTMLMoreInfo(), null,
-                        new CompassTagHandler(getContext())));
-            }
-            else if (!userAction.getMoreInfo().isEmpty()){
+            if (!userAction.getMoreInfo().isEmpty()){
                 holder.setDescription(userAction.getMoreInfo());
             }
             else{

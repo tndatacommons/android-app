@@ -10,8 +10,10 @@ import android.widget.Space;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.databinding.CardContentBinding;
+import org.tndata.android.compass.databinding.CardDetailBinding;
 import org.tndata.android.compass.databinding.CardGoalBinding;
 import org.tndata.android.compass.holder.ContentCardHolder;
+import org.tndata.android.compass.holder.DetailCardHolder;
 import org.tndata.android.compass.holder.GoalCardHolder;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.util.CompassUtil;
@@ -43,14 +45,17 @@ public class NewActionAdapter extends RecyclerView.Adapter{
         else if (position == 1){
             return TYPE_GOAL;
         }
-        else{
+        else if (position == 2){
             return TYPE_CONTENT;
+        }
+        else{
+            return TYPE_DETAIL;
         }
     }
 
     @Override
     public int getItemCount(){
-        return 3;
+        return 4;
     }
 
     @Override
@@ -71,6 +76,13 @@ public class NewActionAdapter extends RecyclerView.Adapter{
                     inflater, R.layout.card_content, parent, false
             );
             return new ContentCardHolder(binding);
+        }
+        else if (viewType == TYPE_DETAIL){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            CardDetailBinding binding = DataBindingUtil.inflate(
+                    inflater, R.layout.card_detail, parent, false
+            );
+            return new DetailCardHolder(binding);
         }
         return null;
     }
