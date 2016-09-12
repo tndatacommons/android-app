@@ -1,7 +1,7 @@
 package org.tndata.android.compass.holder;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 
 import org.tndata.android.compass.databinding.CardDetailBinding;
 
@@ -15,5 +15,14 @@ public class DetailCardHolder extends RecyclerView.ViewHolder{
 
     public DetailCardHolder(CardDetailBinding binding){
         super(binding.getRoot());
+        mBinding = binding;
+    }
+
+    public void setTitle(@NonNull String title){
+        mBinding.detailTitle.setText(title);
+    }
+
+    public void setContent(@NonNull String content){
+        mBinding.detailContent.setText(content);
     }
 }

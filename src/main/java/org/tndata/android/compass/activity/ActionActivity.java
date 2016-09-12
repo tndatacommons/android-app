@@ -1,42 +1,32 @@
 package org.tndata.android.compass.activity;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.gson.annotations.SerializedName;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.adapter.ActionAdapter;
 import org.tndata.android.compass.adapter.NewActionAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.GcmMessage;
-import org.tndata.android.compass.model.TDCAction;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserAction;
-import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.ImageLoader;
 import org.tndata.android.compass.util.ItemSpacing;
-import org.tndata.android.compass.util.NotificationUtil;
 import org.tndata.android.compass.util.Tour;
 
 import java.text.ParsePosition;
@@ -61,7 +51,6 @@ import es.sandwatch.httprequests.HttpRequestError;
 public class ActionActivity
         extends MaterialActivity
         implements
-                ActionAdapter.ActionAdapterListener,
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback{
 
@@ -81,13 +70,12 @@ public class ActionActivity
 
     //The action in question and the associated reminder
     private Action mAction;
-    private UpcomingAction mUpcomingAction;
-    private GcmMessage mGcmMessage;
-
-    private NewActionAdapter mAdapter;
 
     private int mGetActionRC;
     private int mDeleteBehaviorRC;
+
+    private boolean mFromGcm;
+    private boolean mUserAction;
 
 
     @Override
@@ -99,44 +87,61 @@ public class ActionActivity
 
         //Get the action, upcoming action and message from the intent. Only one of them
         //  will be actually something other than null
-        mAction = getIntent().getParcelableExtra(ACTION_KEY);
-        mUpcomingAction = getIntent().getParcelableExtra(UPCOMING_ACTION_KEY);
-        mGcmMessage = getIntent().getParcelableExtra(GCM_MESSAGE_KEY);
+        Action action = getIntent().getParcelableExtra(ACTION_KEY);
+        UpcomingAction upcomingAction = getIntent().getParcelableExtra(UPCOMING_ACTION_KEY);
+        GcmMessage gcmMessage = getIntent().getParcelableExtra(GCM_MESSAGE_KEY);
 
-        //Create and set the adapter
-        mAdapter = new NewActionAdapter(this);
-        setAdapter(mAdapter);
         getRecyclerView().addItemDecoration(new ItemSpacing(this, 8));
 
-        if (mGcmMessage != null){
-            mAction = mGcmMessage.getAction();
-        }
-
         //If the action exists do some initial setup
-        if (mAction != null){
-            if (mAction instanceof UserAction){
-                UserAction userAction = (UserAction)mAction;
-                setCategory(mApp.getAvailableCategories().get(userAction.getPrimaryCategoryId()));
-            }
-            else{
-                setCategory(null);
-            }
-            //mAdapter.setAction(mAction);
+        if (action != null){
+            setAction(action);
         }
         //Otherwise fetch it
         else{
             setColor(getResources().getColor(R.color.primary));
 
-            //At this point the only possible scenario is they being an upcoming action
-            if (mUpcomingAction.isUserAction()){
-                Log.d(TAG, "Fetching UserAction: " + mUpcomingAction.getId());
-                mGetActionRC = HttpRequest.get(this, API.URL.getUserAction(mUpcomingAction.getId()));
+            String url = "";
+            if (gcmMessage != null){
+                if (gcmMessage.isUserActionMessage()){
+                    Log.d(TAG, "Fetching UserAction #" + gcmMessage.getUserAction().getId());
+                    url = API.URL.getUserAction(gcmMessage.getUserAction().getId());
+                    mUserAction = true;
+                }
+                else if (gcmMessage.isCustomActionMessage()){
+                    Log.d(TAG, "Fetching CustomAction #" + gcmMessage.getCustomAction().getId());
+                    url = API.URL.getCustomAction(gcmMessage.getCustomAction().getId());
+                    mUserAction = false;
+                }
+                mFromGcm = true;
             }
-            else if (mUpcomingAction.isCustomAction()){
-                Log.d(TAG, "Fetching CustomAction: " + mUpcomingAction.getId());
-                mGetActionRC = HttpRequest.get(this, API.URL.getCustomAction(mUpcomingAction.getId()));
+            else if (upcomingAction != null){
+                if (upcomingAction.isUserAction()){
+                    Log.d(TAG, "Fetching UserAction #" + upcomingAction.getId());
+                    url = API.URL.getUserAction(upcomingAction.getId());
+                    mUserAction = true;
+                }
+                else if (upcomingAction.isCustomAction()){
+                    Log.d(TAG, "Fetching CustomAction #" + upcomingAction.getId());
+                    url = API.URL.getCustomAction(upcomingAction.getId());
+                    mUserAction = false;
+                }
             }
+            mGetActionRC = HttpRequest.get(this, url);
         }
+    }
+
+    private void setAction(@NonNull Action action){
+        mAction = action;
+        TDCCategory category = null;
+        if (mAction instanceof UserAction){
+            UserAction userAction = (UserAction)mAction;
+            category = mApp.getAvailableCategories().get(userAction.getPrimaryCategoryId());
+        }
+        setCategory(category);
+        NewActionAdapter adapter = new NewActionAdapter(this, mAction, category);
+        setAdapter(adapter);
+        invalidateOptionsMenu();
     }
 
     private void setCategory(@Nullable TDCCategory category){
@@ -160,65 +165,6 @@ public class ActionActivity
         }
     }
 
-    /**
-     * Tells whether the action is a user action.
-     *
-     * @return true if it is a user action, false otherwise.
-     */
-    @SuppressWarnings("RedundantIfStatement")
-    private boolean isUserAction(){
-        if (mAction != null && mAction instanceof UserAction){
-            return true;
-        }
-        if (mUpcomingAction != null && mUpcomingAction.isUserAction()){
-            return true;
-        }
-        if (mGcmMessage != null && mGcmMessage.isUserActionMessage()){
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Tells whether the action is a custom action.
-     *
-     * @return true if it is a custom action, false otherwise.
-     */
-    @SuppressWarnings("RedundantIfStatement")
-    private boolean isCustomAction(){
-        if (mAction != null && mAction instanceof CustomAction){
-            return true;
-        }
-        if (mUpcomingAction != null && mUpcomingAction.isCustomAction()){
-            return true;
-        }
-        if (mGcmMessage != null && mGcmMessage.isCustomActionMessage()){
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Gets the id of the action. This will be the mapping id in the case of a user action
-     * and the object id in case of a user action.
-     *
-     * @return the relevant id for the action.
-     */
-    private long getActionId(){
-        if (mUpcomingAction != null){
-            return mUpcomingAction.getId();
-        }
-        if (mGcmMessage != null){
-            if (mGcmMessage.isUserActionMessage()){
-                return mGcmMessage.getUserAction().getId();
-            }
-            else if (mGcmMessage.isCustomActionMessage()){
-                return mGcmMessage.getCustomAction().getId();
-            }
-        }
-        return -1;
-    }
-
     private void fireTour(View target){
         Queue<Tour.Tooltip> tooltips = new LinkedList<>();
         for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.ACTION)){
@@ -233,14 +179,15 @@ public class ActionActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetActionRC){
-            if (isUserAction()){
+            Log.d(TAG, "Action fetched, parsing");
+            if (mUserAction){
                 Parser.parse(result, UserAction.class, this);
             }
-            else if (isCustomAction()){
+            else{
                 Parser.parse(result, CustomAction.class, this);
             }
         }
-        else if (requestCode == mDeleteBehaviorRC) {
+        else if (requestCode == mDeleteBehaviorRC){
             // We deleted some content so there's really nothing to show.
             Log.d("XXX", "Deleted Behavior");
         }
@@ -253,28 +200,22 @@ public class ActionActivity
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof Action){
-            mAction = (Action)result;
-        }
+        //no-op
     }
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof UserAction){
-            //mAdapter.setAction(mAction);
-            UserAction userAction = (UserAction)mAction;
-            setCategory(mApp.getAvailableCategories().get(userAction.getPrimaryCategoryId()));
-            invalidateOptionsMenu();
+        if (result instanceof Action){
+            setAction((Action)result);
         }
-        else if (result instanceof CustomAction){
-            //mAdapter.setAction(mAction);
-            invalidateOptionsMenu();
+        else{
+            Log.e(TAG, "Result ain't an instance of Action");
         }
     }
 
     @Override
     public void onParseFailed(int requestCode){
-
+        Log.e(TAG, "Action couldn't be parsed");
     }
 
     @Override
@@ -285,7 +226,7 @@ public class ActionActivity
         if (mAction == null || !mAction.isEditable()){
             return false;
         }
-        if (mGcmMessage != null){
+        if (mFromGcm){
             if (mAction.hasTrigger() && mAction.getTrigger().isEnabled()){
                 getMenuInflater().inflate(R.menu.menu_action_reminder, menu);
             }
@@ -349,12 +290,12 @@ public class ActionActivity
         }
     }
 
-    @Override
+    //@Override
     public void onActionCardLoaded(){
         //fireTour(mAdapter.getDidItButton());
     }
 
-    @Override
+    //@Override
     public void onIDidItClick(){
         if (mAction != null){
             startService(new Intent(this, ActionReportService.class)
@@ -373,7 +314,7 @@ public class ActionActivity
         }
     }
 
-    @Override
+    //@Override
     public void onRescheduleClick(){
         if (mAction != null){
             Intent reschedule = new Intent(this, TriggerActivity.class)
@@ -383,17 +324,17 @@ public class ActionActivity
         }
     }
 
-    @Override
-    public void onSnoozeClick(){
+    //@Override
+    /*public void onSnoozeClick(){
         if (mAction != null){
             Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
                     .putExtra(SnoozeActivity.GCM_MESSAGE_KEY, mGcmMessage);
             startActivityForResult(snoozeIntent, SNOOZE_REQUEST_CODE);
         }
-    }
+    }*/
 
-    @Override
-    public void onBehaviorInfoClick() {
+    /*@Override
+    public void onBehaviorInfoClick(){
         if(isUserAction()) {
             // Display a dialog that show's the behavior's Title & Description, with buttons
             // to dismiss the dialog or to delete the behavior. If the user chooses to delete
@@ -455,16 +396,15 @@ public class ActionActivity
             cancelButton.setOnClickListener(buttonHandler);
             dialog.show();
         }
-    }
+    }*/
 
     /**
      * If the user is viewing a UserAction whose externalResourceName is "datetime", then the
      * externalResource is a datetime string (of the form YYYY-mm-dd hh:mm:ss). This is likely
      * for a specific scheduled event, so we'll give them an option to add to their Calendar.
-     *
      */
-    public void sendToCalendar() {
-        if(isUserAction()) {
+    public void sendToCalendar(){
+        if (mAction instanceof UserAction) {
             UserAction userAction = (UserAction) mAction;
             if(userAction.getAction().hasDatetimeResource()) {
 
@@ -522,41 +462,8 @@ public class ActionActivity
 
                 //In either case, the activity should finish after a second
                 case SNOOZE_REQUEST_CODE:
-                    NotificationUtil.cancel(this, NotificationUtil.USER_ACTION_TAG, getActionId());
+                    //NotificationUtil.cancel(this, NotificationUtil.USER_ACTION_TAG, getActionId());
                     finish();
-            }
-        }
-    }
-
-
-    private class EndpointData{
-        @SerializedName("user_action")
-        private UserAction mUserAction;
-        @SerializedName("user_goal")
-        private UserGoal mUserGoal;
-        @SerializedName("user_behavior")
-        private UserAction mBehavior;
-
-        @SerializedName("custom_action")
-        private CustomAction mCustomAction;
-        @SerializedName("custom_goal")
-        private UserGoal mCustomGoal;
-
-
-        public boolean isUserAction(){
-            return mUserAction != null;
-        }
-
-        public boolean isCustomAction(){
-            return mCustomAction != null;
-        }
-
-        public void setAction(Action action){
-            if (action instanceof UserAction){
-                mUserAction = (UserAction)action;
-            }
-            else if (action instanceof  CustomAction){
-                mCustomAction = (CustomAction)action;
             }
         }
     }

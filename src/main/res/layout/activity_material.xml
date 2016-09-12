@@ -26,6 +26,12 @@
         android:minHeight="?attr/actionBarSize"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <ProgressBar
+        android:id="@+id/material_progress"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_centerInParent="true" />
     
     <com.github.clans.fab.FloatingActionButton
         xmlns:fab="http://schemas.android.com/apk/res-auto"

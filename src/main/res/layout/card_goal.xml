@@ -26,7 +26,10 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="12dp" >
+                android:layout_marginLeft="24dp"
+                android:layout_marginBottom="12dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginTop="12dp" >
 
                 <RelativeLayout
                     android:id="@+id/goal_icon_container"
@@ -49,6 +52,8 @@
                     android:id="@+id/goal_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
                     android:layout_gravity="center_vertical"
                     android:text="Goal title"
                     android:textAppearance="?android:attr/textAppearanceMedium"

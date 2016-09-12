@@ -20,6 +20,7 @@
                 android:background="@color/primary"
                 android:text="Title"
                 android:textAllCaps="true"
+                android:textColor="@color/white"
                 style="@style/CardTitleText" />
 
             <TextView

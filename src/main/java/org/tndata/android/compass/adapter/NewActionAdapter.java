@@ -2,6 +2,8 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,9 @@ import org.tndata.android.compass.holder.ContentCardHolder;
 import org.tndata.android.compass.holder.DetailCardHolder;
 import org.tndata.android.compass.holder.GoalCardHolder;
 import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.CustomAction;
+import org.tndata.android.compass.model.TDCCategory;
+import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.util.CompassUtil;
 
 
@@ -31,10 +36,15 @@ public class NewActionAdapter extends RecyclerView.Adapter{
 
     private Context mContext;
     private Action mAction;
+    private TDCCategory mCategory;
 
 
-    public NewActionAdapter(Context context){
+    public NewActionAdapter(@NonNull Context context, @NonNull Action action,
+                            @NonNull TDCCategory category){
+
         mContext = context;
+        mAction = action;
+        mCategory = category;
     }
 
     @Override
@@ -55,7 +65,13 @@ public class NewActionAdapter extends RecyclerView.Adapter{
 
     @Override
     public int getItemCount(){
-        return 4;
+        if (mAction instanceof UserAction){
+            return 4;
+        }
+        else if (mAction instanceof CustomAction){
+            return 3;
+        }
+        return 0;
     }
 
     @Override
@@ -100,9 +116,39 @@ public class NewActionAdapter extends RecyclerView.Adapter{
                 rawHolder.itemView.setVisibility(View.INVISIBLE);
                 break;
 
-            case TYPE_CONTENT:
+            case TYPE_GOAL:
+                GoalCardHolder goalHolder = (GoalCardHolder)rawHolder;
+                goalHolder.setColor(Color.parseColor(mCategory.getColor()));
+                goalHolder.setTitle(mAction.getGoalTitle());
+                if (mAction instanceof UserAction){
+                    goalHolder.setIcon(((UserAction)mAction).getPrimaryGoalIconUrl());
+                }
+                break;
 
+            case TYPE_CONTENT:
+                ContentCardHolder contentHolder = (ContentCardHolder)rawHolder;
+                if (mAction instanceof UserAction){
+                    contentHolder.setTitle(mAction.getTitle());
+                    contentHolder.setContent(((UserAction)mAction).getDescription());
+                }
+                else if (mAction instanceof CustomAction){
+                    contentHolder.setTitle("Your Reminder");
+                    contentHolder.setContent(mAction.getTitle());
+                }
+                break;
+
+            case TYPE_DETAIL:
+                DetailCardHolder detailHolder = (DetailCardHolder)rawHolder;
+                if (mAction instanceof UserAction){
+                    detailHolder.setTitle("How will this help?");
+                    detailHolder.setContent(((UserAction)mAction).getAction().getBehaviorDescription());
+                }
                 break;
         }
+    }
+
+
+    public interface Listener{
+        
     }
 }

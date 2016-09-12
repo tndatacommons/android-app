@@ -19,13 +19,14 @@
                 android:padding="24dp" >
 
                 <TextView
-                    android:id="@+id/detail_header"
+                    android:id="@+id/detail_title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="header"
                     android:textSize="18sp"
-                    android:textAllCaps="true" />
+                    android:textAllCaps="true"
+                    style="@style/CardTitleText" />
 
                 <ImageView
                     android:id="@+id/detail_overflow"

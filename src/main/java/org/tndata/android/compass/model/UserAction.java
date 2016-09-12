@@ -20,10 +20,15 @@ public class UserAction extends Action implements ParserModels.ResultSet{
     //Values retrieved from the API
     @SerializedName("action")
     private TDCAction mAction;
+
     @SerializedName("userbehavior_id")
     private long mUserBehaviorId;
+
     @SerializedName("primary_goal")
     private long mPrimaryGoalId;
+    @SerializedName("goal_icon")
+    private String mGoalIconUrl;
+
     @SerializedName("primary_category")
     private long mPrimaryCategoryId;
 
@@ -72,12 +77,16 @@ public class UserAction extends Action implements ParserModels.ResultSet{
         return mUserBehaviorId;
     }
 
-    public long getPrimaryCategoryId(){
-        return mPrimaryCategoryId;
-    }
-
     public long getPrimaryGoalId(){
         return mPrimaryGoalId;
+    }
+
+    public String getPrimaryGoalIconUrl(){
+        return mGoalIconUrl;
+    }
+
+    public long getPrimaryCategoryId(){
+        return mPrimaryCategoryId;
     }
 
     @Override

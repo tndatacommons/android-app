@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -33,6 +34,7 @@ import org.tndata.android.compass.util.ParallaxEffect;
 public abstract class MaterialActivity extends AppCompatActivity{
     private FrameLayout mHeaderContainer;
     private RecyclerView mRecyclerView;
+    private ProgressBar mProgressBar;
     private FloatingActionButton mFAB;
 
 
@@ -53,6 +55,7 @@ public abstract class MaterialActivity extends AppCompatActivity{
         //Fetch UI components
         mHeaderContainer = (FrameLayout)findViewById(R.id.material_header_container);
         mRecyclerView = (RecyclerView)findViewById(R.id.material_list);
+        mProgressBar = (ProgressBar)findViewById(R.id.material_progress);
         mFAB = (FloatingActionButton)findViewById(R.id.material_fab);
 
         //Make the header the right size
@@ -123,10 +126,12 @@ public abstract class MaterialActivity extends AppCompatActivity{
     }
 
     protected final void setAdapter(MaterialAdapter adapter){
+        mProgressBar.setVisibility(View.GONE);
         mRecyclerView.setAdapter(adapter);
     }
 
     protected final void setAdapter(RecyclerView.Adapter adapter){
+        mProgressBar.setVisibility(View.GONE);
         mRecyclerView.setAdapter(adapter);
     }
 
