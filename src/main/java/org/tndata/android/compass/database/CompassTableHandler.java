@@ -2,20 +2,37 @@ package org.tndata.android.compass.database;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
 
 
 /**
  * A generic class for table handlers containing utilities.
  *
  * @author Ismael Alonso
- * @version 1.0.0
+ * @version 1.1.0
  */
 abstract class CompassTableHandler{
-    protected CompassDbHelper mDbHelper;
+    private static CompassDbHelper sDbHelper = null;
+    private static SQLiteDatabase sDatabase = null;
+    private static int sOpenConnections = 0;
 
 
-    CompassTableHandler(Context context){
-        mDbHelper = new CompassDbHelper(context);
+    protected void init(Context context){
+        if (sDbHelper == null){
+            sDbHelper = new CompassDbHelper(context);
+            sDatabase = sDbHelper.getWritableDatabase();
+            sOpenConnections = 0;
+        }
+        sOpenConnections++;
+    }
+
+    @NonNull
+    protected SQLiteDatabase getDatabase(){
+        if (sOpenConnections == 0){
+            throw new IllegalStateException("The handler needs to be initialized before used");
+        }
+        return sDatabase;
     }
 
     protected int getInt(Cursor cursor, String columnName){
@@ -35,6 +52,11 @@ abstract class CompassTableHandler{
     }
 
     public void close(){
-        mDbHelper.close();
+        if (--sOpenConnections == 0){
+            sDatabase.close();
+            sDatabase = null;
+            sDbHelper.close();
+            sDbHelper = null;
+        }
     }
 }

@@ -65,7 +65,7 @@ public class TDCCategoryTableHandler extends CompassTableHandler{
      * @param context a reference to the context.
      */
     public TDCCategoryTableHandler(Context context){
-        super(context);
+        init(context);
     }
 
     /**
@@ -76,7 +76,7 @@ public class TDCCategoryTableHandler extends CompassTableHandler{
      */
     public void writeCategories(List<TDCCategory> categories){
         //Get the database and clear it
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        SQLiteDatabase db = getDatabase();
         db.execSQL(CLEAR);
 
         //Prepare the transaction
@@ -113,7 +113,6 @@ public class TDCCategoryTableHandler extends CompassTableHandler{
 
         //Close the database
         stmt.close();
-        db.close();
     }
 
     /**
@@ -123,7 +122,7 @@ public class TDCCategoryTableHandler extends CompassTableHandler{
      */
     public Map<Long, TDCCategory> readCategories(){
         //Open a readable database and execute the query
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        SQLiteDatabase db = getDatabase();
         Cursor cursor = db.rawQuery(SELECT, null);
 
         Map<Long, TDCCategory> categories = new HashMap<>();
@@ -157,7 +156,6 @@ public class TDCCategoryTableHandler extends CompassTableHandler{
 
         //Clean up and return the result
         cursor.close();
-        db.close();
         return categories;
     }
 
@@ -167,14 +165,13 @@ public class TDCCategoryTableHandler extends CompassTableHandler{
      * @return true if it is empty, false otherwise.
      */
     public boolean isTableEmpty(){
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        SQLiteDatabase db = getDatabase();
         Cursor cursor = db.rawQuery(COUNT, null);
         cursor.moveToFirst();
 
         int count = cursor.getInt(0);
 
         cursor.close();
-        db.close();
         return count == 0;
     }
 }
