@@ -1,6 +1,5 @@
 package org.tndata.android.compass.holder;
 
-import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.support.annotation.IdRes;
@@ -18,8 +17,6 @@ import org.tndata.android.compass.databinding.CardContentBinding;
 /**
  * Holder to display a card with the card_content.xml layout.
  *
- * TODO content type setters
- *
  * @author Ismael Alonso
  * @version 1.0.0
  */
@@ -35,6 +32,10 @@ public class ContentCardHolder extends RecyclerView.ViewHolder{
     public ContentCardHolder(@NonNull CardContentBinding binding){
         super(binding.getRoot());
         mBinding = binding;
+    }
+
+    public void setColor(int color){
+        mBinding.contentTitle.setBackgroundColor(color);
     }
 
     /**
@@ -70,13 +71,10 @@ public class ContentCardHolder extends RecyclerView.ViewHolder{
      *
      * @param id the id of the new button.
      * @param caption the resource of the caption of the new button.
-     * @param listener the listener to set to the new button.
      *
-     * @return the newly created button
+     * @return the newly created button.
      */
-    public Button addButton(Context context, @IdRes int id, @StringRes int caption,
-                            View.OnClickListener listener){
-
+    public Button addButton(@IdRes int id, @StringRes int caption){
         LayoutInflater inflater = LayoutInflater.from(itemView.getContext());
         AssetManager assets = itemView.getContext().getAssets();
         View view = inflater.inflate(R.layout.button_flat, mBinding.contentButtonContainer);
@@ -84,7 +82,6 @@ public class ContentCardHolder extends RecyclerView.ViewHolder{
         button.setId(id);
         button.setText(caption);
         button.setTypeface(Typeface.createFromAsset(assets, "fonts/Roboto-Medium.ttf"));
-        button.setOnClickListener(listener);
         mBinding.contentButtonContainer.setVisibility(View.VISIBLE);
 
         return button;

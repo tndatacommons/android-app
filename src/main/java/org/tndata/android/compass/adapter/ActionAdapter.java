@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
@@ -20,7 +19,6 @@ import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.CompassTagHandler;
 import org.tndata.android.compass.util.CompassUtil;
 
 import es.sandwatch.httprequests.HttpRequest;
@@ -141,7 +139,7 @@ public class ActionAdapter
                 holder.addButton(R.id.action_do_it_now, R.string.action_do_it_now, this);
             }
         }
-        mDidItButton = holder.addButton(R.id.action_did_it, R.string.action_did_it, this);
+        mDidItButton = holder.addButton(R.id.action_got_it, R.string.action_got_it, this);
 
         ViewTreeObserver vto = holder.itemView.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
@@ -201,7 +199,7 @@ public class ActionAdapter
     @Override
     public void onClick(View v){
         switch (v.getId()){
-            case R.id.action_did_it:
+            case R.id.action_got_it:
                 mListener.onIDidItClick();
                 break;
 

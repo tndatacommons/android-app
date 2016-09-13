@@ -52,7 +52,8 @@ public class ActionActivity
         extends MaterialActivity
         implements
                 HttpRequest.RequestCallback,
-                Parser.ParserCallback{
+                Parser.ParserCallback,
+                NewActionAdapter.Listener{
 
     private static final String TAG = "ActionActivity";
 
@@ -133,14 +134,20 @@ public class ActionActivity
 
     private void setAction(@NonNull Action action){
         mAction = action;
-        TDCCategory category = null;
+
+        //Set the category
         if (mAction instanceof UserAction){
             UserAction userAction = (UserAction)mAction;
-            category = mApp.getAvailableCategories().get(userAction.getPrimaryCategoryId());
+            setCategory(mApp.getAvailableCategories().get(userAction.getPrimaryCategoryId()));
         }
-        setCategory(category);
-        NewActionAdapter adapter = new NewActionAdapter(this, mAction, category);
-        setAdapter(adapter);
+        else{
+            setCategory(null);
+        }
+
+        //Set the adapter
+        setAdapter(new NewActionAdapter(this, this, mAction));
+
+        //Refresh the menu
         invalidateOptionsMenu();
     }
 
@@ -466,5 +473,25 @@ public class ActionActivity
                     finish();
             }
         }
+    }
+
+    @Override
+    public void onContentCardLoaded(){
+
+    }
+
+    @Override
+    public void onGoalClick(){
+
+    }
+
+    @Override
+    public void onGotItClick(){
+
+    }
+
+    @Override
+    public void onDeleteBehaviorClick(){
+
     }
 }
