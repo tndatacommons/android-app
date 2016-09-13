@@ -1,18 +1,15 @@
 package org.tndata.android.compass.activity;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
@@ -21,17 +18,15 @@ import org.tndata.android.compass.adapter.ActionAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.GcmMessage;
-import org.tndata.android.compass.model.Reminder;
-import org.tndata.android.compass.model.TDCAction;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserAction;
-import org.tndata.android.compass.model.UserCategory;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.ImageLoader;
-import org.tndata.android.compass.util.NotificationUtil;
+import org.tndata.android.compass.util.ItemSpacing;
 import org.tndata.android.compass.util.Tour;
 
 import java.text.ParsePosition;
@@ -56,13 +51,14 @@ import es.sandwatch.httprequests.HttpRequestError;
 public class ActionActivity
         extends MaterialActivity
         implements
-                ActionAdapter.ActionAdapterListener,
                 HttpRequest.RequestCallback,
-                Parser.ParserCallback{
+                Parser.ParserCallback,
+                ActionAdapter.Listener{
+
+    private static final String TAG = "ActionActivity";
 
     public static final String ACTION_KEY = "org.tndata.compass.ActionActivity.Action";
     public static final String UPCOMING_ACTION_KEY = "org.tndata.compass.ActionActivity.Upcoming";
-    public static final String REMINDER_KEY = "org.tndata.compass.ActionActivity.Reminder";
     public static final String GCM_MESSAGE_KEY = "org.tndata.compass.ActionActivity.GcmMessage";
 
     public static final String DID_IT_KEY = "org.tndata.compass.ActionActivity.DidIt";
@@ -71,162 +67,132 @@ public class ActionActivity
     private static final int RESCHEDULE_REQUEST_CODE = 61429;
 
 
-    //The action in question and the associated reminder
-    private Action mAction;
-    private UserCategory mUserCategory;
-    private UpcomingAction mUpcomingAction;
-    private Reminder mReminder;
-    private GcmMessage mGcmMessage;
-
+    //References to the app class and the adapter
+    private CompassApplication mApp;
     private ActionAdapter mAdapter;
 
+    //The action in question
+    private Action mAction;
+
+    //Request codes
     private int mGetActionRC;
-    private int mGetUserCategoryRC;
     private int mDeleteBehaviorRC;
+
+    //Flags
+    private boolean mFromGcm;
+    private boolean mUserAction;
 
 
     @Override
-    @SuppressWarnings("deprecation")
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        //Get the action, upcoming action and reminder from the intent. Only one of them
+        mApp = (CompassApplication)getApplication();
+
+        //Get the action, upcoming action and message from the intent. Only one of them
         //  will be actually something other than null
-        mAction = getIntent().getParcelableExtra(ACTION_KEY);
-        mUpcomingAction = getIntent().getParcelableExtra(UPCOMING_ACTION_KEY);
-        mReminder = getIntent().getParcelableExtra(REMINDER_KEY);
-        mGcmMessage = getIntent().getParcelableExtra(GCM_MESSAGE_KEY);
+        Action action = getIntent().getParcelableExtra(ACTION_KEY);
+        UpcomingAction upcomingAction = getIntent().getParcelableExtra(UPCOMING_ACTION_KEY);
+        GcmMessage gcmMessage = getIntent().getParcelableExtra(GCM_MESSAGE_KEY);
 
-        //Set a placeholder color
-        setColor(getResources().getColor(R.color.primary));
+        getRecyclerView().addItemDecoration(new ItemSpacing(this, 8));
 
-        //Create and set the adapter
-        mAdapter = new ActionAdapter(this, this, mReminder != null);
-        setAdapter(mAdapter);
-
-        if (mAction == null && mGcmMessage != null){
-            if (mGcmMessage.isUserActionMessage()){
-                mAction = mGcmMessage.getUserAction();
-            }
-            else if (mGcmMessage.isCustomActionMessage()){
-                mAction = mGcmMessage.getCustomAction();
-            }
+        //If the action exists do some initial setup
+        if (action != null){
+            setAction(action);
         }
-
-        //If the action exists do some initial setup and fetching
-        if (mAction != null){
-            if (mAction instanceof UserAction){
-                UserAction userAction = (UserAction)mAction;
-                fetchCategory(userAction);
-            }
-            else{
-                setHeader();
-            }
-            mAdapter.setAction(mAction);
-        }
+        //Otherwise fetch it
         else{
-            fetchAction();
+            setCategory(null);
+
+            String url = "";
+            if (gcmMessage != null){
+                if (gcmMessage.isUserActionMessage()){
+                    Log.d(TAG, "Fetching UserAction #" + gcmMessage.getUserAction().getId());
+                    url = API.URL.getUserAction(gcmMessage.getUserAction().getId());
+                    mUserAction = true;
+                }
+                else if (gcmMessage.isCustomActionMessage()){
+                    Log.d(TAG, "Fetching CustomAction #" + gcmMessage.getCustomAction().getId());
+                    url = API.URL.getCustomAction(gcmMessage.getCustomAction().getId());
+                    mUserAction = false;
+                }
+                mFromGcm = true;
+            }
+            else if (upcomingAction != null){
+                if (upcomingAction.isUserAction()){
+                    Log.d(TAG, "Fetching UserAction #" + upcomingAction.getId());
+                    url = API.URL.getUserAction(upcomingAction.getId());
+                    mUserAction = true;
+                }
+                else if (upcomingAction.isCustomAction()){
+                    Log.d(TAG, "Fetching CustomAction #" + upcomingAction.getId());
+                    url = API.URL.getCustomAction(upcomingAction.getId());
+                    mUserAction = false;
+                }
+            }
+            mGetActionRC = HttpRequest.get(this, url);
         }
     }
 
     /**
-     * Sets up the header of the activity
+     * Sets the action to be displayed and initializes the adapter.
+     *
+     * @param action the action to be displayed.
      */
-    private void setHeader(){
-        View header = inflateHeader(R.layout.header_hero);
-        ImageView image = (ImageView)header.findViewById(R.id.header_hero_image);
-        if (mUserCategory == null || mUserCategory.getCategory().getImageUrl().isEmpty()){
-            image.setImageResource(R.drawable.compass_master_illustration);
+    private void setAction(@NonNull Action action){
+        mAction = action;
+
+        //Set the category
+        if (mAction instanceof UserAction){
+            UserAction userAction = (UserAction)mAction;
+            setCategory(mApp.getAvailableCategories().get(userAction.getPrimaryCategoryId()));
         }
         else{
-            if (mUserCategory.getCategory().getImageUrl() == null){
+            setCategory(null);
+        }
+
+        //Set the adapter
+        mAdapter = new ActionAdapter(this, this, mAction);
+        setAdapter(mAdapter);
+
+        //Refresh the menu
+        invalidateOptionsMenu();
+    }
+
+    /**
+     * Sets the header with the provided category.
+     *
+     * @param category the category to be displayed.
+     */
+    @SuppressWarnings("deprecation")
+    private void setCategory(@Nullable TDCCategory category){
+        View header = inflateHeader(R.layout.header_hero);
+        ImageView image = (ImageView)header.findViewById(R.id.header_hero_image);
+
+        if (category != null){
+            //When a category is available use its attributes to set the header up
+            setColor(Color.parseColor(category.getColor()));
+            if (category.getImageUrl() == null || category.getImageUrl().isEmpty()){
                 image.setImageResource(R.drawable.compass_master_illustration);
             }
             else{
                 ImageLoader.Options options = new ImageLoader.Options()
                         .setPlaceholder(R.drawable.compass_master_illustration);
-                ImageLoader.loadBitmap(image, mUserCategory.getCategory().getImageUrl(), options);
+                ImageLoader.loadBitmap(image, category.getImageUrl(), options);
             }
         }
+        else{
+            setColor(getResources().getColor(R.color.primary));
+            image.setImageResource(R.drawable.compass_master_illustration);
+        }
     }
 
     /**
-     * Tells whether the action is a user action.
+     * Fires the tour.
      *
-     * @return true if it is a user action, false otherwise.
+     * @param target the target view, the got it button in this case.
      */
-    @SuppressWarnings("RedundantIfStatement")
-    private boolean isUserAction(){
-        if (mAction != null && mAction instanceof UserAction){
-            return true;
-        }
-        if (mUpcomingAction != null && mUpcomingAction.isUserAction()){
-            return true;
-        }
-        if (mReminder != null && mReminder.isUserAction()){
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Tells whether the action is a custom action.
-     *
-     * @return true if it is a custom action, false otherwise.
-     */
-    @SuppressWarnings("RedundantIfStatement")
-    private boolean isCustomAction(){
-        if (mAction != null && mAction instanceof CustomAction){
-            return true;
-        }
-        if (mUpcomingAction != null && mUpcomingAction.isCustomAction()){
-            return true;
-        }
-        if (mReminder != null && mReminder.isCustomAction()){
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Gets the id of the action. This will be the mapping id in the case of a user action
-     * and the object id in case of a user action.
-     *
-     * @return the relevant id for the action.
-     */
-    private int getActionId(){
-        if (mAction != null){
-            return (int)mAction.getId();
-        }
-        if (mUpcomingAction != null){
-            return (int)mUpcomingAction.getId();
-        }
-        if (mReminder != null){
-            if (mReminder.isUserAction()){
-                return mReminder.getUserMappingId();
-            }
-            else if (mReminder.isCustomAction()){
-                return mReminder.getObjectId();
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * Retrieves an action from the API
-     */
-    private void fetchAction(){
-        int id = getActionId();
-        if (isUserAction()){
-            Log.d("ActionActivity", "Fetching UserAction: " + id);
-            mGetActionRC = HttpRequest.get(this, API.URL.getAction(id));
-        }
-        else if (isCustomAction()){
-            Log.d("ActionActivity", "Fetching CustomAction: " + id);
-            mGetActionRC = HttpRequest.get(this, API.URL.getCustomAction(id));
-        }
-    }
-
     private void fireTour(View target){
         Queue<Tour.Tooltip> tooltips = new LinkedList<>();
         for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.ACTION)){
@@ -238,71 +204,51 @@ public class ActionActivity
         Tour.display(this, tooltips);
     }
 
-    /**
-     * Fetches a category from the backend.
-     *
-     * @param userAction the user action whose category is to be fetched.
-     */
-    private void fetchCategory(UserAction userAction){
-        long userCategoryId = userAction.getPrimaryCategoryId();
-        mGetUserCategoryRC = HttpRequest.get(this, API.URL.getUserCategory(userCategoryId));
-    }
-
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetActionRC){
-            if (isUserAction()){
+            Log.i(TAG, "Action fetched, parsing...");
+            if (mUserAction){
                 Parser.parse(result, UserAction.class, this);
             }
-            else if (isCustomAction()){
+            else{
                 Parser.parse(result, CustomAction.class, this);
             }
         }
-        else if (requestCode == mGetUserCategoryRC){
-            Parser.parse(result, ParserModels.UserCategoryResultSet.class, this);
-        }
-        else if (requestCode == mDeleteBehaviorRC) {
-            // We deleted some content so there's really nothing to show.
-            Log.d("XXX", "Deleted Behavior");
+        else if (requestCode == mDeleteBehaviorRC){
+            long behaviorId = ((UserAction)mAction).getAction().getBehaviorId();
+            Log.i(TAG, "Behavior #" + behaviorId + " deleted.");
         }
     }
 
     @Override
     public void onRequestFailed(int requestCode, HttpRequestError error){
-        mAdapter.displayError("Couldn't retrieve activity information");
+        if (requestCode == mGetActionRC){
+            Log.e(TAG, "The action couldn't be fetched");
+            displayMessage(R.string.action_fetch_error);
+        }
+        else if (requestCode == mDeleteBehaviorRC){
+            Log.e(TAG, "The behavior couldn't be deleted");
+        }
     }
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof Action){
-            mAction = (Action)result;
-        }
-        else if (result instanceof ParserModels.UserCategoryResultSet){
-            mUserCategory = ((ParserModels.UserCategoryResultSet)result).results.get(0);
-        }
+        //no-op
     }
 
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof UserAction){
-            mAdapter.setAction(mAction);
-            fetchCategory((UserAction)mAction);
-            invalidateOptionsMenu();
-        }
-        else if (result instanceof CustomAction){
-            mAdapter.setAction(mAction);
-            invalidateOptionsMenu();
-        }
-        else if (result instanceof ParserModels.UserCategoryResultSet){
-            setColor(Color.parseColor(mUserCategory.getColor()));
-            setHeader();
-            mAdapter.setCategory(mUserCategory.getCategory());
+        if (result instanceof Action){
+            setAction((Action)result);
         }
     }
 
     @Override
     public void onParseFailed(int requestCode){
-
+        Log.e(TAG, "Action couldn't be parsed");
+        setCategory(null);
+        displayMessage(R.string.action_fetch_error);
     }
 
     @Override
@@ -313,7 +259,7 @@ public class ActionActivity
         if (mAction == null || !mAction.isEditable()){
             return false;
         }
-        if (mReminder != null){
+        if (mFromGcm){
             if (mAction.hasTrigger() && mAction.getTrigger().isEnabled()){
                 getMenuInflater().inflate(R.menu.menu_action_reminder, menu);
             }
@@ -377,31 +323,6 @@ public class ActionActivity
         }
     }
 
-    @Override
-    public void onActionCardLoaded(){
-        fireTour(mAdapter.getDidItButton());
-    }
-
-    @Override
-    public void onIDidItClick(){
-        if (mAction != null){
-            startService(new Intent(this, ActionReportService.class)
-                    .putExtra(ActionReportService.ACTION_KEY, mAction)
-                    .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
-
-            setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, true)
-                    .putExtra(ACTION_KEY, mAction));
-
-            Toast.makeText(this, R.string.action_completed_toast, Toast.LENGTH_SHORT).show();
-            CompassApplication application = (CompassApplication)getApplication();
-            if(application.getFeedData() == null) {
-                startActivity(new Intent(this, LauncherActivity.class));
-            }
-            finish();
-        }
-    }
-
-    @Override
     public void onRescheduleClick(){
         if (mAction != null){
             Intent reschedule = new Intent(this, TriggerActivity.class)
@@ -411,88 +332,13 @@ public class ActionActivity
         }
     }
 
-    @Override
-    public void onSnoozeClick(){
-        if (mAction != null){
-            Intent snoozeIntent = new Intent(this, SnoozeActivity.class)
-                    .putExtra(NotificationUtil.REMINDER_KEY, mReminder);
-            startActivityForResult(snoozeIntent, SNOOZE_REQUEST_CODE);
-        }
-    }
-
-    @Override
-    public void onBehaviorInfoClick() {
-        if(isUserAction()) {
-            // Display a dialog that show's the behavior's Title & Description, with buttons
-            // to dismiss the dialog or to delete the behavior. If the user chooses to delete
-            // the behavior, we ask for a confirmation before sending the Http request.
-            final long userBehaviorId = ((UserAction)mAction).getUserBehaviorId();
-            TDCAction action = ((UserAction)mAction).getAction();
-
-            ViewGroup rootView = (ViewGroup)findViewById(android.R.id.content);
-            LayoutInflater inflater = LayoutInflater.from(this);
-            View dialogRootView = inflater.inflate(R.layout.dialog_behavior, rootView, false);
-            TextView behaviorTitle = (TextView)dialogRootView.findViewById(R.id.dialog_behavior_title);
-            final TextView behaviorDescription = (TextView)dialogRootView.findViewById(R.id.dialog_behavior_description);
-
-            behaviorTitle.setText(action.getBehaviorTitle());
-            behaviorDescription.setText(action.getBehaviorDescription());
-
-            final Button cancelButton = (Button)dialogRootView.findViewById(R.id.behavior_dialog_cancel);
-            final Button removeButton = (Button)dialogRootView.findViewById(R.id.behavior_dialog_remove);
-            final Button confirmButton = (Button)dialogRootView.findViewById(R.id.behavior_dialog_confirm);
-            final Button cancelConfirmButton = (Button)dialogRootView.findViewById(R.id.behavior_dialog_cancel_confirm);
-
-            final AlertDialog dialog = new AlertDialog.Builder(this)
-                    .setView(dialogRootView)
-                    .create();
-
-            // I want to close this activity if the user deletes the parent behavior, and
-            // I also use this activity as the callback for the Http request.
-            final ActionActivity parent = this;
-
-            View.OnClickListener buttonHandler = new View.OnClickListener() {
-                public void onClick(View v) {
-                    switch(v.getId()) {
-                        case R.id.behavior_dialog_cancel_confirm:
-                        case R.id.behavior_dialog_cancel:
-                            dialog.dismiss();
-                            break;
-                        case R.id.behavior_dialog_remove:
-                            behaviorDescription.setText(getString(R.string.behavior_dialog_confirm_message));
-                            removeButton.setVisibility(View.GONE);
-                            cancelButton.setVisibility(View.GONE);
-                            confirmButton.setVisibility(View.VISIBLE);
-                            cancelConfirmButton.setVisibility(View.VISIBLE);
-                            break;
-                        case R.id.behavior_dialog_confirm:
-                            // Send the Delete http request and close the activity.
-                            String url = API.URL.deleteBehavior(userBehaviorId);
-                            mDeleteBehaviorRC = HttpRequest.delete(parent, url);
-                            dialog.dismiss();
-                            parent.finish();
-                            break;
-                    }
-                }
-            };
-
-            // Handler for buttons in the dialog
-            cancelConfirmButton.setOnClickListener(buttonHandler);
-            confirmButton.setOnClickListener(buttonHandler);
-            removeButton.setOnClickListener(buttonHandler);
-            cancelButton.setOnClickListener(buttonHandler);
-            dialog.show();
-        }
-    }
-
     /**
      * If the user is viewing a UserAction whose externalResourceName is "datetime", then the
      * externalResource is a datetime string (of the form YYYY-mm-dd hh:mm:ss). This is likely
      * for a specific scheduled event, so we'll give them an option to add to their Calendar.
-     *
      */
-    public void sendToCalendar() {
-        if(isUserAction()) {
+    public void sendToCalendar(){
+        if (mAction instanceof UserAction) {
             UserAction userAction = (UserAction) mAction;
             if(userAction.getAction().hasDatetimeResource()) {
 
@@ -550,9 +396,50 @@ public class ActionActivity
 
                 //In either case, the activity should finish after a second
                 case SNOOZE_REQUEST_CODE:
-                    NotificationUtil.cancel(this, NotificationUtil.USER_ACTION_TAG, getActionId());
+                    //NotificationUtil.cancel(this, NotificationUtil.USER_ACTION_TAG, getActionId());
                     finish();
             }
+        }
+    }
+
+    @Override
+    public void onContentCardLoaded(){
+        if (!Tour.getTooltipsFor(Tour.Section.ACTION).isEmpty()){
+            getRecyclerView().scrollToPosition(3);
+            fireTour(mAdapter.getGotItButton());
+        }
+    }
+
+    @Override
+    public void onGoalClick(){
+
+    }
+
+    @Override
+    public void onGotItClick(){
+        if (mAction != null){
+            startService(new Intent(this, ActionReportService.class)
+                    .putExtra(ActionReportService.ACTION_KEY, mAction)
+                    .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
+
+            setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, true)
+                    .putExtra(ACTION_KEY, mAction));
+
+            Toast.makeText(this, R.string.action_completed_toast, Toast.LENGTH_SHORT).show();
+            CompassApplication application = (CompassApplication)getApplication();
+            if(application.getFeedData() == null) {
+                startActivity(new Intent(this, LauncherActivity.class));
+            }
+            finish();
+        }
+    }
+
+    @Override
+    public void onDeleteBehaviorClick(){
+        if (mAction instanceof UserAction){
+            String url = API.URL.deleteBehavior(((UserAction)mAction).getUserBehaviorId());
+            mDeleteBehaviorRC = HttpRequest.delete(this, url);
+            finish();
         }
     }
 }

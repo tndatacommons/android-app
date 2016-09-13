@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +15,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
 
@@ -33,6 +36,8 @@ import org.tndata.android.compass.util.ParallaxEffect;
 public abstract class MaterialActivity extends AppCompatActivity{
     private FrameLayout mHeaderContainer;
     private RecyclerView mRecyclerView;
+    private TextView mFeedback;
+    private ProgressBar mProgressBar;
     private FloatingActionButton mFAB;
 
 
@@ -53,6 +58,8 @@ public abstract class MaterialActivity extends AppCompatActivity{
         //Fetch UI components
         mHeaderContainer = (FrameLayout)findViewById(R.id.material_header_container);
         mRecyclerView = (RecyclerView)findViewById(R.id.material_list);
+        mFeedback = (TextView)findViewById(R.id.material_feedback);
+        mProgressBar = (ProgressBar)findViewById(R.id.material_progress);
         mFAB = (FloatingActionButton)findViewById(R.id.material_fab);
 
         //Make the header the right size
@@ -74,7 +81,7 @@ public abstract class MaterialActivity extends AppCompatActivity{
     @Override
     public void setContentView(@LayoutRes int layoutResID){
         /* no-op */
-        //This and the two following methods are overriden and empty to prevent
+        //This and the two following methods are overridden and empty to prevent
         //  the programmer from changing the default layout of this activity
     }
 
@@ -122,7 +129,25 @@ public abstract class MaterialActivity extends AppCompatActivity{
         mFAB.setColorPressed(color);
     }
 
+    protected final void displayMessage(String message){
+        mFeedback.setText(message);
+        mFeedback.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.GONE);
+    }
+
+    protected final void displayMessage(@StringRes int messageId){
+        mFeedback.setText(messageId);
+        mFeedback.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.GONE);
+    }
+
     protected final void setAdapter(MaterialAdapter adapter){
+        mProgressBar.setVisibility(View.GONE);
+        mRecyclerView.setAdapter(adapter);
+    }
+
+    protected final void setAdapter(RecyclerView.Adapter adapter){
+        mProgressBar.setVisibility(View.GONE);
         mRecyclerView.setAdapter(adapter);
     }
 

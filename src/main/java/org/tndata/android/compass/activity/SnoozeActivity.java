@@ -22,19 +22,22 @@ import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.SnoozeAdapter;
-import org.tndata.android.compass.database.CompassDbHelper;
+import org.tndata.android.compass.database.LocationReminderTableHandler;
 import org.tndata.android.compass.database.PlaceTableHandler;
-import org.tndata.android.compass.model.Reminder;
+import org.tndata.android.compass.model.GcmMessage;
+import org.tndata.android.compass.model.LocationReminder;
 import org.tndata.android.compass.model.UserPlace;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.service.LocationNotificationService;
-import org.tndata.android.compass.service.SnoozeService;
+import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.NotificationUtil;
 import org.tndata.android.compass.util.SharedPreferencesManager;
 
 import java.util.Calendar;
 import java.util.List;
+
+import es.sandwatch.httprequests.HttpRequest;
 
 
 /**
@@ -60,8 +63,11 @@ public class SnoozeActivity
     private static final int LOCATION_PERMISSION_RC = 1;
     private static final int SETTINGS_REQUEST_CODE = 5378;
 
+    //Data keys
+    public static final String GCM_MESSAGE_KEY = "org.tndata.compass.Snooze.GcmMessage";
 
-    private Reminder mReminder;
+
+    private GcmMessage mGcmMessage;
     private int mYear, mMonth, mDay;
 
     private List<UserPlace> mPlaces;
@@ -77,7 +83,7 @@ public class SnoozeActivity
         setContentView(R.layout.activity_snooze);
         setTitle(R.string.later_title);
 
-        mReminder = getIntent().getParcelableExtra(NotificationUtil.REMINDER_KEY);
+        mGcmMessage = getIntent().getParcelableExtra(GCM_MESSAGE_KEY);
 
         ListView list = (ListView)findViewById(R.id.snooze_list);
         list.setAdapter(new SnoozeAdapter(this));
@@ -119,12 +125,7 @@ public class SnoozeActivity
             displayPlacesDialog();
         }
         else if (position == 4){
-            if (mReminder.isUserAction()){
-                NotificationUtil.cancel(this, NotificationUtil.USER_ACTION_TAG, mReminder.getUserMappingId());
-            }
-            else if (mReminder.isCustomAction()){
-                NotificationUtil.cancel(this, NotificationUtil.CUSTOM_ACTION_TAG, mReminder.getObjectId());
-            }
+            cancelNotification();
             setResult(RESULT_OK);
             Toast.makeText(this, R.string.later_toast, Toast.LENGTH_SHORT).show();
             finish();
@@ -207,15 +208,10 @@ public class SnoozeActivity
         String time = hourString + ":" + minuteString;
 
         //Log the data to verify format
-        Log.d(TAG, date + " " + time);
+        Log.i(TAG, "Notification snoozed to " + date + " " + time);
 
-        //Fire up the service with the appropriate parameters
-        Intent snooze = new Intent(this, SnoozeService.class);
-        snooze.putExtra(SnoozeService.NOTIFICATION_ID_KEY, mReminder.getNotificationId());
-        snooze.putExtra(SnoozeService.PUSH_NOTIFICATION_ID_KEY, mReminder.getObjectId());
-        snooze.putExtra(SnoozeService.DATE_KEY, date);
-        snooze.putExtra(SnoozeService.TIME_KEY, time);
-        startService(snooze);
+        HttpRequest.put(null, API.URL.putSnooze(mGcmMessage.getId()), API.BODY.putSnooze(date, time));
+        cancelNotification();
 
         //Kill the activity
         setResult(RESULT_OK);
@@ -333,17 +329,18 @@ public class SnoozeActivity
      */
     private void snooze(@NonNull UserPlace userPlace){
         //Prepare and save the reminder
-        mReminder.setPlaceId(userPlace.getId());
-        mReminder.setSnoozed(true);
-        CompassDbHelper dbHelper = new CompassDbHelper(this);
-        dbHelper.saveReminder(mReminder);
-        dbHelper.close();
+        LocationReminder reminder = new LocationReminder(
+                userPlace.getId(), mGcmMessage.getGcmMessage()
+        );
+        LocationReminderTableHandler handler = new LocationReminderTableHandler(this);
+        handler.saveReminder(reminder);
+        handler.close();
 
         //Cancel the notification
-        NotificationUtil.cancel(this, NotificationUtil.USER_ACTION_TAG, mReminder.getObjectId());
+        cancelNotification();
 
-        //Start the location service and report the snooze
-        LocationNotificationService.start(this);
+        //Update the dataset within the location service and report the snooze
+        LocationNotificationService.updateDataSet(this);
         reportSnooze(ActionReportService.LENGTH_LOCATION);
 
         //Kill the activity
@@ -380,7 +377,7 @@ public class SnoozeActivity
      */
     private void reportSnooze(String length){
         Intent report = new Intent(this, ActionReportService.class)
-                .putExtra(NotificationUtil.REMINDER_KEY, mReminder)
+                .putExtra(ActionReportService.MESSAGE_KEY, mGcmMessage)
                 .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_SNOOZED)
                 .putExtra(ActionReportService.LENGTH_KEY, length);
         startService(report);
@@ -392,6 +389,20 @@ public class SnoozeActivity
             mRationaleDialog = null;
             mLocationDisabledDialog = null;
             displayPlacesDialog();
+        }
+    }
+
+    /**
+     * Cancels the notification associated with the gcm message.
+     */
+    private void cancelNotification(){
+        if (mGcmMessage.isUserActionMessage()){
+            long actionId = mGcmMessage.getUserAction().getId();
+            NotificationUtil.cancel(this, NotificationUtil.USER_ACTION_TAG, actionId);
+        }
+        else if (mGcmMessage.isCustomActionMessage()){
+            long customActionId = mGcmMessage.getCustomAction().getId();
+            NotificationUtil.cancel(this, NotificationUtil.CUSTOM_ACTION_TAG, customActionId);
         }
     }
 }

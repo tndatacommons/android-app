@@ -99,6 +99,13 @@ public final class GcmMessage implements Parcelable{
         return mProduction;
     }
 
+    public Action getAction(){
+        if (isUserActionMessage()){
+            return mUserAction;
+        }
+        return mCustomAction;
+    }
+
     public UserAction getUserAction(){
         return mUserAction;
     }

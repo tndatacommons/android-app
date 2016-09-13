@@ -1,7 +1,6 @@
 package org.tndata.android.compass.receiver;
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -38,15 +37,8 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver{
                     String message = extras.getString("message");
                     Log.d(TAG, "GCM message received: " + message);
 
-                    //Put the extras with my own keys to avoid conflicts
-                    intent.putExtra(GcmIntentService.FROM_GCM_KEY, true);
-                    intent.putExtra(GcmIntentService.MESSAGE_KEY, message);
-
-                    //Explicitly specify that GcmIntentService will handle the intent
-                    ComponentName comp = new ComponentName(context.getPackageName(),
-                            GcmIntentService.class.getName());
                     //Start the service, keeping the device awake while it is running
-                    startWakefulService(context, intent.setComponent(comp));
+                    startWakefulService(context, GcmIntentService.populateIntent(context, intent, message));
                 }
                 else{
                     //Otherwise, release the lock

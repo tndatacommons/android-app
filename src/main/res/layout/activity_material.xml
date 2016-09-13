@@ -26,6 +26,24 @@
         android:minHeight="?attr/actionBarSize"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <TextView
+        android:id="@+id/material_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/material_header_container"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/material_progress"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="12dp"
+        android:layout_below="@id/material_header_container"
+        android:layout_centerHorizontal="true" />
     
     <com.github.clans.fab.FloatingActionButton
         xmlns:fab="http://schemas.android.com/apk/res-auto"

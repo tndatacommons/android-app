@@ -18,7 +18,7 @@ import org.tndata.android.compass.model.Organization;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.CardItemDecoration;
+import org.tndata.android.compass.util.ItemSpacing;
 import org.tndata.android.compass.util.Tour;
 
 import java.util.LinkedList;
@@ -157,7 +157,7 @@ public class OrganizationsFragment
         mBinding.organizationsList.setLayoutManager(new LinearLayoutManager(context));
         OrganizationsAdapter adapter = new OrganizationsAdapter(context, mOrganizations, this);
         mBinding.organizationsList.setAdapter(adapter);
-        mBinding.organizationsList.addItemDecoration(new CardItemDecoration());
+        mBinding.organizationsList.addItemDecoration(new ItemSpacing(getContext(), 12));
         mBinding.organizationsHeader.setVisibility(View.VISIBLE);
         mBinding.organizationsList.setVisibility(View.VISIBLE);
         mBinding.organizationsSkip.setVisibility(View.VISIBLE);

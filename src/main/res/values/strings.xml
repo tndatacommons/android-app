@@ -187,12 +187,16 @@
     <string name="action_do_it_now">Do it now</string>
     <string name="action_snooze">Later</string>
     <string name="action_reschedule">Reschedule</string>
-    <string name="action_did_it">Got it!</string>
+    <string name="action_got_it">Got it!</string>
+    <string name="action_remove_behavior">Remove</string>
     <string name="action_view_goal">View goal activities</string>
     <string name="action_view_goal_condensed">Goal activities</string>
     <string name="action_trigger">Reschedule</string>
     <string name="action_disable_trigger">Disable reminder</string>
     <string name="action_completed_toast">You\'re awesome!</string>
+    <string name="action_fetch_error">Couldn\'t load activity data</string>
+    <string name="action_custom_title">Your reminder</string>
+    <string name="action_detail_title">How will this help?</string>
 
     <!-- Behavior Dialog from ActionActivity -->
     <string name="behavior_dialog_remove">Remove</string>
@@ -350,5 +354,8 @@
     <string name="badge_image_cd">The badge\'s image asset</string>
     <string name="badge_footer">Go check out all the badges you\'ve earned.</string>
     <string name="badge_share">I\'ve earned the %1$s badge on Compass!</string>
+
+    <!-- Goal card -->
+    <string name="card_goal_title">Your goal</string>
 
 </resources>

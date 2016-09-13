@@ -14,7 +14,7 @@
     <item name="goal_yes" type="id" />
     <item name="goal_no" type="id" />
 
-    <item name="action_did_it" type="id" />
+    <item name="action_got_it" type="id" />
     <item name="action_do_it_now" type="id" />
     <item name="action_snooze" type="id" />
     <item name="action_reschedule" type="id" />

@@ -21,7 +21,6 @@ import org.tndata.android.compass.activity.PackageEnrollmentActivity;
 import org.tndata.android.compass.activity.SnoozeActivity;
 import org.tndata.android.compass.fragment.NotificationSettingsFragment;
 import org.tndata.android.compass.model.GcmMessage;
-import org.tndata.android.compass.model.Reminder;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.ui.QuietHoursPreference;
 
@@ -35,9 +34,6 @@ import java.util.Calendar;
  * @version 1.0.0
  */
 public final class NotificationUtil{
-    //Data keys generally common to notifications
-    public static final String REMINDER_KEY = "org.tndata.compass.Notification.Reminder";
-
     //Notification tags
     public static final String USER_ACTION_TAG = "org.tndata.compass.Notification.UserAction";
     public static final String CUSTOM_ACTION_TAG = "org.tndata.compass.Notification.CustomAction";
@@ -51,51 +47,6 @@ public final class NotificationUtil{
      */
     private NotificationUtil(){
         throw new RuntimeException(getClass().toString() + " is not to be instantiated");
-    }
-
-    /**
-     * Private getter for a generic builder for a notification with a title and a message.
-     *
-     * @param context the context.
-     * @param title the title of the notification.
-     * @param message the message of the notification.
-     * @return the builder.
-     */
-    private static NotificationCompat.Builder getBuilder(Context context, String title, String message){
-        Uri ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Bitmap icon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
-
-        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-
-        String quietKey = NotificationSettingsFragment.QUIET_HOURS_KEY;
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean quiet[] = QuietHoursPreference.parsePreference(quietKey, context)[hour<12 ? 0 : 1];
-        boolean sound = preferences.getBoolean(NotificationSettingsFragment.SOUND_KEY, true);
-        boolean vibration = preferences.getBoolean(NotificationSettingsFragment.VIBRATION_KEY, true);
-        boolean light = preferences.getBoolean(NotificationSettingsFragment.LIGHT_KEY, true);
-
-        NotificationCompat.Builder builder =  new NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.ic_compass_notification_white_24dp)
-                .setLargeIcon(icon)
-                .setContentTitle(title)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
-                .setContentText(message)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setAutoCancel(true);
-
-        if (!quiet[hour%12]){
-            if (sound){
-                builder.setSound(ringtone);
-            }
-            if (vibration){
-                builder.setVibrate(new long[]{0, 300, 200, 300});
-            }
-            if (light){
-                builder.setLights(0xFFFFFFFF, 500, 500);
-            }
-        }
-
-        return builder;
     }
 
     /**
@@ -145,73 +96,12 @@ public final class NotificationUtil{
     /**
      * Creates an action notification.
      *
-     * @param context the context.
-     * @param notificationId the id of the notification as given by the API.
-     * @param title the title of the notification.
-     * @param message the message of the notification.
-     * @param actionId the id of the action enclosed in this notification.
-     * @param actionMappingId the mapping id of the action for the user.
-     */
-    public static void putActionNotification(Context context, int notificationId, String title,
-                                             String message, int actionId, int actionMappingId){
-
-        Reminder reminder = new Reminder(notificationId, -1, title, message, actionId, actionMappingId);
-
-        //Action intent; what happens when the user taps the notification
-        Intent intent = new Intent(context, ActionActivity.class)
-                .putExtra(ActionActivity.REMINDER_KEY, reminder);
-
-        PendingIntent contentIntent = PendingIntent.getActivity(context,
-                (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        //Dismiss intent; what happens when the user dismisses the notification
-        Intent dismissIntent = new Intent(context, ActionReportService.class)
-                .putExtra(REMINDER_KEY, reminder)
-                .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_DISMISSED);
-
-        PendingIntent dismissedPendingIntent = PendingIntent.getService(context,
-                (int)System.currentTimeMillis(), dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        //Snooze intent; what happens when the user taps the "later" action
-        Intent snoozeIntent = new Intent(context, SnoozeActivity.class)
-                .putExtra(REMINDER_KEY, reminder);
-
-        PendingIntent snoozePendingIntent = PendingIntent.getActivity(context,
-                (int)System.currentTimeMillis(), snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        String later = context.getString(R.string.action_notification_later);
-
-        //Generate the notification and push it
-        Notification notification = getBuilder(context, title, message)
-                .addAction(R.drawable.ic_snooze, later, snoozePendingIntent)
-                .setContentIntent(contentIntent)
-                .setDeleteIntent(dismissedPendingIntent)
-                .setAutoCancel(false)
-                .build();
-
-        if (actionMappingId != -1){
-            ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
-                    .notify(USER_ACTION_TAG, actionMappingId, notification);
-        }
-        else{
-            ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE))
-                    .notify(CUSTOM_ACTION_TAG, actionId, notification);
-        }
-    }
-
-    /**
-     * Creates an action notification.
-     *
      * @param context a reference to the context.
      * @param message the GCM message that triggered the notification.
      */
     private static void putActionNotification(Context context, GcmMessage message){
-        Reminder reminder = new Reminder((int)message.getId(), -1, message.getContentTitle(),
-                message.getContentText(), message.getObjectId(), message.getUserMappingId());
-
         //Action intent; what happens when the user taps the notification
         Intent intent = new Intent(context, ActionActivity.class)
-                .putExtra(ActionActivity.REMINDER_KEY, reminder)
                 .putExtra(ActionActivity.GCM_MESSAGE_KEY, message);
 
         PendingIntent contentIntent = PendingIntent.getActivity(context,
@@ -219,7 +109,7 @@ public final class NotificationUtil{
 
         //Dismiss intent; what happens when the user dismisses the notification
         Intent dismissIntent = new Intent(context, ActionReportService.class)
-                .putExtra(REMINDER_KEY, reminder)
+                .putExtra(ActionReportService.MESSAGE_KEY, message)
                 .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_DISMISSED);
 
         PendingIntent dismissedPendingIntent = PendingIntent.getService(context,
@@ -227,7 +117,7 @@ public final class NotificationUtil{
 
         //Snooze intent; what happens when the user taps the "later" action
         Intent snoozeIntent = new Intent(context, SnoozeActivity.class)
-                .putExtra(REMINDER_KEY, reminder);
+                .putExtra(SnoozeActivity.GCM_MESSAGE_KEY, message);
 
         PendingIntent snoozePendingIntent = PendingIntent.getActivity(context,
                 (int)System.currentTimeMillis(), snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);

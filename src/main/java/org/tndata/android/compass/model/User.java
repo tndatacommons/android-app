@@ -217,6 +217,10 @@ public class User extends TDCBase{
         return mSex == null || mSex.equalsIgnoreCase("male");
     }
 
+    public boolean isFemale(){
+        return mSex != null && mSex.equalsIgnoreCase("female");
+    }
+
     /**
      * Employed getter.
      *

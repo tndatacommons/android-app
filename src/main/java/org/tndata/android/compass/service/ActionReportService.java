@@ -5,7 +5,7 @@ import android.content.Intent;
 
 import org.json.JSONObject;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.Reminder;
+import org.tndata.android.compass.model.GcmMessage;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NotificationUtil;
@@ -23,6 +23,7 @@ public class ActionReportService extends IntentService{
     private static final String TAG = "ActionReportService";
 
     public static final String ACTION_KEY = "org.tndata.compass.ActionReport.Action";
+    public static final String MESSAGE_KEY = "org.tndata.compass.ActionReport.Message";
     public static final String STATE_KEY = "org.tndata.compass.ActionReport.State";
     public static final String LENGTH_KEY = "org.tndata.compass.ActionReport.Length";
 
@@ -46,20 +47,20 @@ public class ActionReportService extends IntentService{
     @Override
     protected void onHandleIntent(Intent intent){
         Action action = intent.getParcelableExtra(ACTION_KEY);
-        Reminder reminder = intent.getParcelableExtra(NotificationUtil.REMINDER_KEY);
+        GcmMessage message = intent.getParcelableExtra(MESSAGE_KEY);
 
         String notificationTag;
         long actionId;
         String url;
-        if (reminder != null){
-            url = API.URL.postActionReport(reminder);
-            if (reminder.isUserAction()){
+        if (message != null){
+            url = API.URL.postActionReport(message);
+            if (message.isUserActionMessage()){
                 notificationTag = NotificationUtil.USER_ACTION_TAG;
-                actionId = reminder.getUserMappingId();
+                actionId = message.getUserAction().getId();
             }
             else{
                 notificationTag = NotificationUtil.CUSTOM_ACTION_TAG;
-                actionId = reminder.getObjectId();
+                actionId = message.getCustomAction().getId();
             }
         }
         else{

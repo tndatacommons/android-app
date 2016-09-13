@@ -14,13 +14,12 @@ import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import org.tndata.android.compass.database.CompassDbHelper;
+import org.tndata.android.compass.database.LocationReminderTableHandler;
 import org.tndata.android.compass.database.PlaceTableHandler;
-import org.tndata.android.compass.model.Reminder;
+import org.tndata.android.compass.model.LocationReminder;
 import org.tndata.android.compass.model.UserPlace;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.LocationRequest;
-import org.tndata.android.compass.util.NotificationUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,7 +85,7 @@ public class LocationNotificationService
 
     //Map of places and list of reminders
     private Map<Long, UserPlace> mPlaces;
-    private List<Reminder> mReminders;
+    private List<LocationReminder> mReminders;
 
     //Next update time
     private long mNextUpdateTime;
@@ -219,11 +218,13 @@ public class LocationNotificationService
         //To avoid concurrent modification exceptions, the list of reminders to be
         //  removed are put into a separate list and removed from the main list
         //  once the iterator is done iterating
-        List<Reminder> remindersToRemove = new ArrayList<>();
+        List<LocationReminder> remindersToRemove = new ArrayList<>();
+        //For performance, the handler is created outside the loop
+        LocationReminderTableHandler handler = new LocationReminderTableHandler(this);
 
         //For every location based reminder in sight
-        for (Reminder reminder:mReminders){
-            Log.i(TAG, "Reminder: " + reminder.getTitle());
+        for (LocationReminder reminder:mReminders){
+            Log.i(TAG, "Reminder #" + reminder.getId());
             //The place is retrieved from the map
             UserPlace place = mPlaces.get(reminder.getPlaceId());
             //If the place was removed or this is me switching from staging to production
@@ -231,9 +232,7 @@ public class LocationNotificationService
             //  operate as expected
             if (place == null){
                 Log.e(TAG, "The reminder is not associated with an existing place, removing");
-                CompassDbHelper dbHelper = new CompassDbHelper(this);
-                dbHelper.deleteReminder(reminder);
-                dbHelper.close();
+                handler.deleteReminder(reminder);
                 remindersToRemove.add(reminder);
             }
             else{
@@ -245,16 +244,12 @@ public class LocationNotificationService
 
                 //If the pone is within the geofence a notification is created
                 if (distance < GEOFENCE_RADIUS){
-                    NotificationUtil.putActionNotification(this, reminder.getNotificationId(),
-                            reminder.getTitle(), reminder.getMessage(), reminder.getObjectId(),
-                            reminder.getUserMappingId());
+                    startService(GcmIntentService.getIntent(this, reminder.getGcmMessage()));
 
                     //The reminder is removed from the database and added to the removal list
                     //NOTE: This is the case because all reminders in the database are snoozed
                     //  at the moment, which means that they should be triggered only once.
-                    CompassDbHelper dbHelper = new CompassDbHelper(this);
-                    dbHelper.deleteReminder(reminder);
-                    dbHelper.close();
+                    handler.deleteReminder(reminder);
                     remindersToRemove.add(reminder);
                 }
                 //If the phone is not in the fence but the distance is the minimum seen so far
@@ -264,9 +259,11 @@ public class LocationNotificationService
                 }
             }
         }
+        //Close the table handler
+        handler.close();
 
         //The reminders that have been dealt with are removed from the main list
-        for (Reminder reminder:remindersToRemove){
+        for (LocationReminder reminder:remindersToRemove){
             mReminders.remove(reminder);
         }
 
@@ -344,23 +341,23 @@ public class LocationNotificationService
         @Override
         protected Void doInBackground(Void... unused){
             Log.i(TAG, "Loading data");
-            PlaceTableHandler handler = new PlaceTableHandler(LocationNotificationService.this);
+
+            Context context = LocationNotificationService.this;
+
+            PlaceTableHandler placesHandler = new PlaceTableHandler(context);
             mPlaces = new HashMap<>();
-            for (UserPlace userPlace:handler.getPlaces()){
+            for (UserPlace userPlace:placesHandler.getPlaces()){
                 mPlaces.put(userPlace.getId(), userPlace);
             }
-            handler.close();
-            CompassDbHelper dbHelper = new CompassDbHelper(LocationNotificationService.this);
-            mReminders = dbHelper.getReminders();
-            dbHelper.close();
+            placesHandler.close();
+            LocationReminderTableHandler remindersHandler = new LocationReminderTableHandler(context);
+            mReminders = remindersHandler.getReminders();
+            remindersHandler.close();
             Log.i(TAG, mPlaces.size() + " places found");
             for (UserPlace place:mPlaces.values()){
                 Log.i(TAG, place.toString());
             }
             Log.i(TAG, mReminders.size() + " reminders found");
-            for (Reminder reminder:mReminders){
-                Log.i(TAG, reminder.getTitle());
-            }
             return null;
         }
 

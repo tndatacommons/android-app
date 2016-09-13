@@ -229,8 +229,6 @@
 
         <service android:name=".service.ActionReportService" />
 
-        <service android:name=".service.SnoozeService" />
-
         <service android:name=".service.LocationNotificationService" />
 
     </application>

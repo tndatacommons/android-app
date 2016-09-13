@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public class TDCCategoryTableHandler extends CompassTableHandler{
     //The CREATE query needs to be package-protected to be accessible from CompassDbHandler
-    static final String CREATE_TABLE = "CREATE TABLE " + TDCCategoryEntry.TABLE + " ("
+    static final String CREATE = "CREATE TABLE " + TDCCategoryEntry.TABLE + " ("
             + TDCCategoryEntry.LOCAL_ID + " INTEGER PRIMARY KEY, "
             + TDCCategoryEntry.CLOUD_ID + " INTEGER, "
             + TDCCategoryEntry.TITLE + " TEXT, "

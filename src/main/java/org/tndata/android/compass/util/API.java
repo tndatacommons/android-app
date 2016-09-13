@@ -162,7 +162,7 @@ public final class API{
             return BASE_URL + "users/actions/?goal=" + goalId;
         }
 
-        public static String getAction(int actionMappingId){
+        public static String getUserAction(long actionMappingId){
             return BASE_URL + "users/actions/" + actionMappingId + "/";
         }
 
@@ -171,7 +171,7 @@ public final class API{
             return BASE_URL + "users/customactions/?customgoal=" + customGoal.getId();
         }
 
-        public static String getCustomAction(int customActionId){
+        public static String getCustomAction(long customActionId){
             return BASE_URL + "users/customactions/" + customActionId + "/";
         }
 
@@ -243,7 +243,7 @@ public final class API{
             return BASE_URL + "users/progress/checkin/";
         }
 
-        public static String putSnooze(int notificationId){
+        public static String putSnooze(long notificationId){
             return BASE_URL + "notifications/" + notificationId + "/";
         }
 
@@ -259,12 +259,12 @@ public final class API{
             }
         }
 
-        public static String postActionReport(@NonNull Reminder reminder){
-            if (reminder.isUserAction()){
-                return BASE_URL + "users/actions/" + reminder.getUserMappingId() + "/complete/";
+        public static String postActionReport(@NonNull GcmMessage message){
+            if (message.isUserActionMessage()){
+                return BASE_URL + "users/actions/" + message.getUserAction().getId() + "/complete/";
             }
-            else if (reminder.isCustomAction()){
-                return BASE_URL + "users/customactions/" + reminder.getObjectId() + "/complete/";
+            else if (message.isCustomActionMessage()){
+                return BASE_URL + "users/customactions/" + message.getCustomAction().getId() + "/complete/";
             }
             else{
                 return "";
