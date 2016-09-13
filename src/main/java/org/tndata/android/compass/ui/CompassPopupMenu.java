@@ -6,6 +6,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.PopupMenu;
 
+@Deprecated
 public class CompassPopupMenu extends PopupMenu {
 
     private static final String TAG = "CompassPopupMenu";

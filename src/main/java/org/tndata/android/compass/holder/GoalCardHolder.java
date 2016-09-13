@@ -2,6 +2,7 @@ package org.tndata.android.compass.holder;
 
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -58,6 +59,15 @@ public class GoalCardHolder extends RecyclerView.ViewHolder implements View.OnCl
      */
     public void setIcon(@NonNull String url){
         ImageLoader.loadBitmap(mBinding.goalIcon, url);
+    }
+
+    /**
+     * Sets a drawable resource as the goal icon.
+     *
+     * @param resourceId the id of the drawable.
+     */
+    public void setIcon(@DrawableRes int resourceId){
+        mBinding.goalIconContainer.setBackgroundResource(resourceId);
     }
 
     /**

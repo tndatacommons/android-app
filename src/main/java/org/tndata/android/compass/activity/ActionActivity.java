@@ -3,6 +3,7 @@ package org.tndata.android.compass.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -68,6 +69,8 @@ public class ActionActivity
 
 
     private CompassApplication mApp;
+
+    private NewActionAdapter mAdapter;
 
     //The action in question and the associated reminder
     private Action mAction;
@@ -145,7 +148,8 @@ public class ActionActivity
         }
 
         //Set the adapter
-        setAdapter(new NewActionAdapter(this, this, mAction));
+        mAdapter = new NewActionAdapter(this, this, mAction);
+        setAdapter(mAdapter);
 
         //Refresh the menu
         invalidateOptionsMenu();
@@ -297,31 +301,6 @@ public class ActionActivity
         }
     }
 
-    //@Override
-    public void onActionCardLoaded(){
-        //fireTour(mAdapter.getDidItButton());
-    }
-
-    //@Override
-    public void onIDidItClick(){
-        if (mAction != null){
-            startService(new Intent(this, ActionReportService.class)
-                    .putExtra(ActionReportService.ACTION_KEY, mAction)
-                    .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
-
-            setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, true)
-                    .putExtra(ACTION_KEY, mAction));
-
-            Toast.makeText(this, R.string.action_completed_toast, Toast.LENGTH_SHORT).show();
-            CompassApplication application = (CompassApplication)getApplication();
-            if(application.getFeedData() == null) {
-                startActivity(new Intent(this, LauncherActivity.class));
-            }
-            finish();
-        }
-    }
-
-    //@Override
     public void onRescheduleClick(){
         if (mAction != null){
             Intent reschedule = new Intent(this, TriggerActivity.class)
@@ -477,7 +456,15 @@ public class ActionActivity
 
     @Override
     public void onContentCardLoaded(){
-
+        if (!Tour.getTooltipsFor(Tour.Section.ACTION).isEmpty()){
+            getRecyclerView().scrollToPosition(3);
+            new Handler().postDelayed(new Runnable(){
+                @Override
+                public void run(){
+                    fireTour(mAdapter.getGotItButton());
+                }
+            }, 500);
+        }
     }
 
     @Override
@@ -487,11 +474,29 @@ public class ActionActivity
 
     @Override
     public void onGotItClick(){
+        if (mAction != null){
+            startService(new Intent(this, ActionReportService.class)
+                    .putExtra(ActionReportService.ACTION_KEY, mAction)
+                    .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
 
+            setResult(RESULT_OK, new Intent().putExtra(DID_IT_KEY, true)
+                    .putExtra(ACTION_KEY, mAction));
+
+            Toast.makeText(this, R.string.action_completed_toast, Toast.LENGTH_SHORT).show();
+            CompassApplication application = (CompassApplication)getApplication();
+            if(application.getFeedData() == null) {
+                startActivity(new Intent(this, LauncherActivity.class));
+            }
+            finish();
+        }
     }
 
     @Override
     public void onDeleteBehaviorClick(){
-
+        if (mAction instanceof UserAction){
+            String url = API.URL.deleteBehavior(((UserAction)mAction).getUserBehaviorId());
+            mDeleteBehaviorRC = HttpRequest.delete(null, url);
+            finish();
+        }
     }
 }

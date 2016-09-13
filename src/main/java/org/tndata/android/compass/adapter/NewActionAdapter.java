@@ -69,6 +69,8 @@ public class NewActionAdapter
         mContext = context;
         mListener = listener;
         mAction = action;
+
+        //Fetch the action only if this is a user action
         if (mAction instanceof UserAction){
             CompassApplication app = (CompassApplication)mContext.getApplicationContext();
             long categoryId = ((UserAction)mAction).getPrimaryCategoryId();
@@ -98,6 +100,7 @@ public class NewActionAdapter
             return 4;
         }
         else if (mAction instanceof CustomAction){
+            //CustomActions exclude the behavior card, as they don't have behaviors
             return 3;
         }
         return 0;
@@ -151,6 +154,15 @@ public class NewActionAdapter
                 if (mAction instanceof UserAction){
                     goalHolder.setColor(Color.parseColor(mCategory.getColor()));
                     goalHolder.setIcon(((UserAction)mAction).getPrimaryGoalIconUrl());
+                }
+                else if (mAction instanceof CustomAction){
+                    CompassApplication app = (CompassApplication)mContext.getApplicationContext();
+                    if (app.getUser().isMale()){
+                        goalHolder.setIcon(R.drawable.ic_guy);
+                    }
+                    else{
+                        goalHolder.setIcon(R.drawable.ic_lady);
+                    }
                 }
                 break;
 
