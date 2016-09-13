@@ -229,11 +229,11 @@ class GoalsHolder<T> extends MainFeedAdapter.ViewHolder implements View.OnClickL
             }
             else if (goal instanceof CustomGoal){
                 CustomGoal customGoal = (CustomGoal)goal;
-                if (app.getUser().isMale()){
-                    mIconContainer.setBackgroundResource(R.drawable.ic_guy);
+                if (app.getUser().isFemale()){
+                    mIconContainer.setBackgroundResource(R.drawable.ic_lady);
                 }
                 else{
-                    mIconContainer.setBackgroundResource(R.drawable.ic_lady);
+                    mIconContainer.setBackgroundResource(R.drawable.ic_guy);
                 }
                 mIcon.setImageResource(0);
                 mTitle.setText(customGoal.getTitle());

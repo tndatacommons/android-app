@@ -3,7 +3,6 @@ package org.tndata.android.compass.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -458,12 +457,7 @@ public class ActionActivity
     public void onContentCardLoaded(){
         if (!Tour.getTooltipsFor(Tour.Section.ACTION).isEmpty()){
             getRecyclerView().scrollToPosition(3);
-            new Handler().postDelayed(new Runnable(){
-                @Override
-                public void run(){
-                    fireTour(mAdapter.getGotItButton());
-                }
-            }, 500);
+            fireTour(mAdapter.getGotItButton());
         }
     }
 

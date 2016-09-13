@@ -157,11 +157,11 @@ public class NewActionAdapter
                 }
                 else if (mAction instanceof CustomAction){
                     CompassApplication app = (CompassApplication)mContext.getApplicationContext();
-                    if (app.getUser().isMale()){
-                        goalHolder.setIcon(R.drawable.ic_guy);
+                    if (app.getUser().isFemale()){
+                        goalHolder.setIcon(R.drawable.ic_lady);
                     }
                     else{
-                        goalHolder.setIcon(R.drawable.ic_lady);
+                        goalHolder.setIcon(R.drawable.ic_guy);
                     }
                 }
                 break;
