@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 
 /**
@@ -13,18 +14,24 @@ import android.support.annotation.NonNull;
  * @version 1.1.0
  */
 abstract class CompassTableHandler{
+    private static final String TAG = "CompassTableHandler";
+
+
     private static CompassDbHelper sDbHelper = null;
     private static SQLiteDatabase sDatabase = null;
     private static int sOpenConnections = 0;
 
 
     protected void init(Context context){
+        Log.i(TAG, "Initializing database connection...");
         if (sDbHelper == null){
+            Log.i(TAG, "No preexisting connection found, creating...");
             sDbHelper = new CompassDbHelper(context);
             sDatabase = sDbHelper.getWritableDatabase();
             sOpenConnections = 0;
         }
         sOpenConnections++;
+        Log.i(TAG, "Connection initialized, that makes " + sOpenConnections + ".");
     }
 
     @NonNull
@@ -52,11 +59,16 @@ abstract class CompassTableHandler{
     }
 
     public void close(){
+        Log.i(TAG, "Closing database connection...");
         if (--sOpenConnections == 0){
+            Log.i(TAG, "No connections remaining, closing database and helper.");
             sDatabase.close();
             sDatabase = null;
             sDbHelper.close();
             sDbHelper = null;
+        }
+        else{
+            Log.i(TAG, sOpenConnections + " remaining.");
         }
     }
 }
