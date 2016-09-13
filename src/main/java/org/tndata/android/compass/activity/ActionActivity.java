@@ -67,22 +67,23 @@ public class ActionActivity
     private static final int RESCHEDULE_REQUEST_CODE = 61429;
 
 
+    //References to the app class and the adapter
     private CompassApplication mApp;
-
     private ActionAdapter mAdapter;
 
-    //The action in question and the associated reminder
+    //The action in question
     private Action mAction;
 
+    //Request codes
     private int mGetActionRC;
     private int mDeleteBehaviorRC;
 
+    //Flags
     private boolean mFromGcm;
     private boolean mUserAction;
 
 
     @Override
-    @SuppressWarnings("deprecation")
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
@@ -102,7 +103,7 @@ public class ActionActivity
         }
         //Otherwise fetch it
         else{
-            setColor(getResources().getColor(R.color.primary));
+            setCategory(null);
 
             String url = "";
             if (gcmMessage != null){
@@ -134,6 +135,11 @@ public class ActionActivity
         }
     }
 
+    /**
+     * Sets the action to be displayed and initializes the adapter.
+     *
+     * @param action the action to be displayed.
+     */
     private void setAction(@NonNull Action action){
         mAction = action;
 
@@ -154,12 +160,18 @@ public class ActionActivity
         invalidateOptionsMenu();
     }
 
+    /**
+     * Sets the header with the provided category.
+     *
+     * @param category the category to be displayed.
+     */
+    @SuppressWarnings("deprecation")
     private void setCategory(@Nullable TDCCategory category){
         View header = inflateHeader(R.layout.header_hero);
         ImageView image = (ImageView)header.findViewById(R.id.header_hero_image);
 
         if (category != null){
-            //mAdapter.setCategory(category);
+            //When a category is available use its attributes to set the header up
             setColor(Color.parseColor(category.getColor()));
             if (category.getImageUrl() == null || category.getImageUrl().isEmpty()){
                 image.setImageResource(R.drawable.compass_master_illustration);
@@ -171,10 +183,16 @@ public class ActionActivity
             }
         }
         else{
+            setColor(getResources().getColor(R.color.primary));
             image.setImageResource(R.drawable.compass_master_illustration);
         }
     }
 
+    /**
+     * Fires the tour.
+     *
+     * @param target the target view, the got it button in this case.
+     */
     private void fireTour(View target){
         Queue<Tour.Tooltip> tooltips = new LinkedList<>();
         for (Tour.Tooltip tooltip:Tour.getTooltipsFor(Tour.Section.ACTION)){
@@ -189,7 +207,7 @@ public class ActionActivity
     @Override
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetActionRC){
-            Log.d(TAG, "Action fetched, parsing");
+            Log.i(TAG, "Action fetched, parsing...");
             if (mUserAction){
                 Parser.parse(result, UserAction.class, this);
             }
@@ -198,14 +216,20 @@ public class ActionActivity
             }
         }
         else if (requestCode == mDeleteBehaviorRC){
-            // We deleted some content so there's really nothing to show.
-            Log.d("XXX", "Deleted Behavior");
+            long behaviorId = ((UserAction)mAction).getAction().getBehaviorId();
+            Log.i(TAG, "Behavior #" + behaviorId + " deleted.");
         }
     }
 
     @Override
     public void onRequestFailed(int requestCode, HttpRequestError error){
-        //mAdapter.displayError("Couldn't retrieve activity information");
+        if (requestCode == mGetActionRC){
+            Log.e(TAG, "The action couldn't be fetched");
+            displayMessage(R.string.action_fetch_error);
+        }
+        else if (requestCode == mDeleteBehaviorRC){
+            Log.e(TAG, "The behavior couldn't be deleted");
+        }
     }
 
     @Override
@@ -218,14 +242,13 @@ public class ActionActivity
         if (result instanceof Action){
             setAction((Action)result);
         }
-        else{
-            Log.e(TAG, "Result ain't an instance of Action");
-        }
     }
 
     @Override
     public void onParseFailed(int requestCode){
         Log.e(TAG, "Action couldn't be parsed");
+        setCategory(null);
+        displayMessage(R.string.action_fetch_error);
     }
 
     @Override
@@ -415,7 +438,7 @@ public class ActionActivity
     public void onDeleteBehaviorClick(){
         if (mAction instanceof UserAction){
             String url = API.URL.deleteBehavior(((UserAction)mAction).getUserBehaviorId());
-            mDeleteBehaviorRC = HttpRequest.delete(null, url);
+            mDeleteBehaviorRC = HttpRequest.delete(this, url);
             finish();
         }
     }

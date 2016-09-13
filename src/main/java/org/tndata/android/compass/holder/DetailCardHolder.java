@@ -2,6 +2,7 @@ package org.tndata.android.compass.holder;
 
 import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.PopupMenu;
@@ -37,6 +38,15 @@ public class DetailCardHolder extends RecyclerView.ViewHolder implements View.On
      */
     public void setTitle(@NonNull String title){
         mBinding.detailTitle.setText(title);
+    }
+
+    /**
+     * Sets the title of the card.
+     *
+     * @param titleId the if of the title to be set.
+     */
+    public void setTitle(@StringRes int titleId){
+        mBinding.detailTitle.setText(titleId);
     }
 
     /**

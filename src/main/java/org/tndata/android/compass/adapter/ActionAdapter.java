@@ -174,7 +174,7 @@ public class ActionAdapter
                     contentHolder.setContent(((UserAction)mAction).getDescription());
                 }
                 else if (mAction instanceof CustomAction){
-                    contentHolder.setTitle("Your Reminder");
+                    contentHolder.setTitle(R.string.action_custom_title);
                     contentHolder.setContent(mAction.getTitle());
                 }
                 mGotItButton = contentHolder.addButton(R.id.action_got_it, R.string.action_got_it);
@@ -200,7 +200,7 @@ public class ActionAdapter
             case TYPE_DETAIL:
                 if (mAction instanceof UserAction){
                     DetailCardHolder detailHolder = (DetailCardHolder)rawHolder;
-                    detailHolder.setTitle("How will this help?");
+                    detailHolder.setTitle(R.string.action_detail_title);
                     detailHolder.setContent(((UserAction)mAction).getAction().getBehaviorDescription());
                     detailHolder.setOverflowMenu(R.menu.menu_remove_behavior, this);
                 }

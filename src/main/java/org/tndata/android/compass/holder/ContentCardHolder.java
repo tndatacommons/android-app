@@ -48,6 +48,15 @@ public class ContentCardHolder extends RecyclerView.ViewHolder{
     }
 
     /**
+     * Binds a title to the holder.
+     *
+     * @param titleId the resource id of the title to be displayed in the card.
+     */
+    public void setTitle(@StringRes int titleId){
+        mBinding.contentTitle.setText(titleId);
+    }
+
+    /**
      * Sets the font of the title as Roboto-Medium.
      */
     public void setTitleWeightMedium(){

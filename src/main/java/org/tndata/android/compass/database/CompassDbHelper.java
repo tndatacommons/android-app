@@ -49,6 +49,7 @@ class CompassDbHelper extends SQLiteOpenHelper{
             if (i == V1){
                 db.execSQL(TDCCategoryTableHandler.CREATE);
             }
+            //From V2 to V3
             else if (i == V2){
                 db.execSQL(LocationReminderTableHandler.CREATE);
                 db.execSQL("DROP TABLE IF EXISTS Reminder");

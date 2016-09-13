@@ -194,6 +194,9 @@
     <string name="action_trigger">Reschedule</string>
     <string name="action_disable_trigger">Disable reminder</string>
     <string name="action_completed_toast">You\'re awesome!</string>
+    <string name="action_fetch_error">Couldn\'t load activity data</string>
+    <string name="action_custom_title">Your reminder</string>
+    <string name="action_detail_title">How will this help?</string>
 
     <!-- Behavior Dialog from ActionActivity -->
     <string name="behavior_dialog_remove">Remove</string>
