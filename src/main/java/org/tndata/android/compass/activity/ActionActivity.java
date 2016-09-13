@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.adapter.NewActionAdapter;
+import org.tndata.android.compass.adapter.ActionAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.GcmMessage;
@@ -53,7 +53,7 @@ public class ActionActivity
         implements
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback,
-                NewActionAdapter.Listener{
+                ActionAdapter.Listener{
 
     private static final String TAG = "ActionActivity";
 
@@ -69,7 +69,7 @@ public class ActionActivity
 
     private CompassApplication mApp;
 
-    private NewActionAdapter mAdapter;
+    private ActionAdapter mAdapter;
 
     //The action in question and the associated reminder
     private Action mAction;
@@ -147,7 +147,7 @@ public class ActionActivity
         }
 
         //Set the adapter
-        mAdapter = new NewActionAdapter(this, this, mAction);
+        mAdapter = new ActionAdapter(this, this, mAction);
         setAdapter(mAdapter);
 
         //Refresh the menu

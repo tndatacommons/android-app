@@ -36,7 +36,7 @@ import org.tndata.android.compass.util.CompassUtil;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class NewActionAdapter
+public class ActionAdapter
         extends RecyclerView.Adapter
         implements
                 GoalCardHolder.Listener,
@@ -63,8 +63,8 @@ public class NewActionAdapter
      * @param context a reference to the context.
      * @param action the action to be displayed.
      */
-    public NewActionAdapter(@NonNull Context context, @NonNull Listener listener,
-                            @NonNull Action action){
+    public ActionAdapter(@NonNull Context context, @NonNull Listener listener,
+                         @NonNull Action action){
 
         mContext = context;
         mListener = listener;
@@ -243,7 +243,7 @@ public class NewActionAdapter
 
 
     /**
-     * Listener interface for NewActionAdapter.
+     * Listener interface for ActionAdapter.
      *
      * @author Ismael Alonso
      * @version 1.0.0
