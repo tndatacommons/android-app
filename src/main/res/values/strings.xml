@@ -358,4 +358,11 @@
     <!-- Goal card -->
     <string name="card_goal_title">Your goal</string>
 
+    <!-- Editable list card -->
+    <string name="editable_list_edit_dialog_title">Select an option</string>
+    <string-array name="editable_list_edit_dialog_options">
+        <item>Edit</item>
+        <item>Remove</item>
+    </string-array>
+
 </resources>

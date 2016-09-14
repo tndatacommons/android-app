@@ -5,13 +5,42 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp" >
+        android:gravity="center_vertical" >
 
-        <TextView
+        <EditText
             android:id="@+id/editable_list_entry_title"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:layout_weight="1"
+            android:layout_marginLeft="-3dp"
+            android:layout_marginStart="-3dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginEnd="1dp"
+            android:imeOptions="actionDone"
+            android:inputType="textCapSentences" />
+
+        <LinearLayout
+            android:id="@+id/editable_list_entry_buttons"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/editable_list_entry_edit"
+            android:contentDescription="@string/custom_action_edit_cd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_edit_white_24dp"
+            android:tint="@color/gray600" />
+
+        <ImageView
+            android:id="@+id/editable_list_entry_save"
+            android:contentDescription="@string/custom_action_save_cd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:src="@drawable/ic_check_white_24dp"
+            android:tint="@color/gray600" />
 
     </LinearLayout>
 </layout>
