@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.MyGoalAdapter;
+import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
@@ -28,7 +29,8 @@ public class MyGoalActivity
         extends MaterialActivity
         implements
                 HttpRequest.RequestCallback,
-                Parser.ParserCallback{
+                Parser.ParserCallback,
+                MyGoalAdapter.Listener{
 
     private static final String USER_GOAL_ID_KEY = "org.tndata.compass.MyGoal.UserGoalId";
 
@@ -40,10 +42,13 @@ public class MyGoalActivity
 
 
     private CompassApplication mApp;
+    private MyGoalAdapter mAdapter;
 
     private UserGoal mUserGoal;
 
     private int mGetUserGoalRC;
+    private int mGetCustomActionsRC;
+    private int mPostCustomActionRC;
 
 
     @Override
@@ -68,12 +73,24 @@ public class MyGoalActivity
         if (requestCode == mGetUserGoalRC){
             Parser.parse(result, UserGoal.class, this);
         }
+        else if (requestCode == mGetCustomActionsRC){
+            Parser.parse(result, ParserModels.CustomActionResultSet.class, this);
+        }
+        else if (requestCode == mPostCustomActionRC){
+            Parser.parse(result, CustomAction.class, this);
+        }
     }
 
     @Override
     public void onRequestFailed(int requestCode, HttpRequestError error){
         if (requestCode == mGetUserGoalRC){
             displayMessage("Couldn't load goal data...");
+        }
+        else if (requestCode == mGetCustomActionsRC){
+            mAdapter.fetchCustomActionsFailed();
+        }
+        else if (requestCode == mPostCustomActionRC){
+            mAdapter.addCustomActionFailed();
         }
     }
 
@@ -86,12 +103,27 @@ public class MyGoalActivity
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof UserGoal){
             setGoal((UserGoal)result);
+            mGetCustomActionsRC = HttpRequest.get(this, API.URL.getCustomActions(mUserGoal));
+        }
+        else if (result instanceof ParserModels.CustomActionResultSet){
+            mAdapter.setCustomActions(((ParserModels.CustomActionResultSet)result).results);
+        }
+        else if (result instanceof CustomAction){
+            mAdapter.customActionAdded((CustomAction)result);
         }
     }
 
     @Override
     public void onParseFailed(int requestCode){
-        displayMessage("Couldn't load goal data...");
+        if (mAdapter == null){
+            displayMessage("Couldn't load goal data...");
+        }
+        else if (mAdapter.areCustomActionsSet()){
+            mAdapter.addCustomActionFailed();
+        }
+        else{
+            mAdapter.fetchCustomActionsFailed();
+        }
     }
 
     private void setGoal(UserGoal userGoal){
@@ -110,6 +142,19 @@ public class MyGoalActivity
             ImageLoader.loadBitmap(image, category.getImageUrl(), options);
         }
 
-        setAdapter(new MyGoalAdapter(this, mUserGoal));
+        mAdapter = new MyGoalAdapter(this, this, mUserGoal);
+        setAdapter(mAdapter);
+    }
+
+    @Override
+    public void retryCustomActionLoad(){
+        mGetCustomActionsRC = HttpRequest.get(this, API.URL.getCustomActions(mUserGoal));
+    }
+
+    @Override
+    public void addCustomAction(String title){
+        mPostCustomActionRC = HttpRequest.post(
+                this, API.URL.postCustomAction(), API.BODY.postPutCustomAction(title, mUserGoal)
+        );
     }
 }

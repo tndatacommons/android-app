@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Created by isma on 9/14/16.
  */
-public class MyGoalAdapter extends RecyclerView.Adapter{
+public class MyGoalAdapter extends RecyclerView.Adapter implements ProgressFooterHolder.Listener{
     private static final int TYPE_BLANK = 0;
     private static final int TYPE_GOAL = TYPE_BLANK+1;
     private static final int TYPE_CUSTOM_ACTIONS = TYPE_GOAL+1;
@@ -33,14 +33,17 @@ public class MyGoalAdapter extends RecyclerView.Adapter{
 
 
     private Context mContext;
+    private Listener mListener;
     private UserGoal mUserGoal;
     private List<CustomAction> mCustomActions;
 
+    private EditableListCardHolder mCustomActionListHolder;
     private ProgressFooterHolder mProgressFooterHolder;
 
 
-    public MyGoalAdapter(Context context, UserGoal userGoal){
+    public MyGoalAdapter(Context context, Listener listener, UserGoal userGoal){
         mContext = context;
+        mListener = listener;
         mUserGoal = userGoal;
         mCustomActions = null;
     }
@@ -85,7 +88,8 @@ public class MyGoalAdapter extends RecyclerView.Adapter{
             CardEditableListBinding binding = DataBindingUtil.inflate(
                     inflater, R.layout.card_editable_list, parent, false
             );
-            return new EditableListCardHolder(binding);
+            mCustomActionListHolder = new EditableListCardHolder(binding);
+            return mCustomActionListHolder;
         }
         else if (viewType == TYPE_FOOTER){
             LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -122,5 +126,38 @@ public class MyGoalAdapter extends RecyclerView.Adapter{
                 customActionsHolder.setInputHint("Type an idea here");
                 break;
         }
+    }
+
+    public void setCustomActions(List<CustomAction> customActions){
+        mCustomActions = customActions;
+        notifyItemRemoved(2);
+        notifyItemInserted(2);
+    }
+
+    public boolean areCustomActionsSet(){
+        return mCustomActions != null;
+    }
+
+    public void fetchCustomActionsFailed(){
+        mProgressFooterHolder.displayMessage("Couldn't load your custom content");
+    }
+
+    public void customActionAdded(CustomAction customAction){
+        mCustomActions.add(customAction);
+    }
+
+    public void addCustomActionFailed(){
+
+    }
+
+    @Override
+    public void onMessageClick(){
+        mListener.retryCustomActionLoad();
+    }
+
+
+    public interface Listener{
+        void retryCustomActionLoad();
+        void addCustomAction(String title);
     }
 }
