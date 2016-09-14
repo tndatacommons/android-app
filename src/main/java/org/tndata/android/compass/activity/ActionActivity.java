@@ -412,7 +412,10 @@ public class ActionActivity
 
     @Override
     public void onGoalClick(){
-
+        if (mAction instanceof UserAction){
+            long userGoalId = ((UserAction)mAction).getPrimaryUserGoalId();
+            startActivity(MyGoalActivity.getIntent(this, userGoalId));
+        }
     }
 
     @Override

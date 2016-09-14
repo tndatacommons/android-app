@@ -110,6 +110,10 @@ public final class API{
             return BASE_URL + "users/goals/?page_size=3";
         }
 
+        public static String getUserGoal(long userGoalId){
+            return BASE_URL + "users/goals/" + userGoalId + "/";
+        }
+
         public static String getTodaysGoals(){
             return BASE_URL + "users/goals/?today=1";
         }
