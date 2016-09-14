@@ -32,7 +32,7 @@ public class LocationReminderTableHandler extends CompassTableHandler{
 
 
     public LocationReminderTableHandler(Context context){
-        super(context);
+        init(context);
     }
 
 
@@ -45,7 +45,7 @@ public class LocationReminderTableHandler extends CompassTableHandler{
      */
     public void saveReminder(LocationReminder reminder){
         //Open a connection to the database
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        SQLiteDatabase db = getDatabase();
 
         String query = "INSERT INTO " + LocationReminderEntry.TABLE + " ("
                 + LocationReminderEntry.PLACE_ID + ", "
@@ -62,7 +62,6 @@ public class LocationReminderTableHandler extends CompassTableHandler{
 
         //Close up
         stmt.close();
-        db.close();
     }
 
     /**
@@ -74,7 +73,7 @@ public class LocationReminderTableHandler extends CompassTableHandler{
         List<LocationReminder> reminders = new ArrayList<>();
 
         //Open a readable database and execute the query
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        SQLiteDatabase db = getDatabase();
         Cursor cursor = db.rawQuery(SELECT, null);
 
         //If there are rows in the cursor returned by the query
@@ -96,7 +95,6 @@ public class LocationReminderTableHandler extends CompassTableHandler{
 
         //Close both, the cursor and the database
         cursor.close();
-        db.close();
 
         return reminders;
     }
@@ -107,9 +105,8 @@ public class LocationReminderTableHandler extends CompassTableHandler{
      * @param reminder the reminder to be deleted.
      */
     public void deleteReminder(LocationReminder reminder){
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        SQLiteDatabase db = getDatabase();
         db.execSQL(DELETE + reminder.getId());
-        db.close();
         reminder.setId(-1);
     }
 
@@ -119,14 +116,13 @@ public class LocationReminderTableHandler extends CompassTableHandler{
      * @return true if it has reminders, false otherwise.
      */
     public boolean hasReminders(){
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        SQLiteDatabase db = getDatabase();
         Cursor cursor = db.rawQuery(COUNT, null);
         cursor.moveToFirst();
 
         int count = cursor.getInt(0);
 
         cursor.close();
-        db.close();
 
         return count != 0;
     }
@@ -135,8 +131,7 @@ public class LocationReminderTableHandler extends CompassTableHandler{
      * Truncates the reminder table.
      */
     public void emptyReminderTable(){
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        SQLiteDatabase db = getDatabase();
         db.execSQL(EMPTY);
-        db.close();
     }
 }

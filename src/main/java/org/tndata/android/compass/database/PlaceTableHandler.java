@@ -58,7 +58,7 @@ public class PlaceTableHandler extends CompassTableHandler{
      * @param context a reference to the context.
      */
     public PlaceTableHandler(Context context){
-        super(context);
+        init(context);
     }
 
 
@@ -73,7 +73,7 @@ public class PlaceTableHandler extends CompassTableHandler{
      */
     public void savePlace(@NonNull UserPlace userPlace){
         //Open a connection to the database
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        SQLiteDatabase db = getDatabase();
 
         //Prepare the statement
         SQLiteStatement stmt = db.compileStatement(INSERT);
@@ -87,7 +87,6 @@ public class PlaceTableHandler extends CompassTableHandler{
 
         //Close up
         stmt.close();
-        db.close();
     }
 
     /**
@@ -97,7 +96,7 @@ public class PlaceTableHandler extends CompassTableHandler{
      */
     public void savePlaces(@NonNull List<UserPlace> userPlaces){
         //Retrieve a database, begin the transaction, and compile the query
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        SQLiteDatabase db = getDatabase();
         db.beginTransaction();
         SQLiteStatement stmt = db.compileStatement(INSERT);
 
@@ -121,7 +120,6 @@ public class PlaceTableHandler extends CompassTableHandler{
 
         //Close the database
         stmt.close();
-        db.close();
     }
 
     /**
@@ -131,7 +129,7 @@ public class PlaceTableHandler extends CompassTableHandler{
      */
     public void updatePlace(@NonNull UserPlace userPlace){
         //Open a connection to the database
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        SQLiteDatabase db = getDatabase();
 
         //Prepare the statement
         SQLiteStatement stmt = db.compileStatement(UPDATE);
@@ -145,7 +143,6 @@ public class PlaceTableHandler extends CompassTableHandler{
 
         //Close up
         stmt.close();
-        db.close();
     }
 
     /**
@@ -155,7 +152,7 @@ public class PlaceTableHandler extends CompassTableHandler{
      */
     public List<UserPlace> getPlaces(){
         //Open a readable database and execute the query
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        SQLiteDatabase db = getDatabase();
         Cursor cursor = db.rawQuery(SELECT, null);
 
         List<UserPlace> userPlaces = new ArrayList<>();
@@ -185,7 +182,6 @@ public class PlaceTableHandler extends CompassTableHandler{
 
         //Close both, the cursor and the database
         cursor.close();
-        db.close();
 
         return userPlaces;
     }
@@ -194,8 +190,7 @@ public class PlaceTableHandler extends CompassTableHandler{
      * Truncates the places table.
      */
     public void emptyPlacesTable(){
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        SQLiteDatabase db = getDatabase();
         db.execSQL(DELETE);
-        db.close();
     }
 }
