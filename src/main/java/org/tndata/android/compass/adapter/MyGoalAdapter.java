@@ -19,13 +19,19 @@ import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.util.CompassUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 /**
  * Created by isma on 9/14/16.
  */
-public class MyGoalAdapter extends RecyclerView.Adapter implements ProgressFooterHolder.Listener{
+public class MyGoalAdapter
+        extends RecyclerView.Adapter
+        implements
+                EditableListCardHolder.Listener,
+                ProgressFooterHolder.Listener{
+
     private static final int TYPE_BLANK = 0;
     private static final int TYPE_GOAL = TYPE_BLANK+1;
     private static final int TYPE_CUSTOM_ACTIONS = TYPE_GOAL+1;
@@ -88,7 +94,11 @@ public class MyGoalAdapter extends RecyclerView.Adapter implements ProgressFoote
             CardEditableListBinding binding = DataBindingUtil.inflate(
                     inflater, R.layout.card_editable_list, parent, false
             );
-            mCustomActionListHolder = new EditableListCardHolder(binding);
+            List<String> dataset = new ArrayList<>();
+            for (CustomAction customAction:mCustomActions){
+                dataset.add(customAction.getTitle());
+            }
+            mCustomActionListHolder = new EditableListCardHolder(binding, this, dataset);
             return mCustomActionListHolder;
         }
         else if (viewType == TYPE_FOOTER){
@@ -144,9 +154,25 @@ public class MyGoalAdapter extends RecyclerView.Adapter implements ProgressFoote
 
     public void customActionAdded(CustomAction customAction){
         mCustomActions.add(customAction);
+        mCustomActionListHolder.addInputToDataset();
     }
 
     public void addCustomActionFailed(){
+        mCustomActionListHolder.inputAdditionFailed();
+    }
+
+    @Override
+    public void onCreateItem(String title){
+        mListener.addCustomAction(title);
+    }
+
+    @Override
+    public void onEditItem(int row, String newTitle){
+
+    }
+
+    @Override
+    public void onDeleteItem(int row){
 
     }
 
@@ -154,7 +180,6 @@ public class MyGoalAdapter extends RecyclerView.Adapter implements ProgressFoote
     public void onMessageClick(){
         mListener.retryCustomActionLoad();
     }
-
 
     public interface Listener{
         void retryCustomActionLoad();
