@@ -195,7 +195,7 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
         }
         else /*if (viewType == TYPE_LOAD)*/{
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            View rootView = inflater.inflate(R.layout.item_material_progress, parent, false);
+            View rootView = inflater.inflate(R.layout.item_progress_footer, parent, false);
             return new RecyclerView.ViewHolder(rootView){};
         }
     }
@@ -267,8 +267,8 @@ public abstract class MaterialAdapter extends RecyclerView.Adapter{
                 loadMore();
             }
             else{
-                rawHolder.itemView.findViewById(R.id.material_progress_progress).setVisibility(View.GONE);
-                TextView error = (TextView)rawHolder.itemView.findViewById(R.id.material_progress_error);
+                rawHolder.itemView.findViewById(R.id.footer_progress).setVisibility(View.GONE);
+                TextView error = (TextView)rawHolder.itemView.findViewById(R.id.footer_message);
                 error.setVisibility(View.VISIBLE);
                 error.setText(mLoadingError);
             }

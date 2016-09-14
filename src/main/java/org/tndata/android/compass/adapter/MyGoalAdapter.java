@@ -10,9 +10,16 @@ import android.widget.Space;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.databinding.CardDetailBinding;
+import org.tndata.android.compass.databinding.CardEditableListBinding;
+import org.tndata.android.compass.databinding.ItemProgressFooterBinding;
 import org.tndata.android.compass.holder.DetailCardHolder;
+import org.tndata.android.compass.holder.EditableListCardHolder;
+import org.tndata.android.compass.holder.ProgressFooterHolder;
+import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.util.CompassUtil;
+
+import java.util.List;
 
 
 /**
@@ -21,29 +28,44 @@ import org.tndata.android.compass.util.CompassUtil;
 public class MyGoalAdapter extends RecyclerView.Adapter{
     private static final int TYPE_BLANK = 0;
     private static final int TYPE_GOAL = TYPE_BLANK+1;
+    private static final int TYPE_CUSTOM_ACTIONS = TYPE_GOAL+1;
+    private static final int TYPE_FOOTER = TYPE_CUSTOM_ACTIONS+1;
 
 
     private Context mContext;
     private UserGoal mUserGoal;
+    private List<CustomAction> mCustomActions;
+
+    private ProgressFooterHolder mProgressFooterHolder;
 
 
     public MyGoalAdapter(Context context, UserGoal userGoal){
         mContext = context;
         mUserGoal = userGoal;
+        mCustomActions = null;
     }
 
     @Override
     public int getItemViewType(int position){
-        switch (position){
-            case 0: return TYPE_BLANK;
-            case 1: return TYPE_GOAL;
-            default: return TYPE_GOAL;
+        if (position == 0){
+            return TYPE_BLANK;
+        }
+        else if (position == 1){
+            return TYPE_GOAL;
+        }
+        else{// if (position == 2){
+            if (mCustomActions == null){
+                return TYPE_FOOTER;
+            }
+            else{
+                return TYPE_CUSTOM_ACTIONS;
+            }
         }
     }
 
     @Override
     public int getItemCount(){
-        return 2;
+        return 3;
     }
 
     @Override
@@ -57,6 +79,21 @@ public class MyGoalAdapter extends RecyclerView.Adapter{
                     inflater, R.layout.card_detail, parent, false
             );
             return new DetailCardHolder(binding);
+        }
+        else if (viewType == TYPE_CUSTOM_ACTIONS){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            CardEditableListBinding binding = DataBindingUtil.inflate(
+                    inflater, R.layout.card_editable_list, parent, false
+            );
+            return new EditableListCardHolder(binding);
+        }
+        else if (viewType == TYPE_FOOTER){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            ItemProgressFooterBinding binding = DataBindingUtil.inflate(
+                    inflater, R.layout.item_progress_footer, parent, false
+            );
+            mProgressFooterHolder = new ProgressFooterHolder(binding);
+            return mProgressFooterHolder;
         }
         return null;
     }
@@ -78,6 +115,11 @@ public class MyGoalAdapter extends RecyclerView.Adapter{
                 DetailCardHolder goalHolder = (DetailCardHolder)rawHolder;
                 goalHolder.setTitle(mUserGoal.getTitle());
                 goalHolder.setContent(mUserGoal.getDescription());
+                break;
+
+            case TYPE_CUSTOM_ACTIONS:
+                EditableListCardHolder customActionsHolder = (EditableListCardHolder)rawHolder;
+                customActionsHolder.setInputHint("Type an idea here");
                 break;
         }
     }
