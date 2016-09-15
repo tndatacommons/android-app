@@ -3,6 +3,8 @@ package org.tndata.android.compass.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -14,19 +16,27 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Space;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.databinding.CardEditableListBinding;
+import org.tndata.android.compass.databinding.ItemProgressFooterBinding;
+import org.tndata.android.compass.holder.EditableListCardHolder;
+import org.tndata.android.compass.holder.ProgressFooterHolder;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.CustomGoal;
+import org.tndata.android.compass.util.CompassUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -36,17 +46,30 @@ import java.util.List;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class CustomContentAdapter extends MaterialAdapter{
+public class CustomContentAdapter
+        extends RecyclerView.Adapter
+        implements EditableListCardHolder.Listener{
+
     private static final String TAG = "CustomActionAdapter";
 
+    private static final int TYPE_BLANK = 0;
+    private static final int TYPE_GOAL = TYPE_BLANK + 1;
+    private static final int TYPE_ACTIONS = TYPE_GOAL + 1;
+    private static final int TYPE_FOOTER = TYPE_ACTIONS + 1;
 
+
+    private Context mContext;
     private CustomGoal mCustomGoal;
     private List<CustomAction> mCustomActions;
     private String mGoalTitle;
     private CustomContentManagerListener mListener;
 
     private CustomGoalHolder mCustomGoalHolder;
-    private CustomActionListHolder mActionListHolder;
+
+    private EditableListCardHolder mCustomActionListHolder;
+    private ProgressFooterHolder mProgressFooterHolder;
+
+    private boolean mLoading;
 
 
     /**
@@ -59,12 +82,13 @@ public class CustomContentAdapter extends MaterialAdapter{
     public CustomContentAdapter(@NonNull Context context, @Nullable CustomGoal customGoal,
                                 @NonNull CustomContentManagerListener listener){
 
-        super(context, ContentType.LIST, customGoal != null);
-
+        mContext = context;
         mCustomGoal = customGoal;
         mCustomActions = null;
         mGoalTitle = null;
         mListener = listener;
+
+        mLoading = false;
     }
 
     /**
@@ -77,47 +101,109 @@ public class CustomContentAdapter extends MaterialAdapter{
     public CustomContentAdapter(@NonNull Context context, @NonNull String title,
                                 @NonNull CustomContentManagerListener listener){
 
-        super(context, ContentType.LIST, false);
-
+        mContext = context;
         mCustomGoal = null;
         mCustomActions = null;
         mGoalTitle = title;
         mListener = listener;
+
+        mLoading = false;
     }
 
     @Override
-    protected boolean isEmpty(){
-        return mCustomGoal == null || mCustomActions == null;
-    }
-
-    @Override
-    protected @NonNull RecyclerView.ViewHolder getHeaderHolder(ViewGroup parent){
-        if (mCustomGoalHolder == null){
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            View rootView = inflater.inflate(R.layout.card_create_goal, parent, false);
-            mCustomGoalHolder = new CustomGoalHolder(rootView);
+    public int getItemViewType(int position){
+        if (position == 0){
+            return TYPE_BLANK;
         }
-        return mCustomGoalHolder;
+        else if (position == 1){
+            return TYPE_GOAL;
+        }
+        else{// if (position == 2){
+            if (mCustomActions == null){
+                return TYPE_FOOTER;
+            }
+            else{
+                return TYPE_ACTIONS;
+            }
+        }
     }
 
     @Override
-    protected void bindHeaderHolder(RecyclerView.ViewHolder rawHolder){
-        if (mCustomGoal != null){
-            ((CustomGoalHolder)rawHolder).bind(mCustomGoal);
+    public int getItemCount(){
+        //Blank, goal, and either the footer or the list of actions.
+        if (mCustomGoal == null && !mLoading){
+            return 2;
         }
         else{
-            ((CustomGoalHolder)rawHolder).bind(mGoalTitle);
+            return 3;
         }
     }
 
     @Override
-    protected @NonNull RecyclerView.ViewHolder getListHolder(ViewGroup parent){
-        if (mActionListHolder == null){
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            View rootView = inflater.inflate(R.layout.card_custom_action_list, parent, false);
-            mActionListHolder = new CustomActionListHolder(rootView);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        if (viewType == TYPE_BLANK){
+            return new RecyclerView.ViewHolder(new Space(mContext)){};
         }
-        return mActionListHolder;
+        else if (viewType == TYPE_GOAL){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            View rootView = inflater.inflate(R.layout.card_create_goal, parent, false);
+            mCustomGoalHolder = new CustomGoalHolder(rootView);
+            return mCustomGoalHolder;
+        }
+        else if (viewType == TYPE_ACTIONS){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            CardEditableListBinding binding = DataBindingUtil.inflate(
+                    inflater, R.layout.card_editable_list, parent, false
+            );
+            //Generate the dataset
+            List<String> dataset = new ArrayList<>();
+            for (CustomAction customAction:mCustomActions){
+                dataset.add(customAction.getTitle());
+            }
+            mCustomActionListHolder = new EditableListCardHolder(
+                    binding, this, dataset, R.menu.menu_custom_action
+            );
+            return mCustomActionListHolder;
+        }
+        else if (viewType == TYPE_FOOTER){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            ItemProgressFooterBinding binding = DataBindingUtil.inflate(
+                    inflater, R.layout.item_progress_footer, parent, false
+            );
+            mProgressFooterHolder = new ProgressFooterHolder(binding);
+            return mProgressFooterHolder;
+        }
+        return null;
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position){
+        switch (getItemViewType(position)){
+            case TYPE_BLANK:
+                int width = CompassUtil.getScreenWidth(mContext);
+                ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        (int)((width*2/3)*0.8)
+                );
+                rawHolder.itemView.setLayoutParams(params);
+                rawHolder.itemView.setVisibility(View.INVISIBLE);
+                break;
+
+            case TYPE_GOAL:
+                if (mCustomGoal != null){
+                    ((CustomGoalHolder)rawHolder).bind(mCustomGoal);
+                }
+                else{
+                    ((CustomGoalHolder)rawHolder).bind(mGoalTitle);
+                }
+                break;
+
+            case TYPE_ACTIONS:
+                EditableListCardHolder customActionsHolder = (EditableListCardHolder)rawHolder;
+                customActionsHolder.setTitle(R.string.my_goal_custom_actions_title);
+                customActionsHolder.setInputHint(R.string.my_goal_custom_actions_hint);
+                break;
+        }
     }
 
     /**
@@ -131,16 +217,16 @@ public class CustomContentAdapter extends MaterialAdapter{
         mCustomActions = mCustomGoal.getActions();
         mCustomGoalHolder.mCreate.setVisibility(View.GONE);
         mCustomGoalHolder.mEdit.setVisibility(View.VISIBLE);
-        notifyListInserted();
-        updateLoading(false);
+        notifyItemRemoved(2);
+        notifyItemInserted(2);
     }
 
     public void customActionsSet(){
         mCustomActions = mCustomGoal.getActions();
         mCustomGoalHolder.mCreate.setVisibility(View.GONE);
         mCustomGoalHolder.mEdit.setVisibility(View.VISIBLE);
-        notifyListInserted();
-        updateLoading(false);
+        notifyItemRemoved(2);
+        notifyItemInserted(2);
     }
 
     /**
@@ -149,9 +235,7 @@ public class CustomContentAdapter extends MaterialAdapter{
      * the proper animation.
      */
     public void customActionAdded(){
-        mActionListHolder.mAdapter.notifyItemInserted(mCustomActions.size()-1);
-        mActionListHolder.mAdapter.notifyItemChanged(mCustomActions.size());
-        mActionListHolder.mSwitcher.showPrevious();
+        mCustomActionListHolder.addInputToDataset();
     }
 
     /**
@@ -163,14 +247,38 @@ public class CustomContentAdapter extends MaterialAdapter{
     @SuppressWarnings("deprecation")
     private void setButtonEnabled(TextView button, boolean enabled){
         if (enabled){
-            button.setTextColor(getContext().getResources().getColor(R.color.primary));
+            button.setTextColor(mContext.getResources().getColor(R.color.primary));
         }
         else{
-            button.setTextColor(getContext().getResources().getColor(R.color.secondary_text_color));
+            button.setTextColor(mContext.getResources().getColor(R.color.secondary_text_color));
         }
         button.setEnabled(enabled);
     }
 
+    @Override
+    public void onCreateItem(String name){
+
+    }
+
+    @Override
+    public void onEditItem(String newName, int index){
+
+    }
+
+    @Override
+    public void onDeleteItem(int index){
+
+    }
+
+    @Override
+    public void onItemClick(int index){
+
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item, int index){
+        return false;
+    }
 
     /**
      * View holder for a custom goal.
@@ -271,7 +379,7 @@ public class CustomContentAdapter extends MaterialAdapter{
             switch (view.getId()){
                 case R.id.create_goal_button:
                     //Hide the keyboard and clear the focus
-                    InputMethodManager imm = (InputMethodManager)getContext()
+                    InputMethodManager imm = (InputMethodManager)mContext
                             .getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mTitle.getWindowToken(), 0);
                     mTitle.clearFocus();
@@ -283,14 +391,15 @@ public class CustomContentAdapter extends MaterialAdapter{
                     mListener.onCreateGoal(new CustomGoal(mTitle.getText().toString().trim()));
 
                     //Display the progress indicator
-                    updateLoading(true);
+                    mLoading = true;
+                    notifyItemInserted(2);
                     break;
 
                 case R.id.create_goal_edit:
                     //If the holder is in edition mode, this is a save button
                     if (mEditing){
                         //Hide the keyboard and clear the focus
-                        InputMethodManager imm2 = (InputMethodManager)getContext()
+                        InputMethodManager imm2 = (InputMethodManager)mContext
                                 .getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm2.hideSoftInputFromWindow(mTitle.getWindowToken(), 0);
                         mTitle.clearFocus();
@@ -318,7 +427,7 @@ public class CustomContentAdapter extends MaterialAdapter{
                         mTitle.requestFocus();
                         //Put the cursor at the end and open the keyboard
                         mTitle.setSelection(mTitle.getText().length());
-                        InputMethodManager imm2 = (InputMethodManager)getContext()
+                        InputMethodManager imm2 = (InputMethodManager)mContext
                                 .getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm2.toggleSoftInput(InputMethodManager.SHOW_FORCED,
                                 InputMethodManager.HIDE_IMPLICIT_ONLY);
@@ -346,274 +455,6 @@ public class CustomContentAdapter extends MaterialAdapter{
                 }
             }
             return false;
-        }
-    }
-
-
-    /**
-     * Holder for the list of custom actions.
-     *
-     * @author Ismael Alonso
-     * @version 1.0.0
-     */
-    private class CustomActionListHolder
-            extends RecyclerView.ViewHolder
-            implements View.OnClickListener{
-
-        private CustomActionAdapter mAdapter;
-
-        private ViewSwitcher mSwitcher;
-        private TextView mButton;
-
-
-        /**
-         * Constructor.
-         *
-         * @param rootView the view held by this adapter.
-         */
-        public CustomActionListHolder(View rootView){
-            super(rootView);
-
-            //Set the adapter and the inner recycler view
-            mAdapter = new CustomActionAdapter();
-            RecyclerView rv = (RecyclerView)rootView.findViewById(R.id.custom_action_list);
-            rv.setLayoutManager(new LinearLayoutManager(getContext()));
-            rv.setAdapter(mAdapter);
-
-            //Grab and set the rest of the UI
-            mSwitcher =(ViewSwitcher)rootView.findViewById(R.id.custom_action_list_switcher);
-            mButton = (TextView)rootView.findViewById(R.id.custom_action_list_create);
-            mButton.setOnClickListener(this);
-            setButtonEnabled(mButton, false);
-        }
-
-        @Override
-        public void onClick(View view){
-            switch (view.getId()){
-                case R.id.custom_action_list_create:
-                    String title = mAdapter.mNewActionHolder.mTitle.getText().toString().trim();
-                    if (title.length() > 0){
-                        mSwitcher.showNext();
-                        mListener.onCreateAction(new CustomAction(title, mCustomGoal));
-                    }
-            }
-        }
-    }
-
-
-    /**
-     * Adapter for the list of custom actions.
-     *
-     * @author Ismael Alonso
-     * @version 1.0.0
-     */
-    private class CustomActionAdapter extends RecyclerView.Adapter<CustomActionHolder>{
-        private CustomActionHolder mNewActionHolder;
-
-
-        @Override
-        public int getItemCount(){
-            return mCustomActions.size()+1;
-        }
-
-        @Override
-        public CustomActionHolder onCreateViewHolder(ViewGroup parent, int viewType){
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            View rootView = inflater.inflate(R.layout.item_custom_action, parent, false);
-            return new CustomActionHolder(rootView);
-        }
-
-        @Override
-        public void onBindViewHolder(CustomActionHolder holder, int position){
-            //The last position hosts a new action item
-            if (position == getItemCount()-1){
-                mNewActionHolder = holder;
-                holder.bind(null);
-            }
-            else{
-                holder.bind(mCustomActions.get(position));
-            }
-        }
-    }
-
-
-    /**
-     * Holder for a custom action.
-     */
-    private class CustomActionHolder
-            extends RecyclerView.ViewHolder
-            implements
-                    TextWatcher,
-                    TextView.OnEditorActionListener,
-                    View.OnClickListener,
-                    DialogInterface.OnClickListener{
-
-        private CustomAction mCustomAction;
-
-        private EditText mTitle;
-        private Drawable mTitleDefaultBackground;
-
-        private ImageView mEditTrigger;
-        private ImageView mEditAction;
-        private ImageView mSaveAction;
-
-
-        public CustomActionHolder(View rootView){
-            super(rootView);
-
-            //Grab the UI components
-            mTitle = (EditText)rootView.findViewById(R.id.custom_action_title);
-            mEditTrigger = (ImageView)rootView.findViewById(R.id.custom_action_trigger);
-            mEditAction = (ImageView)rootView.findViewById(R.id.custom_action_edit);
-            mSaveAction = (ImageView)rootView.findViewById(R.id.custom_action_save);
-
-            mTitleDefaultBackground = mTitle.getBackground();
-
-            //Set the listeners
-            mTitle.addTextChangedListener(this);
-            mTitle.setOnEditorActionListener(this);
-            mEditTrigger.setOnClickListener(this);
-            mEditAction.setOnClickListener(this);
-            mSaveAction.setOnClickListener(this);
-        }
-
-        /**
-         * Binds a custom action to the holder.
-         *
-         * @param customAction the custom action to be bound or {@code null} if this is a new action.
-         */
-        public void bind(@Nullable CustomAction customAction){
-            mCustomAction = customAction;
-            if (mCustomAction == null){
-                mTitle.setText("");
-            }
-            else{
-                mTitle.setText(mCustomAction.getTitle());
-                mTitle.setFocusable(false);
-                mTitle.setBackgroundResource(0);
-                mEditTrigger.setVisibility(View.VISIBLE);
-                mEditAction.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after){
-            //Unused
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count){
-            //Disable the add button if this is the new action and the title is empty
-            if (mCustomAction == null){
-                setButtonEnabled(mActionListHolder.mButton, count != 0);
-            }
-        }
-
-        @Override
-        public void afterTextChanged(Editable s){
-            //Unused
-        }
-
-        @Override
-        public boolean onEditorAction(TextView v, int actionId, KeyEvent event){
-            if (actionId == EditorInfo.IME_ACTION_DONE){
-                if (mTitle.getText().toString().trim().length() > 0){
-                    if (getAdapterPosition() == mActionListHolder.mAdapter.getItemCount() - 1){
-                        mActionListHolder.onClick(mActionListHolder.mButton);
-                    }
-                    else{
-                        onClick(mSaveAction);
-                    }
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        @Override
-        public void onClick(View view){
-            switch (view.getId()){
-                case R.id.custom_action_trigger:
-                    Log.d(TAG, "Editing the trigger of " + mCustomAction);
-
-                    //Open the trigger editor
-                    mListener.onEditTrigger(mCustomActions.get(getAdapterPosition()));
-                    break;
-
-                //When the user enters edition mode
-                case R.id.custom_action_edit:
-                    AlertDialog dialog = new AlertDialog.Builder(getContext())
-                            .setTitle(R.string.custom_action_edit_dialog_title)
-                            .setItems(R.array.custom_action_edit_dialog_options, this)
-                            .create();
-                    dialog.show();
-                    break;
-
-                //When the user saves a currently existing goal (only from edition)
-                case R.id.custom_action_save://Grab the title and check it ain't empty
-                    String newTitle = mTitle.getText().toString().trim();
-                    if (newTitle.length() > 0){
-                        Log.d(TAG, "Saving the title of " + mCustomAction);
-
-                        //If the title has changed, set it and send an update to the backend
-                        if (!mCustomAction.getTitle().equals(newTitle)){
-                            mCustomAction.setTitle(newTitle);
-                            mListener.onSaveAction(mCustomAction);
-                        }
-
-                        //Hide the keyboard and make the title not focusable
-                        InputMethodManager imm2 = (InputMethodManager)getContext()
-                                .getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm2.hideSoftInputFromWindow(mTitle.getWindowToken(), 0);
-                        mTitle.clearFocus();
-                        mTitle.setFocusable(false);
-                        mTitle.setBackgroundResource(0);
-                        //Set the click listener again to start the trigger editor if the user taps
-                        mTitle.setOnClickListener(this);
-
-                        //Swap the save button for the edit button
-                        mEditTrigger.setVisibility(View.VISIBLE);
-                        mEditAction.setVisibility(View.VISIBLE);
-                        mSaveAction.setVisibility(View.GONE);
-                    }
-                    break;
-            }
-        }
-
-        @Override //for the edition dialog
-        public void onClick(DialogInterface dialog, int which){
-            //Edit the title
-            if (which == 0){
-                Log.d(TAG, "Editing the title of " + mCustomAction);
-                //Set the title click listener to null to avoid going into the trigger editor
-                mTitle.setOnClickListener(null);
-                //Background and focus
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-                    mTitle.setBackground(mTitleDefaultBackground);
-                }
-                else{
-                    mTitle.setBackgroundDrawable(mTitleDefaultBackground);
-                }
-                mTitle.setFocusable(true);
-                mTitle.setFocusableInTouchMode(true);
-                mTitle.requestFocus();
-                //Put the cursor at the end and open the keyboard
-                mTitle.setSelection(mTitle.getText().length());
-                InputMethodManager imm = (InputMethodManager)getContext()
-                        .getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-
-                //Switch the edit button for the save button
-                mEditTrigger.setVisibility(View.GONE);
-                mEditAction.setVisibility(View.GONE);
-                mSaveAction.setVisibility(View.VISIBLE);
-            }
-            //Remove the action
-            else if (which == 1){
-                mListener.onRemoveAction(mCustomAction);
-                mCustomActions.remove(getAdapterPosition());
-                mActionListHolder.mAdapter.notifyItemRemoved(getAdapterPosition());
-            }
         }
     }
 

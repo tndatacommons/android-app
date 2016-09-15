@@ -19,6 +19,7 @@ import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
+import org.tndata.android.compass.util.ItemSpacing;
 
 import java.util.Collections;
 
@@ -70,6 +71,8 @@ public class CustomContentActivity
         super.onCreate(savedInstanceState);
 
         mApplication = (CompassApplication)getApplication();
+
+        getRecyclerView().addItemDecoration(new ItemSpacing(this, 8));
 
         String goalTitle = getIntent().getStringExtra(CUSTOM_GOAL_TITLE_KEY);
         if (goalTitle != null){
@@ -177,7 +180,7 @@ public class CustomContentActivity
     @Override
     public void onRequestFailed(int requestCode, HttpRequestError error){
         if (requestCode == mGetActionsRequestCode){
-            mAdapter.displayError("Couldn't load your activities");
+            //mAdapter.displayError("Couldn't load your activities");
         }
     }
 
