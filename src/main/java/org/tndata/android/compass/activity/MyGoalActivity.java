@@ -23,7 +23,10 @@ import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
- * Created by isma on 9/14/16.
+ * Activity used to display a goal currently selected by the user.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class MyGoalActivity
         extends MaterialActivity
@@ -35,6 +38,13 @@ public class MyGoalActivity
     private static final String USER_GOAL_ID_KEY = "org.tndata.compass.MyGoal.UserGoalId";
 
 
+    /**
+     * Gets the Intent used to launch this activity.
+     *
+     * @param context a reference to the context.
+     * @param userGoalId the id of the user goal to be loaded.
+     * @return the intent that launches this activity correctly.
+     */
     public static Intent getIntent(Context context, long userGoalId){
         return new Intent(context, MyGoalActivity.class)
                 .putExtra(USER_GOAL_ID_KEY, userGoalId);
@@ -96,7 +106,7 @@ public class MyGoalActivity
 
     @Override
     public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-
+        //no-op
     }
 
     @Override
@@ -126,6 +136,11 @@ public class MyGoalActivity
         }
     }
 
+    /**
+     * Initializes the activity with the provided goal.
+     *
+     * @param userGoal the loaded goal.
+     */
     private void setGoal(UserGoal userGoal){
         mUserGoal = userGoal;
 
@@ -160,16 +175,21 @@ public class MyGoalActivity
 
     @Override
     public void saveCustomAction(CustomAction action){
-
+        HttpRequest.put(
+                null, API.URL.putCustomAction(action),
+                API.BODY.postPutCustomAction(action.getTitle(), mUserGoal)
+        );
     }
 
     @Override
     public void deleteCustomAction(CustomAction action){
-
+        HttpRequest.delete(null, API.URL.deleteAction(action));
     }
 
     @Override
     public void editTrigger(CustomAction action){
-
+        startActivity(new Intent(this, TriggerActivity.class)
+                .putExtra(TriggerActivity.GOAL_TITLE_KEY, mUserGoal.getTitle())
+                .putExtra(TriggerActivity.ACTION_KEY, action));
     }
 }
