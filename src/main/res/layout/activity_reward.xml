@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/primary" >
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true" >
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <FrameLayout
+                    android:id="@+id/reward_icon_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <ImageView
+                        android:id="@+id/reward_icon"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="24dp"
+                        android:scaleType="centerInside" />
+
+                </FrameLayout>
+
+                <include
+                    layout="@layout/card_detail"
+                    android:id="@+id/reward_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:visibility="gone" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <com.github.clans.fab.FloatingActionButton
+                    android:id="@+id/reward_share"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="16dp"
+                    android:src="@drawable/ic_share_white_24dp"
+                    app:fab_colorNormal="@color/reward_fab"
+                    app:fab_colorPressed="@color/reward_fab_pressed"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+        </ScrollView>
+
+        <ProgressBar
+            android:id="@+id/reward_progress"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_centerInParent="true" />
+
+        <include
+            layout="@layout/tool_bar"
+            android:id="@+id/reward_toolbar" />
+
+    </RelativeLayout>
+</layout>

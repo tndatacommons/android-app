@@ -1,7 +1,11 @@
 package org.tndata.android.compass.model;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.StringRes;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -9,12 +13,14 @@ import android.text.style.AlignmentSpan;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.tndata.android.compass.R;
+
 
 /**
  * Model class for reward content.
  *
  * @author Ismael Alonso
- * @version 1.0.0
+ * @version 1.1.0
  */
 public class Reward implements Parcelable{
     private static final String QUOTE = "quote";
@@ -68,6 +74,40 @@ public class Reward implements Parcelable{
         return mMessageType.equals(JOKE);
     }
 
+    @DrawableRes
+    public int getIcon(){
+        if (isFortune()){
+            return R.drawable.ic_fortune_150dp;
+        }
+        else if (isFunFact()){
+            return R.drawable.ic_fact_150dp;
+        }
+        else if (isJoke()){
+            return R.drawable.ic_joke_150dp;
+        }
+        else if (isQuote()){
+            return R.drawable.ic_quote_150dp;
+        }
+        return -1;
+    }
+
+    @StringRes
+    public int getHeader(){
+        if (isFortune()){
+            return R.string.reward_fortune_header;
+        }
+        else if (isFunFact()){
+            return R.string.reward_fact_header;
+        }
+        else if (isJoke()){
+            return R.string.reward_joke_header;
+        }
+        else if (isQuote()){
+            return R.string.reward_quote_header;
+        }
+        return -1;
+    }
+
     public SpannableString format(){
         SpannableString string;
         if (isQuote()){
@@ -81,6 +121,38 @@ public class Reward implements Parcelable{
             string = new SpannableString(mMessage);
         }
         return string;
+    }
+
+    /**
+     * Shares this reward via Intent.
+     *
+     * @param context a reference to the context.
+     */
+    public void share(Context context){
+        //Build the content string
+        String content = "";
+        if (isJoke()){
+            content = "Joke: ";
+        }
+        if (isFunFact()){
+            content = "Fun fact: ";
+        }
+        if (isFortune()){
+            content = "Fortune cookie: ";
+        }
+        if (isQuote()){
+            content = getAuthor() + ": \"";
+        }
+        content += getMessage();
+        if (isQuote()){
+            content += "\"";
+        }
+
+        //Send the intent
+        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, content);
+        context.startActivity(Intent.createChooser(shareIntent, "Share via"));
     }
 
     @Override
