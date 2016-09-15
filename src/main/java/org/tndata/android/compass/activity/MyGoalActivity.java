@@ -142,7 +142,7 @@ public class MyGoalActivity
             ImageLoader.loadBitmap(image, category.getImageUrl(), options);
         }
 
-        mAdapter = new MyGoalAdapter(this, this, mUserGoal);
+        mAdapter = new MyGoalAdapter(this, this, mUserGoal, category);
         setAdapter(mAdapter);
     }
 

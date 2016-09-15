@@ -10,29 +10,32 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="24dp"
             android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/editable_list_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="title"
+                android:padding="24dp"
+                android:textColor="@color/white"
+                android:background="@color/primary"
                 style="@style/CardTitleText" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/editable_list_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp" />
+                android:layout_marginTop="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp" />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/editable_list_input_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginLeft="-3dp"
-                android:layout_marginRight="-3dp" >
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp" >
 
                 <EditText
                     android:id="@+id/editable_list_input"
@@ -45,6 +48,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="24dp"
+                android:layout_marginBottom="24dp"
+                android:layout_marginLeft="24dp"
                 android:orientation="horizontal"
                 android:gravity="center_horizontal|end" >
 

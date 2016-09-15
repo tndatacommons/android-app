@@ -2,6 +2,7 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import org.tndata.android.compass.holder.DetailCardHolder;
 import org.tndata.android.compass.holder.EditableListCardHolder;
 import org.tndata.android.compass.holder.ProgressFooterHolder;
 import org.tndata.android.compass.model.CustomAction;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.util.CompassUtil;
 
@@ -41,16 +43,18 @@ public class MyGoalAdapter
     private Context mContext;
     private Listener mListener;
     private UserGoal mUserGoal;
+    private TDCCategory mCategory;
     private List<CustomAction> mCustomActions;
 
     private EditableListCardHolder mCustomActionListHolder;
     private ProgressFooterHolder mProgressFooterHolder;
 
 
-    public MyGoalAdapter(Context context, Listener listener, UserGoal userGoal){
+    public MyGoalAdapter(Context context, Listener listener, UserGoal userGoal, TDCCategory category){
         mContext = context;
         mListener = listener;
         mUserGoal = userGoal;
+        mCategory = category;
         mCustomActions = null;
     }
 
@@ -139,7 +143,9 @@ public class MyGoalAdapter
 
             case TYPE_CUSTOM_ACTIONS:
                 EditableListCardHolder customActionsHolder = (EditableListCardHolder)rawHolder;
-                customActionsHolder.setInputHint("Type an idea here");
+                customActionsHolder.setColor(Color.parseColor(mCategory.getColor()));
+                customActionsHolder.setTitle(R.string.my_goal_custom_actions_title);
+                customActionsHolder.setInputHint(R.string.my_goal_custom_actions_hint);
                 break;
         }
     }
@@ -168,23 +174,23 @@ public class MyGoalAdapter
     }
 
     @Override
-    public void onCreateItem(String title){
-        mListener.addCustomAction(title);
+    public void onCreateItem(String name){
+        mListener.addCustomAction(name);
     }
 
     @Override
-    public void onEditItem(int row, String newTitle){
+    public void onEditItem(String newName, int index){
 
     }
 
     @Override
-    public void onDeleteItem(int row){
+    public void onDeleteItem(int index){
 
     }
 
     @Override
     public void onItemClick(int index){
-        
+
     }
 
     @Override
@@ -201,5 +207,6 @@ public class MyGoalAdapter
     public interface Listener{
         void retryCustomActionLoad();
         void addCustomAction(String title);
+        //void saveCustomAction()
     }
 }

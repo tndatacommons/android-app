@@ -6,12 +6,14 @@ import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,50 +33,105 @@ import java.util.List;
 
 
 /**
- * Created by isma on 9/14/16.
+ * View holder for an editable list of items with the possibility of adding custom buttons.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class EditableListCardHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    private static final String TAG = "EditableListHolder";
+
+
     private CardEditableListBinding mBinding;
     private Listener mListener;
     private List<String> mDataset;
     private List<ButtonSpec> mButtons;
+
     private EditableListAdapter mAdapter;
 
 
+    /**
+     * Constructor. No additional buttons per listed item.
+     *
+     * @param binding the binding object associated with the holder's layout.
+     * @param listener the listener for holder events.
+     * @param dataset the dataset to be displayed.
+     */
     public EditableListCardHolder(@NonNull CardEditableListBinding binding,
                                   @NonNull Listener listener, @NonNull List<String> dataset){
 
         this(binding, listener, dataset, new ArrayList<ButtonSpec>());
     }
 
+    /**
+     *
+     * Constructor. Used to add buttons per listed item.
+     *
+     * @param binding the binding object associated with the holder's layout.
+     * @param listener the listener for holder events.
+     * @param dataset the dataset to be displayed.
+     * @param buttons a list of specs of buttons to generate.
+     */
     public EditableListCardHolder(@NonNull CardEditableListBinding binding,
                                   @NonNull Listener listener, @NonNull List<String> dataset,
                                   @NonNull List<ButtonSpec> buttons){
 
         super(binding.getRoot());
+
         mBinding = binding;
         mListener = listener;
         mDataset = dataset;
         mButtons = buttons;
         mBinding.editableListCreate.setOnClickListener(this);
 
-        mAdapter = new EditableListAdapter(itemView.getContext());
-        mBinding.editableListList.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
+        mAdapter = new EditableListAdapter();
         mBinding.editableListList.setAdapter(mAdapter);
+        mBinding.editableListList.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
     }
 
+    public void setColor(@ColorInt int color){
+        mBinding.editableListTitle.setBackgroundColor(color);
+    }
+
+    /**
+     * Sets the title of the card.
+     *
+     * @param title the title to be set.
+     */
     public void setTitle(String title){
         mBinding.editableListTitle.setText(title);
     }
 
+    /**
+     * Sets the title of the card.
+     *
+     * @param titleId the id of the resource to be set as the title of the card.
+     */
     public void setTitle(@StringRes int titleId){
         mBinding.editableListTitle.setText(titleId);
     }
 
+    /**
+     * Sets the hint of the input field.
+     *
+     * @param hint the hint to be set.
+     */
     public void setInputHint(@NonNull String hint){
         mBinding.editableListInputLayout.setHint(hint);
     }
 
+    /**
+     * Sets the hint of the input field.
+     *
+     * @param hintId the id of the resource to be set as the hint of the input field.
+     */
+    public void setInputHint(@StringRes int hintId){
+        setInputHint(itemView.getContext().getString(hintId));
+    }
+
+    /**
+     * Notifies the holder the input is ready to be added to the dataset.
+     */
     public void addInputToDataset(){
         setEnabled(true);
         mDataset.add(mBinding.editableListInput.getText().toString().trim());
@@ -82,6 +139,9 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
         mBinding.editableListInput.setText("");
     }
 
+    /**
+     * Notifies the holder the input couldn't be added to the dataset.
+     */
     public void inputAdditionFailed(){
         setEnabled(true);
     }
@@ -96,6 +156,11 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
         }
     }
 
+    /**
+     * Enables or disabled the form.
+     *
+     * @param enabled true to enable, false to disable.
+     */
     private void setEnabled(boolean enabled){
         mBinding.editableListCreate.setEnabled(enabled);
         mBinding.editableListInput.setEnabled(enabled);
@@ -103,14 +168,13 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
     }
 
 
+    /**
+     * Adapter for the actual list of items.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     private class EditableListAdapter extends RecyclerView.Adapter<ItemHolder>{
-        private Context mContext;
-
-
-        private EditableListAdapter(Context context){
-            mContext = context;
-        }
-
         @Override
         public int getItemCount(){
             return mDataset.size();
@@ -118,7 +182,7 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
 
         @Override
         public ItemHolder onCreateViewHolder(ViewGroup parent, int viewType){
-            LayoutInflater inflater = LayoutInflater.from(mContext);
+            LayoutInflater inflater = LayoutInflater.from(itemView.getContext());
             ItemEditableListEntryBinding binding = DataBindingUtil.inflate(
                     inflater, R.layout.item_editable_list_entry, parent, false
             );
@@ -132,6 +196,12 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
     }
 
 
+    /**
+     * View holder for an item in the list.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     private class ItemHolder
             extends RecyclerView.ViewHolder
             implements
@@ -144,17 +214,31 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
         private Drawable mTitleDefaultBackground;
 
 
+        /**
+         * Constructor.
+         *
+         * @param binding the binding object.
+         */
         public ItemHolder(ItemEditableListEntryBinding binding){
             super(binding.getRoot());
             mBinding = binding;
+
+            //Set the listeners of the main buttons and input field
             mBinding.editableListEntryEdit.setOnClickListener(this);
             mBinding.editableListEntrySave.setOnClickListener(this);
+            mBinding.editableListEntryTitle.setOnClickListener(this);
+            mBinding.editableListEntryTitle.setOnEditorActionListener(this);
 
+            //Backup the default background of the input field, this is done so it can be
+            //  removed and restored later on to make the EditText look like a TextView
+            //  at will
             mTitleDefaultBackground = mBinding.editableListEntryTitle.getBackground();
 
+            //By default the input field should look like a TextView
             mBinding.editableListEntryTitle.setFocusable(false);
             mBinding.editableListEntryTitle.setBackgroundResource(0);
 
+            //Add the buttons requested by the caller
             LayoutInflater inflater = LayoutInflater.from(itemView.getContext());
             for (ButtonSpec button:mButtons){
                 ButtonIconBinding buttonBinding = DataBindingUtil.inflate(
@@ -166,6 +250,11 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
             }
         }
 
+        /**
+         * Sets the title of the item.
+         *
+         * @param title the title to be set.
+         */
         public void setTitle(String title){
             mBinding.editableListEntryTitle.setText(title);
         }
@@ -173,6 +262,7 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event){
             if (actionId == EditorInfo.IME_ACTION_DONE){
+                //Allow saving only if the length ain't zero
                 if (mBinding.editableListEntryTitle.getText().toString().trim().length() > 0){
                     onClick(mBinding.editableListEntrySave);
                     return true;
@@ -186,6 +276,8 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
         public void onClick(DialogInterface dialog, int which){
             //Edit the title
             if (which == 0){
+                Log.d(TAG, "Edit mode, item #" + getAdapterPosition());
+
                 EditText title = mBinding.editableListEntryTitle;
                 //Set the title click listener to null to avoid going into the trigger editor
                 title.setOnClickListener(null);
@@ -212,6 +304,8 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
             }
             //Remove the action
             else if (which == 1){
+                Log.d(TAG, "Delete requested on item #" + getAdapterPosition());
+
                 mListener.onDeleteItem(getAdapterPosition());
                 mDataset.remove(getAdapterPosition());
                 mAdapter.notifyItemRemoved(getAdapterPosition());
@@ -232,11 +326,13 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
 
                 //When the user saves a currently existing goal (only from edition)
                 case R.id.editable_list_entry_save:
+                    Log.d(TAG, "Save requested, item #" + getAdapterPosition());
+
                     EditText title = mBinding.editableListEntryTitle;
                     //Grab the title and check it ain't empty
                     String newTitle = title.getText().toString().trim();
                     if (newTitle.length() > 0){
-                        mListener.onEditItem(getAdapterPosition(), newTitle);
+                        mListener.onEditItem(newTitle, getAdapterPosition());
 
                         //Hide the keyboard and make the title not focusable
                         InputMethodManager imm2 = (InputMethodManager)itemView.getContext()
@@ -266,11 +362,23 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
     }
 
 
+    /**
+     * Specification class of additional buttons to be added to listed items.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public static class ButtonSpec{
         private final int mId;
         private final int mIcon;
 
 
+        /**
+         * Constructor.
+         *
+         * @param id the resource of the id of the button.
+         * @param icon the resource of the icon of the button.
+         */
         public ButtonSpec(@IdRes int id, @DrawableRes int icon){
             mId = id;
             mIcon = icon;
@@ -278,11 +386,48 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
     }
 
 
+    /**
+     * Listener interface for the editable list.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface Listener{
-        void onCreateItem(String title);
-        void onEditItem(int row, String newTitle);
-        void onDeleteItem(int row);
+        /**
+         * Called when the user taps the create button.
+         *
+         * @param name the name of the item introduced by the user.
+         */
+        void onCreateItem(String name);
+
+        /**
+         * Called when the user edits an intem currently in the list.
+         *
+         * @param newName the new name introduced by the user.
+         * @param index the index of the item.
+         */
+        void onEditItem(String newName, int index);
+
+        /**
+         * Called when the user chooses to delete an item in the list.
+         *
+         * @param index the index of the item.
+         */
+        void onDeleteItem(int index);
+
+        /**
+         * Called when the user taps on the title of an item in the list.
+         *
+         * @param index the index of the item.
+         */
         void onItemClick(int index);
+
+        /**
+         * Called when the user taps a button added dynamically.
+         *
+         * @param view the button that was tapped.
+         * @param index the index of the item.
+         */
         void onButtonClick(View view, int index);
     }
 }
