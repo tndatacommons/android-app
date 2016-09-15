@@ -26,6 +26,8 @@ public class UserAction extends Action implements ParserModels.ResultSet{
 
     @SerializedName("primary_goal")
     private long mPrimaryGoalId;
+    @SerializedName("primary_usergoal")
+    private long mPrimaryUserGoalId;
     @SerializedName("goal_icon")
     private String mGoalIconUrl;
 
@@ -79,6 +81,10 @@ public class UserAction extends Action implements ParserModels.ResultSet{
 
     public long getPrimaryGoalId(){
         return mPrimaryGoalId;
+    }
+
+    public long getPrimaryUserGoalId(){
+        return mPrimaryUserGoalId;
     }
 
     public String getPrimaryGoalIconUrl(){

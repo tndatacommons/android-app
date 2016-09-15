@@ -13,7 +13,7 @@ import org.tndata.android.compass.util.ImageLoader;
 
 
 /**
- * Single goa view holder.
+ * Single goal view holder.
  *
  * @author Ismael Alonso
  * @version 1.0.0

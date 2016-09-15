@@ -1,5 +1,6 @@
 package org.tndata.android.compass.model;
 
+import android.graphics.Color;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
 
@@ -105,6 +106,10 @@ public class TDCCategory extends TDCContent{
 
     public String getColor(){
         return mColor != null ? mColor : "";
+    }
+
+    public int getColorInt(){
+        return Color.parseColor(getColor());
     }
 
     public String getSecondaryColor(){

@@ -110,6 +110,10 @@ public final class API{
             return BASE_URL + "users/goals/?page_size=3";
         }
 
+        public static String getUserGoal(long userGoalId){
+            return BASE_URL + "users/goals/" + userGoalId + "/";
+        }
+
         public static String getTodaysGoals(){
             return BASE_URL + "users/goals/?today=1";
         }
@@ -167,8 +171,16 @@ public final class API{
         }
 
         //Custom actions
-        public static String getCustomActions(@NonNull CustomGoal customGoal){
-            return BASE_URL + "users/customactions/?customgoal=" + customGoal.getId();
+        public static String getCustomActions(@NonNull Goal goal){
+            if (goal instanceof UserGoal){
+                return BASE_URL + "users/customactions/?goal=" + goal.getContentId();
+            }
+            else if (goal instanceof CustomGoal){
+                return BASE_URL + "users/customactions/?customgoal=" + goal.getId();
+            }
+            else{
+                return "";
+            }
         }
 
         public static String getCustomAction(long customActionId){
@@ -449,13 +461,38 @@ public final class API{
         }
 
         public static JSONObject postPutCustomAction(@NonNull CustomAction customAction,
-                                                     @NonNull CustomGoal customGoal){
+                                                     @NonNull Goal goal){
 
             JSONObject postPutCustomActionBody = new JSONObject();
             try{
                 postPutCustomActionBody.put("title", customAction.getTitle())
-                        .put("notification_text", customAction.getNotificationText())
-                        .put("customgoal", customGoal.getId());
+                        .put("notification_text", customAction.getNotificationText());
+                if (goal instanceof UserGoal){
+                    postPutCustomActionBody.put("goal", goal.getContentId());
+                }
+                else if (goal instanceof CustomGoal){
+                    postPutCustomActionBody.put("customgoal", goal.getId());
+                }
+            }
+            catch (JSONException jx){
+                jx.printStackTrace();
+            }
+            return postPutCustomActionBody;
+        }
+
+        public static JSONObject postPutCustomAction(@NonNull String title,
+                                                     @NonNull Goal goal){
+
+            JSONObject postPutCustomActionBody = new JSONObject();
+            try{
+                postPutCustomActionBody.put("title", title)
+                        .put("notification_text", title);
+                if (goal instanceof UserGoal){
+                    postPutCustomActionBody.put("goal", goal.getContentId());
+                }
+                else if (goal instanceof CustomGoal){
+                    postPutCustomActionBody.put("customgoal", goal.getId());
+                }
             }
             catch (JSONException jx){
                 jx.printStackTrace();

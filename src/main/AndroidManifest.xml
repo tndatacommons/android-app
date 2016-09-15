@@ -196,7 +196,11 @@
         <activity
             android:name=".activity.BadgeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BadgeTheme"/>
+            android:theme="@style/BadgeTheme" />
+
+        <activity
+            android:name=".activity.MyGoalActivity"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".activity.RewardActivity"

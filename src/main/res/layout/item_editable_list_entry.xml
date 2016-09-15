@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical" >
+
+        <EditText
+            android:id="@+id/editable_list_entry_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="-3dp"
+            android:layout_marginStart="-3dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginEnd="1dp"
+            android:longClickable="false"
+            android:imeOptions="actionDone"
+            android:inputType="textMultiLine" />
+
+        <ImageView
+            android:id="@+id/editable_list_entry_options"
+            android:contentDescription="@string/editable_list_overflow_cd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_overflow_vertical_white"
+            android:tint="@color/gray600" />
+
+        <ImageView
+            android:id="@+id/editable_list_entry_save"
+            android:contentDescription="@string/editable_list_save_cd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_check_white_24dp"
+            android:tint="@color/gray600"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</layout>
