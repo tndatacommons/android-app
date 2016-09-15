@@ -157,4 +157,19 @@ public class MyGoalActivity
                 this, API.URL.postCustomAction(), API.BODY.postPutCustomAction(title, mUserGoal)
         );
     }
+
+    @Override
+    public void saveCustomAction(CustomAction action){
+
+    }
+
+    @Override
+    public void deleteCustomAction(CustomAction action){
+
+    }
+
+    @Override
+    public void editTrigger(CustomAction action){
+
+    }
 }

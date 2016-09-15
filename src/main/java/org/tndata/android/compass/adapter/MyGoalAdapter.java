@@ -26,7 +26,10 @@ import java.util.List;
 
 
 /**
- * Created by isma on 9/14/16.
+ * Adapter for MyGoalsActivity.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class MyGoalAdapter
         extends RecyclerView.Adapter
@@ -50,6 +53,14 @@ public class MyGoalAdapter
     private ProgressFooterHolder mProgressFooterHolder;
 
 
+    /**
+     * Constructor.
+     *
+     * @param context a reference to the context.
+     * @param listener the listener.
+     * @param userGoal the user goal to be displayed.
+     * @param category the primary category of the goal provided.
+     */
     public MyGoalAdapter(Context context, Listener listener, UserGoal userGoal, TDCCategory category){
         mContext = context;
         mListener = listener;
@@ -78,6 +89,7 @@ public class MyGoalAdapter
 
     @Override
     public int getItemCount(){
+        //Blank, goal, and either the footer or the list of actions; always 3
         return 3;
     }
 
@@ -180,22 +192,28 @@ public class MyGoalAdapter
 
     @Override
     public void onEditItem(String newName, int index){
-
+        CustomAction customAction = mCustomActions.get(index);
+        customAction.setTitle(newName);
+        mListener.saveCustomAction(customAction);
     }
 
     @Override
     public void onDeleteItem(int index){
-
+        mListener.deleteCustomAction(mCustomActions.remove(index));
     }
 
     @Override
     public void onItemClick(int index){
-
+        mListener.editTrigger(mCustomActions.get(index));
     }
 
     @Override
     public void onButtonClick(View view, int index){
-
+        switch (view.getId()){
+            case R.id.my_goal_custom_action_trigger:
+                mListener.editTrigger(mCustomActions.get(index));
+                break;
+        }
     }
 
     @Override
@@ -204,9 +222,44 @@ public class MyGoalAdapter
     }
 
 
+    /**
+     * Listener interface.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface Listener{
+        /**
+         * Called to retry loading the list of actions.
+         */
         void retryCustomActionLoad();
+
+        /**
+         * Called when the user requests a new custom action.
+         *
+         * @param title the title of the new custom action.
+         */
         void addCustomAction(String title);
-        //void saveCustomAction()
+
+        /**
+         * Called when the user changes the title of a custom action.
+         *
+         * @param action the action to be saved.
+         */
+        void saveCustomAction(CustomAction action);
+
+        /**
+         * Called when the user deletes a custom action.
+         *
+         * @param action the action to be deleted.
+         */
+        void deleteCustomAction(CustomAction action);
+
+        /**
+         * Called when the user wants to edit a trigger.
+         *
+         * @param action the action whose trigger is to be edited.
+         */
+        void editTrigger(CustomAction action);
     }
 }
