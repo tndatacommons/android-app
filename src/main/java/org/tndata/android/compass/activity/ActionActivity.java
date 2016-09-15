@@ -416,6 +416,11 @@ public class ActionActivity
             long userGoalId = ((UserAction)mAction).getPrimaryUserGoalId();
             startActivity(MyGoalActivity.getIntent(this, userGoalId));
         }
+        else if (mAction instanceof CustomAction){
+            long customGoalId = ((CustomAction)mAction).getCustomGoalId();
+            startActivity(new Intent(this, CustomContentActivity.class)
+                    .putExtra(CustomContentActivity.CUSTOM_GOAL_ID_KEY, customGoalId));
+        }
     }
 
     @Override
