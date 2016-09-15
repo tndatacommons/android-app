@@ -94,11 +94,17 @@ public class MyGoalAdapter
             CardEditableListBinding binding = DataBindingUtil.inflate(
                     inflater, R.layout.card_editable_list, parent, false
             );
+            //Generate the dataset
             List<String> dataset = new ArrayList<>();
             for (CustomAction customAction:mCustomActions){
                 dataset.add(customAction.getTitle());
             }
-            mCustomActionListHolder = new EditableListCardHolder(binding, this, dataset);
+            //Create the list of additional buttons
+            List<EditableListCardHolder.ButtonSpec> buttons = new ArrayList<>();
+            buttons.add(new EditableListCardHolder.ButtonSpec(
+                    R.id.my_goal_custom_action_trigger, R.drawable.ic_bell_white_24dp
+            ));
+            mCustomActionListHolder = new EditableListCardHolder(binding, this, dataset, buttons);
             return mCustomActionListHolder;
         }
         else if (viewType == TYPE_FOOTER){
@@ -177,9 +183,15 @@ public class MyGoalAdapter
     }
 
     @Override
+    public void onButtonClick(View view, int index){
+
+    }
+
+    @Override
     public void onMessageClick(){
         mListener.retryCustomActionLoad();
     }
+
 
     public interface Listener{
         void retryCustomActionLoad();

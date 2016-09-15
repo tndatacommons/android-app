@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,9 +22,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.databinding.ButtonIconBinding;
 import org.tndata.android.compass.databinding.CardEditableListBinding;
 import org.tndata.android.compass.databinding.ItemEditableListEntryBinding;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,14 +37,25 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
     private CardEditableListBinding mBinding;
     private Listener mListener;
     private List<String> mDataset;
+    private List<ButtonSpec> mButtons;
     private EditableListAdapter mAdapter;
 
 
-    public EditableListCardHolder(CardEditableListBinding binding, Listener listener, List<String> dataset){
+    public EditableListCardHolder(@NonNull CardEditableListBinding binding,
+                                  @NonNull Listener listener, @NonNull List<String> dataset){
+
+        this(binding, listener, dataset, new ArrayList<ButtonSpec>());
+    }
+
+    public EditableListCardHolder(@NonNull CardEditableListBinding binding,
+                                  @NonNull Listener listener, @NonNull List<String> dataset,
+                                  @NonNull List<ButtonSpec> buttons){
+
         super(binding.getRoot());
         mBinding = binding;
         mListener = listener;
         mDataset = dataset;
+        mButtons = buttons;
         mBinding.editableListCreate.setOnClickListener(this);
 
         mAdapter = new EditableListAdapter(itemView.getContext());
@@ -139,6 +154,16 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
 
             mBinding.editableListEntryTitle.setFocusable(false);
             mBinding.editableListEntryTitle.setBackgroundResource(0);
+
+            LayoutInflater inflater = LayoutInflater.from(itemView.getContext());
+            for (ButtonSpec button:mButtons){
+                ButtonIconBinding buttonBinding = DataBindingUtil.inflate(
+                        inflater, R.layout.button_icon, mBinding.editableListEntryButtons, true
+                );
+                buttonBinding.buttonIcon.setId(button.mId);
+                buttonBinding.buttonIcon.setImageResource(button.mIcon);
+                buttonBinding.buttonIcon.setOnClickListener(this);
+            }
         }
 
         public void setTitle(String title){
@@ -182,6 +207,7 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
 
                 //Switch the edit button for the save button
                 mBinding.editableListEntryEdit.setVisibility(View.GONE);
+                mBinding.editableListEntryButtons.setVisibility(View.GONE);
                 mBinding.editableListEntrySave.setVisibility(View.VISIBLE);
             }
             //Remove the action
@@ -195,13 +221,6 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
         @Override
         public void onClick(View view){
             switch (view.getId()){
-                /*case R.id.custom_action_trigger:
-                    Log.d(TAG, "Editing the trigger of " + mCustomAction);
-
-                    //Open the trigger editor
-                    mListener.onEditTrigger(mCustomActions.get(getAdapterPosition()));
-                    break;*/
-
                 //When the user enters edition mode
                 case R.id.editable_list_entry_edit:
                     AlertDialog dialog = new AlertDialog.Builder(itemView.getContext())
@@ -212,7 +231,7 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
                     break;
 
                 //When the user saves a currently existing goal (only from edition)
-                case R.id.custom_action_save:
+                case R.id.editable_list_entry_save:
                     EditText title = mBinding.editableListEntryTitle;
                     //Grab the title and check it ain't empty
                     String newTitle = title.getText().toString().trim();
@@ -230,11 +249,31 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
                         title.setOnClickListener(this);
 
                         //Swap the save button for the edit button
+                        mBinding.editableListEntryButtons.setVisibility(View.VISIBLE);
                         mBinding.editableListEntryEdit.setVisibility(View.VISIBLE);
                         mBinding.editableListEntrySave.setVisibility(View.GONE);
                     }
                     break;
+
+                case R.id.editable_list_entry_title:
+                    mListener.onItemClick(getAdapterPosition());
+                    break;
+
+                default:
+                    mListener.onButtonClick(view, getAdapterPosition());
             }
+        }
+    }
+
+
+    public static class ButtonSpec{
+        private final int mId;
+        private final int mIcon;
+
+
+        public ButtonSpec(@IdRes int id, @DrawableRes int icon){
+            mId = id;
+            mIcon = icon;
         }
     }
 
@@ -243,5 +282,7 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
         void onCreateItem(String title);
         void onEditItem(int row, String newTitle);
         void onDeleteItem(int row);
+        void onItemClick(int index);
+        void onButtonClick(View view, int index);
     }
 }

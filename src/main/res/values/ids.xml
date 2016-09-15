@@ -21,4 +21,6 @@
     <item name="action_add_to_calendar" type="id" />
 
     <item name="review_title" type="id" />
+
+    <item name="my_goal_custom_action_trigger" type="id" />
 </resources>

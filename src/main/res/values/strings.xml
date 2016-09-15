@@ -364,5 +364,8 @@
         <item>Edit</item>
         <item>Remove</item>
     </string-array>
+    
+    <!-- Miscellaneous content descriptions -->
+    <string name="button_icon_cd">An icon acting as a button</string>
 
 </resources>
