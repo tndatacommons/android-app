@@ -1,21 +1,20 @@
 package org.tndata.android.compass.holder;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.ColorInt;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.IdRes;
+import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -24,11 +23,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.databinding.ButtonIconBinding;
 import org.tndata.android.compass.databinding.CardEditableListBinding;
 import org.tndata.android.compass.databinding.ItemEditableListEntryBinding;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -45,13 +42,13 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
     private CardEditableListBinding mBinding;
     private Listener mListener;
     private List<String> mDataset;
-    private List<ButtonSpec> mButtons;
+    private int mMenu;
 
     private EditableListAdapter mAdapter;
 
 
     /**
-     * Constructor. No additional buttons per listed item.
+     * Constructor. No additional menu items per listed item.
      *
      * @param binding the binding object associated with the holder's layout.
      * @param listener the listener for holder events.
@@ -60,28 +57,28 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
     public EditableListCardHolder(@NonNull CardEditableListBinding binding,
                                   @NonNull Listener listener, @NonNull List<String> dataset){
 
-        this(binding, listener, dataset, new ArrayList<ButtonSpec>());
+        this(binding, listener, dataset, -1);
     }
 
     /**
      *
-     * Constructor. Used to add buttons per listed item.
+     * Constructor. Used to add menu items to listed items' overflows.
      *
      * @param binding the binding object associated with the holder's layout.
      * @param listener the listener for holder events.
      * @param dataset the dataset to be displayed.
-     * @param buttons a list of specs of buttons to generate.
+     * @param menu the resource of the menu for listed items.
      */
     public EditableListCardHolder(@NonNull CardEditableListBinding binding,
                                   @NonNull Listener listener, @NonNull List<String> dataset,
-                                  @NonNull List<ButtonSpec> buttons){
+                                  @MenuRes int menu){
 
         super(binding.getRoot());
 
         mBinding = binding;
         mListener = listener;
         mDataset = dataset;
-        mButtons = buttons;
+        mMenu = menu;
         mBinding.editableListCreate.setOnClickListener(this);
 
         mAdapter = new EditableListAdapter();
@@ -206,10 +203,11 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
             extends RecyclerView.ViewHolder
             implements
                     TextView.OnEditorActionListener,
-                    View.OnClickListener,
-                    DialogInterface.OnClickListener{
+                    PopupMenu.OnMenuItemClickListener,
+                    View.OnClickListener{
 
         private ItemEditableListEntryBinding mBinding;
+        private PopupMenu mPopupMenu;
 
         private Drawable mTitleDefaultBackground;
 
@@ -224,7 +222,7 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
             mBinding = binding;
 
             //Set the listeners of the main buttons and input field
-            mBinding.editableListEntryEdit.setOnClickListener(this);
+            mBinding.editableListEntryOptions.setOnClickListener(this);
             mBinding.editableListEntrySave.setOnClickListener(this);
             mBinding.editableListEntryTitle.setOnClickListener(this);
             mBinding.editableListEntryTitle.setOnEditorActionListener(this);
@@ -238,16 +236,11 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
             mBinding.editableListEntryTitle.setFocusable(false);
             mBinding.editableListEntryTitle.setBackgroundResource(0);
 
-            //Add the buttons requested by the caller
-            LayoutInflater inflater = LayoutInflater.from(itemView.getContext());
-            for (ButtonSpec button:mButtons){
-                ButtonIconBinding buttonBinding = DataBindingUtil.inflate(
-                        inflater, R.layout.button_icon, mBinding.editableListEntryButtons, true
-                );
-                buttonBinding.buttonIcon.setId(button.mId);
-                buttonBinding.buttonIcon.setImageResource(button.mIcon);
-                buttonBinding.buttonIcon.setOnClickListener(this);
-            }
+            //Inflate the menus
+            mPopupMenu = new PopupMenu(itemView.getContext(), mBinding.editableListEntryOptions);
+            mPopupMenu.getMenuInflater().inflate(R.menu.menu_editable_list_item, mPopupMenu.getMenu());
+            mPopupMenu.getMenuInflater().inflate(mMenu, mPopupMenu.getMenu());
+            mPopupMenu.setOnMenuItemClickListener(this);
         }
 
         /**
@@ -272,56 +265,30 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
         }
 
         @Override
-        @SuppressWarnings("deprecation")
-        public void onClick(DialogInterface dialog, int which){
-            //Edit the title
-            if (which == 0){
-                Log.d(TAG, "Edit mode, item #" + getAdapterPosition());
+        public boolean onMenuItemClick(MenuItem item){
+            switch (item.getItemId()){
+                case R.id.editable_list_item_edit:
+                    edit();
+                    return true;
 
-                EditText title = mBinding.editableListEntryTitle;
-                //Set the title click listener to null to avoid going into the trigger editor
-                title.setOnClickListener(null);
-                //Background and focus
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-                    title.setBackground(mTitleDefaultBackground);
-                }
-                else{
-                    title.setBackgroundDrawable(mTitleDefaultBackground);
-                }
-                title.setFocusable(true);
-                title.setFocusableInTouchMode(true);
-                title.requestFocus();
-                //Put the cursor at the end and open the keyboard
-                title.setSelection(title.getText().length());
-                InputMethodManager imm = (InputMethodManager)itemView.getContext()
-                        .getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                case R.id.editable_list_item_remove:
+                    Log.d(TAG, "Delete requested on item #" + getAdapterPosition());
 
-                //Switch the edit button for the save button
-                mBinding.editableListEntryEdit.setVisibility(View.GONE);
-                mBinding.editableListEntryButtons.setVisibility(View.GONE);
-                mBinding.editableListEntrySave.setVisibility(View.VISIBLE);
-            }
-            //Remove the action
-            else if (which == 1){
-                Log.d(TAG, "Delete requested on item #" + getAdapterPosition());
+                    mListener.onDeleteItem(getAdapterPosition());
+                    mDataset.remove(getAdapterPosition());
+                    mAdapter.notifyItemRemoved(getAdapterPosition());
+                    return true;
 
-                mListener.onDeleteItem(getAdapterPosition());
-                mDataset.remove(getAdapterPosition());
-                mAdapter.notifyItemRemoved(getAdapterPosition());
+                default:
+                    return mListener.onMenuItemClick(item, getAdapterPosition());
             }
         }
 
         @Override
         public void onClick(View view){
             switch (view.getId()){
-                //When the user enters edition mode
-                case R.id.editable_list_entry_edit:
-                    AlertDialog dialog = new AlertDialog.Builder(itemView.getContext())
-                            .setTitle(R.string.editable_list_edit_dialog_title)
-                            .setItems(R.array.editable_list_edit_dialog_options, this)
-                            .create();
-                    dialog.show();
+                case R.id.editable_list_entry_options:
+                    mPopupMenu.show();
                     break;
 
                 //When the user saves a currently existing goal (only from edition)
@@ -345,8 +312,7 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
                         title.setOnClickListener(this);
 
                         //Swap the save button for the edit button
-                        mBinding.editableListEntryButtons.setVisibility(View.VISIBLE);
-                        mBinding.editableListEntryEdit.setVisibility(View.VISIBLE);
+                        mBinding.editableListEntryOptions.setVisibility(View.VISIBLE);
                         mBinding.editableListEntrySave.setVisibility(View.GONE);
                     }
                     break;
@@ -354,34 +320,38 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
                 case R.id.editable_list_entry_title:
                     mListener.onItemClick(getAdapterPosition());
                     break;
-
-                default:
-                    mListener.onButtonClick(view, getAdapterPosition());
             }
         }
-    }
-
-
-    /**
-     * Specification class of additional buttons to be added to listed items.
-     *
-     * @author Ismael Alonso
-     * @version 1.0.0
-     */
-    public static class ButtonSpec{
-        private final int mId;
-        private final int mIcon;
-
 
         /**
-         * Constructor.
-         *
-         * @param id the resource of the id of the button.
-         * @param icon the resource of the icon of the button.
+         * Triggers the edition mode.
          */
-        public ButtonSpec(@IdRes int id, @DrawableRes int icon){
-            mId = id;
-            mIcon = icon;
+        @SuppressWarnings("deprecation")
+        private void edit(){
+            Log.d(TAG, "Edit mode, item #" + getAdapterPosition());
+
+            EditText title = mBinding.editableListEntryTitle;
+            //Set the title click listener to null to avoid going into the trigger editor
+            title.setOnClickListener(null);
+            //Background and focus
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+                title.setBackground(mTitleDefaultBackground);
+            }
+            else{
+                title.setBackgroundDrawable(mTitleDefaultBackground);
+            }
+            title.setFocusable(true);
+            title.setFocusableInTouchMode(true);
+            title.requestFocus();
+            //Put the cursor at the end and open the keyboard
+            title.setSelection(title.getText().length());
+            InputMethodManager imm = (InputMethodManager)itemView.getContext()
+                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+
+            //Switch the edit button for the save button
+            mBinding.editableListEntryOptions.setVisibility(View.GONE);
+            mBinding.editableListEntrySave.setVisibility(View.VISIBLE);
         }
     }
 
@@ -425,9 +395,10 @@ public class EditableListCardHolder extends RecyclerView.ViewHolder implements V
         /**
          * Called when the user taps a button added dynamically.
          *
-         * @param view the button that was tapped.
+         * @param item the menu item that was tapped.
          * @param index the index of the item.
+         * @return true if the event was handled, false otherwise.
          */
-        void onButtonClick(View view, int index);
+        boolean onMenuItemClick(MenuItem item, int index);
     }
 }

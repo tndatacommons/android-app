@@ -20,23 +20,17 @@
             android:imeOptions="actionDone"
             android:inputType="textCapSentences" />
 
-        <LinearLayout
-            android:id="@+id/editable_list_entry_buttons"
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
         <ImageView
-            android:id="@+id/editable_list_entry_edit"
-            android:contentDescription="@string/custom_action_edit_cd"
+            android:id="@+id/editable_list_entry_options"
+            android:contentDescription="@string/editable_list_overflow_cd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_edit_white_24dp"
+            android:src="@drawable/ic_overflow_vertical_white"
             android:tint="@color/gray600" />
 
         <ImageView
             android:id="@+id/editable_list_entry_save"
-            android:contentDescription="@string/custom_action_save_cd"
+            android:contentDescription="@string/editable_list_save_cd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"

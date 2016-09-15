@@ -358,11 +358,16 @@
     <!-- MyGoalActivity -->
     <string name="my_goal_custom_actions_title">How will you do this?</string>
     <string name="my_goal_custom_actions_hint">Type an idea here</string>
+    <string name="my_goal_custom_action_reschedule">Reschedule</string>
 
     <!-- Goal card -->
     <string name="card_goal_title">Your goal</string>
 
     <!-- Editable list card -->
+    <string name="editable_list_overflow_cd">A list of options related to the item</string>
+    <string name="editable_list_save_cd">save the item currently being edited</string>
+    <string name="editable_list_edit">Edit</string>
+    <string name="editable_list_remove">Remove</string>
     <string name="editable_list_edit_dialog_title">Select an option</string>
     <string-array name="editable_list_edit_dialog_options">
         <item>Edit</item>

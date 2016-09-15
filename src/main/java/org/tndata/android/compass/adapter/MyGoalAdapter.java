@@ -5,6 +5,7 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Space;
@@ -115,12 +116,9 @@ public class MyGoalAdapter
             for (CustomAction customAction:mCustomActions){
                 dataset.add(customAction.getTitle());
             }
-            //Create the list of additional buttons
-            List<EditableListCardHolder.ButtonSpec> buttons = new ArrayList<>();
-            buttons.add(new EditableListCardHolder.ButtonSpec(
-                    R.id.my_goal_custom_action_trigger, R.drawable.ic_bell_white_24dp
-            ));
-            mCustomActionListHolder = new EditableListCardHolder(binding, this, dataset, buttons);
+            mCustomActionListHolder = new EditableListCardHolder(
+                    binding, this, dataset, R.menu.menu_custom_action
+            );
             return mCustomActionListHolder;
         }
         else if (viewType == TYPE_FOOTER){
@@ -208,12 +206,13 @@ public class MyGoalAdapter
     }
 
     @Override
-    public void onButtonClick(View view, int index){
-        switch (view.getId()){
-            case R.id.my_goal_custom_action_trigger:
+    public boolean onMenuItemClick(MenuItem item, int index){
+        switch (item.getItemId()){
+            case R.id.custom_action_reschedule:
                 mListener.editTrigger(mCustomActions.get(index));
-                break;
+                return true;
         }
+        return false;
     }
 
     @Override
