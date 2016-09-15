@@ -132,13 +132,13 @@ public class Reward implements Parcelable{
         //Build the content string
         String content = "";
         if (isJoke()){
-            content = "Joke: ";
+            content = context.getString(R.string.reward_joke) + ": ";
         }
         if (isFunFact()){
-            content = "Fun fact: ";
+            content = context.getString(R.string.reward_fact) + ": ";
         }
         if (isFortune()){
-            content = "Fortune cookie: ";
+            content = context.getString(R.string.reward_fortune) + ": ";
         }
         if (isQuote()){
             content = getAuthor() + ": \"";
@@ -152,7 +152,9 @@ public class Reward implements Parcelable{
         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, content);
-        context.startActivity(Intent.createChooser(shareIntent, "Share via"));
+        context.startActivity(Intent.createChooser(
+                shareIntent, context.getString(R.string.reward_share_via)
+        ));
     }
 
     @Override
