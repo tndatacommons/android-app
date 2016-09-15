@@ -53,4 +53,7 @@
     <!-- Other -->
     <color name="divider">#1F000000</color>
 
+    <color name="reward_fab">#DEB936</color>
+    <color name="reward_fab_pressed">#ECD379</color>
+
 </resources>
