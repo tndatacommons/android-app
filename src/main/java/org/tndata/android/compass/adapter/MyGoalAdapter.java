@@ -183,6 +183,11 @@ public class MyGoalAdapter
     }
 
     @Override
+    public void onItemClick(int index){
+        
+    }
+
+    @Override
     public void onButtonClick(View view, int index){
 
     }
