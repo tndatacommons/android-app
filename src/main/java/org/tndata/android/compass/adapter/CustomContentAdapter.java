@@ -1,19 +1,14 @@
 package org.tndata.android.compass.adapter;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -25,7 +20,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Space;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.databinding.CardEditableListBinding;
@@ -200,8 +194,8 @@ public class CustomContentAdapter
 
             case TYPE_ACTIONS:
                 EditableListCardHolder customActionsHolder = (EditableListCardHolder)rawHolder;
-                customActionsHolder.setTitle(R.string.my_goal_custom_actions_title);
-                customActionsHolder.setInputHint(R.string.my_goal_custom_actions_hint);
+                customActionsHolder.setTitle(R.string.custom_action_list_header);
+                customActionsHolder.setInputHint(R.string.custom_action_list_hint);
                 break;
         }
     }
@@ -227,6 +221,10 @@ public class CustomContentAdapter
         mCustomGoalHolder.mEdit.setVisibility(View.VISIBLE);
         notifyItemRemoved(2);
         notifyItemInserted(2);
+    }
+
+    public void contentLoadError(){
+        mProgressFooterHolder.displayMessage(R.string.content_load_error);
     }
 
     /**
@@ -257,26 +255,33 @@ public class CustomContentAdapter
 
     @Override
     public void onCreateItem(String name){
-
+        mListener.onCreateAction(name);
     }
 
     @Override
     public void onEditItem(String newName, int index){
-
+        CustomAction customAction = mCustomActions.get(index);
+        customAction.setTitle(newName);
+        mListener.onSaveAction(customAction);
     }
 
     @Override
     public void onDeleteItem(int index){
-
+        mListener.onRemoveAction(mCustomActions.remove(index));
     }
 
     @Override
     public void onItemClick(int index){
-
+        mListener.onEditTrigger(mCustomActions.get(index));
     }
 
     @Override
     public boolean onMenuItemClick(MenuItem item, int index){
+        switch (item.getItemId()){
+            case R.id.custom_action_reschedule:
+                mListener.onEditTrigger(mCustomActions.get(index));
+                return true;
+        }
         return false;
     }
 
@@ -483,9 +488,9 @@ public class CustomContentAdapter
         /**
          * Called when the user creates a new action.
          *
-         * @param customAction the newly created action.
+         * @param name the name of the action to be created.
          */
-        void onCreateAction(@NonNull CustomAction customAction);
+        void onCreateAction(@NonNull String name);
 
         /**
          * Called when the user saves an action he is editing.

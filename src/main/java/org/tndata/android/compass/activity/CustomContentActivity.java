@@ -180,7 +180,7 @@ public class CustomContentActivity
     @Override
     public void onRequestFailed(int requestCode, HttpRequestError error){
         if (requestCode == mGetActionsRequestCode){
-            //mAdapter.displayError("Couldn't load your activities");
+            mAdapter.contentLoadError();
         }
     }
 
@@ -250,16 +250,16 @@ public class CustomContentActivity
     }
 
     @Override
-    public void onCreateAction(@NonNull CustomAction customAction){
+    public void onCreateAction(@NonNull String customAction){
         mAddActionRequestCode = HttpRequest.post(this, API.URL.postCustomAction(),
-                API.BODY.postPutCustomAction(customAction, customAction.getGoal()));
+                API.BODY.postPutCustomAction(customAction, mCustomGoal));
     }
 
     @Override
     public void onSaveAction(@NonNull CustomAction customAction){
         mApplication.updateAction(mCustomGoal, customAction);
         HttpRequest.put(null, API.URL.putCustomAction(customAction),
-                API.BODY.postPutCustomAction(customAction, customAction.getGoal()));
+                API.BODY.postPutCustomAction(customAction.getTitle(), customAction.getGoal()));
     }
 
     @Override
