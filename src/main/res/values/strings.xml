@@ -10,9 +10,6 @@
     <string name="launcher_compass_logo_cd">Compass logo</string>
     <string name="launcher_de_soto_bridge_cd">Hernando DeSoto bridge</string>
     <string name="launcher_made_in_memphis">made in memphis</string>
-    <string name="launcher_update_title">A new version is available</string>
-    <string name="launcher_update_subtitle">Updates of the application improve support and fix issues. To continue using the application, please update.</string>
-    <string name="launcher_update_get_it">Update</string>
     <string name="login_email_hint">email</string>
     <string name="login_password_hint">password</string>
     <string name="login_email_label">email address</string>
@@ -137,23 +134,14 @@
     <string name="dialog_enrollment_content">Compass will check back in occasionally with activities that can help you reach your goal.</string>
     <string name="dialog_enrollment_ok">Got it</string>
 
-    <!-- CustomContentManager -->
+    <!-- CustomContent -->
     <string name="custom_goal_header">My goal is to&#8230;</string>
     <string name="custom_goal_create">Create</string>
     <string name="custom_goal_edit_cd">Edition mode toggle button</string>
     <string name="custom_goal_remove">Remove</string>
     <string name="custom_goal_remove_condensed">Remove</string>
     <string name="custom_action_list_header">Here\'s how I\'ll reach my goal</string>
-    <string name="custom_action_list_sub_header">I will&#8230;</string>
-    <string name="custom_action_list_create">Create</string>
-    <string name="custom_action_trigger_cd">Enter trigger edition mode</string>
-    <string name="custom_action_edit_cd">Open the edition dialog</string>
-    <string name="custom_action_edit_dialog_title">Select an option</string>
-    <string-array name="custom_action_edit_dialog_options">
-        <item>Change the title</item>
-        <item>Remove action</item>
-    </string-array>
-    <string name="custom_action_save_cd">Save the title of an action in edition mode</string>
+    <string name="custom_action_list_hint">I will&#8230;</string>
 
     <!-- SettingsActivity -->
     <string name="settings_general_title">General</string>
@@ -197,12 +185,6 @@
     <string name="action_fetch_error">Couldn\'t load activity data</string>
     <string name="action_custom_title">Your reminder</string>
     <string name="action_detail_title">How will this help?</string>
-
-    <!-- Behavior Dialog from ActionActivity -->
-    <string name="behavior_dialog_remove">Remove</string>
-    <string name="behavior_dialog_confirm">Yes, Remove this</string>
-    <string name="behavior_dialog_confirm_cancel">Cancel</string>
-    <string name="behavior_dialog_confirm_message">This activity will help you reach your goals. By removing, you will no longer receive notifications about this activity. Are you sure you want to continue?</string>
 
     <!-- Search -->
     <string name="search">Search</string>
@@ -369,16 +351,11 @@
 
     <!-- Editable list card -->
     <string name="editable_list_overflow_cd">A list of options related to the item</string>
-    <string name="editable_list_save_cd">save the item currently being edited</string>
+    <string name="editable_list_save_cd">Save the item currently being edited</string>
     <string name="editable_list_edit">Edit</string>
     <string name="editable_list_remove">Remove</string>
-    <string name="editable_list_edit_dialog_title">Select an option</string>
-    <string-array name="editable_list_edit_dialog_options">
-        <item>Edit</item>
-        <item>Remove</item>
-    </string-array>
-    
-    <!-- Miscellaneous content descriptions -->
-    <string name="button_icon_cd">An icon acting as a button</string>
+
+    <!-- Generic errors -->
+    <string name="content_load_error">Couldn\'t load your content</string>
 
 </resources>

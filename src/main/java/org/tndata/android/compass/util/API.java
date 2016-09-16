@@ -460,26 +460,6 @@ public final class API{
             return postPutCustomGoalBody;
         }
 
-        public static JSONObject postPutCustomAction(@NonNull CustomAction customAction,
-                                                     @NonNull Goal goal){
-
-            JSONObject postPutCustomActionBody = new JSONObject();
-            try{
-                postPutCustomActionBody.put("title", customAction.getTitle())
-                        .put("notification_text", customAction.getNotificationText());
-                if (goal instanceof UserGoal){
-                    postPutCustomActionBody.put("goal", goal.getContentId());
-                }
-                else if (goal instanceof CustomGoal){
-                    postPutCustomActionBody.put("customgoal", goal.getId());
-                }
-            }
-            catch (JSONException jx){
-                jx.printStackTrace();
-            }
-            return postPutCustomActionBody;
-        }
-
         public static JSONObject postPutCustomAction(@NonNull String title,
                                                      @NonNull Goal goal){
 
