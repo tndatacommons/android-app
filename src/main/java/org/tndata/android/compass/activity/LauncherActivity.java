@@ -1,17 +1,13 @@
 package org.tndata.android.compass.activity;
 
-import android.app.AlertDialog;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
-import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.fragment.LauncherFragment;
@@ -21,13 +17,12 @@ import org.tndata.android.compass.fragment.SignUpFragment;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.util.FeedDataLoader;
-import org.tndata.android.compass.util.VersionChecker;
 
 
+//TODO document
 public class LauncherActivity
         extends AppCompatActivity
         implements
-                VersionChecker.VersionCallback,
                 View.OnClickListener,
                 LauncherFragment.LauncherFragmentListener,
                 SignUpFragment.SignUpFragmentListener,
@@ -57,48 +52,31 @@ public class LauncherActivity
 
         displayLauncherFragment(true);
         mApplication = (CompassApplication)getApplication();
-        //new VersionChecker(this).execute();
-        onVersionRetrieved(getString(R.string.version_name));
+
+        load();
     }
 
-    @Override
-    public void onVersionRetrieved(String versionName){
-        String appVersionName = getString(R.string.version_name);
-        Log.i(TAG, "App version name: " + appVersionName);
-        Log.i(TAG, "Play store version name: " + versionName);
-        if (!BuildConfig.DEBUG && !versionName.equals(appVersionName)){
-            ViewGroup rootView = (ViewGroup)findViewById(android.R.id.content);
-            LayoutInflater inflater = LayoutInflater.from(this);
-            View dialogRootView = inflater.inflate(R.layout.dialog_update, rootView, false);
-            dialogRootView.findViewById(R.id.update_get_it).setOnClickListener(this);
-
-            new AlertDialog.Builder(this)
-                    .setCancelable(false)
-                    .setView(dialogRootView)
-                    .create().show();
+    private void load(){
+        User user = mApplication.getUser();
+        if (user == null){
+            //If there is no user, show the menu
+            Log.e(TAG, "No user was found, displaying menu.");
+            displayLauncherFragment(false);
         }
         else{
-            User user = mApplication.getUser();
-            if (user == null){
-                //If there is no user, show the menu
-                Log.e(TAG, "No user was found, displaying menu.");
-                displayLauncherFragment(false);
+            Log.i(TAG, "User was found.");
+            //If there is a user, show the loading screen
+            displayLauncherFragment(true);
+
+            if (user.needsOnBoarding()){
+                Log.i(TAG, "User needs on-boarding.");
+                transitionToOnBoarding();
+                Log.d(TAG, "Token: " + user.getToken());
             }
             else{
-                Log.i(TAG, "User was found.");
-                //If there is a user, show the loading screen
-                displayLauncherFragment(true);
-
-                if (user.needsOnBoarding()){
-                    Log.i(TAG, "User needs on-boarding.");
-                    transitionToOnBoarding();
-                    Log.d(TAG, "Token: " + user.getToken());
-                }
-                else{
-                    Log.i(TAG, "Retrieving data.");
-                    Log.d(TAG, "Token: " + user.getToken());
-                    fetchData();
-                }
+                Log.i(TAG, "Retrieving data.");
+                Log.d(TAG, "Token: " + user.getToken());
+                fetchData();
             }
         }
     }

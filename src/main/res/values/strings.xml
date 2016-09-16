@@ -10,9 +10,6 @@
     <string name="launcher_compass_logo_cd">Compass logo</string>
     <string name="launcher_de_soto_bridge_cd">Hernando DeSoto bridge</string>
     <string name="launcher_made_in_memphis">made in memphis</string>
-    <string name="launcher_update_title">A new version is available</string>
-    <string name="launcher_update_subtitle">Updates of the application improve support and fix issues. To continue using the application, please update.</string>
-    <string name="launcher_update_get_it">Update</string>
     <string name="login_email_hint">email</string>
     <string name="login_password_hint">password</string>
     <string name="login_email_label">email address</string>
