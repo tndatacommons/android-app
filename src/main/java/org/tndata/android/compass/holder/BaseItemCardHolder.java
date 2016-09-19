@@ -46,6 +46,7 @@ public class BaseItemCardHolder extends RecyclerView.ViewHolder{
         mBinding.baseContent.baseSubtitle.setVisibility(View.VISIBLE);
     }
 
+    //TODO add an id to the method and set it as itemView's id to be able to identify the event
     public void setOnClickListener(View.OnClickListener listener){
         itemView.setOnClickListener(listener);
     }

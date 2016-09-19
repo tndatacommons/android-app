@@ -402,13 +402,6 @@ public class MainFeedAdapter
      *------------------------*/
 
     /**
-     * Loads the next batch of actions into the feed.
-     */
-    void moreActions(){
-
-    }
-
-    /**
      * Loads the next batch of goals into the feed.
      */
     void moreGoals(){
