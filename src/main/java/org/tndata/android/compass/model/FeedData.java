@@ -34,6 +34,8 @@ public class FeedData{
     private List<TDCGoal> mSuggestions;
     @SerializedName("streaks")
     private List<Streak> mStreaks;
+    @SerializedName("funcontent")
+    private Reward mReward;
 
     //Fields set during post-processing or after data retrieval
     private UpcomingAction mUpNextAction;
@@ -160,6 +162,10 @@ public class FeedData{
      */
     public String getNextGoalBatchUrl(){
         return mNextGoalBatchUrl;
+    }
+
+    public Reward getReward(){
+        return mReward;
     }
 
 

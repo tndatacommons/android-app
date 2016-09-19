@@ -38,6 +38,7 @@ import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.TDCGoal;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserGoal;
+import org.tndata.android.compass.util.ItemSpacing;
 import org.tndata.android.compass.util.Tour;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
@@ -147,6 +148,7 @@ public class FeedActivity
         mAdapter = new MainFeedAdapter(this, this, false);
 
         RecyclerView feed = mBinding.feedList;
+        feed.addItemDecoration(new ItemSpacing(this, 12));
         feed.setAdapter(mAdapter);
         feed.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         new ParallaxEffect(mBinding.feedIllustration, 0.5f).attachToRecyclerView(feed);

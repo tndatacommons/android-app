@@ -1,22 +1,25 @@
 package org.tndata.android.compass.adapter.feed;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver;
+import android.widget.Space;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.databinding.CardBaseItemBinding;
+import org.tndata.android.compass.holder.BaseItemCardHolder;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.TDCGoal;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.parser.Parser;
@@ -50,8 +53,8 @@ public class MainFeedAdapter
     public static final int TYPE_UP_NEXT = TYPE_WELCOME+1;
     private static final int TYPE_SUGGESTION = TYPE_UP_NEXT+1;
     public static final int TYPE_STREAKS = TYPE_SUGGESTION+1;
-    private static final int TYPE_UPCOMING = TYPE_STREAKS+1;
-    private static final int TYPE_MY_GOALS = TYPE_UPCOMING +1;
+    private static final int TYPE_REWARD = TYPE_STREAKS+1;
+    private static final int TYPE_MY_GOALS = TYPE_REWARD +1;
     private static final int TYPE_GOAL_SUGGESTIONS = TYPE_MY_GOALS+1;
     private static final int TYPE_OTHER = TYPE_MY_GOALS+1;
 
@@ -63,7 +66,6 @@ public class MainFeedAdapter
     private FeedUtil mFeedUtil;
     private TDCGoal mSuggestion;
 
-    private UpcomingHolder mUpcomingHolder;
     private GoalsHolder<Goal> mMyGoalsHolder;
     private GoalsHolder<TDCGoal> mSuggestionsHolder;
 
@@ -122,15 +124,12 @@ public class MainFeedAdapter
 
     @Override
     public int getItemViewType(int position){
-        //The first card is always a blank card
         if (position == 0){
             return TYPE_BLANK;
         }
-        //The second card may be a welcome card, but only if the user has no goals selected
-        if (CardTypes.hasWelcomeCard() && position == 1){
+        if (CardTypes.isWelcome(position)){
             return TYPE_WELCOME;
         }
-        //The rest of them have checker methods
         if (CardTypes.isUpNext(position)){
             return TYPE_UP_NEXT;
         }
@@ -140,8 +139,8 @@ public class MainFeedAdapter
         if (CardTypes.isSuggestion(position)){
             return TYPE_SUGGESTION;
         }
-        if (CardTypes.isUpcoming(position)){
-            return TYPE_UPCOMING;
+        if (CardTypes.isReward(position)){
+            return TYPE_REWARD;
         }
         if (CardTypes.isMyGoals(position)){
             return TYPE_MY_GOALS;
@@ -157,7 +156,7 @@ public class MainFeedAdapter
         RecyclerView.ViewHolder holder = null;
         //Log.d(TAG, "onCreateViewHolder(): " + viewType);
         if (viewType == TYPE_BLANK){
-            holder = new RecyclerView.ViewHolder(new CardView(mContext)){};
+            holder = new RecyclerView.ViewHolder(new Space(mContext)){};
         }
         else if (viewType == TYPE_WELCOME){
             LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -170,9 +169,12 @@ public class MainFeedAdapter
             });
             holder = new RecyclerView.ViewHolder(view){};
         }
-        else if (viewType == TYPE_UP_NEXT){
+        else if (viewType == TYPE_UP_NEXT || viewType == TYPE_REWARD){
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            holder = new UpNextHolder(this, inflater.inflate(R.layout.card_up_next, parent, false));
+            CardBaseItemBinding binding = DataBindingUtil.inflate(
+                    inflater, R.layout.card_base_item, parent, false
+            );
+            holder = new BaseItemCardHolder(binding);
         }
         else if (viewType == TYPE_STREAKS){
             LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -181,14 +183,6 @@ public class MainFeedAdapter
         else if (viewType == TYPE_SUGGESTION){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             holder = new GoalSuggestionHolder(this, inflater.inflate(R.layout.card_goal_suggestion, parent, false));
-        }
-        else if (viewType == TYPE_UPCOMING){
-            if (mUpcomingHolder == null){
-                LayoutInflater inflater = LayoutInflater.from(mContext);
-                View rootView = inflater.inflate(R.layout.card_upcoming, parent, false);
-                mUpcomingHolder = new UpcomingHolder(this, rootView);
-            }
-            holder = mUpcomingHolder;
         }
         else if (viewType == TYPE_MY_GOALS){
             if (mMyGoalsHolder == null){
@@ -243,7 +237,23 @@ public class MainFeedAdapter
         }
         //Up next
         else if (CardTypes.isUpNext(position)){
-            ((UpNextHolder)rawHolder).bind(mFeedData.getUpNextAction(), mFeedData.getProgress());
+            BaseItemCardHolder holder = (BaseItemCardHolder)rawHolder;
+            holder.setIcon(R.drawable.ic_up_next);
+
+            UpcomingAction action = mFeedData.getUpNextAction();
+            if (action == null){
+                if (mFeedData.getProgress().getTotalActions() != 0){
+                    holder.setTitle(R.string.card_up_next_title_completed);
+                    holder.setSubtitle(R.string.card_up_next_subtitle_completed);
+                }
+                else{
+                    holder.setTitle(R.string.card_up_next_title_empty);
+                    holder.setSubtitle(R.string.card_up_next_subtitle_empty);
+                }
+            }
+            else{
+                holder.setTitle(action.getTitle());
+            }
         }
         //Streaks
         else if (CardTypes.isStreaks(position)){
@@ -254,11 +264,14 @@ public class MainFeedAdapter
             GoalSuggestionHolder holder = (GoalSuggestionHolder)rawHolder;
             holder.mTitle.setText(mSuggestion.getTitle());
         }
-        //Today's activities / upcoming
-        else if (CardTypes.isUpcoming(position)){
-            if (mUpcomingHolder.getItemCount() == 0){
-                moreActions();
-            }
+        //Reward
+        else if (CardTypes.isReward(position)){
+            BaseItemCardHolder holder = (BaseItemCardHolder)rawHolder;
+            Reward reward = mFeedData.getReward();
+
+            holder.setIcon(reward.getIcon());
+            holder.setTitle(reward.getHeader());
+            holder.setSubtitle(reward.getMessage().substring(0, 30) + "...");
         }
         //My goals
         else if (CardTypes.isMyGoals(position)){
@@ -310,10 +323,7 @@ public class MainFeedAdapter
      * Updates upcoming and up next.
      */
     public void updateUpcoming(){
-        notifyItemChanged(CardTypes.getUpNextPosition());
-        if (mUpcomingHolder != null){
-            mUpcomingHolder.updateActions(mFeedData);
-        }
+
     }
 
     /**
@@ -395,10 +405,7 @@ public class MainFeedAdapter
      * Loads the next batch of actions into the feed.
      */
     void moreActions(){
-        mUpcomingHolder.addActions(mFeedData.loadMoreUpcoming(mUpcomingHolder.getItemCount()));
-        if (!mFeedData.canLoadMoreActions(mUpcomingHolder.getItemCount())){
-            mUpcomingHolder.hideFooter();
-        }
+
     }
 
     /**
