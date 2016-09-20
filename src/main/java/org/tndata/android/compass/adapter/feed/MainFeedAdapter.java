@@ -339,6 +339,8 @@ public class MainFeedAdapter
                 else{
                     holder.setIconBackgroundColor(Color.parseColor(category.getColor()));
                 }
+                holder.setIconPadding(CompassUtil.getPixels(mContext, 20));
+                holder.setIcon(((UserGoal)goal).getGoal().getIconUrl());
             }
             else if (goal instanceof CustomGoal){
                 if (mApp.getUser().isFemale()){

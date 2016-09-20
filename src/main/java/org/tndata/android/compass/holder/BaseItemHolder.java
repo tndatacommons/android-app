@@ -52,6 +52,10 @@ public class BaseItemHolder extends RecyclerView.ViewHolder{
         ImageLoader.loadBitmap(mBinding.baseIcon, iconUrl);
     }
 
+    public void setIconPadding(int padding){
+        mBinding.baseIcon.setPadding(padding, padding, padding, padding);
+    }
+
     public void setTitle(@StringRes int resId){
         mBinding.baseTitle.setText(resId);
     }
