@@ -9,7 +9,6 @@ import android.transition.AutoTransition;
 import android.transition.ChangeBounds;
 import android.transition.Transition;
 import android.transition.TransitionManager;
-import android.transition.Visibility;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -57,6 +56,12 @@ public class DynamicListCardHolder extends RecyclerView.ViewHolder implements Vi
     }
 
     public void notifyItemsInserted(int count){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            ViewGroup target = (ViewGroup)itemView.getRootView();
+            Transition transition = new ChangeBounds();
+            transition.setDuration(500);
+            TransitionManager.beginDelayedTransition(target, transition);
+        }
         int start = mAdapter.getDynamicListItemCount() - count;
         mRecyclerViewAdapter.notifyItemRangeInserted(start, count);
         mBinding.dynamicListMoreProgress.setVisibility(View.INVISIBLE);
