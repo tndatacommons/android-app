@@ -64,8 +64,6 @@ public class MainFeedAdapter
     public static final int TYPE_STREAKS = TYPE_SUGGESTION+1;
     private static final int TYPE_REWARD = TYPE_STREAKS+1;
     private static final int TYPE_GOALS = TYPE_REWARD+1;
-    private static final int TYPE_MY_GOALS = TYPE_REWARD +1;
-    private static final int TYPE_GOAL_SUGGESTIONS = TYPE_MY_GOALS+1;
     private static final int TYPE_OTHER = TYPE_GOALS+1;
 
 
@@ -79,11 +77,6 @@ public class MainFeedAdapter
     private TDCGoal mSuggestion;
 
     private DynamicListCardHolder mGoalsHolder;
-
-    //TODO get rid of this
-    private GoalsHolder<Goal> mMyGoalsHolder;
-    private GoalsHolder<TDCGoal> mSuggestionsHolder;
-
     private int mGetMoreGoalsRC;
 
 
@@ -167,12 +160,6 @@ public class MainFeedAdapter
         if (CardTypes.isGoals(position)){
             return TYPE_GOALS;
         }
-        /*if (CardTypes.isMyGoals(position)){
-            return TYPE_MY_GOALS;
-        }
-        if (CardTypes.isGoalSuggestions(position)){
-            return TYPE_GOAL_SUGGESTIONS;
-        }*/
         return TYPE_OTHER;
     }
 
@@ -216,22 +203,6 @@ public class MainFeedAdapter
             mGoalsHolder = new DynamicListCardHolder(binding, this);
             holder = mGoalsHolder;
         }
-        /*else if (viewType == TYPE_MY_GOALS){
-            if (mMyGoalsHolder == null){
-                LayoutInflater inflater = LayoutInflater.from(mContext);
-                View rootView = inflater.inflate(R.layout.card_goals, parent, false);
-                mMyGoalsHolder = new GoalsHolder<>(this, rootView);
-            }
-            holder = mMyGoalsHolder;
-        }
-        else if (viewType == TYPE_GOAL_SUGGESTIONS){
-            if (mSuggestionsHolder == null){
-                LayoutInflater inflater = LayoutInflater.from(mContext);
-                View rootView = inflater.inflate(R.layout.card_goals, parent, false);
-                mSuggestionsHolder = new GoalsHolder<>(this, rootView);
-            }
-            holder = mSuggestionsHolder;
-        }*/
 
         final RecyclerView.ViewHolder vtHolder = holder;
         ViewTreeObserver vto = vtHolder.itemView.getViewTreeObserver();
@@ -317,23 +288,6 @@ public class MainFeedAdapter
                 mGoalsHolder.hideLoadMore();
             }
         }
-        //My goals
-        /*else if (CardTypes.isMyGoals(position)){
-            if (mMyGoalsHolder.getItemCount() == 0){
-                mMyGoalsHolder.bind(mContext.getString(R.string.card_my_goals_header));
-                mMyGoalsHolder.setGoals(mFeedData.getGoals());
-                if (mFeedData.getNextGoalBatchUrl() == null){
-                    mMyGoalsHolder.hideFooter();
-                }
-            }
-        }
-        else if (CardTypes.isGoalSuggestions(position)){
-            if (mSuggestionsHolder.getItemCount() == 0){
-                mSuggestionsHolder.bind(mContext.getString(R.string.card_suggestions_header));
-                mSuggestionsHolder.setGoals(mFeedData.getSuggestions());
-                mSuggestionsHolder.hideFooter();
-            }
-        }*/
     }
 
 
