@@ -92,7 +92,7 @@ public class DynamicListCardHolder extends RecyclerView.ViewHolder implements Vi
         }
     }
 
-    private class Adapter extends RecyclerView.Adapter{
+    private class Adapter extends RecyclerView.Adapter<DynamicItemHolder>{
         @Override
         public int getItemCount(){
             return mAdapter.getDynamicListItemCount();
@@ -104,12 +104,14 @@ public class DynamicListCardHolder extends RecyclerView.ViewHolder implements Vi
         }
 
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-            return mAdapter.onCreateDynamicListViewHolder(parent, viewType);
+        public DynamicItemHolder onCreateViewHolder(ViewGroup parent, int viewType){
+            DynamicItemHolder holder = mAdapter.onCreateDynamicListViewHolder(parent, viewType);
+            holder.setAdapter(mAdapter);
+            return holder;
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position){
+        public void onBindViewHolder(DynamicItemHolder holder, int position){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
                 Transition transition = new AutoTransition();
                 transition.setDuration(10);
@@ -120,11 +122,34 @@ public class DynamicListCardHolder extends RecyclerView.ViewHolder implements Vi
     }
 
 
+    public static abstract class DynamicItemHolder
+            extends RecyclerView.ViewHolder
+            implements View.OnClickListener{
+
+        private DynamicListAdapter mAdapter;
+
+        DynamicItemHolder(View rootView){
+            super(rootView);
+            itemView.setOnClickListener(this);
+        }
+
+        private void setAdapter(DynamicListAdapter adapter){
+            mAdapter = adapter;
+        }
+
+        @Override
+        public void onClick(View view){
+            mAdapter.onDynamicListItemClick(getAdapterPosition());
+        }
+    }
+
+
     public interface DynamicListAdapter{
         int getDynamicListItemCount();
         int getDynamicListViewType(int position);
-        RecyclerView.ViewHolder onCreateDynamicListViewHolder(ViewGroup parent, int viewType);
-        void onBindDynamicListViewHolder(RecyclerView.ViewHolder holder, int position);
+        DynamicItemHolder onCreateDynamicListViewHolder(ViewGroup parent, int viewType);
+        void onBindDynamicListViewHolder(DynamicItemHolder holder, int position);
+        void onDynamicListItemClick(int position);
         void onDynamicListLoadMore();
     }
 }

@@ -516,9 +516,7 @@ public class FeedActivity
     public void onGoalSelected(Goal goal){
         if (goal instanceof UserGoal){
             if (mApplication.getAvailableCategories().get(((UserGoal)goal).getPrimaryCategoryId()) != null){
-                Intent reviewActionsIntent = new Intent(this, ReviewActionsActivity.class)
-                        .putExtra(ReviewActionsActivity.USER_GOAL_KEY, goal);
-                startActivityForResult(reviewActionsIntent, GOAL_RC);
+                startActivityForResult(MyGoalActivity.getIntent(this, (UserGoal)goal), GOAL_RC);
             }
             else{
                 Toast.makeText(this, "The content is currently unavailable", Toast.LENGTH_SHORT).show();

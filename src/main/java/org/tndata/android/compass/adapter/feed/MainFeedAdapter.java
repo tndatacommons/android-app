@@ -313,7 +313,7 @@ public class MainFeedAdapter
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateDynamicListViewHolder(ViewGroup parent, int viewType){
+    public DynamicListCardHolder.DynamicItemHolder onCreateDynamicListViewHolder(ViewGroup parent, int viewType){
         LayoutInflater inflater = LayoutInflater.from(mContext);
         ItemBaseBinding binding = DataBindingUtil.inflate(
                 inflater, R.layout.item_base, parent, false
@@ -321,9 +321,10 @@ public class MainFeedAdapter
         return new BaseItemHolder(binding);
     }
 
+    //TODO simplify.
     @Override
     @SuppressWarnings("deprecation")
-    public void onBindDynamicListViewHolder(RecyclerView.ViewHolder rawHolder, int position){
+    public void onBindDynamicListViewHolder(DynamicListCardHolder.DynamicItemHolder rawHolder, int position){
         BaseItemHolder holder = (BaseItemHolder)rawHolder;
         holder.showSeparator(true);
         if (CardTypes.hasMyGoals()){
@@ -367,6 +368,16 @@ public class MainFeedAdapter
             }
             holder.setIcon(goal.getIconUrl());
             holder.setTitle(goal.getTitle());
+        }
+    }
+
+    @Override
+    public void onDynamicListItemClick(int position){
+        if (CardTypes.hasGoals()){
+            mListener.onGoalSelected(mFeedData.getGoals().get(position));
+        }
+        else if (CardTypes.hasGoalSuggestions()){
+            mListener.onSuggestionSelected(mFeedData.getSuggestions().get(position));
         }
     }
 

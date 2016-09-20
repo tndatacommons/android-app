@@ -4,6 +4,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -18,11 +19,11 @@ import org.tndata.android.compass.util.ImageLoader;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class BaseItemHolder extends RecyclerView.ViewHolder{
+public class BaseItemHolder extends DynamicListCardHolder.DynamicItemHolder{
     private ItemBaseBinding mBinding;
 
 
-    public BaseItemHolder(ItemBaseBinding binding){
+    public BaseItemHolder(@NonNull ItemBaseBinding binding){
         super(binding.getRoot());
         mBinding = binding;
         mBinding.baseSeparator.separator.setVisibility(View.GONE);
@@ -72,10 +73,5 @@ public class BaseItemHolder extends RecyclerView.ViewHolder{
     public void setSubtitle(@NonNull CharSequence subtitle){
         mBinding.baseSubtitle.setText(subtitle);
         mBinding.baseSubtitle.setVisibility(View.VISIBLE);
-    }
-
-    //TODO add an id to the method and set it as itemView's id to be able to identify the event
-    public void setOnClickListener(View.OnClickListener listener){
-        itemView.setOnClickListener(listener);
     }
 }
