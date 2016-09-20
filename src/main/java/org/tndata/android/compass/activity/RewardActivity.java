@@ -1,9 +1,12 @@
 package org.tndata.android.compass.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -36,6 +39,22 @@ public class RewardActivity
                 Parser.ParserCallback,
                 View.OnClickListener{
 
+    private static final String CONTENT_KEY = "org.tndata.compass.RewardActivity.Content";
+
+
+    /**
+     * Creates an intent to correctly launch the Activity.
+     *
+     * @param context a reference to the context.
+     * @param content the reward to be displayed, null to fetch a random one.
+     * @return the intent that launches RewardActivity.
+     */
+    public static Intent getIntent(@NonNull Context context, @Nullable Reward content){
+        return new Intent(context, RewardActivity.class)
+                .putExtra(CONTENT_KEY, content);
+    }
+
+
     private ActivityRewardBinding mBinding;
     private Reward mReward;
 
@@ -63,7 +82,13 @@ public class RewardActivity
         );
         mBinding.rewardIconContainer.setLayoutParams(params);
 
-        mGetRewardUrl = HttpRequest.get(this, API.URL.getRandomReward());
+        Reward reward = getIntent().getParcelableExtra(CONTENT_KEY);
+        if (reward == null){
+            mGetRewardUrl = HttpRequest.get(this, API.URL.getRandomReward());
+        }
+        else{
+            setReward(reward);
+        }
     }
 
     @Override
@@ -98,17 +123,21 @@ public class RewardActivity
     @Override
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof ParserModels.RewardResultSet){
-            mReward = ((ParserModels.RewardResultSet)result).results.get(0);
-
-            mBinding.rewardIcon.setImageResource(mReward.getIcon());
-            mBinding.rewardCard.detailTitle.setText(mReward.getHeader());
-            mBinding.rewardCard.detailContent.setText(mReward.format());
-
-            mBinding.rewardProgress.setVisibility(View.GONE);
-            mBinding.rewardCard.getRoot().setVisibility(View.VISIBLE);
-            mBinding.rewardShare.setVisibility(View.VISIBLE);
-            mBinding.rewardShare.setOnClickListener(this);
+            setReward(((ParserModels.RewardResultSet)result).results.get(0));
         }
+    }
+
+    private void setReward(Reward reward){
+        mReward = reward;
+
+        mBinding.rewardIcon.setImageResource(mReward.getIcon());
+        mBinding.rewardCard.detailTitle.setText(mReward.getHeader());
+        mBinding.rewardCard.detailContent.setText(mReward.format());
+
+        mBinding.rewardProgress.setVisibility(View.GONE);
+        mBinding.rewardCard.getRoot().setVisibility(View.VISIBLE);
+        mBinding.rewardShare.setVisibility(View.VISIBLE);
+        mBinding.rewardShare.setOnClickListener(this);
     }
 
     @Override

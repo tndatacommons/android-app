@@ -1,6 +1,7 @@
 package org.tndata.android.compass.holder;
 
 import android.support.annotation.DrawableRes;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
@@ -51,8 +52,8 @@ public class BaseItemCardHolder extends RecyclerView.ViewHolder{
         mBinding.baseContent.baseSubtitle.setVisibility(View.VISIBLE);
     }
 
-    //TODO add an id to the method and set it as itemView's id to be able to identify the event
-    public void setOnClickListener(View.OnClickListener listener){
+    public void setOnClickListener(View.OnClickListener listener, @IdRes int resId){
+        itemView.setId(resId);
         itemView.setOnClickListener(listener);
     }
 }

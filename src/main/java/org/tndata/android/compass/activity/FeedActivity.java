@@ -35,6 +35,7 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.TDCGoal;
 import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserGoal;
@@ -416,7 +417,7 @@ public class FeedActivity
 
             case DrawerAdapter.DRAWER_COUNT:
                 //Debug button
-                startActivity(new Intent(this, RewardActivity.class));
+                startActivity(RewardActivity.getIntent(this, null));
                 break;
         }
         mBinding.feedDrawerLayout.closeDrawers();
@@ -541,6 +542,11 @@ public class FeedActivity
         Intent actionIntent = new Intent(this, ActionActivity.class)
                 .putExtra(ActionActivity.UPCOMING_ACTION_KEY, action);
         startActivityForResult(actionIntent, ACTION_RC);
+    }
+
+    @Override
+    public void onRewardSelected(Reward reward){
+        startActivity(RewardActivity.getIntent(this, reward));
     }
 
     @Override

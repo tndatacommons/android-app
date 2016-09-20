@@ -21,4 +21,7 @@
     <item name="action_add_to_calendar" type="id" />
 
     <item name="review_title" type="id" />
+
+    <item name="feed_up_next" type="id" />
+    <item name="feed_reward" type="id" />
 </resources>

@@ -50,6 +50,7 @@ import es.sandwatch.httprequests.HttpRequestError;
 public class MainFeedAdapter
         extends RecyclerView.Adapter
         implements
+                View.OnClickListener,
                 DynamicListCardHolder.DynamicListAdapter,
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback{
@@ -256,6 +257,7 @@ public class MainFeedAdapter
             }
             else{
                 holder.setTitle(action.getTitle());
+                holder.setOnClickListener(this, R.id.feed_up_next);
             }
         }
         //Streaks
@@ -275,6 +277,7 @@ public class MainFeedAdapter
             holder.setIcon(reward.getIcon());
             holder.setTitle(reward.getHeader());
             holder.setSubtitle(reward.getMessage().substring(0, 30) + "...");
+            holder.setOnClickListener(this, R.id.feed_reward);
         }
         //Goals
         else if (CardTypes.isGoals(position)){
@@ -287,6 +290,24 @@ public class MainFeedAdapter
             if (mFeedData.getNextGoalBatchUrl() == null){
                 mGoalsHolder.hideLoadMore();
             }
+        }
+    }
+
+
+    /*-----------------*
+     * OnClickListener *
+     *-----------------*/
+
+    @Override
+    public void onClick(View view){
+        switch (view.getId()){
+            case R.id.feed_up_next:
+                mListener.onActionSelected(mFeedData.getUpNextAction());
+                break;
+
+            case R.id.feed_reward:
+                mListener.onRewardSelected(mFeedData.getReward());
+                break;
         }
     }
 
@@ -350,6 +371,7 @@ public class MainFeedAdapter
                 else{
                     holder.setIcon(R.drawable.ic_guy);
                 }
+                holder.setIconPadding(0);
             }
         }
         else if (CardTypes.hasGoalSuggestions()){
@@ -630,5 +652,12 @@ public class MainFeedAdapter
          * @param action the action being displayed at the card.
          */
         void onActionSelected(UpcomingAction action);
+
+        /**
+         * Called when the reward card is tapped.
+         *
+         * @param reward the reward in the card
+         */
+        void onRewardSelected(Reward reward);
     }
 }

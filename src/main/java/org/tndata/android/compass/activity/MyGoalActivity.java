@@ -133,7 +133,6 @@ public class MyGoalActivity
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof UserGoal){
             setGoal((UserGoal)result);
-            mGetCustomActionsRC = HttpRequest.get(this, API.URL.getCustomActions(mUserGoal));
         }
         else if (result instanceof ParserModels.CustomActionResultSet){
             mAdapter.setCustomActions(((ParserModels.CustomActionResultSet)result).results);
@@ -179,6 +178,8 @@ public class MyGoalActivity
 
         mAdapter = new MyGoalAdapter(this, this, mUserGoal, category);
         setAdapter(mAdapter);
+
+        mGetCustomActionsRC = HttpRequest.get(this, API.URL.getCustomActions(mUserGoal));
     }
 
     @Override
