@@ -78,7 +78,7 @@ class GoalsHolder<T> extends MainFeedAdapter.ViewHolder implements View.OnClickL
     public void onClick(View view){
         mMoreButton.setVisibility(View.GONE);
         mMoreProgress.setVisibility(View.VISIBLE);
-        mAdapter.moreGoals();
+        //mAdapter.moreGoals();
     }
 
     void setGoals(@NonNull List<T> goals){

@@ -416,7 +416,7 @@ public class MainFeedAdapter
 
     @Override
     public void onDynamicListLoadMore(){
-
+        mGetMoreGoalsRC = HttpRequest.get(this, mFeedData.getNextGoalBatchUrl());
     }
 
 
@@ -438,7 +438,7 @@ public class MainFeedAdapter
      */
     public void updateDataSet(){
         updateUpcoming();
-        updateMyGoals();
+        updateGoals();
     }
 
     /**
@@ -449,11 +449,11 @@ public class MainFeedAdapter
     }
 
     /**
-     * Updates my goals.
+     * Updates the goals card.
      */
-    public void updateMyGoals(){
-        if (mMyGoalsHolder != null){
-            mMyGoalsHolder.updateGoals();
+    private void updateGoals(){
+        if (mGoalsHolder != null){
+            mGoalsHolder.notifyDataSetChanged();
             notifyItemChanged(CardTypes.getGoalsPosition());
         }
     }
@@ -478,8 +478,8 @@ public class MainFeedAdapter
      *----------------------*/
 
     public void notifyGoalRemoved(int position){
-        if (mMyGoalsHolder != null){
-            mMyGoalsHolder.notifyGoalRemoved(position);
+        if (mGoalsHolder != null){
+            mGoalsHolder.notifyItemRemoved(position);
         }
     }
 
@@ -516,18 +516,6 @@ public class MainFeedAdapter
      */
     void viewSuggestion(){
         mListener.onSuggestionSelected(mSuggestion);
-    }
-
-
-    /*------------------------*
-     * FOOTER RELATED METHODS *
-     *------------------------*/
-
-    /**
-     * Loads the next batch of goals into the feed.
-     */
-    void moreGoals(){
-        mGetMoreGoalsRC = HttpRequest.get(this, mFeedData.getNextGoalBatchUrl());
     }
 
 
@@ -568,16 +556,16 @@ public class MainFeedAdapter
             if (API.STAGING && url.startsWith("https")){
                 url = url.replaceFirst("s", "");
             }
-            mMyGoalsHolder.prepareGoalAddition();
+            //mMyGoalsHolder.prepareGoalAddition();
             mFeedData.addGoals(set.results, url);
-            mMyGoalsHolder.onGoalsAdded();
+            mGoalsHolder.notifyItemsInserted(set.results.size());
         }
         else if (result instanceof ParserModels.UserGoalsResultSet){
             ParserModels.UserGoalsResultSet set = (ParserModels.UserGoalsResultSet)result;
-            mMyGoalsHolder.prepareGoalAddition();
+            //mMyGoalsHolder.prepareGoalAddition();
             String url = set.next;
             if (url == null){
-                mMyGoalsHolder.hideFooter();
+                mGoalsHolder.hideLoadMore();
             }
             else{
                 if (API.STAGING && url.startsWith("https")){
@@ -585,7 +573,7 @@ public class MainFeedAdapter
                 }
             }
             mFeedData.addGoals(set.results, url);
-            mMyGoalsHolder.onGoalsAdded();
+            mGoalsHolder.notifyItemsInserted(set.results.size());
         }
     }
 

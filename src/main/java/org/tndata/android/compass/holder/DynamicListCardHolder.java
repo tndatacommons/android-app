@@ -59,6 +59,8 @@ public class DynamicListCardHolder extends RecyclerView.ViewHolder implements Vi
     public void notifyItemsInserted(int count){
         int start = mAdapter.getDynamicListItemCount() - count;
         mRecyclerViewAdapter.notifyItemRangeInserted(start, count);
+        mBinding.dynamicListMoreProgress.setVisibility(View.INVISIBLE);
+        mBinding.dynamicListMore.setVisibility(View.VISIBLE);
     }
 
     public void notifyItemRemoved(int position){
@@ -71,7 +73,7 @@ public class DynamicListCardHolder extends RecyclerView.ViewHolder implements Vi
 
     public void hideLoadMore(){
         mBinding.dynamicListMore.setVisibility(View.VISIBLE);
-        mBinding.dynamicListMoreProgress.setVisibility(View.GONE);
+        mBinding.dynamicListMoreProgress.setVisibility(View.INVISIBLE);
         mBinding.dynamicListMoreContainer.setVisibility(View.GONE);
     }
 
