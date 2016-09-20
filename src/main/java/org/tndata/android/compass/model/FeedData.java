@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.tndata.android.compass.util.FeedDataLoader;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -41,6 +43,11 @@ public class FeedData{
     private UpcomingAction mUpNextAction;
     private List<Goal> mDisplayedGoals;
     private String mNextGoalBatchUrl;
+
+
+    private Action mUpNext;
+    private UserAction mNextUserAction;
+    private CustomAction mNextCustomAction;
 
 
     /**
@@ -231,6 +238,50 @@ public class FeedData{
             mUpNextAction = mUpcomingActions.remove(0);
         }
         return oldUpNext;
+    }
+
+
+    /*------------------------*
+     * NEW STUFF, MOVE AROUND *
+     *------------------------*/
+
+    public void setNextUserAction(UserAction userAction){
+        mNextUserAction = userAction;
+    }
+
+    public void setNextCustomAction(CustomAction customAction){
+        mNextCustomAction = customAction;
+    }
+
+    public void replaceUpNext(){
+        if (mNextUserAction != null && mNextCustomAction == null){
+            bumpNextUserAction();
+        }
+        else if (mNextUserAction == null && mNextCustomAction != null){
+            bumpNextCustomAction();
+        }
+        else if (mNextUserAction != null){ //&& mNextCustomAction != null){ //Implicit
+            //Comparing the actions compares their triggers first
+            if (mNextUserAction.compareTo(mNextCustomAction) < 0){
+                bumpNextUserAction();
+            }
+            else{
+                bumpNextCustomAction();
+            }
+        }
+        //If both actions are null, do nothing
+    }
+
+    private void bumpNextUserAction(){
+        mUpNext = mNextUserAction;
+        mNextUserAction = null;
+        FeedDataLoader.getInstance().loadNextUserAction();
+    }
+
+    private void bumpNextCustomAction(){
+        mUpNext = mNextCustomAction;
+        mNextCustomAction = null;
+        FeedDataLoader.getInstance().loadNextCustomAction();
     }
 
     /**

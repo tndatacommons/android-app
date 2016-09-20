@@ -166,6 +166,10 @@ public final class API{
             return BASE_URL + "users/actions/?goal=" + goalId;
         }
 
+        public static String getTodaysUserActions(){
+            return BASE_URL + "users/actions/?today=1&page_size=1";
+        }
+
         public static String getUserAction(long actionMappingId){
             return BASE_URL + "users/actions/" + actionMappingId + "/";
         }
@@ -181,6 +185,10 @@ public final class API{
             else{
                 return "";
             }
+        }
+
+        public static String getTodaysCustomActions(){
+            return BASE_URL + "users/customactions/?today=1&page_size=1";
         }
 
         public static String getCustomAction(long customActionId){
