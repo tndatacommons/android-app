@@ -1,5 +1,7 @@
 package org.tndata.android.compass.holder;
 
+import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -32,6 +34,18 @@ public class BaseItemCardHolder extends RecyclerView.ViewHolder{
 
     public void setIcon(@DrawableRes int resId){
         mBinding.baseContent.baseIcon.setImageResource(resId);
+    }
+
+    @SuppressWarnings("deprecation")
+    public void setIconBackgroundColor(int color){
+        GradientDrawable gradientDrawable = (GradientDrawable)mBinding.baseContent.baseIconContainer.getBackground();
+        gradientDrawable.setColor(color);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
+            mBinding.baseContent.baseIconContainer.setBackgroundDrawable(gradientDrawable);
+        }
+        else{
+            mBinding.baseContent.baseIconContainer.setBackground(gradientDrawable);
+        }
     }
 
     public void setTitle(@StringRes int resId){

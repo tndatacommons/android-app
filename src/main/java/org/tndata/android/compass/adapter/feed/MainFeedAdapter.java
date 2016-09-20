@@ -243,6 +243,7 @@ public class MainFeedAdapter
         else if (CardTypes.isUpNext(position)){
             BaseItemCardHolder holder = (BaseItemCardHolder)rawHolder;
             holder.setIcon(R.drawable.ic_up_next);
+            holder.setIconBackgroundColor(Color.WHITE);
 
             UpcomingAction action = mFeedData.getUpNextAction();
             if (action == null){
