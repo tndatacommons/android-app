@@ -209,6 +209,10 @@ final class CardTypes{
         return hasMyGoals() && getGoalsPosition() == position;
     }
 
+    static boolean isGoals(int position){
+        return (hasMyGoals() || hasGoalSuggestions()) && getGoalsPosition() == position;
+    }
+
     /**
      * Gets the total number of cards in the feed.
      *

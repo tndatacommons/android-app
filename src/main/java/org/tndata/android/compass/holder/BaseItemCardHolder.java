@@ -22,6 +22,11 @@ public class BaseItemCardHolder extends RecyclerView.ViewHolder{
     public BaseItemCardHolder(CardBaseItemBinding binding){
         super(binding.getRoot());
         mBinding = binding;
+        mBinding.baseContent.baseSeparator.separator.setVisibility(View.GONE);
+    }
+
+    public void showSeparator(boolean show){
+        mBinding.baseContent.baseSeparator.separator.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     public void setIcon(@DrawableRes int resId){

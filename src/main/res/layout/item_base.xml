@@ -2,52 +2,63 @@
 <layout>
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="12dp"
-        android:gravity="center_vertical"
-        android:baselineAligned="false" >
+        android:layout_height="wrap_content" >
 
-        <FrameLayout
-            android:id="@+id/base_icon_container"
-            android:layout_width="65dp"
-            android:layout_height="65dp"
-            android:background="@drawable/circle_white" >
-
-            <ImageView
-                android:id="@+id/base_icon"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerInside" />
-
-        </FrameLayout>
+        <include
+            android:id="@+id/base_separator"
+            layout="@layout/separator_soft" />
 
         <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="0dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp" >
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:gravity="center_vertical"
+            android:baselineAligned="false" >
 
-            <TextView
-                android:id="@+id/base_title"
-                android:layout_width="match_parent"
+            <FrameLayout
+                android:id="@+id/base_icon_container"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:background="@drawable/circle_white" >
+
+                <ImageView
+                    android:id="@+id/base_icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerInside" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textColor="@color/dark_text_color"
-                android:textSize="20sp" />
+                android:layout_weight="1"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp" >
 
-            <TextView
-                android:id="@+id/base_subtitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                android:textColor="@color/dark_text_color"
-                android:textSize="16sp"
-                android:visibility="gone" />
+                <TextView
+                    android:id="@+id/base_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/dark_text_color"
+                    android:textSize="20sp" />
 
+                <TextView
+                    android:id="@+id/base_subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:textColor="@color/dark_text_color"
+                    android:textSize="16sp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </layout>

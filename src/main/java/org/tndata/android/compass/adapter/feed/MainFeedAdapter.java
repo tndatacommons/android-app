@@ -2,6 +2,7 @@ package org.tndata.android.compass.adapter.feed;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -16,12 +17,19 @@ import android.widget.Space;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.databinding.CardBaseItemBinding;
+import org.tndata.android.compass.databinding.CardDynamicListBinding;
+import org.tndata.android.compass.databinding.ItemBaseBinding;
 import org.tndata.android.compass.holder.BaseItemCardHolder;
+import org.tndata.android.compass.holder.BaseItemHolder;
+import org.tndata.android.compass.holder.DynamicListCardHolder;
+import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Reward;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.TDCGoal;
 import org.tndata.android.compass.model.UpcomingAction;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
@@ -42,6 +50,7 @@ import es.sandwatch.httprequests.HttpRequestError;
 public class MainFeedAdapter
         extends RecyclerView.Adapter
         implements
+                DynamicListCardHolder.DynamicListAdapter,
                 HttpRequest.RequestCallback,
                 Parser.ParserCallback{
 
@@ -54,18 +63,24 @@ public class MainFeedAdapter
     private static final int TYPE_SUGGESTION = TYPE_UP_NEXT+1;
     public static final int TYPE_STREAKS = TYPE_SUGGESTION+1;
     private static final int TYPE_REWARD = TYPE_STREAKS+1;
+    private static final int TYPE_GOALS = TYPE_REWARD+1;
     private static final int TYPE_MY_GOALS = TYPE_REWARD +1;
     private static final int TYPE_GOAL_SUGGESTIONS = TYPE_MY_GOALS+1;
-    private static final int TYPE_OTHER = TYPE_MY_GOALS+1;
+    private static final int TYPE_OTHER = TYPE_GOALS+1;
 
 
     final Context mContext;
     final Listener mListener;
 
+    private CompassApplication mApp;
+
     private FeedData mFeedData;
     private FeedUtil mFeedUtil;
     private TDCGoal mSuggestion;
 
+    private DynamicListCardHolder mGoalsHolder;
+
+    //TODO get rid of this
     private GoalsHolder<Goal> mMyGoalsHolder;
     private GoalsHolder<TDCGoal> mSuggestionsHolder;
 
@@ -84,6 +99,8 @@ public class MainFeedAdapter
         mContext = context;
         mListener = listener;
         mFeedData = ((CompassApplication)mContext.getApplicationContext()).getFeedData();
+
+        mApp = (CompassApplication)mContext.getApplicationContext();
 
         if (mFeedData == null){
             mListener.onNullData();
@@ -123,6 +140,11 @@ public class MainFeedAdapter
      *------------------------------------*/
 
     @Override
+    public int getItemCount(){
+        return CardTypes.getItemCount();
+    }
+
+    @Override
     public int getItemViewType(int position){
         if (position == 0){
             return TYPE_BLANK;
@@ -142,19 +164,21 @@ public class MainFeedAdapter
         if (CardTypes.isReward(position)){
             return TYPE_REWARD;
         }
-        if (CardTypes.isMyGoals(position)){
+        if (CardTypes.isGoals(position)){
+            return TYPE_GOALS;
+        }
+        /*if (CardTypes.isMyGoals(position)){
             return TYPE_MY_GOALS;
         }
         if (CardTypes.isGoalSuggestions(position)){
             return TYPE_GOAL_SUGGESTIONS;
-        }
+        }*/
         return TYPE_OTHER;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, final int viewType){
         RecyclerView.ViewHolder holder = null;
-        //Log.d(TAG, "onCreateViewHolder(): " + viewType);
         if (viewType == TYPE_BLANK){
             holder = new RecyclerView.ViewHolder(new Space(mContext)){};
         }
@@ -184,7 +208,15 @@ public class MainFeedAdapter
             LayoutInflater inflater = LayoutInflater.from(mContext);
             holder = new GoalSuggestionHolder(this, inflater.inflate(R.layout.card_goal_suggestion, parent, false));
         }
-        else if (viewType == TYPE_MY_GOALS){
+        else if (viewType == TYPE_GOALS){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            CardDynamicListBinding binding = DataBindingUtil.inflate(
+                    inflater, R.layout.card_dynamic_list, parent, false
+            );
+            mGoalsHolder = new DynamicListCardHolder(binding, this);
+            holder = mGoalsHolder;
+        }
+        /*else if (viewType == TYPE_MY_GOALS){
             if (mMyGoalsHolder == null){
                 LayoutInflater inflater = LayoutInflater.from(mContext);
                 View rootView = inflater.inflate(R.layout.card_goals, parent, false);
@@ -199,7 +231,7 @@ public class MainFeedAdapter
                 mSuggestionsHolder = new GoalsHolder<>(this, rootView);
             }
             holder = mSuggestionsHolder;
-        }
+        }*/
 
         final RecyclerView.ViewHolder vtHolder = holder;
         ViewTreeObserver vto = vtHolder.itemView.getViewTreeObserver();
@@ -273,8 +305,20 @@ public class MainFeedAdapter
             holder.setTitle(reward.getHeader());
             holder.setSubtitle(reward.getMessage().substring(0, 30) + "...");
         }
+        //Goals
+        else if (CardTypes.isGoals(position)){
+            if (CardTypes.hasMyGoals()){
+                mGoalsHolder.setTitle(R.string.card_my_goals_header);
+            }
+            else{
+                mGoalsHolder.setTitle(R.string.card_suggestions_header);
+            }
+            if (mFeedData.getNextGoalBatchUrl() == null){
+                mGoalsHolder.hideLoadMore();
+            }
+        }
         //My goals
-        else if (CardTypes.isMyGoals(position)){
+        /*else if (CardTypes.isMyGoals(position)){
             if (mMyGoalsHolder.getItemCount() == 0){
                 mMyGoalsHolder.bind(mContext.getString(R.string.card_my_goals_header));
                 mMyGoalsHolder.setGoals(mFeedData.getGoals());
@@ -289,12 +333,90 @@ public class MainFeedAdapter
                 mSuggestionsHolder.setGoals(mFeedData.getSuggestions());
                 mSuggestionsHolder.hideFooter();
             }
+        }*/
+    }
+
+
+    /*---------------------------*
+     * DYNAMIC LIST CARD METHODS *
+     *---------------------------*/
+
+    @Override
+    public int getDynamicListItemCount(){
+        if (CardTypes.hasMyGoals()){
+            return mFeedData.getGoals().size();
+        }
+        else if (CardTypes.hasGoalSuggestions()){
+            return mFeedData.getSuggestions().size();
+        }
+        return 0;
+    }
+
+    @Override
+    public int getDynamicListViewType(int position){
+        //There is only one type of item
+        return 0;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateDynamicListViewHolder(ViewGroup parent, int viewType){
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        ItemBaseBinding binding = DataBindingUtil.inflate(
+                inflater, R.layout.item_base, parent, false
+        );
+        return new BaseItemHolder(binding);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void onBindDynamicListViewHolder(RecyclerView.ViewHolder rawHolder, int position){
+        BaseItemHolder holder = (BaseItemHolder)rawHolder;
+        holder.showSeparator(true);
+        if (CardTypes.hasMyGoals()){
+            Goal goal = mFeedData.getGoals().get(position);
+            holder.setTitle(goal.getTitle());
+            if (goal instanceof UserGoal){
+                UserGoal userGoal = (UserGoal)goal;
+                long categoryId = userGoal.getPrimaryCategoryId();
+                TDCCategory category = mApp.getAvailableCategories().get(categoryId);
+                if (category == null){
+                    holder.setIconBackgroundColor(mContext.getResources().getColor(R.color.primary));
+                }
+                else{
+                    holder.setIconBackgroundColor(Color.parseColor(category.getColor()));
+                }
+            }
+            else if (goal instanceof CustomGoal){
+                if (mApp.getUser().isFemale()){
+                    holder.setIcon(R.drawable.ic_lady);
+                }
+                else{
+                    holder.setIcon(R.drawable.ic_guy);
+                }
+            }
+        }
+        else if (CardTypes.hasGoalSuggestions()){
+            TDCGoal goal = mFeedData.getSuggestions().get(position);
+            TDCCategory category = null;
+            for (Long id:goal.getCategoryIdSet()){
+                if (id > 22){
+                    category = mApp.getAvailableCategories().get(id);
+                }
+            }
+            if (category == null){
+                holder.setIconBackgroundColor(mContext.getResources().getColor(R.color.primary));
+            }
+            else{
+                holder.setIconBackgroundColor(Color.parseColor(category.getColor()));
+            }
+            holder.setIcon(goal.getIconUrl());
+            holder.setTitle(goal.getTitle());
         }
     }
 
     @Override
-    public int getItemCount(){
-        return CardTypes.getItemCount();
+    public void onDynamicListLoadMore(){
+
     }
 
 
@@ -471,6 +593,7 @@ public class MainFeedAdapter
     public void onParseFailed(int requestCode){
 
     }
+
 
     /**
      * Parent class of all the view holders in for the main feed adapter. Provides a reference

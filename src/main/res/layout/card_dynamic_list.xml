@@ -23,7 +23,8 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/dynamic_list_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp" />
 
             <LinearLayout
                 android:id="@+id/dynamic_list_more_container"
@@ -31,7 +32,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
 
-                <include layout="@layout/separator_soft" />
+                <include
+                    layout="@layout/separator_soft"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp" />
 
                 <TextView
                     android:id="@+id/dynamic_list_more"
@@ -49,7 +54,7 @@
                     android:layout_height="30dp"
                     android:layout_margin="5dp"
                     android:layout_gravity="center"
-                    android:visibility="gone" />
+                    android:visibility="invisible" />
 
             </LinearLayout>
         </LinearLayout>
