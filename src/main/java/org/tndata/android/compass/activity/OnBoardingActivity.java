@@ -35,7 +35,7 @@ public class OnBoardingActivity
                 InstrumentFragment.InstrumentFragmentCallback,
                 OrganizationsFragment.OrganizationsListener,
                 OnBoardingCategoryFragment.CategoryListener,
-                FeedDataLoader.Callback{
+                FeedDataLoader.DataLoadCallback{
 
     private static final int PROFILE_ITEMS = 3;
 

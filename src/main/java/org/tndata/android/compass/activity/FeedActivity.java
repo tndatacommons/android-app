@@ -37,7 +37,6 @@ import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.TDCGoal;
-import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.util.ItemSpacing;
 import org.tndata.android.compass.util.Tour;
@@ -72,7 +71,7 @@ public class FeedActivity
                 MainFeedAdapter.Listener,
                 Tour.TourListener,
                 View.OnClickListener,
-                FeedDataLoader.Callback{
+                FeedDataLoader.DataLoadCallback{
 
     //Activity request codes
     private static final int ACTION_RC = 4582;
@@ -538,9 +537,9 @@ public class FeedActivity
     }
 
     @Override
-    public void onActionSelected(UpcomingAction action){
+    public void onActionSelected(Action action){
         Intent actionIntent = new Intent(this, ActionActivity.class)
-                .putExtra(ActionActivity.UPCOMING_ACTION_KEY, action);
+                .putExtra(ActionActivity.ACTION_KEY, action);
         startActivityForResult(actionIntent, ACTION_RC);
     }
 
@@ -574,13 +573,13 @@ public class FeedActivity
             else if (requestCode == ACTION_RC){
                 if (data.getBooleanExtra(ActionActivity.DID_IT_KEY, false)){
                     Log.d("FeedActivity", "removing action");
-                    Action action = data.getParcelableExtra(ActionActivity.ACTION_KEY);
-                    mAdapter.didIt(mApplication.getFeedData().getAction(action));
+                    mAdapter.didIt();
                     mAdapter.updateUpcoming();
                 }
                 else{
                     Log.d("FeedActivity", "updating action");
-                    mApplication.updateAction((Action)data.getParcelableExtra(ActionActivity.ACTION_KEY));
+                    Action action = data.getParcelableExtra(ActionActivity.ACTION_KEY);
+                    mApplication.updateAction(action);
                     mAdapter.updateUpcoming();
                 }
             }
@@ -593,7 +592,7 @@ public class FeedActivity
 
     @Override
     public void onRefresh(){
-        FeedDataLoader.load(this);
+        FeedDataLoader.getInstance().loadData(this);
     }
 
     @Override

@@ -22,6 +22,8 @@ import org.tndata.android.compass.databinding.ItemBaseBinding;
 import org.tndata.android.compass.holder.BaseItemCardHolder;
 import org.tndata.android.compass.holder.BaseItemHolder;
 import org.tndata.android.compass.holder.DynamicListCardHolder;
+import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
@@ -29,11 +31,13 @@ import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.TDCGoal;
 import org.tndata.android.compass.model.UpcomingAction;
+import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
+import org.tndata.android.compass.util.FeedDataLoader;
 
 import java.util.List;
 
@@ -52,8 +56,7 @@ public class MainFeedAdapter
         implements
                 View.OnClickListener,
                 DynamicListCardHolder.DynamicListAdapter,
-                HttpRequest.RequestCallback,
-                Parser.ParserCallback{
+                FeedDataLoader.GoalLoadCallback{
 
     private static final String TAG = "MainFeedAdapter";
 
@@ -245,7 +248,7 @@ public class MainFeedAdapter
             holder.setIcon(R.drawable.ic_up_next);
             holder.setIconBackgroundColor(Color.WHITE);
 
-            UpcomingAction action = mFeedData.getUpNextAction();
+            Action action = mFeedData.getUpNext();
             if (action == null){
                 if (mFeedData.getProgress().getTotalActions() != 0){
                     holder.setTitle(R.string.card_up_next_title_completed);
@@ -288,7 +291,7 @@ public class MainFeedAdapter
             else{
                 mGoalsHolder.setTitle(R.string.card_suggestions_header);
             }
-            if (mFeedData.getNextGoalBatchUrl() == null){
+            if (!FeedDataLoader.getInstance().canLoadMoreGoals()){
                 mGoalsHolder.hideLoadMore();
             }
         }
@@ -303,7 +306,7 @@ public class MainFeedAdapter
     public void onClick(View view){
         switch (view.getId()){
             case R.id.feed_up_next:
-                mListener.onActionSelected(mFeedData.getUpNextAction());
+                mListener.onActionSelected(mFeedData.getUpNext());
                 break;
 
             case R.id.feed_reward:
@@ -406,7 +409,7 @@ public class MainFeedAdapter
 
     @Override
     public void onDynamicListLoadMore(){
-        mGetMoreGoalsRC = HttpRequest.get(this, mFeedData.getNextGoalBatchUrl());
+        FeedDataLoader.getInstance().loadNextGoalBatch(this);
     }
 
 
@@ -455,11 +458,15 @@ public class MainFeedAdapter
 
     /**
      * Marks an action as done in he data set.
-     *
-     * @param action the action to be marked as done.
      */
-    public void didIt(UpcomingAction action){
-        mFeedData.removeUpcomingActionX(action, true);
+    public void didIt(){
+        Action current = mFeedData.replaceUpNext();
+        if (current instanceof UserAction){
+            FeedDataLoader.getInstance().loadNextUserAction();
+        }
+        else if (current instanceof CustomAction){
+            FeedDataLoader.getInstance().loadNextCustomAction();
+        }
     }
 
 
@@ -509,67 +516,17 @@ public class MainFeedAdapter
     }
 
 
-    /*-------------------------*
-     * REQUEST RELATED METHODS *
-     *-------------------------*/
+    /*----------------*
+     * LOADER METHODS *
+     *----------------*/
 
     @Override
-    public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mGetMoreGoalsRC){
-            if (mFeedData.getNextGoalBatchUrl().contains("customgoals")){
-                Parser.parse(result, ParserModels.CustomGoalsResultSet.class, this);
-            }
-            else{
-                Parser.parse(result, ParserModels.UserGoalsResultSet.class, this);
-            }
+    public void onGoalsLoaded(List<Goal> goals){
+        mFeedData.addGoals(goals);
+        mGoalsHolder.notifyItemsInserted(goals.size());
+        if (!FeedDataLoader.getInstance().canLoadMoreGoals()){
+            mGoalsHolder.hideLoadMore();
         }
-    }
-
-    @Override
-    public void onRequestFailed(int requestCode, HttpRequestError error){
-
-    }
-
-    @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-
-    }
-
-    @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.CustomGoalsResultSet){
-            ParserModels.CustomGoalsResultSet set = (ParserModels.CustomGoalsResultSet)result;
-            String url = set.next;
-            if (url == null){
-                url = API.URL.getUserGoals();
-            }
-            if (API.STAGING && url.startsWith("https")){
-                url = url.replaceFirst("s", "");
-            }
-            //mMyGoalsHolder.prepareGoalAddition();
-            mFeedData.addGoals(set.results, url);
-            mGoalsHolder.notifyItemsInserted(set.results.size());
-        }
-        else if (result instanceof ParserModels.UserGoalsResultSet){
-            ParserModels.UserGoalsResultSet set = (ParserModels.UserGoalsResultSet)result;
-            //mMyGoalsHolder.prepareGoalAddition();
-            String url = set.next;
-            if (url == null){
-                mGoalsHolder.hideLoadMore();
-            }
-            else{
-                if (API.STAGING && url.startsWith("https")){
-                    url = url.replaceFirst("s", "");
-                }
-            }
-            mFeedData.addGoals(set.results, url);
-            mGoalsHolder.notifyItemsInserted(set.results.size());
-        }
-    }
-
-    @Override
-    public void onParseFailed(int requestCode){
-
     }
 
 
@@ -652,7 +609,7 @@ public class MainFeedAdapter
          *
          * @param action the action being displayed at the card.
          */
-        void onActionSelected(UpcomingAction action);
+        void onActionSelected(Action action);
 
         /**
          * Called when the reward card is tapped.

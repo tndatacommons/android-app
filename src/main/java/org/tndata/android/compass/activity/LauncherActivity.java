@@ -27,7 +27,7 @@ public class LauncherActivity
                 LauncherFragment.LauncherFragmentListener,
                 SignUpFragment.SignUpFragmentListener,
                 LogInFragment.LogInFragmentCallback,
-                FeedDataLoader.Callback{
+        FeedDataLoader.DataLoadCallback{
 
     private static final String TAG = "LauncherActivity";
 

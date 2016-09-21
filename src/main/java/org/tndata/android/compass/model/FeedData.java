@@ -24,8 +24,6 @@ public class FeedData{
     public static final String TAG = "FeedData";
     public static final String API_TYPE = "feed";
 
-    private static final int LOAD_MORE_COUNT = 3;
-
 
     //API delivered fields
     @SerializedName("progress")
@@ -42,7 +40,6 @@ public class FeedData{
     //Fields set during post-processing or after data retrieval
     private UpcomingAction mUpNextAction;
     private List<Goal> mDisplayedGoals;
-    private String mNextGoalBatchUrl;
 
 
     private Action mUpNext;
@@ -64,15 +61,6 @@ public class FeedData{
     /*------------------------------*
      * REGULAR GETTERS AND CHECKERS *
      *------------------------------*/
-
-    /**
-     * Up next action getter.
-     *
-     * @return the up next action, null if there ain't one.
-     */
-    public UpcomingAction getUpNextAction(){
-        return mUpNextAction;
-    }
 
     /**
      * Progress getter.
@@ -99,31 +87,6 @@ public class FeedData{
      */
     public List<Streak> getStreaks(){
         return mStreaks;
-    }
-
-    /**
-     * Gets the list of upcoming actions.
-     *
-     * @return the list of upcoming actions.
-     */
-    public List<UpcomingAction> getUpcomingActions(){
-        return mUpcomingActions;
-    }
-
-    /**
-     * Gets a sub list if the upcoming actions list.
-     *
-     * @param size the size of the sub-list. This gets capped to the maximum possible value if
-     *             the request cannot be satisfied.
-     * @return the requested sub-list of upcoming actions.
-     */
-    public List<UpcomingAction> getUpcomingActionsSubList(int size){
-        //If the requested size is bigger tha the actual size, cap the size to max.
-        if (size > mUpcomingActions.size()){
-            size = mUpcomingActions.size();
-        }
-        //Return an independent list, not a backed list.
-        return new ArrayList<>(mUpcomingActions.subList(0, size));
     }
 
     /**
@@ -162,15 +125,6 @@ public class FeedData{
         return mSuggestions;
     }
 
-    /**
-     * Getter for the next goal batch url.
-     *
-     * @return the url of the next batch of goals to load or null if we are done loading goals.
-     */
-    public String getNextGoalBatchUrl(){
-        return mNextGoalBatchUrl;
-    }
-
     public Reward getReward(){
         return mReward;
     }
@@ -181,42 +135,15 @@ public class FeedData{
      *--------------------------------------*/
 
     /**
-     * Tells whether there are more actions to display.
-     *
-     * @param displayedActions the number of actions already being displayed in the feed.
-     * @return true if there are more actions to load, false otherwise.
-     */
-    public boolean canLoadMoreActions(int displayedActions){
-        return displayedActions < mUpcomingActions.size();
-    }
-
-    /**
-     * Returns the next batch of actions to be displayed in the feed.
-     *
-     * @param displayedActions the number of actions already being displayed in the feed.
-     * @return a list containing the new actions.
-     */
-    public List<UpcomingAction> loadMoreUpcoming(int displayedActions){
-        Log.d(TAG, "Total: " + mUpcomingActions.size() + ". Displayed: " + displayedActions);
-        List<UpcomingAction> actions = new ArrayList<>();
-        while (actions.size() < LOAD_MORE_COUNT && canLoadMoreActions(displayedActions + actions.size())){
-            actions.add(mUpcomingActions.get(displayedActions + actions.size()));
-        }
-        return actions;
-    }
-
-    /**
      * Adds a batch of goals loaded from the API.
      *
      * @param goals a list containing the loaded goals.
-     * @param nextBatchUrl the url to the next batch, null if we are done.
      */
-    public void addGoals(@NonNull List<? extends Goal> goals, @Nullable String nextBatchUrl){
+    public void addGoals(@NonNull List<Goal> goals){
         for (Goal goal:goals){
             //Call addGoal() to ensure the goal wasn't already added to the bundle.
             addGoal(goal);
         }
-        mNextGoalBatchUrl = nextBatchUrl;
     }
 
 
@@ -253,7 +180,8 @@ public class FeedData{
         mNextCustomAction = customAction;
     }
 
-    public void replaceUpNext(){
+    public Action replaceUpNext(){
+        Action upNext = mUpNext;
         if (mNextUserAction != null && mNextCustomAction == null){
             bumpNextUserAction();
         }
@@ -269,7 +197,11 @@ public class FeedData{
                 bumpNextCustomAction();
             }
         }
-        //If both actions are null, do nothing
+        else{
+            //If both actions are null, then we are done
+            mUpNext = null;
+        }
+        return upNext;
     }
 
     private void bumpNextUserAction(){
@@ -282,6 +214,10 @@ public class FeedData{
         mUpNext = mNextCustomAction;
         mNextCustomAction = null;
         FeedDataLoader.getInstance().loadNextCustomAction();
+    }
+
+    public Action getUpNext(){
+        return mUpNext;
     }
 
     /**
