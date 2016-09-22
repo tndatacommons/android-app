@@ -113,7 +113,7 @@ public class UserAction extends Action implements ParserModels.ResultSet{
 
     @Override
     public String toString(){
-        return "UserAction #" + getId() + " (" + mAction.toString() + ")";
+        return "UserAction #" + getId() + " (" + mAction + "): " + getTrigger();
     }
 
     @Override

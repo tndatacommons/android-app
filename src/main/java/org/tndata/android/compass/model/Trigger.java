@@ -326,7 +326,7 @@ public class Trigger extends TDCBase implements Comparable<Trigger>{
     @Override
     public String toString(){
         String result = "";
-        if (!mRecurrencesDisplay.isEmpty()){
+        if (mRecurrencesDisplay != null && !mRecurrencesDisplay.isEmpty()){
             result += mRecurrencesDisplay + ", ";
         }
         if (mDate != null){
