@@ -14,7 +14,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.squareup.picasso.Transformation;
@@ -60,7 +59,7 @@ public final class ImageLoader{
      * @param callback an optional callback.
      */
     public static void loadBitmap(@NonNull ImageView view, @Nullable String url,
-                                  @Nullable ImageLoaderCallback callback){
+                                  @Nullable Callback callback){
         loadBitmap(view, url, new Options(), callback);
     }
 
@@ -74,7 +73,7 @@ public final class ImageLoader{
      */
     public static void loadBitmap(@NonNull ImageView view, @Nullable String url,
                                   @NonNull Options options,
-                                  @Nullable final ImageLoaderCallback callback){
+                                  @Nullable final Callback callback){
         if (url == null || url.isEmpty()){
             view.setImageResource(R.drawable.ic_compass_white_50dp);
         }
@@ -91,7 +90,7 @@ public final class ImageLoader{
             if (options.mCropToCircle){
                 request.transform(new CircleCropTransformation());
             }
-            request.into(view, new Callback(){
+            request.into(view, new com.squareup.picasso.Callback(){
                 @Override
                 public void onSuccess(){
                     if (callback != null){
@@ -237,7 +236,7 @@ public final class ImageLoader{
      * @author Ismael Alonso
      * @version 1.0.0
      */
-    public interface ImageLoaderCallback{
+    public interface Callback{
         /**
          * Called when loading an image succeeds.
          */

@@ -23,13 +23,13 @@ import org.tndata.android.compass.util.ImageLoader;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-public class BadgeActivity extends AppCompatActivity implements ImageLoader.ImageLoaderCallback{
+public class BadgeActivity extends AppCompatActivity implements ImageLoader.Callback{
     private static final String TAG = "BadgeActivity";
 
     public static final String BADGE_KEY = "org.tndata.compass.BadgeActivity.Badge";
 
+    
     private ActivityBadgeBinding mBinding;
-
 
 
     @Override
