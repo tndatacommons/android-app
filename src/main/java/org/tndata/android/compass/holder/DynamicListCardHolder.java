@@ -56,14 +56,16 @@ public class DynamicListCardHolder extends RecyclerView.ViewHolder implements Vi
     }
 
     public void notifyItemsInserted(int count){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-            ViewGroup target = (ViewGroup)itemView.getRootView();
-            Transition transition = new ChangeBounds();
-            transition.setDuration(500);
-            TransitionManager.beginDelayedTransition(target, transition);
+        if (count != 0){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+                ViewGroup target = (ViewGroup)itemView.getRootView();
+                Transition transition = new ChangeBounds();
+                transition.setDuration(500);
+                TransitionManager.beginDelayedTransition(target, transition);
+            }
+            int start = mAdapter.getDynamicListItemCount() - count;
+            mRecyclerViewAdapter.notifyItemRangeInserted(start, count);
         }
-        int start = mAdapter.getDynamicListItemCount() - count;
-        mRecyclerViewAdapter.notifyItemRangeInserted(start, count);
         mBinding.dynamicListMoreProgress.setVisibility(View.INVISIBLE);
         mBinding.dynamicListMore.setVisibility(View.VISIBLE);
     }

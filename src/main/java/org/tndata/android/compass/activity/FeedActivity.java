@@ -590,7 +590,7 @@ public class FeedActivity
 
     @Override
     public void onRefresh(){
-        FeedDataLoader.getInstance().loadData(this);
+        FeedDataLoader.getInstance().load(this);
     }
 
     @Override

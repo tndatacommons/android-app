@@ -19,6 +19,8 @@ import es.sandwatch.httprequests.HttpRequestError;
 /**
  * This class loads all the necessary initial data for the feed.
  *
+ * TODO have the next batch of goals ready for the next time the loadNextGoalBatch is called
+ *
  * @author Ismael Alonso
  * @version 1.0.0
  */
@@ -28,21 +30,16 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
     private static FeedDataLoader sLoader;
 
 
+    /**
+     * Gets an instance of the FeedDataLoader.
+     *
+     * @return an instance of the FeedDataLoader.
+     */
     public static FeedDataLoader getInstance(){
         if (sLoader == null){
             sLoader = new FeedDataLoader();
         }
         return sLoader;
-    }
-
-    public static void load(@NonNull DataLoadCallback callback){
-        getInstance().loadData(callback);
-    }
-
-    public static void cancel(){
-        if (sLoader != null){
-            sLoader.cancel2();
-        }
     }
 
 
@@ -73,12 +70,18 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
     private boolean mInitialGoalLoad;
 
 
-    public void loadData(@NonNull DataLoadCallback callback){
-        //Cancel any previous requests
-        cancel2();
+    /**
+     * Private constructor. Only the getInstance() method is supposed to create instances.
+     */
+    private FeedDataLoader(){
+        init();
+    }
 
-        //Do some setup
-        mDataLoadCallback = callback;
+    /**
+     * Initializes some of the components of this objects
+     */
+    private void init(){
+        mDataLoadCallback = null;
         mGoalLoadCallback = null;
         mGoalBatch = new ArrayList<>();
         //Empty means data not yet loaded
@@ -86,27 +89,57 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
         mGetNextCustomActionUrl = "";
         mInitialActionLoad = true;
         mInitialGoalLoad = true;
+    }
 
-        //Trigger the process
+    /**
+     * Resets this object and triggers the feed load sequence.
+     *
+     * @param callback the object that should get notified when the feed data is loaded.
+     */
+    public void load(@NonNull DataLoadCallback callback){
+        //Cancel any previous requests
+        cancel();
+
+        //Do some setup
+        init();
+        mDataLoadCallback = callback;
+
+        //Trigger the load sequence
         mGetFeedDataRC = HttpRequest.get(this, API.URL.getFeedData());
     }
 
+    /**
+     * Loads the next user action.
+     */
     public void loadNextUserAction(){
-        if (mGetNextUserActionUrl != null){
+        if (!mInitialActionLoad && mGetNextUserActionUrl != null){
             mGetNextUserActionRC = HttpRequest.get(this, mGetNextUserActionUrl);
         }
     }
 
+    /**
+     * Loads the next custom action.
+     */
     public void loadNextCustomAction(){
-        if (mGetNextCustomActionUrl != null){
+        if (!mInitialActionLoad && mGetNextCustomActionUrl != null){
             mGetNextCustomActionRC = HttpRequest.get(this, mGetNextCustomActionUrl);
         }
     }
 
+    /**
+     * Checks whether more goals can be loaded.
+     *
+     * @return true if more goals can be loaded.
+     */
     public boolean canLoadMoreGoals(){
         return mGetNextGoalBatchUrl != null;
     }
 
+    /**
+     * Loads the next batch of goals.
+     *
+     * @param callback the object that should get notified when the next batch has loaded.
+     */
     public void loadNextGoalBatch(@NonNull GoalLoadCallback callback){
         if (!mInitialGoalLoad && canLoadMoreGoals()){
             mGoalLoadCallback = callback;
@@ -147,8 +180,36 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
 
     @Override
     public void onRequestFailed(int requestCode, HttpRequestError error){
-        sLoader = null;
-        mDataLoadCallback.onFeedDataLoaded(null);
+        //Log the error and which request failed
+        Log.e(TAG, error.toString());
+        if (requestCode == mGetFeedDataRC){
+            Log.e(TAG, "FeedData couldn't be loaded");
+        }
+        else if (requestCode == mGetNextUserActionRC){
+            Log.e(TAG, "UserAction couldn't be loaded");
+        }
+        else if (requestCode == mGetNextCustomActionRC){
+            Log.e(TAG, "CustomAction couldn't be loaded");
+        }
+        else if (requestCode == mGetCustomGoalsRC){
+            Log.e(TAG, "CustomGoals couldn't be loaded");
+            //If goal load callback exists, notify of failure
+            if (mGoalLoadCallback != null){
+                mGoalLoadCallback.onGoalsLoaded(null);
+            }
+        }
+        else if (requestCode == mGetUserGoalsRC){
+            Log.e(TAG, "UserGoals couldn't be loaded");
+            //If goal load callback exists, notify of failure
+            if (mGoalLoadCallback != null){
+                mGoalLoadCallback.onGoalsLoaded(null);
+            }
+        }
+
+        //If data load callback exists, notify of failure
+        if (mDataLoadCallback != null){
+            mDataLoadCallback.onFeedDataLoaded(null);
+        }
     }
 
     @Override
@@ -229,9 +290,12 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
 
     @Override
     public void onParseFailed(int requestCode){
-
+        //This shouldn't happen
     }
 
+    /**
+     * Decides what to do with recently loaded goals.
+     */
     private void dispatchGoals(){
         Log.i(TAG, "Dispatching goals...");
         if (mInitialGoalLoad){
@@ -253,7 +317,10 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
         }
     }
 
-    public void cancel2(){
+    /**
+     * Cancels all pending network requests.
+     */
+    public void cancel(){
         HttpRequest.cancel(sLoader.mGetFeedDataRC);
         HttpRequest.cancel(sLoader.mGetNextUserActionRC);
         HttpRequest.cancel(sLoader.mGetNextCustomActionRC);
@@ -262,11 +329,34 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
     }
 
 
+    /**
+     * Callback interface for FeedData load requests.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface DataLoadCallback{
+        /**
+         * Called when the FeedData object is loaded or fails to load.
+         *
+         * @param feedData the FeedData object if load was successful, null otherwise.
+         */
         void onFeedDataLoaded(@Nullable FeedData feedData);
     }
 
+
+    /**
+     * Callback interface for Goal load requests.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     public interface GoalLoadCallback{
-        void onGoalsLoaded(List<Goal> batch);
+        /**
+         * Called when Goals are loaded or fail to load.
+         *
+         * @param batch a list of Goals if load was successful, null otherwise.
+         */
+        void onGoalsLoaded(@Nullable List<Goal> batch);
     }
 }

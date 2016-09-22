@@ -97,7 +97,7 @@ public class LauncherActivity
      */
     private void popBackStack(){
         //Cancel common requests/tasks
-        FeedDataLoader.cancel();
+        FeedDataLoader.getInstance().cancel();
         cancelled = true;
 
         int count = getSupportFragmentManager().getBackStackEntryCount();
@@ -177,14 +177,13 @@ public class LauncherActivity
 
     private void fetchData(){
         if (!cancelled){
-            FeedDataLoader.load(this);
+            FeedDataLoader.getInstance().load(this);
         }
     }
 
     @Override
     public void onFeedDataLoaded(@Nullable FeedData feedData){
         if (feedData == null){
-            User.deleteFromPreferences(getApplicationContext());
             displayLauncherFragment(false);
         }
         else if (!cancelled){
