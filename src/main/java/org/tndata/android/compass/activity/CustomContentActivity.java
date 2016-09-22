@@ -198,7 +198,7 @@ public class CustomContentActivity
             Collections.sort(((ParserModels.CustomActionResultSet)result).results);
         }
         else if (result instanceof CustomAction){
-            mApplication.addAction(mCustomGoal, (CustomAction)result);
+            mApplication.addAction((Action)result);
             mCustomGoal.addAction((CustomAction)result);
         }
     }
@@ -257,7 +257,7 @@ public class CustomContentActivity
 
     @Override
     public void onSaveAction(@NonNull CustomAction customAction){
-        mApplication.updateAction(mCustomGoal, customAction);
+        mApplication.updateAction(customAction);
         HttpRequest.put(null, API.URL.putCustomAction(customAction),
                 API.BODY.postPutCustomAction(customAction.getTitle(), customAction.getGoal()));
     }
@@ -280,7 +280,7 @@ public class CustomContentActivity
         if (requestCode == TRIGGER_RC){
             if (resultCode == RESULT_OK){
                 Action action = data.getParcelableExtra(TriggerActivity.ACTION_KEY);
-                mApplication.updateAction(mCustomGoal, action);
+                mApplication.updateAction(action);
             }
         }
     }

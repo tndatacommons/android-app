@@ -430,15 +430,7 @@ public class MainFeedAdapter
      * Updates the data set (up next, upcoming, and my goals).
      */
     public void updateDataSet(){
-        updateUpcoming();
         updateGoals();
-    }
-
-    /**
-     * Updates upcoming and up next.
-     */
-    public void updateUpcoming(){
-
     }
 
     /**
@@ -460,13 +452,14 @@ public class MainFeedAdapter
      * Marks an action as done in he data set.
      */
     public void didIt(){
-        Action current = mFeedData.replaceUpNext();
-        if (current instanceof UserAction){
-            FeedDataLoader.getInstance().loadNextUserAction();
-        }
-        else if (current instanceof CustomAction){
-            FeedDataLoader.getInstance().loadNextCustomAction();
-        }
+        mFeedData.replaceUpNext();
+    }
+
+    /**
+     * Updates upcoming and up next.
+     */
+    public void updateUpNext(Action upNext){
+        mFeedData.updateAction(upNext);
     }
 
 

@@ -574,13 +574,11 @@ public class FeedActivity
                 if (data.getBooleanExtra(ActionActivity.DID_IT_KEY, false)){
                     Log.d("FeedActivity", "removing action");
                     mAdapter.didIt();
-                    mAdapter.updateUpcoming();
                 }
                 else{
                     Log.d("FeedActivity", "updating action");
                     Action action = data.getParcelableExtra(ActionActivity.ACTION_KEY);
-                    mApplication.updateAction(action);
-                    mAdapter.updateUpcoming();
+                    mAdapter.updateUpNext(action);
                 }
             }
         }

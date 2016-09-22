@@ -149,6 +149,10 @@ public abstract class Action extends UserContent implements Comparable<Action>{
         }
     }
 
+    public boolean happensBefore(Action action){
+        return compareTo(action) < 0;
+    }
+
 
     /*------------*
      * PARCELABLE *
