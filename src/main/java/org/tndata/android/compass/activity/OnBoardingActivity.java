@@ -35,7 +35,7 @@ public class OnBoardingActivity
                 InstrumentFragment.InstrumentFragmentCallback,
                 OrganizationsFragment.OrganizationsListener,
                 OnBoardingCategoryFragment.CategoryListener,
-                FeedDataLoader.Callback{
+                FeedDataLoader.DataLoadCallback{
 
     private static final int PROFILE_ITEMS = 3;
 
@@ -72,7 +72,7 @@ public class OnBoardingActivity
     @Override
     public void onBackPressed(){
         if (mApplying){
-            FeedDataLoader.cancel();
+            FeedDataLoader.getInstance().cancel();
             finish();
         }
         else{
@@ -120,16 +120,19 @@ public class OnBoardingActivity
         user.setOnBoardingComplete();
         user.writeToSharedPreferences(this);
         HttpRequest.put(null, API.URL.putUserProfile(user), API.BODY.putUserProfile(user));
-        FeedDataLoader.load(this);
+        FeedDataLoader.getInstance().load(this);
     }
 
     @Override
     public void onFeedDataLoaded(@Nullable FeedData feedData){
-        if (feedData != null){
+        if (feedData == null){
+            startActivity(new Intent(this, LauncherActivity.class));
+        }
+        else{
             mApplication.setFeedData(feedData);
             startActivity(new Intent(getApplicationContext(), FeedActivity.class));
-            finish();
         }
+        finish();
     }
 
     @Override

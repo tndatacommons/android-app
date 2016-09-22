@@ -35,9 +35,10 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.TDCGoal;
-import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserGoal;
+import org.tndata.android.compass.util.ItemSpacing;
 import org.tndata.android.compass.util.Tour;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
@@ -70,7 +71,7 @@ public class FeedActivity
                 MainFeedAdapter.Listener,
                 Tour.TourListener,
                 View.OnClickListener,
-                FeedDataLoader.Callback{
+                FeedDataLoader.DataLoadCallback{
 
     //Activity request codes
     private static final int ACTION_RC = 4582;
@@ -147,6 +148,7 @@ public class FeedActivity
         mAdapter = new MainFeedAdapter(this, this, false);
 
         RecyclerView feed = mBinding.feedList;
+        feed.addItemDecoration(new ItemSpacing(this, 12));
         feed.setAdapter(mAdapter);
         feed.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         new ParallaxEffect(mBinding.feedIllustration, 0.5f).attachToRecyclerView(feed);
@@ -414,7 +416,7 @@ public class FeedActivity
 
             case DrawerAdapter.DRAWER_COUNT:
                 //Debug button
-                startActivity(new Intent(this, RewardActivity.class));
+                startActivity(RewardActivity.getIntent(this, null));
                 break;
         }
         mBinding.feedDrawerLayout.closeDrawers();
@@ -514,9 +516,7 @@ public class FeedActivity
     public void onGoalSelected(Goal goal){
         if (goal instanceof UserGoal){
             if (mApplication.getAvailableCategories().get(((UserGoal)goal).getPrimaryCategoryId()) != null){
-                Intent reviewActionsIntent = new Intent(this, ReviewActionsActivity.class)
-                        .putExtra(ReviewActionsActivity.USER_GOAL_KEY, goal);
-                startActivityForResult(reviewActionsIntent, GOAL_RC);
+                startActivityForResult(MyGoalActivity.getIntent(this, (UserGoal)goal), GOAL_RC);
             }
             else{
                 Toast.makeText(this, "The content is currently unavailable", Toast.LENGTH_SHORT).show();
@@ -537,10 +537,15 @@ public class FeedActivity
     }
 
     @Override
-    public void onActionSelected(UpcomingAction action){
+    public void onActionSelected(Action action){
         Intent actionIntent = new Intent(this, ActionActivity.class)
-                .putExtra(ActionActivity.UPCOMING_ACTION_KEY, action);
+                .putExtra(ActionActivity.ACTION_KEY, action);
         startActivityForResult(actionIntent, ACTION_RC);
+    }
+
+    @Override
+    public void onRewardSelected(Reward reward){
+        startActivity(RewardActivity.getIntent(this, reward));
     }
 
     @Override
@@ -568,14 +573,12 @@ public class FeedActivity
             else if (requestCode == ACTION_RC){
                 if (data.getBooleanExtra(ActionActivity.DID_IT_KEY, false)){
                     Log.d("FeedActivity", "removing action");
-                    Action action = data.getParcelableExtra(ActionActivity.ACTION_KEY);
-                    mAdapter.didIt(mApplication.getFeedData().getAction(action));
-                    mAdapter.updateUpcoming();
+                    mAdapter.didIt();
                 }
                 else{
                     Log.d("FeedActivity", "updating action");
-                    mApplication.updateAction((Action)data.getParcelableExtra(ActionActivity.ACTION_KEY));
-                    mAdapter.updateUpcoming();
+                    Action action = data.getParcelableExtra(ActionActivity.ACTION_KEY);
+                    mAdapter.updateUpNext(action);
                 }
             }
         }
@@ -587,7 +590,7 @@ public class FeedActivity
 
     @Override
     public void onRefresh(){
-        FeedDataLoader.load(this);
+        FeedDataLoader.getInstance().load(this);
     }
 
     @Override

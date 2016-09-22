@@ -35,11 +35,12 @@ public class MyGoalActivity
                 Parser.ParserCallback,
                 MyGoalAdapter.Listener{
 
+    private static final String USER_GOAL_KEY = "org.tndata.compass.MyGoal.UserGoal";
     private static final String USER_GOAL_ID_KEY = "org.tndata.compass.MyGoal.UserGoalId";
 
 
     /**
-     * Gets the Intent used to launch this activity.
+     * Gets the Intent used to launch this activity when a goal is unavailable.
      *
      * @param context a reference to the context.
      * @param userGoalId the id of the user goal to be loaded.
@@ -48,6 +49,19 @@ public class MyGoalActivity
     public static Intent getIntent(Context context, long userGoalId){
         return new Intent(context, MyGoalActivity.class)
                 .putExtra(USER_GOAL_ID_KEY, userGoalId);
+    }
+
+
+    /**
+     * Gets the Intent used to launch this activity when a goal is available.
+     *
+     * @param context a reference to the context.
+     * @param userGoal the id of the user goal to be loaded.
+     * @return the intent that launches this activity correctly.
+     */
+    public static Intent getIntent(Context context, UserGoal userGoal){
+        return new Intent(context, MyGoalActivity.class)
+                .putExtra(USER_GOAL_KEY, userGoal);
     }
 
 
@@ -69,8 +83,14 @@ public class MyGoalActivity
 
         getRecyclerView().addItemDecoration(new ItemSpacing(this, 8));
 
-        long userGoalId = getIntent().getLongExtra(USER_GOAL_ID_KEY, -1);
-        mGetUserGoalRC = HttpRequest.get(this, API.URL.getUserGoal(userGoalId));
+        UserGoal userGoal = getIntent().getParcelableExtra(USER_GOAL_KEY);
+        if (userGoal == null){
+            long userGoalId = getIntent().getLongExtra(USER_GOAL_ID_KEY, -1);
+            mGetUserGoalRC = HttpRequest.get(this, API.URL.getUserGoal(userGoalId));
+        }
+        else{
+            setGoal(userGoal);
+        }
     }
 
     @Override
@@ -113,7 +133,6 @@ public class MyGoalActivity
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof UserGoal){
             setGoal((UserGoal)result);
-            mGetCustomActionsRC = HttpRequest.get(this, API.URL.getCustomActions(mUserGoal));
         }
         else if (result instanceof ParserModels.CustomActionResultSet){
             mAdapter.setCustomActions(((ParserModels.CustomActionResultSet)result).results);
@@ -159,6 +178,8 @@ public class MyGoalActivity
 
         mAdapter = new MyGoalAdapter(this, this, mUserGoal, category);
         setAdapter(mAdapter);
+
+        mGetCustomActionsRC = HttpRequest.get(this, API.URL.getCustomActions(mUserGoal));
     }
 
     @Override

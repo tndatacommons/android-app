@@ -215,21 +215,10 @@ public class CompassApplication extends Application{
     /**
      * Adds an action to the global FeedData bundle.
      *
-     * @param goal the parent goal of the action.
      * @param action the action to be added.
      */
-    public void addAction(Goal goal, Action action){
-        mFeedData.addAction(goal, action);
-    }
-
-    /**
-     * Updates an action in the global FeedData bundle.
-     *
-     * @param goal the parent goal of the action.
-     * @param action the action to be added.
-     */
-    public void updateAction(Goal goal, Action action){
-        mFeedData.updateAction(goal, action);
+    public void addAction(Action action){
+        mFeedData.addAction(action);
     }
 
     /**
@@ -279,6 +268,5 @@ public class CompassApplication extends Application{
         Tour.init(this);
         //Tour.reset();
         LocationNotificationService.start(this);
-        ImageLoader.initialize(getApplicationContext());
     }
 }

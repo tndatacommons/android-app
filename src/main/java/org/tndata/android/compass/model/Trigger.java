@@ -324,6 +324,21 @@ public class Trigger extends TDCBase implements Comparable<Trigger>{
     }
 
     @Override
+    public String toString(){
+        String result = "";
+        if (mRecurrencesDisplay != null && !mRecurrencesDisplay.isEmpty()){
+            result += mRecurrencesDisplay + ", ";
+        }
+        if (mDate != null){
+            result += mDate + " - ";
+        }
+        if (mTime != null){
+            result += mTime;
+        }
+        return result;
+    }
+
+    @Override
     public int describeContents(){
         return 0;
     }

@@ -73,7 +73,7 @@ public final class ParserModels{
         public List<UserAction> results;
     }
 
-    public final class CustomActionResultSet implements ResultSet{
+    public final class CustomActionResultSet extends ListResultSet{
         public List<CustomAction> results;
     }
 

@@ -1,33 +1,41 @@
 package org.tndata.android.compass.adapter.feed;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver;
+import android.widget.Space;
+import android.widget.Toast;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
+import org.tndata.android.compass.databinding.CardBaseItemBinding;
+import org.tndata.android.compass.databinding.CardDynamicListBinding;
+import org.tndata.android.compass.databinding.ItemBaseBinding;
+import org.tndata.android.compass.holder.BaseItemCardHolder;
+import org.tndata.android.compass.holder.BaseItemHolder;
+import org.tndata.android.compass.holder.DynamicListCardHolder;
+import org.tndata.android.compass.model.Action;
+import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
+import org.tndata.android.compass.model.Reward;
+import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.TDCGoal;
-import org.tndata.android.compass.model.UpcomingAction;
-import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserModels;
-import org.tndata.android.compass.util.API;
+import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.util.CompassUtil;
+import org.tndata.android.compass.util.FeedDataLoader;
 
 import java.util.List;
-
-import es.sandwatch.httprequests.HttpRequest;
-import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -39,8 +47,9 @@ import es.sandwatch.httprequests.HttpRequestError;
 public class MainFeedAdapter
         extends RecyclerView.Adapter
         implements
-                HttpRequest.RequestCallback,
-                Parser.ParserCallback{
+                View.OnClickListener,
+                DynamicListCardHolder.DynamicListAdapter,
+                FeedDataLoader.GoalLoadCallback{
 
     private static final String TAG = "MainFeedAdapter";
 
@@ -50,24 +59,21 @@ public class MainFeedAdapter
     public static final int TYPE_UP_NEXT = TYPE_WELCOME+1;
     private static final int TYPE_SUGGESTION = TYPE_UP_NEXT+1;
     public static final int TYPE_STREAKS = TYPE_SUGGESTION+1;
-    private static final int TYPE_UPCOMING = TYPE_STREAKS+1;
-    private static final int TYPE_MY_GOALS = TYPE_UPCOMING +1;
-    private static final int TYPE_GOAL_SUGGESTIONS = TYPE_MY_GOALS+1;
-    private static final int TYPE_OTHER = TYPE_MY_GOALS+1;
+    private static final int TYPE_REWARD = TYPE_STREAKS+1;
+    private static final int TYPE_GOALS = TYPE_REWARD+1;
+    private static final int TYPE_OTHER = TYPE_GOALS+1;
 
 
     final Context mContext;
     final Listener mListener;
 
+    private CompassApplication mApp;
+
     private FeedData mFeedData;
     private FeedUtil mFeedUtil;
     private TDCGoal mSuggestion;
 
-    private UpcomingHolder mUpcomingHolder;
-    private GoalsHolder<Goal> mMyGoalsHolder;
-    private GoalsHolder<TDCGoal> mSuggestionsHolder;
-
-    private int mGetMoreGoalsRC;
+    private DynamicListCardHolder mGoalsHolder;
 
 
     /**
@@ -82,6 +88,8 @@ public class MainFeedAdapter
         mContext = context;
         mListener = listener;
         mFeedData = ((CompassApplication)mContext.getApplicationContext()).getFeedData();
+
+        mApp = (CompassApplication)mContext.getApplicationContext();
 
         if (mFeedData == null){
             mListener.onNullData();
@@ -121,16 +129,18 @@ public class MainFeedAdapter
      *------------------------------------*/
 
     @Override
+    public int getItemCount(){
+        return CardTypes.getItemCount();
+    }
+
+    @Override
     public int getItemViewType(int position){
-        //The first card is always a blank card
         if (position == 0){
             return TYPE_BLANK;
         }
-        //The second card may be a welcome card, but only if the user has no goals selected
-        if (CardTypes.hasWelcomeCard() && position == 1){
+        if (CardTypes.isWelcome(position)){
             return TYPE_WELCOME;
         }
-        //The rest of them have checker methods
         if (CardTypes.isUpNext(position)){
             return TYPE_UP_NEXT;
         }
@@ -140,14 +150,11 @@ public class MainFeedAdapter
         if (CardTypes.isSuggestion(position)){
             return TYPE_SUGGESTION;
         }
-        if (CardTypes.isUpcoming(position)){
-            return TYPE_UPCOMING;
+        if (CardTypes.isReward(position)){
+            return TYPE_REWARD;
         }
-        if (CardTypes.isMyGoals(position)){
-            return TYPE_MY_GOALS;
-        }
-        if (CardTypes.isGoalSuggestions(position)){
-            return TYPE_GOAL_SUGGESTIONS;
+        if (CardTypes.isGoals(position)){
+            return TYPE_GOALS;
         }
         return TYPE_OTHER;
     }
@@ -155,9 +162,8 @@ public class MainFeedAdapter
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, final int viewType){
         RecyclerView.ViewHolder holder = null;
-        //Log.d(TAG, "onCreateViewHolder(): " + viewType);
         if (viewType == TYPE_BLANK){
-            holder = new RecyclerView.ViewHolder(new CardView(mContext)){};
+            holder = new RecyclerView.ViewHolder(new Space(mContext)){};
         }
         else if (viewType == TYPE_WELCOME){
             LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -170,9 +176,12 @@ public class MainFeedAdapter
             });
             holder = new RecyclerView.ViewHolder(view){};
         }
-        else if (viewType == TYPE_UP_NEXT){
+        else if (viewType == TYPE_UP_NEXT || viewType == TYPE_REWARD){
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            holder = new UpNextHolder(this, inflater.inflate(R.layout.card_up_next, parent, false));
+            CardBaseItemBinding binding = DataBindingUtil.inflate(
+                    inflater, R.layout.card_base_item, parent, false
+            );
+            holder = new BaseItemCardHolder(binding);
         }
         else if (viewType == TYPE_STREAKS){
             LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -182,29 +191,13 @@ public class MainFeedAdapter
             LayoutInflater inflater = LayoutInflater.from(mContext);
             holder = new GoalSuggestionHolder(this, inflater.inflate(R.layout.card_goal_suggestion, parent, false));
         }
-        else if (viewType == TYPE_UPCOMING){
-            if (mUpcomingHolder == null){
-                LayoutInflater inflater = LayoutInflater.from(mContext);
-                View rootView = inflater.inflate(R.layout.card_upcoming, parent, false);
-                mUpcomingHolder = new UpcomingHolder(this, rootView);
-            }
-            holder = mUpcomingHolder;
-        }
-        else if (viewType == TYPE_MY_GOALS){
-            if (mMyGoalsHolder == null){
-                LayoutInflater inflater = LayoutInflater.from(mContext);
-                View rootView = inflater.inflate(R.layout.card_goals, parent, false);
-                mMyGoalsHolder = new GoalsHolder<>(this, rootView);
-            }
-            holder = mMyGoalsHolder;
-        }
-        else if (viewType == TYPE_GOAL_SUGGESTIONS){
-            if (mSuggestionsHolder == null){
-                LayoutInflater inflater = LayoutInflater.from(mContext);
-                View rootView = inflater.inflate(R.layout.card_goals, parent, false);
-                mSuggestionsHolder = new GoalsHolder<>(this, rootView);
-            }
-            holder = mSuggestionsHolder;
+        else if (viewType == TYPE_GOALS){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            CardDynamicListBinding binding = DataBindingUtil.inflate(
+                    inflater, R.layout.card_dynamic_list, parent, false
+            );
+            mGoalsHolder = new DynamicListCardHolder(binding, this);
+            holder = mGoalsHolder;
         }
 
         final RecyclerView.ViewHolder vtHolder = holder;
@@ -243,7 +236,25 @@ public class MainFeedAdapter
         }
         //Up next
         else if (CardTypes.isUpNext(position)){
-            ((UpNextHolder)rawHolder).bind(mFeedData.getUpNextAction(), mFeedData.getProgress());
+            BaseItemCardHolder holder = (BaseItemCardHolder)rawHolder;
+            holder.setIcon(R.drawable.ic_up_next);
+            holder.setIconBackgroundColor(Color.WHITE);
+
+            Action action = mFeedData.getUpNext();
+            if (action == null){
+                if (mFeedData.getProgress().getTotalActions() != 0){
+                    holder.setTitle(R.string.card_up_next_title_completed);
+                    holder.setSubtitle(R.string.card_up_next_subtitle_completed);
+                }
+                else{
+                    holder.setTitle(R.string.card_up_next_title_empty);
+                    holder.setSubtitle(R.string.card_up_next_subtitle_empty);
+                }
+            }
+            else{
+                holder.setTitle(action.getTitle());
+                holder.setOnClickListener(this, R.id.feed_up_next);
+            }
         }
         //Streaks
         else if (CardTypes.isStreaks(position)){
@@ -254,34 +265,145 @@ public class MainFeedAdapter
             GoalSuggestionHolder holder = (GoalSuggestionHolder)rawHolder;
             holder.mTitle.setText(mSuggestion.getTitle());
         }
-        //Today's activities / upcoming
-        else if (CardTypes.isUpcoming(position)){
-            if (mUpcomingHolder.getItemCount() == 0){
-                moreActions();
-            }
+        //Reward
+        else if (CardTypes.isReward(position)){
+            BaseItemCardHolder holder = (BaseItemCardHolder)rawHolder;
+            Reward reward = mFeedData.getReward();
+
+            holder.setIcon(reward.getIcon());
+            holder.setTitle(reward.getHeader());
+            holder.setSubtitle(reward.getMessage().substring(0, 30) + "...");
+            holder.setOnClickListener(this, R.id.feed_reward);
         }
-        //My goals
-        else if (CardTypes.isMyGoals(position)){
-            if (mMyGoalsHolder.getItemCount() == 0){
-                mMyGoalsHolder.bind(mContext.getString(R.string.card_my_goals_header));
-                mMyGoalsHolder.setGoals(mFeedData.getGoals());
-                if (mFeedData.getNextGoalBatchUrl() == null){
-                    mMyGoalsHolder.hideFooter();
-                }
+        //Goals
+        else if (CardTypes.isGoals(position)){
+            if (CardTypes.hasMyGoals()){
+                mGoalsHolder.setTitle(R.string.card_my_goals_header);
             }
-        }
-        else if (CardTypes.isGoalSuggestions(position)){
-            if (mSuggestionsHolder.getItemCount() == 0){
-                mSuggestionsHolder.bind(mContext.getString(R.string.card_suggestions_header));
-                mSuggestionsHolder.setGoals(mFeedData.getSuggestions());
-                mSuggestionsHolder.hideFooter();
+            else{
+                mGoalsHolder.setTitle(R.string.card_suggestions_header);
+            }
+            if (!FeedDataLoader.getInstance().canLoadMoreGoals()){
+                mGoalsHolder.hideLoadMore();
             }
         }
     }
 
+
+    /*-----------------*
+     * OnClickListener *
+     *-----------------*/
+
     @Override
-    public int getItemCount(){
-        return CardTypes.getItemCount();
+    public void onClick(View view){
+        switch (view.getId()){
+            case R.id.feed_up_next:
+                if (mFeedData.getUpNext() != null){
+                    mListener.onActionSelected(mFeedData.getUpNext());
+                }
+                break;
+
+            case R.id.feed_reward:
+                mListener.onRewardSelected(mFeedData.getReward());
+                break;
+        }
+    }
+
+
+    /*---------------------------*
+     * DYNAMIC LIST CARD METHODS *
+     *---------------------------*/
+
+    @Override
+    public int getDynamicListItemCount(){
+        if (CardTypes.hasMyGoals()){
+            return mFeedData.getGoals().size();
+        }
+        else if (CardTypes.hasGoalSuggestions()){
+            return mFeedData.getSuggestions().size();
+        }
+        return 0;
+    }
+
+    @Override
+    public int getDynamicListViewType(int position){
+        //There is only one type of item
+        return 0;
+    }
+
+    @Override
+    public DynamicListCardHolder.DynamicItemHolder onCreateDynamicListViewHolder(ViewGroup parent, int viewType){
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        ItemBaseBinding binding = DataBindingUtil.inflate(
+                inflater, R.layout.item_base, parent, false
+        );
+        return new BaseItemHolder(binding);
+    }
+
+    //TODO simplify.
+    @Override
+    @SuppressWarnings("deprecation")
+    public void onBindDynamicListViewHolder(DynamicListCardHolder.DynamicItemHolder rawHolder, int position){
+        BaseItemHolder holder = (BaseItemHolder)rawHolder;
+        holder.showSeparator(true);
+        if (CardTypes.hasMyGoals()){
+            Goal goal = mFeedData.getGoals().get(position);
+            holder.setTitle(goal.getTitle());
+            if (goal instanceof UserGoal){
+                UserGoal userGoal = (UserGoal)goal;
+                long categoryId = userGoal.getPrimaryCategoryId();
+                TDCCategory category = mApp.getAvailableCategories().get(categoryId);
+                if (category == null){
+                    holder.setIconBackgroundColor(mContext.getResources().getColor(R.color.primary));
+                }
+                else{
+                    holder.setIconBackgroundColor(Color.parseColor(category.getColor()));
+                }
+                holder.setIconPadding(CompassUtil.getPixels(mContext, 20));
+                holder.setIcon(((UserGoal)goal).getGoal().getIconUrl());
+            }
+            else if (goal instanceof CustomGoal){
+                if (mApp.getUser().isFemale()){
+                    holder.setIcon(R.drawable.ic_lady);
+                }
+                else{
+                    holder.setIcon(R.drawable.ic_guy);
+                }
+                holder.setIconPadding(0);
+            }
+        }
+        else if (CardTypes.hasGoalSuggestions()){
+            TDCGoal goal = mFeedData.getSuggestions().get(position);
+            TDCCategory category = null;
+            for (Long id:goal.getCategoryIdSet()){
+                if (id > 22){
+                    category = mApp.getAvailableCategories().get(id);
+                }
+            }
+            if (category == null){
+                holder.setIconBackgroundColor(mContext.getResources().getColor(R.color.primary));
+            }
+            else{
+                holder.setIconBackgroundColor(Color.parseColor(category.getColor()));
+            }
+            holder.setIcon(goal.getIconUrl());
+            holder.setTitle(goal.getTitle());
+        }
+    }
+
+    @Override
+    public void onDynamicListItemClick(int position){
+        if (CardTypes.hasGoals()){
+            mListener.onGoalSelected(mFeedData.getGoals().get(position));
+        }
+        else if (CardTypes.hasGoalSuggestions()){
+            mListener.onSuggestionSelected(mFeedData.getSuggestions().get(position));
+        }
+    }
+
+    @Override
+    public void onDynamicListLoadMore(){
+        FeedDataLoader.getInstance().loadNextGoalBatch(this);
     }
 
 
@@ -302,26 +424,15 @@ public class MainFeedAdapter
      * Updates the data set (up next, upcoming, and my goals).
      */
     public void updateDataSet(){
-        updateUpcoming();
-        updateMyGoals();
+        updateGoals();
     }
 
     /**
-     * Updates upcoming and up next.
+     * Updates the goals card.
      */
-    public void updateUpcoming(){
-        notifyItemChanged(CardTypes.getUpNextPosition());
-        if (mUpcomingHolder != null){
-            mUpcomingHolder.updateActions(mFeedData);
-        }
-    }
-
-    /**
-     * Updates my goals.
-     */
-    public void updateMyGoals(){
-        if (mMyGoalsHolder != null){
-            mMyGoalsHolder.updateGoals();
+    private void updateGoals(){
+        if (mGoalsHolder != null){
+            mGoalsHolder.notifyDataSetChanged();
             notifyItemChanged(CardTypes.getGoalsPosition());
         }
     }
@@ -333,11 +444,16 @@ public class MainFeedAdapter
 
     /**
      * Marks an action as done in he data set.
-     *
-     * @param action the action to be marked as done.
      */
-    public void didIt(UpcomingAction action){
-        mFeedData.removeUpcomingActionX(action, true);
+    public void didIt(){
+        mFeedData.replaceUpNext();
+    }
+
+    /**
+     * Updates upcoming and up next.
+     */
+    public void updateUpNext(Action upNext){
+        mFeedData.updateAction(upNext);
     }
 
 
@@ -346,8 +462,8 @@ public class MainFeedAdapter
      *----------------------*/
 
     public void notifyGoalRemoved(int position){
-        if (mMyGoalsHolder != null){
-            mMyGoalsHolder.notifyGoalRemoved(position);
+        if (mGoalsHolder != null){
+            mGoalsHolder.notifyItemRemoved(position);
         }
     }
 
@@ -387,90 +503,25 @@ public class MainFeedAdapter
     }
 
 
-    /*------------------------*
-     * FOOTER RELATED METHODS *
-     *------------------------*/
-
-    /**
-     * Loads the next batch of actions into the feed.
-     */
-    void moreActions(){
-        mUpcomingHolder.addActions(mFeedData.loadMoreUpcoming(mUpcomingHolder.getItemCount()));
-        if (!mFeedData.canLoadMoreActions(mUpcomingHolder.getItemCount())){
-            mUpcomingHolder.hideFooter();
-        }
-    }
-
-    /**
-     * Loads the next batch of goals into the feed.
-     */
-    void moreGoals(){
-        mGetMoreGoalsRC = HttpRequest.get(this, mFeedData.getNextGoalBatchUrl());
-    }
-
-
-    /*-------------------------*
-     * REQUEST RELATED METHODS *
-     *-------------------------*/
+    /*----------------*
+     * LOADER METHODS *
+     *----------------*/
 
     @Override
-    public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mGetMoreGoalsRC){
-            if (mFeedData.getNextGoalBatchUrl().contains("customgoals")){
-                Parser.parse(result, ParserModels.CustomGoalsResultSet.class, this);
-            }
-            else{
-                Parser.parse(result, ParserModels.UserGoalsResultSet.class, this);
+    public void onGoalsLoaded(@Nullable List<Goal> goals){
+        if (goals == null){
+            mGoalsHolder.notifyItemsInserted(0);
+            Toast.makeText(mContext, R.string.feed_goal_load_error, Toast.LENGTH_LONG).show();
+        }
+        else{
+            mFeedData.addGoals(goals);
+            mGoalsHolder.notifyItemsInserted(goals.size());
+            if (!FeedDataLoader.getInstance().canLoadMoreGoals()){
+                mGoalsHolder.hideLoadMore();
             }
         }
     }
 
-    @Override
-    public void onRequestFailed(int requestCode, HttpRequestError error){
-
-    }
-
-    @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-
-    }
-
-    @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof ParserModels.CustomGoalsResultSet){
-            ParserModels.CustomGoalsResultSet set = (ParserModels.CustomGoalsResultSet)result;
-            String url = set.next;
-            if (url == null){
-                url = API.URL.getUserGoals();
-            }
-            if (API.STAGING && url.startsWith("https")){
-                url = url.replaceFirst("s", "");
-            }
-            mMyGoalsHolder.prepareGoalAddition();
-            mFeedData.addGoals(set.results, url);
-            mMyGoalsHolder.onGoalsAdded();
-        }
-        else if (result instanceof ParserModels.UserGoalsResultSet){
-            ParserModels.UserGoalsResultSet set = (ParserModels.UserGoalsResultSet)result;
-            mMyGoalsHolder.prepareGoalAddition();
-            String url = set.next;
-            if (url == null){
-                mMyGoalsHolder.hideFooter();
-            }
-            else{
-                if (API.STAGING && url.startsWith("https")){
-                    url = url.replaceFirst("s", "");
-                }
-            }
-            mFeedData.addGoals(set.results, url);
-            mMyGoalsHolder.onGoalsAdded();
-        }
-    }
-
-    @Override
-    public void onParseFailed(int requestCode){
-
-    }
 
     /**
      * Parent class of all the view holders in for the main feed adapter. Provides a reference
@@ -551,6 +602,13 @@ public class MainFeedAdapter
          *
          * @param action the action being displayed at the card.
          */
-        void onActionSelected(UpcomingAction action);
+        void onActionSelected(Action action);
+
+        /**
+         * Called when the reward card is tapped.
+         *
+         * @param reward the reward in the card
+         */
+        void onRewardSelected(Reward reward);
     }
 }

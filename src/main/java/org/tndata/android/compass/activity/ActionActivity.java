@@ -19,7 +19,6 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.GcmMessage;
 import org.tndata.android.compass.model.TDCCategory;
-import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
@@ -58,7 +57,6 @@ public class ActionActivity
     private static final String TAG = "ActionActivity";
 
     public static final String ACTION_KEY = "org.tndata.compass.ActionActivity.Action";
-    public static final String UPCOMING_ACTION_KEY = "org.tndata.compass.ActionActivity.Upcoming";
     public static final String GCM_MESSAGE_KEY = "org.tndata.compass.ActionActivity.GcmMessage";
 
     public static final String DID_IT_KEY = "org.tndata.compass.ActionActivity.DidIt";
@@ -79,7 +77,6 @@ public class ActionActivity
     private int mDeleteBehaviorRC;
 
     //Flags
-    private boolean mFromGcm;
     private boolean mUserAction;
 
 
@@ -92,7 +89,6 @@ public class ActionActivity
         //Get the action, upcoming action and message from the intent. Only one of them
         //  will be actually something other than null
         Action action = getIntent().getParcelableExtra(ACTION_KEY);
-        UpcomingAction upcomingAction = getIntent().getParcelableExtra(UPCOMING_ACTION_KEY);
         GcmMessage gcmMessage = getIntent().getParcelableExtra(GCM_MESSAGE_KEY);
 
         getRecyclerView().addItemDecoration(new ItemSpacing(this, 8));
@@ -115,19 +111,6 @@ public class ActionActivity
                 else if (gcmMessage.isCustomActionMessage()){
                     Log.d(TAG, "Fetching CustomAction #" + gcmMessage.getCustomAction().getId());
                     url = API.URL.getCustomAction(gcmMessage.getCustomAction().getId());
-                    mUserAction = false;
-                }
-                mFromGcm = true;
-            }
-            else if (upcomingAction != null){
-                if (upcomingAction.isUserAction()){
-                    Log.d(TAG, "Fetching UserAction #" + upcomingAction.getId());
-                    url = API.URL.getUserAction(upcomingAction.getId());
-                    mUserAction = true;
-                }
-                else if (upcomingAction.isCustomAction()){
-                    Log.d(TAG, "Fetching CustomAction #" + upcomingAction.getId());
-                    url = API.URL.getCustomAction(upcomingAction.getId());
                     mUserAction = false;
                 }
             }
@@ -259,22 +242,14 @@ public class ActionActivity
         if (mAction == null || !mAction.isEditable()){
             return false;
         }
-        if (mFromGcm){
-            if (mAction.hasTrigger() && mAction.getTrigger().isEnabled()){
-                getMenuInflater().inflate(R.menu.menu_action_reminder, menu);
-            }
-            else{
-                getMenuInflater().inflate(R.menu.menu_action_reminder_disabled, menu);
-            }
+
+        if (mAction.hasTrigger() && mAction.getTrigger().isEnabled()){
+            getMenuInflater().inflate(R.menu.menu_action, menu);
         }
         else{
-            if (mAction.hasTrigger() && mAction.getTrigger().isEnabled()){
-                getMenuInflater().inflate(R.menu.menu_action, menu);
-            }
-            else{
-                getMenuInflater().inflate(R.menu.menu_action_disabled, menu);
-            }
+            getMenuInflater().inflate(R.menu.menu_action_disabled, menu);
         }
+
         return true;
     }
 
@@ -285,7 +260,7 @@ public class ActionActivity
                 viewGoal();
                 break;
 
-            case R.id.action_trigger:
+            case R.id.action_reschedule:
                 onRescheduleClick();
                 break;
 

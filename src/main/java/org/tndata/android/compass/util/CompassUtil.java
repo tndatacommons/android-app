@@ -205,9 +205,6 @@ public final class CompassUtil{
         else if (src.equals("feed_streak")){
             return FeedData.Streak.class;
         }
-        else if (src.equals(UpcomingAction.API_TYPE)){
-            return UpcomingAction.class;
-        }
         //Awards
         else if (src.equals(AwardsActivity.Award.API_TYPE)){
             return AwardsActivity.Award.class;

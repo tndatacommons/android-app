@@ -41,17 +41,16 @@ final class CardTypes{
      *
      * @return true if there is a welcome card, false otherwise.
      */
-    static boolean hasWelcomeCard(){
+    static boolean hasWelcome(){
         return sFeedData.getGoals().isEmpty();
     }
 
-    /**
-     * Tells whether the feed has an up next action card.
-     *
-     * @return true if there is an up next card, false otherwise.
-     */
-    static boolean hasUpNextAction(){
-        return sFeedData.getUpNextAction() != null;
+    static int getWelcome(){
+        return 1;
+    }
+
+    static boolean isWelcome(int position){
+        return hasWelcome() && position == getWelcome();
     }
 
     /**
@@ -60,7 +59,7 @@ final class CardTypes{
      * @return the position of the up next card.
      */
     static int getUpNextPosition(){
-        return hasWelcomeCard() ? 2 : 1;
+        return hasWelcome() ? 2 : 1;
     }
 
     /**
@@ -130,41 +129,28 @@ final class CardTypes{
     }
 
     /**
-     * Tells whether there are upcoming actions.
+     * Gets the position of the reward card.
      *
-     * @return true if there are upcoming actions, false otherwise.
+     * @return the position of the reward card.
      */
-    static boolean hasUpcoming(){
-        return !sFeedData.getUpcomingActions().isEmpty();
-    }
-
-    /**
-     * Gets the position of the upcoming header card.
-     *
-     * @return the position of the upcoming header card.
-     */
-    static int getUpcomingPosition(){
-        if (hasStreaks()){
-            return getStreaksPosition()+1;
-        }
+    static int getRewardPosition(){
         if (hasSuggestion()){
             return getSuggestionPosition()+1;
         }
-        if (hasUpNextAction()){
-            return getUpNextPosition()+1;
+        if (hasStreaks()){
+            return getStreaksPosition()+1;
         }
-        //If there ain't up next, then there is no feedback and up next displays something else
         return getUpNextPosition()+1;
     }
 
     /**
-     * Tells whether a position is that of the upcoming header card.
+     * Tells whether a position is that of the reward card.
      *
      * @param position the position to be checked.
-     * @return true if it is the position of the upcoming header, false otherwise.
+     * @return true if it is the position of the reward, false otherwise.
      */
-    static boolean isUpcoming(int position){
-        return hasUpcoming() && getUpcomingPosition() == position;
+    static boolean isReward(int position){
+        return getRewardPosition() == position;
     }
 
     /**
@@ -200,12 +186,7 @@ final class CardTypes{
      * @return the position of a goals card.
      */
     static int getGoalsPosition(){
-        //If there are upcoming actions then my goals are right after
-        if (hasUpcoming()){
-            return getUpcomingPosition()+1;
-        }
-        //If there ain't upcoming actions then my goals takes its place
-        return getUpcomingPosition();
+        return getRewardPosition()+1;
     }
 
     /**
@@ -228,6 +209,10 @@ final class CardTypes{
         return hasMyGoals() && getGoalsPosition() == position;
     }
 
+    static boolean isGoals(int position){
+        return (hasMyGoals() || hasGoalSuggestions()) && getGoalsPosition() == position;
+    }
+
     /**
      * Gets the total number of cards in the feed.
      *
@@ -237,15 +222,6 @@ final class CardTypes{
         if (hasGoals()){
             return getGoalsPosition()+1;
         }
-        if (hasUpcoming()){
-            return getUpcomingPosition()+1;
-        }
-        if (hasStreaks()){
-            return getStreaksPosition()+1;
-        }
-        if (hasSuggestion()){
-            return getSuggestionPosition()+1;
-        }
-        return getUpNextPosition()+1;
+        return getRewardPosition()+1;
     }
 }

@@ -1,14 +1,13 @@
 package org.tndata.android.compass.model;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.tndata.android.compass.util.FeedDataLoader;
+
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 
@@ -22,23 +21,24 @@ public class FeedData{
     public static final String TAG = "FeedData";
     public static final String API_TYPE = "feed";
 
-    private static final int LOAD_MORE_COUNT = 3;
-
 
     //API delivered fields
     @SerializedName("progress")
     private Progress mProgress;
-    @SerializedName("upcoming")
-    private List<UpcomingAction> mUpcomingActions;
     @SerializedName("suggestions")
     private List<TDCGoal> mSuggestions;
     @SerializedName("streaks")
     private List<Streak> mStreaks;
+    @SerializedName("funcontent")
+    private Reward mReward;
 
     //Fields set during post-processing or after data retrieval
-    private UpcomingAction mUpNextAction;
     private List<Goal> mDisplayedGoals;
-    private String mNextGoalBatchUrl;
+
+
+    private Action mUpNext;
+    private UserAction mNextUserAction;
+    private CustomAction mNextCustomAction;
 
 
     /**
@@ -46,24 +46,12 @@ public class FeedData{
      */
     public void init(){
         mDisplayedGoals = new ArrayList<>();
-        if (!mUpcomingActions.isEmpty()){
-            mUpNextAction = mUpcomingActions.remove(0);
-        }
     }
 
 
     /*------------------------------*
      * REGULAR GETTERS AND CHECKERS *
      *------------------------------*/
-
-    /**
-     * Up next action getter.
-     *
-     * @return the up next action, null if there ain't one.
-     */
-    public UpcomingAction getUpNextAction(){
-        return mUpNextAction;
-    }
 
     /**
      * Progress getter.
@@ -93,49 +81,6 @@ public class FeedData{
     }
 
     /**
-     * Gets the list of upcoming actions.
-     *
-     * @return the list of upcoming actions.
-     */
-    public List<UpcomingAction> getUpcomingActions(){
-        return mUpcomingActions;
-    }
-
-    /**
-     * Gets a sub list if the upcoming actions list.
-     *
-     * @param size the size of the sub-list. This gets capped to the maximum possible value if
-     *             the request cannot be satisfied.
-     * @return the requested sub-list of upcoming actions.
-     */
-    public List<UpcomingAction> getUpcomingActionsSubList(int size){
-        //If the requested size is bigger tha the actual size, cap the size to max.
-        if (size > mUpcomingActions.size()){
-            size = mUpcomingActions.size();
-        }
-        //Return an independent list, not a backed list.
-        return new ArrayList<>(mUpcomingActions.subList(0, size));
-    }
-
-    /**
-     * Gets the UpcomingAction representing the passed action.
-     *
-     * @param action the action to be looked up.
-     * @return the UpcomingAction representing the passed Action.
-     */
-    public UpcomingAction getAction(@NonNull Action action){
-        if (mUpNextAction.is(action)){
-            return mUpNextAction;
-        }
-        for (int i = 0; i < mUpcomingActions.size(); i++){
-            if (mUpcomingActions.get(i).is(action)){
-                return mUpcomingActions.get(i);
-            }
-        }
-        return null;
-    }
-
-    /**
      * Goal getter.
      *
      * @return the list of loaded goals.
@@ -153,13 +98,8 @@ public class FeedData{
         return mSuggestions;
     }
 
-    /**
-     * Getter for the next goal batch url.
-     *
-     * @return the url of the next batch of goals to load or null if we are done loading goals.
-     */
-    public String getNextGoalBatchUrl(){
-        return mNextGoalBatchUrl;
+    public Reward getReward(){
+        return mReward;
     }
 
 
@@ -168,86 +108,92 @@ public class FeedData{
      *--------------------------------------*/
 
     /**
-     * Tells whether there are more actions to display.
-     *
-     * @param displayedActions the number of actions already being displayed in the feed.
-     * @return true if there are more actions to load, false otherwise.
-     */
-    public boolean canLoadMoreActions(int displayedActions){
-        return displayedActions < mUpcomingActions.size();
-    }
-
-    /**
-     * Returns the next batch of actions to be displayed in the feed.
-     *
-     * @param displayedActions the number of actions already being displayed in the feed.
-     * @return a list containing the new actions.
-     */
-    public List<UpcomingAction> loadMoreUpcoming(int displayedActions){
-        Log.d(TAG, "Total: " + mUpcomingActions.size() + ". Displayed: " + displayedActions);
-        List<UpcomingAction> actions = new ArrayList<>();
-        while (actions.size() < LOAD_MORE_COUNT && canLoadMoreActions(displayedActions + actions.size())){
-            actions.add(mUpcomingActions.get(displayedActions + actions.size()));
-        }
-        return actions;
-    }
-
-    /**
      * Adds a batch of goals loaded from the API.
      *
      * @param goals a list containing the loaded goals.
-     * @param nextBatchUrl the url to the next batch, null if we are done.
      */
-    public void addGoals(@NonNull List<? extends Goal> goals, @Nullable String nextBatchUrl){
+    public void addGoals(@NonNull List<Goal> goals){
         for (Goal goal:goals){
             //Call addGoal() to ensure the goal wasn't already added to the bundle.
             addGoal(goal);
         }
-        mNextGoalBatchUrl = nextBatchUrl;
     }
 
 
-    /*------------ ------*
-     * DATA MANIPULATION *
-     *-------------------*/
+    /*------------------------*
+     * NEW STUFF, MOVE AROUND *
+     *------------------------*/
 
-    /**
-     * Takes the first action in upcoming and places it in up next, if possible.
-     *
-     * @return the action previously in up next.
-     */
-    public UpcomingAction replaceUpNextAction(){
-        UpcomingAction oldUpNext = mUpNextAction;
-        if (mUpcomingActions.isEmpty()){
-            mUpNextAction = null;
-        }
-        else{
-            mUpNextAction = mUpcomingActions.remove(0);
-        }
-        return oldUpNext;
+    public void setNextUserAction(UserAction userAction){
+        Log.i(TAG, "Setting next user action: " + userAction);
+        mNextUserAction = userAction;
     }
 
-    /**
-     * Removes an UpcomingAction from the feed.
-     *
-     * @param action the action to be removed.
-     * @param didIt whether this was due to an i did it event.
-     */
-    public void removeUpcomingActionX(UpcomingAction action, boolean didIt){
-        if (didIt){
-            mProgress.complete();
-        }
-        else{
-            mProgress.remove();
-        }
+    public void setNextCustomAction(CustomAction customAction){
+        Log.i(TAG, "Setting next custom action: " + customAction);
+        mNextCustomAction = customAction;
+    }
 
-        if (mUpNextAction.equals(action)){
-            replaceUpNextAction();
+    private Action getNextAction(){
+        if (mNextUserAction != null && mNextCustomAction == null){
+            Log.i(TAG, "Only user actions available");
+            return mNextUserAction;
+        }
+        else if (mNextUserAction == null && mNextCustomAction != null){
+            Log.i(TAG, "Only custom actions available");
+            return mNextCustomAction;
+        }
+        else if (mNextUserAction != null){ //&& mNextCustomAction != null){ //Implicit
+            //Comparing the actions compares their triggers first
+            if (mNextUserAction.happensBefore(mNextCustomAction)){
+                Log.i(TAG, "Next is user action");
+                return mNextUserAction;
+            }
+            else{
+                Log.i(TAG, "Next is custom action");
+                return mNextCustomAction;
+            }
         }
         else{
-            mUpcomingActions.remove(action);
+            Log.i(TAG, "No actions available");
+            return null;
         }
     }
+
+    public void replaceUpNext(){
+        Action next = getNextAction();
+        if (next instanceof UserAction){
+            bumpNextUserAction();
+        }
+        else if (next instanceof CustomAction){
+            bumpNextCustomAction();
+        }
+        else{
+            mUpNext = null;
+        }
+    }
+
+    private void bumpNextUserAction(){
+        Log.i(TAG, "Setting up next: " + mNextUserAction);
+        mUpNext = mNextUserAction;
+        mNextUserAction = null;
+        FeedDataLoader.getInstance().loadNextUserAction();
+    }
+
+    private void bumpNextCustomAction(){
+        Log.i(TAG, "Setting up next: " + mNextCustomAction);
+        mUpNext = mNextCustomAction;
+        mNextCustomAction = null;
+        FeedDataLoader.getInstance().loadNextCustomAction();
+    }
+
+    public Action getUpNext(){
+        return mUpNext;
+    }
+
+
+
+
 
     /**
      * Adds a goal to the data set.
@@ -279,10 +225,6 @@ public class FeedData{
                     break;
                 }
             }
-            //Try to update all the actions, the update() method checks for equality
-            for (UpcomingAction upcomingAction:mUpcomingActions){
-                upcomingAction.update(customGoal);
-            }
         }
     }
 
@@ -304,64 +246,34 @@ public class FeedData{
     }
 
     /**
-     * Tells whether a particular action is scheduled to happen between now and the end of the day.
-     *
-     * @param action the action to be checked.
-     * @return true if the action is happening today, false otherwise.
-     */
-    private boolean happensToday(Action action){
-        if (action.getNextReminder().equals("")){
-            Log.d(TAG, "happensToday(): next reminder is not set");
-            return false;
-        }
-
-        Calendar tomorrowCalendar = Calendar.getInstance();
-        tomorrowCalendar.set(Calendar.DAY_OF_MONTH, tomorrowCalendar.get(Calendar.DAY_OF_MONTH)+1);
-        tomorrowCalendar.set(Calendar.HOUR_OF_DAY, 0);
-        tomorrowCalendar.set(Calendar.MINUTE, 0);
-        tomorrowCalendar.set(Calendar.SECOND, 0);
-        tomorrowCalendar.set(Calendar.MILLISECOND, 0);
-
-        Date now = Calendar.getInstance().getTime();
-        Date tomorrow = tomorrowCalendar.getTime();
-        Date actionDate = action.getNextReminderDate();
-
-        Log.d(TAG, "Action date: " + actionDate);
-
-        return actionDate.after(now) && actionDate.before(tomorrow);
-    }
-
-    /**
      * Adds an action to the upcoming list if the action is due today.
      *
-     * @param goal the parent goal of the action.
      * @param action the action to be added.
      */
-    public void addAction(Goal goal, Action action){
-        if (happensToday(action)){
-            Log.d(TAG, "Adding: " + action);
-            Date actionDate = action.getNextReminderDate();
-            if (mUpNextAction == null){
-                mUpNextAction = new UpcomingAction(goal, action);
-                Log.d(TAG, "Action added to up next");
+    public void addAction(Action action){
+        if (action.happensToday()){
+            Log.i(TAG, "Adding " + action + ".");
+            if (mUpNext == null){
+                Log.i(TAG, "Action is up next.");
+                mUpNext = action;
             }
-            else if (mUpNextAction.getTriggerDate().compareTo(actionDate) > 0){
-                mUpcomingActions.add(0, mUpNextAction);
-                mUpNextAction = new UpcomingAction(goal, action);
-                Log.d(TAG, "Action added to up next, previous up next moved to upcoming");
+            else if (action.happensBefore(mUpNext)){
+                Log.i(TAG, "Action is up next.");
+                if (mUpNext instanceof UserAction){
+                    mNextUserAction = (UserAction)mUpNext;
+                }
+                else if (mUpNext instanceof CustomAction){
+                    mNextCustomAction = (CustomAction)mUpNext;
+                }
             }
             else{
-                for (int i = 0; i < mUpcomingActions.size(); i++){
-                    if (mUpcomingActions.get(i).getTriggerDate().compareTo(actionDate) > 0){
-                        mUpcomingActions.add(i, new UpcomingAction(goal, action));
-                        Log.d(TAG, "Action added at " + i + " in upcoming");
-                        break;
-                    }
-                    else if (i == mUpcomingActions.size() - 1){
-                        mUpcomingActions.add(new UpcomingAction(goal, action));
-                        Log.d(TAG, "Action added at the end of upcoming");
-                        break;
-                    }
+                if (action instanceof UserAction && action.happensBefore(mNextUserAction)){
+                    Log.i(TAG, "Action is next user action.");
+                    mNextUserAction = (UserAction)action;
+                }
+                else if (action instanceof CustomAction && action.happensBefore(mNextCustomAction)){
+                    Log.i(TAG, "Action is next custom action.");
+                    mNextCustomAction = (CustomAction)action;
                 }
             }
         }
@@ -374,76 +286,39 @@ public class FeedData{
      */
     public void updateAction(Action action){
         Log.d(TAG, "Updating action: " + action);
-        //In order to update the action it must be found first, remove() will do that for us,
-        //  additionally, the action might have changed triggers, which would have made it
-        //  change positions any way.
-        UpcomingAction upcomingAction = removeAction(action);
-        //If the action could be found and it happens today
-        if (upcomingAction != null && happensToday(action)){
-            //Update the action and insert it wherever it belongs
-            upcomingAction.update(action);
-            if (mUpNextAction == null){
-                mUpNextAction = upcomingAction;
-                Log.d(TAG, "Action added to up next");
-            }
-            else if (mUpNextAction.getTriggerDate().compareTo(upcomingAction.getTriggerDate()) > 0){
-                UpcomingAction oldUpNext = mUpNextAction;
-                mUpNextAction = upcomingAction;
-                mUpcomingActions.add(0, oldUpNext);
-                Log.d(TAG, "Action added to up next, previous up next moved to upcoming");
-            }
-            else{
-                for (int i = 0; i < mUpcomingActions.size(); i++){
-                    UpcomingAction nextUpcoming = mUpcomingActions.get(i);
-                    if (nextUpcoming.getTriggerDate().compareTo(upcomingAction.getTriggerDate()) > 0){
-                        mUpcomingActions.add(i, upcomingAction);
-                        Log.d(TAG, "Action added at " + i + " in upcoming");
-                        break;
-                    }
-                    if (i == mUpcomingActions.size() -1){
-                        mUpcomingActions.add(upcomingAction);
-                        Log.d(TAG, "Action added at the end of upcoming");
-                        break;
-                    }
+
+        if (!action.happensToday()){
+            replaceUpNext();
+        }
+        else{
+            //TODO title might've change
+            Action next = getNextAction();
+            if (next != null && next.compareTo(action) < 0){
+                if (next instanceof UserAction){
+                    bumpNextUserAction();
+                }
+                else if (next instanceof CustomAction){
+                    bumpNextCustomAction();
                 }
             }
         }
-    }
-
-    /**
-     * Update an action in the data set. Use when a goal can be provided.
-     *
-     * @param goal the parent goal of the action in question.
-     * @param action the action to be updated.
-     */
-    public void updateAction(Goal goal, Action action){
-        Log.d(TAG, "Updating action: " + action);
-        //Remove and add, it's easier than lookup and update.
-        removeAction(action);
-        addAction(goal, action);
     }
 
     /**
      * Removes an action from the data set.
      *
      * @param action the action to be removed.
-     * @return the UpcomingAction representation of the removed action.
      */
-    public UpcomingAction removeAction(Action action){
-        if (mUpNextAction != null && mUpNextAction.is(action)){
-            Log.d(TAG, "Removing: " + action);
-            return replaceUpNextAction();
+    public void removeAction(Action action){
+        if (mUpNext != null && mUpNext.equals(action)){
+            replaceUpNext();
         }
-        else{
-            for (int i = 0; i < mUpcomingActions.size(); i++){
-                UpcomingAction upcomingAction = mUpcomingActions.get(i);
-                if (upcomingAction.is(action)){
-                    Log.d(TAG, "Removing: " + action);
-                    return mUpcomingActions.remove(i);
-                }
-            }
+        else if (mNextUserAction != null && mNextUserAction.equals(action)){
+            FeedDataLoader.getInstance().loadNextUserAction();
         }
-        return null;
+        else if (mNextCustomAction != null && mNextCustomAction.equals(action)){
+            FeedDataLoader.getInstance().loadNextCustomAction();
+        }
     }
 
 

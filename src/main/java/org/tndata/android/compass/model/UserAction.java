@@ -113,7 +113,7 @@ public class UserAction extends Action implements ParserModels.ResultSet{
 
     @Override
     public String toString(){
-        return "UserAction #" + getId() + " (" + mAction.toString() + ")";
+        return "UserAction #" + getId() + " (" + mAction + "): " + getNextReminder();
     }
 
     @Override
@@ -126,6 +126,7 @@ public class UserAction extends Action implements ParserModels.ResultSet{
         super.writeToParcel(dest, flags);
         dest.writeParcelable(mAction, flags);
         dest.writeLong(mPrimaryGoalId);
+        dest.writeLong(mPrimaryUserGoalId);
         dest.writeLong(mPrimaryCategoryId);
     }
 
@@ -150,6 +151,7 @@ public class UserAction extends Action implements ParserModels.ResultSet{
         super(src);
         mAction = src.readParcelable(TDCAction.class.getClassLoader());
         mPrimaryGoalId = src.readLong();
+        mPrimaryUserGoalId = src.readLong();
         mPrimaryCategoryId = src.readLong();
     }
 }
