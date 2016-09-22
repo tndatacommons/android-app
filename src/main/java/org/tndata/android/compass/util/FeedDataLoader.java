@@ -112,7 +112,7 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
      * Loads the next user action.
      */
     public void loadNextUserAction(){
-        if (!mInitialActionLoad && mGetNextUserActionUrl != null){
+        if (mGetNextUserActionUrl != null){
             mGetNextUserActionRC = HttpRequest.get(this, mGetNextUserActionUrl);
         }
     }
@@ -121,7 +121,7 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
      * Loads the next custom action.
      */
     public void loadNextCustomAction(){
-        if (!mInitialActionLoad && mGetNextCustomActionUrl != null){
+        if (mGetNextCustomActionUrl != null){
             mGetNextCustomActionRC = HttpRequest.get(this, mGetNextCustomActionUrl);
         }
     }
@@ -232,8 +232,15 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
             ParserModels.UserActionResultSet set = (ParserModels.UserActionResultSet)result;
             //Record the url to fetch the next user action and set this one
             mGetNextUserActionUrl = set.next;
-            mFeedData.setNextUserAction(set.results.get(0));
-            if (mInitialActionLoad && (mGetNextCustomActionUrl == null || mGetNextCustomActionUrl.isEmpty())){
+            if (set.results.isEmpty()){
+                Log.i(TAG, "No user actions loaded");
+                mFeedData.setNextUserAction(null);
+            }
+            else{
+                Log.i(TAG, "User action loaded: " + set.results.get(0));
+                mFeedData.setNextUserAction(set.results.get(0));
+            }
+            if (mInitialActionLoad && (mGetNextCustomActionUrl == null || !mGetNextCustomActionUrl.isEmpty())){
                 //If this is the initial load and the custom action has already been loaded,
                 //  call replaceUpNext to set the upNext field in FeedData and trigger the
                 //  load of the next action
@@ -249,8 +256,13 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
             //This block follows the same procedure as the block above
             ParserModels.CustomActionResultSet set = (ParserModels.CustomActionResultSet)result;
             mGetNextCustomActionUrl = set.next;
-            mFeedData.setNextCustomAction(set.results.get(0));
-            if (mInitialActionLoad && (mGetNextUserActionUrl == null || mGetNextUserActionUrl.isEmpty())){
+            if (set.results.isEmpty()){
+                mFeedData.setNextCustomAction(null);
+            }
+            else{
+                mFeedData.setNextCustomAction(set.results.get(0));
+            }
+            if (mInitialActionLoad && (mGetNextUserActionUrl == null || !mGetNextUserActionUrl.isEmpty())){
                 mFeedData.replaceUpNext();
                 mInitialActionLoad = false;
                 if (!mInitialGoalLoad){

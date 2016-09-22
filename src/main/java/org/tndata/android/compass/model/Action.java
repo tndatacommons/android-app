@@ -9,6 +9,7 @@ import com.google.gson.annotations.SerializedName;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -21,6 +22,9 @@ import java.util.Locale;
  * @version 1.0.0
  */
 public abstract class Action extends UserContent implements Comparable<Action>{
+    private static final String TAG = "Action";
+
+
     @SerializedName("trigger")
     private Trigger mTrigger;
     @SerializedName("next_reminder")
@@ -91,7 +95,11 @@ public abstract class Action extends UserContent implements Comparable<Action>{
         }
         catch (ParseException px){
             px.printStackTrace();
-            return new Date();
+            //Returning a date a year from now should dismiss the action where this method is used
+            /*Date date = new Date();
+            date.setTime(date.getTime() + 365L*24L*60L*60L*1000L);
+            return date;*/
+            return null;
         }
     }
 
@@ -129,28 +137,56 @@ public abstract class Action extends UserContent implements Comparable<Action>{
 
     @Override
     public int compareTo(@NonNull Action another){
-        if (mTrigger == null && another.mTrigger == null){
+        Date thisReminder = getNextReminderDate();
+        Date anotherReminder = another.getNextReminderDate();
+        if (thisReminder == null && anotherReminder == null){
             return getTitle().compareTo(another.getTitle());
         }
-        else if (mTrigger == null){
+        else if (thisReminder == null){
             return 1;
         }
-        else if (another.mTrigger == null){
+        else if (anotherReminder == null){
             return -1;
         }
         else{
-            int trigger = mTrigger.compareTo(another.mTrigger);
-            if (trigger == 0){
+            int reminders = thisReminder.compareTo(anotherReminder);
+            if (reminders == 0){
                 return getTitle().compareTo(another.getTitle());
             }
             else{
-                return trigger;
+                return reminders;
             }
         }
     }
 
     public boolean happensBefore(Action action){
         return compareTo(action) < 0;
+    }
+
+
+    /**
+     * Tells whether a particular action is scheduled to happen between now and the end of the day.
+     *
+     * @return true if the action is happening today, false otherwise.
+     */
+    public boolean happensToday(){
+        if (getNextReminder().equals("")){
+            Log.i(TAG, "happensToday(): next reminder is not set, " + toString());
+            return false;
+        }
+
+        Calendar tomorrowCalendar = Calendar.getInstance();
+        tomorrowCalendar.set(Calendar.DAY_OF_MONTH, tomorrowCalendar.get(Calendar.DAY_OF_MONTH)+1);
+        tomorrowCalendar.set(Calendar.HOUR_OF_DAY, 0);
+        tomorrowCalendar.set(Calendar.MINUTE, 0);
+        tomorrowCalendar.set(Calendar.SECOND, 0);
+        tomorrowCalendar.set(Calendar.MILLISECOND, 0);
+
+        Date now = Calendar.getInstance().getTime();
+        Date tomorrow = tomorrowCalendar.getTime();
+        Date actionDate = getNextReminderDate();
+
+        return actionDate.after(now) && actionDate.before(tomorrow);
     }
 
 

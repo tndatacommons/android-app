@@ -81,7 +81,7 @@ public class CustomAction extends Action{
 
     @Override
     public String toString(){
-        return "CustomAction #" + getId() + ": " + mTitle + ", " + getTrigger();
+        return "CustomAction #" + getId() + ": " + mTitle + ", " + getNextReminderDate();
     }
 
 

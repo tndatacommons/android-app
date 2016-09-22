@@ -167,7 +167,7 @@ public final class API{
         }
 
         public static String getTodaysUserActions(){
-            return BASE_URL + "users/actions/?today=1&page_size=1";
+            return BASE_URL + "users/actions/?today=1&exclude_completed=1&page_size=1";
         }
 
         public static String getUserAction(long actionMappingId){
@@ -188,7 +188,7 @@ public final class API{
         }
 
         public static String getTodaysCustomActions(){
-            return BASE_URL + "users/customactions/?today=1&page_size=1";
+            return BASE_URL + "users/customactions/?today=1&exclude_completed=1&page_size=1";
         }
 
         public static String getCustomAction(long customActionId){

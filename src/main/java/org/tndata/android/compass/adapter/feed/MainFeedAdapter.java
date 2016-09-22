@@ -298,7 +298,9 @@ public class MainFeedAdapter
     public void onClick(View view){
         switch (view.getId()){
             case R.id.feed_up_next:
-                mListener.onActionSelected(mFeedData.getUpNext());
+                if (mFeedData.getUpNext() != null){
+                    mListener.onActionSelected(mFeedData.getUpNext());
+                }
                 break;
 
             case R.id.feed_reward:

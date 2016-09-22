@@ -8,8 +8,6 @@ import com.google.gson.annotations.SerializedName;
 import org.tndata.android.compass.util.FeedDataLoader;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 
@@ -132,27 +130,32 @@ public class FeedData{
     }
 
     public void setNextCustomAction(CustomAction customAction){
-        Log.i(TAG, "Setting next custom action");
+        Log.i(TAG, "Setting next custom action: " + customAction);
         mNextCustomAction = customAction;
     }
 
     private Action getNextAction(){
         if (mNextUserAction != null && mNextCustomAction == null){
+            Log.i(TAG, "Only user actions available");
             return mNextUserAction;
         }
         else if (mNextUserAction == null && mNextCustomAction != null){
+            Log.i(TAG, "Only custom actions available");
             return mNextCustomAction;
         }
         else if (mNextUserAction != null){ //&& mNextCustomAction != null){ //Implicit
             //Comparing the actions compares their triggers first
             if (mNextUserAction.happensBefore(mNextCustomAction)){
+                Log.i(TAG, "Next is user action");
                 return mNextUserAction;
             }
             else{
+                Log.i(TAG, "Next is custom action");
                 return mNextCustomAction;
             }
         }
         else{
+            Log.i(TAG, "No actions available");
             return null;
         }
     }
@@ -243,40 +246,12 @@ public class FeedData{
     }
 
     /**
-     * Tells whether a particular action is scheduled to happen between now and the end of the day.
-     *
-     * @param action the action to be checked.
-     * @return true if the action is happening today, false otherwise.
-     */
-    private boolean happensToday(Action action){
-        if (action.getNextReminder().equals("")){
-            Log.d(TAG, "happensToday(): next reminder is not set");
-            return false;
-        }
-
-        Calendar tomorrowCalendar = Calendar.getInstance();
-        tomorrowCalendar.set(Calendar.DAY_OF_MONTH, tomorrowCalendar.get(Calendar.DAY_OF_MONTH)+1);
-        tomorrowCalendar.set(Calendar.HOUR_OF_DAY, 0);
-        tomorrowCalendar.set(Calendar.MINUTE, 0);
-        tomorrowCalendar.set(Calendar.SECOND, 0);
-        tomorrowCalendar.set(Calendar.MILLISECOND, 0);
-
-        Date now = Calendar.getInstance().getTime();
-        Date tomorrow = tomorrowCalendar.getTime();
-        Date actionDate = action.getNextReminderDate();
-
-        Log.d(TAG, "Action date: " + actionDate);
-
-        return actionDate.after(now) && actionDate.before(tomorrow);
-    }
-
-    /**
      * Adds an action to the upcoming list if the action is due today.
      *
      * @param action the action to be added.
      */
     public void addAction(Action action){
-        if (happensToday(action)){
+        if (action.happensToday()){
             Log.i(TAG, "Adding " + action + ".");
             if (mUpNext == null){
                 Log.i(TAG, "Action is up next.");
@@ -312,7 +287,7 @@ public class FeedData{
     public void updateAction(Action action){
         Log.d(TAG, "Updating action: " + action);
 
-        if (!happensToday(action)){
+        if (!action.happensToday()){
             replaceUpNext();
         }
         else{
