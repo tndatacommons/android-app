@@ -51,6 +51,7 @@ public class GcmIntentService extends IntentService{
     protected void onHandleIntent(Intent intent){
         boolean isFromGcm = intent.getBooleanExtra(FROM_GCM_KEY, false);
         String gcmMessage = intent.getStringExtra(MESSAGE_KEY);
+        boolean release = true;
 
         //IntentServices are executed in the background, so it is safe to do this
         GcmMessage message = ParserMethods.sGson.fromJson(gcmMessage, GcmMessage.class);
@@ -59,7 +60,8 @@ public class GcmIntentService extends IntentService{
             if (user.getId() == message.getRecipient()){
                 message.setGcmMessage(gcmMessage);
                 if (message.isUserActionMessage() || message.isCustomActionMessage()){
-                    new ActionFetcher(this, message);
+                    new ActionFetcher(this, intent, message);
+                    release = false;
                 }
                 else{
                     NotificationUtil.generateNotification(this, message);
@@ -77,7 +79,7 @@ public class GcmIntentService extends IntentService{
             Log.e(TAG, "The message was delivered from " + sender + ", running " + running);
         }
 
-        if (isFromGcm){
+        if (release && isFromGcm){
             GcmBroadcastReceiver.completeWakefulIntent(intent);
         }
     }
@@ -101,13 +103,29 @@ public class GcmIntentService extends IntentService{
     }
 
 
+    /**
+     * Class that fetches an action whenever an instance is created and releases the
+     * Receiver's wake lock on completion.
+     *
+     * @author Ismael Alonso
+     * @version 1.0.0
+     */
     private static class ActionFetcher implements HttpRequest.RequestCallback, Parser.ParserCallback{
         private Context mContext;
+        private Intent mIntent;
         private GcmMessage mMessage;
 
 
-        private ActionFetcher(Context context, GcmMessage message){
+        /**
+         * Constructor. Triggers the fetching operation.
+         *
+         * @param context a reference to the context.
+         * @param intent the intent that triggered the fetch.
+         * @param message the message delivered by GCM
+         */
+        private ActionFetcher(Context context, Intent intent, GcmMessage message){
             mContext = context.getApplicationContext();
+            mIntent = intent;
             mMessage = message;
             if (mMessage.isUserActionMessage()){
                 HttpRequest.get(this, API.URL.getUserAction(mMessage.getUserMappingId()));
@@ -129,7 +147,7 @@ public class GcmIntentService extends IntentService{
 
         @Override
         public void onRequestFailed(int requestCode, HttpRequestError error){
-
+            GcmBroadcastReceiver.completeWakefulIntent(mIntent);
         }
 
         @Override
@@ -146,11 +164,12 @@ public class GcmIntentService extends IntentService{
                 mMessage.setCustomAction((CustomAction)result);
             }
             NotificationUtil.generateNotification(mContext, mMessage);
+            GcmBroadcastReceiver.completeWakefulIntent(mIntent);
         }
 
         @Override
         public void onParseFailed(int requestCode){
-
+            GcmBroadcastReceiver.completeWakefulIntent(mIntent);
         }
     }
 }
