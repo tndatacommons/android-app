@@ -7,12 +7,19 @@ import android.content.Intent;
 import android.util.Log;
 
 import org.tndata.android.compass.CompassApplication;
+import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.GcmMessage;
 import org.tndata.android.compass.model.User;
+import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserMethods;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.receiver.GcmBroadcastReceiver;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NotificationUtil;
+
+import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -51,7 +58,12 @@ public class GcmIntentService extends IntentService{
             User user = ((CompassApplication)getApplicationContext()).getUser();
             if (user.getId() == message.getRecipient()){
                 message.setGcmMessage(gcmMessage);
-                NotificationUtil.generateNotification(this, message);
+                if (message.isUserActionMessage() || message.isCustomActionMessage()){
+                    new ActionFetcher(this, message);
+                }
+                else{
+                    NotificationUtil.generateNotification(this, message);
+                }
             }
             else{
                 long recipient = message.getRecipient();
@@ -86,5 +98,59 @@ public class GcmIntentService extends IntentService{
                                 GcmIntentService.class.getName()
                         )
                 );
+    }
+
+
+    private static class ActionFetcher implements HttpRequest.RequestCallback, Parser.ParserCallback{
+        private Context mContext;
+        private GcmMessage mMessage;
+
+
+        private ActionFetcher(Context context, GcmMessage message){
+            mContext = context.getApplicationContext();
+            mMessage = message;
+            if (mMessage.isUserActionMessage()){
+                HttpRequest.get(this, API.URL.getUserAction(mMessage.getUserMappingId()));
+            }
+            else if (mMessage.isCustomActionMessage()){
+                HttpRequest.get(this, API.URL.getCustomAction(mMessage.getObjectId()));
+            }
+        }
+
+        @Override
+        public void onRequestComplete(int requestCode, String result){
+            if (mMessage.isUserActionMessage()){
+                Parser.parse(result, UserAction.class, this);
+            }
+            else if (mMessage.isCustomActionMessage()){
+                Parser.parse(result, CustomAction.class, this);
+            }
+        }
+
+        @Override
+        public void onRequestFailed(int requestCode, HttpRequestError error){
+
+        }
+
+        @Override
+        public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+
+        }
+
+        @Override
+        public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+            if (result instanceof UserAction){
+                mMessage.setUserAction((UserAction)result);
+            }
+            else if (result instanceof CustomAction){
+                mMessage.setCustomAction((CustomAction)result);
+            }
+            NotificationUtil.generateNotification(mContext, mMessage);
+        }
+
+        @Override
+        public void onParseFailed(int requestCode){
+
+        }
     }
 }
