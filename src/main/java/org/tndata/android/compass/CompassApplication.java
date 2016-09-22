@@ -268,6 +268,5 @@ public class CompassApplication extends Application{
         Tour.init(this);
         //Tour.reset();
         LocationNotificationService.start(this);
-        ImageLoader.initialize(getApplicationContext());
     }
 }

@@ -1,6 +1,5 @@
 package org.tndata.android.compass.util;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -31,19 +30,6 @@ import org.tndata.android.compass.R;
  * @version 3.0.0
  */
 public final class ImageLoader{
-    //The application context, to get paths
-    private static Context mContext = null;
-
-
-    /**
-     * Initializes the loader
-     *
-     * @param context the application context.
-     */
-    public static void initialize(Context context){
-        mContext = context;
-    }
-
     /**
      * Loads the bitmap at the provided url, but checks the cache first.
      *
@@ -93,7 +79,7 @@ public final class ImageLoader{
             view.setImageResource(R.drawable.ic_compass_white_50dp);
         }
         else{
-            Picasso picasso = Picasso.with(mContext);
+            Picasso picasso = Picasso.with(view.getContext());
             picasso.setIndicatorsEnabled(API.STAGING && BuildConfig.DEBUG);
             RequestCreator request = picasso.load(url);
             if (options.mUseDefaultPlaceholder){
