@@ -127,10 +127,12 @@ public class FeedData{
      *------------------------*/
 
     public void setNextUserAction(UserAction userAction){
+        Log.i(TAG, "Setting next user action: " + userAction);
         mNextUserAction = userAction;
     }
 
     public void setNextCustomAction(CustomAction customAction){
+        Log.i(TAG, "Setting next custom action");
         mNextCustomAction = customAction;
     }
 
@@ -143,7 +145,7 @@ public class FeedData{
         }
         else if (mNextUserAction != null){ //&& mNextCustomAction != null){ //Implicit
             //Comparing the actions compares their triggers first
-            if (mNextUserAction.compareTo(mNextCustomAction) < 0){
+            if (mNextUserAction.happensBefore(mNextCustomAction)){
                 return mNextUserAction;
             }
             else{
@@ -169,12 +171,14 @@ public class FeedData{
     }
 
     private void bumpNextUserAction(){
+        Log.i(TAG, "Setting up next: " + mNextUserAction);
         mUpNext = mNextUserAction;
         mNextUserAction = null;
         FeedDataLoader.getInstance().loadNextUserAction();
     }
 
     private void bumpNextCustomAction(){
+        Log.i(TAG, "Setting up next: " + mNextCustomAction);
         mUpNext = mNextCustomAction;
         mNextCustomAction = null;
         FeedDataLoader.getInstance().loadNextCustomAction();

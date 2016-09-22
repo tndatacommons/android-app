@@ -77,7 +77,6 @@ public class ActionActivity
     private int mDeleteBehaviorRC;
 
     //Flags
-    private boolean mFromGcm;
     private boolean mUserAction;
 
 
@@ -114,7 +113,6 @@ public class ActionActivity
                     url = API.URL.getCustomAction(gcmMessage.getCustomAction().getId());
                     mUserAction = false;
                 }
-                mFromGcm = true;
             }
             mGetActionRC = HttpRequest.get(this, url);
         }
@@ -244,22 +242,14 @@ public class ActionActivity
         if (mAction == null || !mAction.isEditable()){
             return false;
         }
-        if (mFromGcm){
-            if (mAction.hasTrigger() && mAction.getTrigger().isEnabled()){
-                getMenuInflater().inflate(R.menu.menu_action_reminder, menu);
-            }
-            else{
-                getMenuInflater().inflate(R.menu.menu_action_reminder_disabled, menu);
-            }
+
+        if (mAction.hasTrigger() && mAction.getTrigger().isEnabled()){
+            getMenuInflater().inflate(R.menu.menu_action, menu);
         }
         else{
-            if (mAction.hasTrigger() && mAction.getTrigger().isEnabled()){
-                getMenuInflater().inflate(R.menu.menu_action, menu);
-            }
-            else{
-                getMenuInflater().inflate(R.menu.menu_action_disabled, menu);
-            }
+            getMenuInflater().inflate(R.menu.menu_action_disabled, menu);
         }
+
         return true;
     }
 
@@ -270,7 +260,7 @@ public class ActionActivity
                 viewGoal();
                 break;
 
-            case R.id.action_trigger:
+            case R.id.action_reschedule:
                 onRescheduleClick();
                 break;
 

@@ -10,6 +10,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_reschedule"
+        android:title="@string/action_reschedule"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_disable_trigger"
         android:title="@string/action_disable_trigger"
         app:showAsAction="never" />

@@ -9,4 +9,9 @@
         android:titleCondensed="@string/action_view_goal_condensed"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_reschedule"
+        android:title="@string/action_reschedule"
+        app:showAsAction="never" />
+
 </menu>
