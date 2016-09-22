@@ -17,11 +17,8 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ActionAdapter;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
-import org.tndata.android.compass.model.GcmMessage;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.UserAction;
-import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.ImageLoader;
@@ -37,7 +34,6 @@ import java.util.Locale;
 import java.util.Queue;
 
 import es.sandwatch.httprequests.HttpRequest;
-import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -49,16 +45,11 @@ import es.sandwatch.httprequests.HttpRequestError;
  */
 public class ActionActivity
         extends MaterialActivity
-        implements
-                HttpRequest.RequestCallback,
-                Parser.ParserCallback,
-                ActionAdapter.Listener{
+        implements ActionAdapter.Listener{
 
     private static final String TAG = "ActionActivity";
 
     public static final String ACTION_KEY = "org.tndata.compass.ActionActivity.Action";
-    public static final String GCM_MESSAGE_KEY = "org.tndata.compass.ActionActivity.GcmMessage";
-
     public static final String DID_IT_KEY = "org.tndata.compass.ActionActivity.DidIt";
 
     private static final int SNOOZE_REQUEST_CODE = 61428;
@@ -72,13 +63,6 @@ public class ActionActivity
     //The action in question
     private Action mAction;
 
-    //Request codes
-    private int mGetActionRC;
-    private int mDeleteBehaviorRC;
-
-    //Flags
-    private boolean mUserAction;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -89,32 +73,16 @@ public class ActionActivity
         //Get the action, upcoming action and message from the intent. Only one of them
         //  will be actually something other than null
         Action action = getIntent().getParcelableExtra(ACTION_KEY);
-        GcmMessage gcmMessage = getIntent().getParcelableExtra(GCM_MESSAGE_KEY);
 
         getRecyclerView().addItemDecoration(new ItemSpacing(this, 8));
 
-        //If the action exists do some initial setup
+        //If the action exists set it up
         if (action != null){
             setAction(action);
         }
-        //Otherwise fetch it
+        //Otherwise, finish the activity, as this shouls never happen
         else{
-            setCategory(null);
-
-            String url = "";
-            if (gcmMessage != null){
-                if (gcmMessage.isUserActionMessage()){
-                    Log.d(TAG, "Fetching UserAction #" + gcmMessage.getUserAction().getId());
-                    url = API.URL.getUserAction(gcmMessage.getUserAction().getId());
-                    mUserAction = true;
-                }
-                else if (gcmMessage.isCustomActionMessage()){
-                    Log.d(TAG, "Fetching CustomAction #" + gcmMessage.getCustomAction().getId());
-                    url = API.URL.getCustomAction(gcmMessage.getCustomAction().getId());
-                    mUserAction = false;
-                }
-            }
-            mGetActionRC = HttpRequest.get(this, url);
+            finish();
         }
     }
 
@@ -185,53 +153,6 @@ public class ActionActivity
             }
         }
         Tour.display(this, tooltips);
-    }
-
-    @Override
-    public void onRequestComplete(int requestCode, String result){
-        if (requestCode == mGetActionRC){
-            Log.i(TAG, "Action fetched, parsing...");
-            if (mUserAction){
-                Parser.parse(result, UserAction.class, this);
-            }
-            else{
-                Parser.parse(result, CustomAction.class, this);
-            }
-        }
-        else if (requestCode == mDeleteBehaviorRC){
-            long behaviorId = ((UserAction)mAction).getAction().getBehaviorId();
-            Log.i(TAG, "Behavior #" + behaviorId + " deleted.");
-        }
-    }
-
-    @Override
-    public void onRequestFailed(int requestCode, HttpRequestError error){
-        if (requestCode == mGetActionRC){
-            Log.e(TAG, "The action couldn't be fetched");
-            displayMessage(R.string.action_fetch_error);
-        }
-        else if (requestCode == mDeleteBehaviorRC){
-            Log.e(TAG, "The behavior couldn't be deleted");
-        }
-    }
-
-    @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
-        //no-op
-    }
-
-    @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
-        if (result instanceof Action){
-            setAction((Action)result);
-        }
-    }
-
-    @Override
-    public void onParseFailed(int requestCode){
-        Log.e(TAG, "Action couldn't be parsed");
-        setCategory(null);
-        displayMessage(R.string.action_fetch_error);
     }
 
     @Override
@@ -421,7 +342,8 @@ public class ActionActivity
     public void onDeleteBehaviorClick(){
         if (mAction instanceof UserAction){
             String url = API.URL.deleteBehavior(((UserAction)mAction).getUserBehaviorId());
-            mDeleteBehaviorRC = HttpRequest.delete(this, url);
+            HttpRequest.delete(null, url);
+            mApp.removeAction(mAction);
             finish();
         }
     }

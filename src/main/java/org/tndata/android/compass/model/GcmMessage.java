@@ -55,6 +55,14 @@ public final class GcmMessage implements Parcelable{
     private String mGcmMessage;
 
 
+    public void setUserAction(UserAction userAction){
+        mUserAction = userAction;
+    }
+
+    public void setCustomAction(CustomAction customAction){
+        mCustomAction = customAction;
+    }
+
     public void setGcmMessage(String gcmMessage){
         mGcmMessage = gcmMessage;
     }

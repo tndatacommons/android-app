@@ -102,7 +102,7 @@ public final class NotificationUtil{
     private static void putActionNotification(Context context, GcmMessage message){
         //Action intent; what happens when the user taps the notification
         Intent intent = new Intent(context, ActionActivity.class)
-                .putExtra(ActionActivity.GCM_MESSAGE_KEY, message);
+                .putExtra(ActionActivity.ACTION_KEY, message.getAction());
 
         PendingIntent contentIntent = PendingIntent.getActivity(context,
                 (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
