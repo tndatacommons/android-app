@@ -19,7 +19,6 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.GcmMessage;
 import org.tndata.android.compass.model.TDCCategory;
-import org.tndata.android.compass.model.UpcomingAction;
 import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
@@ -58,7 +57,6 @@ public class ActionActivity
     private static final String TAG = "ActionActivity";
 
     public static final String ACTION_KEY = "org.tndata.compass.ActionActivity.Action";
-    public static final String UPCOMING_ACTION_KEY = "org.tndata.compass.ActionActivity.Upcoming";
     public static final String GCM_MESSAGE_KEY = "org.tndata.compass.ActionActivity.GcmMessage";
 
     public static final String DID_IT_KEY = "org.tndata.compass.ActionActivity.DidIt";
@@ -92,7 +90,6 @@ public class ActionActivity
         //Get the action, upcoming action and message from the intent. Only one of them
         //  will be actually something other than null
         Action action = getIntent().getParcelableExtra(ACTION_KEY);
-        UpcomingAction upcomingAction = getIntent().getParcelableExtra(UPCOMING_ACTION_KEY);
         GcmMessage gcmMessage = getIntent().getParcelableExtra(GCM_MESSAGE_KEY);
 
         getRecyclerView().addItemDecoration(new ItemSpacing(this, 8));
@@ -118,18 +115,6 @@ public class ActionActivity
                     mUserAction = false;
                 }
                 mFromGcm = true;
-            }
-            else if (upcomingAction != null){
-                if (upcomingAction.isUserAction()){
-                    Log.d(TAG, "Fetching UserAction #" + upcomingAction.getId());
-                    url = API.URL.getUserAction(upcomingAction.getId());
-                    mUserAction = true;
-                }
-                else if (upcomingAction.isCustomAction()){
-                    Log.d(TAG, "Fetching CustomAction #" + upcomingAction.getId());
-                    url = API.URL.getCustomAction(upcomingAction.getId());
-                    mUserAction = false;
-                }
             }
             mGetActionRC = HttpRequest.get(this, url);
         }

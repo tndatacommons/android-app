@@ -23,26 +23,17 @@ import org.tndata.android.compass.holder.BaseItemCardHolder;
 import org.tndata.android.compass.holder.BaseItemHolder;
 import org.tndata.android.compass.holder.DynamicListCardHolder;
 import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.TDCGoal;
-import org.tndata.android.compass.model.UpcomingAction;
-import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserGoal;
-import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserModels;
-import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.FeedDataLoader;
 
 import java.util.List;
-
-import es.sandwatch.httprequests.HttpRequest;
-import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -81,7 +72,6 @@ public class MainFeedAdapter
     private TDCGoal mSuggestion;
 
     private DynamicListCardHolder mGoalsHolder;
-    private int mGetMoreGoalsRC;
 
 
     /**

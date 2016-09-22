@@ -27,8 +27,6 @@ public class FeedData{
     //API delivered fields
     @SerializedName("progress")
     private Progress mProgress;
-    @SerializedName("upcoming")
-    private List<UpcomingAction> mUpcomingActions;
     @SerializedName("suggestions")
     private List<TDCGoal> mSuggestions;
     @SerializedName("streaks")
@@ -37,7 +35,6 @@ public class FeedData{
     private Reward mReward;
 
     //Fields set during post-processing or after data retrieval
-    private UpcomingAction mUpNextAction;
     private List<Goal> mDisplayedGoals;
 
 
@@ -51,9 +48,6 @@ public class FeedData{
      */
     public void init(){
         mDisplayedGoals = new ArrayList<>();
-        if (!mUpcomingActions.isEmpty()){
-            mUpNextAction = mUpcomingActions.remove(0);
-        }
     }
 
 
@@ -223,10 +217,6 @@ public class FeedData{
                     existingGoal.setTitle(customGoal.getTitle());
                     break;
                 }
-            }
-            //Try to update all the actions, the update() method checks for equality
-            for (UpcomingAction upcomingAction:mUpcomingActions){
-                upcomingAction.update(customGoal);
             }
         }
     }
