@@ -11,6 +11,9 @@ import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ShareEvent;
+
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.databinding.ActivityBadgeBinding;
 import org.tndata.android.compass.model.Badge;
@@ -55,6 +58,12 @@ public class BadgeActivity extends AppCompatActivity implements ImageLoader.Call
         shareIntent.setType("text/plain");
         shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, content);
         startActivity(Intent.createChooser(shareIntent, "Share via"));
+
+        // Log the attempt to share the badge info.
+        Answers.getInstance().logShare(new ShareEvent()
+                .putContentType("Badge")
+                .putContentName(content)
+                .putContentId("" + mBinding.getBadge().getId()));
     }
 
     @Override

@@ -11,6 +11,8 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.AlignmentSpan;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ShareEvent;
 import com.google.gson.annotations.SerializedName;
 
 import org.tndata.android.compass.R;
@@ -155,6 +157,12 @@ public class Reward implements Parcelable{
         context.startActivity(Intent.createChooser(
                 shareIntent, context.getString(R.string.reward_share_via)
         ));
+
+        //Log the attempt to share this reward content.
+        Answers.getInstance().logShare(new ShareEvent()
+                .putContentType("Reward")
+                .putContentName(content)
+                .putContentId("" + getId()));
     }
 
     @Override
