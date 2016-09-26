@@ -5,12 +5,14 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
@@ -55,6 +57,9 @@ public class ActionActivity
     private static final int SNOOZE_REQUEST_CODE = 61428;
     private static final int RESCHEDULE_REQUEST_CODE = 61429;
 
+    //Poor man's "time in activity" timer.
+    private long mStartTime;
+    private long mEndTime;
 
     //References to the app class and the adapter
     private CompassApplication mApp;
@@ -84,6 +89,15 @@ public class ActionActivity
         else{
             finish();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // We want to get a rough idea of the amount of time the user spends in this
+        // activity prior to tapping "Got It". Therefore, we'll grab a timestamp here,
+        // then again when they tap the button, and log the difference.
+        mStartTime = System.currentTimeMillis();
     }
 
     /**
@@ -322,6 +336,13 @@ public class ActionActivity
     @Override
     public void onGotItClick(){
         if (mAction != null){
+            mEndTime = System.currentTimeMillis();
+            Answers.getInstance().logContentView(new ContentViewEvent()
+                    .putContentName(mAction.getTitle())
+                    .putContentType("Action")
+                    .putContentId("" + mAction.getId())
+                    .putCustomAttribute("Duration", (mEndTime - mStartTime) / 1000));
+
             startService(new Intent(this, ActionReportService.class)
                     .putExtra(ActionReportService.ACTION_KEY, mAction)
                     .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
