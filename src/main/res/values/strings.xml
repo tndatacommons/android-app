@@ -350,6 +350,10 @@
     <!-- Goal card -->
     <string name="card_goal_title">Your goal</string>
 
+    <!-- Progress card -->
+    <string name="card_progress_caption_tips">%1$d tips</string>
+    <string name="card_progress_caption_completed">completed last week</string>
+
     <!-- Editable list card -->
     <string name="editable_list_overflow_cd">A list of options related to the item</string>
     <string name="editable_list_save_cd">Save the item currently being edited</string>

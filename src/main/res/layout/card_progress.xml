@@ -12,14 +12,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="24dp"
-            android:layout_gravity="center_vertical" >
+            android:gravity="center_vertical" >
 
-            <TextView
-                android:id="@+id/progress_caption"
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="18sp" />
+                android:layout_weight="1" >
+
+                <TextView
+                    android:id="@+id/progress_caption_tips"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="@string/card_progress_caption_completed"/>
+
+            </LinearLayout>
 
             <org.tndata.android.compass.ui.ProgressView
                 android:id="@+id/progress_meter"
