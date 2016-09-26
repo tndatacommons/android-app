@@ -1,6 +1,7 @@
 package org.tndata.android.compass.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.view.View;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.service.LocationNotificationService;
+import org.tndata.android.compass.ui.ProgressView;
 import org.tndata.android.compass.ui.TransitionButton;
 
 import java.text.ParsePosition;
@@ -23,7 +25,7 @@ import java.util.regex.Pattern;
  * rest of the application.
  */
 public class PlaygroundActivity extends AppCompatActivity implements View.OnClickListener{
-
+    private ProgressView mProgressView;
     private TransitionButton button;
     private int state;
     static String TAG = "Playground";
@@ -37,6 +39,9 @@ public class PlaygroundActivity extends AppCompatActivity implements View.OnClic
         //button.setOnClickListener(this);
 
         state = 0;
+
+        mProgressView = (ProgressView)findViewById(R.id.playground_test);
+        mProgressView.setBackgroundColor(Color.RED);
 
         findViewById(R.id.playground_button_start).setOnClickListener(this);
         findViewById(R.id.playground_button_kill).setOnClickListener(this);
