@@ -20,10 +20,12 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.databinding.CardBaseItemBinding;
 import org.tndata.android.compass.databinding.CardDynamicListBinding;
+import org.tndata.android.compass.databinding.CardProgressBinding;
 import org.tndata.android.compass.databinding.ItemBaseBinding;
 import org.tndata.android.compass.holder.BaseItemCardHolder;
 import org.tndata.android.compass.holder.BaseItemHolder;
 import org.tndata.android.compass.holder.DynamicListCardHolder;
+import org.tndata.android.compass.holder.ProgressCardHolder;
 import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomGoal;
 import org.tndata.android.compass.model.FeedData;
@@ -60,7 +62,8 @@ public class MainFeedAdapter
     private static final int TYPE_SUGGESTION = TYPE_UP_NEXT+1;
     public static final int TYPE_STREAKS = TYPE_SUGGESTION+1;
     private static final int TYPE_REWARD = TYPE_STREAKS+1;
-    private static final int TYPE_GOALS = TYPE_REWARD+1;
+    private static final int TYPE_PROGRESS = TYPE_REWARD+1;
+    private static final int TYPE_GOALS = TYPE_PROGRESS+1;
     private static final int TYPE_OTHER = TYPE_GOALS+1;
 
 
@@ -153,6 +156,9 @@ public class MainFeedAdapter
         if (CardTypes.isReward(position)){
             return TYPE_REWARD;
         }
+        if (CardTypes.isProgress(position)){
+            return TYPE_PROGRESS;
+        }
         if (CardTypes.isGoals(position)){
             return TYPE_GOALS;
         }
@@ -190,6 +196,13 @@ public class MainFeedAdapter
         else if (viewType == TYPE_SUGGESTION){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             holder = new GoalSuggestionHolder(this, inflater.inflate(R.layout.card_goal_suggestion, parent, false));
+        }
+        else if (viewType == TYPE_PROGRESS){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            CardProgressBinding binding = DataBindingUtil.inflate(
+                    inflater, R.layout.card_progress, parent, false
+            );
+            holder = new ProgressCardHolder(binding);
         }
         else if (viewType == TYPE_GOALS){
             LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -274,6 +287,11 @@ public class MainFeedAdapter
             holder.setTitle(reward.getHeader());
             holder.setSubtitle(reward.getMessage().substring(0, 30) + "...");
             holder.setOnClickListener(this, R.id.feed_reward);
+        }
+        //Progress
+        else if (CardTypes.isProgress(position)){
+            ProgressCardHolder holder = (ProgressCardHolder)rawHolder;
+            holder.setProgress(mFeedData.getProgress().getEngagementRank());
         }
         //Goals
         else if (CardTypes.isGoals(position)){
