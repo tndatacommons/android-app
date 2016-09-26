@@ -4,11 +4,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -17,28 +18,38 @@ import org.tndata.android.compass.util.CompassUtil;
 
 
 /**
- * Created by isma on 9/23/16.
+ * Custom UI component that displays a percentage as a vertical color filling image.
+ *
+ * @author Ismael Alonso
+ * @version 1.0.0
  */
 public class ProgressView extends View{
+    //Percentage text markers
     private static final String m100 = "100%";
     private static final String m50 = "50%";
     private static final String m0 = "0%";
 
 
+    //Bitmap related objects
+    private Bitmap mProgressBitmap;
+    private Paint mGrayscalePaint;
+    private Rect mGrayscaleSrcBounds;
+    private Rect mGrayscaleDstBounds;
+    private Rect mColorSrcBounds;
+    private Rect mColorDstBounds;
+
+    //Percentages related paint
     private Paint mPercentagesPaint;
-    private Paint mTextPaint;
 
-    private Bitmap mSample;
-
-    private Rect mPercentagesBounds;
-    private Rect mBitmapBounds;
-    private Rect mTextBounds;
-
+    //Test rect to calculate bounds at random
     private Rect mTestBounds;
 
     //Inner padding
     private int mHorizontalPadding;
     private int mVerticalPadding;
+
+    //Data
+    private int mProgress;
 
 
     public ProgressView(Context context){
@@ -56,21 +67,27 @@ public class ProgressView extends View{
         init();
     }
 
+    /**
+     * Initialization method. Allocates all the necessary objects.
+     */
     private void init(){
+        mProgressBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_quote_150dp);
+        mGrayscalePaint = new Paint();
+        ColorMatrix matrix = new ColorMatrix();
+        matrix.setSaturation(0);
+        mGrayscalePaint.setColorFilter(new ColorMatrixColorFilter(matrix));
+        mGrayscaleSrcBounds = new Rect();
+        mGrayscaleDstBounds = new Rect();
+        mColorSrcBounds = new Rect();
+        mColorDstBounds = new Rect();
+
         mPercentagesPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         mPercentagesPaint.setTextSize(getPxFromSp(18));
         mPercentagesPaint.setTextAlign(Paint.Align.RIGHT);
 
-        mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-        mPercentagesBounds = new Rect();
-        mBitmapBounds = new Rect();
-        mTextBounds = new Rect();
-
         mTestBounds = new Rect();
 
-        mPercentagesPaint.getTextBounds("100%", 0, 4, mPercentagesBounds);
-
-        mSample = BitmapFactory.decodeResource(getResources(), R.drawable.ic_quote_150dp);
+        mProgress = 0;
     }
 
     @Override
@@ -150,36 +167,68 @@ public class ProgressView extends View{
     }
 
     @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh){
-        super.onSizeChanged(w, h, oldw, oldh);
-        Log.d("ProgressView", "width: " + w + ", height: " + h);
-    }
-
-    @Override
     protected void onDraw(Canvas canvas){
         super.onDraw(canvas);
 
         int w = getMeasuredWidth();
         int h = getMeasuredHeight();
 
-        mPercentagesPaint.getTextBounds("100%", 0, 4, mTestBounds);
+        mPercentagesPaint.getTextBounds(m100, 0, 4, mTestBounds);
 
+        //Src bound primitives
+        int srcBoundary = (int)(mProgressBitmap.getHeight()*((100-mProgress)/100f));
+
+        //Dst bound primitives
         int left = mHorizontalPadding;
         int bottom = h - mVerticalPadding;
         int right = w - mTestBounds.width() - mHorizontalPadding;
         int top = mVerticalPadding;
-        mBitmapBounds.set(left, top, right, bottom);
+        int dstBoundary = (int)(top+(bottom-top)*((100-mProgress)/100f));
 
+        //Set the right values in the bound objects
+        mGrayscaleSrcBounds.set(0, 0, mProgressBitmap.getWidth(), srcBoundary);
+        mGrayscaleDstBounds.set(left, top, right, dstBoundary);
+        mColorSrcBounds.set(0, srcBoundary, mProgressBitmap.getWidth(), mProgressBitmap.getHeight());
+        mColorDstBounds.set(left, dstBoundary, right, bottom);
 
-        canvas.drawText("100%", w-mHorizontalPadding, mTestBounds.height()+mVerticalPadding, mPercentagesPaint);
-        canvas.drawText("50%", w-mHorizontalPadding, h/2+mTestBounds.height()/2, mPercentagesPaint);
-        canvas.drawText("0%", w-mHorizontalPadding, h-mVerticalPadding, mPercentagesPaint);
-        canvas.drawBitmap(mSample, null, mBitmapBounds, null);
+        //Draw the bitmap
+        canvas.drawBitmap(mProgressBitmap, mGrayscaleSrcBounds, mGrayscaleDstBounds, mGrayscalePaint);
+        canvas.drawBitmap(mProgressBitmap, mColorSrcBounds, mColorDstBounds, null);
+
+        //Draw the percentages
+        canvas.drawText(m100, w-mHorizontalPadding, mTestBounds.height()+mVerticalPadding, mPercentagesPaint);
+        canvas.drawText(m50, w-mHorizontalPadding, h/2+mTestBounds.height()/2, mPercentagesPaint);
+        canvas.drawText(m0, w-mHorizontalPadding, h-mVerticalPadding, mPercentagesPaint);
     }
 
+    /**
+     * Utility method to convert scale pixels to pixels.
+     *
+     * @param sp the value to convert.
+     * @return the value in pixels.
+     */
     private float getPxFromSp(float sp){
         return TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_SP, sp, getResources().getDisplayMetrics()
         );
+    }
+
+    /**
+     * Sets the progress to be displayed by this view.
+     *
+     * @param progress the progress value.
+     */
+    public void setProgressValue(int progress){
+        mProgress = Math.min(100, Math.max(0, progress));
+        invalidate();
+    }
+
+    /**
+     * Gets the currently displayed progress.
+     *
+     * @return the currently displayed progress.
+     */
+    public int getProgressValue(){
+        return mProgress;
     }
 }

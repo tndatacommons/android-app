@@ -41,7 +41,8 @@ public class PlaygroundActivity extends AppCompatActivity implements View.OnClic
         state = 0;
 
         mProgressView = (ProgressView)findViewById(R.id.playground_test);
-        mProgressView.setBackgroundColor(Color.RED);
+        //mProgressView.setBackgroundColor(Color.RED);
+        mProgressView.setProgressValue(66);
 
         findViewById(R.id.playground_button_start).setOnClickListener(this);
         findViewById(R.id.playground_button_kill).setOnClickListener(this);
