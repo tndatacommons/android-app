@@ -6,40 +6,71 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         card_view:cardCornerRadius="@dimen/card_view_corner_radius" >
-
+        
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            android:gravity="center_vertical" >
+            android:layout_margin="12dp" >
+
+            <ImageView
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:src="@drawable/ic_thumbs_up_80dp"
+                android:contentDescription="@string/card_progress_icon_cd" />
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" >
+                android:layout_weight="1"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp" >
 
                 <TextView
-                    android:id="@+id/progress_caption_tips"
+                    android:id="@+id/progress_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/dark_text_color" />
 
-                <TextView
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:text="@string/card_progress_caption_completed"/>
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical" >
 
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" >
+
+                        <TextView
+                            android:id="@+id/progress_caption_tips"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/dark_text_color" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="18sp"
+                            android:textColor="@color/dark_text_color"
+                            android:text="@string/card_progress_caption_completed"/>
+
+                    </LinearLayout>
+
+                    <org.tndata.android.compass.ui.ProgressView
+                        android:id="@+id/progress_meter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="100dp" />
+
+                </LinearLayout>
             </LinearLayout>
-
-            <org.tndata.android.compass.ui.ProgressView
-                android:id="@+id/progress_meter"
-                android:layout_width="wrap_content"
-                android:layout_height="100dp" />
-
         </LinearLayout>
     </android.support.v7.widget.CardView>
 </layout>

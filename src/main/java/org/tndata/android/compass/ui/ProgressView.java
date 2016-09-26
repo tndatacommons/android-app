@@ -71,7 +71,7 @@ public class ProgressView extends View{
      * Initialization method. Allocates all the necessary objects.
      */
     private void init(){
-        mProgressBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_quote_150dp);
+        mProgressBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.master_circle_150dp);
         mGrayscalePaint = new Paint();
         ColorMatrix matrix = new ColorMatrix();
         matrix.setSaturation(0);

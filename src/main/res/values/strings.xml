@@ -351,7 +351,13 @@
     <string name="card_goal_title">Your goal</string>
 
     <!-- Progress card -->
-    <string name="card_progress_caption_tips">%1$d tips</string>
+    <string name="card_progress_icon_cd">Card icon</string>
+    <string name="card_progress_title">You are more engaged than %1$d%% of Compass users in your area.</string>
+    <plurals name="card_progress_caption_tips">
+        <item quantity="one">%d tip</item>
+        <item quantity="other">%d tips</item>
+
+    </plurals>
     <string name="card_progress_caption_completed">completed last week</string>
 
     <!-- Editable list card -->
