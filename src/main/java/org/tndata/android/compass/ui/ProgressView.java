@@ -21,6 +21,11 @@ import org.tndata.android.compass.util.CompassUtil;
  * Created by isma on 9/23/16.
  */
 public class ProgressView extends View{
+    private static final String m100 = "100%";
+    private static final String m50 = "50%";
+    private static final String m0 = "0%";
+
+
     private Paint mPercentagesPaint;
     private Paint mTextPaint;
 
@@ -30,11 +35,11 @@ public class ProgressView extends View{
     private Rect mBitmapBounds;
     private Rect mTextBounds;
 
+    private Rect mTestBounds;
+
     //Inner padding
-    private int mLeft;
-    private int mBottom;
-    private int mRight;
-    private int mTop;
+    private int mHorizontalPadding;
+    private int mVerticalPadding;
 
 
     public ProgressView(Context context){
@@ -62,6 +67,8 @@ public class ProgressView extends View{
         mBitmapBounds = new Rect();
         mTextBounds = new Rect();
 
+        mTestBounds = new Rect();
+
         mPercentagesPaint.getTextBounds("100%", 0, 4, mPercentagesBounds);
 
         mSample = BitmapFactory.decodeResource(getResources(), R.drawable.ic_quote_150dp);
@@ -80,41 +87,52 @@ public class ProgressView extends View{
         int width = defaultWidth;
         int height = defaultHeight;
 
+        mPercentagesPaint.getTextBounds(m100, 0, m100.length(), mTestBounds);
+        int excessWidth = 0;
+        int excessHeight = 0;
+
         if (widthMode == MeasureSpec.EXACTLY && heightMode == MeasureSpec.EXACTLY){
             width = widthSize;
             height = heightSize;
 
-            if (width - mPercentagesBounds.width() > height){
-                
+            if (width - mTestBounds.width() > height){
+                excessWidth = height-(width-mTestBounds.width());
+            }
+            else{
+                excessHeight = (width-mTestBounds.width())-height;
             }
         }
         else if (widthMode == MeasureSpec.EXACTLY && heightMode == MeasureSpec.AT_MOST){
             width = widthSize;
-            height = heightSize;
+            height = width-mTestBounds.width();
 
+            if (height > heightSize){
+                excessWidth = height-heightSize;
+                height = heightSize;
+            }
         }
         else if (widthMode == MeasureSpec.AT_MOST && heightMode == MeasureSpec.EXACTLY){
-            width = widthSize;
             height = heightSize;
+            width = height+mTestBounds.width();
 
+            if (width > widthSize){
+                excessHeight = width-widthSize;
+                width = widthSize;
+            }
         }
         else if (widthMode == MeasureSpec.AT_MOST && heightMode == MeasureSpec.AT_MOST){
-            width = widthSize;
-            height = heightSize;
-
+            if (widthSize - mTestBounds.width() > heightSize){
+                height = heightSize;
+                width = height-(widthSize-mTestBounds.width());
+            }
+            else{
+                width = widthSize;
+                height = (width-mTestBounds.width())-heightSize;
+            }
         }
 
-        else if (widthMode == MeasureSpec.AT_MOST){
-            width = Math.min(widthSize, defaultWidth);
-        }
-
-        if (heightMode == MeasureSpec.EXACTLY){
-            height = heightSize;
-        }
-        else if (heightMode == MeasureSpec.AT_MOST){
-            height = Math.min(heightSize, defaultHeight);
-        }
-
+        mHorizontalPadding = excessWidth/2;
+        mVerticalPadding = excessHeight/2;
         setMeasuredDimension(width, height);
     }
 
@@ -131,13 +149,13 @@ public class ProgressView extends View{
         int w = getMeasuredWidth();
         int h = getMeasuredHeight();
 
-        mPercentagesPaint.getTextBounds("100%", 0, 4, mPercentagesBounds);
-        mBitmapBounds.set(w - h - mPercentagesBounds.width(), 0, w - mPercentagesBounds.width(), h);
+        mPercentagesPaint.getTextBounds("100%", 0, 4, mTestBounds);
+        mBitmapBounds.set(w - h - mTestBounds.width(), 0, w - mTestBounds.width(), h);
 
 
-        canvas.drawText("100%", w, mPercentagesBounds.height(), mPercentagesPaint);
-        canvas.drawText("50%", w, h/2+mPercentagesBounds.height()/2, mPercentagesPaint);
-        canvas.drawText("0%", w, h, mPercentagesPaint);
+        canvas.drawText("100%", w-mHorizontalPadding, mTestBounds.height()+mVerticalPadding, mPercentagesPaint);
+        canvas.drawText("50%", w-mHorizontalPadding, h/2+mTestBounds.height()/2+mVerticalPadding, mPercentagesPaint);
+        canvas.drawText("0%", w-mHorizontalPadding, h+mVerticalPadding, mPercentagesPaint);
         canvas.drawBitmap(mSample, null, mBitmapBounds, null);
     }
 
