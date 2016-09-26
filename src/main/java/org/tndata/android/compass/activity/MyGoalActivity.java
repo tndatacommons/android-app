@@ -110,6 +110,7 @@ public class MyGoalActivity
 
     @Override
     protected void onStop() {
+        super.onStop();
         mEndTime = System.currentTimeMillis();
         Answers.getInstance().logContentView(new ContentViewEvent()
                 .putContentName(mUserGoal.getTitle())
