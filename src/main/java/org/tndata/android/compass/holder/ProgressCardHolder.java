@@ -28,14 +28,22 @@ public class ProgressCardHolder extends RecyclerView.ViewHolder{
     }
 
     /**
+     * Sets the amount of completed items.
+     *
+     * @param completedItems the amount of completed items.
+     */
+    public void setCompletedItems(int completedItems){
+        Context context = itemView.getContext();
+        String tips = context.getString(R.string.card_progress_caption_tips, completedItems);
+        mBinding.progressCaptionTips.setText(tips);
+    }
+
+    /**
      * Sets the progress displayed by this card.
      *
      * @param progress the progress to be displayed.
      */
     public void setProgress(int progress){
-        Context context = itemView.getContext();
-        String tips = context.getString(R.string.card_progress_caption_tips, progress);
-        mBinding.progressCaptionTips.setText(tips);
         mBinding.progressMeter.setProgressValue(progress);
     }
 }

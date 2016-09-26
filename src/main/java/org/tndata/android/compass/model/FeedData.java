@@ -356,6 +356,15 @@ public class FeedData{
         }
 
         /**
+         * Gets the number of completed actions.
+         *
+         * @return the total number of completed actions.
+         */
+        public int getCompletedActions(){
+            return mCompletedActions;
+        }
+
+        /**
          * Gets the total actions.
          *
          * @return the total actions.

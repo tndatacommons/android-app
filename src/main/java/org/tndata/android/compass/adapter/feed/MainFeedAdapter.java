@@ -291,6 +291,7 @@ public class MainFeedAdapter
         //Progress
         else if (CardTypes.isProgress(position)){
             ProgressCardHolder holder = (ProgressCardHolder)rawHolder;
+            holder.setCompletedItems(mFeedData.getProgress().getCompletedActions());
             holder.setProgress(mFeedData.getProgress().getEngagementRank());
         }
         //Goals
