@@ -2,9 +2,9 @@ package org.tndata.android.compass.adapter.feed;
 
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.ui.CompassPopupMenu;
 
 
 /**
@@ -13,7 +13,7 @@ import org.tndata.android.compass.ui.CompassPopupMenu;
  * @author Ismael Alonso
  * @version 1.0.0
  */
-class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
+class FeedUtil implements PopupMenu.OnMenuItemClickListener{
     private MainFeedAdapter mAdapter;
 
 
@@ -32,7 +32,7 @@ class FeedUtil implements CompassPopupMenu.OnMenuItemClickListener{
      * @param anchor the view it should be anchored to.
      */
     void showSuggestionPopup(View anchor){
-        CompassPopupMenu popup = CompassPopupMenu.newInstance(mAdapter.mContext, anchor);
+        PopupMenu popup = new PopupMenu(mAdapter.mContext, anchor);
         popup.getMenuInflater().inflate(R.menu.popup_goal_suggestion, popup.getMenu());
 
         //Set the listener
