@@ -15,12 +15,15 @@ import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.SearchEvent;
+
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.SearchAdapter;
+import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.TDCGoal;
-import org.tndata.android.compass.model.SearchResult;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
@@ -97,6 +100,8 @@ public class SearchActivity
     public boolean onQueryTextChange(String newText){
         HttpRequest.cancel(mLastSearchRequestCode);
         mLastSearch = newText;
+        Answers.getInstance().logSearch(new SearchEvent().putQuery(newText));
+
         if (newText.equals("")){
             mSearchHeader.setVisibility(View.INVISIBLE);
             mCreateGoal.setVisibility(View.GONE);
