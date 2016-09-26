@@ -21,6 +21,11 @@ public class UserGoal extends Goal{
     @SerializedName("primary_category")
     private long mPrimaryCategoryId;
 
+    @SerializedName("engagement_rank")
+    private double mEngagementRank;
+    @SerializedName("weekly_completions")
+    private int mWeeklyCompletions;
+
 
     /*---------*
      * GETTERS *
@@ -50,6 +55,14 @@ public class UserGoal extends Goal{
 
     public long getPrimaryCategoryId(){
         return mPrimaryCategoryId;
+    }
+
+    public int getEngagementRank(){
+        return (int)mEngagementRank;
+    }
+
+    public int getWeeklyCompletions(){
+        return mWeeklyCompletions;
     }
 
     @Override
@@ -82,6 +95,8 @@ public class UserGoal extends Goal{
         super.writeToParcel(dest, flags);
         dest.writeParcelable(mGoal, flags);
         dest.writeLong(mPrimaryCategoryId);
+        dest.writeDouble(mEngagementRank);
+        dest.writeInt(mWeeklyCompletions);
     }
 
     public static final Creator<UserGoal> CREATOR = new Creator<UserGoal>(){
@@ -100,5 +115,7 @@ public class UserGoal extends Goal{
         super(src);
         mGoal = src.readParcelable(TDCGoal.class.getClassLoader());
         mPrimaryCategoryId = src.readLong();
+        mEngagementRank = src.readDouble();
+        mWeeklyCompletions =src.readInt();
     }
 }
