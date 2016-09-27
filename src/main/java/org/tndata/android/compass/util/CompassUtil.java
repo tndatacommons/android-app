@@ -18,6 +18,8 @@ import com.google.android.gms.maps.model.LatLng;
 import org.tndata.android.compass.activity.AwardsActivity;
 import org.tndata.android.compass.model.*;
 
+import es.sandwatch.httprequests.HttpRequest;
+
 
 /**
  * This class contains all general purpose helper or utility methods used
@@ -307,5 +309,16 @@ public final class CompassUtil{
     public static boolean hasPermission(@NonNull Context context, String permission){
         int permissionGranted = PackageManager.PERMISSION_GRANTED;
         return ContextCompat.checkSelfPermission(context, permission) == permissionGranted;
+    }
+
+    /**
+     * Logs some information to the backend.
+     *
+     * @param context a reference to the context.
+     * @param title the title of the log.
+     * @param message the content of the log.
+     */
+    public static void log(Context context, String title, String message){
+        HttpRequest.post(null, API.URL.postLog(), API.BODY.postLog(context, title, message));
     }
 }
