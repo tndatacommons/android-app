@@ -348,7 +348,7 @@
     <string name="my_goal_custom_action_reschedule">Reschedule</string>
 
     <!-- Goal card -->
-    <string name="card_goal_title">Your goal</string>
+    <string name="card_goal_title">For your goal</string>
 
     <!-- Progress card -->
     <string name="card_progress_icon_cd">Card icon</string>
