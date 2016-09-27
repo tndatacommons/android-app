@@ -283,9 +283,14 @@ public class MainFeedAdapter
             BaseItemCardHolder holder = (BaseItemCardHolder)rawHolder;
             Reward reward = mFeedData.getReward();
 
+            String message = reward.getMessage();
+            message = message.substring(0, Math.min(30, message.length()));
+            if (reward.getMessage().length() >= 30){
+                message += "...";
+            }
             holder.setIcon(reward.getIcon());
             holder.setTitle(reward.getHeader());
-            holder.setSubtitle(reward.getMessage().substring(0, 30) + "...");
+            holder.setSubtitle(message);
             holder.setOnClickListener(this, R.id.feed_reward);
         }
         //Progress
