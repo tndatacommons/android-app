@@ -202,7 +202,7 @@ public class ActionAdapter
                     DetailCardHolder detailHolder = (DetailCardHolder)rawHolder;
                     detailHolder.setTitle(R.string.action_detail_title);
                     detailHolder.setContent(((UserAction)mAction).getAction().getBehaviorDescription());
-                    detailHolder.setOverflowMenu(R.menu.menu_remove_behavior, this);
+                    //detailHolder.setOverflowMenu(R.menu.menu_remove_behavior, this);
                 }
                 break;
         }
