@@ -35,6 +35,7 @@ public class ProgressView extends View{
     private Paint mGrayscalePaint;
     private Rect mGrayscaleSrcBounds;
     private Rect mGrayscaleDstBounds;
+    private Paint mColorPaint;
     private Rect mColorSrcBounds;
     private Rect mColorDstBounds;
 
@@ -73,11 +74,18 @@ public class ProgressView extends View{
     private void init(){
         mProgressBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.master_circle_150dp);
         mGrayscalePaint = new Paint();
+        mGrayscalePaint.setAntiAlias(true);
+        mGrayscalePaint.setFilterBitmap(true);
+        mGrayscalePaint.setDither(true);
         ColorMatrix matrix = new ColorMatrix();
         matrix.setSaturation(0);
         mGrayscalePaint.setColorFilter(new ColorMatrixColorFilter(matrix));
         mGrayscaleSrcBounds = new Rect();
         mGrayscaleDstBounds = new Rect();
+        mColorPaint = new Paint();
+        mColorPaint.setAntiAlias(true);
+        mColorPaint.setFilterBitmap(true);
+        mColorPaint.setDither(true);
         mColorSrcBounds = new Rect();
         mColorDstBounds = new Rect();
 
@@ -193,7 +201,7 @@ public class ProgressView extends View{
 
         //Draw the bitmap
         canvas.drawBitmap(mProgressBitmap, mGrayscaleSrcBounds, mGrayscaleDstBounds, mGrayscalePaint);
-        canvas.drawBitmap(mProgressBitmap, mColorSrcBounds, mColorDstBounds, null);
+        canvas.drawBitmap(mProgressBitmap, mColorSrcBounds, mColorDstBounds, mColorPaint);
 
         //Draw the percentages
         canvas.drawText(m100, w-mHorizontalPadding, mTestBounds.height()+mVerticalPadding, mPercentagesPaint);

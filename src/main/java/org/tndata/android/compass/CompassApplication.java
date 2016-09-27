@@ -134,7 +134,7 @@ public class CompassApplication extends Application{
      * @return A Long->CategoryContent HashMap.
      */
     public synchronized Map<Long, TDCCategory> getAvailableCategories(){
-        if (mAvailableCategories == null){
+        if (mAvailableCategories == null || mAvailableCategories.isEmpty()){
             TDCCategoryTableHandler handler = new TDCCategoryTableHandler(this);
             mAvailableCategories = handler.readCategories();
             handler.close();
