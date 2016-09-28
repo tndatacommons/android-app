@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -89,6 +90,9 @@ public class RewardActivity
         else{
             setReward(reward);
         }
+
+        mBinding.rewardRefresh.setOnClickListener(this);
+        mBinding.rewardShare.setOnClickListener(this);
     }
 
     @Override
@@ -111,7 +115,7 @@ public class RewardActivity
     @Override
     public void onRequestFailed(int requestCode, HttpRequestError error){
         if (requestCode == mGetRewardUrl){
-            //TODO
+            Log.e("RewardActivity", "Reward couldn't be fetched");
         }
     }
 
@@ -127,17 +131,21 @@ public class RewardActivity
         }
     }
 
-    private void setReward(Reward reward){
+    private void setReward(@Nullable Reward reward){
         mReward = reward;
 
-        mBinding.rewardIcon.setImageResource(mReward.getIcon());
-        mBinding.rewardCard.detailTitle.setText(mReward.getHeader());
-        mBinding.rewardCard.detailContent.setText(mReward.format());
+        if (mReward == null){
+            mBinding.rewardProgress.setVisibility(View.VISIBLE);
+            mBinding.rewardContentContainer.setVisibility(View.GONE);
+        }
+        else {
+            mBinding.rewardIcon.setImageResource(mReward.getIcon());
+            mBinding.rewardCard.detailTitle.setText(mReward.getHeader());
+            mBinding.rewardCard.detailContent.setText(mReward.format());
 
-        mBinding.rewardProgress.setVisibility(View.GONE);
-        mBinding.rewardCard.getRoot().setVisibility(View.VISIBLE);
-        mBinding.rewardShare.setVisibility(View.VISIBLE);
-        mBinding.rewardShare.setOnClickListener(this);
+            mBinding.rewardProgress.setVisibility(View.GONE);
+            mBinding.rewardContentContainer.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -148,6 +156,11 @@ public class RewardActivity
     @Override
     public void onClick(View view){
         switch (view.getId()){
+            case R.id.reward_refresh:
+                setReward(null);
+                mGetRewardUrl = HttpRequest.get(this, API.URL.getRandomReward());
+                break;
+
             case R.id.reward_share:
                 mReward.share(this);
                 break;

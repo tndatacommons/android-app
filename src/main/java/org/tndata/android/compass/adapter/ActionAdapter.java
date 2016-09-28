@@ -74,6 +74,8 @@ public class ActionAdapter
         if (mAction instanceof UserAction){
             CompassApplication app = (CompassApplication)mContext.getApplicationContext();
             long categoryId = ((UserAction)mAction).getPrimaryCategoryId();
+            CompassUtil.log(mContext, "Action, requested category", categoryId + "");
+            CompassUtil.log(mContext, "Action, categories", app.getAvailableCategories().size() + "");
             mCategory = app.getAvailableCategories().get(categoryId);
         }
     }

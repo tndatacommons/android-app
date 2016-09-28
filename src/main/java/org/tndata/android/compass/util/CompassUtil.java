@@ -15,6 +15,7 @@ import android.view.WindowManager;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.activity.AwardsActivity;
 import org.tndata.android.compass.model.*;
 
@@ -319,6 +320,8 @@ public final class CompassUtil{
      * @param message the content of the log.
      */
     public static void log(Context context, String title, String message){
-        HttpRequest.post(null, API.URL.postLog(), API.BODY.postLog(context, title, message));
+        if (BuildConfig.DEBUG) {
+            HttpRequest.post(null, API.URL.postLog(), API.BODY.postLog(context, title, message));
+        }
     }
 }

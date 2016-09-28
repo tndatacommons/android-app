@@ -15,9 +15,7 @@ import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.GcmRegistration;
-import org.tndata.android.compass.util.ImageLoader;
 import org.tndata.android.compass.util.Tour;
 
 import java.util.ArrayList;
@@ -269,7 +267,5 @@ public class CompassApplication extends Application{
         Tour.init(this);
         //Tour.reset();
         LocationNotificationService.start(this);
-
-        CompassUtil.log(this, "Hello log!", "This is the first test");
     }
 }
