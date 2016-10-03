@@ -61,6 +61,7 @@ public class ActionAdapter
      * Constructor.
      *
      * @param context a reference to the context.
+     * @param listener a listener object.
      * @param action the action to be displayed.
      */
     public ActionAdapter(@NonNull Context context, @NonNull Listener listener,
@@ -170,14 +171,15 @@ public class ActionAdapter
 
             case TYPE_CONTENT:
                 ContentCardHolder contentHolder = (ContentCardHolder)rawHolder;
+                contentHolder.setHeader(R.string.action_content_header);
                 if (mAction instanceof UserAction){
                     contentHolder.setColor(Color.parseColor(mCategory.getColor()));
-                    contentHolder.setTitle(mAction.getTitle());
+                    contentHolder.setTitle(mAction.getTitle().toUpperCase());
                     contentHolder.setContent(((UserAction)mAction).getDescription());
                 }
                 else if (mAction instanceof CustomAction){
-                    contentHolder.setTitle(R.string.action_custom_title);
-                    contentHolder.setContent(mAction.getTitle());
+                    contentHolder.setTitle(mAction.getTitle().toUpperCase());
+                    contentHolder.setContent(R.string.action_custom_description);
                 }
                 mGotItButton = contentHolder.addButton(R.id.action_got_it, R.string.action_got_it);
                 mGotItButton.setOnClickListener(this);
@@ -202,9 +204,10 @@ public class ActionAdapter
             case TYPE_DETAIL:
                 if (mAction instanceof UserAction){
                     DetailCardHolder detailHolder = (DetailCardHolder)rawHolder;
+                    detailHolder.setHeaderBackgroundColor(Color.parseColor(mCategory.getColor()));
+                    detailHolder.setTitleColor(0xFFFFFFFF);
                     detailHolder.setTitle(R.string.action_detail_title);
                     detailHolder.setContent(((UserAction)mAction).getAction().getBehaviorDescription());
-                    //detailHolder.setOverflowMenu(R.menu.menu_remove_behavior, this);
                 }
                 break;
         }

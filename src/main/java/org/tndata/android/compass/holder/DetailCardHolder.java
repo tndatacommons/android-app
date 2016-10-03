@@ -31,6 +31,15 @@ public class DetailCardHolder extends RecyclerView.ViewHolder implements View.On
         mBinding = binding;
     }
 
+    public void setHeaderBackgroundColor(int color){
+        mBinding.detailHeaderContainer.setBackgroundColor(color);
+        mBinding.detailSeparator.separator.setVisibility(View.GONE);
+    }
+
+    public void setTitleColor(int color){
+        mBinding.detailTitle.setTextColor(color);
+    }
+
     /**
      * Sets the title of the card.
      *

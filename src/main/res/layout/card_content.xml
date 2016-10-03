@@ -13,21 +13,36 @@
             android:layout_height="wrap_content" >
 
             <TextView
-                android:id="@+id/content_title"
+                android:id="@+id/content_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="24dp"
+                android:padding="18dp"
                 android:background="@color/primary"
-                android:text="Title"
+                android:text="Header"
                 android:textAllCaps="true"
                 android:textColor="@color/white"
                 style="@style/CardTitleText" />
 
             <TextView
+                android:id="@+id/content_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="18dp"
+                android:paddingBottom="9dp"
+                android:paddingRight="18dp"
+                android:paddingTop="18dp"
+                android:text="Title"
+                android:visibility="gone"
+                style="@style/CardContentText" />
+
+            <TextView
                 android:id="@+id/content_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="24dp"
+                android:paddingLeft="18dp"
+                android:paddingBottom="18dp"
+                android:paddingRight="18dp"
+                android:paddingTop="9dp"
                 android:text="Content"
                 style="@style/CardContentText" />
 

@@ -165,6 +165,8 @@ public class MyGoalAdapter
 
             case TYPE_GOAL:
                 DetailCardHolder goalHolder = (DetailCardHolder)rawHolder;
+                goalHolder.setHeaderBackgroundColor(Color.parseColor(mCategory.getColor()));
+                goalHolder.setTitleColor(0xFFFFFFFF);
                 goalHolder.setTitle(mUserGoal.getTitle());
                 goalHolder.setContent(mUserGoal.getDescription());
                 break;

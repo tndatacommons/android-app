@@ -35,7 +35,35 @@ public class ContentCardHolder extends RecyclerView.ViewHolder{
     }
 
     public void setColor(int color){
-        mBinding.contentTitle.setBackgroundColor(color);
+        mBinding.contentHeader.setBackgroundColor(color);
+    }
+
+    /**
+     * Binds a header to the holder.
+     *
+     * @param header the header to be displayed in the card.
+     */
+    public void setHeader(CharSequence header){
+        mBinding.contentHeader.setText(header);
+    }
+
+    /**
+     * Binds a header to the holder.
+     *
+     * @param headerId the resource id of the header to be displayed in the card.
+     */
+    public void setHeader(@StringRes int headerId){
+        mBinding.contentHeader.setText(headerId);
+    }
+
+    /**
+     * Sets the font of the title as Roboto-Medium.
+     */
+    public void setHeaderWeightMedium(){
+        AssetManager assets = itemView.getContext().getAssets();
+        mBinding.contentHeader.setTypeface(
+                Typeface.createFromAsset(assets, "fonts/Roboto-Medium.ttf")
+        );
     }
 
     /**
@@ -45,6 +73,7 @@ public class ContentCardHolder extends RecyclerView.ViewHolder{
      */
     public void setTitle(CharSequence title){
         mBinding.contentTitle.setText(title);
+        mBinding.contentTitle.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -54,16 +83,7 @@ public class ContentCardHolder extends RecyclerView.ViewHolder{
      */
     public void setTitle(@StringRes int titleId){
         mBinding.contentTitle.setText(titleId);
-    }
-
-    /**
-     * Sets the font of the title as Roboto-Medium.
-     */
-    public void setTitleWeightMedium(){
-        AssetManager assets = itemView.getContext().getAssets();
-        mBinding.contentTitle.setTypeface(
-                Typeface.createFromAsset(assets, "fonts/Roboto-Medium.ttf")
-        );
+        mBinding.contentTitle.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -73,6 +93,15 @@ public class ContentCardHolder extends RecyclerView.ViewHolder{
      */
     public void setContent(CharSequence content){
         mBinding.contentContent.setText(content);
+    }
+
+    /**
+     * Binds a content to the holder.
+     *
+     * @param contentId the id of the description to be displayed in the card.
+     */
+    public void setContent(@StringRes int contentId){
+        mBinding.contentContent.setText(contentId);
     }
 
     /**

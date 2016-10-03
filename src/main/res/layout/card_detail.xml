@@ -13,18 +13,19 @@
             android:layout_height="wrap_content">
 
             <LinearLayout
+                android:id="@+id/detail_header_container"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:padding="24dp" >
+                android:padding="18dp" >
 
                 <TextView
                     android:id="@+id/detail_title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="header"
+                    android:text="Header"
                     android:textAllCaps="true"
                     style="@style/CardTitleText" />
 
@@ -38,13 +39,15 @@
 
             </LinearLayout>
 
-            <include layout="@layout/separator_soft" />
+            <include
+                android:id="@+id/detail_separator"
+                layout="@layout/separator_soft" />
 
             <TextView
                 android:id="@+id/detail_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="24dp"
+                android:layout_margin="18dp"
                 android:text="Description"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/dark_text_color" />
