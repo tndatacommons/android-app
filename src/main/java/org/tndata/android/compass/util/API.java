@@ -95,6 +95,10 @@ public final class API{
             return BASE_URL + "categories/?page_size=999999";
         }
 
+        public static String getCategory(long categoryId){
+            return BASE_URL + "categories/" + categoryId + "/";
+        }
+
         public static String getUserCategories(){
             return BASE_URL + "users/categories/?page_size=999999";
         }
