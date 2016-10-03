@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
+
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.MyGoalAdapter;
@@ -38,6 +41,9 @@ public class MyGoalActivity
     private static final String USER_GOAL_KEY = "org.tndata.compass.MyGoal.UserGoal";
     private static final String USER_GOAL_ID_KEY = "org.tndata.compass.MyGoal.UserGoalId";
 
+    //Poor man's "time in activity" timer.
+    private long mStartTime;
+    private long mEndTime;
 
     /**
      * Gets the Intent used to launch this activity when a goal is unavailable.
@@ -91,6 +97,26 @@ public class MyGoalActivity
         else{
             setGoal(userGoal);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // We want to get a rough idea of the amount of time the user spends in this
+        // activity prior to tapping "Got It". Therefore, we'll grab a timestamp here,
+        // then again when they tap the button, and log the difference.
+        mStartTime = System.currentTimeMillis();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mEndTime = System.currentTimeMillis();
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName(mUserGoal.getTitle())
+                .putContentType("UserGoal")
+                .putContentId("" + mUserGoal.getId())
+                .putCustomAttribute("Duration", (mEndTime - mStartTime) / 1000));
     }
 
     @Override
