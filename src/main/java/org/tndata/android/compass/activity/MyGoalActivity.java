@@ -138,7 +138,12 @@ public class MyGoalActivity
             mAdapter.setCustomActions(((ParserModels.CustomActionResultSet)result).results);
         }
         else if (result instanceof CustomAction){
-            mAdapter.customActionAdded((CustomAction)result);
+            CustomAction customAction = (CustomAction)result;
+            mAdapter.customActionAdded(customAction);
+            Intent intent = new Intent(MyGoalActivity.this, TriggerActivity.class)
+                    .putExtra(TriggerActivity.GOAL_TITLE_KEY, mUserGoal.getTitle())
+                    .putExtra(TriggerActivity.ACTION_KEY, customAction);
+            startActivity(intent);
         }
     }
 
