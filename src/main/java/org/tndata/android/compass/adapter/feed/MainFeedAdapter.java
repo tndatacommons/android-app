@@ -33,6 +33,7 @@ import org.tndata.android.compass.model.Goal;
 import org.tndata.android.compass.model.Reward;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.TDCGoal;
+import org.tndata.android.compass.model.UserAction;
 import org.tndata.android.compass.model.UserGoal;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.FeedDataLoader;
@@ -266,6 +267,16 @@ public class MainFeedAdapter
             }
             else{
                 holder.setTitle(action.getTitle());
+                if (action instanceof UserAction){
+                    String description = ((UserAction) action).getDescription();
+                    if (description.length() > 30){
+                        description = description.substring(0, 30) + "...";
+                    }
+                    holder.setSubtitle(description);
+                }
+                else{
+                    holder.hideSubtitle();
+                }
                 holder.setOnClickListener(this, R.id.feed_up_next);
             }
         }
