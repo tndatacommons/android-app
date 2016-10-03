@@ -97,6 +97,11 @@ public final class DataSynchronizer implements HttpRequest.RequestCallback, Pars
         }
         else if (result instanceof ParserModels.CategoryContentResultSet){
             List<TDCCategory> categories = ((ParserModels.CategoryContentResultSet)result).results;
+            String log = "";
+            for (TDCCategory category:categories){
+                log += category.getId() + ", ";
+            }
+            CompassUtil.log(mApplication, "Categories", log.substring(0, log.length()-2));
             mApplication.setAvailableCategories(categories);
             Log.i(TAG, "Categories synchronized");
         }

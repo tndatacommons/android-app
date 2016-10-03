@@ -50,6 +50,7 @@ public class GoalCardHolder extends RecyclerView.ViewHolder implements View.OnCl
         else{
             mBinding.goalIconContainer.setBackground(gradientDrawable);
         }
+        mBinding.goalHeader.setBackgroundColor(color);
     }
 
     /**

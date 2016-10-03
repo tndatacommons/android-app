@@ -184,7 +184,8 @@
     <string name="action_disable_trigger">Disable reminder</string>
     <string name="action_completed_toast">You\'re awesome!</string>
     <string name="action_fetch_error">Couldn\'t load activity data</string>
-    <string name="action_custom_title">Your reminder</string>
+    <string name="action_content_header">Try this</string>
+    <string name="action_custom_description">This is an activity that you created when you set this goal for yourself. Congratulations for being so engaged! How\'s it going for you?</string>
     <string name="action_detail_title">How will this help?</string>
 
     <!-- Search -->
@@ -348,7 +349,17 @@
     <string name="my_goal_custom_action_reschedule">Reschedule</string>
 
     <!-- Goal card -->
-    <string name="card_goal_title">Your goal</string>
+    <string name="card_goal_title">For your goal</string>
+
+    <!-- Progress card -->
+    <string name="card_progress_icon_cd">Card icon</string>
+    <string name="card_progress_title">You are more engaged than %1$d%% of Compass users in your area.</string>
+    <plurals name="card_progress_caption_tips">
+        <item quantity="one">%d tip</item>
+        <item quantity="other">%d tips</item>
+
+    </plurals>
+    <string name="card_progress_caption_completed">completed last week</string>
 
     <!-- Editable list card -->
     <string name="editable_list_overflow_cd">A list of options related to the item</string>

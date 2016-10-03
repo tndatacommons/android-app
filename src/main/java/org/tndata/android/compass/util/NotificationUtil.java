@@ -38,8 +38,8 @@ public final class NotificationUtil{
     public static final String USER_ACTION_TAG = "org.tndata.compass.Notification.UserAction";
     public static final String CUSTOM_ACTION_TAG = "org.tndata.compass.Notification.CustomAction";
     public static final String ENROLLMENT_TAG = "org.tndata.compass.Notification.Enrollment";
-    public static final String CHECK_IN_TAG = "org.tndata.compass.Notification.CheckIn";
-    public static final String BADGE_TAG = "org.tndata.compass.Notification.Badge";
+    private static final String CHECK_IN_TAG = "org.tndata.compass.Notification.CheckIn";
+    private static final String BADGE_TAG = "org.tndata.compass.Notification.Badge";
 
 
     /**
@@ -170,7 +170,7 @@ public final class NotificationUtil{
      * @param context an instance of the context.
      * @param message the GCM message that triggered the call.
      */
-    public static void putCheckInNotification(Context context, GcmMessage message){
+    private static void putCheckInNotification(Context context, GcmMessage message){
         Intent intent = new Intent(context, CheckInActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(context,
                 (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);

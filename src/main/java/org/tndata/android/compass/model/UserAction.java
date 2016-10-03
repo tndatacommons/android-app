@@ -127,6 +127,7 @@ public class UserAction extends Action implements ParserModels.ResultSet{
         dest.writeParcelable(mAction, flags);
         dest.writeLong(mPrimaryGoalId);
         dest.writeLong(mPrimaryUserGoalId);
+        dest.writeString(mGoalIconUrl);
         dest.writeLong(mPrimaryCategoryId);
     }
 
@@ -152,6 +153,7 @@ public class UserAction extends Action implements ParserModels.ResultSet{
         mAction = src.readParcelable(TDCAction.class.getClassLoader());
         mPrimaryGoalId = src.readLong();
         mPrimaryUserGoalId = src.readLong();
+        mGoalIconUrl = src.readString();
         mPrimaryCategoryId = src.readLong();
     }
 }

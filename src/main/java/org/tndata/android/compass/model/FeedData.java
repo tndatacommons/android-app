@@ -335,6 +335,8 @@ public class FeedData{
         private int mCompletedActions;
         @SerializedName("progress")
         private int mProgressPercentage;
+        @SerializedName("engagement_rank")
+        private double mEngagementRank;
 
 
         /**
@@ -354,6 +356,15 @@ public class FeedData{
         }
 
         /**
+         * Gets the number of completed actions.
+         *
+         * @return the total number of completed actions.
+         */
+        public int getCompletedActions(){
+            return mCompletedActions;
+        }
+
+        /**
          * Gets the total actions.
          *
          * @return the total actions.
@@ -363,30 +374,12 @@ public class FeedData{
         }
 
         /**
-         * Gets the completed actions,
+         * Gets the engagement rank.
          *
-         * @return the completed actions.
+         * @return the user's engagement rank.
          */
-        public int getCompletedActions(){
-            return mCompletedActions;
-        }
-
-        /**
-         * Gets the progress percentage of completed actions.
-         *
-         * @return the progress percentage of completed actions.
-         */
-        public int getProgressPercentage(){
-            return mProgressPercentage;
-        }
-
-        /**
-         * Gets the progress percentage as a fraction.
-         *
-         * @return the progress percentage as a fraction.
-         */
-        public String getProgressFraction(){
-            return mCompletedActions + "/" + mTotalActions;
+        public int getEngagementRank(){
+            return (int)mEngagementRank;
         }
     }
 

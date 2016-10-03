@@ -8,9 +8,11 @@
         android:background="@color/primary" >
 
         <ScrollView
+            android:id="@+id/reward_content_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fillViewport="true" >
+            android:fillViewport="true"
+            android:visibility="gone" >
 
             <LinearLayout
                 android:orientation="vertical"
@@ -36,25 +38,41 @@
                     android:id="@+id/reward_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:visibility="gone" />
+                    android:layout_margin="8dp" />
 
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1" />
 
-                <com.github.clans.fab.FloatingActionButton
-                    android:id="@+id/reward_share"
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="16dp"
-                    android:src="@drawable/ic_share_white_24dp"
-                    app:fab_colorNormal="@color/reward_fab"
-                    app:fab_colorPressed="@color/reward_fab_pressed"
-                    android:visibility="gone" />
+                    android:layout_gravity="center_horizontal" >
 
+                    <com.github.clans.fab.FloatingActionButton
+                        android:id="@+id/reward_refresh"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginTop="16dp"
+                        android:src="@drawable/ic_refresh"
+                        app:fab_colorNormal="@color/reward_fab"
+                        app:fab_colorPressed="@color/reward_fab_pressed" />
+
+                    <com.github.clans.fab.FloatingActionButton
+                        android:id="@+id/reward_share"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        android:src="@drawable/ic_share_white_24dp"
+                        app:fab_colorNormal="@color/reward_fab"
+                        app:fab_colorPressed="@color/reward_fab_pressed" />
+
+                </LinearLayout>
             </LinearLayout>
         </ScrollView>
 

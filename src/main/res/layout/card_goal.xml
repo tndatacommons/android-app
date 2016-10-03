@@ -13,23 +13,24 @@
             android:orientation="vertical" >
 
             <TextView
+                android:id="@+id/goal_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="24dp"
+                android:padding="18dp"
+                android:background="@color/primary"
                 android:text="@string/card_goal_title"
+                android:textColor="@color/white"
                 android:textAllCaps="true"
                 style="@style/CardTitleText" />
-
-            <include layout="@layout/separator_soft" />
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="24dp"
-                android:layout_marginBottom="12dp"
-                android:layout_marginRight="24dp"
-                android:layout_marginTop="12dp" >
+                android:layout_marginLeft="18dp"
+                android:layout_marginBottom="18dp"
+                android:layout_marginRight="18dp"
+                android:layout_marginTop="18dp" >
 
                 <RelativeLayout
                     android:id="@+id/goal_icon_container"

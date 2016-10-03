@@ -16,7 +16,6 @@ import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.GcmRegistration;
-import org.tndata.android.compass.util.ImageLoader;
 import org.tndata.android.compass.util.Tour;
 
 import java.util.ArrayList;
@@ -134,7 +133,7 @@ public class CompassApplication extends Application{
      * @return A Long->CategoryContent HashMap.
      */
     public synchronized Map<Long, TDCCategory> getAvailableCategories(){
-        if (mAvailableCategories == null){
+        if (mAvailableCategories == null || mAvailableCategories.isEmpty()){
             TDCCategoryTableHandler handler = new TDCCategoryTableHandler(this);
             mAvailableCategories = handler.readCategories();
             handler.close();

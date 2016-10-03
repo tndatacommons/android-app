@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     android:gravity="center" >
 
+    <org.tndata.android.compass.ui.ProgressView
+        android:id="@+id/playground_test"
+        android:layout_width="120dp"
+        android:layout_height="300dp"
+        android:layout_margin="10dp" />
 
     <Button
         android:id="@+id/playground_button_calendar"

@@ -66,6 +66,10 @@ public class BaseItemCardHolder extends RecyclerView.ViewHolder{
         mBinding.baseContent.baseSubtitle.setVisibility(View.VISIBLE);
     }
 
+    public void hideSubtitle(){
+        mBinding.baseContent.baseSubtitle.setVisibility(View.GONE);
+    }
+
     public void setOnClickListener(View.OnClickListener listener, @IdRes int resId){
         itemView.setId(resId);
         itemView.setOnClickListener(listener);

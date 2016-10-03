@@ -15,8 +15,11 @@ import android.view.WindowManager;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.activity.AwardsActivity;
 import org.tndata.android.compass.model.*;
+
+import es.sandwatch.httprequests.HttpRequest;
 
 
 /**
@@ -307,5 +310,18 @@ public final class CompassUtil{
     public static boolean hasPermission(@NonNull Context context, String permission){
         int permissionGranted = PackageManager.PERMISSION_GRANTED;
         return ContextCompat.checkSelfPermission(context, permission) == permissionGranted;
+    }
+
+    /**
+     * Logs some information to the backend.
+     *
+     * @param context a reference to the context.
+     * @param title the title of the log.
+     * @param message the content of the log.
+     */
+    public static void log(Context context, String title, String message){
+        if (BuildConfig.DEBUG) {
+            HttpRequest.post(null, API.URL.postLog(), API.BODY.postLog(context, title, message));
+        }
     }
 }

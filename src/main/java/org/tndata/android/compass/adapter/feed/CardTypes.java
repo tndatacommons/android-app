@@ -154,6 +154,25 @@ final class CardTypes{
     }
 
     /**
+     * Gets the position of the progress card.
+     *
+     * @return the position of the progress card.
+     */
+    static int getProgressPosition(){
+        return getRewardPosition()+1;
+    }
+
+    /**
+     * Tells whether a position is the position of the progress card.
+     *
+     * @param position the position to be checked.
+     * @return true if it is the position of the progress card, false otherwise.
+     */
+    static boolean isProgress(int position){
+        return getProgressPosition() == position;
+    }
+
+    /**
      * Tells whether there are goal suggestions.
      *
      * @return true if there are goal suggestions, false otherwise.
@@ -186,7 +205,7 @@ final class CardTypes{
      * @return the position of a goals card.
      */
     static int getGoalsPosition(){
-        return getRewardPosition()+1;
+        return getProgressPosition()+1;
     }
 
     /**
@@ -222,6 +241,6 @@ final class CardTypes{
         if (hasGoals()){
             return getGoalsPosition()+1;
         }
-        return getRewardPosition()+1;
+        return getProgressPosition()+1;
     }
 }

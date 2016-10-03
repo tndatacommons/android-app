@@ -13,9 +13,11 @@ import android.widget.Space;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.databinding.CardDetailBinding;
 import org.tndata.android.compass.databinding.CardEditableListBinding;
+import org.tndata.android.compass.databinding.CardProgressBinding;
 import org.tndata.android.compass.databinding.ItemProgressFooterBinding;
 import org.tndata.android.compass.holder.DetailCardHolder;
 import org.tndata.android.compass.holder.EditableListCardHolder;
+import org.tndata.android.compass.holder.ProgressCardHolder;
 import org.tndata.android.compass.holder.ProgressFooterHolder;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.TDCCategory;
@@ -41,7 +43,8 @@ public class MyGoalAdapter
     private static final int TYPE_BLANK = 0;
     private static final int TYPE_GOAL = TYPE_BLANK+1;
     private static final int TYPE_CUSTOM_ACTIONS = TYPE_GOAL+1;
-    private static final int TYPE_FOOTER = TYPE_CUSTOM_ACTIONS+1;
+    private static final int TYPE_PROGRESS = TYPE_CUSTOM_ACTIONS+1;
+    private static final int TYPE_FOOTER = TYPE_PROGRESS+1;
 
 
     private Context mContext;
@@ -78,20 +81,28 @@ public class MyGoalAdapter
         else if (position == 1){
             return TYPE_GOAL;
         }
-        else{// if (position == 2){
+        else if (position == 2){
+            if (mCustomActions == null){
+                return TYPE_PROGRESS;
+            }
+            else{
+                return TYPE_CUSTOM_ACTIONS;
+            }
+        }
+        else{// if (position == 3){
             if (mCustomActions == null){
                 return TYPE_FOOTER;
             }
             else{
-                return TYPE_CUSTOM_ACTIONS;
+                return TYPE_PROGRESS;
             }
         }
     }
 
     @Override
     public int getItemCount(){
-        //Blank, goal, and either the footer or the list of actions; always 3
-        return 3;
+        //Blank, goal, progress, and either the footer or the list of actions; always 4
+        return 4;
     }
 
     @Override
@@ -121,6 +132,13 @@ public class MyGoalAdapter
             );
             return mCustomActionListHolder;
         }
+        else if (viewType == TYPE_PROGRESS){
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            CardProgressBinding binding = DataBindingUtil.inflate(
+                    inflater, R.layout.card_progress, parent, false
+            );
+            return new ProgressCardHolder(binding);
+        }
         else if (viewType == TYPE_FOOTER){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             ItemProgressFooterBinding binding = DataBindingUtil.inflate(
@@ -147,6 +165,8 @@ public class MyGoalAdapter
 
             case TYPE_GOAL:
                 DetailCardHolder goalHolder = (DetailCardHolder)rawHolder;
+                goalHolder.setHeaderBackgroundColor(Color.parseColor(mCategory.getColor()));
+                goalHolder.setTitleColor(0xFFFFFFFF);
                 goalHolder.setTitle(mUserGoal.getTitle());
                 goalHolder.setContent(mUserGoal.getDescription());
                 break;
@@ -157,12 +177,18 @@ public class MyGoalAdapter
                 customActionsHolder.setTitle(R.string.my_goal_custom_actions_title);
                 customActionsHolder.setInputHint(R.string.my_goal_custom_actions_hint);
                 break;
+
+            case TYPE_PROGRESS:
+                ProgressCardHolder holder = (ProgressCardHolder)rawHolder;
+                holder.setCompletedItems(mUserGoal.getWeeklyCompletions());
+                holder.setProgress(mUserGoal.getEngagementRank());
+                break;
         }
     }
 
     public void setCustomActions(List<CustomAction> customActions){
         mCustomActions = customActions;
-        notifyItemRemoved(2);
+        notifyItemRemoved(3);
         notifyItemInserted(2);
     }
 

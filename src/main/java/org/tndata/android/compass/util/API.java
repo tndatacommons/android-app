@@ -1,5 +1,6 @@
 package org.tndata.android.compass.util;
 
+import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -7,6 +8,7 @@ import android.support.annotation.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.BuildConfig;
+import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.model.*;
 
 import java.util.TimeZone;
@@ -371,6 +373,10 @@ public final class API{
         public static String postResetEmailUrl(){
             return BASE_URL + "reset-password/";
         }
+
+        public static String postLog(){
+            return "https://staging.tndata.org/cronlog/add/";
+        }
     }
 
 
@@ -662,6 +668,21 @@ public final class API{
             JSONObject body = new JSONObject();
             try{
                 body.put("organization", organizationId);
+            }
+            catch (JSONException jx){
+                jx.printStackTrace();
+            }
+            return body;
+        }
+
+        public static JSONObject postLog(Context context, String title, String message){
+            JSONObject body = new JSONObject();
+            try{
+                CompassApplication app = (CompassApplication)context.getApplicationContext();
+                body.put("command", title);
+                body.put("message", message);
+                body.put("host", app.getUser().getEmail());
+                body.put("key", context.getString(org.tndata.android.compass.R.string.logging_key));
             }
             catch (JSONException jx){
                 jx.printStackTrace();

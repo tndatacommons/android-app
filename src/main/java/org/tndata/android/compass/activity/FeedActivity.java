@@ -416,7 +416,7 @@ public class FeedActivity
 
             case DrawerAdapter.DRAWER_COUNT:
                 //Debug button
-                startActivity(RewardActivity.getIntent(this, null));
+                startActivity(new Intent(this, PlaygroundActivity.class));
                 break;
         }
         mBinding.feedDrawerLayout.closeDrawers();
