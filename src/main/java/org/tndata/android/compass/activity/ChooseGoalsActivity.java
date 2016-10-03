@@ -162,9 +162,6 @@ public class ChooseGoalsActivity
 
     @Override
     public void loadMore(){
-        if (API.STAGING && mGetGoalsNextUrl.startsWith("https")){
-            mGetGoalsNextUrl = mGetGoalsNextUrl.replaceFirst("s", "");
-        }
         mGetGoalsRC = HttpRequest.get(this, mGetGoalsNextUrl);
     }
 

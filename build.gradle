@@ -47,8 +47,6 @@ android {
         }
     }
 
-    //useLibrary 'org.apache.http.legacy'
-
     defaultConfig {
         applicationId "org.tndata.android.compass"
         minSdkVersion 14
