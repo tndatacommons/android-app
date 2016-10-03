@@ -2,7 +2,6 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -50,7 +49,7 @@ public class MyGoalAdapter
     private Context mContext;
     private Listener mListener;
     private UserGoal mUserGoal;
-    private TDCCategory mCategory;
+    private int mColor;
     private List<CustomAction> mCustomActions;
 
     private EditableListCardHolder mCustomActionListHolder;
@@ -65,11 +64,17 @@ public class MyGoalAdapter
      * @param userGoal the user goal to be displayed.
      * @param category the primary category of the goal provided.
      */
+    @SuppressWarnings("deprecation")
     public MyGoalAdapter(Context context, Listener listener, UserGoal userGoal, TDCCategory category){
         mContext = context;
         mListener = listener;
         mUserGoal = userGoal;
-        mCategory = category;
+        if (category == null){
+            mColor = context.getResources().getColor(R.color.primary);
+        }
+        else{
+            mColor = category.getColorInt();
+        }
         mCustomActions = null;
     }
 
@@ -165,7 +170,7 @@ public class MyGoalAdapter
 
             case TYPE_GOAL:
                 DetailCardHolder goalHolder = (DetailCardHolder)rawHolder;
-                goalHolder.setHeaderBackgroundColor(Color.parseColor(mCategory.getColor()));
+                goalHolder.setHeaderBackgroundColor(mColor);
                 goalHolder.setTitleColor(0xFFFFFFFF);
                 goalHolder.setTitle(mUserGoal.getTitle());
                 goalHolder.setContent(mUserGoal.getDescription());
@@ -173,7 +178,7 @@ public class MyGoalAdapter
 
             case TYPE_CUSTOM_ACTIONS:
                 EditableListCardHolder customActionsHolder = (EditableListCardHolder)rawHolder;
-                customActionsHolder.setColor(Color.parseColor(mCategory.getColor()));
+                customActionsHolder.setColor(mColor);
                 customActionsHolder.setTitle(R.string.my_goal_custom_actions_title);
                 customActionsHolder.setInputHint(R.string.my_goal_custom_actions_hint);
                 break;

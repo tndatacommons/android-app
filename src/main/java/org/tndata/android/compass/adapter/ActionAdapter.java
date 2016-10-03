@@ -2,7 +2,6 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -83,7 +82,7 @@ public class ActionAdapter
                 mColor = mContext.getResources().getColor(R.color.primary);
             }
             else{
-                mColor = Color.parseColor(category.getColor());
+                mColor = category.getColorInt();
             }
         }
     }
@@ -221,7 +220,7 @@ public class ActionAdapter
     }
 
     public void setCategory(@NonNull TDCCategory category){
-        mColor = Color.parseColor(category.getColor());
+        mColor = category.getColorInt();
         //This method will always be called when the Action displayed is a UserAction
         notifyItemRangeChanged(1, 3);
     }

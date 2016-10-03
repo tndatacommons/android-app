@@ -41,9 +41,6 @@ public class MyGoalActivity
     private static final String USER_GOAL_KEY = "org.tndata.compass.MyGoal.UserGoal";
     private static final String USER_GOAL_ID_KEY = "org.tndata.compass.MyGoal.UserGoalId";
 
-    //Poor man's "time in activity" timer.
-    private long mStartTime;
-    private long mEndTime;
 
     /**
      * Gets the Intent used to launch this activity when a goal is unavailable.
@@ -56,7 +53,6 @@ public class MyGoalActivity
         return new Intent(context, MyGoalActivity.class)
                 .putExtra(USER_GOAL_ID_KEY, userGoalId);
     }
-
 
     /**
      * Gets the Intent used to launch this activity when a goal is available.
@@ -76,7 +72,12 @@ public class MyGoalActivity
 
     private UserGoal mUserGoal;
 
+    //Poor man's "time in activity" timer
+    private long mStartTime;
+
+    //Request codes
     private int mGetUserGoalRC;
+    private int mGetCategoryRC;
     private int mGetCustomActionsRC;
     private int mPostCustomActionRC;
 
@@ -110,13 +111,13 @@ public class MyGoalActivity
 
     @Override
     protected void onStop() {
-        super.onStop();
-        mEndTime = System.currentTimeMillis();
+        long endTime = System.currentTimeMillis();
         Answers.getInstance().logContentView(new ContentViewEvent()
                 .putContentName(mUserGoal.getTitle())
                 .putContentType("UserGoal")
                 .putContentId("" + mUserGoal.getId())
-                .putCustomAttribute("Duration", (mEndTime - mStartTime) / 1000));
+                .putCustomAttribute("Duration", (endTime - mStartTime) / 1000));
+        super.onStop();
     }
 
     @Override
@@ -128,6 +129,9 @@ public class MyGoalActivity
     public void onRequestComplete(int requestCode, String result){
         if (requestCode == mGetUserGoalRC){
             Parser.parse(result, UserGoal.class, this);
+        }
+        else if (requestCode ==mGetCategoryRC){
+            Parser.parse(result, TDCCategory.class, this);
         }
         else if (requestCode == mGetCustomActionsRC){
             Parser.parse(result, ParserModels.CustomActionResultSet.class, this);
@@ -141,6 +145,9 @@ public class MyGoalActivity
     public void onRequestFailed(int requestCode, HttpRequestError error){
         if (requestCode == mGetUserGoalRC){
             displayMessage("Couldn't load goal data...");
+        }
+        else if (requestCode == mGetCategoryRC){
+            setCategory(null);
         }
         else if (requestCode == mGetCustomActionsRC){
             mAdapter.fetchCustomActionsFailed();
@@ -159,6 +166,9 @@ public class MyGoalActivity
     public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
         if (result instanceof UserGoal){
             setGoal((UserGoal)result);
+        }
+        else if (result instanceof TDCCategory){
+            setCategory((TDCCategory)result);
         }
         else if (result instanceof ParserModels.CustomActionResultSet){
             mAdapter.setCustomActions(((ParserModels.CustomActionResultSet)result).results);
@@ -194,23 +204,35 @@ public class MyGoalActivity
     private void setGoal(UserGoal userGoal){
         mUserGoal = userGoal;
 
-        TDCCategory category = mApp.getAvailableCategories().get(mUserGoal.getPrimaryCategoryId());
-        setColor(category.getColorInt());
-        View header = inflateHeader(R.layout.header_hero);
-        ImageView image = (ImageView)header.findViewById(R.id.header_hero_image);
-        if (category.getImageUrl() == null || category.getImageUrl().isEmpty()){
-            image.setImageResource(R.drawable.compass_master_illustration);
+        long categoryId = mUserGoal.getPrimaryCategoryId();
+        TDCCategory category = mApp.getAvailableCategories().get(categoryId);
+        if (category == null){
+            mGetCategoryRC = HttpRequest.get(this, API.URL.getCategory(categoryId));
         }
         else{
-            ImageLoader.Options options = new ImageLoader.Options()
-                    .setPlaceholder(R.drawable.compass_master_illustration);
-            ImageLoader.loadBitmap(image, category.getImageUrl(), options);
+            setCategory(category);
         }
 
-        mAdapter = new MyGoalAdapter(this, this, mUserGoal, category);
-        setAdapter(mAdapter);
-
         mGetCustomActionsRC = HttpRequest.get(this, API.URL.getCustomActions(mUserGoal));
+    }
+
+    private void setCategory(TDCCategory category){
+        if (category != null){
+            setColor(category.getColorInt());
+            View header = inflateHeader(R.layout.header_hero);
+            ImageView image = (ImageView) header.findViewById(R.id.header_hero_image);
+            if (category.getImageUrl() == null || category.getImageUrl().isEmpty()){
+                image.setImageResource(R.drawable.compass_master_illustration);
+            }
+            else{
+                ImageLoader.Options options = new ImageLoader.Options()
+                        .setPlaceholder(R.drawable.compass_master_illustration);
+                ImageLoader.loadBitmap(image, category.getImageUrl(), options);
+            }
+
+            mAdapter = new MyGoalAdapter(this, this, mUserGoal, category);
+            setAdapter(mAdapter);
+        }
     }
 
     @Override
