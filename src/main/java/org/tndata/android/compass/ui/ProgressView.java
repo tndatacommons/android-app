@@ -4,8 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.text.TextPaint;
@@ -32,6 +30,7 @@ public class ProgressView extends View{
 
     //Bitmap related objects
     private Bitmap mProgressBitmap;
+    private Bitmap mGrayBitmap;
     private Paint mGrayscalePaint;
     private Rect mGrayscaleSrcBounds;
     private Rect mGrayscaleDstBounds;
@@ -73,13 +72,14 @@ public class ProgressView extends View{
      */
     private void init(){
         mProgressBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.master_circle_150dp);
+        mGrayBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_black50_150dp);
         mGrayscalePaint = new Paint();
         mGrayscalePaint.setAntiAlias(true);
         mGrayscalePaint.setFilterBitmap(true);
         mGrayscalePaint.setDither(true);
-        ColorMatrix matrix = new ColorMatrix();
-        matrix.setSaturation(0);
-        mGrayscalePaint.setColorFilter(new ColorMatrixColorFilter(matrix));
+        //ColorMatrix matrix = new ColorMatrix();
+        //matrix.setSaturation(0);
+        //mGrayscalePaint.setColorFilter(new ColorMatrixColorFilter(matrix));
         mGrayscaleSrcBounds = new Rect();
         mGrayscaleDstBounds = new Rect();
         mColorPaint = new Paint();
@@ -200,7 +200,7 @@ public class ProgressView extends View{
         mColorDstBounds.set(left, dstBoundary, right, bottom);
 
         //Draw the bitmap
-        canvas.drawBitmap(mProgressBitmap, mGrayscaleSrcBounds, mGrayscaleDstBounds, mGrayscalePaint);
+        canvas.drawBitmap(mGrayBitmap, mGrayscaleSrcBounds, mGrayscaleDstBounds, mGrayscalePaint);
         canvas.drawBitmap(mProgressBitmap, mColorSrcBounds, mColorDstBounds, mColorPaint);
 
         //Draw the percentages
