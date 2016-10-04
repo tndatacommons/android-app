@@ -21,7 +21,7 @@ public abstract class TDCContent extends TDCBase implements Parcelable, Comparab
     @SerializedName("html_description")
     private String mHtmlDescription;
     @SerializedName("icon_url")
-    private String mIconUrl;
+    private String mIconUrl = "";
 
 
     public TDCContent(){
@@ -67,7 +67,10 @@ public abstract class TDCContent extends TDCBase implements Parcelable, Comparab
     }
 
     public String getIconUrl(){
-        return mIconUrl;
+        if(mIconUrl != null){
+            return mIconUrl;
+        }
+        return "";
     }
 
 
