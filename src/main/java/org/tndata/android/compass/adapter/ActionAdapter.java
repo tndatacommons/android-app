@@ -2,7 +2,6 @@ package org.tndata.android.compass.adapter;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -52,7 +51,7 @@ public class ActionAdapter
     private Context mContext;
     private Listener mListener;
     private Action mAction;
-    private TDCCategory mCategory;
+    private int mColor;
 
     private Button mGotItButton;
 
@@ -64,6 +63,7 @@ public class ActionAdapter
      * @param listener a listener object.
      * @param action the action to be displayed.
      */
+    @SuppressWarnings("deprecation")
     public ActionAdapter(@NonNull Context context, @NonNull Listener listener,
                          @NonNull Action action){
 
@@ -77,7 +77,13 @@ public class ActionAdapter
             long categoryId = ((UserAction)mAction).getPrimaryCategoryId();
             CompassUtil.log(mContext, "Action, requested category", categoryId + "");
             CompassUtil.log(mContext, "Action, categories", app.getAvailableCategories().size() + "");
-            mCategory = app.getAvailableCategories().get(categoryId);
+            TDCCategory category = app.getAvailableCategories().get(categoryId);
+            if (category == null){
+                mColor = mContext.getResources().getColor(R.color.primary);
+            }
+            else{
+                mColor = category.getColorInt();
+            }
         }
     }
 
@@ -155,7 +161,7 @@ public class ActionAdapter
                 GoalCardHolder goalHolder = (GoalCardHolder)rawHolder;
                 goalHolder.setTitle(mAction.getGoalTitle());
                 if (mAction instanceof UserAction){
-                    goalHolder.setColor(Color.parseColor(mCategory.getColor()));
+                    goalHolder.setColor(mColor);
                     goalHolder.setIcon(((UserAction)mAction).getPrimaryGoalIconUrl());
                 }
                 else if (mAction instanceof CustomAction){
@@ -173,7 +179,7 @@ public class ActionAdapter
                 ContentCardHolder contentHolder = (ContentCardHolder)rawHolder;
                 contentHolder.setHeader(R.string.action_content_header);
                 if (mAction instanceof UserAction){
-                    contentHolder.setColor(Color.parseColor(mCategory.getColor()));
+                    contentHolder.setColor(mColor);
                     contentHolder.setTitle(mAction.getTitle().toUpperCase());
                     contentHolder.setContent(((UserAction)mAction).getDescription());
                 }
@@ -204,13 +210,19 @@ public class ActionAdapter
             case TYPE_DETAIL:
                 if (mAction instanceof UserAction){
                     DetailCardHolder detailHolder = (DetailCardHolder)rawHolder;
-                    detailHolder.setHeaderBackgroundColor(Color.parseColor(mCategory.getColor()));
+                    detailHolder.setHeaderBackgroundColor(mColor);
                     detailHolder.setTitleColor(0xFFFFFFFF);
                     detailHolder.setTitle(R.string.action_detail_title);
                     detailHolder.setContent(((UserAction)mAction).getAction().getBehaviorDescription());
                 }
                 break;
         }
+    }
+
+    public void setCategory(@NonNull TDCCategory category){
+        mColor = category.getColorInt();
+        //This method will always be called when the Action displayed is a UserAction
+        notifyItemRangeChanged(1, 3);
     }
 
     /**

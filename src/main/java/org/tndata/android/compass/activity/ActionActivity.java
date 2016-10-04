@@ -21,6 +21,8 @@ import org.tndata.android.compass.model.Action;
 import org.tndata.android.compass.model.CustomAction;
 import org.tndata.android.compass.model.TDCCategory;
 import org.tndata.android.compass.model.UserAction;
+import org.tndata.android.compass.parser.Parser;
+import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.ImageLoader;
@@ -36,6 +38,7 @@ import java.util.Locale;
 import java.util.Queue;
 
 import es.sandwatch.httprequests.HttpRequest;
+import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
@@ -47,7 +50,7 @@ import es.sandwatch.httprequests.HttpRequest;
  */
 public class ActionActivity
         extends MaterialActivity
-        implements ActionAdapter.Listener{
+        implements ActionAdapter.Listener, HttpRequest.RequestCallback, Parser.ParserCallback{
 
     private static final String TAG = "ActionActivity";
 
@@ -68,6 +71,8 @@ public class ActionActivity
     //The action in question
     private Action mAction;
 
+    private int mGetCategoryRC;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -85,7 +90,7 @@ public class ActionActivity
         if (action != null){
             setAction(action);
         }
-        //Otherwise, finish the activity, as this shouls never happen
+        //Otherwise, finish the activity, as this should never happen
         else{
             finish();
         }
@@ -111,7 +116,12 @@ public class ActionActivity
         //Set the category
         if (mAction instanceof UserAction){
             UserAction userAction = (UserAction)mAction;
-            setCategory(mApp.getAvailableCategories().get(userAction.getPrimaryCategoryId()));
+            long categoryId = userAction.getPrimaryCategoryId();
+            TDCCategory category = mApp.getAvailableCategories().get(categoryId);
+            if (category == null){
+                mGetCategoryRC = HttpRequest.get(this, API.URL.getCategory(categoryId));
+            }
+            setCategory(category);
         }
         else{
             setCategory(null);
@@ -123,6 +133,37 @@ public class ActionActivity
 
         //Refresh the menu
         invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onRequestComplete(int requestCode, String result){
+        if (requestCode == mGetCategoryRC){
+            Parser.parse(result, TDCCategory.class, this);
+        }
+    }
+
+    @Override
+    public void onRequestFailed(int requestCode, HttpRequestError error){
+        //no-op
+    }
+
+    @Override
+    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        //no-op
+    }
+
+    @Override
+    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        if (result instanceof TDCCategory){
+            TDCCategory category = (TDCCategory)result;
+            setCategory(category);
+            mAdapter.setCategory(category);
+        }
+    }
+
+    @Override
+    public void onParseFailed(int requestCode){
+        //no-op
     }
 
     /**

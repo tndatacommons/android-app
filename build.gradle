@@ -47,8 +47,6 @@ android {
         }
     }
 
-    //useLibrary 'org.apache.http.legacy'
-
     defaultConfig {
         applicationId "org.tndata.android.compass"
         minSdkVersion 14
@@ -107,7 +105,6 @@ dependencies {
     compile 'me.relex:circleindicator:1.1.5@aar'
     compile 'com.github.clans:fab:1.6.2'
     compile 'es.sandwatch:http-requests:1.0.0'
-    compile 'org.jsoup:jsoup:1.9.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.amlcurran.showcaseview:library:5.4.3'
 }
