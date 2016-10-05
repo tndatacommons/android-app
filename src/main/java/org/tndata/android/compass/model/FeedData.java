@@ -335,6 +335,8 @@ public class FeedData{
         private int mCompletedActions;
         @SerializedName("progress")
         private int mProgressPercentage;
+        @SerializedName("weekly_completions")
+        private int mWeeklyCompletions;
         @SerializedName("engagement_rank")
         private double mEngagementRank;
 
@@ -356,9 +358,9 @@ public class FeedData{
         }
 
         /**
-         * Gets the number of completed actions.
+         * Gets the number of actions completed <b>today</b>.
          *
-         * @return the total number of completed actions.
+         * @return the total number of actions completed today.
          */
         public int getCompletedActions(){
             return mCompletedActions;
@@ -371,6 +373,15 @@ public class FeedData{
          */
         public int getTotalActions(){
             return mTotalActions;
+        }
+
+        /**
+         * Gets the number of actions completed <b>this week</b>.
+         *
+         * @return the number of actions completed this week.
+         */
+        public int getWeeklyCompletions(){
+            return mWeeklyCompletions;
         }
 
         /**
