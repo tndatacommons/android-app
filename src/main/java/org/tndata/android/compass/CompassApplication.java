@@ -105,7 +105,6 @@ public class CompassApplication extends Application{
         }
         mUser = null;
         User.deleteFromPreferences(this);
-        Tour.reset();
     }
 
     /**
