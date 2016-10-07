@@ -402,14 +402,4 @@ public class ActionActivity
             }
         }
     }
-
-    @Override
-    public void onDeleteBehaviorClick(){
-        if (mAction instanceof UserAction){
-            String url = API.URL.deleteBehavior(((UserAction)mAction).getUserBehaviorId());
-            HttpRequest.delete(null, url);
-            mApp.removeAction(mAction);
-            finish();
-        }
-    }
 }
