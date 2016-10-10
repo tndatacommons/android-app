@@ -62,7 +62,6 @@ public class ActionActivity
 
     //Poor man's "time in activity" timer.
     private long mStartTime;
-    private long mEndTime;
 
     //References to the app class and the adapter
     private CompassApplication mApp;
@@ -289,9 +288,9 @@ public class ActionActivity
      * for a specific scheduled event, so we'll give them an option to add to their Calendar.
      */
     public void sendToCalendar(){
-        if (mAction instanceof UserAction) {
+        if (mAction instanceof UserAction){
             UserAction userAction = (UserAction) mAction;
-            if(userAction.getAction().hasDatetimeResource()) {
+            if (userAction.getAction().hasDatetimeResource()){
 
                 // NOTE: Let's save this as a positive action, prior to adding to their calendar.
                 startService(new Intent(this, ActionReportService.class)
@@ -377,13 +376,6 @@ public class ActionActivity
     @Override
     public void onGotItClick(){
         if (mAction != null){
-            mEndTime = System.currentTimeMillis();
-            Answers.getInstance().logContentView(new ContentViewEvent()
-                    .putContentName(mAction.getTitle())
-                    .putContentType("Action")
-                    .putContentId("" + mAction.getId())
-                    .putCustomAttribute("Duration", (mEndTime - mStartTime) / 1000));
-
             startService(new Intent(this, ActionReportService.class)
                     .putExtra(ActionReportService.ACTION_KEY, mAction)
                     .putExtra(ActionReportService.STATE_KEY, ActionReportService.STATE_COMPLETED));
@@ -393,20 +385,25 @@ public class ActionActivity
 
             Toast.makeText(this, R.string.action_completed_toast, Toast.LENGTH_SHORT).show();
             CompassApplication application = (CompassApplication)getApplication();
-            if(application.getFeedData() == null) {
+            if(application.getFeedData() == null){
                 startActivity(new Intent(this, LauncherActivity.class));
             }
-            finish();
+            else{
+                startActivity(RewardActivity.getIntent(this, null));
+                finish();
+            }
         }
     }
 
     @Override
-    public void onDeleteBehaviorClick(){
-        if (mAction instanceof UserAction){
-            String url = API.URL.deleteBehavior(((UserAction)mAction).getUserBehaviorId());
-            HttpRequest.delete(null, url);
-            mApp.removeAction(mAction);
-            finish();
-        }
+    public void finish(){
+        int time = (int)(System.currentTimeMillis()-mStartTime)/1000;
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName(mAction.getTitle())
+                .putContentType("Action")
+                .putContentId("" + mAction.getId())
+                .putCustomAttribute("Duration", time));
+
+        super.finish();
     }
 }

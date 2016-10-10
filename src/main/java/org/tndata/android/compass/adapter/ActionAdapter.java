@@ -39,8 +39,7 @@ public class ActionAdapter
         extends RecyclerView.Adapter
         implements
                 GoalCardHolder.Listener,
-                View.OnClickListener,
-                PopupMenu.OnMenuItemClickListener{
+                View.OnClickListener{
 
     private static final int TYPE_BLANK = 0;
     private static final int TYPE_GOAL = TYPE_BLANK+1;
@@ -248,16 +247,6 @@ public class ActionAdapter
         }
     }
 
-    @Override
-    public boolean onMenuItemClick(MenuItem item){
-        switch (item.getItemId()){
-            case R.id.action_remove_behavior:
-                mListener.onDeleteBehaviorClick();
-                return true;
-        }
-        return false;
-    }
-
 
     /**
      * Listener interface for ActionAdapter.
@@ -280,10 +269,5 @@ public class ActionAdapter
          * Called when the got it button is clicked.
          */
         void onGotItClick();
-
-        /**
-         * Called when the remove behavior menu item is clicked.
-         */
-        void onDeleteBehaviorClick();
     }
 }

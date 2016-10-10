@@ -10,6 +10,7 @@ import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
+import org.tndata.android.compass.util.Tour;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -277,6 +278,7 @@ public class SignUpFragment
             mGetCategoriesRC = HttpRequest.get(this, API.URL.getCategories());
         }
         else if (result instanceof ParserModels.CategoryContentResultSet){
+            Tour.reset();
             mListener.onSignUpSuccess();
         }
     }
