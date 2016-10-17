@@ -12,7 +12,6 @@ import com.google.gson.annotations.SerializedName;
 public class SearchResult extends TDCBase{
     private static final String CATEGORY_TYPE = "search-category";
     private static final String GOAL_TYPE = "search-goal";
-    private static final String BEHAVIOR_TYPE = "search-behavior";
     private static final String ACTION_TYPE = "search-action";
 
     public static final String TYPE = "search_result";
@@ -45,10 +44,6 @@ public class SearchResult extends TDCBase{
 
     public boolean isGoal(){
         return mObjectType.equals(GOAL_TYPE);
-    }
-
-    public boolean isBehavior(){
-        return mObjectType.equals(BEHAVIOR_TYPE);
     }
 
     public boolean isAction(){
