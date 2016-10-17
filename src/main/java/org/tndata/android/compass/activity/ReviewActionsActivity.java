@@ -26,7 +26,7 @@ import es.sandwatch.httprequests.HttpRequestError;
 
 
 /**
- * Activity where the user can review the actions in a particular goal or behavior.
+ * Activity where the user can review the actions in a particular goal.
  *
  * @author Ismael Alonso
  * @version 1.0.0

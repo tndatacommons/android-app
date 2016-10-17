@@ -24,7 +24,7 @@ import java.util.Queue;
  */
 public class GoalActivity extends MaterialActivity implements GoalAdapter.GoalListener{
     //Argument keys; since this activity does NOT handle the addition ops, only
-    //  the category and the behavior need to be passed
+    //  the category and the goal need to be passed
     public static final String CATEGORY_KEY = "org.tndata.compass.Goal.Category";
     public static final String GOAL_KEY = "org.tndata.compass.Goal.Goal";
 
