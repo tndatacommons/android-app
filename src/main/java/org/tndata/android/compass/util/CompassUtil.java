@@ -223,9 +223,6 @@ public final class CompassUtil{
         else if (src.contains("usergoal")){
             return UserGoal.class;
         }
-        else if (src.contains("userbehavior")){
-            return UserBehavior.class;
-        }
         else if (src.contains("useraction")){
             return UserAction.class;
         }
@@ -245,9 +242,6 @@ public final class CompassUtil{
         }
         else if (src.contains("goal")){
             return TDCGoal.class;
-        }
-        else if (src.contains("behavior")){
-            return TDCBehavior.class;
         }
         else if (src.contains("action")){
             return TDCAction.class;

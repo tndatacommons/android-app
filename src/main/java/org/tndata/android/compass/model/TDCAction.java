@@ -28,14 +28,6 @@ public class TDCAction extends TDCContent{
     @SerializedName("external_resource_type")
     private String mExternalResourceType;
 
-    @SerializedName("behavior")
-    private long mBehaviorId;
-    @SerializedName("behavior_title")
-    private String mBehaviorTitle;
-    @SerializedName("behavior_description")
-    private String mBehaviorDescription;
-
-
     /*---------*
      * GETTERS *
      *---------*/
@@ -94,32 +86,6 @@ public class TDCAction extends TDCContent{
         return mExternalResourceType;
     }
 
-    /**
-     * Behavior id getter.
-     *
-     * @return the id of the action's parent behavior.
-     */
-    public long getBehaviorId(){
-        return mBehaviorId;
-    }
-
-    /**
-     * Behavior title getter.
-     *
-     * @return the title of the action's parent behavior.
-     */
-    public String getBehaviorTitle(){
-        return mBehaviorTitle;
-    }
-
-    /**
-     * Behavior description getter.
-     *
-     * @return the description of the action's parent behavior.
-     */
-    public String getBehaviorDescription(){
-        return mBehaviorDescription;
-    }
 
     @Override
     protected String getType(){
@@ -145,9 +111,6 @@ public class TDCAction extends TDCContent{
         dest.writeString(mExternalResource);
         dest.writeString(mExternalResourceName);
         dest.writeString(mExternalResourceType);
-        dest.writeLong(mBehaviorId);
-        dest.writeString(mBehaviorTitle);
-        dest.writeString(mBehaviorDescription);
     }
 
     public boolean hasDatetimeResource() {
@@ -187,8 +150,5 @@ public class TDCAction extends TDCContent{
         mExternalResource = src.readString();
         mExternalResourceName = src.readString();
         mExternalResourceType = src.readString();
-        mBehaviorId = src.readLong();
-        mBehaviorTitle = src.readString();
-        mBehaviorDescription = src.readString();
     }
 }

@@ -158,11 +158,6 @@ public final class API{
             }
         }
 
-        //Behaviors
-        public static String deleteBehavior(long userBehaviorId){
-            return BASE_URL + "users/behaviors/" + userBehaviorId + "/";
-        }
-
         //User actions
         public static String getUserActions(@NonNull TDCCategory category){
             return BASE_URL + "users/actions/?category=" + category.getId();

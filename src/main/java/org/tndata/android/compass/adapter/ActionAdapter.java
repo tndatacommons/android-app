@@ -6,12 +6,10 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
-import android.widget.PopupMenu;
 import android.widget.Space;
 
 import org.tndata.android.compass.CompassApplication;
@@ -30,7 +28,7 @@ import org.tndata.android.compass.util.CompassUtil;
 
 
 /**
- * Adapter to display an Action, including information about it's primary goal and behavior.
+ * Adapter to display an Action, including information about it's primary goal.
  *
  * @author Ismael Alonso
  * @version 1.0.0
@@ -212,7 +210,7 @@ public class ActionAdapter
                     detailHolder.setHeaderBackgroundColor(mColor);
                     detailHolder.setTitleColor(0xFFFFFFFF);
                     detailHolder.setTitle(R.string.action_detail_title);
-                    detailHolder.setContent(((UserAction)mAction).getAction().getBehaviorDescription());
+                    detailHolder.setContent(((UserAction)mAction).getAction().getMoreInfo());
                 }
                 break;
         }
