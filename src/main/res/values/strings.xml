@@ -347,6 +347,8 @@
     <string name="my_goal_custom_actions_title">How will you do this?</string>
     <string name="my_goal_custom_actions_hint">Type an idea here</string>
     <string name="my_goal_custom_action_reschedule">Reschedule</string>
+    <string name="my_goal_remove_condensed">Remove</string>
+    <string name="my_goal_remove">Remove goal</string>
 
     <!-- Goal card -->
     <string name="card_goal_title">For your goal</string>

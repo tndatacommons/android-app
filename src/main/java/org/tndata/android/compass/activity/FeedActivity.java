@@ -552,20 +552,44 @@ public class FeedActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         //TODO transition from RESULT_OK to custom result codes
         if (requestCode == GOAL_RC){
+            Goal removedGoal = null;
             if (resultCode == CustomContentActivity.GOAL_REMOVED_RC){
-                CustomGoal customGoal = data.getParcelableExtra(CustomContentActivity.REMOVED_GOAL_KEY);
-                mAdapter.notifyGoalRemoved(mApplication.removeGoal(customGoal));
-                Toast.makeText(this, R.string.goal_removed_toast, Toast.LENGTH_SHORT).show();
+                removedGoal = data.getParcelableExtra(CustomContentActivity.REMOVED_GOAL_KEY);
             }
             else if (resultCode == ReviewActionsActivity.GOAL_REMOVED_RC){
-                UserGoal userGoal = data.getParcelableExtra(ReviewActionsActivity.REMOVED_GOAL_KEY);
-                mAdapter.notifyGoalRemoved(mApplication.removeGoal(userGoal));
+                removedGoal = data.getParcelableExtra(ReviewActionsActivity.REMOVED_GOAL_KEY);
+            }
+            else if (resultCode == MyGoalActivity.GOAL_REMOVED_RC){
+                removedGoal = data.getParcelableExtra(MyGoalActivity.REMOVED_GOAL_KEY);
+            }
+
+            if (removedGoal != null){
+                mAdapter.notifyGoalRemoved(mApplication.removeGoal(removedGoal));
+
+                //If up next is a child of the removed goal replace it
+                if (mApplication.getFeedData().getUpNext().getParentId() == removedGoal.getId()){
+                    mApplication.getFeedData().replaceUpNext();
+                }
+
                 Toast.makeText(this, R.string.goal_removed_toast, Toast.LENGTH_SHORT).show();
             }
             else{
                 mAdapter.updateDataSet();
             }
         }
+        else if (requestCode == ACTION_RC){
+            if (resultCode == MyGoalActivity.GOAL_REMOVED_RC){
+                UserGoal userGoal = data.getParcelableExtra(MyGoalActivity.REMOVED_GOAL_KEY);
+                mAdapter.notifyGoalRemoved(mApplication.removeGoal(userGoal));
+                mApplication.getFeedData().replaceUpNext();
+            }
+            else if (resultCode == CustomContentActivity.GOAL_REMOVED_RC){
+                CustomGoal customGoal = data.getParcelableExtra(CustomContentActivity.REMOVED_GOAL_KEY);
+                mAdapter.notifyGoalRemoved(mApplication.removeGoal(customGoal));
+                mApplication.getFeedData().replaceUpNext();
+            }
+        }
+
         if (resultCode == RESULT_OK){
             if (requestCode == GOAL_SUGGESTION_RC){
                 mAdapter.dismissSuggestion();

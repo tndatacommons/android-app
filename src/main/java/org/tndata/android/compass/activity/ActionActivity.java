@@ -25,6 +25,7 @@ import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.util.API;
+import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ImageLoader;
 import org.tndata.android.compass.util.ItemSpacing;
 import org.tndata.android.compass.util.Tour;
@@ -60,6 +61,9 @@ public class ActionActivity
     private static final int SNOOZE_REQUEST_CODE = 61428;
     private static final int RESCHEDULE_REQUEST_CODE = 61429;
 
+    private static final int GOAL_RC = 6390;
+
+
     //Poor man's "time in activity" timer.
     private long mStartTime;
 
@@ -91,16 +95,17 @@ public class ActionActivity
         }
         //Otherwise, finish the activity, as this should never happen
         else{
+            //CompassUtil.log(this, "Gcm Message", "Action is null, why?");
             finish();
         }
     }
 
     @Override
-    protected void onStart() {
+    protected void onStart(){
         super.onStart();
-        // We want to get a rough idea of the amount of time the user spends in this
-        // activity prior to tapping "Got It". Therefore, we'll grab a timestamp here,
-        // then again when they tap the button, and log the difference.
+        //We want to get a rough idea of the amount of time the user spends in this
+        //  activity prior to tapping "Got It". Therefore, we'll grab a timestamp here,
+        //  then again when they tap the button, and log the difference.
         mStartTime = System.currentTimeMillis();
     }
 
@@ -338,7 +343,17 @@ public class ActionActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        if (resultCode == RESULT_OK){
+        if (requestCode == GOAL_RC){
+            if (resultCode == MyGoalActivity.GOAL_REMOVED_RC){
+                setResult(resultCode, data);
+                finish();
+            }
+            else if (resultCode == CustomContentActivity.GOAL_REMOVED_RC){
+                setResult(resultCode, data);
+                finish();
+            }
+        }
+        else if (resultCode == RESULT_OK){
             switch (requestCode){
                 case RESCHEDULE_REQUEST_CODE:
                     mAction = data.getParcelableExtra(TriggerActivity.ACTION_KEY);
@@ -362,15 +377,17 @@ public class ActionActivity
 
     @Override
     public void onGoalClick(){
+        Intent intent;
         if (mAction instanceof UserAction){
             long userGoalId = ((UserAction)mAction).getPrimaryUserGoalId();
-            startActivity(MyGoalActivity.getIntent(this, userGoalId));
+            intent = MyGoalActivity.getIntent(this, userGoalId);
         }
-        else if (mAction instanceof CustomAction){
-            long customGoalId = ((CustomAction)mAction).getCustomGoalId();
-            startActivity(new Intent(this, CustomContentActivity.class)
-                    .putExtra(CustomContentActivity.CUSTOM_GOAL_ID_KEY, customGoalId));
+        else {
+            long customGoalId = ((CustomAction) mAction).getCustomGoalId();
+            intent = new Intent(this, CustomContentActivity.class)
+                    .putExtra(CustomContentActivity.CUSTOM_GOAL_ID_KEY, customGoalId);
         }
+        startActivityForResult(intent, GOAL_RC);
     }
 
     @Override

@@ -128,7 +128,7 @@ public class CustomContentActivity
             getMenuInflater().inflate(R.menu.menu_custom_content, menu);
             return true;
         }
-        return false;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

@@ -207,6 +207,7 @@ public final class NotificationUtil{
      */
     public static void generateNotification(Context context, GcmMessage message){
         if (message.isUserActionMessage() || message.isCustomActionMessage()){
+            //CompassUtil.log(context, "Gcm Message", "Generating action notification");
             putActionNotification(context, message);
         }
         else if (message.isPackageEnrollmentMessage()){
