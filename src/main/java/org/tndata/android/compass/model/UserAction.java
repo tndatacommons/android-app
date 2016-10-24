@@ -50,6 +50,11 @@ public class UserAction extends Action implements ParserModels.ResultSet{
         return mAction.getTitle();
     }
 
+    @Override
+    public long getParentId(){
+        return mPrimaryGoalId;
+    }
+
     public String getDescription(){
         return mAction.getDescription();
     }

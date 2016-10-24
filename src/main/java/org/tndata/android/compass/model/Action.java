@@ -65,6 +65,13 @@ public abstract class Action extends UserContent implements Comparable<Action>{
     public abstract String getTitle();
 
     /**
+     * Gets the id of the parent primary Goal.
+     *
+     * @return the id of the parent primary Goal.
+     */
+    public abstract long getParentId();
+
+    /**
      * Trigger getter.
      *
      * @return the trigger.

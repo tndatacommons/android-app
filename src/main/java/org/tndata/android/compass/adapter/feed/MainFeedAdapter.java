@@ -497,7 +497,7 @@ public class MainFeedAdapter
      *----------------------*/
 
     public void notifyGoalRemoved(int position){
-        if (mGoalsHolder != null){
+        if (mGoalsHolder != null && position != -1){
             mGoalsHolder.notifyItemRemoved(position);
         }
     }

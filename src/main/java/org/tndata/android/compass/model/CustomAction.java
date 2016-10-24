@@ -61,6 +61,11 @@ public class CustomAction extends Action{
         return mTitle;
     }
 
+    @Override
+    public long getParentId(){
+        return mCustomGoalId;
+    }
+
     public void setGoal(CustomGoal goal){
         mGoal = goal;
     }

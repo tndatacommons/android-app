@@ -3,6 +3,8 @@ package org.tndata.android.compass.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -38,8 +40,12 @@ public class MyGoalActivity
                 Parser.ParserCallback,
                 MyGoalAdapter.Listener{
 
+    public static final int GOAL_REMOVED_RC = 3836;
+
     private static final String USER_GOAL_KEY = "org.tndata.compass.MyGoal.UserGoal";
     private static final String USER_GOAL_ID_KEY = "org.tndata.compass.MyGoal.UserGoalId";
+
+    public static final String REMOVED_GOAL_KEY = "org.tndata.compass.MyGoal.RemovedGoal";
 
 
     /**
@@ -118,6 +124,20 @@ public class MyGoalActivity
                 .putContentId("" + mUserGoal.getId())
                 .putCustomAttribute("Duration", (endTime - mStartTime) / 1000));
         super.onStop();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu_my_goal, menu);
+        return true;
+    }
+
+    @Override
+    protected boolean menuItemSelected(MenuItem item){
+        if (item.getItemId() == R.id.my_goal_remove){
+            removeGoal();
+        }
+        return super.menuItemSelected(item);
     }
 
     @Override
@@ -233,6 +253,12 @@ public class MyGoalActivity
             mAdapter = new MyGoalAdapter(this, this, mUserGoal, category);
             setAdapter(mAdapter);
         }
+    }
+
+    private void removeGoal(){
+        HttpRequest.delete(null, API.URL.deleteGoal(mUserGoal));
+        setResult(GOAL_REMOVED_RC, new Intent().putExtra(REMOVED_GOAL_KEY, mUserGoal));
+        finish();
     }
 
     @Override
