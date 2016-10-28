@@ -60,6 +60,7 @@ public class ActionActivity
 
     private static final int SNOOZE_REQUEST_CODE = 61428;
     private static final int RESCHEDULE_REQUEST_CODE = 61429;
+    private static final int REWARD_REQUEST_CODE = 4298;
 
     private static final int GOAL_RC = 6390;
 
@@ -81,6 +82,8 @@ public class ActionActivity
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
+        //CompassUtil.log(this, "ActionActivity", "Action Activity is firing up");
+
         mApp = (CompassApplication)getApplication();
 
         //Get the action, upcoming action and message from the intent. Only one of them
@@ -91,11 +94,12 @@ public class ActionActivity
 
         //If the action exists set it up
         if (action != null){
+            //CompassUtil.log(this, "Gcm Message - ActionActivity", "Action: " + action.toString());
             setAction(action);
         }
         //Otherwise, finish the activity, as this should never happen
         else{
-            //CompassUtil.log(this, "Gcm Message", "Action is null, why?");
+            //CompassUtil.log(this, "Gcm Message - ActionActivity", "Action is null, why?");
             finish();
         }
     }
@@ -107,6 +111,17 @@ public class ActionActivity
         //  activity prior to tapping "Got It". Therefore, we'll grab a timestamp here,
         //  then again when they tap the button, and log the difference.
         mStartTime = System.currentTimeMillis();
+    }
+
+    @Override
+    protected void onStop(){
+        int time = (int)(System.currentTimeMillis()-mStartTime)/1000;
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName(mAction.getTitle())
+                .putContentType("Action")
+                .putContentId("" + mAction.getId())
+                .putCustomAttribute("Duration", time));
+        super.onStop();
     }
 
     /**
@@ -365,6 +380,12 @@ public class ActionActivity
                     finish();
             }
         }
+        else if (requestCode == REWARD_REQUEST_CODE){
+            finish();
+            if (mApp.getFeedData() == null){
+                startActivity(new Intent(this, LauncherActivity.class));
+            }
+        }
     }
 
     @Override
@@ -401,26 +422,7 @@ public class ActionActivity
                     .putExtra(ACTION_KEY, mAction));
 
             Toast.makeText(this, R.string.action_completed_toast, Toast.LENGTH_SHORT).show();
-            CompassApplication application = (CompassApplication)getApplication();
-            if(application.getFeedData() == null){
-                startActivity(new Intent(this, LauncherActivity.class));
-            }
-            else{
-                startActivity(RewardActivity.getIntent(this, null));
-                finish();
-            }
+            startActivityForResult(RewardActivity.getIntent(this, null), REWARD_REQUEST_CODE);
         }
-    }
-
-    @Override
-    public void finish(){
-        int time = (int)(System.currentTimeMillis()-mStartTime)/1000;
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName(mAction.getTitle())
-                .putContentType("Action")
-                .putContentId("" + mAction.getId())
-                .putCustomAttribute("Duration", time));
-
-        super.finish();
     }
 }

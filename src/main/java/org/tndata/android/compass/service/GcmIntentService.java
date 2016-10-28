@@ -175,6 +175,13 @@ public class GcmIntentService extends IntentService{
             else if (result instanceof CustomAction){
                 mMessage.setCustomAction((CustomAction)result);
             }
+            if (mMessage.getAction() == null){
+                //CompassUtil.log(mContext, "Gcm Message", "mMessage.getAction() yields null");
+            }
+            else{
+                //CompassUtil.log(mContext, "Gcm Message", "mMessage.getAction() yields an action:");
+                //CompassUtil.log(mContext, "Gcm Message", mMessage.getAction().toString());
+            }
             NotificationUtil.generateNotification(mContext, mMessage);
             GcmBroadcastReceiver.completeWakefulIntent(mIntent);
         }
