@@ -3,7 +3,7 @@
     <data>
         <variable
             name="organization"
-            type="org.tndata.android.compass.model.Organization" />
+            type="org.tndata.compass.model.Organization" />
     </data>
 
     <android.support.v7.widget.CardView

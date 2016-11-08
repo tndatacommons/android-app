@@ -5,9 +5,10 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.tndata.android.compass.model.FeedData;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.compass.model.Goal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
+import org.tndata.compass.model.ResultSet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -213,7 +214,7 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
     }
 
     @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+    public void onProcessResult(int requestCode, ResultSet result){
         if (result instanceof ParserModels.FeedDataResultSet){
             mFeedData = ((ParserModels.FeedDataResultSet)result).results.get(0);
             mFeedData.init();
@@ -221,7 +222,7 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
     }
 
     @Override
-    public synchronized void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+    public synchronized void onParseSuccess(int requestCode, ResultSet result){
         if (result instanceof ParserModels.FeedDataResultSet){
             //When the feed data is loaded, begin loading the rest of the dataset
             mGetNextUserActionRC = HttpRequest.get(this, API.URL.getTodaysUserActions());

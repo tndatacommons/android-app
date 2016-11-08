@@ -4,9 +4,9 @@ import android.app.IntentService;
 import android.content.Intent;
 
 import org.json.JSONObject;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.GcmMessage;
-import org.tndata.android.compass.model.UserAction;
+import org.tndata.compass.model.Action;
+import org.tndata.compass.model.GcmMessage;
+import org.tndata.compass.model.UserAction;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.NotificationUtil;
 

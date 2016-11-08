@@ -11,11 +11,12 @@ import android.widget.ImageView;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ReviewActionsAdapter;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.TDCCategory;
-import org.tndata.android.compass.model.UserAction;
-import org.tndata.android.compass.model.UserCategory;
-import org.tndata.android.compass.model.UserGoal;
+import org.tndata.compass.model.Action;
+import org.tndata.compass.model.ResultSet;
+import org.tndata.compass.model.TDCCategory;
+import org.tndata.compass.model.UserAction;
+import org.tndata.compass.model.UserCategory;
+import org.tndata.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
@@ -202,12 +203,12 @@ public class ReviewActionsActivity
     }
 
     @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+    public void onProcessResult(int requestCode, ResultSet result){
 
     }
 
     @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+    public void onParseSuccess(int requestCode, ResultSet result){
         if (result instanceof ParserModels.UserCategoryResultSet){
             mUserCategory = ((ParserModels.UserCategoryResultSet)result).results.get(0);
             setColor(Color.parseColor(mUserCategory.getColor()));

@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.UserPlace;
+import org.tndata.compass.model.UserPlace;
 
 import java.util.List;
 

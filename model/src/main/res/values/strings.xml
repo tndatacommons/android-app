@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">Model</string>
+
+    <!-- Strings for reward content -->
+    <string name="reward_fortune_header">Here\'s a fortune cookie for you</string>
+    <string name="reward_fact_header">Here\'s a fun fact for you</string>
+    <string name="reward_joke_header">Here\'s a joke for you</string>
+    <string name="reward_quote_header">A thought for the day</string>
+    <string name="reward_fortune">Fortune cookie</string>
+    <string name="reward_fact">Fun fact</string>
+    <string name="reward_joke">Joke</string>
+    <string name="reward_share_via">Share via</string>
+
 </resources>

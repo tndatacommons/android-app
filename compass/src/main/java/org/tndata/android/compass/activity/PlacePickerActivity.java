@@ -39,8 +39,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.PlacePickerAdapter;
-import org.tndata.android.compass.model.Place;
-import org.tndata.android.compass.model.UserPlace;
+import org.tndata.compass.model.Place;
+import org.tndata.compass.model.UserPlace;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.SharedPreferencesManager;
 
@@ -155,7 +155,7 @@ public class PlacePickerActivity
         //Set the map and place a marker if a place was passed
         mMap = googleMap;
         if (mPlace.getId() != -1 && !(mPlace.isPrimary() && !mPlace.isSet())){
-            onPlaceSelected(mPlace.getLocation());
+            onPlaceSelected(new LatLng(mPlace.getLatitude(), mPlace.getLongitude()));
         }
     }
 

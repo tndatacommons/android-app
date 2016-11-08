@@ -9,6 +9,9 @@ import android.util.Log;
 import com.google.gson.annotations.SerializedName;
 
 import org.tndata.android.compass.R;
+import org.tndata.compass.model.Survey;
+import org.tndata.compass.model.SurveyOption;
+import org.tndata.compass.model.TDCBase;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -25,7 +28,7 @@ import java.util.Locale;
  * @author Edited by Ismael Alonso
  * @version 1.1.0
  */
-public class User extends TDCBase{
+public class User extends TDCBase {
     public static final String TYPE = "user";
     private static final String PREFERENCES_NAME = "CompassUserPreferences";
 

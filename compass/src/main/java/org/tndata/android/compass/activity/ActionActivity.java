@@ -17,15 +17,14 @@ import com.crashlytics.android.answers.ContentViewEvent;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ActionAdapter;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.CustomAction;
-import org.tndata.android.compass.model.TDCCategory;
-import org.tndata.android.compass.model.UserAction;
+import org.tndata.compass.model.Action;
+import org.tndata.compass.model.CustomAction;
+import org.tndata.compass.model.ResultSet;
+import org.tndata.compass.model.TDCCategory;
+import org.tndata.compass.model.UserAction;
 import org.tndata.android.compass.parser.Parser;
-import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ImageLoader;
 import org.tndata.android.compass.util.ItemSpacing;
 import org.tndata.android.compass.util.Tour;
@@ -167,12 +166,12 @@ public class ActionActivity
     }
 
     @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+    public void onProcessResult(int requestCode, ResultSet result){
         //no-op
     }
 
     @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+    public void onParseSuccess(int requestCode, ResultSet result){
         if (result instanceof TDCCategory){
             TDCCategory category = (TDCCategory)result;
             setCategory(category);

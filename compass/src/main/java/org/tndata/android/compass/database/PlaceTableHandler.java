@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteStatement;
 import android.support.annotation.NonNull;
 
 import org.tndata.android.compass.database.CompassContract.PlaceEntry;
-import org.tndata.android.compass.model.Place;
-import org.tndata.android.compass.model.UserPlace;
+import org.tndata.compass.model.Place;
+import org.tndata.compass.model.UserPlace;
 
 import java.util.ArrayList;
 import java.util.List;

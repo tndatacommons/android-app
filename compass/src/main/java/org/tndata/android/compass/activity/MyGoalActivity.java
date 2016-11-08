@@ -14,9 +14,10 @@ import com.crashlytics.android.answers.ContentViewEvent;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.MyGoalAdapter;
-import org.tndata.android.compass.model.CustomAction;
-import org.tndata.android.compass.model.TDCCategory;
-import org.tndata.android.compass.model.UserGoal;
+import org.tndata.compass.model.CustomAction;
+import org.tndata.compass.model.ResultSet;
+import org.tndata.compass.model.TDCCategory;
+import org.tndata.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
@@ -178,12 +179,12 @@ public class MyGoalActivity
     }
 
     @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+    public void onProcessResult(int requestCode, ResultSet result){
         //no-op
     }
 
     @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+    public void onParseSuccess(int requestCode, ResultSet result){
         if (result instanceof UserGoal){
             setGoal((UserGoal)result);
         }

@@ -15,8 +15,9 @@ import android.widget.ImageView;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseGoalsAdapter;
-import org.tndata.android.compass.model.TDCCategory;
-import org.tndata.android.compass.model.TDCGoal;
+import org.tndata.compass.model.ResultSet;
+import org.tndata.compass.model.TDCCategory;
+import org.tndata.compass.model.TDCGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.Tour;
@@ -188,12 +189,12 @@ public class ChooseGoalsActivity
     }
 
     @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+    public void onProcessResult(int requestCode, ResultSet result){
 
     }
 
     @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+    public void onParseSuccess(int requestCode, ResultSet result){
         if (result instanceof ParserModels.GoalContentResultSet){
             ParserModels.GoalContentResultSet set = (ParserModels.GoalContentResultSet)result;
             mGetGoalsNextUrl = set.next;

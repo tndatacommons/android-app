@@ -26,8 +26,8 @@ import org.tndata.android.compass.databinding.CardEditableListBinding;
 import org.tndata.android.compass.databinding.ItemProgressFooterBinding;
 import org.tndata.android.compass.holder.EditableListCardHolder;
 import org.tndata.android.compass.holder.ProgressFooterHolder;
-import org.tndata.android.compass.model.CustomAction;
-import org.tndata.android.compass.model.CustomGoal;
+import org.tndata.compass.model.CustomAction;
+import org.tndata.compass.model.CustomGoal;
 import org.tndata.android.compass.util.CompassUtil;
 
 import java.util.ArrayList;

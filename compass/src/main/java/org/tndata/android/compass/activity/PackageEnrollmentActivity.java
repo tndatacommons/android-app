@@ -10,7 +10,8 @@ import android.widget.Toast;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.databinding.ActivityPackageEnrollmentBinding;
-import org.tndata.android.compass.model.TDCPackage;
+import org.tndata.compass.model.ResultSet;
+import org.tndata.compass.model.TDCPackage;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
@@ -96,14 +97,14 @@ public class PackageEnrollmentActivity
     }
 
     @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+    public void onProcessResult(int requestCode, ResultSet result){
         if (result instanceof TDCPackage){
             mPackage = (TDCPackage)result;
         }
     }
 
     @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+    public void onParseSuccess(int requestCode, ResultSet result){
         populateUI(mPackage);
         mBinding.packageProgress.setVisibility(View.GONE);
     }

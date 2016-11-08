@@ -9,7 +9,7 @@
 
         <variable
             name="tdcPackage"
-            type="org.tndata.android.compass.model.TDCPackage" />
+            type="org.tndata.compass.model.TDCPackage" />
     </data>
 
     <LinearLayout

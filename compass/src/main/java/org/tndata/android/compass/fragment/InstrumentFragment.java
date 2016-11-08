@@ -14,8 +14,8 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Instrument;
-import org.tndata.android.compass.model.Survey;
+import org.tndata.compass.model.Instrument;
+import org.tndata.compass.model.Survey;
 import org.tndata.android.compass.ui.SurveyView;
 
 

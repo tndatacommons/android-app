@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import org.tndata.android.compass.database.CompassContract.TDCCategoryEntry;
-import org.tndata.android.compass.model.TDCCategory;
+import org.tndata.compass.model.TDCCategory;
 
 import java.util.HashMap;
 import java.util.List;

@@ -14,12 +14,13 @@ import android.view.ViewGroup;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.OrganizationsAdapter;
 import org.tndata.android.compass.databinding.FragmentOrganizationsBinding;
-import org.tndata.android.compass.model.Organization;
+import org.tndata.compass.model.Organization;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.ItemSpacing;
 import org.tndata.android.compass.util.Tour;
+import org.tndata.compass.model.ResultSet;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -126,12 +127,12 @@ public class OrganizationsFragment
     }
 
     @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+    public void onProcessResult(int requestCode, ResultSet result){
 
     }
 
     @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+    public void onParseSuccess(int requestCode, ResultSet result){
         if (result instanceof ParserModels.OrganizationsResultSet){
             mOrganizations = ((ParserModels.OrganizationsResultSet)result).results;
             if (mOrganizations.size() == 0){

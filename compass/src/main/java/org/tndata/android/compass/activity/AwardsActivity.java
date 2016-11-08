@@ -14,11 +14,12 @@ import com.google.gson.annotations.SerializedName;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.AwardsAdapter;
 import org.tndata.android.compass.databinding.ActivityAwardsBinding;
-import org.tndata.android.compass.model.Badge;
+import org.tndata.compass.model.Badge;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.ParallaxEffect;
+import org.tndata.compass.model.ResultSet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,12 +74,12 @@ public class AwardsActivity
     }
 
     @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+    public void onProcessResult(int requestCode, ResultSet result){
 
     }
 
     @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+    public void onParseSuccess(int requestCode, ResultSet result){
         if (result instanceof ParserModels.AwardsResultSet){
             List<Award> awards = ((ParserModels.AwardsResultSet)result).results;
             if (awards.size() == 0){
@@ -128,7 +129,7 @@ public class AwardsActivity
                 .putExtra(BadgeActivity.BADGE_KEY, badge));
     }
 
-    public class Award implements ParserModels.ResultSet{
+    public class Award implements ResultSet{
         public static final String API_TYPE = "award";
 
 

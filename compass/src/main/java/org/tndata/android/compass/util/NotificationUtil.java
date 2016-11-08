@@ -20,7 +20,7 @@ import org.tndata.android.compass.activity.CheckInActivity;
 import org.tndata.android.compass.activity.PackageEnrollmentActivity;
 import org.tndata.android.compass.activity.SnoozeActivity;
 import org.tndata.android.compass.fragment.NotificationSettingsFragment;
-import org.tndata.android.compass.model.GcmMessage;
+import org.tndata.compass.model.GcmMessage;
 import org.tndata.android.compass.service.ActionReportService;
 import org.tndata.android.compass.ui.QuietHoursPreference;
 

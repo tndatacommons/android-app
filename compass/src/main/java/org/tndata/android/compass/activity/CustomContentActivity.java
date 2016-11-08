@@ -13,13 +13,14 @@ import android.widget.ImageView;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.CustomContentAdapter;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.CustomAction;
-import org.tndata.android.compass.model.CustomGoal;
+import org.tndata.compass.model.Action;
+import org.tndata.compass.model.CustomAction;
+import org.tndata.compass.model.CustomGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.ItemSpacing;
+import org.tndata.compass.model.ResultSet;
 
 import java.util.Collections;
 
@@ -185,7 +186,7 @@ public class CustomContentActivity
     }
 
     @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+    public void onProcessResult(int requestCode, ResultSet result){
         if (result instanceof CustomGoal){
             mCustomGoal = (CustomGoal)result;
             if (mAdapter != null){
@@ -204,7 +205,7 @@ public class CustomContentActivity
     }
 
     @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+    public void onParseSuccess(int requestCode, ResultSet result){
         if (result instanceof CustomGoal){
             if (mAdapter == null){
                 fetchActions(mCustomGoal);

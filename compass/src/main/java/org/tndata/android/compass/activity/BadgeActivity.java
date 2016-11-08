@@ -16,7 +16,7 @@ import com.crashlytics.android.answers.ShareEvent;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.databinding.ActivityBadgeBinding;
-import org.tndata.android.compass.model.Badge;
+import org.tndata.compass.model.Badge;
 import org.tndata.android.compass.util.ImageLoader;
 
 

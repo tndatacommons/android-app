@@ -6,8 +6,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import org.tndata.android.compass.fragment.CheckInFeedbackFragment;
 import org.tndata.android.compass.fragment.CheckInRewardFragment;
-import org.tndata.android.compass.model.Reward;
-import org.tndata.android.compass.model.UserGoal;
+import org.tndata.compass.model.Reward;
+import org.tndata.compass.model.UserGoal;
 
 import java.util.ArrayList;
 import java.util.List;

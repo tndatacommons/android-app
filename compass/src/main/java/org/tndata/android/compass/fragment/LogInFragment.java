@@ -5,7 +5,8 @@ import org.json.JSONObject;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.databinding.FragmentLoginBinding;
-import org.tndata.android.compass.model.TDCCategory;
+import org.tndata.compass.model.ResultSet;
+import org.tndata.compass.model.TDCCategory;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
@@ -208,7 +209,7 @@ public class LogInFragment
     }
 
     @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+    public void onProcessResult(int requestCode, ResultSet result){
         if (result instanceof User){
             User user = (User)result;
             user.setPassword(mBinding.loginPassword.getText().toString().trim());
@@ -221,7 +222,7 @@ public class LogInFragment
     }
 
     @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+    public void onParseSuccess(int requestCode, ResultSet result){
         if (result instanceof User){
             mGetCategoriesRC = HttpRequest.get(this, API.URL.getCategories());
         }

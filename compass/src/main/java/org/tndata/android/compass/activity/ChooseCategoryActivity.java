@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
-import org.tndata.android.compass.model.TDCCategory;
+import org.tndata.compass.model.TDCCategory;
 import org.tndata.android.compass.util.Tour;
 
 import java.util.LinkedList;

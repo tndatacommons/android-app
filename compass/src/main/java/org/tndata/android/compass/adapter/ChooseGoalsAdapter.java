@@ -14,8 +14,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.TDCCategory;
-import org.tndata.android.compass.model.TDCGoal;
+import org.tndata.compass.model.TDCCategory;
+import org.tndata.compass.model.TDCGoal;
+import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -198,7 +199,7 @@ public class ChooseGoalsAdapter extends MaterialAdapter{
             else{
                 mIconContainer.setBackground(gradientDrawable);
             }
-            goal.loadIconIntoView(mIcon);
+            ImageLoader.loadBitmap(mIcon, goal.getIconUrl());
             mTitle.setText(goal.getTitle());
         }
 

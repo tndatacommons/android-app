@@ -7,16 +7,16 @@ import android.content.Intent;
 import android.util.Log;
 
 import org.tndata.android.compass.CompassApplication;
-import org.tndata.android.compass.model.CustomAction;
-import org.tndata.android.compass.model.GcmMessage;
+import org.tndata.compass.model.CustomAction;
+import org.tndata.compass.model.GcmMessage;
 import org.tndata.android.compass.model.User;
-import org.tndata.android.compass.model.UserAction;
+import org.tndata.compass.model.ResultSet;
+import org.tndata.compass.model.UserAction;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserMethods;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.receiver.GcmBroadcastReceiver;
 import org.tndata.android.compass.util.API;
-import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.NotificationUtil;
 
 import es.sandwatch.httprequests.HttpRequest;
@@ -161,12 +161,12 @@ public class GcmIntentService extends IntentService{
         }
 
         @Override
-        public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+        public void onProcessResult(int requestCode, ResultSet result){
 
         }
 
         @Override
-        public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+        public void onParseSuccess(int requestCode, ResultSet result){
             //CompassUtil.log(mContext, "Gcm Message", "Parsing succeeded");
             //CompassUtil.log(mContext, "Gcm Message", result.toString());
             if (result instanceof UserAction){

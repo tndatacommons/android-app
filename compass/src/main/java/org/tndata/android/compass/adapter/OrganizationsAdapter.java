@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.databinding.CardOrganizationBinding;
-import org.tndata.android.compass.model.Organization;
+import org.tndata.compass.model.Organization;
 
 import java.util.List;
 

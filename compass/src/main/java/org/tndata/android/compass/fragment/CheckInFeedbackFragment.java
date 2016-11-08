@@ -14,7 +14,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.UserGoal;
+import org.tndata.compass.model.UserGoal;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.CompassUtil;
 

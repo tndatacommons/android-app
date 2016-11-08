@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.databinding.CardBadgeBinding;
-import org.tndata.android.compass.model.Badge;
+import org.tndata.compass.model.Badge;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.ImageLoader;
 

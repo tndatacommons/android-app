@@ -20,10 +20,10 @@ import org.tndata.android.compass.databinding.CardGoalBinding;
 import org.tndata.android.compass.holder.ContentCardHolder;
 import org.tndata.android.compass.holder.DetailCardHolder;
 import org.tndata.android.compass.holder.GoalCardHolder;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.CustomAction;
-import org.tndata.android.compass.model.TDCCategory;
-import org.tndata.android.compass.model.UserAction;
+import org.tndata.compass.model.Action;
+import org.tndata.compass.model.CustomAction;
+import org.tndata.compass.model.TDCCategory;
+import org.tndata.compass.model.UserAction;
 import org.tndata.android.compass.util.CompassUtil;
 
 

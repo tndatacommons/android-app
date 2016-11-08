@@ -10,8 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.UserAction;
+import org.tndata.compass.model.Action;
+import org.tndata.compass.model.UserAction;
 
 import java.util.ArrayList;
 import java.util.List;

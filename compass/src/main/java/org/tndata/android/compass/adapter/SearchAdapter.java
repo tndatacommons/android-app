@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.SearchResult;
+import org.tndata.compass.model.SearchResult;
 
 import java.util.ArrayList;
 import java.util.List;

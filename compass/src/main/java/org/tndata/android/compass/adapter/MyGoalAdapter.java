@@ -18,9 +18,9 @@ import org.tndata.android.compass.holder.DetailCardHolder;
 import org.tndata.android.compass.holder.EditableListCardHolder;
 import org.tndata.android.compass.holder.ProgressCardHolder;
 import org.tndata.android.compass.holder.ProgressFooterHolder;
-import org.tndata.android.compass.model.CustomAction;
-import org.tndata.android.compass.model.TDCCategory;
-import org.tndata.android.compass.model.UserGoal;
+import org.tndata.compass.model.CustomAction;
+import org.tndata.compass.model.TDCCategory;
+import org.tndata.compass.model.UserGoal;
 import org.tndata.android.compass.util.CompassUtil;
 
 import java.util.ArrayList;

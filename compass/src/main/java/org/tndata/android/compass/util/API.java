@@ -10,6 +10,20 @@ import org.json.JSONObject;
 import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.model.*;
+import org.tndata.compass.model.Action;
+import org.tndata.compass.model.CustomAction;
+import org.tndata.compass.model.CustomGoal;
+import org.tndata.compass.model.GcmMessage;
+import org.tndata.compass.model.Goal;
+import org.tndata.compass.model.Organization;
+import org.tndata.compass.model.Survey;
+import org.tndata.compass.model.TDCCategory;
+import org.tndata.compass.model.TDCGoal;
+import org.tndata.compass.model.TDCPackage;
+import org.tndata.compass.model.Trigger;
+import org.tndata.compass.model.UserAction;
+import org.tndata.compass.model.UserGoal;
+import org.tndata.compass.model.UserPlace;
 
 import java.util.TimeZone;
 

@@ -12,9 +12,10 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.CheckInPagerAdapter;
 import org.tndata.android.compass.fragment.CheckInFeedbackFragment;
 import org.tndata.android.compass.fragment.CheckInRewardFragment;
-import org.tndata.android.compass.model.DailyProgress;
-import org.tndata.android.compass.model.Reward;
-import org.tndata.android.compass.model.UserGoal;
+import org.tndata.compass.model.DailyProgress;
+import org.tndata.compass.model.ResultSet;
+import org.tndata.compass.model.Reward;
+import org.tndata.compass.model.UserGoal;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
@@ -106,7 +107,7 @@ public class CheckInActivity
     }
 
     @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+    public void onProcessResult(int requestCode, ResultSet result){
         if (result instanceof ParserModels.UserGoalsResultSet){
             mGoals = ((ParserModels.UserGoalsResultSet)result).results;
             mCurrentProgress = new int[mGoals.size()];
@@ -126,7 +127,7 @@ public class CheckInActivity
     }
 
     @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+    public void onParseSuccess(int requestCode, ResultSet result){
         if (++mCompletedRequests == REQUEST_COUNT){
             setAdapter();
         }

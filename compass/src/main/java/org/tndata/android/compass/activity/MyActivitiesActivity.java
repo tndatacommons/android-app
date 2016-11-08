@@ -12,8 +12,9 @@ import android.widget.ProgressBar;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
-import org.tndata.android.compass.model.TDCCategory;
-import org.tndata.android.compass.model.UserCategory;
+import org.tndata.compass.model.ResultSet;
+import org.tndata.compass.model.TDCCategory;
+import org.tndata.compass.model.UserCategory;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
@@ -93,7 +94,7 @@ public class MyActivitiesActivity
     }
 
     @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+    public void onProcessResult(int requestCode, ResultSet result){
         if (result instanceof ParserModels.UserCategoryResultSet){
             mCategoryList = new ArrayList<>();
             mUserCategoryMap = new HashMap<>();
@@ -107,7 +108,7 @@ public class MyActivitiesActivity
     }
 
     @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+    public void onParseSuccess(int requestCode, ResultSet result){
         if (result instanceof ParserModels.UserCategoryResultSet){
             mLoading.setVisibility(View.GONE);
             mList.setAdapter(new ChooseCategoryAdapter(this, this, mCategoryList));

@@ -2,7 +2,7 @@ package org.tndata.android.compass.parser;
 
 import android.os.AsyncTask;
 
-import org.tndata.android.compass.parser.ParserModels.ResultSet;
+import org.tndata.compass.model.ResultSet;
 import org.tndata.android.compass.util.CompassUtil;
 
 

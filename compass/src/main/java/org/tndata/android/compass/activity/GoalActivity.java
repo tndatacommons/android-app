@@ -7,8 +7,8 @@ import android.widget.ImageView;
 
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.GoalAdapter;
-import org.tndata.android.compass.model.TDCCategory;
-import org.tndata.android.compass.model.TDCGoal;
+import org.tndata.compass.model.TDCCategory;
+import org.tndata.compass.model.TDCGoal;
 import org.tndata.android.compass.util.Tour;
 import org.tndata.android.compass.util.ImageLoader;
 

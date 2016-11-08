@@ -8,7 +8,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.tndata.android.compass.model.UserContent;
+import org.tndata.compass.model.UserContent;
 import org.tndata.android.compass.util.CompassUtil;
 
 import java.lang.reflect.Type;

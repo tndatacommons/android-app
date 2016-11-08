@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.TDCCategory;
+import org.tndata.compass.model.TDCCategory;
 import org.tndata.android.compass.util.ImageLoader;
 
 import java.util.ArrayList;

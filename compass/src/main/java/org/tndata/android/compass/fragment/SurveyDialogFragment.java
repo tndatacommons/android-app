@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Survey;
+import org.tndata.compass.model.Survey;
 import org.tndata.android.compass.ui.SurveyView;
 
 

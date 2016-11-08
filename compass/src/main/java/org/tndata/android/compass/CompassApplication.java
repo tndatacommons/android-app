@@ -8,10 +8,10 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 
 import org.tndata.android.compass.database.TDCCategoryTableHandler;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.TDCCategory;
+import org.tndata.compass.model.Action;
+import org.tndata.compass.model.TDCCategory;
 import org.tndata.android.compass.model.FeedData;
-import org.tndata.android.compass.model.Goal;
+import org.tndata.compass.model.Goal;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.util.API;

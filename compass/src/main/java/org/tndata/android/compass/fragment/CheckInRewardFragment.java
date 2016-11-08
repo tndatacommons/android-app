@@ -13,7 +13,8 @@ import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Reward;
+import org.tndata.compass.model.ResultSet;
+import org.tndata.compass.model.Reward;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
@@ -208,12 +209,12 @@ public class CheckInRewardFragment
     }
 
     @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+    public void onProcessResult(int requestCode, ResultSet result){
 
     }
 
     @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+    public void onParseSuccess(int requestCode, ResultSet result){
         if (result instanceof ParserModels.RewardResultSet){
             mReward = ((ParserModels.RewardResultSet)result).results.get(0);
             populateUI();

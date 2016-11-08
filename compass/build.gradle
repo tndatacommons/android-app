@@ -62,6 +62,7 @@ repositories {
 }
 
 dependencies {
+    compile project(':model')
     compile('com.doomonafireball.betterpickers:library:1.6.0') {
         exclude group: 'com.android.support', module: 'support-v4'
     }

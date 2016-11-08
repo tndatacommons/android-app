@@ -15,7 +15,8 @@ import android.widget.TextView;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.ChooseCategoryAdapter;
-import org.tndata.android.compass.model.TDCCategory;
+import org.tndata.compass.model.ResultSet;
+import org.tndata.compass.model.TDCCategory;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.Tour;
@@ -134,7 +135,7 @@ public class OnBoardingCategoryFragment
     }
 
     @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+    public void onProcessResult(int requestCode, ResultSet result){
         if (result instanceof ParserModels.CategoryContentResultSet){
             List<TDCCategory> categories = ((ParserModels.CategoryContentResultSet)result).results;
             ((CompassApplication)getActivity().getApplication()).setAvailableCategories(categories);
@@ -142,7 +143,7 @@ public class OnBoardingCategoryFragment
     }
 
     @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+    public void onParseSuccess(int requestCode, ResultSet result){
         if (result instanceof ParserModels.CategoryContentResultSet){
             CompassApplication app = (CompassApplication)getActivity().getApplication();
             List<TDCCategory> filtered = app.getCategoryList(true);

@@ -22,8 +22,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Survey;
-import org.tndata.android.compass.model.SurveyOption;
+import org.tndata.compass.model.Survey;
+import org.tndata.compass.model.SurveyOption;
 import org.tndata.android.compass.util.CompassUtil;
 
 import java.text.DateFormat;

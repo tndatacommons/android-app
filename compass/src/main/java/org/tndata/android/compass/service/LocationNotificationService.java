@@ -16,8 +16,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 import org.tndata.android.compass.database.LocationReminderTableHandler;
 import org.tndata.android.compass.database.PlaceTableHandler;
-import org.tndata.android.compass.model.LocationReminder;
-import org.tndata.android.compass.model.UserPlace;
+import org.tndata.compass.model.LocationReminder;
+import org.tndata.compass.model.UserPlace;
 import org.tndata.android.compass.util.CompassUtil;
 import org.tndata.android.compass.util.LocationRequest;
 
@@ -237,7 +237,8 @@ public class LocationNotificationService
             }
             else{
                 //Calculate distance and log data
-                double distance = CompassUtil.getDistance(place.getLocation(), current);
+                LatLng placeLocation  = new LatLng(place.getLatitude(), place.getLongitude());
+                double distance = CompassUtil.getDistance(placeLocation, current);
                 Log.i(TAG, place.toString());
                 Log.i(TAG, "Current location: " + current);
                 Log.i(TAG, "Distance: " + distance);

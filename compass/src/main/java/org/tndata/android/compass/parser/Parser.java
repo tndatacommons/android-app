@@ -3,6 +3,8 @@ package org.tndata.android.compass.parser;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.tndata.compass.model.ResultSet;
+
 
 /**
  * Main interface to the parser. It receives a string and a callback, generates a request
@@ -39,9 +41,9 @@ public final class Parser{
      * @param callback the callback object.
      * @return a request code.
      */
-    public static <T extends ParserModels.ResultSet> int parse(@NonNull String src,
-                                                               @Nullable Class<T> type,
-                                                               @NonNull ParserCallback callback){
+    public static <T extends ResultSet> int parse(@NonNull String src,
+                                                  @Nullable Class<T> type,
+                                                  @NonNull ParserCallback callback){
 
         int requestCode = generateRequestCode();
         new ParserWorker<>(requestCode, src, type, callback).execute();
@@ -69,7 +71,7 @@ public final class Parser{
          * @param requestCode the request code.
          * @param result the result set.
          */
-        void onProcessResult(int requestCode, ParserModels.ResultSet result);
+        void onProcessResult(int requestCode, ResultSet result);
 
         /**
          * Called in the foreground when parsing is complete.
@@ -77,7 +79,7 @@ public final class Parser{
          * @param requestCode the request code.
          * @param result the result set.
          */
-        void onParseSuccess(int requestCode, ParserModels.ResultSet result);
+        void onParseSuccess(int requestCode, ResultSet result);
 
         /**
          * Called in the foreground when parsing fails

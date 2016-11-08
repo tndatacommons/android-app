@@ -10,7 +10,7 @@ import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.UserProfileAdapter;
 import org.tndata.android.compass.fragment.SurveyDialogFragment;
-import org.tndata.android.compass.model.Survey;
+import org.tndata.compass.model.Survey;
 import org.tndata.android.compass.model.User;
 import org.tndata.android.compass.util.API;
 

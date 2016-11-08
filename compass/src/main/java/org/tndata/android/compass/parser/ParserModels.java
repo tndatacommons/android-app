@@ -1,21 +1,22 @@
 package org.tndata.android.compass.parser;
 
 import org.tndata.android.compass.activity.AwardsActivity;
-import org.tndata.android.compass.model.CustomAction;
-import org.tndata.android.compass.model.CustomGoal;
-import org.tndata.android.compass.model.DailyProgress;
+import org.tndata.compass.model.CustomAction;
+import org.tndata.compass.model.CustomGoal;
+import org.tndata.compass.model.DailyProgress;
 import org.tndata.android.compass.model.FeedData;
-import org.tndata.android.compass.model.Organization;
-import org.tndata.android.compass.model.Place;
-import org.tndata.android.compass.model.Reward;
-import org.tndata.android.compass.model.SearchResult;
-import org.tndata.android.compass.model.TDCCategory;
-import org.tndata.android.compass.model.TDCGoal;
+import org.tndata.compass.model.Organization;
+import org.tndata.compass.model.Place;
+import org.tndata.compass.model.Reward;
+import org.tndata.compass.model.SearchResult;
+import org.tndata.compass.model.TDCCategory;
+import org.tndata.compass.model.TDCGoal;
 import org.tndata.android.compass.model.User;
-import org.tndata.android.compass.model.UserAction;
-import org.tndata.android.compass.model.UserCategory;
-import org.tndata.android.compass.model.UserGoal;
-import org.tndata.android.compass.model.UserPlace;
+import org.tndata.compass.model.UserAction;
+import org.tndata.compass.model.UserCategory;
+import org.tndata.compass.model.UserGoal;
+import org.tndata.compass.model.UserPlace;
+import org.tndata.compass.model.ResultSet;
 
 import java.util.List;
 
@@ -28,8 +29,6 @@ import java.util.List;
  * @version 1.0.0
  */
 public final class ParserModels{
-    public interface ResultSet{}
-
     private abstract class ListResultSet implements ResultSet{
         public int count;
         public String previous;

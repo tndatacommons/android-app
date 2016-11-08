@@ -18,6 +18,24 @@ import com.google.android.gms.maps.model.LatLng;
 import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.activity.AwardsActivity;
 import org.tndata.android.compass.model.*;
+import org.tndata.compass.model.CustomAction;
+import org.tndata.compass.model.CustomGoal;
+import org.tndata.compass.model.DailyProgress;
+import org.tndata.compass.model.Instrument;
+import org.tndata.compass.model.Organization;
+import org.tndata.compass.model.Place;
+import org.tndata.compass.model.Reward;
+import org.tndata.compass.model.SearchResult;
+import org.tndata.compass.model.Survey;
+import org.tndata.compass.model.SurveyOption;
+import org.tndata.compass.model.TDCAction;
+import org.tndata.compass.model.TDCCategory;
+import org.tndata.compass.model.TDCGoal;
+import org.tndata.compass.model.TDCPackage;
+import org.tndata.compass.model.UserAction;
+import org.tndata.compass.model.UserCategory;
+import org.tndata.compass.model.UserGoal;
+import org.tndata.compass.model.UserPlace;
 
 import es.sandwatch.httprequests.HttpRequest;
 

@@ -22,10 +22,11 @@ import com.doomonafireball.betterpickers.recurrencepicker.EventRecurrenceFormatt
 import com.doomonafireball.betterpickers.recurrencepicker.RecurrencePickerDialog;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.Action;
-import org.tndata.android.compass.model.CustomAction;
-import org.tndata.android.compass.model.Trigger;
-import org.tndata.android.compass.model.UserAction;
+import org.tndata.compass.model.Action;
+import org.tndata.compass.model.CustomAction;
+import org.tndata.compass.model.ResultSet;
+import org.tndata.compass.model.Trigger;
+import org.tndata.compass.model.UserAction;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;
@@ -477,12 +478,12 @@ public class TriggerActivity
     }
 
     @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+    public void onProcessResult(int requestCode, ResultSet result){
 
     }
 
     @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+    public void onParseSuccess(int requestCode, ResultSet result){
         if (result instanceof Action){
             setResult(RESULT_OK, new Intent().putExtra(ACTION_KEY, (Parcelable)result));
             finish();

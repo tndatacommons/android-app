@@ -21,11 +21,11 @@ import android.widget.Toast;
 import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.PlacesAdapter;
 import org.tndata.android.compass.database.PlaceTableHandler;
-import org.tndata.android.compass.model.Place;
-import org.tndata.android.compass.model.UserPlace;
+import org.tndata.compass.model.Place;
+import org.tndata.compass.model.ResultSet;
+import org.tndata.compass.model.UserPlace;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
-import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.util.API;
 
 import java.util.ArrayList;
@@ -143,7 +143,7 @@ public class PlacesActivity
     }
 
     @Override
-    public void onProcessResult(int requestCode, ParserModels.ResultSet result){
+    public void onProcessResult(int requestCode, ResultSet result){
         List<Place> primaryPlaces = ((ParserModels.PlacesResultSet)result).results;
         Log.d(TAG, "Primary places: " + primaryPlaces.toString());
 
@@ -192,7 +192,7 @@ public class PlacesActivity
     }
 
     @Override
-    public void onParseSuccess(int requestCode, ParserModels.ResultSet result){
+    public void onParseSuccess(int requestCode, ResultSet result){
         //Hide the progress bar
         mProgress.setVisibility(View.GONE);
 
@@ -318,8 +318,8 @@ public class PlacesActivity
                 }
                 //Otherwise, this place was edited, so update both, the place and the adapter
                 else{
-                    mCurrentPlace.setLatitude(place.getLocation().latitude);
-                    mCurrentPlace.setLongitude(place.getLocation().longitude);
+                    mCurrentPlace.setLatitude(place.getLatitude());
+                    mCurrentPlace.setLongitude(place.getLongitude());
 
                     PlaceTableHandler handler = new PlaceTableHandler(this);
                     //If the place is primary and not set it won't be in the database, so save

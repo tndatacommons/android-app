@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import org.tndata.android.compass.database.CompassContract.LocationReminderEntry;
-import org.tndata.android.compass.model.LocationReminder;
+import org.tndata.compass.model.LocationReminder;
 
 import java.util.ArrayList;
 import java.util.List;
