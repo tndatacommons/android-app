@@ -15,7 +15,7 @@ import org.tndata.compass.model.TDCCategory;
 import org.tndata.android.compass.model.FeedData;
 import org.tndata.compass.model.Instrument;
 import org.tndata.compass.model.Survey;
-import org.tndata.android.compass.model.User;
+import org.tndata.compass.model.User;
 import org.tndata.android.compass.util.API;
 import org.tndata.android.compass.util.FeedDataLoader;
 

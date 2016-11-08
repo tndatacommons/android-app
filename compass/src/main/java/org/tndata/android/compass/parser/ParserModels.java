@@ -11,7 +11,7 @@ import org.tndata.compass.model.Reward;
 import org.tndata.compass.model.SearchResult;
 import org.tndata.compass.model.TDCCategory;
 import org.tndata.compass.model.TDCGoal;
-import org.tndata.android.compass.model.User;
+import org.tndata.compass.model.User;
 import org.tndata.compass.model.UserAction;
 import org.tndata.compass.model.UserCategory;
 import org.tndata.compass.model.UserGoal;

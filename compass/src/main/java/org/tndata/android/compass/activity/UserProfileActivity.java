@@ -11,7 +11,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.adapter.UserProfileAdapter;
 import org.tndata.android.compass.fragment.SurveyDialogFragment;
 import org.tndata.compass.model.Survey;
-import org.tndata.android.compass.model.User;
+import org.tndata.compass.model.User;
 import org.tndata.android.compass.util.API;
 
 import es.sandwatch.httprequests.HttpRequest;

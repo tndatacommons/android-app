@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
 
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.User;
+import org.tndata.compass.model.User;
 
 
 /**

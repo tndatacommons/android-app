@@ -7,7 +7,7 @@ import org.tndata.android.compass.R;
 import org.tndata.android.compass.databinding.FragmentLoginBinding;
 import org.tndata.compass.model.ResultSet;
 import org.tndata.compass.model.TDCCategory;
-import org.tndata.android.compass.model.User;
+import org.tndata.compass.model.User;
 import org.tndata.android.compass.parser.Parser;
 import org.tndata.android.compass.parser.ParserModels;
 import org.tndata.android.compass.util.API;

@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.User;
+import org.tndata.compass.model.User;
 
 
 public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.ViewHolder>{

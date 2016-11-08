@@ -1,17 +1,13 @@
-package org.tndata.android.compass.model;
+package org.tndata.compass.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
-
-import org.tndata.android.compass.R;
-import org.tndata.compass.model.Survey;
-import org.tndata.compass.model.SurveyOption;
-import org.tndata.compass.model.TDCBase;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -28,7 +24,7 @@ import java.util.Locale;
  * @author Edited by Ismael Alonso
  * @version 1.1.0
  */
-public class User extends TDCBase {
+public class User extends TDCBase{
     public static final String TYPE = "user";
     private static final String PREFERENCES_NAME = "CompassUserPreferences";
 
@@ -503,6 +499,7 @@ public class User extends TDCBase {
      * @param context a reference to the context.
      * @return the user if it exists, null if it doesn't.
      */
+    @Nullable
     public static User getFromPreferences(@NonNull Context context){
         //Open the shared preferences file for the user and check if they exist
         SharedPreferences prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);

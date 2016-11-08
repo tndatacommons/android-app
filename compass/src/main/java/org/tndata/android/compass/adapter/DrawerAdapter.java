@@ -14,7 +14,7 @@ import android.widget.TextView;
 import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.User;
+import org.tndata.compass.model.User;
 import org.tndata.android.compass.util.CompassUtil;
 
 import java.util.ArrayList;

@@ -32,6 +32,7 @@ import org.tndata.compass.model.TDCAction;
 import org.tndata.compass.model.TDCCategory;
 import org.tndata.compass.model.TDCGoal;
 import org.tndata.compass.model.TDCPackage;
+import org.tndata.compass.model.User;
 import org.tndata.compass.model.UserAction;
 import org.tndata.compass.model.UserCategory;
 import org.tndata.compass.model.UserGoal;
