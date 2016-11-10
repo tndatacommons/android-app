@@ -6,14 +6,6 @@ import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.tndata.compass.model.Action;
-import org.tndata.compass.model.CustomAction;
-import org.tndata.compass.model.CustomGoal;
-import org.tndata.compass.model.Goal;
-import org.tndata.compass.model.Reward;
-import org.tndata.compass.model.TDCGoal;
-import org.tndata.compass.model.UserAction;
-
 import java.util.ArrayList;
 import java.util.List;
 
