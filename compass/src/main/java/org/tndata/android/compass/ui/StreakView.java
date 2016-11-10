@@ -13,7 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.FeedData;
+import org.tndata.compass.model.FeedData;
 
 public class StreakView extends LinearLayout {
 

@@ -33,7 +33,7 @@ import org.tndata.android.compass.adapter.feed.MainFeedAdapter;
 import org.tndata.android.compass.databinding.ActivityFeedBinding;
 import org.tndata.compass.model.Action;
 import org.tndata.compass.model.CustomGoal;
-import org.tndata.android.compass.model.FeedData;
+import org.tndata.compass.model.FeedData;
 import org.tndata.compass.model.Goal;
 import org.tndata.compass.model.Reward;
 import org.tndata.compass.model.TDCGoal;

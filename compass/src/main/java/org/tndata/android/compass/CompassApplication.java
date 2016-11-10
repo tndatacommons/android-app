@@ -11,7 +11,7 @@ import org.tndata.android.compass.database.TDCCategoryTableHandler;
 import org.tndata.android.compass.util.FeedDataLoader;
 import org.tndata.compass.model.Action;
 import org.tndata.compass.model.TDCCategory;
-import org.tndata.android.compass.model.FeedData;
+import org.tndata.compass.model.FeedData;
 import org.tndata.compass.model.User;
 import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.util.API;

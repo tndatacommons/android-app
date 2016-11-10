@@ -1,4 +1,4 @@
-package org.tndata.android.compass.model;
+package org.tndata.compass.model;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;

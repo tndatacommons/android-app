@@ -1,6 +1,6 @@
 package org.tndata.android.compass.adapter.feed;
 
-import org.tndata.android.compass.model.FeedData;
+import org.tndata.compass.model.FeedData;
 
 
 /**

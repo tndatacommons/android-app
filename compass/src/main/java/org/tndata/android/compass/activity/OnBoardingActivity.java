@@ -12,7 +12,7 @@ import org.tndata.android.compass.fragment.OnBoardingCategoryFragment;
 import org.tndata.android.compass.fragment.OrganizationsFragment;
 import org.tndata.android.compass.fragment.ProgressFragment;
 import org.tndata.compass.model.TDCCategory;
-import org.tndata.android.compass.model.FeedData;
+import org.tndata.compass.model.FeedData;
 import org.tndata.compass.model.Instrument;
 import org.tndata.compass.model.Survey;
 import org.tndata.compass.model.User;

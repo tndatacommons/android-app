@@ -3,7 +3,7 @@ package org.tndata.android.compass.adapter.feed;
 import android.view.View;
 
 import org.tndata.android.compass.R;
-import org.tndata.android.compass.model.FeedData;
+import org.tndata.compass.model.FeedData;
 import org.tndata.android.compass.ui.StreakView;
 
 import java.util.List;

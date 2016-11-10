@@ -4,7 +4,7 @@ import org.tndata.android.compass.activity.AwardsActivity;
 import org.tndata.compass.model.CustomAction;
 import org.tndata.compass.model.CustomGoal;
 import org.tndata.compass.model.DailyProgress;
-import org.tndata.android.compass.model.FeedData;
+import org.tndata.compass.model.FeedData;
 import org.tndata.compass.model.Organization;
 import org.tndata.compass.model.Place;
 import org.tndata.compass.model.Reward;

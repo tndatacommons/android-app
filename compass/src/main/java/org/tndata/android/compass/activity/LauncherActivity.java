@@ -14,7 +14,7 @@ import org.tndata.android.compass.fragment.LauncherFragment;
 import org.tndata.android.compass.fragment.LogInFragment;
 import org.tndata.android.compass.fragment.ResetPasswordFragment;
 import org.tndata.android.compass.fragment.SignUpFragment;
-import org.tndata.android.compass.model.FeedData;
+import org.tndata.compass.model.FeedData;
 import org.tndata.compass.model.User;
 import org.tndata.android.compass.util.FeedDataLoader;
 
