@@ -481,14 +481,14 @@ public class MainFeedAdapter
      * Marks an action as done in he data set.
      */
     public void didIt(){
-        mFeedData.replaceUpNext();
+        mApp.replaceUpNext();
     }
 
     /**
      * Updates upcoming and up next.
      */
     public void updateUpNext(Action upNext){
-        mFeedData.updateAction(upNext);
+        mApp.updateAction(upNext);
     }
 
 

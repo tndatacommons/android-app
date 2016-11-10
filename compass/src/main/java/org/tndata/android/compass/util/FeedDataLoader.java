@@ -109,6 +109,15 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
         mGetFeedDataRC = HttpRequest.get(this, API.URL.getFeedData());
     }
 
+    public void loadNextAction(){
+        if (mFeedData.getReplacedActionType() == FeedData.ActionType.USER_ACTION){
+            loadNextUserAction();
+        }
+        else if (mFeedData.getReplacedActionType() == FeedData.ActionType.CUSTOM_ACTION){
+            loadNextCustomAction();
+        }
+    }
+
     /**
      * Loads the next user action.
      */
@@ -246,6 +255,7 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
                 //  call replaceUpNext to set the upNext field in FeedData and trigger the
                 //  load of the next action
                 mFeedData.replaceUpNext();
+                loadNextAction();
                 mInitialActionLoad = false;
                 if (!mInitialGoalLoad){
                     //If the goals have already been loaded, let the callback know
@@ -265,6 +275,7 @@ public class FeedDataLoader implements HttpRequest.RequestCallback, Parser.Parse
             }
             if (mInitialActionLoad && (mGetNextUserActionUrl == null || !mGetNextUserActionUrl.isEmpty())){
                 mFeedData.replaceUpNext();
+                loadNextAction();
                 mInitialActionLoad = false;
                 if (!mInitialGoalLoad){
                     mDataLoadCallback.onFeedDataLoaded(mFeedData);

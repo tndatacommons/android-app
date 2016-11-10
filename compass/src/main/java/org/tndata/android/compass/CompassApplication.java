@@ -8,10 +8,10 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 
 import org.tndata.android.compass.database.TDCCategoryTableHandler;
+import org.tndata.android.compass.util.FeedDataLoader;
 import org.tndata.compass.model.Action;
 import org.tndata.compass.model.TDCCategory;
 import org.tndata.android.compass.model.FeedData;
-import org.tndata.compass.model.Goal;
 import org.tndata.compass.model.User;
 import org.tndata.android.compass.service.LocationNotificationService;
 import org.tndata.android.compass.util.API;
@@ -178,36 +178,12 @@ public class CompassApplication extends Application{
     }
 
 
-    /*---------------------------------------------------------------------------*
-     * These methods wrap add, update, and remove methods in the FeedData class. *
-     *---------------------------------------------------------------------------*/
+    /*--------------------------------------------------------------*
+     * These methods action handling methods in the FeedData class. *
+     *--------------------------------------------------------------*/
 
-    /**
-     * Adds a goal to the global FeedData bundle.
-     *
-     * @param goal the goal to be added.
-     */
-    public void addGoal(Goal goal){
-        mFeedData.addGoal(goal);
-    }
+    public void replaceUpNext(){
 
-    /**
-     * Updates a goal in the global FeedData bundle.
-     *
-     * @param goal the goal to be updated.
-     */
-    public void updateGoal(Goal goal){
-        mFeedData.updateGoal(goal);
-    }
-
-    /**
-     * Removes a goal from the global FeedData bundle.
-     *
-     * @param goal the goal to be removed.
-     * @return the index of the goal in the backing list prior to removal, -1 if not found.
-     */
-    public int removeGoal(Goal goal){
-        return mFeedData.removeGoal(goal);
     }
 
     /**
@@ -225,7 +201,9 @@ public class CompassApplication extends Application{
      * @param action the acton to be added.
      */
     public void updateAction(Action action){
-        mFeedData.updateAction(action);
+        if (mFeedData.updateAction(action)){
+            FeedDataLoader.getInstance().loadNextAction();
+        }
     }
 
     /**
@@ -235,6 +213,7 @@ public class CompassApplication extends Application{
      */
     public void removeAction(Action action){
         mFeedData.removeAction(action);
+        FeedDataLoader.getInstance().loadNextAction();
     }
 
 

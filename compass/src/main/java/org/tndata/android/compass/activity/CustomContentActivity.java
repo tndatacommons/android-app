@@ -190,7 +190,7 @@ public class CustomContentActivity
         if (result instanceof CustomGoal){
             mCustomGoal = (CustomGoal)result;
             if (mAdapter != null){
-                mApplication.addGoal(mCustomGoal);
+                mApplication.getFeedData().addGoal(mCustomGoal);
                 mCustomGoal.init();
             }
             invalidateOptionsMenu();
@@ -245,7 +245,7 @@ public class CustomContentActivity
 
     @Override
     public void onSaveGoal(@NonNull CustomGoal customGoal){
-        mApplication.updateGoal(customGoal);
+        mApplication.getFeedData().updateGoal(customGoal);
         HttpRequest.put(null, API.URL.putCustomGoal(customGoal),
                 API.BODY.postPutCustomGoal(customGoal));
     }

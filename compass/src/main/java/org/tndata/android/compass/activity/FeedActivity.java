@@ -564,11 +564,11 @@ public class FeedActivity
             }
 
             if (removedGoal != null){
-                mAdapter.notifyGoalRemoved(mApplication.removeGoal(removedGoal));
+                mAdapter.notifyGoalRemoved(mApplication.getFeedData().removeGoal(removedGoal));
 
                 //If up next is a child of the removed goal replace it
                 if (mApplication.getFeedData().getUpNext().getParentId() == removedGoal.getId()){
-                    mApplication.getFeedData().replaceUpNext();
+                    mApplication.replaceUpNext();
                 }
 
                 Toast.makeText(this, R.string.goal_removed_toast, Toast.LENGTH_SHORT).show();
@@ -580,13 +580,13 @@ public class FeedActivity
         else if (requestCode == ACTION_RC){
             if (resultCode == MyGoalActivity.GOAL_REMOVED_RC){
                 UserGoal userGoal = data.getParcelableExtra(MyGoalActivity.REMOVED_GOAL_KEY);
-                mAdapter.notifyGoalRemoved(mApplication.removeGoal(userGoal));
-                mApplication.getFeedData().replaceUpNext();
+                mAdapter.notifyGoalRemoved(mApplication.getFeedData().removeGoal(userGoal));
+                mApplication.replaceUpNext();
             }
             else if (resultCode == CustomContentActivity.GOAL_REMOVED_RC){
                 CustomGoal customGoal = data.getParcelableExtra(CustomContentActivity.REMOVED_GOAL_KEY);
-                mAdapter.notifyGoalRemoved(mApplication.removeGoal(customGoal));
-                mApplication.getFeedData().replaceUpNext();
+                mAdapter.notifyGoalRemoved(mApplication.getFeedData().removeGoal(customGoal));
+                mApplication.replaceUpNext();
             }
         }
 

@@ -1,11 +1,11 @@
 package org.tndata.android.compass.model;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.tndata.android.compass.util.FeedDataLoader;
 import org.tndata.compass.model.Action;
 import org.tndata.compass.model.CustomAction;
 import org.tndata.compass.model.CustomGoal;
@@ -39,13 +39,14 @@ public class FeedData{
     @SerializedName("funcontent")
     private Reward mReward;
 
+
     //Fields set during post-processing or after data retrieval
     private List<Goal> mDisplayedGoals;
-
 
     private Action mUpNext;
     private UserAction mNextUserAction;
     private CustomAction mNextCustomAction;
+    private ActionType mActionToReplace;
 
 
     /**
@@ -53,12 +54,13 @@ public class FeedData{
      */
     public void init(){
         mDisplayedGoals = new ArrayList<>();
+        mActionToReplace = ActionType.NONE;
     }
 
 
-    /*------------------------------*
-     * REGULAR GETTERS AND CHECKERS *
-     *------------------------------*/
+    /*-------------------------------------------------------*
+     * REGULAR GETTERS AND CHECKERS FOR API DELIVERED FIELDS *
+     *-------------------------------------------------------*/
 
     /**
      * Progress getter.
@@ -88,15 +90,6 @@ public class FeedData{
     }
 
     /**
-     * Goal getter.
-     *
-     * @return the list of loaded goals.
-     */
-    public List<Goal> getGoals(){
-        return mDisplayedGoals;
-    }
-
-    /**
      * Gets the list of suggestions.
      *
      * @return the list of suggestions.
@@ -110,9 +103,41 @@ public class FeedData{
     }
 
 
-    /*--------------------------------------*
-     * LOAD MORE / SEE MORE RELATED METHODS *
-     *--------------------------------------*/
+    /*--------------------------------------------------------*
+     * GETTERS FOR GOALS AND ACTIONS, SET AFTER INITIAL FETCH *
+     *--------------------------------------------------------*/
+
+    /**
+     * Goals getter.
+     *
+     * @return the list of loaded goals.
+     */
+    public List<Goal> getGoals(){
+        return mDisplayedGoals;
+    }
+
+    /**
+     * Up next getter.
+     *
+     * @return the up next action.
+     */
+    public Action getUpNext(){
+        return mUpNext;
+    }
+
+    /**
+     * Gets the type of action that was bumped to up next, if any.
+     *
+     * @return the type of action
+     */
+    public ActionType getReplacedActionType(){
+        return mActionToReplace;
+    }
+
+
+    /*----------------------*
+     * GOAL RELATED METHODS *
+     *----------------------*/
 
     /**
      * Adds a batch of goals loaded from the API.
@@ -120,27 +145,104 @@ public class FeedData{
      * @param goals a list containing the loaded goals.
      */
     public void addGoals(@NonNull List<Goal> goals){
+        Log.i(TAG, "Trying to add " + goals.size() + " to the list");
         for (Goal goal:goals){
-            //Call addGoal() to ensure the goal wasn't already added to the bundle.
+            //addGoal() ensures the goal wasn't already in the list.
             addGoal(goal);
         }
     }
 
+    /**
+     * Adds a goal to the data set unless the goal is already present.
+     *
+     * @param goal the goal to be added.
+     */
+    public void addGoal(@NonNull Goal goal){
+        Log.i(TAG, "Adding goal: " + goal);
+        if (!mDisplayedGoals.contains(goal)){
+            mDisplayedGoals.add(goal);
+        }
+        else{
+            Log.e(TAG, "The goal was already in the list");
+        }
+    }
+
+    /**
+     * Updates a goal in the data set.
+     *
+     * @param goal the goal to be updated.
+     */
+    public void updateGoal(@NonNull Goal goal){
+        Log.i(TAG, "Updating goal: " + goal);
+        //This operation can only happen for custom goals
+        if (goal instanceof CustomGoal){
+            CustomGoal customGoal = (CustomGoal)goal;
+            //Find the goal and update it
+            for (Goal listedGoal:mDisplayedGoals){
+                if (listedGoal.equals(goal)){
+                    CustomGoal existingGoal = (CustomGoal)listedGoal;
+                    existingGoal.setTitle(customGoal.getTitle());
+                    return;
+                }
+            }
+            Log.e(TAG, "The goal doesn't exist");
+        }
+        else{
+            Log.e(TAG, "Only CustomGoal instances can be updated");
+        }
+    }
+
+    /**
+     * Removes a goal from the data set.
+     *
+     * @param goal the goal to be removed.
+     * @return the index of the goal in the backing list prior to removal, -1 if not found.
+     */
+    public int removeGoal(@NonNull Goal goal){
+        Log.i(TAG, "Removing goal: " + goal);
+        for (int i = 0; i < mDisplayedGoals.size(); i++){
+            if (mDisplayedGoals.get(i).equals(goal)){
+                mDisplayedGoals.remove(i);
+                return i;
+            }
+        }
+        Log.e(TAG, "The goal doesn't exist");
+        return -1;
+    }
+
 
     /*------------------------*
-     * NEW STUFF, MOVE AROUND *
+     * ACTION RELATED METHODS *
      *------------------------*/
 
-    public void setNextUserAction(UserAction userAction){
+    /**
+     * Saves the next UserAction in the buffer.
+     *
+     * @param userAction the UserAction to be set in the buffer.
+     */
+    public void setNextUserAction(@Nullable UserAction userAction){
         Log.i(TAG, "Setting next user action: " + userAction);
         mNextUserAction = userAction;
+        mActionToReplace = ActionType.NONE;
     }
 
-    public void setNextCustomAction(CustomAction customAction){
+    /**
+     * Saves the next CustomAction in the buffer.
+     *
+     * @param customAction the CustomAction to be set in the buffer.
+     */
+    public void setNextCustomAction(@Nullable CustomAction customAction){
         Log.i(TAG, "Setting next custom action: " + customAction);
         mNextCustomAction = customAction;
+        mActionToReplace = ActionType.NONE;
     }
 
+    /**
+     * Among the two actions in the buffer, picks the one scheduled to happen earliest.
+     *
+     * @return the next action in the buffer.
+     */
+    @Nullable
     private Action getNextAction(){
         if (mNextUserAction != null && mNextCustomAction == null){
             Log.i(TAG, "Only user actions available");
@@ -167,6 +269,9 @@ public class FeedData{
         }
     }
 
+    /**
+     * Replaces up next with whatever happens earliest in the buffer.
+     */
     public void replaceUpNext(){
         Action next = getNextAction();
         if (next instanceof UserAction){
@@ -180,86 +285,35 @@ public class FeedData{
         }
     }
 
+    /**
+     * Brings the UserAction in the buffer to up next.
+     */
     private void bumpNextUserAction(){
         Log.i(TAG, "Setting up next: " + mNextUserAction);
         mUpNext = mNextUserAction;
         mNextUserAction = null;
-        FeedDataLoader.getInstance().loadNextUserAction();
+        mActionToReplace = ActionType.USER_ACTION;
     }
 
+    /**
+     * Brings the CustomAction in the buffer to up next.
+     */
     private void bumpNextCustomAction(){
         Log.i(TAG, "Setting up next: " + mNextCustomAction);
         mUpNext = mNextCustomAction;
         mNextCustomAction = null;
-        FeedDataLoader.getInstance().loadNextCustomAction();
-    }
-
-    public Action getUpNext(){
-        return mUpNext;
-    }
-
-
-
-
-
-    /**
-     * Adds a goal to the data set.
-     *
-     * @param goal the goal to be added.
-     */
-    public void addGoal(Goal goal){
-        if (!mDisplayedGoals.contains(goal)){
-            Log.d(TAG, "Adding goal: " + goal);
-            mDisplayedGoals.add(goal);
-        }
+        mActionToReplace = ActionType.CUSTOM_ACTION;
     }
 
     /**
-     * Updates a goal in the data set.
-     *
-     * @param goal the goal to be updated.
-     */
-    public void updateGoal(Goal goal){
-        Log.d(TAG, "Updating goal: " + goal);
-        //This operation can only happen for custom goals
-        if (goal instanceof CustomGoal){
-            CustomGoal customGoal = (CustomGoal)goal;
-            //Find the goal and update it
-            for (Goal listedGoal:mDisplayedGoals){
-                if (listedGoal.equals(goal)){
-                    CustomGoal existingGoal = (CustomGoal)listedGoal;
-                    existingGoal.setTitle(customGoal.getTitle());
-                    break;
-                }
-            }
-        }
-    }
-
-    /**
-     * Removes a goal from the data set.
-     *
-     * @param goal the goal to be removed.
-     * @return the index of the goal in the backing list prior to removal, -1 if not found.
-     */
-    public int removeGoal(Goal goal){
-        for (int i = 0; i < mDisplayedGoals.size(); i++){
-            if (mDisplayedGoals.get(i).equals(goal)){
-                Log.d(TAG, "Removing goal: " + goal);
-                mDisplayedGoals.remove(i);
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * Adds an action to the upcoming list if the action is due today.
+     * Adds an action to the data set if the action happens before any of the actions
+     * in the buffer or up next.
      *
      * @param action the action to be added.
      */
-    public void addAction(Action action){
+    public void addAction(@NonNull Action action){
+        Log.i(TAG, "Adding action: " + action);
         if (action.happensToday()){
-            Log.i(TAG, "Adding " + action + ".");
             if (mUpNext == null){
                 Log.i(TAG, "Action is up next.");
                 mUpNext = action;
@@ -284,31 +338,40 @@ public class FeedData{
                 }
             }
         }
+        else{
+            Log.e(TAG, "The action doesn't happen today");
+        }
     }
 
     /**
      * Updates an action in the data set. Use when no goal can be provided.
      *
      * @param action the action to be updated.
+     * @return true if an action change happened.
      */
-    public void updateAction(Action action){
-        Log.d(TAG, "Updating action: " + action);
-
+    public boolean updateAction(@NonNull Action action){
+        Log.i(TAG, "Updating action: " + action);
+        //The assumption here is that update gets called on up nexr, if the action doesn't
+        //  happen today any more replace it
         if (!action.happensToday()){
             replaceUpNext();
+            return true;
         }
         else{
-            //TODO title might've change
+            //TODO title might've changed
             Action next = getNextAction();
-            if (next != null && next.compareTo(action) < 0){
+            if (next != null && action.happensBefore(next)){
                 if (next instanceof UserAction){
                     bumpNextUserAction();
+                    return true;
                 }
                 else if (next instanceof CustomAction){
                     bumpNextCustomAction();
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     /**
@@ -316,15 +379,17 @@ public class FeedData{
      *
      * @param action the action to be removed.
      */
-    public void removeAction(Action action){
+    public void removeAction(@NonNull Action action){
         if (mUpNext != null && mUpNext.equals(action)){
             replaceUpNext();
         }
         else if (mNextUserAction != null && mNextUserAction.equals(action)){
-            FeedDataLoader.getInstance().loadNextUserAction();
+            mNextUserAction = null;
+            mActionToReplace = ActionType.USER_ACTION;
         }
         else if (mNextCustomAction != null && mNextCustomAction.equals(action)){
-            FeedDataLoader.getInstance().loadNextCustomAction();
+            mNextCustomAction = null;
+            mActionToReplace = ActionType.CUSTOM_ACTION;
         }
     }
 
@@ -401,6 +466,7 @@ public class FeedData{
         }
     }
 
+
     /**
      * Model for the user's daily progress streaks.
      *
@@ -433,5 +499,10 @@ public class FeedData{
         public int getCount() {
             return mCount;
         }
+    }
+
+
+    public enum ActionType{
+        USER_ACTION, CUSTOM_ACTION, NONE
     }
 }
