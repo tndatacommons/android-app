@@ -183,7 +183,8 @@ public class CompassApplication extends Application{
      *--------------------------------------------------------------*/
 
     public void replaceUpNext(){
-
+        mFeedData.replaceUpNext();
+        FeedDataLoader.getInstance().loadNextAction();
     }
 
     /**
