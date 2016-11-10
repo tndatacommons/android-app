@@ -1,0 +1,9 @@
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.tndata.compass.model">
+
+    <application
+        android:allowBackup="false"
+        android:supportsRtl="true" />
+
+</manifest>

@@ -3,7 +3,7 @@
 .idea/
 .gradle
 fabric.properties
-/build
+build
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries

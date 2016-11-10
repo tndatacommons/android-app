@@ -1,0 +1,35 @@
+<resources>
+
+    <!-- Resources for reward content -->
+    <string name="reward_fortune_header">Here\'s a fortune cookie for you</string>
+    <string name="reward_fact_header">Here\'s a fun fact for you</string>
+    <string name="reward_joke_header">Here\'s a joke for you</string>
+    <string name="reward_quote_header">A thought for the day</string>
+    <string name="reward_fortune">Fortune cookie</string>
+    <string name="reward_fact">Fun fact</string>
+    <string name="reward_joke">Joke</string>
+    <string name="reward_share_via">Share via</string>
+
+    <!-- Resources for the user's profile -->
+    <string name="profile_statement_am">I\'m</string>
+    <string name="profile_statement_am_not">I\'m not</string>
+    <string name="profile_statement_have">I have</string>
+    <string name="profile_statement_have_not">I don\'t have</string>
+
+    <string name="profile_zip_question">What\'s your ZIP code?</string>
+    <string name="profile_birthday_question">What\'s your birthday?</string>
+    <string name="profile_gender_question">What\'s your sex?</string>
+    <string name="profile_employed_question">Are you employed?</string>
+    <string name="profile_offspring_question">Are you a parent?</string>
+    <string name="profile_relationship_question">Are you in a romantic relationship?</string>
+    <string name="profile_education_question">Do you have a degree?</string>
+
+    <string name="profile_zip">My zip code is %1$s</string>
+    <string name="profile_birthday">My birthday is %1$s</string>
+    <string name="profile_gender">I am a %1$s</string>
+    <string name="profile_employed">%1$s employed</string>
+    <string name="profile_offspring">%1$s children</string>
+    <string name="profile_relationship">%1$s in a romantic relationship</string>
+    <string name="profile_education">%1$s a degree</string>
+
+</resources>
