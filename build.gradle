@@ -2,16 +2,11 @@
 
 // Specify the exact version of gradle. See:
 // http://stackoverflow.com/a/25232725/182778
-buildscript {
-    repositories {
+buildscript{
+    repositories{
         jcenter()
-        mavenLocal()
-        mavenCentral()
-        maven { url 'https://maven.fabric.io/public' }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.2'
-        classpath 'io.fabric.tools:gradle:1.21.5'
     }
 }
