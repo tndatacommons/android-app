@@ -1,5 +1,6 @@
 package org.tndata.android.compass.fragment;
 
+import org.tndata.android.compass.BuildConfig;
 import org.tndata.android.compass.CompassApplication;
 import org.tndata.android.compass.R;
 
@@ -20,6 +21,7 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
     private static final String TOS_KEY = "settings_tos";
     private static final String PRIVACY_KEY = "settings_privacy";
     private static final String SOURCES_KEY = "settings_sources";
+    private static final String VERSION_KEY = "settings_version";
 
 
     //The listener interface
@@ -48,6 +50,7 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
         findPreference(TOS_KEY).setOnPreferenceClickListener(this);
         findPreference(PRIVACY_KEY).setOnPreferenceClickListener(this);
         findPreference(SOURCES_KEY).setOnPreferenceClickListener(this);
+        findPreference(VERSION_KEY).setSummary(BuildConfig.VERSION_NAME);
     }
 
     @Override

@@ -352,7 +352,7 @@ public class FeedData{
         else{
             //TODO title might've changed
             Action next = getNextAction();
-            if (next != null && action.happensBefore(next)){
+            if (next != null && !action.happensBefore(next)){
                 if (next instanceof UserAction){
                     bumpNextUserAction();
                     return true;
@@ -465,7 +465,7 @@ public class FeedData{
      * @author Brad Montgomery
      * @version 1.0.0
      */
-    public class Streak {
+    public class Streak{
         @SerializedName("day")
         private String mDay;
         @SerializedName("date")
@@ -473,22 +473,23 @@ public class FeedData{
         @SerializedName("count")
         private int mCount = 0;
 
-        public boolean completed() {
+        public boolean completed(){
             return mCount > 0;
         }
-        public String getDay() {
+
+        public String getDay(){
             return mDay;
         }
 
-        public String getDayAbbrev() {
+        public String getDayAbbrev(){
             return mDay.substring(0, 1);
         }
 
-        public String getDate() {
+        public String getDate(){
             return mDate;
         }
 
-        public int getCount() {
+        public int getCount(){
             return mCount;
         }
     }

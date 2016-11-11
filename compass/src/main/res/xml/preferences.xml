@@ -33,7 +33,6 @@
 
         <Preference
             android:key="settings_version"
-            android:summary="@string/version_name"
             android:title="@string/settings_version_title" />
 
     </PreferenceCategory>
