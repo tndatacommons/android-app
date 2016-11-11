@@ -16,18 +16,6 @@ android{
     compileSdkVersion 25
     buildToolsVersion "25.0.0"
 
-    /* NOTES on Versioning:
-     * Prior to release, increment VERSION_CODE. This should be an integer value.
-     * VERSION_NAME should adhere to Semantic Versioning. See http://semver.org/
-     *    - MAJOR version when you make incompatible API changes (or significant UI changes)
-     *    - MINOR version when you add functionality in a backwards-compatible manner, and
-     *    - PATCH version when you make backwards-compatible bug fixes.
-     */
-
-    //Version variables, modify these to update versions
-    def VERSION_CODE = 42
-    def VERSION_NAME = "3.7.3"
-
     //Configurations that affect all flavors
     defaultConfig{
         //Application id (ie, the package)
@@ -37,9 +25,17 @@ android{
         minSdkVersion 14
         targetSdkVersion 25
 
-        //Versions
-        versionCode VERSION_CODE
-        versionName VERSION_NAME
+        /* NOTES on Versioning:
+         * Prior to release, increment VERSION_CODE. This should be an integer value.
+         * VERSION_NAME should adhere to Semantic Versioning. See http://semver.org/
+         *    - MAJOR version when you make incompatible API changes (or significant UI changes)
+         *    - MINOR version when you add functionality in a backwards-compatible manner, and
+         *    - PATCH version when you make backwards-compatible bug fixes.
+         */
+
+        //Versions, modify these to update versions
+        versionCode 42
+        versionName "3.7.3"
 
         //GCM
         buildConfigField(
@@ -57,12 +53,10 @@ android{
     buildTypes{
         debug{
             manifestPlaceholders = [fabricApiKey: FabricApiKey, mapsApiKey: MapsDebugApiKey]
-            resValue "string", "version_name", VERSION_NAME + ".debug"
             versionNameSuffix ".debug"
         }
         release{
             manifestPlaceholders = [fabricApiKey: FabricApiKey, mapsApiKey: MapsApiKey]
-            resValue "string", "version_name", VERSION_NAME
 
             //Enable proguard for release
             minifyEnabled true
